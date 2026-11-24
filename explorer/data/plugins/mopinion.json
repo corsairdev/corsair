@@ -1,0 +1,546 @@
+{
+  "id": "mopinion",
+  "displayName": "Mopinion",
+  "description": "Feedback analytics with Mopinion - read account data, datasets, deployments, reports, fields and collected feedback with filters and paging.",
+  "npmPackageName": "@corsair-dev/mopinion",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 11,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "public_key"]
+    }
+  ],
+  "api": [
+    {
+      "path": "mopinion.api.account.get",
+      "shortPath": "account.get",
+      "description": "Read the account data behind the signed credentials",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "package",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "enddate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "number_users",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "number_charts",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "number_forms",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "number_reports",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "reports",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, language?: string | null, created?: string | null, dataSets?: { id?: number | null, name?: string | null, report_id?: number | null, description?: string | null, data_source?: string | null }[] | null }[] | null"
+          },
+          {
+            "key": "_meta",
+            "optional": true,
+            "type": "{ code?: number | null, message?: string | null, has_more?: boolean | null, previous?: string | boolean | null, next?: string | boolean | null, count?: number | null, total?: number | null, warnings?: any[] | null, changed?: number | null, previous_attributes?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mopinion.api.datasets.feedback",
+      "shortPath": "datasets.feedback",
+      "description": "List the feedback items of a dataset, one page at a time, with Mopinion filter expressions for date, rating, NPS, CES, GCR and tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 10, at most 1000."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "created | datetime"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Defaults to desc."
+          },
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "Record<string, string | number>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | string | null, created?: string | null, report_id?: number | null, dataset_id?: number | null, fields?: { key?: string | null, label?: string | null, value: any }[] | null, tags?: string[] | null }[] | null"
+          },
+          {
+            "key": "_meta",
+            "optional": true,
+            "type": "{ code?: number | null, message?: string | null, has_more?: boolean | null, previous?: string | boolean | null, next?: string | boolean | null, count?: number | null, total?: number | null, warnings?: any[] | null, changed?: number | null, previous_attributes?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mopinion.api.datasets.feedbackItem",
+      "shortPath": "datasets.feedbackItem",
+      "description": "Read one feedback item of a dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "feedbackId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | string | null, created?: string | null, report_id?: number | null, dataset_id?: number | null, fields?: { key?: string | null, label?: string | null, value: any }[] | null, tags?: string[] | null }[] | null"
+          },
+          {
+            "key": "_meta",
+            "optional": true,
+            "type": "{ code?: number | null, message?: string | null, has_more?: boolean | null, previous?: string | boolean | null, next?: string | boolean | null, count?: number | null, total?: number | null, warnings?: any[] | null, changed?: number | null, previous_attributes?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mopinion.api.datasets.fields",
+      "shortPath": "datasets.fields",
+      "description": "Read the field definitions of a dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ key?: string | null, label?: string | null, short_label?: string | null, type?: string | null, report_id?: number | null, dataset_id?: number | null }[] | null"
+          },
+          {
+            "key": "_meta",
+            "optional": true,
+            "type": "{ code?: number | null, message?: string | null, has_more?: boolean | null, previous?: string | boolean | null, next?: string | boolean | null, count?: number | null, total?: number | null, warnings?: any[] | null, changed?: number | null, previous_attributes?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mopinion.api.datasets.get",
+      "shortPath": "datasets.get",
+      "description": "Read basic info on one feedback dataset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datasetId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "report_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data_source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_meta",
+            "optional": true,
+            "type": "{ code?: number | null, message?: string | null, has_more?: boolean | null, previous?: string | boolean | null, next?: string | boolean | null, count?: number | null, total?: number | null, warnings?: any[] | null, changed?: number | null, previous_attributes?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mopinion.api.deployments.get",
+      "shortPath": "deployments.get",
+      "description": "Read one deployment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deploymentId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "datetime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "published",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "revision",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "_meta",
+            "optional": true,
+            "type": "{ code?: number | null, message?: string | null, has_more?: boolean | null, previous?: string | boolean | null, next?: string | boolean | null, count?: number | null, total?: number | null, warnings?: any[] | null, changed?: number | null, previous_attributes?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mopinion.api.deployments.list",
+      "shortPath": "deployments.list",
+      "description": "List the deployments (the containers that publish feedback forms on a website or app), one page at a time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 10, at most 1000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ data?: { id?: string | null, key?: string | null, name?: string | null, domain?: string | null, org_id?: number | null, datetime?: string | null, published?: boolean | null, revision?: number | null, type?: string | null, rules?: any[] | null }[] | null, _meta?: { code?: number | null, message?: string | null, has_more?: boolean | null, previous?: string | boolean | null, next?: string | boolean | null, count?: number | null, total?: number | null, warnings?: any[] | null, changed?: number | null, previous_attributes?: Record<string, any> | null } | null } | { id?: string | null, key?: string | null, name?: string | null, domain?: string | null, org_id?: number | null, datetime?: string | null, published?: boolean | null, revision?: number | null, type?: string | null, rules?: any[] | null }[]"
+      }
+    },
+    {
+      "path": "mopinion.api.reports.feedback",
+      "shortPath": "reports.feedback",
+      "description": "List the feedback items behind a report, one page at a time, with Mopinion filter expressions for date, rating, NPS, CES, GCR and tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 10, at most 1000."
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "created | datetime"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Defaults to desc."
+          },
+          {
+            "key": "reportId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "Record<string, string | number>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | string | null, created?: string | null, report_id?: number | null, dataset_id?: number | null, fields?: { key?: string | null, label?: string | null, value: any }[] | null, tags?: string[] | null }[] | null"
+          },
+          {
+            "key": "_meta",
+            "optional": true,
+            "type": "{ code?: number | null, message?: string | null, has_more?: boolean | null, previous?: string | boolean | null, next?: string | boolean | null, count?: number | null, total?: number | null, warnings?: any[] | null, changed?: number | null, previous_attributes?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mopinion.api.reports.feedbackItem",
+      "shortPath": "reports.feedbackItem",
+      "description": "Read one feedback item of a report",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reportId",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "feedbackId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: number | string | null, created?: string | null, report_id?: number | null, dataset_id?: number | null, fields?: { key?: string | null, label?: string | null, value: any }[] | null, tags?: string[] | null }[] | null"
+          },
+          {
+            "key": "_meta",
+            "optional": true,
+            "type": "{ code?: number | null, message?: string | null, has_more?: boolean | null, previous?: string | boolean | null, next?: string | boolean | null, count?: number | null, total?: number | null, warnings?: any[] | null, changed?: number | null, previous_attributes?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mopinion.api.reports.fields",
+      "shortPath": "reports.fields",
+      "description": "Read the field definitions of a report",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reportId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ key?: string | null, label?: string | null, short_label?: string | null, type?: string | null, report_id?: number | null, dataset_id?: number | null }[] | null"
+          },
+          {
+            "key": "_meta",
+            "optional": true,
+            "type": "{ code?: number | null, message?: string | null, has_more?: boolean | null, previous?: string | boolean | null, next?: string | boolean | null, count?: number | null, total?: number | null, warnings?: any[] | null, changed?: number | null, previous_attributes?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mopinion.api.reports.get",
+      "shortPath": "reports.get",
+      "description": "Read basic info on one report",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reportId",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dataSets",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, report_id?: number | null, description?: string | null, data_source?: string | null }[] | null"
+          },
+          {
+            "key": "_meta",
+            "optional": true,
+            "type": "{ code?: number | null, message?: string | null, has_more?: boolean | null, previous?: string | boolean | null, next?: string | boolean | null, count?: number | null, total?: number | null, warnings?: any[] | null, changed?: number | null, previous_attributes?: Record<string, any> | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

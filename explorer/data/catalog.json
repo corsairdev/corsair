@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-24T15:35:10.021Z",
-  "corsairVersion": "0.2.31",
+  "generatedAt": "2026-11-24T16:11:04.009Z",
+  "corsairVersion": "0.2.32",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -6667,6 +6667,51 @@
       }
     },
     {
+      "id": "mixpanel",
+      "displayName": "Mixpanel",
+      "description": "Product analytics with Mixpanel - ingest events and user or group profiles, run Insights, funnel, retention and segmentation reports, export raw events, and manage annotations, Lexicon schemas, feature flags, experiments, warehouse imports, data pipelines, service accounts and GDPR requests.",
+      "npmPackageName": "@corsair-dev/mixpanel",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 119,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "mocean",
+      "displayName": "Mocean",
+      "description": "Messaging with Mocean - SMS and delivery status, verify codes over SMS and Telegram, voice calls, WhatsApp messages and templates, number lookup, and account balance and pricing.",
+      "npmPackageName": "@corsair-dev/mocean",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 20,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "moco",
+      "displayName": "Moco",
+      "description": "Business management with MOCO: time tracking, projects and tasks, clients, contacts and deals, offers, invoices, payments and reminders, purchases and expenses, planning and schedules, staff (users, employments, holidays, presences, absences), reports, tags, comments and account settings (290 operations).",
+      "npmPackageName": "@corsair-dev/moco",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 290,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "modelry",
       "displayName": "Modelry",
       "description": "Manage 3D modeling requests, products, assets, and embeds with Modelry.",
@@ -6725,6 +6770,36 @@
       }
     },
     {
+      "id": "moosend",
+      "displayName": "Moosend",
+      "description": "Email marketing with Moosend - mailing lists, custom fields, subscribers and tags, segments, draft and sent campaigns with their reports, senders, and transactional email.",
+      "npmPackageName": "@corsair-dev/moosend",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 52,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "mopinion",
+      "displayName": "Mopinion",
+      "description": "Feedback analytics with Mopinion - read account data, datasets, deployments, reports, fields and collected feedback with filters and paging.",
+      "npmPackageName": "@corsair-dev/mopinion",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 11,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "motion",
       "displayName": "Motion",
       "description": "Manage Motion tasks, projects, workspaces, comments, recurring tasks, and custom fields.",
@@ -6736,6 +6811,21 @@
       "counts": {
         "api": 27,
         "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "moz",
+      "displayName": "Moz",
+      "description": "SEO data with Moz - site metrics (Domain Authority, Page Authority, Spam Score, Brand Authority, histories), backlinks, linking domains, anchor texts, top pages, ranking keywords, keyword metrics, SERPs and suggestions, competitors, global top lists, and Moz Local accounts, groups, locations, listings and insights.",
+      "npmPackageName": "@corsair-dev/moz",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 74,
+        "webhooks": 4,
         "db": 0
       }
     },
@@ -133758,6 +133848,2580 @@
       "haystack": "yesno.list mixmax.api.yesno.list list the user’s mixmax yes/no questions with their answers. read"
     },
     {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "annotations.create",
+      "haystack": "annotations.create mixpanel.api.annotations.create create a chart annotation marking an event on a date write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "annotations.createTag",
+      "haystack": "annotations.createtag mixpanel.api.annotations.createtag create an annotation tag write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "annotations.delete",
+      "haystack": "annotations.delete mixpanel.api.annotations.delete delete an annotation destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "annotations.get",
+      "haystack": "annotations.get mixpanel.api.annotations.get get one annotation by id read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "annotations.list",
+      "haystack": "annotations.list mixpanel.api.annotations.list list the chart annotations in the project, optionally by date range read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "annotations.listTags",
+      "haystack": "annotations.listtags mixpanel.api.annotations.listtags list the annotation tags in the project read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "annotations.update",
+      "haystack": "annotations.update mixpanel.api.annotations.update change an annotation's description or tags write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "auditLogs.query",
+      "haystack": "auditlogs.query mixpanel.api.auditlogs.query query the organization's audit log (who changed what, when), filtered by user, type, service and date read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "cohorts.list",
+      "haystack": "cohorts.list mixpanel.api.cohorts.list list every saved cohort with its id, member count, visibility and description read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "dataDefinitions.create",
+      "haystack": "datadefinitions.create mixpanel.api.datadefinitions.create create a lexicon data definition (event, property, custom event, metric, behavior or cohort) write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "dataDefinitions.delete",
+      "haystack": "datadefinitions.delete mixpanel.api.datadefinitions.delete delete a data definition destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "dataDefinitions.get",
+      "haystack": "datadefinitions.get mixpanel.api.datadefinitions.get get one lexicon data definition read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "dataDefinitions.list",
+      "haystack": "datadefinitions.list mixpanel.api.datadefinitions.list list lexicon data definitions (events, properties, metrics, cohorts) with filters, paged by cursor read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "dataDefinitions.merge",
+      "haystack": "datadefinitions.merge mixpanel.api.datadefinitions.merge merge event or property definitions into one canonical definition write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "dataDefinitions.unmerge",
+      "haystack": "datadefinitions.unmerge mixpanel.api.datadefinitions.unmerge undo a merge of data definitions write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "dataDefinitions.update",
+      "haystack": "datadefinitions.update mixpanel.api.datadefinitions.update update a data definition's description, display name, tags, owners or hidden/blocked/verified flags; blocked: true drops its data at ingestion destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "dataDefinitionTags.create",
+      "haystack": "datadefinitiontags.create mixpanel.api.datadefinitiontags.create create a data definition tag write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "dataDefinitionTags.delete",
+      "haystack": "datadefinitiontags.delete mixpanel.api.datadefinitiontags.delete delete a data definition tag (it is removed from every definition) destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "dataDefinitionTags.get",
+      "haystack": "datadefinitiontags.get mixpanel.api.datadefinitiontags.get get one data definition tag read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "dataDefinitionTags.list",
+      "haystack": "datadefinitiontags.list mixpanel.api.datadefinitiontags.list list data definition tags with their usage counts read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "dataDefinitionTags.rename",
+      "haystack": "datadefinitiontags.rename mixpanel.api.datadefinitiontags.rename rename a data definition tag write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "events.counts",
+      "haystack": "events.counts mixpanel.api.events.counts aggregate counts of one or more events over time read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "events.import",
+      "haystack": "events.import mixpanel.api.events.import import up to 2000 server-side events (service account auth, any age), validated per event unless strict is 0 write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "events.names",
+      "haystack": "events.names mixpanel.api.events.names the most common event names over the last 31 days read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "events.propertyCounts",
+      "haystack": "events.propertycounts mixpanel.api.events.propertycounts aggregate counts of an event broken down by the values of one property read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "events.top",
+      "haystack": "events.top mixpanel.api.events.top today's top events with counts and change against yesterday read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "events.topProperties",
+      "haystack": "events.topproperties mixpanel.api.events.topproperties the top property names of an event with their counts read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "events.topPropertyValues",
+      "haystack": "events.toppropertyvalues mixpanel.api.events.toppropertyvalues the top values of one event property read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "events.track",
+      "haystack": "events.track mixpanel.api.events.track track up to 2000 recent events (last 5 days) with the project token, the client-side ingestion route write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "experiments.archive",
+      "haystack": "experiments.archive mixpanel.api.experiments.archive archive an experiment write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "experiments.create",
+      "haystack": "experiments.create mixpanel.api.experiments.create create a draft experiment write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "experiments.decide",
+      "haystack": "experiments.decide mixpanel.api.experiments.decide record the decision on a concluded experiment (success and winning variant) destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "experiments.delete",
+      "haystack": "experiments.delete mixpanel.api.experiments.delete delete an experiment destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "experiments.forceConclude",
+      "haystack": "experiments.forceconclude mixpanel.api.experiments.forceconclude stop a running experiment now, ending exposure to its variants destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "experiments.get",
+      "haystack": "experiments.get mixpanel.api.experiments.get get one experiment read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "experiments.launch",
+      "haystack": "experiments.launch mixpanel.api.experiments.launch launch an experiment: live users start getting its variants destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "experiments.list",
+      "haystack": "experiments.list mixpanel.api.experiments.list list the experiments of a workspace read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "experiments.unarchive",
+      "haystack": "experiments.unarchive mixpanel.api.experiments.unarchive restore an archived experiment write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "experiments.update",
+      "haystack": "experiments.update mixpanel.api.experiments.update update an experiment's fields write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "export.events",
+      "haystack": "export.events mixpanel.api.export.events export raw events for a date range as parsed objects, with optional event-name filter, expression filter and limit read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "featureFlags.create",
+      "haystack": "featureflags.create mixpanel.api.featureflags.create create a feature flag with variants and rollout rules write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "featureFlags.definitions",
+      "haystack": "featureflags.definitions mixpanel.api.featureflags.definitions get the definitions of every flag, for local evaluation in server sdks read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "featureFlags.delete",
+      "haystack": "featureflags.delete mixpanel.api.featureflags.delete delete a feature flag destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "featureFlags.evaluate",
+      "haystack": "featureflags.evaluate mixpanel.api.featureflags.evaluate evaluate every enabled feature flag for one user and return the assigned variants read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "featureFlags.get",
+      "haystack": "featureflags.get mixpanel.api.featureflags.get get one feature flag with its ruleset read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "featureFlags.list",
+      "haystack": "featureflags.list mixpanel.api.featureflags.list list the feature flags of a workspace read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "featureFlags.update",
+      "haystack": "featureflags.update mixpanel.api.featureflags.update replace a feature flag (full put: send every field); changes what live users are served write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "funnels.list",
+      "haystack": "funnels.list mixpanel.api.funnels.list list the saved funnels with their ids and names read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "funnels.query",
+      "haystack": "funnels.query mixpanel.api.funnels.query query a saved funnel for a date range, with optional segmentation and conversion window read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "gdpr.cancelDeletion",
+      "haystack": "gdpr.canceldeletion mixpanel.api.gdpr.canceldeletion cancel a gdpr deletion job that has not started yet write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "gdpr.createDeletion",
+      "haystack": "gdpr.createdeletion mixpanel.api.gdpr.createdeletion start a gdpr/ccpa deletion job that permanently deletes all events and profile data of the given users destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "gdpr.createRetrieval",
+      "haystack": "gdpr.createretrieval mixpanel.api.gdpr.createretrieval start a gdpr/ccpa data retrieval job that exports everything stored about the given users write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "gdpr.getDeletion",
+      "haystack": "gdpr.getdeletion mixpanel.api.gdpr.getdeletion check a gdpr deletion job read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "gdpr.getRetrieval",
+      "haystack": "gdpr.getretrieval mixpanel.api.gdpr.getretrieval check a gdpr data retrieval job read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "groups.batchUpdate",
+      "haystack": "groups.batchupdate mixpanel.api.groups.batchupdate apply up to 200 mixed group profile updates in one request; $unset and $delete entries remove data destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "groups.delete",
+      "haystack": "groups.delete mixpanel.api.groups.delete permanently delete a group profile and its properties destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "groups.remove",
+      "haystack": "groups.remove mixpanel.api.groups.remove remove a value from list properties on a group profile write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "groups.set",
+      "haystack": "groups.set mixpanel.api.groups.set set properties on a group profile, creating it if needed write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "groups.setOnce",
+      "haystack": "groups.setonce mixpanel.api.groups.setonce set properties on a group profile only where they are not set yet write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "groups.union",
+      "haystack": "groups.union mixpanel.api.groups.union merge values into list properties on a group profile, skipping duplicates write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "groups.unset",
+      "haystack": "groups.unset mixpanel.api.groups.unset delete properties from a group profile destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "identity.createAlias",
+      "haystack": "identity.createalias mixpanel.api.identity.createalias send a $create_alias event so a new id resolves to an existing distinct_id (legacy id management) write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "identity.createIdentity",
+      "haystack": "identity.createidentity mixpanel.api.identity.createidentity send an $identify event linking an anonymous id to an identified id (original id merge api) write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "identity.merge",
+      "haystack": "identity.merge mixpanel.api.identity.merge merge two distinct_ids into one user with a $merge event (original id merge api); cannot be undone destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "insights.query",
+      "haystack": "insights.query mixpanel.api.insights.query read the data behind one saved insights report by its bookmark id read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "insights.run",
+      "haystack": "insights.run mixpanel.api.insights.run run an ad hoc insights query (events, funnels, retention, cohorts, formulas) without a saved report read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "jql.run",
+      "haystack": "jql.run mixpanel.api.jql.run run a jql script (custom javascript query) over events and profiles; jql is in maintenance mode at mixpanel read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "lexicon.delete",
+      "haystack": "lexicon.delete mixpanel.api.lexicon.delete delete the lexicon schema of one event or profile type destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "lexicon.deleteAll",
+      "haystack": "lexicon.deleteall mixpanel.api.lexicon.deleteall delete every lexicon schema in the project destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "lexicon.deleteForEntity",
+      "haystack": "lexicon.deleteforentity mixpanel.api.lexicon.deleteforentity delete every lexicon schema for events or for profiles destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "lexicon.get",
+      "haystack": "lexicon.get mixpanel.api.lexicon.get get the lexicon schema of one event or profile type read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "lexicon.list",
+      "haystack": "lexicon.list mixpanel.api.lexicon.list list every lexicon schema in the project read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "lexicon.listForEntity",
+      "haystack": "lexicon.listforentity mixpanel.api.lexicon.listforentity list the lexicon schemas for events or for profiles read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "lexicon.upsert",
+      "haystack": "lexicon.upsert mixpanel.api.lexicon.upsert create or replace the lexicon schema of one event or profile type; metadata dropped: true makes mixpanel drop that event at ingestion destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "lexicon.upsertMany",
+      "haystack": "lexicon.upsertmany mixpanel.api.lexicon.upsertmany create or replace many lexicon schemas at once; truncate deletes every schema not uploaded destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "lookupTables.list",
+      "haystack": "lookuptables.list mixpanel.api.lookuptables.list list the lookup tables in the project with their ids read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "lookupTables.replace",
+      "haystack": "lookuptables.replace mixpanel.api.lookuptables.replace replace every row of a lookup table with new csv content (max 100 mb); the old rows are gone destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "pipelines.create",
+      "haystack": "pipelines.create mixpanel.api.pipelines.create create a data pipeline that exports project data to a bucket or warehouse (a paid add-on that bills while it runs) destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "pipelines.delete",
+      "haystack": "pipelines.delete mixpanel.api.pipelines.delete delete (cancel) a data pipeline destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "pipelines.edit",
+      "haystack": "pipelines.edit mixpanel.api.pipelines.edit change a pipeline's event filter or settings write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "pipelines.list",
+      "haystack": "pipelines.list mixpanel.api.pipelines.list list the data pipelines of the project read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "pipelines.pause",
+      "haystack": "pipelines.pause mixpanel.api.pipelines.pause pause a data pipeline write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "pipelines.resume",
+      "haystack": "pipelines.resume mixpanel.api.pipelines.resume resume a paused data pipeline write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "pipelines.status",
+      "haystack": "pipelines.status mixpanel.api.pipelines.status get a pipeline's export jobs by status read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "pipelines.timeline",
+      "haystack": "pipelines.timeline mixpanel.api.pipelines.timeline list the dates a pipeline has synced read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "profiles.activity",
+      "haystack": "profiles.activity mixpanel.api.profiles.activity return the event activity stream of one or more users' profiles for a date range read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "profiles.append",
+      "haystack": "profiles.append mixpanel.api.profiles.append append a value to list properties on a user profile write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "profiles.batchUpdate",
+      "haystack": "profiles.batchupdate mixpanel.api.profiles.batchupdate apply up to 2000 mixed profile updates in one request; $unset and $delete entries remove data destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "profiles.delete",
+      "haystack": "profiles.delete mixpanel.api.profiles.delete permanently delete a user profile and its properties (events stay) destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "profiles.increment",
+      "haystack": "profiles.increment mixpanel.api.profiles.increment add to (or subtract from) numeric properties on a user profile write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "profiles.query",
+      "haystack": "profiles.query mixpanel.api.profiles.query query user or group profiles with an expression, a cohort filter or exact distinct_ids, paged via session_id and next_page read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "profiles.remove",
+      "haystack": "profiles.remove mixpanel.api.profiles.remove remove a value from list properties on a user profile write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "profiles.set",
+      "haystack": "profiles.set mixpanel.api.profiles.set set properties on a user profile, creating the profile if needed write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "profiles.setOnce",
+      "haystack": "profiles.setonce mixpanel.api.profiles.setonce set properties on a user profile only where they are not set yet write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "profiles.union",
+      "haystack": "profiles.union mixpanel.api.profiles.union merge values into list properties on a user profile, skipping values already present write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "profiles.unset",
+      "haystack": "profiles.unset mixpanel.api.profiles.unset delete properties from a user profile destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "retention.frequency",
+      "haystack": "retention.frequency mixpanel.api.retention.frequency frequency (addiction) report: how many users did an event on how many hours or days of each period read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "retention.query",
+      "haystack": "retention.query mixpanel.api.retention.query run a birth or compounded retention query for a date range, per day, week or month read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "segmentation.average",
+      "haystack": "segmentation.average mixpanel.api.segmentation.average average a numeric property of an event per time unit read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "segmentation.numeric",
+      "haystack": "segmentation.numeric mixpanel.api.segmentation.numeric segment an event by numeric ranges of a property read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "segmentation.query",
+      "haystack": "segmentation.query mixpanel.api.segmentation.query count an event over time, optionally segmented by a property (segmentation report) read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "segmentation.sum",
+      "haystack": "segmentation.sum mixpanel.api.segmentation.sum sum a numeric property of an event per time unit read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "serviceAccounts.addToProjects",
+      "haystack": "serviceaccounts.addtoprojects mixpanel.api.serviceaccounts.addtoprojects grant service accounts access to projects with a role write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "serviceAccounts.create",
+      "haystack": "serviceaccounts.create mixpanel.api.serviceaccounts.create create a service account and return its secret once; this mints a new credential with the given role destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "serviceAccounts.delete",
+      "haystack": "serviceaccounts.delete mixpanel.api.serviceaccounts.delete delete a service account; anything using its secret stops working (including this connection, if it is this one) destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "serviceAccounts.get",
+      "haystack": "serviceaccounts.get mixpanel.api.serviceaccounts.get get one service account of the organization read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "serviceAccounts.list",
+      "haystack": "serviceaccounts.list mixpanel.api.serviceaccounts.list list the organization's service accounts read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "serviceAccounts.listForProject",
+      "haystack": "serviceaccounts.listforproject mixpanel.api.serviceaccounts.listforproject list the service accounts that can reach this project, with their roles read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "serviceAccounts.removeFromProjects",
+      "haystack": "serviceaccounts.removefromprojects mixpanel.api.serviceaccounts.removefromprojects remove service accounts from projects; they lose access at once destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "warehouseImports.createEventStream",
+      "haystack": "warehouseimports.createeventstream mixpanel.api.warehouseimports.createeventstream create an import that loads events from a warehouse table write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "warehouseImports.createGroups",
+      "haystack": "warehouseimports.creategroups mixpanel.api.warehouseimports.creategroups create an import that loads group profiles from a warehouse table write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "warehouseImports.createLookupTable",
+      "haystack": "warehouseimports.createlookuptable mixpanel.api.warehouseimports.createlookuptable create an import that loads a lookup table from a warehouse table write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "warehouseImports.createPeople",
+      "haystack": "warehouseimports.createpeople mixpanel.api.warehouseimports.createpeople create an import that loads user profiles from a warehouse table write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "warehouseImports.delete",
+      "haystack": "warehouseimports.delete mixpanel.api.warehouseimports.delete delete a warehouse import, and with delete_data the data it imported destructive"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "warehouseImports.get",
+      "haystack": "warehouseimports.get mixpanel.api.warehouseimports.get get one warehouse import with its settings read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "warehouseImports.history",
+      "haystack": "warehouseimports.history mixpanel.api.warehouseimports.history list the past sync runs of a warehouse import read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "warehouseImports.list",
+      "haystack": "warehouseimports.list mixpanel.api.warehouseimports.list list the warehouse imports of the project read"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "warehouseImports.run",
+      "haystack": "warehouseimports.run mixpanel.api.warehouseimports.run start a sync of a warehouse import now write"
+    },
+    {
+      "pluginId": "mixpanel",
+      "kind": "api",
+      "shortPath": "warehouseImports.update",
+      "haystack": "warehouseimports.update mixpanel.api.warehouseimports.update pause, resume or reschedule a warehouse import write"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "account.balance",
+      "haystack": "account.balance mocean.api.account.balance read the account credit balance read"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "account.pricing",
+      "haystack": "account.pricing mocean.api.account.pricing list per-destination prices for sms, number lookup or verify, optionally for one mcc/mnc pair read"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "lookup.request",
+      "haystack": "lookup.request mocean.api.lookup.request look up a number's original and current carrier and porting status, paid from prepaid credit; synchronous without a callback url read"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "sms.reportConversion",
+      "haystack": "sms.reportconversion mocean.api.sms.reportconversion tell mocean whether a sent sms reached the user (conversion tracking for otp routes) write"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "sms.send",
+      "haystack": "sms.send mocean.api.sms.send send an sms to up to 500 receivers, charged per destination; the response has a status and msgid per receiver destructive"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "sms.status",
+      "haystack": "sms.status mocean.api.sms.status read a sent message's final status (success, failed, expired, pending or not found) and the credit it took read"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "templates.create",
+      "haystack": "templates.create mocean.api.templates.create create a whatsapp message template and submit it to meta for review write"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "templates.delete",
+      "haystack": "templates.delete mocean.api.templates.delete delete a whatsapp message template, every language of it or one by id; cannot be undone destructive"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "templates.edit",
+      "haystack": "templates.edit mocean.api.templates.edit edit a whatsapp message template; meta reviews it again write"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "templates.get",
+      "haystack": "templates.get mocean.api.templates.get read one whatsapp message template read"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "templates.list",
+      "haystack": "templates.list mocean.api.templates.list list whatsapp message templates, filtered by name, status, category or language read"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "verify.check",
+      "haystack": "verify.check mocean.api.verify.check check the code a user gave you against a verify request; mocean allows three wrong attempts write"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "verify.request",
+      "haystack": "verify.request mocean.api.verify.request send a verification code by sms, charged per attempt; keep the reqid for check and resend destructive"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "verify.requestTelegram",
+      "haystack": "verify.requesttelegram mocean.api.verify.requesttelegram send a verification code to a telegram chat through your bot; keep the reqid for check destructive"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "verify.resend",
+      "haystack": "verify.resend mocean.api.verify.resend resend the code of a verify request by sms, charged per attempt destructive"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "voice.dial",
+      "haystack": "voice.dial mocean.api.voice.dial call one or more numbers and run a mocean command flow (say, play, collect, record, dial), charged per call destructive"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "voice.hangup",
+      "haystack": "voice.hangup mocean.api.voice.hangup hang up a call in progress destructive"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "voice.recording",
+      "haystack": "voice.recording mocean.api.voice.recording download the audio recording of a call read"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "whatsapp.downloadMedia",
+      "haystack": "whatsapp.downloadmedia mocean.api.whatsapp.downloadmedia download media a whatsapp user sent to your business number read"
+    },
+    {
+      "pluginId": "mocean",
+      "kind": "api",
+      "shortPath": "whatsapp.send",
+      "haystack": "whatsapp.send mocean.api.whatsapp.send send a whatsapp message (text, media, template, interactive, location or contacts) from your business number destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.catalogServices.create",
+      "haystack": "account.catalogservices.create moco.api.account.catalogservices.create create account catalog service write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.catalogServices.delete",
+      "haystack": "account.catalogservices.delete moco.api.account.catalogservices.delete delete account catalog service destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.catalogServices.get",
+      "haystack": "account.catalogservices.get moco.api.account.catalogservices.get get account catalog service read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.catalogServices.items.create",
+      "haystack": "account.catalogservices.items.create moco.api.account.catalogservices.items.create create account catalog service item write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.catalogServices.items.delete",
+      "haystack": "account.catalogservices.items.delete moco.api.account.catalogservices.items.delete delete account catalog service item destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.catalogServices.items.get",
+      "haystack": "account.catalogservices.items.get moco.api.account.catalogservices.items.get get account catalog service item read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.catalogServices.items.update",
+      "haystack": "account.catalogservices.items.update moco.api.account.catalogservices.items.update update account catalog service item write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.catalogServices.list",
+      "haystack": "account.catalogservices.list moco.api.account.catalogservices.list list account catalog services, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.catalogServices.update",
+      "haystack": "account.catalogservices.update moco.api.account.catalogservices.update update account catalog service write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.customProperties.create",
+      "haystack": "account.customproperties.create moco.api.account.customproperties.create create account custom property write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.customProperties.delete",
+      "haystack": "account.customproperties.delete moco.api.account.customproperties.delete delete account custom property destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.customProperties.get",
+      "haystack": "account.customproperties.get moco.api.account.customproperties.get get account custom property read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.customProperties.list",
+      "haystack": "account.customproperties.list moco.api.account.customproperties.list list account custom properties: lists custom property definitions; can be filtered by `entity`, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.customProperties.update",
+      "haystack": "account.customproperties.update moco.api.account.customproperties.update update account custom property write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.expenseTemplates.create",
+      "haystack": "account.expensetemplates.create moco.api.account.expensetemplates.create create account expense template write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.expenseTemplates.delete",
+      "haystack": "account.expensetemplates.delete moco.api.account.expensetemplates.delete delete account expense template destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.expenseTemplates.get",
+      "haystack": "account.expensetemplates.get moco.api.account.expensetemplates.get get account expense template read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.expenseTemplates.list",
+      "haystack": "account.expensetemplates.list moco.api.account.expensetemplates.list list account expense templates, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.expenseTemplates.update",
+      "haystack": "account.expensetemplates.update moco.api.account.expensetemplates.update update account expense template write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.fixedCosts.list",
+      "haystack": "account.fixedcosts.list moco.api.account.fixedcosts.list list account fixed costs, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.hourlyRates.get",
+      "haystack": "account.hourlyrates.get moco.api.account.hourlyrates.get list account hourly rates read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.internalHourlyRates.get",
+      "haystack": "account.internalhourlyrates.get moco.api.account.internalhourlyrates.get get account internal hourly rates read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.internalHourlyRates.update",
+      "haystack": "account.internalhourlyrates.update moco.api.account.internalhourlyrates.update update account internal hourly rates: upserts internal hourly rates for the provided year and users write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.taskTemplates.create",
+      "haystack": "account.tasktemplates.create moco.api.account.tasktemplates.create create account task template write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.taskTemplates.delete",
+      "haystack": "account.tasktemplates.delete moco.api.account.tasktemplates.delete delete account task template destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.taskTemplates.get",
+      "haystack": "account.tasktemplates.get moco.api.account.tasktemplates.get get account task template read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.taskTemplates.list",
+      "haystack": "account.tasktemplates.list moco.api.account.tasktemplates.list list account task templates, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.taskTemplates.update",
+      "haystack": "account.tasktemplates.update moco.api.account.tasktemplates.update update account task template write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.webHooks.create",
+      "haystack": "account.webhooks.create moco.api.account.webhooks.create create account web hook write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.webHooks.delete",
+      "haystack": "account.webhooks.delete moco.api.account.webhooks.delete delete account web hook destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.webHooks.disable",
+      "haystack": "account.webhooks.disable moco.api.account.webhooks.disable disable account web hook write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.webHooks.enable",
+      "haystack": "account.webhooks.enable moco.api.account.webhooks.enable enable account web hook write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.webHooks.get",
+      "haystack": "account.webhooks.get moco.api.account.webhooks.get get account web hook read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.webHooks.list",
+      "haystack": "account.webhooks.list moco.api.account.webhooks.list list account web hooks, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "account.webHooks.update",
+      "haystack": "account.webhooks.update moco.api.account.webhooks.update update account web hook: only `hook` can be changed write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "activities.bulkCreate",
+      "haystack": "activities.bulkcreate moco.api.activities.bulkcreate create activities in bulk write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "activities.create",
+      "haystack": "activities.create moco.api.activities.create create a time entry on a project task for the authenticated user, in hours or seconds write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "activities.delete",
+      "haystack": "activities.delete moco.api.activities.delete delete a time entry; billed entries cannot be deleted this way destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "activities.disregard",
+      "haystack": "activities.disregard moco.api.activities.disregard disregard activities for invoicing: marks selected activities as disregarded for billing calculations write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "activities.get",
+      "haystack": "activities.get moco.api.activities.get read one time entry read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "activities.list",
+      "haystack": "activities.list moco.api.activities.list list time entries with date, user, project, task, billable and billed filters, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "activities.startTimer",
+      "haystack": "activities.starttimer moco.api.activities.starttimer start activity timer: starts the timer for an existing activity write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "activities.stopTimer",
+      "haystack": "activities.stoptimer moco.api.activities.stoptimer stop activity timer: stops a running timer and writes tracked duration back to the activity write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "activities.update",
+      "haystack": "activities.update moco.api.activities.update update a time entry write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "activities.updateBillableSeconds",
+      "haystack": "activities.updatebillableseconds moco.api.activities.updatebillableseconds update activity billable seconds write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "approvals.approve",
+      "haystack": "approvals.approve moco.api.approvals.approve approve approval: approves a pending approval write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "approvals.create",
+      "haystack": "approvals.create moco.api.approvals.create create approval write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "approvals.delete",
+      "haystack": "approvals.delete moco.api.approvals.delete delete approval destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "approvals.deny",
+      "haystack": "approvals.deny moco.api.approvals.deny deny approval: denies a pending approval write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "approvals.get",
+      "haystack": "approvals.get moco.api.approvals.get get approval read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "approvals.list",
+      "haystack": "approvals.list moco.api.approvals.list list approvals, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "comments.bulkCreate",
+      "haystack": "comments.bulkcreate moco.api.comments.bulkcreate create comments in bulk write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "comments.create",
+      "haystack": "comments.create moco.api.comments.create create comment write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "comments.delete",
+      "haystack": "comments.delete moco.api.comments.delete delete comment destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "comments.get",
+      "haystack": "comments.get moco.api.comments.get get comment read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "comments.list",
+      "haystack": "comments.list moco.api.comments.list list comments, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "comments.update",
+      "haystack": "comments.update moco.api.comments.update update comment write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "companies.archive",
+      "haystack": "companies.archive moco.api.companies.archive archive a company; unarchive reverses it write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "companies.create",
+      "haystack": "companies.create moco.api.companies.create create a client, supplier or organization write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "companies.delete",
+      "haystack": "companies.delete moco.api.companies.delete delete company destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "companies.get",
+      "haystack": "companies.get moco.api.companies.get read one company read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "companies.list",
+      "haystack": "companies.list moco.api.companies.list list clients, suppliers and organizations, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "companies.unarchive",
+      "haystack": "companies.unarchive moco.api.companies.unarchive unarchive a company write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "companies.update",
+      "haystack": "companies.update moco.api.companies.update update a company write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "contacts.create",
+      "haystack": "contacts.create moco.api.contacts.create create a contact person for a company write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "contacts.delete",
+      "haystack": "contacts.delete moco.api.contacts.delete delete a contact person destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "contacts.get",
+      "haystack": "contacts.get moco.api.contacts.get read one contact person read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "contacts.list",
+      "haystack": "contacts.list moco.api.contacts.list list contact persons, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "contacts.update",
+      "haystack": "contacts.update moco.api.contacts.update update a contact person write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "dealCategories.create",
+      "haystack": "dealcategories.create moco.api.dealcategories.create create deal category write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "dealCategories.delete",
+      "haystack": "dealcategories.delete moco.api.dealcategories.delete delete deal category destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "dealCategories.get",
+      "haystack": "dealcategories.get moco.api.dealcategories.get get deal category read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "dealCategories.list",
+      "haystack": "dealcategories.list moco.api.dealcategories.list list deal categories, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "dealCategories.update",
+      "haystack": "dealcategories.update moco.api.dealcategories.update update deal category write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "deals.create",
+      "haystack": "deals.create moco.api.deals.create create a deal in a deal category write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "deals.delete",
+      "haystack": "deals.delete moco.api.deals.delete delete a deal destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "deals.get",
+      "haystack": "deals.get moco.api.deals.get read one deal read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "deals.list",
+      "haystack": "deals.list moco.api.deals.list list deals with status, close date, company and contact filters, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "deals.update",
+      "haystack": "deals.update moco.api.deals.update update a deal, including its status write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoiceReminders.create",
+      "haystack": "invoicereminders.create moco.api.invoicereminders.create create invoice reminder write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoiceReminders.delete",
+      "haystack": "invoicereminders.delete moco.api.invoicereminders.delete delete invoice reminder destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoiceReminders.get",
+      "haystack": "invoicereminders.get moco.api.invoicereminders.get get invoice reminder read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoiceReminders.list",
+      "haystack": "invoicereminders.list moco.api.invoicereminders.list list invoice reminders, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoiceReminders.sendEmail",
+      "haystack": "invoicereminders.sendemail moco.api.invoicereminders.sendemail email a payment reminder to the recipients given (sends real email from moco) destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.attachments.create",
+      "haystack": "invoices.attachments.create moco.api.invoices.attachments.create create invoice attachment: uploads a file as invoice attachment using base64-encoded content write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.attachments.delete",
+      "haystack": "invoices.attachments.delete moco.api.invoices.attachments.delete delete invoice attachment destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.attachments.list",
+      "haystack": "invoices.attachments.list moco.api.invoices.attachments.list list invoice attachments read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.bookkeepingExports.create",
+      "haystack": "invoices.bookkeepingexports.create moco.api.invoices.bookkeepingexports.create create invoice bookkeeping export destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.bookkeepingExports.get",
+      "haystack": "invoices.bookkeepingexports.get moco.api.invoices.bookkeepingexports.get get invoice bookkeeping export read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.bookkeepingExports.list",
+      "haystack": "invoices.bookkeepingexports.list moco.api.invoices.bookkeepingexports.list list invoice bookkeeping exports, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.create",
+      "haystack": "invoices.create moco.api.invoices.create create invoice write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.delete",
+      "haystack": "invoices.delete moco.api.invoices.delete delete invoice destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.get",
+      "haystack": "invoices.get moco.api.invoices.get read one invoice with its line items, payments and reminders read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.getPdf",
+      "haystack": "invoices.getpdf moco.api.invoices.getpdf download invoice pdf (a pdf, saved to files) read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.getTimesheet",
+      "haystack": "invoices.gettimesheet moco.api.invoices.gettimesheet get invoice timesheet entries read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.getTimesheetPdf",
+      "haystack": "invoices.gettimesheetpdf moco.api.invoices.gettimesheetpdf download invoice timesheet pdf (a pdf, saved to files) read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.list",
+      "haystack": "invoices.list moco.api.invoices.list list invoices with status, date, client and project filters, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.listExpenses",
+      "haystack": "invoices.listexpenses moco.api.invoices.listexpenses list invoice expenses read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.listLocked",
+      "haystack": "invoices.listlocked moco.api.invoices.listlocked list locked invoices, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.payments.bulkCreate",
+      "haystack": "invoices.payments.bulkcreate moco.api.invoices.payments.bulkcreate create invoice payments in bulk: requires `application/json` request body with `bulk_data` list write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.payments.create",
+      "haystack": "invoices.payments.create moco.api.invoices.payments.create create invoice payment write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.payments.delete",
+      "haystack": "invoices.payments.delete moco.api.invoices.payments.delete delete invoice payment destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.payments.get",
+      "haystack": "invoices.payments.get moco.api.invoices.payments.get get invoice payment read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.payments.list",
+      "haystack": "invoices.payments.list moco.api.invoices.payments.list list invoice payments, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.payments.update",
+      "haystack": "invoices.payments.update moco.api.invoices.payments.update update invoice payment write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.sendEmail",
+      "haystack": "invoices.sendemail moco.api.invoices.sendemail email an invoice to the recipients given (sends real email from moco) destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "invoices.updateStatus",
+      "haystack": "invoices.updatestatus moco.api.invoices.updatestatus move an invoice to created, sent, overdue or ignored; locked invoices refuse the change write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "letterPapers.list",
+      "haystack": "letterpapers.list moco.api.letterpapers.list list letter papers read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offerConfirmations.create",
+      "haystack": "offerconfirmations.create moco.api.offerconfirmations.create create offer confirmation write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offerConfirmations.delete",
+      "haystack": "offerconfirmations.delete moco.api.offerconfirmations.delete delete offer confirmation destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offerConfirmations.get",
+      "haystack": "offerconfirmations.get moco.api.offerconfirmations.get get offer confirmation read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offerConfirmations.getPdf",
+      "haystack": "offerconfirmations.getpdf moco.api.offerconfirmations.getpdf download offer confirmation pdf (a pdf, saved to files) read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offerConfirmations.list",
+      "haystack": "offerconfirmations.list moco.api.offerconfirmations.list list offer confirmations, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offerConfirmations.update",
+      "haystack": "offerconfirmations.update moco.api.offerconfirmations.update update offer confirmation write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offers.assign",
+      "haystack": "offers.assign moco.api.offers.assign assign offer to company/project/deal: if `project_id` is set, project company overrides `company_id` write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offers.attachments.create",
+      "haystack": "offers.attachments.create moco.api.offers.attachments.create create offer attachment write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offers.attachments.delete",
+      "haystack": "offers.attachments.delete moco.api.offers.attachments.delete delete offer attachment destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offers.attachments.list",
+      "haystack": "offers.attachments.list moco.api.offers.attachments.list list offer attachments read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offers.create",
+      "haystack": "offers.create moco.api.offers.create create offer write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offers.customerApproval.activate",
+      "haystack": "offers.customerapproval.activate moco.api.offers.customerapproval.activate activate customer approval write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offers.customerApproval.deactivate",
+      "haystack": "offers.customerapproval.deactivate moco.api.offers.customerapproval.deactivate deactivate customer approval write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offers.customerApproval.get",
+      "haystack": "offers.customerapproval.get moco.api.offers.customerapproval.get get customer approval state read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offers.delete",
+      "haystack": "offers.delete moco.api.offers.delete delete offer destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offers.get",
+      "haystack": "offers.get moco.api.offers.get get offer read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offers.getPdf",
+      "haystack": "offers.getpdf moco.api.offers.getpdf download offer pdf (a pdf, saved to files) read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offers.list",
+      "haystack": "offers.list moco.api.offers.list list offers, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offers.sendEmail",
+      "haystack": "offers.sendemail moco.api.offers.sendemail email an offer to the recipients given (sends real email from moco) destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offers.update",
+      "haystack": "offers.update moco.api.offers.update update offer write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "offers.updateStatus",
+      "haystack": "offers.updatestatus moco.api.offers.updatestatus update offer status: transitions the offer state; successful updates return no body write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "plannedPurchases.create",
+      "haystack": "plannedpurchases.create moco.api.plannedpurchases.create create planned purchase: create a new planned purchase write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "plannedPurchases.delete",
+      "haystack": "plannedpurchases.delete moco.api.plannedpurchases.delete delete planned purchase destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "plannedPurchases.get",
+      "haystack": "plannedpurchases.get moco.api.plannedpurchases.get get planned purchase read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "plannedPurchases.list",
+      "haystack": "plannedpurchases.list moco.api.plannedpurchases.list list planned purchases, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "plannedPurchases.update",
+      "haystack": "plannedpurchases.update moco.api.plannedpurchases.update update planned purchase: update an existing planned purchase write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "planningEntries.create",
+      "haystack": "planningentries.create moco.api.planningentries.create create planning entry write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "planningEntries.delete",
+      "haystack": "planningentries.delete moco.api.planningentries.delete delete planning entry destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "planningEntries.get",
+      "haystack": "planningentries.get moco.api.planningentries.get get planning entry read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "planningEntries.list",
+      "haystack": "planningentries.list moco.api.planningentries.list list planning entries, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "planningEntries.update",
+      "haystack": "planningentries.update moco.api.planningentries.update update planning entry write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "profile.get",
+      "haystack": "profile.get moco.api.profile.get read the profile of the authenticated user read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "profile.performanceReport",
+      "haystack": "profile.performancereport moco.api.profile.performancereport get current user's performance report read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.archive",
+      "haystack": "projects.archive moco.api.projects.archive archive a project; unarchive reverses it write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.assignProjectGroup",
+      "haystack": "projects.assignprojectgroup moco.api.projects.assignprojectgroup assign project to project group: assigns a project to a project group write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.contracts.create",
+      "haystack": "projects.contracts.create moco.api.projects.contracts.create create project contract write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.contracts.delete",
+      "haystack": "projects.contracts.delete moco.api.projects.contracts.delete delete project contract destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.contracts.get",
+      "haystack": "projects.contracts.get moco.api.projects.contracts.get get project contract read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.contracts.list",
+      "haystack": "projects.contracts.list moco.api.projects.contracts.list list project contracts, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.contracts.update",
+      "haystack": "projects.contracts.update moco.api.projects.contracts.update update project contract write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.create",
+      "haystack": "projects.create moco.api.projects.create create a project for a client write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.delete",
+      "haystack": "projects.delete moco.api.projects.delete delete project destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.disableShare",
+      "haystack": "projects.disableshare moco.api.projects.disableshare disable project report sharing: disables public customer report sharing for the selected project write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.expenses.bulkCreate",
+      "haystack": "projects.expenses.bulkcreate moco.api.projects.expenses.bulkcreate create project expenses in bulk write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.expenses.create",
+      "haystack": "projects.expenses.create moco.api.projects.expenses.create create project expense write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.expenses.delete",
+      "haystack": "projects.expenses.delete moco.api.projects.expenses.delete delete project expense destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.expenses.disregard",
+      "haystack": "projects.expenses.disregard moco.api.projects.expenses.disregard disregard project expenses: marks selected expenses as disregarded for billing calculations write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.expenses.get",
+      "haystack": "projects.expenses.get moco.api.projects.expenses.get get project expense read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.expenses.list",
+      "haystack": "projects.expenses.list moco.api.projects.expenses.list list project expenses, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.expenses.listAll",
+      "haystack": "projects.expenses.listall moco.api.projects.expenses.listall list expenses across projects, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.expenses.update",
+      "haystack": "projects.expenses.update moco.api.projects.expenses.update update project expense write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.get",
+      "haystack": "projects.get moco.api.projects.get read one project, optionally embedding the client read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.groups.get",
+      "haystack": "projects.groups.get moco.api.projects.groups.get get project group read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.groups.list",
+      "haystack": "projects.groups.list moco.api.projects.groups.list list project groups, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.list",
+      "haystack": "projects.list moco.api.projects.list list projects with company, leader, tag, date and archive filters, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.listAssigned",
+      "haystack": "projects.listassigned moco.api.projects.listassigned list projects assigned to current user read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.paymentSchedules.create",
+      "haystack": "projects.paymentschedules.create moco.api.projects.paymentschedules.create create project payment schedule write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.paymentSchedules.delete",
+      "haystack": "projects.paymentschedules.delete moco.api.projects.paymentschedules.delete delete project payment schedule destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.paymentSchedules.get",
+      "haystack": "projects.paymentschedules.get moco.api.projects.paymentschedules.get get project payment schedule read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.paymentSchedules.list",
+      "haystack": "projects.paymentschedules.list moco.api.projects.paymentschedules.list list project payment schedules, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.paymentSchedules.listAll",
+      "haystack": "projects.paymentschedules.listall moco.api.projects.paymentschedules.listall list project payment schedules (all projects), one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.paymentSchedules.update",
+      "haystack": "projects.paymentschedules.update moco.api.projects.paymentschedules.update update project payment schedule write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.recurringExpenses.create",
+      "haystack": "projects.recurringexpenses.create moco.api.projects.recurringexpenses.create create project recurring expense write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.recurringExpenses.delete",
+      "haystack": "projects.recurringexpenses.delete moco.api.projects.recurringexpenses.delete delete project recurring expense destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.recurringExpenses.get",
+      "haystack": "projects.recurringexpenses.get moco.api.projects.recurringexpenses.get get project recurring expense read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.recurringExpenses.list",
+      "haystack": "projects.recurringexpenses.list moco.api.projects.recurringexpenses.list list project recurring expenses, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.recurringExpenses.recur",
+      "haystack": "projects.recurringexpenses.recur moco.api.projects.recurringexpenses.recur recur project recurring expense write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.recurringExpenses.update",
+      "haystack": "projects.recurringexpenses.update moco.api.projects.recurringexpenses.update update project recurring expense write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.report",
+      "haystack": "projects.report moco.api.projects.report read a project business report: budget, invoiced totals, hours and costs read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.share",
+      "haystack": "projects.share moco.api.projects.share enable project report sharing: enables public customer report sharing for the selected project write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.tasks.create",
+      "haystack": "projects.tasks.create moco.api.projects.tasks.create create project task write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.tasks.delete",
+      "haystack": "projects.tasks.delete moco.api.projects.tasks.delete delete project task destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.tasks.deleteAll",
+      "haystack": "projects.tasks.deleteall moco.api.projects.tasks.deleteall delete all project tasks destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.tasks.get",
+      "haystack": "projects.tasks.get moco.api.projects.tasks.get get project task read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.tasks.list",
+      "haystack": "projects.tasks.list moco.api.projects.tasks.list list project tasks, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.tasks.update",
+      "haystack": "projects.tasks.update moco.api.projects.tasks.update update project task write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.unarchive",
+      "haystack": "projects.unarchive moco.api.projects.unarchive unarchive a project write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.unassignProjectGroup",
+      "haystack": "projects.unassignprojectgroup moco.api.projects.unassignprojectgroup unassign project from project group: removes the project-group assignment from a project write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "projects.update",
+      "haystack": "projects.update moco.api.projects.update update a project write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.assignToProject",
+      "haystack": "purchases.assigntoproject moco.api.purchases.assigntoproject assign purchase item to project: assigns one purchase item to a project expense write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.bookkeepingExports.create",
+      "haystack": "purchases.bookkeepingexports.create moco.api.purchases.bookkeepingexports.create create purchase bookkeeping export destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.bookkeepingExports.get",
+      "haystack": "purchases.bookkeepingexports.get moco.api.purchases.bookkeepingexports.get get purchase bookkeeping export read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.bookkeepingExports.list",
+      "haystack": "purchases.bookkeepingexports.list moco.api.purchases.bookkeepingexports.list list purchase bookkeeping exports, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.budgets.create",
+      "haystack": "purchases.budgets.create moco.api.purchases.budgets.create create purchase budget: create a new purchase budget write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.budgets.delete",
+      "haystack": "purchases.budgets.delete moco.api.purchases.budgets.delete delete a purchase budget destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.budgets.list",
+      "haystack": "purchases.budgets.list moco.api.purchases.budgets.list list purchase budgets read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.budgets.update",
+      "haystack": "purchases.budgets.update moco.api.purchases.budgets.update update a purchase budget: update the title, cost category, or active status of a purchase budget write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.budgets.updateTarget",
+      "haystack": "purchases.budgets.updatetarget moco.api.purchases.budgets.updatetarget update budget target for a year write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.categories.get",
+      "haystack": "purchases.categories.get moco.api.purchases.categories.get get purchase category read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.categories.list",
+      "haystack": "purchases.categories.list moco.api.purchases.categories.list list purchase categories, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.create",
+      "haystack": "purchases.create moco.api.purchases.create create purchase write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.delete",
+      "haystack": "purchases.delete moco.api.purchases.delete delete purchase: deletion is possible only for pending purchases without payments destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.drafts.create",
+      "haystack": "purchases.drafts.create moco.api.purchases.drafts.create create purchase draft write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.drafts.delete",
+      "haystack": "purchases.drafts.delete moco.api.purchases.drafts.delete delete purchase draft destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.drafts.get",
+      "haystack": "purchases.drafts.get moco.api.purchases.drafts.get get purchase draft read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.drafts.getPdf",
+      "haystack": "purchases.drafts.getpdf moco.api.purchases.drafts.getpdf download purchase draft pdf (a pdf, saved to files) read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.drafts.list",
+      "haystack": "purchases.drafts.list moco.api.purchases.drafts.list list purchase drafts, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.get",
+      "haystack": "purchases.get moco.api.purchases.get get purchase read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.list",
+      "haystack": "purchases.list moco.api.purchases.list list purchases, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.payments.bulkCreate",
+      "haystack": "purchases.payments.bulkcreate moco.api.purchases.payments.bulkcreate create purchase payments in bulk: requires `application/json` request body with `bulk_data` list write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.payments.create",
+      "haystack": "purchases.payments.create moco.api.purchases.payments.create create purchase payment write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.payments.delete",
+      "haystack": "purchases.payments.delete moco.api.purchases.payments.delete delete purchase payment destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.payments.get",
+      "haystack": "purchases.payments.get moco.api.purchases.payments.get get purchase payment read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.payments.list",
+      "haystack": "purchases.payments.list moco.api.purchases.payments.list list purchase payments, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.payments.update",
+      "haystack": "purchases.payments.update moco.api.purchases.payments.update update purchase payment write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.storeDocument",
+      "haystack": "purchases.storedocument moco.api.purchases.storedocument store purchase document: replaces or adds document after purchase creation destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.update",
+      "haystack": "purchases.update moco.api.purchases.update update purchase write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "purchases.updateStatus",
+      "haystack": "purchases.updatestatus moco.api.purchases.updatestatus update purchase status write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "receipts.create",
+      "haystack": "receipts.create moco.api.receipts.create create receipt write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "receipts.delete",
+      "haystack": "receipts.delete moco.api.receipts.delete delete receipt destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "receipts.get",
+      "haystack": "receipts.get moco.api.receipts.get get receipt read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "receipts.list",
+      "haystack": "receipts.list moco.api.receipts.list list receipts, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "receipts.update",
+      "haystack": "receipts.update moco.api.receipts.update update receipt write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "recurringExpenses.list",
+      "haystack": "recurringexpenses.list moco.api.recurringexpenses.list list recurring expenses, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "reports.absences",
+      "haystack": "reports.absences moco.api.reports.absences get absences report read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "reports.cashflow",
+      "haystack": "reports.cashflow moco.api.reports.cashflow get cashflow report, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "reports.finance",
+      "haystack": "reports.finance moco.api.reports.finance get finance report, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "reports.plannedVsTracked",
+      "haystack": "reports.plannedvstracked moco.api.reports.plannedvstracked get planned vs tracked report, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "reports.utilization",
+      "haystack": "reports.utilization moco.api.reports.utilization get utilization report read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "revenueCategories.create",
+      "haystack": "revenuecategories.create moco.api.revenuecategories.create create revenue category write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "revenueCategories.delete",
+      "haystack": "revenuecategories.delete moco.api.revenuecategories.delete delete revenue category destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "revenueCategories.get",
+      "haystack": "revenuecategories.get moco.api.revenuecategories.get get revenue category read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "revenueCategories.list",
+      "haystack": "revenuecategories.list moco.api.revenuecategories.list list revenue categories, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "revenueCategories.update",
+      "haystack": "revenuecategories.update moco.api.revenuecategories.update update revenue category write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "schedules.create",
+      "haystack": "schedules.create moco.api.schedules.create create schedule write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "schedules.delete",
+      "haystack": "schedules.delete moco.api.schedules.delete delete schedule destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "schedules.get",
+      "haystack": "schedules.get moco.api.schedules.get get schedule read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "schedules.list",
+      "haystack": "schedules.list moco.api.schedules.list list schedules: retrieve all absences (paged), one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "schedules.update",
+      "haystack": "schedules.update moco.api.schedules.update update schedule write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "session.verify",
+      "haystack": "session.verify moco.api.session.verify verify the api key and read the user identity it belongs to read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "taggings.add",
+      "haystack": "taggings.add moco.api.taggings.add add tags to a record, keeping the ones it has write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "taggings.list",
+      "haystack": "taggings.list moco.api.taggings.list list the tags on one record read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "taggings.remove",
+      "haystack": "taggings.remove moco.api.taggings.remove remove the given tags from a record destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "taggings.replace",
+      "haystack": "taggings.replace moco.api.taggings.replace replace every tag on a record with the given list destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "tags.create",
+      "haystack": "tags.create moco.api.tags.create create tag write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "tags.delete",
+      "haystack": "tags.delete moco.api.tags.delete delete tag destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "tags.get",
+      "haystack": "tags.get moco.api.tags.get get tag read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "tags.list",
+      "haystack": "tags.list moco.api.tags.list list tags, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "tags.update",
+      "haystack": "tags.update moco.api.tags.update update tag write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "todos.get",
+      "haystack": "todos.get moco.api.todos.get get todo read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "todos.list",
+      "haystack": "todos.list moco.api.todos.list list todos, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "units.create",
+      "haystack": "units.create moco.api.units.create create unit write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "units.delete",
+      "haystack": "units.delete moco.api.units.delete delete unit destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "units.get",
+      "haystack": "units.get moco.api.units.get get unit read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "units.list",
+      "haystack": "units.list moco.api.units.list list units, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "units.update",
+      "haystack": "units.update moco.api.units.update update unit write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.absenceRequests.create",
+      "haystack": "users.absencerequests.create moco.api.users.absencerequests.create create user absence request write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.absenceRequests.delete",
+      "haystack": "users.absencerequests.delete moco.api.users.absencerequests.delete delete user absence request destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.absenceRequests.get",
+      "haystack": "users.absencerequests.get moco.api.users.absencerequests.get get user absence request read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.absenceRequests.list",
+      "haystack": "users.absencerequests.list moco.api.users.absencerequests.list list user absence requests, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.create",
+      "haystack": "users.create moco.api.users.create create a user (a billed seat); moco emails them a welcome message unless welcome_email is false destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.delete",
+      "haystack": "users.delete moco.api.users.delete delete user destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.employments.create",
+      "haystack": "users.employments.create moco.api.users.employments.create create user employment write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.employments.delete",
+      "haystack": "users.employments.delete moco.api.users.employments.delete delete user employment destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.employments.get",
+      "haystack": "users.employments.get moco.api.users.employments.get get user employment read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.employments.list",
+      "haystack": "users.employments.list moco.api.users.employments.list list user employments, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.employments.update",
+      "haystack": "users.employments.update moco.api.users.employments.update update user employment write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.get",
+      "haystack": "users.get moco.api.users.get read one user read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.holidays.create",
+      "haystack": "users.holidays.create moco.api.users.holidays.create create user holiday write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.holidays.delete",
+      "haystack": "users.holidays.delete moco.api.users.holidays.delete delete user holiday destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.holidays.get",
+      "haystack": "users.holidays.get moco.api.users.holidays.get get user holiday read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.holidays.list",
+      "haystack": "users.holidays.list moco.api.users.holidays.list list user holidays, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.holidays.update",
+      "haystack": "users.holidays.update moco.api.users.holidays.update update user holiday write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list moco.api.users.list list account users, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.performanceReport",
+      "haystack": "users.performancereport moco.api.users.performancereport get user performance report read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.presences.create",
+      "haystack": "users.presences.create moco.api.users.presences.create create user presence write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.presences.delete",
+      "haystack": "users.presences.delete moco.api.users.presences.delete delete user presence destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.presences.get",
+      "haystack": "users.presences.get moco.api.users.presences.get get user presence read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.presences.list",
+      "haystack": "users.presences.list moco.api.users.presences.list list user presences, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.presences.touch",
+      "haystack": "users.presences.touch moco.api.users.presences.touch touch user presence write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.presences.update",
+      "haystack": "users.presences.update moco.api.users.presences.update update user presence write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.roles.list",
+      "haystack": "users.roles.list moco.api.users.roles.list list user roles read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.update",
+      "haystack": "users.update moco.api.users.update update user write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.workTimeAdjustments.create",
+      "haystack": "users.worktimeadjustments.create moco.api.users.worktimeadjustments.create create user work time adjustment write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.workTimeAdjustments.delete",
+      "haystack": "users.worktimeadjustments.delete moco.api.users.worktimeadjustments.delete delete user work time adjustment destructive"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.workTimeAdjustments.get",
+      "haystack": "users.worktimeadjustments.get moco.api.users.worktimeadjustments.get get user work time adjustment read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.workTimeAdjustments.list",
+      "haystack": "users.worktimeadjustments.list moco.api.users.worktimeadjustments.list list user work time adjustments, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "users.workTimeAdjustments.update",
+      "haystack": "users.worktimeadjustments.update moco.api.users.worktimeadjustments.update update user work time adjustment write"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "vatCodePurchases.get",
+      "haystack": "vatcodepurchases.get moco.api.vatcodepurchases.get get vat code purchase read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "vatCodePurchases.list",
+      "haystack": "vatcodepurchases.list moco.api.vatcodepurchases.list list vat code purchases, one page at a time read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "vatCodeSales.get",
+      "haystack": "vatcodesales.get moco.api.vatcodesales.get get vat code sale read"
+    },
+    {
+      "pluginId": "moco",
+      "kind": "api",
+      "shortPath": "vatCodeSales.list",
+      "haystack": "vatcodesales.list moco.api.vatcodesales.list list vat code sales, one page at a time read"
+    },
+    {
       "pluginId": "modelry",
       "kind": "api",
       "shortPath": "embeds.delete",
@@ -134478,6 +137142,384 @@
       "haystack": "payments.list moonclerk.api.payments.list list payments read"
     },
     {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "campaigns.abSummary",
+      "haystack": "campaigns.absummary moosend.api.campaigns.absummary read an a/b campaign's totals per version read"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "campaigns.activityByLocation",
+      "haystack": "campaigns.activitybylocation moosend.api.campaigns.activitybylocation count campaign opens per country read"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "campaigns.clone",
+      "haystack": "campaigns.clone moosend.api.campaigns.clone copy a campaign into a new draft and return the copy write"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "campaigns.create",
+      "haystack": "campaigns.create moosend.api.campaigns.create create a draft campaign (regular or a/b); nothing is sent write"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "campaigns.delete",
+      "haystack": "campaigns.delete moosend.api.campaigns.delete delete a campaign; cannot be undone destructive"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "campaigns.get",
+      "haystack": "campaigns.get moosend.api.campaigns.get read one campaign with its content, sender and mailing lists (no statistics) read"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "campaigns.linkActivity",
+      "haystack": "campaigns.linkactivity moosend.api.campaigns.linkactivity count campaign clicks per link read"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "campaigns.list",
+      "haystack": "campaigns.list moosend.api.campaigns.list list campaigns (drafts, scheduled and sent) with their totals, optionally by page and page size read"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "campaigns.schedule",
+      "haystack": "campaigns.schedule moosend.api.campaigns.schedule schedule a draft campaign to be sent at a set time destructive"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "campaigns.send",
+      "haystack": "campaigns.send moosend.api.campaigns.send send a draft campaign to its mailing lists now destructive"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "campaigns.sendTest",
+      "haystack": "campaigns.sendtest moosend.api.campaigns.sendtest email a test copy of a campaign to up to 5 addresses destructive"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "campaigns.stats",
+      "haystack": "campaigns.stats moosend.api.campaigns.stats list per-recipient campaign activity of one type (sent, opened, clicked, bounced, unsubscribed, complained), with paging and dates read"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "campaigns.summary",
+      "haystack": "campaigns.summary moosend.api.campaigns.summary read a campaign's totals: sent, opens, clicks, bounces, complaints, unsubscribes read"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "campaigns.unschedule",
+      "haystack": "campaigns.unschedule moosend.api.campaigns.unschedule cancel a scheduled send; the campaign goes back to draft write"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "campaigns.update",
+      "haystack": "campaigns.update moosend.api.campaigns.update change a draft campaign; nothing is sent write"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "customFields.create",
+      "haystack": "customfields.create moosend.api.customfields.create add a custom field (text, number, date, dropdown or checkbox) to a mailing list write"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "customFields.delete",
+      "haystack": "customfields.delete moosend.api.customfields.delete remove a custom field and every subscriber's value for it; cannot be undone destructive"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "customFields.update",
+      "haystack": "customfields.update moosend.api.customfields.update change a custom field's name, type, options or visibility write"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "lists.create",
+      "haystack": "lists.create moosend.api.lists.create create an empty mailing list write"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "lists.delete",
+      "haystack": "lists.delete moosend.api.lists.delete delete a mailing list and its subscribers; cannot be undone destructive"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "lists.get",
+      "haystack": "lists.get moosend.api.lists.get read one mailing list with its custom field definitions read"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "lists.list",
+      "haystack": "lists.list moosend.api.lists.list list the active mailing lists with subscriber counts and custom field definitions (first page of 10) read"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "lists.listPaged",
+      "haystack": "lists.listpaged moosend.api.lists.listpaged list mailing lists one page at a time read"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "lists.update",
+      "haystack": "lists.update moosend.api.lists.update change a mailing list's name, confirmation and unsubscribe pages, or preferences write"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "segments.addCriteria",
+      "haystack": "segments.addcriteria moosend.api.segments.addcriteria add one criterion to a segment; returns its position for updatecriteria write"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "segments.create",
+      "haystack": "segments.create moosend.api.segments.create create a segment of a mailing list, empty or with criteria write"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "segments.delete",
+      "haystack": "segments.delete moosend.api.segments.delete delete a segment; its subscribers stay on the list. cannot be undone destructive"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "segments.get",
+      "haystack": "segments.get moosend.api.segments.get read one segment with its criteria read"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "segments.list",
+      "haystack": "segments.list moosend.api.segments.list list a mailing list's segments with their criteria read"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "segments.members",
+      "haystack": "segments.members moosend.api.segments.members list the subscribers a segment matches, one page at a time read"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "segments.update",
+      "haystack": "segments.update moosend.api.segments.update change a segment's name and match settings; criteria, when given, replace all existing ones write"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "segments.updateCriteria",
+      "haystack": "segments.updatecriteria moosend.api.segments.updatecriteria change one segment criterion, addressed by its position (1 = first) write"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "senders.get",
+      "haystack": "senders.get moosend.api.senders.get read one sender by email address read"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "senders.list",
+      "haystack": "senders.list moosend.api.senders.list list the account senders (from addresses) with their spf, dkim and dmarc checks read"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "subscribers.addTags",
+      "haystack": "subscribers.addtags moosend.api.subscribers.addtags add tags to up to 1,000 subscribers of one mailing list write"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "subscribers.delete",
+      "haystack": "subscribers.delete moosend.api.subscribers.delete delete a subscriber from one mailing list for good; cannot be undone destructive"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "subscribers.deleteFromAccount",
+      "haystack": "subscribers.deletefromaccount moosend.api.subscribers.deletefromaccount delete an email address from every mailing list in the account (and optionally its sub-accounts); cannot be undone destructive"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "subscribers.deleteMany",
+      "haystack": "subscribers.deletemany moosend.api.subscribers.deletemany delete up to 1,000 subscribers from one mailing list for good; cannot be undone destructive"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "subscribers.getByEmail",
+      "haystack": "subscribers.getbyemail moosend.api.subscribers.getbyemail find a subscriber by email address in one mailing list read"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "subscribers.getById",
+      "haystack": "subscribers.getbyid moosend.api.subscribers.getbyid find a subscriber by id in one mailing list read"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "subscribers.getByIdAnyList",
+      "haystack": "subscribers.getbyidanylist moosend.api.subscribers.getbyidanylist find a subscriber by id without naming the mailing list read"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "subscribers.list",
+      "haystack": "subscribers.list moosend.api.subscribers.list list a mailing list's subscribed, unsubscribed, bounced or removed members, one page at a time read"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "subscribers.remove",
+      "haystack": "subscribers.remove moosend.api.subscribers.remove mark a subscriber as removed from one mailing list (no more campaigns) destructive"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "subscribers.removeMany",
+      "haystack": "subscribers.removemany moosend.api.subscribers.removemany mark up to 1,000 subscribers as removed from one mailing list destructive"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "subscribers.removeTags",
+      "haystack": "subscribers.removetags moosend.api.subscribers.removetags remove tags from up to 1,000 subscribers of one mailing list write"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "subscribers.subscribe",
+      "haystack": "subscribers.subscribe moosend.api.subscribers.subscribe add a subscriber or update the one with that email; re-subscribes an unsubscribed contact, clears custom fields left out, and on a double opt-in list emails a confirmation unless hasexternaldoubleoptin is true destructive"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "subscribers.subscribeMany",
+      "haystack": "subscribers.subscribemany moosend.api.subscribers.subscribemany add or update up to 1,000 subscribers in one call (same effects as subscribe); moosend skips invalid addresses and reports them in notice destructive"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "subscribers.unsubscribe",
+      "haystack": "subscribers.unsubscribe moosend.api.subscribers.unsubscribe unsubscribe an email address from one mailing list destructive"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "subscribers.unsubscribeFromAccount",
+      "haystack": "subscribers.unsubscribefromaccount moosend.api.subscribers.unsubscribefromaccount unsubscribe an email address from every mailing list in the account destructive"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "subscribers.unsubscribeFromCampaign",
+      "haystack": "subscribers.unsubscribefromcampaign moosend.api.subscribers.unsubscribefromcampaign unsubscribe an email address from one mailing list and count it against a campaign destructive"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "subscribers.update",
+      "haystack": "subscribers.update moosend.api.subscribers.update update a subscriber's email, name, tags, preferences and custom fields; custom fields left out are cleared write"
+    },
+    {
+      "pluginId": "moosend",
+      "kind": "api",
+      "shortPath": "transactional.send",
+      "haystack": "transactional.send moosend.api.transactional.send send a transactional email (from a template or inline content) to the given recipients destructive"
+    },
+    {
+      "pluginId": "mopinion",
+      "kind": "api",
+      "shortPath": "account.get",
+      "haystack": "account.get mopinion.api.account.get read the account data behind the signed credentials read"
+    },
+    {
+      "pluginId": "mopinion",
+      "kind": "api",
+      "shortPath": "datasets.feedback",
+      "haystack": "datasets.feedback mopinion.api.datasets.feedback list the feedback items of a dataset, one page at a time, with mopinion filter expressions for date, rating, nps, ces, gcr and tags read"
+    },
+    {
+      "pluginId": "mopinion",
+      "kind": "api",
+      "shortPath": "datasets.feedbackItem",
+      "haystack": "datasets.feedbackitem mopinion.api.datasets.feedbackitem read one feedback item of a dataset read"
+    },
+    {
+      "pluginId": "mopinion",
+      "kind": "api",
+      "shortPath": "datasets.fields",
+      "haystack": "datasets.fields mopinion.api.datasets.fields read the field definitions of a dataset read"
+    },
+    {
+      "pluginId": "mopinion",
+      "kind": "api",
+      "shortPath": "datasets.get",
+      "haystack": "datasets.get mopinion.api.datasets.get read basic info on one feedback dataset read"
+    },
+    {
+      "pluginId": "mopinion",
+      "kind": "api",
+      "shortPath": "deployments.get",
+      "haystack": "deployments.get mopinion.api.deployments.get read one deployment read"
+    },
+    {
+      "pluginId": "mopinion",
+      "kind": "api",
+      "shortPath": "deployments.list",
+      "haystack": "deployments.list mopinion.api.deployments.list list the deployments (the containers that publish feedback forms on a website or app), one page at a time read"
+    },
+    {
+      "pluginId": "mopinion",
+      "kind": "api",
+      "shortPath": "reports.feedback",
+      "haystack": "reports.feedback mopinion.api.reports.feedback list the feedback items behind a report, one page at a time, with mopinion filter expressions for date, rating, nps, ces, gcr and tags read"
+    },
+    {
+      "pluginId": "mopinion",
+      "kind": "api",
+      "shortPath": "reports.feedbackItem",
+      "haystack": "reports.feedbackitem mopinion.api.reports.feedbackitem read one feedback item of a report read"
+    },
+    {
+      "pluginId": "mopinion",
+      "kind": "api",
+      "shortPath": "reports.fields",
+      "haystack": "reports.fields mopinion.api.reports.fields read the field definitions of a report read"
+    },
+    {
+      "pluginId": "mopinion",
+      "kind": "api",
+      "shortPath": "reports.get",
+      "haystack": "reports.get mopinion.api.reports.get read basic info on one report read"
+    },
+    {
       "pluginId": "motion",
       "kind": "api",
       "shortPath": "comments.create",
@@ -134638,6 +137680,474 @@
       "kind": "api",
       "shortPath": "workspaces.list",
       "haystack": "workspaces.list motion.api.workspaces.list list workspaces. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "anchorText.list",
+      "haystack": "anchortext.list moz.api.anchortext.list use this endpoint to get data about anchor text used to link to a specified site. costs rows per result returned. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "competitors.fetch",
+      "haystack": "competitors.fetch moz.api.competitors.fetch get the top ranking competitors for a given target site, sorted by rivalry descending. asynchronous: answers with an async_call to poll with jobs.lookup. draws on the mozscape rows quota. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "global.topDomains",
+      "haystack": "global.topdomains moz.api.global.topdomains get the top ranking domains globally. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "global.topPages",
+      "haystack": "global.toppages moz.api.global.toppages get the top ranking pages globally. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "index.fetch",
+      "haystack": "index.fetch moz.api.index.fetch use this endpoint to track when the index is updated with new data. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "jobs.lookup",
+      "haystack": "jobs.lookup moz.api.jobs.lookup fetch an `async_call` by id to retrieve the result or error. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "keywords.difficulty",
+      "haystack": "keywords.difficulty moz.api.keywords.difficulty retrieve the most recent difficulty metric for any keyword that exists in our database. costs 1 row per call. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "keywords.generateMetrics",
+      "haystack": "keywords.generatemetrics moz.api.keywords.generatemetrics trigger on-demand collection of a serp and return the refreshed metrics once collection is complete. asynchronous: answers with an async_call to poll with jobs.lookup. quota cost varies by request. runs a fresh on-demand serp collection, billed per call. destructive"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "keywords.generateSerp",
+      "haystack": "keywords.generateserp moz.api.keywords.generateserp trigger on-demand collection of a serp, returning it upon completion. asynchronous: answers with an async_call to poll with jobs.lookup. quota cost varies by request. runs a fresh on-demand serp collection, billed per call. destructive"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "keywords.intent",
+      "haystack": "keywords.intent moz.api.keywords.intent retrieve the most recent search intent scores (navigational, informational, commercial, and transactional) for any keyword that exists in our database. costs 1 row per call. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "keywords.metrics",
+      "haystack": "keywords.metrics moz.api.keywords.metrics retrieve the most recent difficulty, volume, organic ctr, priority, and/or search intent metrics for any keyword that exists in our database. costs one row per returned metric value: 4, plus 1 for search intent, which is opt-in with options.include_intent until 2026-12-01 and returned by default from then. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "keywords.metricsMultiple",
+      "haystack": "keywords.metricsmultiple moz.api.keywords.metricsmultiple retrieve difficulty, volume, organic ctr, priority, and search intent metrics for up to 50 keywords in a single request. costs one row per returned metric value, up to 5 per keyword; null metrics and keywords in errors_by_serp_query cost nothing. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "keywords.opportunity",
+      "haystack": "keywords.opportunity moz.api.keywords.opportunity retrieve the most recent organic ctr (opportunity) metric for any keyword that exists in our database. costs 1 row per call. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "keywords.priority",
+      "haystack": "keywords.priority moz.api.keywords.priority retrieve the most recent priority metric for any keyword that exists in our database. costs 1 row per call. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "keywords.serp",
+      "haystack": "keywords.serp moz.api.keywords.serp retrieve the most recently collected serp for a given query. quota cost varies by request. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "keywords.suggestions",
+      "haystack": "keywords.suggestions moz.api.keywords.suggestions retrieve a list of related keyword suggestions for a given input keyword. asynchronous: answers with an async_call to poll with jobs.lookup. costs rows per result returned. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "keywords.volume",
+      "haystack": "keywords.volume moz.api.keywords.volume retrieve the most recent volume metric for any keyword that exists in our database. costs 1 row per call. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "linkingDomains.list",
+      "haystack": "linkingdomains.list moz.api.linkingdomains.list use this endpoint to get a list of linking root domains to a target, with information about each root domain and the aggregate number of links to the target. costs rows per result returned. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "linkingDomains.recentlyGained",
+      "haystack": "linkingdomains.recentlygained moz.api.linkingdomains.recentlygained this endpoint will return information about external root domains that added new links to a target during the past 60 days. costs rows per result returned. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "linkingDomains.recentlyLost",
+      "haystack": "linkingdomains.recentlylost moz.api.linkingdomains.recentlylost this endpoint will return information about root domains that removed links to a target during the past 60 days. costs rows per result returned. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "links.filterByAnchorText",
+      "haystack": "links.filterbyanchortext moz.api.links.filterbyanchortext use this endpoint to get a list of links to a target where the anchor text exactly matches a particular string. costs rows per result returned. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "links.filterByDomain",
+      "haystack": "links.filterbydomain moz.api.links.filterbydomain use this endpoint to find links pointing to a target only if they originate from a particular root domain. costs rows per result returned. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "links.intersect",
+      "haystack": "links.intersect moz.api.links.intersect this endpoint returns information about sites that point to two or more specified domains, or that point at some domains but not others. quota cost varies by request. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "links.list",
+      "haystack": "links.list moz.api.links.list use this endpoint to get a list of links to a target. costs rows per result returned. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "links.status",
+      "haystack": "links.status moz.api.links.status use this endpoint to get the status of a link from a source to a target. costs 1 row per call. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "links.statusMultiple",
+      "haystack": "links.statusmultiple moz.api.links.statusmultiple use this endpoint to get the status of multiple links from a source to a target. costs rows per result returned. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.accounts.create",
+      "haystack": "local.accounts.create moz.api.local.accounts.create creates a new moz local account. moz local enterprise only. free (no quota). write"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.accounts.list",
+      "haystack": "local.accounts.list moz.api.local.accounts.list list all moz local accounts. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.accounts.lookup",
+      "haystack": "local.accounts.lookup moz.api.local.accounts.lookup lookup a specific moz local account by id. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.customFields.create",
+      "haystack": "local.customfields.create moz.api.local.customfields.create creates a location custom field definition on a moz local account. moz local enterprise only. free (no quota). write"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.customFields.listForAccount",
+      "haystack": "local.customfields.listforaccount moz.api.local.customfields.listforaccount list all location custom fields for a given moz local account id. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.customFields.lookup",
+      "haystack": "local.customfields.lookup moz.api.local.customfields.lookup lookup a specific custom field by id for a moz local account. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.groups.addLocation",
+      "haystack": "local.groups.addlocation moz.api.local.groups.addlocation add a location to a group. moz local enterprise only. free (no quota). write"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.groups.create",
+      "haystack": "local.groups.create moz.api.local.groups.create creates a new group in a moz local account to organize locations. moz local enterprise only. free (no quota). write"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.groups.list",
+      "haystack": "local.groups.list moz.api.local.groups.list list all local groups. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.groups.listForAccount",
+      "haystack": "local.groups.listforaccount moz.api.local.groups.listforaccount list all groups for a given moz local account id. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.groups.listLocations",
+      "haystack": "local.groups.listlocations moz.api.local.groups.listlocations list locations in a given group. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.groups.lookup",
+      "haystack": "local.groups.lookup moz.api.local.groups.lookup lookup a specific group by id. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.groups.removeLocation",
+      "haystack": "local.groups.removelocation moz.api.local.groups.removelocation remove a location from a group. moz local enterprise only. free (no quota). write"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.cancel",
+      "haystack": "local.locations.cancel moz.api.local.locations.cancel cancel a specific location by id. moz local enterprise only. free (no quota). stops the paid listing service for the location. destructive"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.categories",
+      "haystack": "local.locations.categories moz.api.local.locations.categories retrieve a list of google category ids that can be used for `primary_category` or `additional_categories` when creating or updating a location. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.close",
+      "haystack": "local.locations.close moz.api.local.locations.close closes a location, setting its status to closed and opening status to permanently closed. moz local enterprise only. free (no quota). marks the business permanently closed on every directory. destructive"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.create",
+      "haystack": "local.locations.create moz.api.local.locations.create creates a new location. moz local enterprise only. free (no quota). adds a billed moz local location. destructive"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.fieldIssues",
+      "haystack": "local.locations.fieldissues moz.api.local.locations.fieldissues returns field-level discrepancy issues for a given location. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.fieldStatuses",
+      "haystack": "local.locations.fieldstatuses moz.api.local.locations.fieldstatuses returns field-level listing health data for a given location. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.gbpImpressionHistory",
+      "haystack": "local.locations.gbpimpressionhistory moz.api.local.locations.gbpimpressionhistory returns google business profile keyword-impression history over time (month by month) for a location's top-performing keywords. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.gbpImpressionTotals",
+      "haystack": "local.locations.gbpimpressiontotals moz.api.local.locations.gbpimpressiontotals returns total google business profile keyword impressions for a given location and date range, ordered from most to least impressions. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.gbpLeadHistory",
+      "haystack": "local.locations.gbpleadhistory moz.api.local.locations.gbpleadhistory returns google business profile lead history over time for a given location, bucketed by day, week, or month. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.levels",
+      "haystack": "local.locations.levels moz.api.local.locations.levels list the available levels of service for locations. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.list",
+      "haystack": "local.locations.list moz.api.local.locations.list list all locations. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.listByStatus",
+      "haystack": "local.locations.listbystatus moz.api.local.locations.listbystatus list locations filtered by status. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.listForAccount",
+      "haystack": "local.locations.listforaccount moz.api.local.locations.listforaccount list all active locations filtered by moz local account id. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.listings",
+      "haystack": "local.locations.listings moz.api.local.locations.listings returns a list of listings for a given location. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.localGridHistory",
+      "haystack": "local.locations.localgridhistory moz.api.local.locations.localgridhistory returns all local grid results over time for a given keyword, device, engine, and location, including every dot of each grid. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.localGridKeywords",
+      "haystack": "local.locations.localgridkeywords moz.api.local.locations.localgridkeywords returns the keywords available to generate a local grid report on for a given location. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.lookup",
+      "haystack": "local.locations.lookup moz.api.local.locations.lookup lookup a specific location by id. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.networks",
+      "haystack": "local.locations.networks moz.api.local.locations.networks returns a list of networks for a given location. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.networkStatuses",
+      "haystack": "local.locations.networkstatuses moz.api.local.locations.networkstatuses returns a list of statuses per network for a given location. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.rankingHistory",
+      "haystack": "local.locations.rankinghistory moz.api.local.locations.rankinghistory returns keyword ranking position over time for a location's tracked keywords. moz local enterprise only. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.update",
+      "haystack": "local.locations.update moz.api.local.locations.update update a single location. moz local enterprise only. free (no quota). moz local publishes the change to the business listings on every directory. write"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "local.locations.updateLevel",
+      "haystack": "local.locations.updatelevel moz.api.local.locations.updatelevel updates the tier of service for a single location. moz local enterprise only. free (no quota). changes the billed service level. destructive"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "locales.list",
+      "haystack": "locales.list moz.api.locales.list use this endpoint to list every locale a search engine supports. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "metrics.brandAuthority",
+      "haystack": "metrics.brandauthority moz.api.metrics.brandauthority this endpoint returns a brand authority™ score for the provided site. costs 1 row per call. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "metrics.distributions",
+      "haystack": "metrics.distributions moz.api.metrics.distributions fetch site metrics distributions. costs 1 row per call. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "metrics.fetch",
+      "haystack": "metrics.fetch moz.api.metrics.fetch use this endpoint to get metrics such as domain authority, page authority, spam score, link counts and more for one url. costs 1 row per call. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "metrics.fetchMultiple",
+      "haystack": "metrics.fetchmultiple moz.api.metrics.fetchmultiple use this endpoint to get metrics such as domain authority, page authority, spam score, link counts and more about one or more urls. costs rows per result returned. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "metrics.histories",
+      "haystack": "metrics.histories moz.api.metrics.histories use this endpoint to get daily or monthly metric histories for a single site. costs rows per value requested. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "quota.lookup",
+      "haystack": "quota.lookup moz.api.quota.lookup check how much quota is used/available for the current billing period, as well as additional information about the quota such as whether or not overages are enabled. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "rankingKeywords.count",
+      "haystack": "rankingkeywords.count moz.api.rankingkeywords.count retrieve a summary of the number of keywords for which the provided query (domain, subdomain, or page) ranks in the top 50. costs 1 row per call. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "rankingKeywords.list",
+      "haystack": "rankingkeywords.list moz.api.rankingkeywords.list retrieve a list of keywords for which the provided site (domain, subdomain, subfolder, or page) ranks in the top 50, along with the ranking position and the difficulty and monthly search volume for each keyword. costs rows per result returned. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "redirects.fetch",
+      "haystack": "redirects.fetch moz.api.redirects.fetch use this endpoint to see the final redirect target of a page after following known redirects in the index. costs 1 row per call. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "test.ping",
+      "haystack": "test.ping moz.api.test.ping use this endpoint to verify that your integration with the moz json-rpc api works end to end, without spending any quota. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "test.pingAsync",
+      "haystack": "test.pingasync moz.api.test.pingasync use this endpoint to verify that your integration correctly handles the asynchronous methods in the moz json-rpc api, without spending any quota. asynchronous: answers with an async_call to poll with jobs.lookup. free (no quota). read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "api",
+      "shortPath": "topPages.list",
+      "haystack": "toppages.list moz.api.toppages.list use this endpoint to return a list of the top pages on a target domain, sorted by descending page authority, linking root domains, or external linking pages. costs rows per result returned. read"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "webhook",
+      "shortPath": "locations.canceled",
+      "haystack": "locations.canceled moz.webhooks.locations.canceled a moz local location was canceled; carries the location_id to read with local.locations.lookup"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "webhook",
+      "shortPath": "locations.closed",
+      "haystack": "locations.closed moz.webhooks.locations.closed a moz local location was closed (permanently closed); carries the location_id to read with local.locations.lookup"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "webhook",
+      "shortPath": "locations.created",
+      "haystack": "locations.created moz.webhooks.locations.created a moz local location was created; carries the location_id to read with local.locations.lookup"
+    },
+    {
+      "pluginId": "moz",
+      "kind": "webhook",
+      "shortPath": "locations.updated",
+      "haystack": "locations.updated moz.webhooks.locations.updated a moz local location was updated; carries the location_id to read with local.locations.lookup"
     },
     {
       "pluginId": "mrscraper",

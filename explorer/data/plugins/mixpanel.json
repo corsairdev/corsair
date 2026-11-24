@@ -1,0 +1,5795 @@
+{
+  "id": "mixpanel",
+  "displayName": "Mixpanel",
+  "description": "Product analytics with Mixpanel - ingest events and user or group profiles, run Insights, funnel, retention and segmentation reports, export raw events, and manage annotations, Lexicon schemas, feature flags, experiments, warehouse imports, data pipelines, service accounts and GDPR requests.",
+  "npmPackageName": "@corsair-dev/mixpanel",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 119,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": [
+        "api_key",
+        "webhook_signature",
+        "service_account_username",
+        "project_id",
+        "region",
+        "project_token",
+        "gdpr_token"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "mixpanel.api.annotations.create",
+      "shortPath": "annotations.create",
+      "description": "Create a chart annotation marking an event on a date",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "date",
+            "optional": false,
+            "type": "string",
+            "description": "When, as \"YYYY-MM-DD HH:mm:ss\" in the project timezone."
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "number[]",
+            "description": "Annotation tag ids."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number | null, date?: string | null, description?: string | null, user?: { id?: number | null, first_name?: string | null, last_name?: string | null } | null, tags?: { id?: number | null, name?: string | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.annotations.createTag",
+      "shortPath": "annotations.createTag",
+      "description": "Create an annotation tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "has_annotations",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.annotations.delete",
+      "shortPath": "annotations.delete",
+      "description": "Delete an annotation",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "annotation_id",
+            "optional": false,
+            "type": "number",
+            "description": "The annotation id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.annotations.get",
+      "shortPath": "annotations.get",
+      "description": "Get one annotation by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "annotation_id",
+            "optional": false,
+            "type": "number",
+            "description": "The annotation id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number | null, date?: string | null, description?: string | null, user?: { id?: number | null, first_name?: string | null, last_name?: string | null } | null, tags?: { id?: number | null, name?: string | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.annotations.list",
+      "shortPath": "annotations.list",
+      "description": "List the chart annotations in the project, optionally by date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fromDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only annotations on or after this date."
+          },
+          {
+            "key": "toDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only annotations on or before this date."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number | null, date?: string | null, description?: string | null, user?: { id?: number | null, first_name?: string | null, last_name?: string | null } | null, tags?: { id?: number | null, name?: string | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.annotations.listTags",
+      "shortPath": "annotations.listTags",
+      "description": "List the annotation tags in the project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, project_id?: number | null, has_annotations?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.annotations.update",
+      "shortPath": "annotations.update",
+      "description": "Change an annotation's description or tags",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "annotation_id",
+            "optional": false,
+            "type": "number",
+            "description": "The annotation id."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number | null, date?: string | null, description?: string | null, user?: { id?: number | null, first_name?: string | null, last_name?: string | null } | null, tags?: { id?: number | null, name?: string | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.auditLogs.query",
+      "shortPath": "auditLogs.query",
+      "description": "Query the organization's audit log (who changed what, when), filtered by user, type, service and date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "number",
+            "description": "The organization id (Organization Settings, Overview)."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "user_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "user_emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_user_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_user_emails",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "string[]",
+            "description": "Audit event types."
+          },
+          {
+            "key": "services",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "project_ids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "user_email_search",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{}[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ previous_cursor?: string | null, next_cursor?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.cohorts.list",
+      "shortPath": "cohorts.list",
+      "description": "List every saved cohort with its id, member count, visibility and description",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cohorts",
+            "optional": false,
+            "type": "{ count?: number | null, is_visible?: number | null, description?: string | null, created?: string | null, project_id?: number | null, id?: number | null, name?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.dataDefinitions.create",
+      "shortPath": "dataDefinitions.create",
+      "description": "Create a Lexicon data definition (event, property, custom event, metric, behavior or cohort)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "Use the workspace-scoped route for this workspace instead of the project."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "event | custom_event | event_property | custom_property | metric | behavior | cohort"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "{ type: string, id: string }[]"
+          },
+          {
+            "key": "event_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "For event properties."
+          },
+          {
+            "key": "definition",
+            "optional": true,
+            "type": "{}",
+            "description": "For custom events, custom properties, metrics, behaviors and cohorts."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "blocked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.dataDefinitions.delete",
+      "shortPath": "dataDefinitions.delete",
+      "description": "Delete a data definition",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "Use the workspace-scoped route for this workspace instead of the project."
+          },
+          {
+            "key": "definition_id",
+            "optional": false,
+            "type": "string",
+            "description": "The data definition id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.dataDefinitions.get",
+      "shortPath": "dataDefinitions.get",
+      "description": "Get one Lexicon data definition",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "Use the workspace-scoped route for this workspace instead of the project."
+          },
+          {
+            "key": "definition_id",
+            "optional": false,
+            "type": "string",
+            "description": "The data definition id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "blocked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.dataDefinitions.list",
+      "shortPath": "dataDefinitions.list",
+      "description": "List Lexicon data definitions (events, properties, metrics, cohorts) with filters, paged by cursor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "Use the workspace-scoped route for this workspace instead of the project."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "(event | custom_event | event_property | custom_property | metric | behavior | cohort)[]"
+          },
+          {
+            "key": "event_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "blocked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_description",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_owner",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, type?: string | null, description?: string | null, display_name?: string | null, tags?: string[] | null, owners?: {}[] | null, hidden?: boolean | null, blocked?: boolean | null, verified?: boolean | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ previous_cursor?: string | null, next_cursor?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.dataDefinitions.merge",
+      "shortPath": "dataDefinitions.merge",
+      "description": "Merge event or property definitions into one canonical definition",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "Use the workspace-scoped route for this workspace instead of the project."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "event | event_property"
+          },
+          {
+            "key": "canonical",
+            "optional": false,
+            "type": "string",
+            "description": "The definition the others merge into."
+          },
+          {
+            "key": "sources",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "canonical",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "{}[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.dataDefinitions.unmerge",
+      "shortPath": "dataDefinitions.unmerge",
+      "description": "Undo a merge of data definitions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "Use the workspace-scoped route for this workspace instead of the project."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "event | event_property"
+          },
+          {
+            "key": "canonical",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "string[]",
+            "description": "Omit to unmerge every source."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "canonical",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "{}[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.dataDefinitions.update",
+      "shortPath": "dataDefinitions.update",
+      "description": "Update a data definition's description, display name, tags, owners or hidden/blocked/verified flags; blocked: true drops its data at ingestion",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "Use the workspace-scoped route for this workspace instead of the project."
+          },
+          {
+            "key": "definition_id",
+            "optional": false,
+            "type": "string",
+            "description": "The data definition id."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "{ operation: add | set | remove, values: string[] }"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "{ operation: add | set | remove, values: { type: string, id: string }[] }"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "blocked",
+            "optional": true,
+            "type": "boolean",
+            "description": "True drops the data at ingestion."
+          },
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "hidden",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "blocked",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.dataDefinitionTags.create",
+      "shortPath": "dataDefinitionTags.create",
+      "description": "Create a data definition tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "Use the workspace-scoped route for this workspace instead of the project."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "entity_count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.dataDefinitionTags.delete",
+      "shortPath": "dataDefinitionTags.delete",
+      "description": "Delete a data definition tag (it is removed from every definition)",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "Use the workspace-scoped route for this workspace instead of the project."
+          },
+          {
+            "key": "tag_id",
+            "optional": false,
+            "type": "string",
+            "description": "The tag id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "mixpanel.api.dataDefinitionTags.get",
+      "shortPath": "dataDefinitionTags.get",
+      "description": "Get one data definition tag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "Use the workspace-scoped route for this workspace instead of the project."
+          },
+          {
+            "key": "tag_id",
+            "optional": false,
+            "type": "string",
+            "description": "The tag id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "entity_count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.dataDefinitionTags.list",
+      "shortPath": "dataDefinitionTags.list",
+      "description": "List data definition tags with their usage counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "Use the workspace-scoped route for this workspace instead of the project."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "next_cursor from the previous page."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "name | entity_count"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, entity_count?: number | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ previous_cursor?: string | null, next_cursor?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.dataDefinitionTags.rename",
+      "shortPath": "dataDefinitionTags.rename",
+      "description": "Rename a data definition tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "Use the workspace-scoped route for this workspace instead of the project."
+          },
+          {
+            "key": "tag_id",
+            "optional": false,
+            "type": "string",
+            "description": "The tag id."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "entity_count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.events.counts",
+      "shortPath": "events.counts",
+      "description": "Aggregate counts of one or more events over time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": false,
+            "type": "string[]",
+            "description": "Event names."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "general | unique | average",
+            "description": "general counts every event, unique counts users, average is per user."
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "minute | hour | day | week | month"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ series?: string[] | null, values?: Record<string, any> | null } | null"
+          },
+          {
+            "key": "legend_size",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.events.import",
+      "shortPath": "events.import",
+      "description": "Import up to 2000 server-side events (service account auth, any age), validated per event unless strict is 0",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "strict",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "Defaults to '1': Mixpanel validates the batch and rejects it with per-event errors instead of ingesting silently."
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ event: string, properties: { time: number | string, distinct_id: string, $insert_id: string } }[]",
+            "description": "Up to 2000 events and 10 MB uncompressed per request. Mixpanel deduplicates on (event, time, distinct_id, $insert_id)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "num_records_imported",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.events.names",
+      "shortPath": "events.names",
+      "description": "The most common event names over the last 31 days",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "general | unique | average",
+            "description": "general counts every event, unique counts users, average is per user."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "names",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.events.propertyCounts",
+      "shortPath": "events.propertyCounts",
+      "description": "Aggregate counts of an event broken down by the values of one property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The property name."
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only these property values."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "general | unique | average",
+            "description": "general counts every event, unique counts users, average is per user."
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "minute | hour | day | week | month"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ series?: string[] | null, values?: Record<string, any> | null } | null"
+          },
+          {
+            "key": "legend_size",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.events.top",
+      "shortPath": "events.top",
+      "description": "Today's top events with counts and change against yesterday",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "general | unique | average",
+            "description": "general counts every event, unique counts users, average is per user."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{ amount?: number | null, event?: string | null, percent_change?: number | null }[] | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.events.topProperties",
+      "shortPath": "events.topProperties",
+      "description": "The top property names of an event with their counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "mixpanel.api.events.topPropertyValues",
+      "shortPath": "events.topPropertyValues",
+      "description": "The top values of one event property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The property name."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "values",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.events.track",
+      "shortPath": "events.track",
+      "description": "Track up to 2000 recent events (last 5 days) with the project token, the client-side ingestion route",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ event: string, properties?: { distinct_id?: string, time?: number, $insert_id?: string } }[]"
+          },
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "boolean",
+            "description": "True to geolocate from the sender IP (the server running Corsair)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.experiments.archive",
+      "shortPath": "experiments.archive",
+      "description": "Archive an experiment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace (data view) id, from the project URL (/project/<id>/view/<workspace>)."
+          },
+          {
+            "key": "experiment_id",
+            "optional": false,
+            "type": "string",
+            "description": "The experiment id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, description?: string | null, hypothesis?: string | null, status?: string | null, start_date?: string | null, end_date?: string | null, variants?: {}[] | null, metrics?: {}[] | null, tags?: string[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.experiments.create",
+      "shortPath": "experiments.create",
+      "description": "Create a draft experiment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace (data view) id, from the project URL (/project/<id>/view/<workspace>)."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hypothesis",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "variants",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "global_access_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, description?: string | null, hypothesis?: string | null, status?: string | null, start_date?: string | null, end_date?: string | null, variants?: {}[] | null, metrics?: {}[] | null, tags?: string[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.experiments.decide",
+      "shortPath": "experiments.decide",
+      "description": "Record the decision on a concluded experiment (success and winning variant)",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace (data view) id, from the project URL (/project/<id>/view/<workspace>)."
+          },
+          {
+            "key": "experiment_id",
+            "optional": false,
+            "type": "string",
+            "description": "The experiment id."
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the experiment succeeded."
+          },
+          {
+            "key": "variant",
+            "optional": true,
+            "type": "string",
+            "description": "The winning variant key."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, description?: string | null, hypothesis?: string | null, status?: string | null, start_date?: string | null, end_date?: string | null, variants?: {}[] | null, metrics?: {}[] | null, tags?: string[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.experiments.delete",
+      "shortPath": "experiments.delete",
+      "description": "Delete an experiment",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace (data view) id, from the project URL (/project/<id>/view/<workspace>)."
+          },
+          {
+            "key": "experiment_id",
+            "optional": false,
+            "type": "string",
+            "description": "The experiment id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.experiments.forceConclude",
+      "shortPath": "experiments.forceConclude",
+      "description": "Stop a running experiment now, ending exposure to its variants",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace (data view) id, from the project URL (/project/<id>/view/<workspace>)."
+          },
+          {
+            "key": "experiment_id",
+            "optional": false,
+            "type": "string",
+            "description": "The experiment id."
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, description?: string | null, hypothesis?: string | null, status?: string | null, start_date?: string | null, end_date?: string | null, variants?: {}[] | null, metrics?: {}[] | null, tags?: string[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.experiments.get",
+      "shortPath": "experiments.get",
+      "description": "Get one experiment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace (data view) id, from the project URL (/project/<id>/view/<workspace>)."
+          },
+          {
+            "key": "experiment_id",
+            "optional": false,
+            "type": "string",
+            "description": "The experiment id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, description?: string | null, hypothesis?: string | null, status?: string | null, start_date?: string | null, end_date?: string | null, variants?: {}[] | null, metrics?: {}[] | null, tags?: string[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.experiments.launch",
+      "shortPath": "experiments.launch",
+      "description": "Launch an experiment: live users start getting its variants",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace (data view) id, from the project URL (/project/<id>/view/<workspace>)."
+          },
+          {
+            "key": "experiment_id",
+            "optional": false,
+            "type": "string",
+            "description": "The experiment id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, description?: string | null, hypothesis?: string | null, status?: string | null, start_date?: string | null, end_date?: string | null, variants?: {}[] | null, metrics?: {}[] | null, tags?: string[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.experiments.list",
+      "shortPath": "experiments.list",
+      "description": "List the experiments of a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace (data view) id, from the project URL (/project/<id>/view/<workspace>)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, description?: string | null, hypothesis?: string | null, status?: string | null, start_date?: string | null, end_date?: string | null, variants?: {}[] | null, metrics?: {}[] | null, tags?: string[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.experiments.unarchive",
+      "shortPath": "experiments.unarchive",
+      "description": "Restore an archived experiment",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace (data view) id, from the project URL (/project/<id>/view/<workspace>)."
+          },
+          {
+            "key": "experiment_id",
+            "optional": false,
+            "type": "string",
+            "description": "The experiment id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, description?: string | null, hypothesis?: string | null, status?: string | null, start_date?: string | null, end_date?: string | null, variants?: {}[] | null, metrics?: {}[] | null, tags?: string[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.experiments.update",
+      "shortPath": "experiments.update",
+      "description": "Update an experiment's fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace (data view) id, from the project URL (/project/<id>/view/<workspace>)."
+          },
+          {
+            "key": "experiment_id",
+            "optional": false,
+            "type": "string",
+            "description": "The experiment id."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hypothesis",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "variants",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "global_access_type",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, description?: string | null, hypothesis?: string | null, status?: string | null, start_date?: string | null, end_date?: string | null, variants?: {}[] | null, metrics?: {}[] | null, tags?: string[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.export.events",
+      "shortPath": "export.events",
+      "description": "Export raw events for a date range as parsed objects, with optional event-name filter, expression filter and limit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_date",
+            "optional": false,
+            "type": "string",
+            "description": "Inclusive, in the project timezone."
+          },
+          {
+            "key": "to_date",
+            "optional": false,
+            "type": "string",
+            "description": "Inclusive."
+          },
+          {
+            "key": "event_names",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only these events; omit for all of them."
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string",
+            "description": "An expression to filter events by."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "At most 100000."
+          },
+          {
+            "key": "time_in_ms",
+            "optional": true,
+            "type": "boolean",
+            "description": "True for millisecond timestamps; default is seconds."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ event?: string | null, properties?: Record<string, any> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.featureFlags.create",
+      "shortPath": "featureFlags.create",
+      "description": "Create a feature flag with variants and rollout rules",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "The key code evaluates the flag by."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]",
+            "description": "Tags; [] for none."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "enabled | disabled | archived"
+          },
+          {
+            "key": "context",
+            "optional": false,
+            "type": "string",
+            "description": "The identity the flag is evaluated on, usually distinct_id."
+          },
+          {
+            "key": "serving_method",
+            "optional": false,
+            "type": "client | server | remote_or_local | remote_only"
+          },
+          {
+            "key": "ruleset",
+            "optional": false,
+            "type": "{ variants: {}[], rollout: {}[], test?: {} }"
+          },
+          {
+            "key": "experiment_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data_group_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "is_experiment_active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hash_salt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "reset_hash_salt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace (data view) id, from the project URL (/project/<id>/view/<workspace>)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, key?: string | null, description?: string | null, status?: string | null, tags?: string[] | null, context?: string | null, serving_method?: string | null, ruleset?: {} | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.featureFlags.definitions",
+      "shortPath": "featureFlags.definitions",
+      "description": "Get the definitions of every flag, for local evaluation in server SDKs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "flags",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.featureFlags.delete",
+      "shortPath": "featureFlags.delete",
+      "description": "Delete a feature flag",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace (data view) id, from the project URL (/project/<id>/view/<workspace>)."
+          },
+          {
+            "key": "flag_id",
+            "optional": false,
+            "type": "string",
+            "description": "The feature flag id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.featureFlags.evaluate",
+      "shortPath": "featureFlags.evaluate",
+      "description": "Evaluate every enabled feature flag for one user and return the assigned variants",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "distinct_id",
+            "optional": false,
+            "type": "string",
+            "description": "The user to evaluate flags for."
+          },
+          {
+            "key": "device_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_properties",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Properties the rollout rules can target."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "flags",
+            "optional": true,
+            "type": "Record<string, {}> | null"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.featureFlags.get",
+      "shortPath": "featureFlags.get",
+      "description": "Get one feature flag with its ruleset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace (data view) id, from the project URL (/project/<id>/view/<workspace>)."
+          },
+          {
+            "key": "flag_id",
+            "optional": false,
+            "type": "string",
+            "description": "The feature flag id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, key?: string | null, description?: string | null, status?: string | null, tags?: string[] | null, context?: string | null, serving_method?: string | null, ruleset?: {} | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.featureFlags.list",
+      "shortPath": "featureFlags.list",
+      "description": "List the feature flags of a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace (data view) id, from the project URL (/project/<id>/view/<workspace>)."
+          },
+          {
+            "key": "include_archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, key?: string | null, description?: string | null, status?: string | null, tags?: string[] | null, context?: string | null, serving_method?: string | null, ruleset?: {} | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.featureFlags.update",
+      "shortPath": "featureFlags.update",
+      "description": "Replace a feature flag (full PUT: send every field); changes what live users are served",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string",
+            "description": "The key code evaluates the flag by."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "string[]",
+            "description": "Tags; [] for none."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "enabled | disabled | archived"
+          },
+          {
+            "key": "context",
+            "optional": false,
+            "type": "string",
+            "description": "The identity the flag is evaluated on, usually distinct_id."
+          },
+          {
+            "key": "serving_method",
+            "optional": false,
+            "type": "client | server | remote_or_local | remote_only"
+          },
+          {
+            "key": "ruleset",
+            "optional": false,
+            "type": "{ variants: {}[], rollout: {}[], test?: {} }"
+          },
+          {
+            "key": "experiment_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data_group_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "is_experiment_active",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hash_salt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "reset_hash_salt",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace (data view) id, from the project URL (/project/<id>/view/<workspace>)."
+          },
+          {
+            "key": "flag_id",
+            "optional": false,
+            "type": "string",
+            "description": "The feature flag id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, key?: string | null, description?: string | null, status?: string | null, tags?: string[] | null, context?: string | null, serving_method?: string | null, ruleset?: {} | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.funnels.list",
+      "shortPath": "funnels.list",
+      "description": "List the saved funnels with their ids and names",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "funnels",
+            "optional": false,
+            "type": "{ funnel_id?: number | null, name?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.funnels.query",
+      "shortPath": "funnels.query",
+      "description": "Query a saved funnel for a date range, with optional segmentation and conversion window",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "funnel_id",
+            "optional": false,
+            "type": "number",
+            "description": "The saved funnel id (funnels.list)."
+          },
+          {
+            "key": "from_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "length",
+            "optional": true,
+            "type": "number",
+            "description": "Conversion window length, in length_unit."
+          },
+          {
+            "key": "length_unit",
+            "optional": true,
+            "type": "day | hour | minute | second"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "day | week | month"
+          },
+          {
+            "key": "on",
+            "optional": true,
+            "type": "string",
+            "description": "A property expression to segment on."
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ dates?: string[] | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.gdpr.cancelDeletion",
+      "shortPath": "gdpr.cancelDeletion",
+      "description": "Cancel a GDPR deletion job that has not started yet",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tracking_id",
+            "optional": false,
+            "type": "string",
+            "description": "The task_id the create call returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.gdpr.createDeletion",
+      "shortPath": "gdpr.createDeletion",
+      "description": "Start a GDPR/CCPA deletion job that permanently deletes all events and profile data of the given users",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "distinct_ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "The users the request covers."
+          },
+          {
+            "key": "compliance_type",
+            "optional": true,
+            "type": "GDPR | CCPA",
+            "description": "Defaults to GDPR."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ task_id?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.gdpr.createRetrieval",
+      "shortPath": "gdpr.createRetrieval",
+      "description": "Start a GDPR/CCPA data retrieval job that exports everything stored about the given users",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "distinct_ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "The users the request covers."
+          },
+          {
+            "key": "compliance_type",
+            "optional": true,
+            "type": "GDPR | CCPA",
+            "description": "Defaults to GDPR."
+          },
+          {
+            "key": "disclosure_type",
+            "optional": true,
+            "type": "Data | Categories | Sources",
+            "description": "CCPA only: what to disclose. Defaults to Data."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ task_id?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.gdpr.getDeletion",
+      "shortPath": "gdpr.getDeletion",
+      "description": "Check a GDPR deletion job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tracking_id",
+            "optional": false,
+            "type": "string",
+            "description": "The task_id the create call returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ tracking_id?: string | null, status?: string | null, requesting_user?: string | null, compliance_type?: string | null, project_id?: number | null, date_requested?: string | null, distinct_ids?: string[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.gdpr.getRetrieval",
+      "shortPath": "gdpr.getRetrieval",
+      "description": "Check a GDPR data retrieval job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tracking_id",
+            "optional": false,
+            "type": "string",
+            "description": "The task_id the create call returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ status?: string | null, results?: string | null, distinct_ids?: string[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.groups.batchUpdate",
+      "shortPath": "groups.batchUpdate",
+      "description": "Apply up to 200 mixed group profile updates in one request; $unset and $delete entries remove data",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "updates",
+            "optional": false,
+            "type": "{ $group_key: string, $group_id: string, $set?: Record<string, any>, $set_once?: Record<string, any>, $union?: Record<string, any[]>, $remove?: Record<string, any>, $unset?: string[], $delete?: string }[]",
+            "description": "Up to 200 group updates, each with $group_key, $group_id and one operation."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.groups.delete",
+      "shortPath": "groups.delete",
+      "description": "Permanently delete a group profile and its properties",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_key",
+            "optional": false,
+            "type": "string",
+            "description": "The group key, the property groups are keyed on (e.g. company)."
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string",
+            "description": "The id of the group to update."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.groups.remove",
+      "shortPath": "groups.remove",
+      "description": "Remove a value from list properties on a group profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_key",
+            "optional": false,
+            "type": "string",
+            "description": "The group key, the property groups are keyed on (e.g. company)."
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string",
+            "description": "The id of the group to update."
+          },
+          {
+            "key": "$remove",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "List properties and one value each to remove."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.groups.set",
+      "shortPath": "groups.set",
+      "description": "Set properties on a group profile, creating it if needed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_key",
+            "optional": false,
+            "type": "string",
+            "description": "The group key, the property groups are keyed on (e.g. company)."
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string",
+            "description": "The id of the group to update."
+          },
+          {
+            "key": "$set",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Properties to set, overwriting current values."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.groups.setOnce",
+      "shortPath": "groups.setOnce",
+      "description": "Set properties on a group profile only where they are not set yet",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_key",
+            "optional": false,
+            "type": "string",
+            "description": "The group key, the property groups are keyed on (e.g. company)."
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string",
+            "description": "The id of the group to update."
+          },
+          {
+            "key": "$set_once",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Properties to set only where not already set."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.groups.union",
+      "shortPath": "groups.union",
+      "description": "Merge values into list properties on a group profile, skipping duplicates",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_key",
+            "optional": false,
+            "type": "string",
+            "description": "The group key, the property groups are keyed on (e.g. company)."
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string",
+            "description": "The id of the group to update."
+          },
+          {
+            "key": "$union",
+            "optional": false,
+            "type": "Record<string, any[]>",
+            "description": "List properties and the values to merge in."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.groups.unset",
+      "shortPath": "groups.unset",
+      "description": "Delete properties from a group profile",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_key",
+            "optional": false,
+            "type": "string",
+            "description": "The group key, the property groups are keyed on (e.g. company)."
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string",
+            "description": "The id of the group to update."
+          },
+          {
+            "key": "$unset",
+            "optional": false,
+            "type": "string[]",
+            "description": "Property names to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.identity.createAlias",
+      "shortPath": "identity.createAlias",
+      "description": "Send a $create_alias event so a new id resolves to an existing distinct_id (legacy ID management)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "distinct_id",
+            "optional": false,
+            "type": "string",
+            "description": "The existing distinct_id."
+          },
+          {
+            "key": "alias",
+            "optional": false,
+            "type": "string",
+            "description": "The new id that should resolve to distinct_id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.identity.createIdentity",
+      "shortPath": "identity.createIdentity",
+      "description": "Send an $identify event linking an anonymous id to an identified id (original ID merge API)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identified_id",
+            "optional": false,
+            "type": "string",
+            "description": "The id the user is known by after login ($identified_id)."
+          },
+          {
+            "key": "anon_id",
+            "optional": false,
+            "type": "string",
+            "description": "The anonymous id used before login ($anon_id)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.identity.merge",
+      "shortPath": "identity.merge",
+      "description": "Merge two distinct_ids into one user with a $merge event (original ID merge API); cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "distinct_ids",
+            "optional": false,
+            "type": "[string, string]",
+            "description": "The two distinct_ids to merge into one user."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "num_records_imported",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.insights.query",
+      "shortPath": "insights.query",
+      "description": "Read the data behind one saved Insights report by its bookmark id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "bookmark_id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the saved Insights report."
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "computed_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "date_range",
+            "optional": true,
+            "type": "{ from_date?: string | null, to_date?: string | null } | null"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "series",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.insights.run",
+      "shortPath": "insights.run",
+      "description": "Run an ad hoc Insights query (events, funnels, retention, cohorts, formulas) without a saved report",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metrics",
+            "optional": false,
+            "type": "{ type: string }[]",
+            "description": "What to measure; each has `type`: event, funnel, retention, cohort or formula (see Mixpanel Insights query reference)."
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "{ start: string | {}, end?: string | {}, unit?: string }",
+            "description": "start/end as YYYY-MM-DD, YYYY-MM-DDTHH:mm or a relative date object; unit such as day or week."
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ type: string }[]"
+          },
+          {
+            "key": "breakdowns",
+            "optional": true,
+            "type": "{ type: string }[]"
+          },
+          {
+            "key": "time_comparison",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "lift_comparison",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "mixpanel.api.jql.run",
+      "shortPath": "jql.run",
+      "description": "Run a JQL script (custom JavaScript query) over events and profiles; JQL is in maintenance mode at Mixpanel",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "script",
+            "optional": false,
+            "type": "string",
+            "description": "The JQL script, a JavaScript main() function."
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Values the script reads as `params`."
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.lexicon.delete",
+      "shortPath": "lexicon.delete",
+      "description": "Delete the Lexicon schema of one event or profile type",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity_type",
+            "optional": false,
+            "type": "event | profile",
+            "description": "event for event schemas, profile for user profile schemas."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ delete_count?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.lexicon.deleteAll",
+      "shortPath": "lexicon.deleteAll",
+      "description": "Delete every Lexicon schema in the project",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ delete_count?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.lexicon.deleteForEntity",
+      "shortPath": "lexicon.deleteForEntity",
+      "description": "Delete every Lexicon schema for events or for profiles",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity_type",
+            "optional": false,
+            "type": "event | profile",
+            "description": "event for event schemas, profile for user profile schemas."
+          },
+          {
+            "key": "entity_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ delete_count?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.lexicon.get",
+      "shortPath": "lexicon.get",
+      "description": "Get the Lexicon schema of one event or profile type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity_type",
+            "optional": false,
+            "type": "event | profile",
+            "description": "event for event schemas, profile for user profile schemas."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The event name, or $user for user profiles."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "mixpanel.api.lexicon.list",
+      "shortPath": "lexicon.list",
+      "description": "List every Lexicon schema in the project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ entityType?: string | null, name?: string | null, schemaJson?: Record<string, any> | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.lexicon.listForEntity",
+      "shortPath": "lexicon.listForEntity",
+      "description": "List the Lexicon schemas for events or for profiles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity_type",
+            "optional": false,
+            "type": "event | profile",
+            "description": "event for event schemas, profile for user profile schemas."
+          },
+          {
+            "key": "entity_name",
+            "optional": true,
+            "type": "string",
+            "description": "Only the schema of this event or profile."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ entityType?: string | null, name?: string | null, schemaJson?: Record<string, any> | null }[] | {} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.lexicon.upsert",
+      "shortPath": "lexicon.upsert",
+      "description": "Create or replace the Lexicon schema of one event or profile type; metadata dropped: true makes Mixpanel drop that event at ingestion",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entity_type",
+            "optional": false,
+            "type": "event | profile",
+            "description": "event for event schemas, profile for user profile schemas."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schema",
+            "optional": false,
+            "type": "{ description?: string, properties?: Record<string, any>, metadata?: Record<string, any> }",
+            "description": "The JSON Schema to store, replacing any existing one."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.lexicon.upsertMany",
+      "shortPath": "lexicon.upsertMany",
+      "description": "Create or replace many Lexicon schemas at once; truncate deletes every schema not uploaded",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ entityType: event | profile, name: string, schemaJson: { description?: string, properties?: Record<string, any>, metadata?: Record<string, any> } }[]"
+          },
+          {
+            "key": "truncate",
+            "optional": true,
+            "type": "boolean",
+            "description": "True deletes every schema not in this upload. Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ added?: number | null, deleted?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.lookupTables.list",
+      "shortPath": "lookupTables.list",
+      "description": "List the lookup tables in the project with their ids",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.lookupTables.replace",
+      "shortPath": "lookupTables.replace",
+      "description": "Replace every row of a lookup table with new CSV content (max 100 MB); the old rows are gone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The lookup table id from lookupTables.list."
+          },
+          {
+            "key": "csv",
+            "optional": false,
+            "type": "string",
+            "description": "The whole table as CSV, header row first; the first column is the join key. Replaces every row."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.pipelines.create",
+      "shortPath": "pipelines.create",
+      "description": "Create a data pipeline that exports project data to a bucket or warehouse (a paid add-on that bills while it runs)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "gcs-raw | s3-raw | azure-raw | bigquery | snowflake | aws | azure-blob | gcs-schema",
+            "description": "Where to export: raw to a bucket, or schematized to a warehouse."
+          },
+          {
+            "key": "from_date",
+            "optional": true,
+            "type": "string",
+            "description": "Start of the export window (at most six months back); required unless trial is true."
+          },
+          {
+            "key": "to_date",
+            "optional": true,
+            "type": "string",
+            "description": "End of the window; omit to keep exporting."
+          },
+          {
+            "key": "trial",
+            "optional": true,
+            "type": "boolean",
+            "description": "A free 30-day trial pipeline."
+          },
+          {
+            "key": "data_source",
+            "optional": true,
+            "type": "events | people"
+          },
+          {
+            "key": "frequency",
+            "optional": true,
+            "type": "daily | hourly"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only these events."
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data_format",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | string[]>",
+            "description": "Destination fields for this type, e.g. gcs_bucket and gcs_region, s3_bucket, s3_region and s3_role, bq_region, snowflake_*, azure_*."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "mixpanel.api.pipelines.delete",
+      "shortPath": "pipelines.delete",
+      "description": "Delete (cancel) a data pipeline",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The pipeline name, from pipelines.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "mixpanel.api.pipelines.edit",
+      "shortPath": "pipelines.edit",
+      "description": "Change a pipeline's event filter or settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The pipeline name, from pipelines.list."
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "settings",
+            "optional": true,
+            "type": "Record<string, string | number | boolean | string[]>",
+            "description": "Other fields the pipeline type allows editing."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "mixpanel.api.pipelines.list",
+      "shortPath": "pipelines.list",
+      "description": "List the data pipelines of the project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pipelines",
+            "optional": false,
+            "type": "{} | any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.pipelines.pause",
+      "shortPath": "pipelines.pause",
+      "description": "Pause a data pipeline",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The pipeline name, from pipelines.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "mixpanel.api.pipelines.resume",
+      "shortPath": "pipelines.resume",
+      "description": "Resume a paused data pipeline",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The pipeline name, from pipelines.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{} | any[]"
+      }
+    },
+    {
+      "path": "mixpanel.api.pipelines.status",
+      "shortPath": "pipelines.status",
+      "description": "Get a pipeline's export jobs by status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The pipeline name, from pipelines.list."
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "boolean",
+            "description": "True for counts only."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "(pending | running | retried | failed | canceled | timed_out | succeeded)[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "canceled",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "retried",
+            "optional": true,
+            "type": "{}[] | null"
+          },
+          {
+            "key": "succeeded",
+            "optional": true,
+            "type": "{}[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.pipelines.timeline",
+      "shortPath": "pipelines.timeline",
+      "description": "List the dates a pipeline has synced",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "The pipeline name, from pipelines.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "timeline",
+            "optional": false,
+            "type": "{} | any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.profiles.activity",
+      "shortPath": "profiles.activity",
+      "description": "Return the event activity stream of one or more users' profiles for a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "distinct_ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "The users whose event stream to return."
+          },
+          {
+            "key": "from_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ events?: { event?: string | null, properties?: Record<string, any> | null }[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.profiles.append",
+      "shortPath": "profiles.append",
+      "description": "Append a value to list properties on a user profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "distinct_id",
+            "optional": false,
+            "type": "string",
+            "description": "The profile to update."
+          },
+          {
+            "key": "$append",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "List properties and one value each to append."
+          },
+          {
+            "key": "$ip",
+            "optional": true,
+            "type": "string",
+            "description": "An IP to geolocate the profile from; omit to skip it."
+          },
+          {
+            "key": "$ignore_time",
+            "optional": true,
+            "type": "boolean",
+            "description": "True to leave $last_seen unchanged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.profiles.batchUpdate",
+      "shortPath": "profiles.batchUpdate",
+      "description": "Apply up to 2000 mixed profile updates in one request; $unset and $delete entries remove data",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "updates",
+            "optional": false,
+            "type": "{ $distinct_id: string, $set?: Record<string, any>, $set_once?: Record<string, any>, $add?: Record<string, number>, $union?: Record<string, any[]>, $append?: Record<string, any>, $remove?: Record<string, any>, $unset?: string[], $delete?: string, $ip?: string, $ignore_time?: boolean }[]",
+            "description": "Up to 2000 profile updates, each with $distinct_id and one operation ($set, $set_once, $add, $union, $append, $remove, $unset or $delete)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.profiles.delete",
+      "shortPath": "profiles.delete",
+      "description": "Permanently delete a user profile and its properties (events stay)",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "distinct_id",
+            "optional": false,
+            "type": "string",
+            "description": "The profile to update."
+          },
+          {
+            "key": "ignore_alias",
+            "optional": true,
+            "type": "boolean",
+            "description": "True to delete only this id, not profiles aliased to it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.profiles.increment",
+      "shortPath": "profiles.increment",
+      "description": "Add to (or subtract from) numeric properties on a user profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "distinct_id",
+            "optional": false,
+            "type": "string",
+            "description": "The profile to update."
+          },
+          {
+            "key": "$add",
+            "optional": false,
+            "type": "Record<string, number>",
+            "description": "Numeric properties and the amount to add (negative to subtract)."
+          },
+          {
+            "key": "$ip",
+            "optional": true,
+            "type": "string",
+            "description": "An IP to geolocate the profile from; omit to skip it."
+          },
+          {
+            "key": "$ignore_time",
+            "optional": true,
+            "type": "boolean",
+            "description": "True to leave $last_seen unchanged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.profiles.query",
+      "shortPath": "profiles.query",
+      "description": "Query user or group profiles with an expression, a cohort filter or exact distinct_ids, paged via session_id and next_page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string",
+            "description": "An expression to filter profiles by, such as properties[\"$email\"] == \"...\"."
+          },
+          {
+            "key": "distinct_id",
+            "optional": true,
+            "type": "string",
+            "description": "Retrieve exactly this profile."
+          },
+          {
+            "key": "distinct_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Retrieve exactly these profiles."
+          },
+          {
+            "key": "data_group_id",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of the group key, to query group profiles instead of user profiles."
+          },
+          {
+            "key": "output_properties",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only return these properties, which speeds the query up considerably."
+          },
+          {
+            "key": "session_id",
+            "optional": true,
+            "type": "string",
+            "description": "The session_id from the previous response, to keep paging through one query."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Set to the previous response's next_page; pages after 0 need its session_id."
+          },
+          {
+            "key": "behaviors",
+            "optional": true,
+            "type": "number",
+            "description": "Needed when filtering with an event selector expression."
+          },
+          {
+            "key": "as_of_timestamp",
+            "optional": true,
+            "type": "number",
+            "description": "Required with `behaviors` when exporting more than 1000 profiles."
+          },
+          {
+            "key": "filter_by_cohort",
+            "optional": true,
+            "type": "number",
+            "description": "Only profiles in this cohort id."
+          },
+          {
+            "key": "include_all_users",
+            "optional": true,
+            "type": "boolean",
+            "description": "With `filter_by_cohort`: false keeps only distinct_ids that have a profile. Defaults to true."
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ $distinct_id?: string | number | null, $properties?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "session_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "next_page",
+            "optional": false,
+            "type": "number | null",
+            "description": "Derived: the page to request next while this one came back full, otherwise null. Pass it as `page` with the same session_id."
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.profiles.remove",
+      "shortPath": "profiles.remove",
+      "description": "Remove a value from list properties on a user profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "distinct_id",
+            "optional": false,
+            "type": "string",
+            "description": "The profile to update."
+          },
+          {
+            "key": "$remove",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "List properties and one value each to remove."
+          },
+          {
+            "key": "$ip",
+            "optional": true,
+            "type": "string",
+            "description": "An IP to geolocate the profile from; omit to skip it."
+          },
+          {
+            "key": "$ignore_time",
+            "optional": true,
+            "type": "boolean",
+            "description": "True to leave $last_seen unchanged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.profiles.set",
+      "shortPath": "profiles.set",
+      "description": "Set properties on a user profile, creating the profile if needed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "distinct_id",
+            "optional": false,
+            "type": "string",
+            "description": "The profile to update."
+          },
+          {
+            "key": "$set",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Properties to set, overwriting current values."
+          },
+          {
+            "key": "$ip",
+            "optional": true,
+            "type": "string",
+            "description": "An IP to geolocate the profile from; omit to skip it."
+          },
+          {
+            "key": "$ignore_time",
+            "optional": true,
+            "type": "boolean",
+            "description": "True to leave $last_seen unchanged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.profiles.setOnce",
+      "shortPath": "profiles.setOnce",
+      "description": "Set properties on a user profile only where they are not set yet",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "distinct_id",
+            "optional": false,
+            "type": "string",
+            "description": "The profile to update."
+          },
+          {
+            "key": "$set_once",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Properties to set only where not already set."
+          },
+          {
+            "key": "$ip",
+            "optional": true,
+            "type": "string",
+            "description": "An IP to geolocate the profile from; omit to skip it."
+          },
+          {
+            "key": "$ignore_time",
+            "optional": true,
+            "type": "boolean",
+            "description": "True to leave $last_seen unchanged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.profiles.union",
+      "shortPath": "profiles.union",
+      "description": "Merge values into list properties on a user profile, skipping values already present",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "distinct_id",
+            "optional": false,
+            "type": "string",
+            "description": "The profile to update."
+          },
+          {
+            "key": "$union",
+            "optional": false,
+            "type": "Record<string, any[]>",
+            "description": "List properties and the values to merge in without duplicates."
+          },
+          {
+            "key": "$ip",
+            "optional": true,
+            "type": "string",
+            "description": "An IP to geolocate the profile from; omit to skip it."
+          },
+          {
+            "key": "$ignore_time",
+            "optional": true,
+            "type": "boolean",
+            "description": "True to leave $last_seen unchanged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.profiles.unset",
+      "shortPath": "profiles.unset",
+      "description": "Delete properties from a user profile",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "distinct_id",
+            "optional": false,
+            "type": "string",
+            "description": "The profile to update."
+          },
+          {
+            "key": "$unset",
+            "optional": false,
+            "type": "string[]",
+            "description": "Property names to delete."
+          },
+          {
+            "key": "$ip",
+            "optional": true,
+            "type": "string",
+            "description": "An IP to geolocate the profile from; omit to skip it."
+          },
+          {
+            "key": "$ignore_time",
+            "optional": true,
+            "type": "boolean",
+            "description": "True to leave $last_seen unchanged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.retention.frequency",
+      "shortPath": "retention.frequency",
+      "description": "Frequency (addiction) report: how many users did an event on how many hours or days of each period",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": false,
+            "type": "day | week | month",
+            "description": "The overall time period to bucket users by."
+          },
+          {
+            "key": "addiction_unit",
+            "optional": false,
+            "type": "hour | day",
+            "description": "The granularity to count how often users did the event."
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.retention.query",
+      "shortPath": "retention.query",
+      "description": "Run a birth or compounded retention query for a date range, per day, week or month",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "retention_type",
+            "optional": true,
+            "type": "birth | compounded",
+            "description": "Defaults to 'birth' (first time). 'compounded' is recurring retention."
+          },
+          {
+            "key": "born_event",
+            "optional": true,
+            "type": "string",
+            "description": "The first event, required when retention_type is 'birth'."
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string",
+            "description": "The returning event. Omit to look across all events."
+          },
+          {
+            "key": "born_where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1. At most 90 when unit is day."
+          },
+          {
+            "key": "interval_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "day | week | month"
+          },
+          {
+            "key": "unbounded_retention",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "on",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "mixpanel.api.segmentation.average",
+      "shortPath": "segmentation.average",
+      "description": "Average a numeric property of an event per time unit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string",
+            "description": "The event to segment."
+          },
+          {
+            "key": "from_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          },
+          {
+            "key": "on",
+            "optional": false,
+            "type": "string",
+            "description": "A numeric property expression to average."
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "hour | day"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "computed_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.segmentation.numeric",
+      "shortPath": "segmentation.numeric",
+      "description": "Segment an event by numeric ranges of a property",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string",
+            "description": "The event to segment."
+          },
+          {
+            "key": "from_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          },
+          {
+            "key": "on",
+            "optional": false,
+            "type": "string",
+            "description": "A numeric property expression to bucket."
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "hour | day"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "general | unique | average",
+            "description": "general counts every event, unique counts users, average is per user."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ series?: string[] | null, values?: Record<string, any> | null } | null"
+          },
+          {
+            "key": "legend_size",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.segmentation.query",
+      "shortPath": "segmentation.query",
+      "description": "Count an event over time, optionally segmented by a property (Segmentation report)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string",
+            "description": "The event to segment."
+          },
+          {
+            "key": "from_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          },
+          {
+            "key": "on",
+            "optional": true,
+            "type": "string",
+            "description": "A property expression to segment on."
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "minute | hour | day | month"
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "general | unique | average",
+            "description": "general counts every event, unique counts users, average is per user."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ series?: string[] | null, values?: Record<string, any> | null } | null"
+          },
+          {
+            "key": "legend_size",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.segmentation.sum",
+      "shortPath": "segmentation.sum",
+      "description": "Sum a numeric property of an event per time unit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string",
+            "description": "The event to segment."
+          },
+          {
+            "key": "from_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number",
+            "description": "The workspace (data view) to run in; omit for the project default."
+          },
+          {
+            "key": "on",
+            "optional": false,
+            "type": "string",
+            "description": "A numeric property expression to sum."
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "hour | day"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "computed_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.serviceAccounts.addToProjects",
+      "shortPath": "serviceAccounts.addToProjects",
+      "description": "Grant service accounts access to projects with a role",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "number",
+            "description": "The organization id (Organization Settings, Overview)."
+          },
+          {
+            "key": "service_account_ids",
+            "optional": false,
+            "type": "number[]"
+          },
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ id: number, role: owner | admin | analyst | consumer }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.serviceAccounts.create",
+      "shortPath": "serviceAccounts.create",
+      "description": "Create a service account and return its secret once; this mints a new credential with the given role",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "number",
+            "description": "The organization id (Organization Settings, Overview)."
+          },
+          {
+            "key": "username",
+            "optional": false,
+            "type": "string",
+            "description": "A name for the service account."
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "owner | admin | analyst | consumer",
+            "description": "Organization role; defaults to Mixpanel default."
+          },
+          {
+            "key": "expires",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 expiry; omit for no expiry."
+          },
+          {
+            "key": "projects",
+            "optional": true,
+            "type": "{ id: number, role: owner | admin | analyst | consumer }[]",
+            "description": "Projects to grant, each with a role."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number | null, username?: string | null, last_used?: string | null, expires?: string | null, creator?: number | null, creator_name?: string | null, created?: string | null, user?: number | null, role?: string | null, token?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.serviceAccounts.delete",
+      "shortPath": "serviceAccounts.delete",
+      "description": "Delete a service account; anything using its secret stops working (including this connection, if it is this one)",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "number",
+            "description": "The organization id (Organization Settings, Overview)."
+          },
+          {
+            "key": "service_account_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "mixpanel.api.serviceAccounts.get",
+      "shortPath": "serviceAccounts.get",
+      "description": "Get one service account of the organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "number",
+            "description": "The organization id (Organization Settings, Overview)."
+          },
+          {
+            "key": "service_account_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_used",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expires",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "creator_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.serviceAccounts.list",
+      "shortPath": "serviceAccounts.list",
+      "description": "List the organization's service accounts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "number",
+            "description": "The organization id (Organization Settings, Overview)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number | null, username?: string | null, last_used?: string | null, expires?: string | null, creator?: number | null, creator_name?: string | null, created?: string | null, user?: number | null, role?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.serviceAccounts.listForProject",
+      "shortPath": "serviceAccounts.listForProject",
+      "description": "List the service accounts that can reach this project, with their roles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number | null, username?: string | null, last_used?: string | null, expires?: string | null, creator?: number | null, creator_name?: string | null, created?: string | null, user?: number | null, role?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.serviceAccounts.removeFromProjects",
+      "shortPath": "serviceAccounts.removeFromProjects",
+      "description": "Remove service accounts from projects; they lose access at once",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organization_id",
+            "optional": false,
+            "type": "number",
+            "description": "The organization id (Organization Settings, Overview)."
+          },
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ id: number, service_account_ids: number[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.warehouseImports.createEventStream",
+      "shortPath": "warehouseImports.createEventStream",
+      "description": "Create an import that loads events from a warehouse table",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "warehouse_source_id",
+            "optional": false,
+            "type": "number",
+            "description": "The connected warehouse source."
+          },
+          {
+            "key": "table_params",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Where the table is, per warehouse (e.g. dataset_name and table_name for BigQuery)."
+          },
+          {
+            "key": "run_every",
+            "optional": true,
+            "type": "0 | 3600000000000 | 86400000000000 | 604800000000000",
+            "description": "Sync interval in nanoseconds: 0 (manual), hourly, daily or weekly."
+          },
+          {
+            "key": "json_properties_column_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "property_mappings",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "databricks_params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "time_column_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sync_mode",
+            "optional": false,
+            "type": "time_based | mirror_mode | full_sync | one_time"
+          },
+          {
+            "key": "event_name",
+            "optional": true,
+            "type": "string",
+            "description": "One event name for every row."
+          },
+          {
+            "key": "event_column_name",
+            "optional": true,
+            "type": "string",
+            "description": "Or a column holding the event name."
+          },
+          {
+            "key": "user_column_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company_column_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "device_column_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "insert_id_column_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "insert_time_column_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number | null, import_type?: string | null, warehouse_source_id?: number | null, paused?: boolean | null, run_every?: number | null, sync_mode?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.warehouseImports.createGroups",
+      "shortPath": "warehouseImports.createGroups",
+      "description": "Create an import that loads group profiles from a warehouse table",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "warehouse_source_id",
+            "optional": false,
+            "type": "number",
+            "description": "The connected warehouse source."
+          },
+          {
+            "key": "table_params",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Where the table is, per warehouse (e.g. dataset_name and table_name for BigQuery)."
+          },
+          {
+            "key": "run_every",
+            "optional": true,
+            "type": "0 | 3600000000000 | 86400000000000 | 604800000000000",
+            "description": "Sync interval in nanoseconds: 0 (manual), hourly, daily or weekly."
+          },
+          {
+            "key": "json_properties_column_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "property_mappings",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "databricks_params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "group_key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group_id_column",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sync_mode",
+            "optional": false,
+            "type": "time_based | mirror_mode | full_sync | one_time"
+          },
+          {
+            "key": "insert_time_column_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number | null, import_type?: string | null, warehouse_source_id?: number | null, paused?: boolean | null, run_every?: number | null, sync_mode?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.warehouseImports.createLookupTable",
+      "shortPath": "warehouseImports.createLookupTable",
+      "description": "Create an import that loads a lookup table from a warehouse table",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "warehouse_source_id",
+            "optional": false,
+            "type": "number",
+            "description": "The connected warehouse source."
+          },
+          {
+            "key": "table_params",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Where the table is, per warehouse (e.g. dataset_name and table_name for BigQuery)."
+          },
+          {
+            "key": "run_every",
+            "optional": true,
+            "type": "0 | 3600000000000 | 86400000000000 | 604800000000000",
+            "description": "Sync interval in nanoseconds: 0 (manual), hourly, daily or weekly."
+          },
+          {
+            "key": "databricks_params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "mixpanel_property",
+            "optional": false,
+            "type": "{ value: string, resourceType: string, customPropertyId?: number }",
+            "description": "The Mixpanel property the table joins on."
+          },
+          {
+            "key": "property_key_column_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sync_mode",
+            "optional": false,
+            "type": "full_sync | one_time"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number | null, import_type?: string | null, warehouse_source_id?: number | null, paused?: boolean | null, run_every?: number | null, sync_mode?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.warehouseImports.createPeople",
+      "shortPath": "warehouseImports.createPeople",
+      "description": "Create an import that loads user profiles from a warehouse table",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "warehouse_source_id",
+            "optional": false,
+            "type": "number",
+            "description": "The connected warehouse source."
+          },
+          {
+            "key": "table_params",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Where the table is, per warehouse (e.g. dataset_name and table_name for BigQuery)."
+          },
+          {
+            "key": "run_every",
+            "optional": true,
+            "type": "0 | 3600000000000 | 86400000000000 | 604800000000000",
+            "description": "Sync interval in nanoseconds: 0 (manual), hourly, daily or weekly."
+          },
+          {
+            "key": "json_properties_column_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "property_mappings",
+            "optional": true,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "databricks_params",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "user_column_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sync_mode",
+            "optional": false,
+            "type": "time_based | mirror_mode | full_sync | one_time"
+          },
+          {
+            "key": "insert_time_column_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number | null, import_type?: string | null, warehouse_source_id?: number | null, paused?: boolean | null, run_every?: number | null, sync_mode?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.warehouseImports.delete",
+      "shortPath": "warehouseImports.delete",
+      "description": "Delete a warehouse import, and with delete_data the data it imported",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "import_id",
+            "optional": false,
+            "type": "number",
+            "description": "The warehouse import id."
+          },
+          {
+            "key": "delete_data",
+            "optional": true,
+            "type": "boolean",
+            "description": "True also deletes the data this import brought into Mixpanel."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.warehouseImports.get",
+      "shortPath": "warehouseImports.get",
+      "description": "Get one warehouse import with its settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "import_id",
+            "optional": false,
+            "type": "number",
+            "description": "The warehouse import id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number | null, import_type?: string | null, warehouse_source_id?: number | null, paused?: boolean | null, run_every?: number | null, sync_mode?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.warehouseImports.history",
+      "shortPath": "warehouseImports.history",
+      "description": "List the past sync runs of a warehouse import",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "import_id",
+            "optional": false,
+            "type": "number",
+            "description": "The warehouse import id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ runs?: {}[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.warehouseImports.list",
+      "shortPath": "warehouseImports.list",
+      "description": "List the warehouse imports of the project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number | null, import_type?: string | null, warehouse_source_id?: number | null, paused?: boolean | null, run_every?: number | null, sync_mode?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.warehouseImports.run",
+      "shortPath": "warehouseImports.run",
+      "description": "Start a sync of a warehouse import now",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "import_id",
+            "optional": false,
+            "type": "number",
+            "description": "The warehouse import id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ run_id?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mixpanel.api.warehouseImports.update",
+      "shortPath": "warehouseImports.update",
+      "description": "Pause, resume or reschedule a warehouse import",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "import_id",
+            "optional": false,
+            "type": "number",
+            "description": "The warehouse import id."
+          },
+          {
+            "key": "paused",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "run_every",
+            "optional": false,
+            "type": "0 | 3600000000000 | 86400000000000 | 604800000000000",
+            "description": "Sync interval in nanoseconds: 0 (manual), hourly, daily or weekly."
+          },
+          {
+            "key": "databricks_params",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number | null, import_type?: string | null, warehouse_source_id?: number | null, paused?: boolean | null, run_every?: number | null, sync_mode?: string | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

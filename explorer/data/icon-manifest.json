@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-23T19:33:40.211Z",
+  "generatedAt": "2026-11-24T16:11:13.873Z",
   "primarySource": "https://twenty-icons.com",
   "fallbackSource": "https://www.google.com/s2/favicons",
   "size": 128,
   "format": "png",
-  "total": 779,
-  "succeeded": 779,
-  "failed": 0,
+  "total": 785,
+  "succeeded": 784,
+  "failed": 1,
   "domains": {
     "ably": "ably.io",
     "abstract": "abstractapi.com",
@@ -451,11 +451,17 @@
     "missive": "missiveapp.com",
     "mistralai": "mistral.ai",
     "mixmax": "mixmax.com",
+    "mixpanel": "mixpanel.com",
+    "mocean": "moceanapi.com",
+    "moco": "mocoapp.com",
     "modelry": "modelry.ai",
     "monday": "monday.com",
     "mondaymcp": "monday.com",
     "moonclerk": "moonclerk.com",
+    "moosend": "moosend.com",
+    "mopinion": "mopinion.com",
     "motion": "usemotion.com",
+    "moz": "moz.com",
     "mrscraper": "mrscraper.com",
     "nango": "nango.dev",
     "nanonets": "nanonets.com",
@@ -1232,11 +1238,16 @@
     "missive": "twenty-icons",
     "mistralai": "twenty-icons",
     "mixmax": "curated",
+    "mixpanel": "curated",
+    "moco": "twenty-icons",
     "modelry": "twenty-icons",
     "monday": "curated",
     "mondaymcp": "twenty-icons",
     "moonclerk": "twenty-icons",
+    "moosend": "twenty-icons",
+    "mopinion": "curated",
     "motion": "curated",
+    "moz": "twenty-icons",
     "mrscraper": "twenty-icons",
     "nango": "twenty-icons",
     "nanonets": "curated",
@@ -1691,7 +1702,9 @@
     "metabase",
     "minerstat",
     "mixmax",
+    "mixpanel",
     "monday",
+    "mopinion",
     "motion",
     "nanonets",
     "nasa",
@@ -1892,5 +1905,11 @@
     "writer",
     "zendesk"
   ],
-  "failures": []
+  "failures": [
+    {
+      "id": "mocean",
+      "domain": "moceanapi.com",
+      "error": "twenty-icons returned no PNG; google-favicon HTTP 404"
+    }
+  ]
 }
