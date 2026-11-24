@@ -1543,7 +1543,7 @@
     {
       "path": "outlook.api.events.getSchedule",
       "shortPath": "events.getSchedule",
-      "description": "Get free/busy schedule for a calendar",
+      "description": "Free/busy for the listed schedules (email addresses), not event details. startTime and endTime are {dateTime, timeZone} objects.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1556,17 +1556,20 @@
           {
             "key": "schedules",
             "optional": false,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Email addresses to check."
           },
           {
             "key": "startTime",
             "optional": false,
-            "type": "{ dateTime: string, timeZone: string }"
+            "type": "{ dateTime: string, timeZone: string }",
+            "description": "{\"dateTime\":\"2025-06-03T09:00:00\",\"timeZone\":\"Pacific Standard Time\"}"
           },
           {
             "key": "endTime",
             "optional": false,
-            "type": "{ dateTime: string, timeZone: string }"
+            "type": "{ dateTime: string, timeZone: string }",
+            "description": "{\"dateTime\":\"2025-06-03T18:00:00\",\"timeZone\":\"Pacific Standard Time\"}"
           },
           {
             "key": "availabilityViewInterval",
@@ -1594,7 +1597,7 @@
     {
       "path": "outlook.api.events.list",
       "shortPath": "events.list",
-      "description": "List calendar events",
+      "description": "Single events and series masters; with expand_recurring_events it lists the occurrences between start_datetime and end_datetime, one page at a time (next skip is in @odata.nextLink). Times are UTC unless timezone is set.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1637,12 +1640,26 @@
           {
             "key": "timezone",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Windows time zone name such as \"Pacific Standard Time\", sent as the Prefer header. Times are UTC if omitted."
           },
           {
             "key": "expand_recurring_events",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Lists each occurrence of a recurring event (calendarView). Needs start_datetime and end_datetime."
+          },
+          {
+            "key": "start_datetime",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 with offset, e.g. 2025-06-01T00:00:00Z. Window start; goes with expand_recurring_events."
+          },
+          {
+            "key": "end_datetime",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 with offset, e.g. 2025-06-30T00:00:00Z. Window end; goes with expand_recurring_events."
           }
         ]
       },
@@ -2109,7 +2126,7 @@
     {
       "path": "outlook.api.folders.list",
       "shortPath": "folders.list",
-      "description": "List mail folders",
+      "description": "Top-level mail folders only; nested folders are not listed. Use a folder id or a name like \"inbox\" as folder in messages.list.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -2152,7 +2169,8 @@
           {
             "key": "include_hidden_folders",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Hidden folders are left out unless true."
           }
         ]
       },
@@ -2742,7 +2760,7 @@
     {
       "path": "outlook.api.messages.get",
       "shortPath": "messages.get",
-      "description": "Get an email message by ID",
+      "description": "Reads one message by id. Body is HTML. Attachments are not included and this plugin cannot download them; hasAttachments only says whether any non-inline attachment exists, so it is false for a message with only inline ones.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -2918,7 +2936,7 @@
     {
       "path": "outlook.api.messages.list",
       "shortPath": "messages.list",
-      "description": "List email messages in a folder",
+      "description": "Lists messages from one folder, or the whole mailbox including Deleted Items when folder is unset. 10 per page unless top is set (max 1000). Take the next skip from @odata.nextLink; it can exceed top, so do not add top to skip.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -2931,12 +2949,14 @@
           {
             "key": "folder",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Folder id or well-known name such as \"inbox\", \"sentitems\", \"drafts\" or \"deleteditems\". Unset covers the whole mailbox."
           },
           {
             "key": "top",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Page size. Graph returns 10 if omitted; max 1000."
           },
           {
             "key": "skip",
@@ -2961,12 +2981,14 @@
           {
             "key": "subject",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Exact match. An apostrophe in the value breaks the query; use messages.search for free text."
           },
           {
             "key": "subject_contains",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "An apostrophe in the value breaks the query; use messages.search for free text."
           },
           {
             "key": "subject_startswith",
@@ -3006,32 +3028,38 @@
           {
             "key": "sent_date_time_gt",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "ISO 8601 UTC such as 2025-01-31T00:00:00Z."
           },
           {
             "key": "sent_date_time_lt",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "ISO 8601 UTC such as 2025-01-31T00:00:00Z."
           },
           {
             "key": "received_date_time_ge",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "ISO 8601 UTC such as 2025-01-31T00:00:00Z."
           },
           {
             "key": "received_date_time_gt",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "ISO 8601 UTC such as 2025-01-31T00:00:00Z."
           },
           {
             "key": "received_date_time_le",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "ISO 8601 UTC such as 2025-01-31T00:00:00Z."
           },
           {
             "key": "received_date_time_lt",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "ISO 8601 UTC such as 2025-01-31T00:00:00Z."
           }
         ]
       },
@@ -3235,7 +3263,7 @@
     {
       "path": "outlook.api.messages.query",
       "shortPath": "messages.query",
-      "description": "Query email messages with OData filters",
+      "description": "Raw OData filter over one folder or the whole mailbox. 10 per page unless top is set. Properties in orderby must also be in filter, first and in the same order, or Graph returns InefficientFilter.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -3253,7 +3281,8 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "OData $filter, e.g. \"receivedDateTime ge 2025-01-31T00:00:00Z and isRead eq false\". With orderby, filter on the ordered properties first."
           },
           {
             "key": "select",
@@ -3263,12 +3292,14 @@
           {
             "key": "orderby",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "e.g. \"receivedDateTime desc\". Each property must also appear in filter, first and in the same order, or Graph returns InefficientFilter."
           },
           {
             "key": "top",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Page size. Graph returns 10 if omitted; max 1000."
           },
           {
             "key": "skip",
@@ -3357,7 +3388,7 @@
     {
       "path": "outlook.api.messages.search",
       "shortPath": "messages.search",
-      "description": "Search email messages",
+      "description": "KQL search over the signed-in user's whole mailbox, newest sent first, at most 1,000 results. For a folder or date range use messages.list or messages.query.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -3365,7 +3396,8 @@
           {
             "key": "query",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Words, or KQL such as from:alice@example.com or subject:invoice. Not OData."
           },
           {
             "key": "subject",
