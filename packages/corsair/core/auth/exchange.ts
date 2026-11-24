@@ -57,6 +57,8 @@ export function exchangeCodeForTokens(
 	clientSecret: string,
 	oauthConfig: OAuthConfig,
 	redirectUri: string,
+	/** The PKCE verifier, for a provider with `pkce` (see oauth/pkce). */
+	codeVerifier?: string,
 ): Promise<TokenResponse> {
 	const tokenUrl = new URL(oauthConfig.tokenUrl);
 	const useBasicAuth = oauthConfig.tokenAuthMethod === 'basic';
@@ -67,6 +69,7 @@ export function exchangeCodeForTokens(
 			redirect_uri: redirectUri,
 			grant_type: 'authorization_code',
 		};
+		if (codeVerifier) postDataParams.code_verifier = codeVerifier;
 
 		if (!useBasicAuth) {
 			postDataParams.client_id = clientId;
