@@ -16,7 +16,7 @@ pnpm add @corsair-dev/notion
 | `blocks.getManyChildBlocks` | `notion.api.blocks.getManyChildBlocks` | `read` | Page body as blocks, one level only. Call again with the id of any block that has has_children true. Pass the page id as block_id for top-level content |
 | `databasePages.createDatabasePage` | `notion.api.databasePages.createDatabasePage` | `write` | Create a new page in a database |
 | `databasePages.getDatabasePage` | `notion.api.databasePages.getDatabasePage` | `read` | Properties of any page by id, not its body; read the body with blocks.getManyChildBlocks using the page id |
-| `databasePages.getManyDatabasePages` | `notion.api.databasePages.getManyDatabasePages` | `read` | Rows of one database, properties only. Read property names with databases.getDatabase first; 404 means the database is not shared with the integration |
+| `databasePages.getManyDatabasePages` | `notion.api.databasePages.getManyDatabasePages` | `read` | Rows of one database, properties only. Read property names with databases.getDatabase first; a 404 means the database id is wrong or the database is not shared with the integration |
 | `databasePages.updateDatabasePage` | `notion.api.databasePages.updateDatabasePage` | `write` | Update properties of a database page |
 | `databases.getDatabase` | `notion.api.databases.getDatabase` | `read` | Get info about a database |
 | `databases.getManyDatabases` | `notion.api.databases.getManyDatabases` | `read` | List databases accessible to the integration |

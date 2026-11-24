@@ -181,7 +181,7 @@ const notionEndpointMeta = {
 	'databasePages.getManyDatabasePages': {
 		riskLevel: 'read',
 		description:
-			'Rows of one database, properties only. Read property names with databases.getDatabase first; 404 means the database is not shared with the integration',
+			'Rows of one database, properties only. Read property names with databases.getDatabase first; a 404 means the database id is wrong or the database is not shared with the integration',
 	},
 	'databasePages.updateDatabasePage': {
 		riskLevel: 'write',
