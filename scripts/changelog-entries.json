@@ -12216,5 +12216,21 @@
         "title": "Cover Canva's current REST API (62 operations), download exports to files"
       }
     ]
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/canva",
+    "dir": "packages/canva",
+    "name": "Canva",
+    "version": "0.2.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2717,
+        "title": "Require corsair 0.2.31, the first release with PKCE"
+      }
+    ]
   }
 ]
