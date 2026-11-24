@@ -1,9 +1,15 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 // Inputs use Mocean's own `mocean-*` parameter names, so a form field maps one
 // to one. Outputs are `.loose()` and their documented fields nullish, so a
 // field Mocean adds or omits cannot fail a call that has already happened.
 // Source: https://moceanapi.com/docs
+
+// Body statuses arrive as numbers, and on voice routes as strings.
+const BodyStatus = z.union([z.number(), z.string()]);
+// Credits and prices arrive as numbers although the reference says strings.
+const Amount = z.union([z.number(), z.string()]).nullish();
 
 // ── sms.send ──────────────────────────────────────────────────────────────
 
@@ -107,7 +113,7 @@ export type SmsSendInput = z.input<typeof SmsSendInputSchema>;
 
 const MessageResultSchema = z
 	.object({
-		status: z.number(),
+		status: BodyStatus,
 		receiver: z.string().nullish(),
 		msgid: z.string().nullish(),
 		err_msg: z.string().nullish(),
@@ -130,12 +136,12 @@ export type SmsStatusInput = z.input<typeof SmsStatusInputSchema>;
 
 const SmsStatusResponseSchema = z
 	.object({
-		status: z.number(),
+		status: BodyStatus,
 		// 1 success, 2 failed, 3 expired, 4 pending, 5 not found; kept as a
 		// number so an added state cannot fail a read.
-		message_status: z.number(),
+		message_status: z.number().nullish(),
 		msgid: z.string().nullish(),
-		credit_deducted: z.string().nullish(),
+		credit_deducted: Amount,
 	})
 	.loose();
 
@@ -145,7 +151,7 @@ export type SmsStatusResponse = z.infer<typeof SmsStatusResponseSchema>;
 
 const BalanceResponseSchema = z
 	.object({
-		status: z.number(),
+		status: BodyStatus,
 		value: z.number(),
 	})
 	.loose();
@@ -162,19 +168,20 @@ const AccountPricingInputSchema = z
 			.string()
 			.regex(/^\d{1,3}$/, 'A Mobile Country Code of 1-3 digits')
 			.optional()
-			.describe('Only pricing for this Mobile Country Code.'),
+			.describe('Only pricing for this Mobile Country Code; needs mocean_mnc.'),
 		mocean_mnc: z
 			.string()
 			.regex(/^\d{1,4}$/, 'A Mobile Network Code of 1-4 digits')
 			.optional()
-			.describe('One Mobile Network Code; needs mocean_mcc.'),
+			.describe('One Mobile Network Code; sent together with mocean_mcc.'),
 		mocean_type: PricingTypeSchema.optional().describe("Defaults to 'sms'."),
 	})
 	.superRefine((value, ctx) => {
-		if (value.mocean_mnc !== undefined && value.mocean_mcc === undefined) {
+		// Mocean answers status 46 (invalid MCC/MNC) to either one alone.
+		if ((value.mocean_mnc === undefined) !== (value.mocean_mcc === undefined)) {
 			ctx.addIssue({
 				code: 'custom',
-				message: 'mocean_mnc needs mocean_mcc',
+				message: 'mocean_mcc and mocean_mnc go together',
 			});
 		}
 	});
@@ -187,14 +194,14 @@ const DestinationSchema = z
 		operator: z.string().nullish(),
 		mcc: z.string().nullish(),
 		mnc: z.string().nullish(),
-		price: z.string().nullish(),
+		price: Amount,
 		currency: z.string().nullish(),
 	})
 	.loose();
 
 const AccountPricingResponseSchema = z
 	.object({
-		status: z.number().nullish(),
+		status: BodyStatus.nullish(),
 		destinations: z.array(DestinationSchema),
 	})
 	.loose();
@@ -242,7 +249,7 @@ export type VerifyRequestInput = z.input<typeof VerifyRequestInputSchema>;
 const VerifyResponseSchema = z
 	.object({
 		reqid: z.string().nullish(),
-		status: z.number(),
+		status: BodyStatus,
 		to: z.string().nullish(),
 		is_number_reachable: z.string().nullish(),
 		resend_number: z.string().nullish(),
@@ -272,7 +279,7 @@ export type VerifyCheckInput = z.input<typeof VerifyCheckInputSchema>;
 const VerifyCheckResponseSchema = z
 	.object({
 		reqid: z.string().nullish(),
-		status: z.number(),
+		status: BodyStatus,
 	})
 	.loose();
 
@@ -308,7 +315,7 @@ export type LookupRequestInput = z.input<typeof LookupRequestInputSchema>;
 
 const LookupResponseSchema = z
 	.object({
-		status: z.number(),
+		status: BodyStatus,
 		msgid: z.string().nullish(),
 		to: z.string().nullish(),
 		current_carrier: CarrierSchema.nullish(),
@@ -321,48 +328,324 @@ const LookupResponseSchema = z
 
 export type LookupResponse = z.infer<typeof LookupResponseSchema>;
 
+// ── sms.reportConversion ──────────────────────────────────────────────────
+
+const ConversionInputSchema = z.object({
+	mocean_msgid: z.string().min(1).describe('The msgid from the send response.'),
+	mocean_delivered: z
+		.boolean()
+		.describe(
+			'true when the user received the message (for example, used the OTP).',
+		),
+	mocean_timestamp: z
+		.string()
+		.regex(
+			/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/,
+			'Must be yyyy-MM-dd HH:mm:ss',
+		)
+		.optional()
+		.describe('When it happened; defaults to the submission time.'),
+});
+
+const StatusOnlySchema = z
+	.object({ status: BodyStatus, err_msg: z.string().nullish() })
+	.loose();
+
+// ── verify.requestTelegram ────────────────────────────────────────────────
+
+const VerifyTelegramInputSchema = z.object({
+	mocean_to: z
+		.string()
+		.min(1)
+		.describe('The Telegram chat ID that gets the code.'),
+	mocean_from: z
+		.string()
+		.min(1)
+		.describe('Your Telegram bot username that sends the code.'),
+	mocean_brand: z
+		.string()
+		.min(1)
+		.describe('The company or application name shown to the user.'),
+	mocean_code_length: z.union([z.literal(4), z.literal(6)]).optional(),
+	mocean_pin_validity: z
+		.number()
+		.int()
+		.min(MOCEAN_MIN_PIN_VALIDITY_SECONDS)
+		.max(MOCEAN_MAX_PIN_VALIDITY_SECONDS)
+		.optional(),
+});
+
+// ── voice ─────────────────────────────────────────────────────────────────
+
+const VoiceDialInputSchema = z.object({
+	mocean_to: z
+		.string()
+		.min(1)
+		.describe(
+			'Number(s) to call with country code, separated by commas or spaces.',
+		),
+	mocean_command: z
+		.array(
+			z
+				.object({
+					action: z
+						.string()
+						.min(1)
+						.describe('say, play, collect, sleep, record or dial'),
+				})
+				// The action's own fields (language, text, file, max-digits, ...)
+				// vary per action; Mocean checks them.
+				.loose(),
+		)
+		.min(1)
+		.describe(
+			'Mocean Command (MC) objects run in order, e.g. [{ action: "say", language: "en-US", text: "Hello" }].',
+		),
+	mocean_from: z.string().optional().describe('Caller ID (number of origin).'),
+	mocean_event_url: z
+		.string()
+		.url()
+		.optional()
+		.describe('Webhook that receives call status events.'),
+});
+
+const VoiceDialResponseSchema = z
+	.object({
+		status: BodyStatus.nullish(),
+		calls: z
+			.array(
+				z
+					.object({
+						status: BodyStatus,
+						receiver: z.string().nullish(),
+						session_uuid: z.string().nullish(),
+						call_uuid: z.string().nullish(),
+						err_msg: z.string().nullish(),
+					})
+					.loose(),
+			)
+			.nullish(),
+	})
+	.loose();
+
+const CallUuidInputSchema = z.object({
+	mocean_call_uuid: z
+		.string()
+		.min(1)
+		.describe('The call_uuid from voice.dial.'),
+});
+
+const VoiceHangupResponseSchema = z
+	.object({
+		status: BodyStatus,
+		session_uuid: z.string().nullish(),
+		call_uuid: z.string().nullish(),
+	})
+	.loose();
+
+// ── whatsapp ──────────────────────────────────────────────────────────────
+
+const WhatsAppSendInputSchema = z.object({
+	mocean_from: z
+		.string()
+		.min(1)
+		.describe('Your registered WhatsApp Business sender number.'),
+	mocean_to: z
+		.string()
+		.min(1)
+		.describe(
+			'Receiver number with country code, or a Business Scoped User ID.',
+		),
+	mocean_event_url: z
+		.string()
+		.url()
+		.optional()
+		.describe('Webhook that receives delivery events.'),
+	mocean_content: z
+		.object({
+			type: z
+				.string()
+				.min(1)
+				.describe(
+					'text, image, video, audio, document, sticker, reaction, template, interactive, location or contacts',
+				),
+		})
+		// Each type has its own fields (text, rich_media_url, wa_template,
+		// wa_interactive, location, wa_contacts ...); Mocean checks them.
+		.loose()
+		.describe('The message, e.g. { type: "text", text: "Hello" }.'),
+});
+
+const WhatsAppSendResponseSchema = z
+	.object({
+		status: BodyStatus,
+		message_id: z.string().nullish(),
+		err_msg: z.string().nullish(),
+	})
+	.loose();
+
+const WhatsAppMediaInputSchema = z.object({
+	mocean_from: z
+		.string()
+		.min(1)
+		.describe('Your WhatsApp Business sender number that received the media.'),
+	mocean_media_id: z
+		.string()
+		.min(1)
+		.describe('The media ID from the inbound message.'),
+});
+
+// ── templates (WhatsApp) ──────────────────────────────────────────────────
+
+const TemplateCategory = z.enum(['AUTHENTICATION', 'MARKETING', 'UTILITY']);
+
+const TemplateBody = {
+	name: z
+		.string()
+		.regex(/^[a-z0-9_]+$/, 'Lowercase letters, digits and underscores only')
+		.describe('Template name.'),
+	language: z.string().min(1).describe('Language code, e.g. en_US.'),
+	category: TemplateCategory,
+	allowCategoryChange: z
+		.boolean()
+		.optional()
+		.describe('Let Meta pick the category under its guidelines.'),
+	message_send_ttl_seconds: z
+		.number()
+		.int()
+		.optional()
+		.describe('Time to live of an authentication message, in seconds.'),
+	parameter_format: z.enum(['POSITIONAL', 'NAMED']).optional(),
+	components: z
+		.array(
+			z
+				.object({
+					type: z.string().min(1).describe('HEADER, BODY, FOOTER or BUTTONS'),
+				})
+				// format, text, example and buttons depend on the component type.
+				.loose(),
+		)
+		.min(1)
+		.describe('Header, body, footer and buttons, as in the Meta template API.'),
+};
+
+const TemplateSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).nullish(),
+		name: z.string().nullish(),
+		language: z.string().nullish(),
+		category: z.string().nullish(),
+		status: z.string().nullish(),
+		// unknown: components follow Meta's template model, which varies per type.
+		components: z.array(z.unknown()).nullish(),
+	})
+	.loose();
+
+const TemplatesListInputSchema = z.object({
+	limit: z.number().int().min(1).max(100).optional(),
+	category: TemplateCategory.optional(),
+	content: z.string().optional().describe('Search the template text.'),
+	language: z.string().optional(),
+	name: z.string().optional(),
+	name_or_content: z.string().optional(),
+	quality_score: z
+		.string()
+		.optional()
+		.describe('GREEN, YELLOW, RED or UNKNOWN'),
+	status: z
+		.string()
+		.optional()
+		.describe('Review status: APPROVED, PENDING, REJECTED, ...'),
+});
+
+const TemplatesListResponseSchema = z
+	.object({
+		data: z.array(TemplateSchema).nullish(),
+		paging: z
+			.object({
+				cursors: z
+					.object({ before: z.string().nullish(), after: z.string().nullish() })
+					.loose()
+					.nullish(),
+				next: z.string().nullish(),
+			})
+			.loose()
+			.nullish(),
+	})
+	.loose();
+
+const TemplateIdInputSchema = z.object({
+	templateId: z.string().min(1).describe('The WhatsApp template ID.'),
+});
+
+const TemplatesDeleteInputSchema = z.object({
+	name: z
+		.string()
+		.min(1)
+		.describe('Template name; deletes every language of it.'),
+	hsm_id: z
+		.string()
+		.optional()
+		.describe('Template ID, to delete only that one language.'),
+});
+
+const FileSchema = FileOutputSchema;
+
 // ── Registry ──────────────────────────────────────────────────────────────
-
-export type MoceanEndpointInputs = {
-	smsSend: SmsSendInput;
-	smsStatus: SmsStatusInput;
-	accountBalance: Record<string, never>;
-	accountPricing: AccountPricingInput;
-	verifyRequest: VerifyRequestInput;
-	verifyResend: VerifyResendInput;
-	verifyCheck: VerifyCheckInput;
-	lookupRequest: LookupRequestInput;
-};
-
-export type MoceanEndpointOutputs = {
-	smsSend: SmsSendResponse;
-	smsStatus: SmsStatusResponse;
-	accountBalance: BalanceResponse;
-	accountPricing: AccountPricingResponse;
-	verifyRequest: VerifyResponse;
-	verifyResend: VerifyResponse;
-	verifyCheck: VerifyCheckResponse;
-	lookupRequest: LookupResponse;
-};
 
 export const MoceanEndpointInputSchemas = {
 	smsSend: SmsSendInputSchema,
 	smsStatus: SmsStatusInputSchema,
-	accountBalance: z.object({}).loose(),
+	smsReportConversion: ConversionInputSchema,
+	accountBalance: z.object({}),
 	accountPricing: AccountPricingInputSchema,
 	verifyRequest: VerifyRequestInputSchema,
+	verifyRequestTelegram: VerifyTelegramInputSchema,
 	verifyResend: VerifyResendInputSchema,
 	verifyCheck: VerifyCheckInputSchema,
 	lookupRequest: LookupRequestInputSchema,
+	voiceDial: VoiceDialInputSchema,
+	voiceHangup: CallUuidInputSchema,
+	voiceRecording: CallUuidInputSchema,
+	whatsappSend: WhatsAppSendInputSchema,
+	whatsappDownloadMedia: WhatsAppMediaInputSchema,
+	templatesList: TemplatesListInputSchema,
+	templatesGet: TemplateIdInputSchema,
+	templatesCreate: z.object(TemplateBody),
+	templatesEdit: z.object({
+		templateId: TemplateIdInputSchema.shape.templateId,
+		...TemplateBody,
+	}),
+	templatesDelete: TemplatesDeleteInputSchema,
 } as const;
 
 export const MoceanEndpointOutputSchemas = {
 	smsSend: SmsSendResponseSchema,
 	smsStatus: SmsStatusResponseSchema,
+	smsReportConversion: StatusOnlySchema,
 	accountBalance: BalanceResponseSchema,
 	accountPricing: AccountPricingResponseSchema,
 	verifyRequest: VerifyResponseSchema,
+	verifyRequestTelegram: VerifyResponseSchema,
 	verifyResend: VerifyResponseSchema,
 	verifyCheck: VerifyCheckResponseSchema,
 	lookupRequest: LookupResponseSchema,
+	voiceDial: VoiceDialResponseSchema,
+	voiceHangup: VoiceHangupResponseSchema,
+	voiceRecording: FileSchema,
+	whatsappSend: WhatsAppSendResponseSchema,
+	whatsappDownloadMedia: FileSchema,
+	templatesList: TemplatesListResponseSchema,
+	templatesGet: TemplateSchema,
+	templatesCreate: TemplateSchema,
+	templatesEdit: TemplateSchema,
+	templatesDelete: z
+		.object({ success: z.union([z.string(), z.boolean()]).nullish() })
+		.loose(),
 } as const;
+
+type Ins = typeof MoceanEndpointInputSchemas;
+type Outs = typeof MoceanEndpointOutputSchemas;
+
+export type MoceanEndpointInputs = { [K in keyof Ins]: z.input<Ins[K]> };
+export type MoceanEndpointOutputs = { [K in keyof Outs]: z.output<Outs[K]> };

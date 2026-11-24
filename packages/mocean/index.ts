@@ -11,7 +11,8 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Account, Lookup, Sms, Verify } from './endpoints';
+import { Account, Lookup, Sms, Verify, Voice, WhatsApp } from './endpoints';
+import { moceanEndpointMeta as endpointMeta } from './endpoints/meta';
 import type {
 	MoceanEndpointInputs,
 	MoceanEndpointOutputs,
@@ -48,20 +49,14 @@ type MoceanEndpoint<K extends keyof MoceanEndpointOutputs> = CorsairEndpoint<
 >;
 
 export type MoceanEndpoints = {
-	smsSend: MoceanEndpoint<'smsSend'>;
-	smsStatus: MoceanEndpoint<'smsStatus'>;
-	accountBalance: MoceanEndpoint<'accountBalance'>;
-	accountPricing: MoceanEndpoint<'accountPricing'>;
-	verifyRequest: MoceanEndpoint<'verifyRequest'>;
-	verifyResend: MoceanEndpoint<'verifyResend'>;
-	verifyCheck: MoceanEndpoint<'verifyCheck'>;
-	lookupRequest: MoceanEndpoint<'lookupRequest'>;
+	[K in keyof MoceanEndpointOutputs]: MoceanEndpoint<K>;
 };
 
 const moceanEndpointsNested = {
 	sms: {
 		send: Sms.send,
 		status: Sms.status,
+		reportConversion: Sms.reportConversion,
 	},
 	account: {
 		balance: Account.balance,
@@ -69,94 +64,67 @@ const moceanEndpointsNested = {
 	},
 	verify: {
 		request: Verify.request,
+		requestTelegram: Verify.requestTelegram,
 		resend: Verify.resend,
 		check: Verify.check,
 	},
 	lookup: {
 		request: Lookup.request,
 	},
+	voice: {
+		dial: Voice.dial,
+		hangup: Voice.hangup,
+		recording: Voice.recording,
+	},
+	whatsapp: {
+		send: WhatsApp.send,
+		downloadMedia: WhatsApp.downloadMedia,
+	},
+	templates: {
+		list: WhatsApp.listTemplates,
+		get: WhatsApp.getTemplate,
+		create: WhatsApp.createTemplate,
+		edit: WhatsApp.editTemplate,
+		delete: WhatsApp.deleteTemplate,
+	},
 } as const;
 
+const schemas = <K extends keyof typeof MoceanEndpointInputSchemas>(key: K) =>
+	({
+		input: MoceanEndpointInputSchemas[key],
+		output: MoceanEndpointOutputSchemas[key],
+	}) as const;
+
 export const moceanEndpointSchemas = {
-	'sms.send': {
-		input: MoceanEndpointInputSchemas.smsSend,
-		output: MoceanEndpointOutputSchemas.smsSend,
-	},
-	'sms.status': {
-		input: MoceanEndpointInputSchemas.smsStatus,
-		output: MoceanEndpointOutputSchemas.smsStatus,
-	},
-	'account.balance': {
-		input: MoceanEndpointInputSchemas.accountBalance,
-		output: MoceanEndpointOutputSchemas.accountBalance,
-	},
-	'account.pricing': {
-		input: MoceanEndpointInputSchemas.accountPricing,
-		output: MoceanEndpointOutputSchemas.accountPricing,
-	},
-	'verify.request': {
-		input: MoceanEndpointInputSchemas.verifyRequest,
-		output: MoceanEndpointOutputSchemas.verifyRequest,
-	},
-	'verify.resend': {
-		input: MoceanEndpointInputSchemas.verifyResend,
-		output: MoceanEndpointOutputSchemas.verifyResend,
-	},
-	'verify.check': {
-		input: MoceanEndpointInputSchemas.verifyCheck,
-		output: MoceanEndpointOutputSchemas.verifyCheck,
-	},
-	'lookup.request': {
-		input: MoceanEndpointInputSchemas.lookupRequest,
-		output: MoceanEndpointOutputSchemas.lookupRequest,
-	},
+	'sms.send': schemas('smsSend'),
+	'sms.status': schemas('smsStatus'),
+	'sms.reportConversion': schemas('smsReportConversion'),
+	'account.balance': schemas('accountBalance'),
+	'account.pricing': schemas('accountPricing'),
+	'verify.request': schemas('verifyRequest'),
+	'verify.requestTelegram': schemas('verifyRequestTelegram'),
+	'verify.resend': schemas('verifyResend'),
+	'verify.check': schemas('verifyCheck'),
+	'lookup.request': schemas('lookupRequest'),
+	'voice.dial': schemas('voiceDial'),
+	'voice.hangup': schemas('voiceHangup'),
+	'voice.recording': schemas('voiceRecording'),
+	'whatsapp.send': schemas('whatsappSend'),
+	'whatsapp.downloadMedia': schemas('whatsappDownloadMedia'),
+	'templates.list': schemas('templatesList'),
+	'templates.get': schemas('templatesGet'),
+	'templates.create': schemas('templatesCreate'),
+	'templates.edit': schemas('templatesEdit'),
+	'templates.delete': schemas('templatesDelete'),
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof moceanEndpointsNested
 >;
 
 const defaultAuthType = 'api_key' as const;
 
-const moceanEndpointMeta = {
-	'sms.send': {
-		riskLevel: 'destructive',
-		description:
-			'Send an SMS to up to 500 receivers, charged per destination; the response carries a status and msgid per receiver',
-	},
-	'sms.status': {
-		riskLevel: 'read',
-		description:
-			"Read one sent message's final status (success, failed, expired, pending or not found) and the credit it deducted",
-	},
-	'account.balance': {
-		riskLevel: 'read',
-		description: 'Read the account balance',
-	},
-	'account.pricing': {
-		riskLevel: 'read',
-		description:
-			'List the account per-destination pricing, optionally filtered by MCC/MNC or service type',
-	},
-	'verify.request': {
-		riskLevel: 'destructive',
-		description:
-			'Send a verification code over SMS, charged per attempt; keep the reqid for check and resend',
-	},
-	'verify.resend': {
-		riskLevel: 'destructive',
-		description:
-			'Resend the code of an existing verify request over SMS, charged per attempt',
-	},
-	'verify.check': {
-		riskLevel: 'write',
-		description:
-			'Check the PIN a user gave you against a verify request; Mocean allows three wrong attempts',
-	},
-	'lookup.request': {
-		riskLevel: 'read',
-		description:
-			"Look up a number's original and current carrier and porting status, charged against prepaid credit; returns synchronously without a callback URL",
-	},
-} as const satisfies RequiredPluginEndpointMeta<typeof moceanEndpointsNested>;
+const moceanEndpointMeta = endpointMeta satisfies RequiredPluginEndpointMeta<
+	typeof moceanEndpointsNested
+>;
 
 export type BaseMoceanPlugin<T extends MoceanPluginOptions> = CorsairPlugin<
 	'mocean',
@@ -204,8 +172,6 @@ export function mocean<const T extends MoceanPluginOptions>(
 		},
 	} satisfies InternalMoceanPlugin;
 }
-
-export { MoceanAPIError } from './client';
 
 export type {
 	AccountPricingInput,

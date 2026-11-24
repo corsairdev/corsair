@@ -1,31 +1,26 @@
-// Response bodies copied from the examples on https://moceanapi.com/docs,
-// with made-up people and numbers. The 401 bodies were captured from the
-// live API unauthenticated.
+// Bodies captured from the live Mocean API on 11-24 (trial account) where
+// the route could be called for free; the send and call bodies are the
+// examples on https://moceanapi.com/docs with made-up numbers.
 
 export const smsSent = {
-	messages: [
-		{ status: 0, receiver: '60123456789', msgid: 'cust20013050311050614001' },
-		{ status: 0, receiver: '60198765432', msgid: 'cust20013050311050614002' },
-	],
-};
-
-/** One failed receiver inside an otherwise accepted batch. */
-export const smsPartiallyFailed = {
 	messages: [
 		{ status: 0, receiver: '60123456789', msgid: 'cust20013050311050614001' },
 		{ status: 28, err_msg: 'Invalid+destination+number' },
 	],
 };
 
+/** Live: an unknown msgid answers status 0 with message_status 5. */
 export const messageStatus = {
 	status: 0,
-	message_status: 1,
-	msgid: 'cust20013050311050614001',
-	credit_deducted: '1',
+	message_status: 5,
+	msgid: 'nonexistent123',
+	credit_deducted: 0.0,
 };
 
-export const balance = { status: 0, value: 100.0 };
+/** Live: the trial account's balance. */
+export const balance = { status: 0, value: 20.0 };
 
+/** Live: prices come back as numbers although the reference says strings. */
 export const pricing = {
 	status: 0,
 	destinations: [
@@ -34,40 +29,27 @@ export const pricing = {
 			operator: 'Default',
 			mcc: 'Default',
 			mnc: 'Default',
-			price: '0.0100',
-			currency: 'MYR',
-		},
-		{
-			country: 'Malaysia',
-			operator: 'Celcom',
-			mcc: '502',
-			mnc: '13,19',
-			price: '0.0020',
-			currency: 'MYR',
+			price: 1.0,
+			currency: 'CREDIT',
 		},
 	],
 };
 
-export const verifyRequested = {
-	reqid: 'moceanq5672285037',
+export const verifySent = {
+	reqid: 'CPASS_restapi_C0000002737000000.0002',
 	status: 0,
 	to: '60123456789',
-	is_number_reachable: 'unknown',
+	is_number_reachable: 'reachable',
 };
 
-export const verifyResent = {
-	reqid: 'moceanq5672285037',
+export const verifyChecked = {
+	reqid: 'CPASS_restapi_C0000002737000000.0002',
 	status: 0,
-	to: '60123456789',
-	is_number_reachable: 'unknown',
-	resend_number: '2',
 };
 
-export const verifyChecked = { reqid: 'moceanq5672285037', status: 0 };
-
-export const lookupSync = {
+export const lookup = {
 	status: 0,
-	msgid: 'test0412143224000022.0002',
+	msgid: 'CPASS_restapi_C0000002737000000.0002',
 	to: '60123456789',
 	current_carrier: {
 		country: 'MY',
@@ -86,29 +68,33 @@ export const lookupSync = {
 	ported: 'ported',
 };
 
-/** The async answer when mocean_nl_url is given: the result arrives later. */
-export const lookupAsync = {
+export const callStarted = {
+	calls: [
+		{
+			status: 0,
+			receiver: '60123456789',
+			session_uuid: 'xxx-xxx-xxx-xxx',
+			call_uuid: 'xxx-xxx-xxx-xxx',
+		},
+	],
+};
+
+export const hungUp = {
 	status: 0,
-	msgid: 'test0412143224000022.0002',
-	to: '60123456789',
+	session_uuid: 'xxx-xxx-xxx-xxx',
+	call_uuid: 'xxx-xxx-xxx-xxx',
 };
 
-/** A 2xx body whose status says the request failed (JSON form). */
-export const authFailedBody = { status: 1, err_msg: 'Authorization failed' };
-
-export const verifyAuthFailedBody = {
-	status: 2,
-	err_msg: 'Invalid credentials were provided',
+export const whatsappSent = {
+	status: 0,
+	message_id: 'd2eaf858-1b0e-11ee-a06f-891a3eb010d6',
 };
 
-export const throttledBody = { status: 32, err_msg: 'Message throttled.' };
-
-export const maintenanceBody = {
-	status: 40,
-	err_msg: 'System down for maintenance',
+export const template = {
+	id: '5653923468721315',
+	name: 'mocean_template_example',
+	language: 'en_US',
+	category: 'UTILITY',
+	status: 'APPROVED',
+	components: [{ type: 'BODY', text: 'Your order {{1}} is ready' }],
 };
-
-/** The 401 body the API answers with when JSON was not honoured. */
-export const authFailedXml = `<?xml version="1.0"?>
-<result>
-<status>1</status><err_msg>Authorization+failed</err_msg></result>`;

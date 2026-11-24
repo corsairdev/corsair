@@ -1,38 +1,18 @@
-import type { MoceanEndpoints } from '..';
 import { moceanForm } from '../client';
-import { call } from './call';
-import {
-	MoceanEndpointInputSchemas as Inputs,
-	MoceanEndpointOutputSchemas as Outputs,
-} from './types';
+import { endpoint, FORM } from './call';
 
-/**
- * Looks a number's carrier and porting status up. A metered read: it costs
- * prepaid credit, not a message. Without mocean_nl_url the full result comes
- * back synchronously; with it, Mocean posts the result to that URL and this
- * call only returns the msgid.
- */
-export const request: MoceanEndpoints['lookupRequest'] = async (ctx, input) =>
-	call(
-		ctx,
-		{
-			event: 'lookup.request',
-			input: Inputs.lookupRequest,
-			output: Outputs.lookupRequest,
-		},
-		input,
-		({ mocean_to, mocean_nl_url }) => ({
-			family: 'sms',
-			replayable: true,
-			method: 'POST',
-			path: '/nl',
-			body: moceanForm({
-				'mocean-to': mocean_to,
-				'mocean-nl-url': mocean_nl_url,
-			}),
-			mediaType: 'application/x-www-form-urlencoded',
+/** Looks up a number's carrier and porting status; uses prepaid credit. */
+export const request = endpoint('lookupRequest', {
+	event: 'lookup.request',
+	request: ({ mocean_to, mocean_nl_url }) => ({
+		family: 'query',
+		method: 'POST',
+		path: '/rest/2/nl',
+		body: moceanForm({
+			'mocean-to': mocean_to,
+			'mocean-nl-url': mocean_nl_url,
 		}),
-		{
-			log: (_, result) => ({ msgid: result.msgid ?? undefined }),
-		},
-	);
+		mediaType: FORM,
+	}),
+	log: (_, result) => ({ ported: result.ported ?? undefined }),
+});

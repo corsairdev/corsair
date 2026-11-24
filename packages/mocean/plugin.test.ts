@@ -19,15 +19,26 @@ function buildKey(
 	return plugin.keyBuilder?.(ctx as never, 'endpoint');
 }
 
-const operations = [
+const destructive = [
+	'sms.send',
+	'templates.delete',
+	'verify.request',
+	'verify.requestTelegram',
+	'verify.resend',
+	'voice.dial',
+	'voice.hangup',
+	'whatsapp.send',
+];
+
+const reads = [
 	'account.balance',
 	'account.pricing',
 	'lookup.request',
-	'sms.send',
 	'sms.status',
-	'verify.check',
-	'verify.request',
-	'verify.resend',
+	'templates.get',
+	'templates.list',
+	'voice.recording',
+	'whatsapp.downloadMedia',
 ];
 
 describe('mocean plugin definition', () => {
@@ -42,38 +53,48 @@ describe('mocean plugin definition', () => {
 		).toBe(false);
 	});
 
-	it('exposes exactly the eight catalog operations across four groups', () => {
-		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
-			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
-		);
-		expect(nested.sort()).toEqual(operations);
-		expect(Object.keys(plugin.endpoints ?? {})).toHaveLength(4);
+	const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
+		([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
+	);
+
+	it('exposes 20 operations across 7 groups', () => {
+		expect(nested).toHaveLength(20);
+		expect(Object.keys(plugin.endpoints ?? {}).sort()).toEqual([
+			'account',
+			'lookup',
+			'sms',
+			'templates',
+			'verify',
+			'voice',
+			'whatsapp',
+		]);
 	});
 
 	it('gives every endpoint a description and the right risk level', () => {
 		const meta = plugin.endpointMeta ?? {};
-		expect(Object.keys(meta).sort()).toEqual(operations);
+		expect(Object.keys(meta).sort()).toEqual([...nested].sort());
 		for (const entry of Object.values(meta)) {
 			expect(entry.description?.length).toBeGreaterThan(10);
 		}
-		expect(
-			Object.fromEntries(
-				Object.entries(meta).map(([name, entry]) => [name, entry.riskLevel]),
-			),
-		).toEqual({
-			'sms.send': 'destructive',
-			'sms.status': 'read',
-			'account.balance': 'read',
-			'account.pricing': 'read',
-			'verify.request': 'destructive',
-			'verify.resend': 'destructive',
-			'verify.check': 'write',
-			'lookup.request': 'read',
-		});
+		const byLevel = (level: string) =>
+			Object.entries(meta)
+				.filter(([, entry]) => entry.riskLevel === level)
+				.map(([name]) => name)
+				.sort();
+		expect(byLevel('destructive')).toEqual(destructive);
+		expect(byLevel('read')).toEqual(reads);
+		expect(byLevel('write')).toEqual([
+			'sms.reportConversion',
+			'templates.create',
+			'templates.edit',
+			'verify.check',
+		]);
 	});
 
 	it('has input and output schemas for every endpoint', () => {
-		expect(Object.keys(moceanEndpointSchemas).sort()).toEqual(operations);
+		expect(Object.keys(moceanEndpointSchemas).sort()).toEqual(
+			[...nested].sort(),
+		);
 		for (const schemas of Object.values(moceanEndpointSchemas)) {
 			expect(typeof schemas.input.safeParse).toBe('function');
 			expect(typeof schemas.output.safeParse).toBe('function');

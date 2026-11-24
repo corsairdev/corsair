@@ -1,55 +1,29 @@
-import type { MoceanEndpoints } from '..';
-import { call } from './call';
-import {
-	MoceanEndpointInputSchemas as Inputs,
-	MoceanEndpointOutputSchemas as Outputs,
-} from './types';
+import { endpoint } from './call';
 
-/** Reads the account's remaining credit. */
-export const balance: MoceanEndpoints['accountBalance'] = async (ctx, input) =>
-	call(
-		ctx,
-		{
-			event: 'account.balance',
-			input: Inputs.accountBalance,
-			output: Outputs.accountBalance,
-		},
-		input,
-		() => ({
-			family: 'query',
-			replayable: true,
-			method: 'GET',
-			path: '/account/balance',
-			query: { 'mocean-resp-format': 'json' },
-		}),
-		{
-			log: (_, result) => ({ value: result.value }),
-		},
-	);
+/** Reads the account's credit balance. */
+export const balance = endpoint('accountBalance', {
+	event: 'account.balance',
+	request: () => ({
+		family: 'query',
+		method: 'GET',
+		path: '/rest/2/account/balance',
+		query: { 'mocean-resp-format': 'json' },
+	}),
+});
 
-/** Lists the account's per-destination pricing. */
-export const pricing: MoceanEndpoints['accountPricing'] = async (ctx, input) =>
-	call(
-		ctx,
-		{
-			event: 'account.pricing',
-			input: Inputs.accountPricing,
-			output: Outputs.accountPricing,
+/** Lists per-destination prices for SMS, number lookup or verify. */
+export const pricing = endpoint('accountPricing', {
+	event: 'account.pricing',
+	request: ({ mocean_mcc, mocean_mnc, mocean_type }) => ({
+		family: 'query',
+		method: 'GET',
+		path: '/rest/2/account/pricing',
+		query: {
+			'mocean-mcc': mocean_mcc,
+			'mocean-mnc': mocean_mnc,
+			'mocean-type': mocean_type,
+			'mocean-resp-format': 'json',
 		},
-		input,
-		({ mocean_mcc, mocean_mnc, mocean_type }) => ({
-			family: 'query',
-			replayable: true,
-			method: 'GET',
-			path: '/account/pricing',
-			query: {
-				'mocean-mcc': mocean_mcc,
-				'mocean-mnc': mocean_mnc,
-				'mocean-type': mocean_type,
-				'mocean-resp-format': 'json',
-			},
-		}),
-		{
-			log: (_, result) => ({ destinations: result.destinations.length }),
-		},
-	);
+	}),
+	log: (_, result) => ({ destinations: result.destinations.length }),
+});
