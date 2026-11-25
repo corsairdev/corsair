@@ -432,6 +432,7 @@ export const BaseProviders = [
 	'livesession',
 	'logodev',
 	'loyverse',
+	'lusha',
 	'magichour',
 	'mailboxlayer',
 	'mailcheck',
@@ -1221,6 +1222,7 @@ export const ProviderDisplayNames = {
 	logodev: 'Logo.dev',
 	loyverse: 'Loyverse',
 	magichour: 'Magic Hour',
+	lusha: 'Lusha',
 	mailboxlayer: 'MailboxLayer',
 	mailcheck: 'Mailcheck',
 	mailchimp: 'Mailchimp',
@@ -2016,6 +2018,7 @@ export type AllProviders =
 	| 'logodev'
 	| 'loyverse'
 	| 'magichour'
+	| 'lusha'
 	| 'mailboxlayer'
 	| 'mailcheck'
 	| 'mailchimp'
