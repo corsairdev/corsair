@@ -1,4 +1,4 @@
-import type { LinklyContext, LinklyEndpoints } from '..';
+import type { LinklyEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {
@@ -41,8 +41,8 @@ export const subscribe: LinklyEndpoints['webhooksSubscribe'] = (ctx, input) =>
 			method: 'POST',
 			path: `/api/v1/workspace/${segment(workspace_id)}/webhooks`,
 			body: { url },
-			// A repeat subscription is not documented as a no-op, so an unknown
-			// outcome is not replayed.
+			// A repeat subscription is not documented as a no-op, so an
+			// inconclusive outcome is not replayed.
 			replaySafe: false,
 		}),
 		{
@@ -75,6 +75,9 @@ export const unsubscribe: LinklyEndpoints['webhooksUnsubscribe'] = (
 			replaySafe: true,
 		}),
 		{
-			log: ({ workspace_id }) => ({ workspaceId: workspace_id, unsubscribed: 1 }),
+			log: ({ workspace_id }) => ({
+				workspaceId: workspace_id,
+				unsubscribed: 1,
+			}),
 		},
 	);

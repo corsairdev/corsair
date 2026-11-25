@@ -1,4 +1,4 @@
-import type { LinklyContext, LinklyEndpoints } from '..';
+import type { LinklyEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {
@@ -18,26 +18,24 @@ export const getTimeSeries: LinklyEndpoints['clicksGetTimeSeries'] = (
 			output: Outputs.clicksGetTimeSeries,
 		},
 		input,
-		(
-			{
-				workspace_id,
-				link_id,
-				link_ids,
-				start,
-				end,
-				country,
-				browser,
-				platform,
-				referer,
-				isp,
-				bots,
-				unique,
-				format,
-				pivot,
-				timezone,
-				frequency,
-			},
-		) => ({
+		({
+			workspace_id,
+			link_id,
+			link_ids,
+			start,
+			end,
+			country,
+			browser,
+			platform,
+			referer,
+			isp,
+			bots,
+			unique,
+			format,
+			pivot,
+			timezone,
+			frequency,
+		}) => ({
 			method: 'GET',
 			path: `/api/v1/workspace/${segment(workspace_id)}/clicks`,
 			query: {

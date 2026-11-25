@@ -1,4 +1,4 @@
-import type { LinklyContext, LinklyEndpoints } from '..';
+import type { LinklyEndpoints } from '..';
 import { call } from './call';
 import {
 	LinklyEndpointInputSchemas as Inputs,

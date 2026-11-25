@@ -30,7 +30,10 @@ const RuleInputSchema = z.object({
 	url: z.string().min(1).describe('Destination for clicks the rule matches.'),
 	matches: z.string().optional().describe('Pattern the click must match.'),
 	what: z.string().optional().describe('What the rule matches, e.g. country.'),
-	percentage: z.string().optional().describe('Split percentage for rotator rules.'),
+	percentage: z
+		.string()
+		.optional()
+		.describe('Split percentage for rotator rules.'),
 	rule_url: z.string().optional(),
 });
 
@@ -38,7 +41,9 @@ export const LinklyLinkSchema = z
 	.object({
 		id: z.number().int(),
 		url: z.string(),
-		full_url: z.string().describe('The public short URL, e.g. https://l.linklyhq.com/l/2TQ.'),
+		full_url: z
+			.string()
+			.describe('The public short URL, e.g. https://l.linklyhq.com/l/2TQ.'),
 		workspace_id: z.number().int(),
 		name: z.string().nullish(),
 		note: z.string().nullish(),
@@ -78,8 +83,8 @@ export const LinklyLinkSchema = z
 		webhooks: z.array(z.string()).nullish(),
 		notify_user_ids: z.array(z.number().int()).nullish(),
 		notify_slack: z.boolean().nullish(),
-		// unknown: QR style settings, passed through as Linkly sends them.
-		qr_styles: z.record(z.string(), z.unknown()).nullish(),
+		// QR style settings; the spec types it a bare object.
+		qr_styles: z.record(z.string(), z.unknown()).nullish(), // unknown: free-form object, passed through as Linkly sends it
 		metadata: z.record(z.string(), z.string()).nullish(),
 		created_by_user_id: z.number().int().nullish(),
 	})
@@ -249,8 +254,14 @@ const linkWriteFields = {
 	forward_params: z.boolean().optional(),
 	hide_referrer: z.boolean().optional(),
 	block_bots: z.boolean().optional(),
-	head_tags: z.string().optional().describe('HTML injected into <head> on the cloaking page.'),
-	body_tags: z.string().optional().describe('HTML injected into <body> on the cloaking page.'),
+	head_tags: z
+		.string()
+		.optional()
+		.describe('HTML injected into <head> on the cloaking page.'),
+	body_tags: z
+		.string()
+		.optional()
+		.describe('HTML injected into <body> on the cloaking page.'),
 	linkify_words: z.string().optional(),
 	replacements: z.string().optional(),
 	utm_source: z.string().optional(),
@@ -275,7 +286,9 @@ const linkWriteFields = {
 		.string()
 		.startsWith('http')
 		.optional()
-		.describe('Where visitors go once the link has expired. Must start with http.'),
+		.describe(
+			'Where visitors go once the link has expired. Must start with http.',
+		),
 	expiry_clicks: z
 		.number()
 		.int()
@@ -286,18 +299,13 @@ const linkWriteFields = {
 		.array(RuleInputSchema)
 		.optional()
 		.describe(
-			"Click routing rules, e.g. send matches to another URL or split traffic. Only sent as JSON.",
+			'Click routing rules, e.g. send matches to another URL or split traffic. Only sent as JSON.',
 		),
 };
 
 const LinksCreateInputSchema = z.object({
 	workspace_id: WorkspaceIdSchema,
-	url: z
-		.string()
-		.min(1)
-		.describe(
-			'The destination URL. Required to create.',
-		),
+	url: z.string().min(1).describe('The destination URL. Required to create.'),
 	...linkWriteFields,
 });
 
@@ -439,7 +447,9 @@ const ClicksGetTimeSeriesInputSchema = z.object({
 	timezone: z
 		.string()
 		.optional()
-		.describe('IANA name for bucket boundaries, e.g. America/New_York. Data is stored in UTC.'),
+		.describe(
+			'IANA name for bucket boundaries, e.g. America/New_York. Data is stored in UTC.',
+		),
 	frequency: z
 		.enum(['day', 'hour'])
 		.optional()
@@ -453,7 +463,9 @@ export type ClicksGetTimeSeriesInput = z.infer<
 const ClickBucketSchema = z.object({
 	t: z
 		.string()
-		.describe('Bucket start: YYYY-MM-DD for frequency=day, YYYY-MM-DDTHH:MM:SS for hour.'),
+		.describe(
+			'Bucket start: YYYY-MM-DD for frequency=day, YYYY-MM-DDTHH:MM:SS for hour.',
+		),
 	y: z.number().int().nullish().describe('Clicks in the bucket.'),
 });
 
@@ -485,9 +497,11 @@ const ClicksPivotResponseSchema = z
 		data: z.array(
 			z.object({
 				date: z.string(),
-				clicks: z.record(z.string(), z.number().nullish()).describe(
-					"Clicks keyed by link ID, e.g. { '30': 45 }. Absent means zero for that row.",
-				),
+				clicks: z
+					.record(z.string(), z.number().nullish())
+					.describe(
+						"Clicks keyed by link ID, e.g. { '30': 45 }. Absent means zero for that row.",
+					),
 			}),
 		),
 	})
@@ -536,7 +550,10 @@ const ClicksGetCountersInputSchema = z.object({
 	start: DateQuerySchema,
 	end: DateQuerySchema,
 	country: CountryQuerySchema.optional(),
-	bots: z.boolean().optional().describe('Include bot clicks. Defaults to false.'),
+	bots: z
+		.boolean()
+		.optional()
+		.describe('Include bot clicks. Defaults to false.'),
 	unique: z.boolean().optional().describe('Count unique visitors only.'),
 	format: z
 		.enum(['json', 'csv', 'tsv'])
@@ -565,8 +582,12 @@ const ClicksGetCountersResponseSchema = z.object({
 	total: z
 		.number()
 		.int()
-		.describe('Clicks across all groups, including any beyond the top 10,000 returned.'),
-	values: z.array(CounterValueSchema).describe('Ordered by count, highest first.'),
+		.describe(
+			'Clicks across all groups, including any beyond the top 10,000 returned.',
+		),
+	values: z
+		.array(CounterValueSchema)
+		.describe('Ordered by count, highest first.'),
 });
 
 export type ClicksGetCountersResponse = z.infer<
@@ -623,11 +644,15 @@ const WebhooksSubscribeInputSchema = z.object({
 		),
 });
 
-export type WebhooksSubscribeInput = z.infer<typeof WebhooksSubscribeInputSchema>;
+export type WebhooksSubscribeInput = z.infer<
+	typeof WebhooksSubscribeInputSchema
+>;
 
 const WebhooksSubscribeResponseSchema = z
 	.object({
-		id: z.string().describe('The webhook URL. Pass it to webhooks.unsubscribe.'),
+		id: z
+			.string()
+			.describe('The webhook URL. Pass it to webhooks.unsubscribe.'),
 	})
 	.loose();
 

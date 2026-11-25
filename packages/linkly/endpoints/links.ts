@@ -1,4 +1,4 @@
-import type { LinklyContext, LinklyEndpoints } from '..';
+import type { LinklyEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {
@@ -15,7 +15,15 @@ export const list: LinklyEndpoints['linksList'] = (ctx, input) =>
 			output: Outputs.linksList,
 		},
 		input,
-		({ workspace_id, search, page, page_size, sort_by, sort_dir, deleted }) => ({
+		({
+			workspace_id,
+			search,
+			page,
+			page_size,
+			sort_by,
+			sort_dir,
+			deleted,
+		}) => ({
 			method: 'GET',
 			path: `/api/v1/workspace/${segment(workspace_id)}/list_links`,
 			query: { search, page, page_size, sort_by, sort_dir, deleted },
@@ -64,7 +72,7 @@ export const create: LinklyEndpoints['linksCreate'] = (ctx, input) =>
 			path: '/api/v1/link',
 			body: parsed,
 			// POST /link without an id creates a new link; a repeat after an
-			// unknown outcome would make a second one.
+			// inconclusive outcome would make a second one.
 			replaySafe: false,
 		}),
 		{
@@ -114,7 +122,10 @@ export const remove: LinklyEndpoints['linksDelete'] = (ctx, input) =>
 			replaySafe: true,
 		}),
 		{
-			log: ({ workspace_id, id }) => ({ workspaceId: workspace_id, linkId: id }),
+			log: ({ workspace_id, id }) => ({
+				workspaceId: workspace_id,
+				linkId: id,
+			}),
 		},
 	);
 

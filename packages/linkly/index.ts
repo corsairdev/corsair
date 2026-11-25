@@ -273,7 +273,7 @@ export function linkly<const T extends LinklyPluginOptions>(
 	} satisfies InternalLinklyPlugin;
 }
 
-export { LinklyAPIError, LINKLY_API_BASE } from './client';
+export { LINKLY_API_BASE, LinklyAPIError } from './client';
 
 export type {
 	ClicksGetCountersInput,

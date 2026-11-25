@@ -42,7 +42,7 @@ export const errorHandlers = {
 			statusOf(error) === 403 || codeOf(error) === 'forbidden',
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 404 not_found: an unknown link, workspace or webhook URL. A key that
+	// 404 not_found: a missing link, workspace or webhook URL. A key that
 	// cannot see a workspace also answers 404, indistinguishable from missing.
 	NOT_FOUND_ERROR: {
 		match: (error: Error) =>
@@ -54,7 +54,11 @@ export const errorHandlers = {
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			const status = statusOf(error);
-			return error.name === 'ZodError' || status === 400 || codeOf(error) === 'bad_request';
+			return (
+				error.name === 'ZodError' ||
+				status === 400 ||
+				codeOf(error) === 'bad_request'
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
@@ -66,7 +70,8 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			error instanceof LinklyAPIError &&
 			error.replaySafe &&
-			(error.status === undefined || (error.status >= 500 && error.status < 600)),
+			(error.status === undefined ||
+				(error.status >= 500 && error.status < 600)),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

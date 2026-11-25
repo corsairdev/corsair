@@ -1,4 +1,4 @@
-import type { LinklyContext, LinklyEndpoints } from '..';
+import type { LinklyEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {

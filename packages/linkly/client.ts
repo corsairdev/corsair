@@ -1,22 +1,29 @@
 import { asRecord } from 'corsair/core';
-import type { ApiRequestOptions, OpenAPIConfig, RateLimitConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export const LINKLY_API_BASE = 'https://api.linklyhq.com';
 
-export type LinklyQuery = Record<
-	string,
-	string | number | boolean | undefined
->;
+// A JSON object of any shape; Linkly adds fields freely and error bodies differ per route.
+export type JsonRecord = Record<string, unknown>; // unknown: provider bodies are open objects
+
+// The response body type is each endpoint's output schema's job, not the client's.
+export type ApiBody = unknown; // unknown: callers parse with their output schema
+
+export type LinklyQuery = Record<string, string | number | boolean | undefined>;
 
 export type LinklyRequest = {
 	method: 'GET' | 'POST' | 'DELETE';
 	path: string;
 	query?: LinklyQuery;
 	// unknown: the endpoint's input schema has already validated the body.
-	body?: unknown;
+	body?: ApiBody;
 	/**
-	 * Safe to send again after an unknown outcome (a 5xx or a dropped
+	 * Safe to send again after an inconclusive outcome (a 5xx or a dropped
 	 * connection). GET reads are always safe. Writes are only where the
 	 * provider makes a repeat a no-op or an upsert: POST /link with `id`
 	 * updates in place, re-deleting a trashed link answers 200 again, and
@@ -45,18 +52,18 @@ export class LinklyAPIError extends Error {
 	readonly retryAfter?: number;
 	/** The HTTP method of the failed request. */
 	readonly method?: string;
-	/** True when the request can be sent again after this unknown outcome. */
+	/** True when the request can be sent again after an inconclusive outcome. */
 	readonly replaySafe: boolean;
 	// unknown: an error body is one of Linkly's envelopes, a field-keyed
 	// validation object, or plain text a proxy sent.
-	readonly body?: unknown;
+	readonly body?: ApiBody;
 
 	constructor(
 		message: string,
 		options: {
 			status?: number;
 			// unknown: same open error body as the field above.
-			body?: unknown;
+			body?: ApiBody;
 			code?: string;
 			retryAfter?: number;
 			method?: string;
@@ -84,9 +91,9 @@ export class LinklyAPIError extends Error {
 	}
 }
 
-// unknown: the record is an untyped error body; read one field at a time.
+// The record is an untyped error body; read one field at a time.
 function readString(
-	record: Record<string, unknown> | null | undefined,
+	record: JsonRecord | null | undefined,
 	key: string,
 ): string | undefined {
 	const value = record?.[key];
@@ -104,10 +111,13 @@ function readString(
 export function describeLinklyError(
 	status: number | undefined,
 	// unknown: see LinklyAPIError.body.
-	body: unknown,
+	body: ApiBody,
 	fallback: string,
 ): string {
-	if (typeof body === 'string' && body.length > 0) {
+	// A string body is Linkly's documented plain-text error (some 401s), but
+	// an HTML page means the route never answered as an API route, so it is
+	// noise rather than a message.
+	if (typeof body === 'string' && body.length > 0 && !body.startsWith('<')) {
 		return label(status, body);
 	}
 	const record = asRecord(body);
@@ -123,7 +133,7 @@ function label(status: number | undefined, text: string): string {
 
 /** Joins `{ slug: ['is invalid'] }` into `slug: is invalid`. */
 function readFieldErrors(
-	record: Record<string, unknown> | null | undefined,
+	record: JsonRecord | null | undefined,
 ): string | undefined {
 	if (!record || readString(record, 'error')) return undefined;
 	const parts: string[] = [];
@@ -143,12 +153,12 @@ export function segment(value: string | number): string {
 	return encodeURIComponent(String(value));
 }
 
-// unknown: callers parse the body with the endpoint's zod output schema. It
-// is undefined when Linkly answers without a body.
+// The returned body is parsed by the endpoint's zod output schema; it is
+// undefined when Linkly answers without a body.
 export async function makeLinklyRequest(
 	apiKey: string,
 	{ method, path, query, body, replaySafe }: LinklyRequest,
-): Promise<unknown> {
+): Promise<ApiBody> {
 	const config: OpenAPIConfig = {
 		BASE: LINKLY_API_BASE,
 		VERSION: '1.0.0',
@@ -166,7 +176,7 @@ export async function makeLinklyRequest(
 	};
 
 	try {
-		return await request<unknown>(config, requestOptions, {
+		return await request<ApiBody>(config, requestOptions, {
 			rateLimitConfig: LINKLY_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
