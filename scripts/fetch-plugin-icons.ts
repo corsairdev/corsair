@@ -157,6 +157,12 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	// Google's current Admin console mark (the domain lookup gave the generic G).
 	googleadmin:
 		'https://www.gstatic.com/images/branding/product/2x/admin_2020q4_96dp.png',
+	// The domain lookup gave the eye with a ".COM" caption (mocoapp.com's
+	// apple-touch icon); MOCO's own 192px eye mark has no caption.
+	moco: 'https://www.mocoapp.com/assets/moco_eye_192px-70c0735d10957991ce7df9a26ba9aca752d504d497ea3ee78e0a2558b6d4ad81.png',
+	// moceanapi.com has no root favicon (twenty-icons and Google both miss);
+	// the site's own 128px favicon.
+	mocean: 'https://moceanapi.com/images/favicon.png',
 	// interzoid.com serves no favicon (twenty-icons and Google both miss);
 	// its GitHub organisation logo is square.
 	interzoid: 'https://github.com/interzoid.png?size=256',

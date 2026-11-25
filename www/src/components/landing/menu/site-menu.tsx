@@ -1,9 +1,24 @@
 'use client';
 
-import { BookOpen, DiscordLogo, GithubLogo } from '@phosphor-icons/react';
+import type { Icon } from '@phosphor-icons/react';
+import {
+	ArrowUpRight,
+	Article,
+	BookOpen,
+	CaretDown,
+	Code,
+	DiscordLogo,
+	GithubLogo,
+	PlugsConnected,
+	Robot,
+	Scales,
+	SquaresFour,
+} from '@phosphor-icons/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCallback, useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { NavigationMenu } from 'radix-ui';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
 	CLAIM_HREF,
 	DISCORD_URL,
@@ -13,13 +28,151 @@ import {
 } from '@/lib/site-links';
 import { PlusCorner } from '../icons';
 
+// Corsair is the company; each product sits under Products, the way Vercel
+// lists v0 and its other products. Lug's page is /mcp-gateway (/lug redirects
+// there); Hub, for developers, is /developers.
+type Product = { href: string; name: string; line: string; icon: Icon };
+
+const PRODUCTS: readonly Product[] = [
+	{
+		href: '/mcp-gateway',
+		name: 'Lug',
+		line: 'MCP gateway: one URL for every app and agent',
+		icon: PlugsConnected,
+	},
+	{
+		href: '/developers',
+		name: 'Hub',
+		line: 'For developers: the open-source SDK, managed auth and the console',
+		icon: Code,
+	},
+];
+
+type ExploreLink = {
+	href: string;
+	label: string;
+	icon: Icon;
+	external?: boolean;
+};
+
+/** Pages the bar itself doesn't link (Skills, Pricing and Docs are already there), so nothing shows twice. */
+const EXPLORE_LINKS: readonly ExploreLink[] = [
+	{ href: '/integrations', label: 'Integrations', icon: SquaresFour },
+	{ href: '/connect', label: 'Connect an agent', icon: Robot },
+	{ href: '/compare', label: 'Compare', icon: Scales },
+	{ href: '/blog', label: 'Blog', icon: Article },
+];
+
+/** Beside Products on the desktop bar; Docs (external) follows them. */
 const NAV_LINKS = [
-	{ href: '/mcp-gateway', label: 'MCP gateway' },
-	{ href: '/integrations', label: 'Integrations' },
 	{ href: '/skills', label: 'Skills' },
 	{ href: '/pricing', label: 'Pricing' },
-	{ href: '/developers', label: 'Developers' },
 ] as const;
+
+const NAV_ITEM_CLASS =
+	'whitespace-nowrap px-3 py-2 text-sm font-medium text-[#1c1c1c]/80 no-underline transition-colors duration-200 hover:text-[#1c1c1c] font-[family-name:var(--landing-font-sans)]';
+
+const MOBILE_LINK_CLASS =
+	'flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/60 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-white font-[family-name:var(--landing-font-sans)]';
+
+function ProductMark({
+	product,
+	size = 36,
+}: {
+	product: Product;
+	size?: number;
+}) {
+	const Mark = product.icon;
+	const lug = product.name === 'Lug';
+	return (
+		<span
+			aria-hidden="true"
+			className={`grid shrink-0 place-items-center rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_1px_3px_rgba(0,0,0,0.12)] ${
+				lug ? 'bg-[#4a38f5] text-white' : 'bg-[#1c1c1c] text-white'
+			}`}
+			style={{ width: size, height: size }}
+		>
+			<Mark size={Math.round(size * 0.5)} weight="bold" />
+		</span>
+	);
+}
+
+/** The Products panel: products on the left, the rest of the site on the right. */
+function ProductsPanel() {
+	return (
+		<div className="site-menu-panel-card grid grid-cols-[1.4fr_1fr] gap-1 rounded-2xl border border-[#1c1c1c]/[0.08] bg-[#f7f7f7]/95 p-2 font-[family-name:var(--landing-font-sans)] shadow-[0_16px_48px_rgba(0,0,0,0.12),0_4px_12px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-xl">
+			<div className="flex flex-col gap-0.5 p-1">
+				<p className="px-3 pb-1 pt-2 font-[family-name:var(--landing-font-mono)] text-[11px] font-semibold uppercase tracking-wider text-[#1c1c1c66]">
+					Products
+				</p>
+				{PRODUCTS.map((product) => (
+					<NavigationMenu.Link key={product.href} asChild>
+						<Link
+							href={product.href}
+							className="site-menu-panel-link flex items-start gap-3 rounded-xl p-3 no-underline outline-none transition-colors duration-150 hover:bg-white focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-[#4a38f5]/40"
+						>
+							<ProductMark product={product} />
+							<span className="flex min-w-0 flex-col gap-0.5">
+								<span className="text-sm font-semibold text-[#1c1c1c]">
+									{product.name}
+								</span>
+								<span className="text-[13px] leading-snug text-[#1c1c1c99]">
+									{product.line}
+								</span>
+							</span>
+						</Link>
+					</NavigationMenu.Link>
+				))}
+			</div>
+			<div className="flex flex-col gap-0.5 border-l border-[#1c1c1c]/[0.07] p-1 pl-2">
+				<p className="px-3 pb-1 pt-2 font-[family-name:var(--landing-font-mono)] text-[11px] font-semibold uppercase tracking-wider text-[#1c1c1c66]">
+					Explore
+				</p>
+				{EXPLORE_LINKS.map((link) => {
+					const LinkIcon = link.icon;
+					const className =
+						'site-menu-panel-link flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-[#1c1c1c]/80 no-underline outline-none transition-colors duration-150 hover:bg-white hover:text-[#1c1c1c] focus-visible:bg-white focus-visible:ring-2 focus-visible:ring-[#4a38f5]/40';
+					const inner = (
+						<>
+							<LinkIcon
+								size={16}
+								weight="duotone"
+								className="text-[#1c1c1c]/50"
+								aria-hidden
+							/>
+							{link.label}
+							{link.external ? (
+								<ArrowUpRight
+									size={12}
+									className="ml-auto text-[#1c1c1c]/40"
+									aria-hidden
+								/>
+							) : null}
+						</>
+					);
+					return (
+						<NavigationMenu.Link key={link.href} asChild>
+							{link.external ? (
+								<a
+									href={link.href}
+									target="_blank"
+									rel="noopener noreferrer"
+									className={className}
+								>
+									{inner}
+								</a>
+							) : (
+								<Link href={link.href} className={className}>
+									{inner}
+								</Link>
+							)}
+						</NavigationMenu.Link>
+					);
+				})}
+			</div>
+		</div>
+	);
+}
 
 function MenuIcon() {
 	return (
@@ -65,6 +218,17 @@ function CloseIcon() {
 export function SiteMenu() {
 	const [hasScrolled, setHasScrolled] = useState(false);
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+	// The open desktop panel ('' when none). Controlled so a mouse click on the
+	// trigger after a hover has opened it keeps it open instead of closing it.
+	const [openMenu, setOpenMenu] = useState('');
+	const lastPointer = useRef('');
+	const pathname = usePathname();
+
+	// A new page closes both menus, however it was reached.
+	useEffect(() => {
+		setOpenMenu('');
+		setIsMobileMenuOpen(false);
+	}, [pathname]);
 
 	const handleScroll = useCallback(() => {
 		const scrolled = window.scrollY > 8;
@@ -98,7 +262,10 @@ export function SiteMenu() {
 					<PlusCorner />
 				</span>
 
-				<nav
+				<NavigationMenu.Root
+					value={openMenu}
+					onValueChange={setOpenMenu}
+					delayDuration={80}
 					className="relative flex w-full min-w-0 items-center gap-2 sm:gap-4 px-3 py-2 sm:px-4 sm:py-2.5 md:px-6"
 					aria-label="Primary navigation"
 				>
@@ -120,25 +287,61 @@ export function SiteMenu() {
 						</span>
 					</Link>
 
-					{/* Desktop center links */}
-					<div className="absolute left-1/2 hidden -translate-x-1/2 xl:flex items-center gap-0.5">
-						{NAV_LINKS.map((link) => (
-							<Link
-								key={link.href}
-								href={link.href}
-								className="whitespace-nowrap px-3 py-2 text-sm font-medium text-[#1c1c1c]/80 no-underline transition-colors duration-200 hover:text-[#1c1c1c] font-[family-name:var(--landing-font-sans)]"
-							>
-								{link.label}
-							</Link>
-						))}
-						<a
-							href={DOCS_URL}
-							target="_blank"
-							rel="noopener noreferrer"
-							className="whitespace-nowrap px-3 py-2 text-sm font-medium text-[#1c1c1c]/80 no-underline transition-colors duration-200 hover:text-[#1c1c1c] font-[family-name:var(--landing-font-sans)]"
-						>
-							Docs
-						</a>
+					{/* Desktop center: Products, then the pages people look for most */}
+					<div className="absolute left-1/2 hidden -translate-x-1/2 xl:flex items-center">
+						<NavigationMenu.List className="m-0 flex list-none items-center gap-0.5 p-0">
+							<NavigationMenu.Item value="products">
+								<NavigationMenu.Trigger
+									className={`site-menu-trigger inline-flex items-center gap-1 rounded-md bg-transparent outline-none focus-visible:ring-2 focus-visible:ring-[#4a38f5]/40 data-[state=open]:text-[#1c1c1c] [&[data-state=open]>svg]:rotate-180 ${NAV_ITEM_CLASS}`}
+									onPointerDown={(event) => {
+										lastPointer.current = event.pointerType;
+									}}
+									onClick={(event) => {
+										// Hover already opened it: a mouse click shouldn't close it again.
+										// Keyboard (detail 0) and touch still toggle.
+										if (
+											openMenu === 'products' &&
+											lastPointer.current === 'mouse' &&
+											event.detail > 0
+										) {
+											event.preventDefault();
+										}
+									}}
+								>
+									Products
+									<CaretDown
+										size={12}
+										weight="bold"
+										aria-hidden
+										className="text-[#1c1c1c]/50 transition-transform duration-200 motion-reduce:transition-none"
+									/>
+								</NavigationMenu.Trigger>
+								<NavigationMenu.Content className="site-menu-panel absolute left-1/2 top-full -ml-[310px] w-[620px] pt-5">
+									<ProductsPanel />
+								</NavigationMenu.Content>
+							</NavigationMenu.Item>
+							{NAV_LINKS.map((link) => (
+								<NavigationMenu.Item key={link.href}>
+									<NavigationMenu.Link asChild active={pathname === link.href}>
+										<Link href={link.href} className={NAV_ITEM_CLASS}>
+											{link.label}
+										</Link>
+									</NavigationMenu.Link>
+								</NavigationMenu.Item>
+							))}
+							<NavigationMenu.Item>
+								<NavigationMenu.Link asChild>
+									<a
+										href={DOCS_URL}
+										target="_blank"
+										rel="noopener noreferrer"
+										className={NAV_ITEM_CLASS}
+									>
+										Docs
+									</a>
+								</NavigationMenu.Link>
+							</NavigationMenu.Item>
+						</NavigationMenu.List>
 					</div>
 
 					{/* Desktop right actions */}
@@ -194,18 +397,41 @@ export function SiteMenu() {
 							{isMobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
 						</button>
 					</div>
-				</nav>
+				</NavigationMenu.Root>
 			</div>
 
 			{/* Mobile Dropdown Menu */}
 			{isMobileMenuOpen && (
 				<div className="xl:hidden w-full border-t border-[#1c1c1c]/[0.07] bg-[#f4f4f4]/95 backdrop-blur-xl px-4 py-4 shadow-lg rounded-b-lg">
-					<div className="grid grid-cols-2 gap-2">
-						{NAV_LINKS.map((link) => (
+					<p className="mb-2 px-1 font-[family-name:var(--landing-font-mono)] text-[11px] font-semibold uppercase tracking-wider text-[#1c1c1c66]">
+						Products
+					</p>
+					<div className="grid gap-2 sm:grid-cols-2">
+						{PRODUCTS.map((product) => (
+							<Link
+								key={product.href}
+								href={product.href}
+								className="flex items-start gap-3 rounded-lg border border-[#1c1c1c]/10 bg-white/60 px-4 py-3 no-underline transition-colors hover:bg-white font-[family-name:var(--landing-font-sans)]"
+								onClick={() => setIsMobileMenuOpen(false)}
+							>
+								<ProductMark product={product} size={32} />
+								<span className="flex min-w-0 flex-col gap-0.5">
+									<span className="text-sm font-semibold text-[#1c1c1c]">
+										{product.name}
+									</span>
+									<span className="text-[13px] leading-snug text-[#1c1c1c99]">
+										{product.line}
+									</span>
+								</span>
+							</Link>
+						))}
+					</div>
+					<div className="mt-4 grid grid-cols-2 gap-2">
+						{[...NAV_LINKS, ...EXPLORE_LINKS].map((link) => (
 							<Link
 								key={link.href}
 								href={link.href}
-								className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/60 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-white font-[family-name:var(--landing-font-sans)]"
+								className={MOBILE_LINK_CLASS}
 								onClick={() => setIsMobileMenuOpen(false)}
 							>
 								{link.label}
@@ -215,7 +441,7 @@ export function SiteMenu() {
 							href={DOCS_URL}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/60 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-white font-[family-name:var(--landing-font-sans)]"
+							className={MOBILE_LINK_CLASS}
 							onClick={() => setIsMobileMenuOpen(false)}
 						>
 							Docs
@@ -223,7 +449,7 @@ export function SiteMenu() {
 						</a>
 						<a
 							href={hubMeSignInUrl()}
-							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/60 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-white font-[family-name:var(--landing-font-sans)]"
+							className={MOBILE_LINK_CLASS}
 							onClick={() => setIsMobileMenuOpen(false)}
 						>
 							Sign in
@@ -232,7 +458,7 @@ export function SiteMenu() {
 							href={GITHUB_URL}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/60 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-white font-[family-name:var(--landing-font-sans)]"
+							className={MOBILE_LINK_CLASS}
 							onClick={() => setIsMobileMenuOpen(false)}
 						>
 							GitHub
@@ -246,7 +472,7 @@ export function SiteMenu() {
 							href={DISCORD_URL}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/60 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-white font-[family-name:var(--landing-font-sans)]"
+							className={MOBILE_LINK_CLASS}
 							onClick={() => setIsMobileMenuOpen(false)}
 						>
 							Discord

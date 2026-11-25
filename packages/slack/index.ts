@@ -567,7 +567,7 @@ const slackEndpointMeta = {
 	'messages.search': {
 		riskLevel: 'read',
 		description:
-			'Search messages with Slack search syntax, e.g. "deploy in:#channel from:@user". Needs a user token.',
+			'Search messages with structured fields (keywords, in, from, with, after, before, on, during, hasPin, hasReaction, isThread, ...) or a raw query in Slack search syntax; no modifier syntax needed. Needs a user token.',
 	},
 	'messages.post': {
 		riskLevel: 'write',

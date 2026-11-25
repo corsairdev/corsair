@@ -1419,7 +1419,7 @@ await corsair.linear.api.issues.get({});
 
 `issues.list`
 
-Lists issues, newest created first, across the workspace or one team; filter by assignee, state, labels or project.
+Lists issues, newest created first, across the workspace or one team. Search with structured fields (keywords, assignee, creator, stateName, stateType, teamKey, label, priority, createdAfter, updatedAfter, ...) or a raw filter; no GraphQL needed.
 
 **Risk:** `read`
 
@@ -1434,7 +1434,19 @@ await corsair.linear.api.issues.list({});
 | `teamId` | `string` | No | Team UUID from teams.list, not the short key like "ENG". |
 | `first` | `number` | No | — |
 | `after` | `string` | No | pageInfo.endCursor from the previous page. |
-| `filter` | `object` | No | Server-side filter on assignee (isMe or id), state (type or name), labels.some (name), project (id), plus createdAt, updatedAt, title, description, team, and/or. |
+| `filter` | `object` | No | Raw IssueFilter, ANDed with the structured fields above. Server-side filter on assignee (isMe or id), state (type or name), labels.some (name), project (id), plus createdAt, updatedAt, title, description, team, and/or. |
+| `keywords` | `string[]` | No | Words that must each appear in the title or the description (case-insensitive) |
+| `assignee` | `string` | No | "me" for the connected user, an email address, or a name (matches names containing it, case-insensitive) |
+| `creator` | `string` | No | Who created the issue: "me", an email address, or a name |
+| `stateName` | `string` | No | Workflow state name such as "In Progress" (case-insensitive) |
+| `stateType` | `triage \| backlog \| unstarted \| started \| completed \| canceled` | No | Workflow state type |
+| `teamKey` | `string` | No | Short team key such as "ENG" (not the UUID, which is teamId) |
+| `label` | `string[]` | No | Label names (case-insensitive); the issue must have all of them |
+| `priority` | `0 \| 1 \| 2 \| 3 \| 4` | No | 0 none, 1 urgent, 2 high, 3 medium, 4 low |
+| `createdAfter` | `string` | No | Created at or after this ISO 8601 date or time, e.g. 2025-01-31 |
+| `createdBefore` | `string` | No | Created at or before this ISO 8601 date or time |
+| `updatedAfter` | `string` | No | Updated at or after this ISO 8601 date or time |
+| `updatedBefore` | `string` | No | Updated at or before this ISO 8601 date or time |
 | `orderBy` | `createdAt \| updatedAt` | No | — |
 
 <AccordionGroup>
@@ -1461,6 +1473,7 @@ await corsair.linear.api.issues.list({});
   title?: {
     eq?: string,
     neq?: string,
+    eqIgnoreCase?: string,
     in?: string[],
     nin?: string[],
     contains?: string,
@@ -1473,6 +1486,7 @@ await corsair.linear.api.issues.list({});
   description?: {
     eq?: string,
     neq?: string,
+    eqIgnoreCase?: string,
     in?: string[],
     nin?: string[],
     contains?: string,
@@ -1488,6 +1502,19 @@ await corsair.linear.api.issues.list({});
       neq?: string,
       in?: string[],
       nin?: string[]
+    },
+    key?: {
+      eq?: string,
+      neq?: string,
+      eqIgnoreCase?: string,
+      in?: string[],
+      nin?: string[],
+      contains?: string,
+      containsIgnoreCase?: string,
+      notContains?: string,
+      notContainsIgnoreCase?: string,
+      startsWith?: string,
+      endsWith?: string
     }
   },
   assignee?: {
@@ -1504,6 +1531,7 @@ await corsair.linear.api.issues.list({});
     name?: {
       eq?: string,
       neq?: string,
+      eqIgnoreCase?: string,
       in?: string[],
       nin?: string[],
       contains?: string,
@@ -1516,6 +1544,7 @@ await corsair.linear.api.issues.list({});
     displayName?: {
       eq?: string,
       neq?: string,
+      eqIgnoreCase?: string,
       in?: string[],
       nin?: string[],
       contains?: string,
@@ -1528,6 +1557,7 @@ await corsair.linear.api.issues.list({});
     email?: {
       eq?: string,
       neq?: string,
+      eqIgnoreCase?: string,
       in?: string[],
       nin?: string[],
       contains?: string,
@@ -1539,6 +1569,66 @@ await corsair.linear.api.issues.list({});
     },
     null?: boolean
   },
+  creator?: {
+    id?: {
+      eq?: string,
+      neq?: string,
+      in?: string[],
+      nin?: string[]
+    },
+    isMe?: {
+      eq?: boolean,
+      neq?: boolean
+    },
+    name?: {
+      eq?: string,
+      neq?: string,
+      eqIgnoreCase?: string,
+      in?: string[],
+      nin?: string[],
+      contains?: string,
+      containsIgnoreCase?: string,
+      notContains?: string,
+      notContainsIgnoreCase?: string,
+      startsWith?: string,
+      endsWith?: string
+    },
+    displayName?: {
+      eq?: string,
+      neq?: string,
+      eqIgnoreCase?: string,
+      in?: string[],
+      nin?: string[],
+      contains?: string,
+      containsIgnoreCase?: string,
+      notContains?: string,
+      notContainsIgnoreCase?: string,
+      startsWith?: string,
+      endsWith?: string
+    },
+    email?: {
+      eq?: string,
+      neq?: string,
+      eqIgnoreCase?: string,
+      in?: string[],
+      nin?: string[],
+      contains?: string,
+      containsIgnoreCase?: string,
+      notContains?: string,
+      notContainsIgnoreCase?: string,
+      startsWith?: string,
+      endsWith?: string
+    },
+    null?: boolean
+  },
+  priority?: {
+    eq?: number,
+    neq?: number,
+    lt?: number,
+    lte?: number,
+    gt?: number,
+    gte?: number
+  },
   state?: {
     id?: {
       eq?: string,
@@ -1549,6 +1639,7 @@ await corsair.linear.api.issues.list({});
     name?: {
       eq?: string,
       neq?: string,
+      eqIgnoreCase?: string,
       in?: string[],
       nin?: string[],
       contains?: string,
@@ -1561,6 +1652,7 @@ await corsair.linear.api.issues.list({});
     type?: {
       eq?: string,
       neq?: string,
+      eqIgnoreCase?: string,
       in?: string[],
       nin?: string[],
       contains?: string,
@@ -1582,6 +1674,7 @@ await corsair.linear.api.issues.list({});
       name?: {
         eq?: string,
         neq?: string,
+        eqIgnoreCase?: string,
         in?: string[],
         nin?: string[],
         contains?: string,
@@ -1602,6 +1695,7 @@ await corsair.linear.api.issues.list({});
       name?: {
         eq?: string,
         neq?: string,
+        eqIgnoreCase?: string,
         in?: string[],
         nin?: string[],
         contains?: string,
@@ -1623,6 +1717,7 @@ await corsair.linear.api.issues.list({});
     name?: {
       eq?: string,
       neq?: string,
+      eqIgnoreCase?: string,
       in?: string[],
       nin?: string[],
       contains?: string,

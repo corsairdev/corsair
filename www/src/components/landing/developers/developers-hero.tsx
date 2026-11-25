@@ -19,6 +19,9 @@ export function DevelopersHero({ starCount }: { starCount?: number | null }) {
 			<HeroBackground />
 			<div className="relative z-[1] mx-auto grid max-w-[1440px] grid-cols-1 justify-items-center gap-6 px-4 pt-12 text-center sm:gap-8 sm:px-6 sm:pt-20 md:px-10 md:pt-24">
 				<div className="flex w-full flex-col items-center gap-4 sm:max-w-[360px] sm:gap-5 md:max-w-[720px]">
+					<span className="animate-hero-fade-up inline-flex items-center gap-2 rounded-full border border-[#1c1c1c]/10 bg-white/60 px-3 py-1 font-[family-name:var(--landing-font-mono)] text-[11px] font-semibold uppercase tracking-wider text-[#1c1c1c]/60">
+						Hub · for developers
+					</span>
 					{/* High-Fidelity Typography Headline */}
 					<h1 className="animate-hero-fade-up delay-[100ms] w-full text-[clamp(2.25rem,6vw,4.5rem)] font-light leading-[1.05] tracking-tight text-[#1c1c1c]">
 						<span className="font-[family-name:var(--landing-font-serif)] italic pr-1.5">

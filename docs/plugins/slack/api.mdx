@@ -2183,7 +2183,7 @@ await corsair.slack.api.messages.post({});
 
 `messages.search`
 
-Search messages with Slack search syntax, e.g. "deploy in:#channel from:@user". Needs a user token.
+Search messages with structured fields (keywords, in, from, with, after, before, on, during, hasPin, hasReaction, isThread, ...) or a raw query in Slack search syntax; no modifier syntax needed. Needs a user token.
 
 **Risk:** `read`
 
@@ -2195,7 +2195,23 @@ await corsair.slack.api.messages.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `string` | Yes | Slack search string; modifiers such as in:#channel, from:@user and has: narrow it. |
+| `query` | `string` | No | Slack search string; modifiers such as in:#channel, from:@user and has: narrow it. Optional: prefer the structured fields below; when both are given, a message must match both. |
+| `keywords` | `string[]` | No | Words that must all appear in the message |
+| `exactPhrase` | `string` | No | Exact phrase that must appear in the message |
+| `exclude` | `string[]` | No | Words that must not appear in the message |
+| `in` | `string` | No | Channel name, e.g. "team-marketing" (the # is added for you) |
+| `notIn` | `string[]` | No | Channel names to leave out of the results |
+| `from` | `string` | No | Sender display name, e.g. "Sara" (the @ is added for you) |
+| `notFrom` | `string[]` | No | Sender display names to leave out of the results |
+| `with` | `string` | No | Display name of a person: threads and DMs with them |
+| `after` | `string` | No | Only messages after this date (YYYY-MM-DD) |
+| `before` | `string` | No | Only messages before this date (YYYY-MM-DD) |
+| `on` | `string` | No | Only messages on this date (YYYY-MM-DD) |
+| `during` | `string` | No | A month or year, e.g. "august" or "2025" |
+| `hasPin` | `boolean` | No | true: only pinned messages |
+| `hasReaction` | `string` | No | Emoji name of a reaction on the message, e.g. "eyes" |
+| `isSaved` | `boolean` | No | true: only messages you saved for later |
+| `isThread` | `boolean` | No | true: only messages that are part of a thread |
 | `sort` | `score \| timestamp` | No | Default score (relevance). Use timestamp to sort by time. |
 | `sort_dir` | `asc \| desc` | No | Default desc. |
 | `highlight` | `boolean` | No | — |
