@@ -1,0 +1,138 @@
+---
+title: "Loomio plugin"
+sidebarTitle: "Overview"
+description: "Group decision making with Loomio - browse groups, threads and discussions, read thread timelines and markdown exports, start discussions and comments, and create polls."
+---
+
+Use **Loomio** through Corsair: one client, typed API calls.
+
+Create an API key by signing in at loomio.com and opening the API access page at https://www.loomio.com/profile/api_access. The page also lists your groups with their numeric ids, which every group-scoped call needs.
+
+- **The key is you.** The key acts as its full user account, with that account's permissions and visibility. Loomio recommends a dedicated bot account for integrations. The key rotates when the account's password changes.
+- **Header auth only.** Requests authenticate with `Authorization: Bearer <key>`. Query-string keys are rejected. This plugin always talks to `https://www.loomio.com/api/user0` (never the legacy `/api/b2` prefix, which renames poll fields), so self-hosted installs are not reachable with it.
+- **Bad keys answer 403.** A missing or invalid key gets 403 `{"error":"You are not authorized to access this page."}`, and so does a permission denial, even on calls that name a record. The plugin reports both readings on the error.
+- **Compound envelopes.** Every response carries the primary records in an array named after the resource (`groups`, `discussions`, `threads`, `items`, `polls`, `comments`), related records in sibling arrays (users, topics, groups, poll_options, outcomes), and `meta: {root, total}`. Thread titles are not on the thread record: join the related `discussions` (or `polls`) array on `topicable_id`.
+- **Paging.** List calls take `limit` (default 50, capped at 500 for groups and thread items) and `offset`, and return `meta.total` plus a derived `next_offset` that disappears on the last page.
+- **Polls.** A poll without `closing_at` stays a draft with voting disabled. Proposal polls default to the agree, disagree, abstain, and block options when `options` is omitted. Options ride in the related `poll_options` array and the current outcome in `outcomes`, matched by `current_outcome_id`.
+- **No webhooks.** Loomio supports outgoing webhooks (chatbots) for group admins, but this plugin does not receive webhook deliveries and does not manage chatbot registrations.
+- **Writes are not idempotent.** A retry of a failed `discussions.create` or `comments.create` can post twice, so the plugin never replays writes on server errors.
+
+**What you get:**
+
+- 12 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/loomio better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/loomio better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/loomio better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/loomio better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { loomio } from '@corsair-dev/loomio';
+
+export const corsair = createCorsair({
+	plugins: [
+		loomio(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Loomio API key before the first call: `pnpm corsair setup --plugin=loomio --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+loomio()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'loomio',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the latest discussions in a group**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.loomio.api.discussions.list({ group_id: 12, limit: 20 });
+```
+
+
+**Start a discussion**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.loomio.api.discussions.create({ group_id: 12, title: 'Spring palette', description: 'Pick three colours for the rebrand.' });
+```
+
+
+See the full list on the [API](/plugins/loomio/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/loomio/api">
+    Every `loomio.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

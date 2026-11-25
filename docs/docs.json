@@ -3579,6 +3579,14 @@
                 ]
               },
               {
+                "group": "Loomio",
+                "pages": [
+                  "plugins/loomio/overview",
+                  "plugins/loomio/api",
+                  "plugins/loomio/database"
+                ]
+              },
+              {
                 "group": "Loyverse",
                 "pages": [
                   "plugins/loyverse/overview",

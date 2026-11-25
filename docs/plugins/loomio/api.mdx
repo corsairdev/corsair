@@ -1,0 +1,913 @@
+---
+title: "Loomio API reference"
+sidebarTitle: "API"
+description: "API reference for the Loomio plugin in Corsair: every `loomio.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Comments
+
+### create
+
+`comments.create`
+
+Post a comment on a discussion, in markdown or html
+
+**Risk:** `write`
+
+```ts
+await corsair.loomio.api.comments.create({ discussion_id: 88, body: 'Sounds good to me.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `discussion_id` | `number` | Yes | The discussion (thread) to comment on. |
+| `body` | `string` | Yes | The comment text. Required. |
+| `body_format` | `md \| html` | No | Format of `body`; `md` (default) or `html`. |
+
+discussion_id is the thread id (the discussion's topic_id). body_format takes md (default) or html.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="comment full type">
+
+```ts
+{
+  id: number,
+  body?: string | null,
+  body_format?: string | null,
+  mentioned_usernames?: string[] | null,
+  topic_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  parent_id?: number | null,
+  parent_type?: string | null,
+  content_locale?: string | null,
+  versions_count?: number | null,
+  author_id?: number | null,
+  discarded_at?: string | null,
+  discarded_by?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Discussions
+
+### create
+
+`discussions.create`
+
+Start a discussion in a group, optionally notifying members or inviting email recipients
+
+**Risk:** `write`
+
+```ts
+await corsair.loomio.api.discussions.create({ group_id: 12, title: 'Spring palette', description: 'Pick three colours for the rebrand.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | The group to start the discussion in. |
+| `title` | `string` | Yes | The discussion title. Required. |
+| `description` | `string` | No | The discussion body. |
+| `description_format` | `md \| html` | No | Format of `description`; `md` (default) or `html`. |
+| `recipient_audience` | `string` | No | Notify an audience in the group about the new discussion. |
+| `recipient_user_ids` | `number[]` | No | Notify these user ids about the new discussion. |
+| `recipient_emails` | `string[]` | No | Invite these email addresses to the group with the discussion. |
+| `recipient_message` | `string` | No | Message sent to the notified recipients. |
+
+A permission denial on create answers the same 403 body a bad key does, so a failure here can mean the account may not post in that group.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `discussion` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="discussion full type">
+
+```ts
+{
+  id: number,
+  key?: string | null,
+  group_id?: number | null,
+  topic_id?: number | null,
+  title?: string | null,
+  content_locale?: string | null,
+  description?: string | null,
+  description_format?: string | null,
+  discussion_template_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  context_changed_at?: string | null,
+  versions_count?: number | null,
+  mentioned_usernames?: string[] | null,
+  discarded_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`discussions.get`
+
+Read one discussion by numeric id or url key, with its author and thread record
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.discussions.get({ id: 'dX2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | The discussion, by numeric id or url key. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `discussion` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="discussion full type">
+
+```ts
+{
+  id: number,
+  key?: string | null,
+  group_id?: number | null,
+  topic_id?: number | null,
+  title?: string | null,
+  content_locale?: string | null,
+  description?: string | null,
+  description_format?: string | null,
+  discussion_template_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  context_changed_at?: string | null,
+  versions_count?: number | null,
+  mentioned_usernames?: string[] | null,
+  discarded_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`discussions.list`
+
+List discussions in one group, filtered by open or closed status, ordered by latest activity
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.discussions.list({ group_id: 12, limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | The group whose discussions to list. Required. |
+| `status` | `open \| closed \| all` | No | Filter: `open` (default), `closed`, or `all`. |
+| `limit` | `number` | No | Records per page; Loomio defaults to 50 when omitted. |
+| `offset` | `number` | No | Records to skip for this page; Loomio defaults to 0. |
+
+group_id is required; Loomio answers a missing one with 404 &#123;"error":404&#125;. status takes open (default), closed, or all.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `discussions` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="discussions full type">
+
+```ts
+{
+  id: number,
+  key?: string | null,
+  group_id?: number | null,
+  topic_id?: number | null,
+  title?: string | null,
+  content_locale?: string | null,
+  description?: string | null,
+  description_format?: string | null,
+  discussion_template_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  context_changed_at?: string | null,
+  versions_count?: number | null,
+  mentioned_usernames?: string[] | null,
+  discarded_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  root?: string | null,
+  total?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### get
+
+`groups.get`
+
+Read one group by numeric id, url key, or handle, with its settings and member counts
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.groups.get({ id: 'design' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | The group, by numeric id, url key, or handle. |
+
+The id accepts a numeric id, a url key, or a handle.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="group full type">
+
+```ts
+{
+  id: number,
+  key?: string | null,
+  handle?: string | null,
+  name?: string | null,
+  full_name?: string | null,
+  description?: string | null,
+  description_format?: string | null,
+  logo_url?: string | null,
+  created_at?: string | null,
+  creator_id?: number | null,
+  enabled?: boolean | null,
+  parent_id?: number | null,
+  group_privacy?: string | null,
+  membership_granted_upon?: string | null,
+  listed_in_explore?: boolean | null,
+  memberships_count?: number | null,
+  accepted_memberships_count?: number | null,
+  pending_memberships_count?: number | null,
+  admin_memberships_count?: number | null,
+  discussions_count?: number | null,
+  polls_count?: number | null,
+  subgroups_count?: number | null,
+  token?: string | null,
+  members_can_add_members?: boolean | null,
+  members_can_start_discussions?: boolean | null,
+  members_can_edit_discussions?: boolean | null,
+  members_can_edit_comments?: boolean | null,
+  members_can_delete_comments?: boolean | null,
+  members_can_create_subgroups?: boolean | null,
+  members_can_raise_motions?: boolean | null,
+  discarded_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`groups.list`
+
+List the groups the API key user belongs to, including subgroups, oldest first
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.groups.list({ limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page, capped at 500; Loomio defaults to 50 when omitted. |
+| `offset` | `number` | No | Records to skip for this page; Loomio defaults to 0. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groups` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+| `next_offset` | `number` | No | Offset of the next page, derived from `meta.total`. |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  id: number,
+  key?: string | null,
+  handle?: string | null,
+  name?: string | null,
+  full_name?: string | null,
+  description?: string | null,
+  description_format?: string | null,
+  logo_url?: string | null,
+  created_at?: string | null,
+  creator_id?: number | null,
+  enabled?: boolean | null,
+  parent_id?: number | null,
+  group_privacy?: string | null,
+  membership_granted_upon?: string | null,
+  listed_in_explore?: boolean | null,
+  memberships_count?: number | null,
+  accepted_memberships_count?: number | null,
+  pending_memberships_count?: number | null,
+  admin_memberships_count?: number | null,
+  discussions_count?: number | null,
+  polls_count?: number | null,
+  subgroups_count?: number | null,
+  token?: string | null,
+  members_can_add_members?: boolean | null,
+  members_can_start_discussions?: boolean | null,
+  members_can_edit_discussions?: boolean | null,
+  members_can_edit_comments?: boolean | null,
+  members_can_delete_comments?: boolean | null,
+  members_can_create_subgroups?: boolean | null,
+  members_can_raise_motions?: boolean | null,
+  discarded_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  root?: string | null,
+  total?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Polls
+
+### create
+
+`polls.create`
+
+Create a poll in a group or on a discussion: proposal, poll, count, score, ranked_choice, meeting, or dot_vote
+
+**Risk:** `write`
+
+```ts
+await corsair.loomio.api.polls.create({ discussion_id: 88, title: 'Which blue?', poll_type: 'poll', options: ['Sky blue', 'Navy'], closing_at: '2026-04-01T00:00:00.000Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | No | Start the poll in this group. Provide this or `discussion_id`. |
+| `discussion_id` | `number` | No | Start the poll on this discussion. Provide this or `group_id`. |
+| `title` | `string` | Yes | The poll question. Required. |
+| `poll_type` | `proposal \| poll \| count \| score \| ranked_choice \| meeting \| dot_vote` | Yes | Voting style: proposal, poll, count, score, ranked_choice, meeting, or dot_vote. |
+| `options` | `string[]` | No | Option texts. For a proposal, Loomio uses agree, disagree, abstain, and block when omitted. |
+| `poll_options_attributes` | `object[]` | No | Options with per-option settings; an alternative to `options`. |
+| `closing_at` | `string \| null` | No | ISO 8601 close time. Omit or send null to keep the poll a draft with voting disabled. |
+| `specified_voters_only` | `boolean` | No | Restrict voting to invited voters. |
+| `hide_results` | `off \| until_vote \| until_closed` | No | Hide results until a vote is cast or until the poll closes. |
+| `anonymous` | `boolean` | No | Hide voter identities. Options freeze after the first ballot. |
+| `shuffle_options` | `boolean` | No | Show options in random order. |
+| `stance_reason_required` | `disabled \| optional \| required \| required_for_disagree_or_block \| required_for_block` | No | When a reason statement is required with a vote. |
+| `reason_prompt` | `string` | No | Question shown when a reason is requested. |
+| `notify_on_closing_soon` | `nobody \| author \| voters_uncast \| voters` | No | Who is reminded before the poll closes. |
+| `recipient_audience` | `string` | No | Notify an audience in the group about the poll. |
+| `recipient_user_ids` | `number[]` | No | Notify these user ids about the poll. |
+| `recipient_emails` | `string[]` | No | Invite these email addresses to vote. |
+| `recipient_message` | `string` | No | Message sent to the notified recipients. |
+| `notify_recipients` | `boolean` | No | Send the invitation notification. |
+
+Provide group_id or discussion_id. Omit closing_at (or send null) to keep the poll a draft with voting disabled. For proposals, options default to agree, disagree, abstain, and block.
+
+<AccordionGroup>
+<Accordion title="poll_options_attributes full type">
+
+```ts
+{
+  name: string,
+  meaning?: string,
+  prompt?: string,
+  icon?: string,
+  priority?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `poll` | `object` | Yes | Poll record. The chosen options arrive in the related `poll_options` array and the current outcome in `outcomes`, matched by `current_outcome_id`. |
+
+<AccordionGroup>
+<Accordion title="poll full type">
+
+```ts
+{
+  id: number,
+  key?: string | null,
+  title?: string | null,
+  details?: string | null,
+  details_format?: string | null,
+  poll_type?: string | null,
+  poll_option_names?: string[] | null,
+  closing_at?: string | null,
+  closed_at?: string | null,
+  opening_at?: string | null,
+  opened_at?: string | null,
+  created_at?: string | null,
+  anonymous?: boolean | null,
+  hide_results?: string | null,
+  shuffle_options?: boolean | null,
+  specified_voters_only?: boolean | null,
+  stance_reason_required?: string | null,
+  reason_prompt?: string | null,
+  notify_on_closing_soon?: string | null,
+  notify_on_open?: boolean | null,
+  topic_id?: number | null,
+  group_id?: number | null,
+  author_id?: number | null,
+  discarded_at?: string | null,
+  discarded_by?: number | null,
+  vote_count_cast?: number | null,
+  vote_count_eligible?: number | null,
+  vote_count_uncast?: number | null,
+  participation_pct?: number | null,
+  total_score?: number | null,
+  quorum_pct?: number | null,
+  quorum_reached?: boolean | null,
+  quorum_threshold?: number | null,
+  quorum_shortfall?: number | null,
+  min_score?: number | null,
+  max_score?: number | null,
+  minimum_stance_choices?: number | null,
+  maximum_stance_choices?: number | null,
+  dots_per_person?: number | null,
+  meeting_duration?: number | null,
+  stv_seats?: number | null,
+  stv_method?: string | null,
+  stv_quota?: number | null,
+  chart_type?: string | null,
+  show_none_of_the_above?: boolean | null,
+  weighted_voting?: boolean | null,
+  current_outcome_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`polls.get`
+
+Read one poll by numeric id or url key, with vote counts and its options
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.polls.get({ id: 63 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | The poll, by numeric id or url key. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `poll` | `object` | Yes | Poll record. The chosen options arrive in the related `poll_options` array and the current outcome in `outcomes`, matched by `current_outcome_id`. |
+
+<AccordionGroup>
+<Accordion title="poll full type">
+
+```ts
+{
+  id: number,
+  key?: string | null,
+  title?: string | null,
+  details?: string | null,
+  details_format?: string | null,
+  poll_type?: string | null,
+  poll_option_names?: string[] | null,
+  closing_at?: string | null,
+  closed_at?: string | null,
+  opening_at?: string | null,
+  opened_at?: string | null,
+  created_at?: string | null,
+  anonymous?: boolean | null,
+  hide_results?: string | null,
+  shuffle_options?: boolean | null,
+  specified_voters_only?: boolean | null,
+  stance_reason_required?: string | null,
+  reason_prompt?: string | null,
+  notify_on_closing_soon?: string | null,
+  notify_on_open?: boolean | null,
+  topic_id?: number | null,
+  group_id?: number | null,
+  author_id?: number | null,
+  discarded_at?: string | null,
+  discarded_by?: number | null,
+  vote_count_cast?: number | null,
+  vote_count_eligible?: number | null,
+  vote_count_uncast?: number | null,
+  participation_pct?: number | null,
+  total_score?: number | null,
+  quorum_pct?: number | null,
+  quorum_reached?: boolean | null,
+  quorum_threshold?: number | null,
+  quorum_shortfall?: number | null,
+  min_score?: number | null,
+  max_score?: number | null,
+  minimum_stance_choices?: number | null,
+  maximum_stance_choices?: number | null,
+  dots_per_person?: number | null,
+  meeting_duration?: number | null,
+  stv_seats?: number | null,
+  stv_method?: string | null,
+  stv_quota?: number | null,
+  chart_type?: string | null,
+  show_none_of_the_above?: boolean | null,
+  weighted_voting?: boolean | null,
+  current_outcome_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`polls.list`
+
+List polls in one group, filtered by active or closed status, newest first, with current outcomes
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.polls.list({ group_id: 12, status: 'all', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | The group whose polls to list. Required. |
+| `status` | `active \| closed \| all` | No | Filter: `active` (default), `closed`, or `all`. |
+| `limit` | `number` | No | Records per page; Loomio defaults to 50 when omitted. |
+| `offset` | `number` | No | Records to skip for this page; Loomio defaults to 0. |
+
+status takes active (default), closed, or all. Current outcomes ride in the outcomes array; match current_outcome_id on each poll.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `polls` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="polls full type">
+
+```ts
+{
+  id: number,
+  key?: string | null,
+  title?: string | null,
+  details?: string | null,
+  details_format?: string | null,
+  poll_type?: string | null,
+  poll_option_names?: string[] | null,
+  closing_at?: string | null,
+  closed_at?: string | null,
+  opening_at?: string | null,
+  opened_at?: string | null,
+  created_at?: string | null,
+  anonymous?: boolean | null,
+  hide_results?: string | null,
+  shuffle_options?: boolean | null,
+  specified_voters_only?: boolean | null,
+  stance_reason_required?: string | null,
+  reason_prompt?: string | null,
+  notify_on_closing_soon?: string | null,
+  notify_on_open?: boolean | null,
+  topic_id?: number | null,
+  group_id?: number | null,
+  author_id?: number | null,
+  discarded_at?: string | null,
+  discarded_by?: number | null,
+  vote_count_cast?: number | null,
+  vote_count_eligible?: number | null,
+  vote_count_uncast?: number | null,
+  participation_pct?: number | null,
+  total_score?: number | null,
+  quorum_pct?: number | null,
+  quorum_reached?: boolean | null,
+  quorum_threshold?: number | null,
+  quorum_shortfall?: number | null,
+  min_score?: number | null,
+  max_score?: number | null,
+  minimum_stance_choices?: number | null,
+  maximum_stance_choices?: number | null,
+  dots_per_person?: number | null,
+  meeting_duration?: number | null,
+  stv_seats?: number | null,
+  stv_method?: string | null,
+  stv_quota?: number | null,
+  chart_type?: string | null,
+  show_none_of_the_above?: boolean | null,
+  weighted_voting?: boolean | null,
+  current_outcome_id?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  root?: string | null,
+  total?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Threads
+
+### items
+
+`threads.items`
+
+Read one thread timeline in sequence order: comments, polls, votes, and outcomes as one event stream
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.threads.items({ topic_id: 55, limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic_id` | `number` | Yes | The thread id, which is its `topic_id`. |
+| `limit` | `number` | No | Records per page, capped at 500; Loomio defaults to 50 when omitted. |
+| `offset` | `number` | No | Records to skip for this page; Loomio defaults to 0. |
+
+Items come back in ascending sequence order and cap limit at 500. Comments, polls, votes, and outcomes ride in related arrays matched by itemable_id.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  sequence_id?: number | null,
+  position?: number | null,
+  depth?: number | null,
+  child_count?: number | null,
+  kind?: string | null,
+  topic_id?: number | null,
+  created_at?: string | null,
+  itemable_id?: number | null,
+  itemable_type?: string | null,
+  pinned?: boolean | null,
+  pinned_title?: string | null,
+  parent_id?: number | null,
+  actor_id?: number | null,
+  position_key?: string | null,
+  change_note?: string | null,
+  tags?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  root?: string | null,
+  total?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`threads.list`
+
+List the threads the key user can see, ordered by latest activity, across all groups
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.threads.list({ limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page; Loomio defaults to 50 when omitted. |
+| `offset` | `number` | No | Records to skip for this page; Loomio defaults to 0. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threads` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="threads full type">
+
+```ts
+{
+  id: number,
+  group_id?: number | null,
+  items_count?: number | null,
+  replies_count?: number | null,
+  active_polls_count?: number | null,
+  last_activity_at?: string | null,
+  discarded_at?: string | null,
+  locked_at?: string | boolean | null,
+  locker_id?: number | null,
+  pinned_at?: string | boolean | null,
+  topicable_id?: number | null,
+  topicable_type?: string | null,
+  has_anonymous_polls?: boolean | null,
+  tags?: string[] | null,
+  topic_reader_id?: number | null,
+  last_read_at?: string | boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  root?: string | null,
+  total?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markdown
+
+`threads.markdown`
+
+Export one thread as a single markdown document; needs export permission on the thread
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.threads.markdown({ topic_id: 55 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic_id` | `number` | Yes | The thread id, which is its `topic_id`. |
+
+Requires export permission on the thread; the thread's whole visible content comes back as one document under markdown.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `markdown` | `string` | Yes | — |
+
+
+
+---
+
