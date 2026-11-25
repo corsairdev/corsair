@@ -1,14 +1,16 @@
 ---
 title: "X (Twitter) plugin"
 sidebarTitle: "Overview"
-description: "Social media platform for posts, timelines, users, and public conversation data via X API."
+description: "Read and act on X (Twitter) through the full X API v2: publish and search posts, read timelines, mentions, likes, bookmarks and followers, look up and search users, send and read Direct Messages and encrypted Chat, manage Lists, Spaces, Communities, trends, news, Community Notes, live broadcasts and media uploads, and run usage, compliance and webhook routes (259 operations)."
 ---
 
 Use **X (Twitter)** through Corsair: one client, typed API calls, local DB sync.
 
+Connect with OAuth 2.0 (Authorization Code with PKCE) to act as an X user, or with the app's Bearer token (authType api_key) for app-only routes and public reads. X bills every call pay-per-use: a post or a DM costs $0.015 ($0.20 for a post with a URL), each post read $0.005, each user read $0.010 and each DM event read $0.010, so keep max_results low. Following, liking and quote-posting left the self-serve tiers on 2026-04-20 and may answer 403. Access tokens last 2 hours and X rotates the refresh token on every refresh; the plugin stores the new one. Streaming endpoints (filtered, sample and firehose streams) are not included.
+
 **What you get:**
 
-- 2 typed API operations
+- 259 typed API operations
 - 1 synced entity (`tweets`) for fast `.search()` / `.list()`
 
 ## Setup
@@ -76,6 +78,21 @@ twitter()
 More: [OAuth 2.0](/concepts/oauth)
 
 </Tab>
+<Tab title="API Key">
+
+Store the X (Twitter) API key before the first call: `pnpm corsair setup --plugin=twitter --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+Provider walkthrough: [Get Credentials](/plugins/twitter/get-credentials).
+
+```ts
+twitter({
+	authType: 'api_key',
+})
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
 </Tabs>
 
 </Step>
@@ -97,16 +114,23 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**Read**
-
-_No read-style endpoint inferred; pick any operation from the [API](/plugins/twitter/api) reference._
-
-
-**`tweets.create`**
+**Search the last 7 days of posts**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.twitter.api.tweets.create({});
+await tenant.twitter.api.posts.search.recent({
+	query: 'from:XDevelopers -is:retweet',
+	max_results: 10,
+	post.fields: ['created_at', 'public_metrics'],
+});
+```
+
+
+**Publish a post as the connected user**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.twitter.api.posts.create({ text: 'Shipping the new release today.' });
 ```
 
 

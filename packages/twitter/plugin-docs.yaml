@@ -1,2 +1,535 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from X's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
 displayName: X (Twitter)
-description: Social media platform for posts, timelines, users, and public conversation data via X API.
+domain: x.com
+description: "Read and act on X (Twitter) through the full X API v2: publish and search posts, read timelines, mentions, likes, bookmarks and followers, look up and search users, send and read Direct Messages and encrypted Chat, manage Lists, Spaces, Communities, trends, news, Community Notes, live broadcasts and media uploads, and run usage, compliance and webhook routes (259 operations)."
+overviewNote: "Connect with OAuth 2.0 (Authorization Code with PKCE) to act as an X user, or with the app's Bearer token (authType api_key) for app-only routes and public reads. X bills every call pay-per-use: a post or a DM costs $0.015 ($0.20 for a post with a URL), each post read $0.005, each user read $0.010 and each DM event read $0.010, so keep max_results low. Following, liking and quote-posting left the self-serve tiers on 2026-04-20 and may answer 403. Access tokens last 2 hours and X rotates the refresh token on every refresh; the plugin stores the new one. Streaming endpoints (filtered, sample and firehose streams) are not included."
+examples:
+  read:
+    path: posts.search.recent
+    title: Search the last 7 days of posts
+    args: {"query": "from:XDevelopers -is:retweet", "max_results": 10, "post.fields": ["created_at", "public_metrics"]}
+  write:
+    path: posts.create
+    title: Publish a post as the connected user
+    args: {"text": "Shipping the new release today."}
+apiExamples:
+  account.ensure:
+    args: {}
+  account.get:
+    args: {}
+  accountActivity.subscriptions.count:
+    args: {}
+  accountActivity.subscriptions.create:
+    args: {"webhook_id": "1460323737035677698"}
+  accountActivity.subscriptions.delete:
+    args: {"webhook_id": "1460323737035677698", "user_id": "2244994945"}
+  accountActivity.subscriptions.list:
+    args: {"webhook_id": "1460323737035677698"}
+  accountActivity.subscriptions.validate:
+    args: {"webhook_id": "1460323737035677698"}
+  activity.subscriptions.create:
+    args: {"event_type": "profile.update.bio", "filter": {}}
+  activity.subscriptions.delete:
+    args: {"subscription_id": "1460323737035677698"}
+  activity.subscriptions.deleteMany:
+    args: {"ids": ["1460323737035677698"]}
+  activity.subscriptions.list:
+    args: {}
+  activity.subscriptions.update:
+    args: {"subscription_id": "1460323737035677698"}
+  articles.createDraft:
+    args: {"title": "Launch week", "content_state": {"blocks": [{"text": "Shipping the new release today.", "type": "unstyled"}], "entities": [{"key": "1460323737035677698", "value": {"type": "post", "mutability": "immutable", "data": {}}}]}}
+  articles.publish:
+    args: {"article_id": "1460323737035677698"}
+  bots.create:
+    args: {"handle": "example"}
+  bots.delete:
+    args: {"id": "1460323737035677698"}
+  bots.list:
+    args: {}
+  bots.token.revoke:
+    args: {"id": "1460323737035677698"}
+  bots.token.rotate:
+    args: {"id": "1460323737035677698"}
+  bots.update:
+    args: {"id": "1460323737035677698"}
+  broadcasts.chat.deleteMessage:
+    args: {"id": "1460323737035677698", "message_id": "1460323737035677698"}
+  broadcasts.chat.list:
+    args: {"id": "1460323737035677698"}
+  broadcasts.chat.muteUser:
+    args: {"id": "1460323737035677698", "user_id": "2244994945"}
+  broadcasts.chat.send:
+    args: {"id": "1460323737035677698", "text": "Shipping the new release today."}
+  broadcasts.chat.unmuteUser:
+    args: {"id": "1460323737035677698", "user_id": "2244994945"}
+  broadcasts.chatModerators.add:
+    args: {"user_id": "2244994945"}
+  broadcasts.chatModerators.list:
+    args: {}
+  broadcasts.chatModerators.remove:
+    args: {"user_id": "2244994945"}
+  broadcasts.chatMutes.create:
+    args: {"user_id": "2244994945"}
+  broadcasts.chatMutes.delete:
+    args: {"user_id": "2244994945"}
+  broadcasts.chatMutes.list:
+    args: {}
+  broadcasts.create:
+    args: {"source_id": "1460323737035677698"}
+  broadcasts.delete:
+    args: {"id": "1460323737035677698"}
+  broadcasts.end:
+    args: {"id": "1460323737035677698", "state": "1460323737035677698"}
+  broadcasts.get:
+    args: {"id": "1460323737035677698"}
+  broadcasts.list:
+    args: {}
+  broadcasts.listCategories:
+    args: {}
+  broadcasts.scheduled.create:
+    args: {"source_id": "1460323737035677698", "scheduled_start_ms": "1460323737035677698"}
+  broadcasts.scheduled.delete:
+    args: {"id": "1460323737035677698"}
+  broadcasts.scheduled.get:
+    args: {"id": "1460323737035677698"}
+  broadcasts.scheduled.goLive:
+    args: {"id": "1460323737035677698"}
+  broadcasts.scheduled.list:
+    args: {}
+  broadcasts.scheduled.update:
+    args: {"id": "1460323737035677698", "scheduled_broadcast_id": "1460323737035677698", "scheduled_start_ms": "1460323737035677698", "scheduled_end_ms": "1460323737035677698"}
+  broadcasts.update:
+    args: {"id": "1460323737035677698"}
+  calls.create:
+    args: {}
+  calls.get:
+    args: {"id": "1460323737035677698"}
+  calls.join:
+    args: {"id": "1460323737035677698"}
+  calls.leave:
+    args: {"id": "1460323737035677698"}
+  calls.scheduled.cancel:
+    args: {"id": "1460323737035677698"}
+  calls.scheduled.create:
+    args: {"start_time": "2026-11-01T00:00:00Z"}
+  calls.scheduled.get:
+    args: {"id": "1460323737035677698"}
+  calls.scheduled.list:
+    args: {}
+  calls.scheduled.respond:
+    args: {"id": "1460323737035677698", "response": "accepted"}
+  calls.scheduled.update:
+    args: {"id": "1460323737035677698", "start_time": "2026-11-01T00:00:00Z"}
+  chat.conversations.addKeys:
+    args: {"id": "1460323737035677698", "conversation_key_version": "1460323737035677698", "conversation_participant_keys": [{"user_id": "2244994945", "encrypted_conversation_key": "1460323737035677698", "public_key_version": "1460323737035677698"}]}
+  chat.conversations.archive:
+    args: {"id": "1460323737035677698"}
+  chat.conversations.delete:
+    args: {"id": "1460323737035677698"}
+  chat.conversations.disableMessageTtl:
+    args: {"id": "1460323737035677698"}
+  chat.conversations.enableMessageTtl:
+    args: {"id": "1460323737035677698", "message_ttl_ms": "1460323737035677698"}
+  chat.conversations.get:
+    args: {"id": "1460323737035677698"}
+  chat.conversations.list:
+    args: {}
+  chat.conversations.listEvents:
+    args: {"id": "1460323737035677698"}
+  chat.conversations.listPinnedMessages:
+    args: {"id": "1460323737035677698"}
+  chat.conversations.markRead:
+    args: {"id": "1460323737035677698"}
+  chat.conversations.markUnread:
+    args: {"id": "1460323737035677698"}
+  chat.conversations.mute:
+    args: {"id": "1460323737035677698"}
+  chat.conversations.sendTyping:
+    args: {"id": "1460323737035677698"}
+  chat.conversations.unarchive:
+    args: {"id": "1460323737035677698"}
+  chat.conversations.unmute:
+    args: {"id": "1460323737035677698"}
+  chat.conversations.updateScreenCapture:
+    args: {"id": "1460323737035677698", "blocking": true}
+  chat.groups.adminRequests.approve:
+    args: {"id": "g1460323737035677698", "user_id": "2244994945"}
+  chat.groups.adminRequests.create:
+    args: {"id": "g1460323737035677698"}
+  chat.groups.adminRequests.list:
+    args: {"id": "g1460323737035677698"}
+  chat.groups.adminRequests.reject:
+    args: {"id": "g1460323737035677698", "user_id": "2244994945"}
+  chat.groups.admins.add:
+    args: {"id": "g1460323737035677698", "user_ids": ["2244994945"]}
+  chat.groups.admins.remove:
+    args: {"id": "g1460323737035677698", "user_ids": ["2244994945"]}
+  chat.groups.create:
+    args: {"conversation_id": "1460323737035677698", "conversation_key_version": "1460323737035677698", "conversation_participant_keys": [{"user_id": "2244994945", "encrypted_conversation_key": "1460323737035677698", "public_key_version": "1460323737035677698"}], "group_members": ["1460323737035677698"]}
+  chat.groups.initialize:
+    args: {}
+  chat.groups.inviteLink.disable:
+    args: {"id": "g1460323737035677698"}
+  chat.groups.inviteLink.enable:
+    args: {"id": "g1460323737035677698"}
+  chat.groups.inviteLink.get:
+    args: {"id": "g1460323737035677698", "token": "abcdefghij"}
+  chat.groups.joinRequests.create:
+    args: {"id": "g1460323737035677698", "token": "abcdefghij"}
+  chat.groups.joinRequests.reject:
+    args: {"id": "g1460323737035677698", "user_ids": ["2244994945"]}
+  chat.groups.members.add:
+    args: {"id": "1460323737035677698", "user_ids": ["2244994945"]}
+  chat.groups.members.remove:
+    args: {"id": "1460323737035677698", "user_ids": ["2244994945"]}
+  chat.groups.update:
+    args: {"id": "g1460323737035677698", "modified_fields": ["group_name"], "conversation_key_version": "1460323737035677698"}
+  chat.groups.updateAdminSettings:
+    args: {"id": "g1460323737035677698", "add_member": true}
+  chat.media.appendUpload:
+    args: {"id": "1460323737035677698", "media": {"base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==", "filename": "pixel.png", "contentType": "image/png"}, "segment_index": 1, "conversation_id": "1460323737035677698", "media_hash_key": "1460323737035677698"}
+  chat.media.download:
+    args: {"id": "1460323737035677698", "media_hash_key": "1460323737035677698"}
+  chat.media.finalizeUpload:
+    args: {"id": "1460323737035677698", "conversation_id": "1460323737035677698", "media_hash_key": "1460323737035677698", "num_parts": "1460323737035677698"}
+  chat.media.initializeUpload:
+    args: {"conversation_id": "1460323737035677698", "total_bytes": 1}
+  chat.messageRequests.accept:
+    args: {"id": "1460323737035677698"}
+  chat.messageRequests.get:
+    args: {"id": "1460323737035677698"}
+  chat.messageRequests.list:
+    args: {}
+  chat.messages.delete:
+    args: {"id": "1460323737035677698", "sequence_ids": ["1460323737035677698"], "delete_message_action": "delete_for_all", "action_signatures": [{"message_id": "1460323737035677698", "encoded_message_event_detail": "1460323737035677698", "message_event_signature": {"signature": "1460323737035677698", "public_key_version": "1460323737035677698", "signature_version": "1460323737035677698"}}]}
+  chat.messages.send:
+    args: {"id": "1460323737035677698", "message_id": "1460323737035677698", "encoded_message_create_event": "1460323737035677698"}
+  chat.settings.get:
+    args: {}
+  chat.settings.update:
+    args: {"allow_dms_from": "all"}
+  communities.get:
+    args: {"id": "1460323737035677698"}
+  communities.search:
+    args: {"query": "from:XDevelopers -is:retweet"}
+  communityNotes.create:
+    args: {"test_mode": true, "post_id": "1460323737035677698", "info": {"text": "The photo is from 2019, not this week: https://example.com/source", "classification": "misinformed_or_potentially_misleading", "misleading_tags": ["disputed_claim_as_fact"], "trustworthy_sources": true}}
+  communityNotes.delete:
+    args: {"id": "1460323737035677698"}
+  communityNotes.evaluate:
+    args: {"post_id": "1460323737035677698", "note_text": "1460323737035677698"}
+  communityNotes.searchEligiblePosts:
+    args: {"test_mode": true}
+  communityNotes.searchWritten:
+    args: {"test_mode": true}
+  compliance.jobs.cancel:
+    args: {"id": "1460323737035677698"}
+  compliance.jobs.create:
+    args: {"type": "tweets"}
+  compliance.jobs.downloadResults:
+    args: {"id": "1460323737035677698", "token": "1460323737035677698"}
+  compliance.jobs.get:
+    args: {"id": "1460323737035677698"}
+  compliance.jobs.list:
+    args: {"type": "tweets"}
+  compliance.jobs.upload:
+    args: {"id": "1460323737035677698", "token": "1460323737035677698", "file": {"base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==", "filename": "pixel.png", "contentType": "image/png"}}
+  connections.history:
+    args: {}
+  connections.terminateAll:
+    args: {}
+  connections.terminateByEndpoint:
+    args: {"endpoint_id": "filtered_stream"}
+  connections.terminateMany:
+    args: {"uuids": ["1460323737035677698"]}
+  directMessages.conversations.create:
+    args: {"conversation_type": "Group", "participant_ids": ["2244994945", "2244994945"], "message": {}}
+  directMessages.events.delete:
+    args: {"event_id": "1460323737035677698"}
+  directMessages.events.get:
+    args: {"event_id": "1460323737035677698"}
+  directMessages.events.list:
+    args: {"max_results": 10, "event_types": ["MessageCreate"]}
+  directMessages.events.listByConversation:
+    args: {"id": "1460323737035677698"}
+  directMessages.events.listWithParticipant:
+    args: {"participant_id": "2244994945"}
+  directMessages.media.download:
+    args: {"dm_id": "1460323737035677698", "media_id": "1460323737035677698", "resource_id": "1460323737035677698"}
+  directMessages.sendToConversation:
+    args: {"dm_conversation_id": "1460323737035677698", "text": "Shipping the new release today."}
+  directMessages.sendToParticipant:
+    args: {"participant_id": "2244994945", "text": "Thanks for trying the beta!"}
+  lists.create:
+    args: {"name": "Launch week"}
+  lists.delete:
+    args: {"id": "1460323737035677698"}
+  lists.followers.list:
+    args: {"id": "1460323737035677698"}
+  lists.get:
+    args: {"id": "1460323737035677698"}
+  lists.members.add:
+    args: {"id": "1460323737035677698", "user_id": "2244994945"}
+  lists.members.list:
+    args: {"id": "1460323737035677698"}
+  lists.members.remove:
+    args: {"id": "1460323737035677698", "user_id": "2244994945"}
+  lists.posts.list:
+    args: {"id": "1460323737035677698"}
+  lists.update:
+    args: {"id": "1460323737035677698"}
+  media.amplify.addPost:
+    args: {"post_id": "1460323737035677698", "program_ids": ["1460323737035677698"]}
+  media.amplify.programs.get:
+    args: {"program_id": "1460323737035677698"}
+  media.amplify.programs.list:
+    args: {}
+  media.amplify.programs.listPosts:
+    args: {"program_id": "1460323737035677698"}
+  media.analytics:
+    args: {"media_keys": ["3_1460323737035677698"], "start_time": "2026-11-01T00:00:00Z", "end_time": "2026-11-02T00:00:00Z"}
+  media.get:
+    args: {"media_key": "3_1460323737035677698"}
+  media.getMany:
+    args: {"media_keys": ["3_1460323737035677698"]}
+  media.library.add:
+    args: {"media_key": "3_1460323737035677698"}
+  media.library.listCategories:
+    args: {}
+  media.library.remove:
+    args: {"media_key": "3_1460323737035677698"}
+  media.library.update:
+    args: {"media_key": "3_1460323737035677698"}
+  media.metadata.create:
+    args: {"id": "1460323737035677698", "metadata": {}}
+  media.subtitles.create:
+    args: {"id": "1460323737035677698", "media_category": "AmplifyVideo", "subtitles": {}}
+  media.subtitles.delete:
+    args: {"id": "1460323737035677698", "media_category": "tweet_image", "language_code": "1460323737035677698"}
+  media.upload.append:
+    args: {"id": "1460323737035677698", "media": {"base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==", "filename": "pixel.png", "contentType": "image/png"}, "segment_index": 1}
+  media.upload.finalize:
+    args: {"id": "1460323737035677698"}
+  media.upload.getStatus:
+    args: {"media_id": "1460323737035677698"}
+  media.upload.initialize:
+    args: {}
+  media.upload.single:
+    args: {"media": {"base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==", "filename": "pixel.png", "contentType": "image/png"}, "media_category": "tweet_image"}
+  news.get:
+    args: {"id": "1460323737035677698"}
+  news.search:
+    args: {"query": "from:XDevelopers -is:retweet"}
+  posts.analytics:
+    args: {"ids": ["1460323737035677698"], "start_time": "2026-11-01T00:00:00Z", "end_time": "2026-11-02T00:00:00Z"}
+  posts.counts.all:
+    args: {"query": "from:XDevelopers -is:retweet"}
+  posts.counts.recent:
+    args: {"query": "from:XDevelopers -is:retweet"}
+  posts.create:
+    args: {"text": "Shipping the new release today."}
+  posts.delete:
+    args: {"id": "1460323737035677698"}
+  posts.drafts.create:
+    args: {}
+  posts.drafts.delete:
+    args: {"id": "1460323737035677698"}
+  posts.drafts.list:
+    args: {}
+  posts.get:
+    args: {"id": "1460323737035677698"}
+  posts.getMany:
+    args: {"ids": ["1460323737035677698"]}
+  posts.hideReply:
+    args: {"tweet_id": "1460323737035677698", "hidden": true}
+  posts.likingUsers:
+    args: {"id": "1460323737035677698"}
+  posts.quotes:
+    args: {"id": "1460323737035677698"}
+  posts.repostedBy:
+    args: {"id": "1460323737035677698"}
+  posts.reposts:
+    args: {"id": "1460323737035677698"}
+  posts.search.all:
+    args: {"query": "from:XDevelopers -is:retweet"}
+  posts.search.recent:
+    args: {"query": "from:XDevelopers -is:retweet", "max_results": 10, "post.fields": ["created_at", "public_metrics"]}
+  posts.streamLinks.create:
+    args: {"webhook_id": "1460323737035677698"}
+  posts.streamLinks.delete:
+    args: {"webhook_id": "1460323737035677698"}
+  posts.streamLinks.list:
+    args: {}
+  posts.streamRules.counts:
+    args: {}
+  posts.streamRules.list:
+    args: {}
+  posts.streamRules.update:
+    args: {}
+  sources.create:
+    args: {"name": "Launch week", "region": "1460323737035677698"}
+  sources.delete:
+    args: {"id": "1460323737035677698"}
+  sources.get:
+    args: {"id": "1460323737035677698"}
+  sources.getIngestRegion:
+    args: {}
+  sources.getStreamKey:
+    args: {"id": "1460323737035677698"}
+  sources.list:
+    args: {}
+  sources.rename:
+    args: {"id": "1460323737035677698", "name": "Launch week"}
+  spaces.get:
+    args: {"id": "1460323737035677698"}
+  spaces.getByCreators:
+    args: {"user_ids": ["2244994945"]}
+  spaces.getMany:
+    args: {"ids": ["1460323737035677698"]}
+  spaces.listBuyers:
+    args: {"id": "1460323737035677698"}
+  spaces.listPosts:
+    args: {"id": "1460323737035677698"}
+  spaces.search:
+    args: {"query": "from:XDevelopers -is:retweet"}
+  trends.byWoeid:
+    args: {"woeid": 1}
+  trends.locations:
+    args: {}
+  trends.personalized:
+    args: {}
+  usage.credits:
+    args: {}
+  usage.get:
+    args: {"days": 7}
+  users.affiliates:
+    args: {"id": "1460323737035677698"}
+  users.blockDms:
+    args: {"id": "1460323737035677698"}
+  users.blocking.block:
+    args: {"id": "1460323737035677698", "target_user_id": "2244994945"}
+  users.blocking.list:
+    args: {"id": "1460323737035677698"}
+  users.blocking.unblock:
+    args: {"source_user_id": "2244994945", "target_user_id": "2244994945"}
+  users.bookmarks.create:
+    args: {"id": "1460323737035677698", "tweet_id": "1460323737035677698"}
+  users.bookmarks.delete:
+    args: {"id": "1460323737035677698", "tweet_id": "1460323737035677698"}
+  users.bookmarks.folders.create:
+    args: {"id": "1460323737035677698", "name": "Launch week"}
+  users.bookmarks.folders.list:
+    args: {"id": "1460323737035677698"}
+  users.bookmarks.folders.listPosts:
+    args: {"id": "1460323737035677698", "folder_id": "1460323737035677698"}
+  users.bookmarks.list:
+    args: {"id": "1460323737035677698"}
+  users.broadcasts.create:
+    args: {"id": "1460323737035677698", "source_id": "1460323737035677698"}
+  users.broadcasts.delete:
+    args: {"id": "1460323737035677698", "broadcast_id": "1460323737035677698"}
+  users.broadcasts.get:
+    args: {"id": "1460323737035677698", "broadcast_id": "1460323737035677698"}
+  users.broadcasts.list:
+    args: {"id": "1460323737035677698"}
+  users.broadcasts.updateState:
+    args: {"id": "1460323737035677698", "broadcast_id": "1460323737035677698", "state": "1460323737035677698"}
+  users.followedLists.follow:
+    args: {"id": "1460323737035677698", "list_id": "1460323737035677698"}
+  users.followedLists.list:
+    args: {"id": "1460323737035677698"}
+  users.followedLists.unfollow:
+    args: {"id": "1460323737035677698", "list_id": "1460323737035677698"}
+  users.followers:
+    args: {"id": "1460323737035677698"}
+  users.following.follow:
+    args: {"id": "1460323737035677698", "target_user_id": "2244994945"}
+  users.following.list:
+    args: {"id": "1460323737035677698"}
+  users.following.unfollow:
+    args: {"source_user_id": "2244994945", "target_user_id": "2244994945"}
+  users.get:
+    args: {"id": "1460323737035677698"}
+  users.getByUsername:
+    args: {"username": "XDevelopers", "user.fields": ["description", "public_metrics"]}
+  users.getMany:
+    args: {"ids": ["1460323737035677698"]}
+  users.getManyByUsernames:
+    args: {"usernames": ["XDevelopers"]}
+  users.likes.like:
+    args: {"id": "1460323737035677698", "tweet_id": "1460323737035677698"}
+  users.likes.list:
+    args: {"id": "1460323737035677698"}
+  users.likes.unlike:
+    args: {"id": "1460323737035677698", "tweet_id": "1460323737035677698"}
+  users.listMemberships:
+    args: {"id": "1460323737035677698"}
+  users.me:
+    args: {"user.fields": ["created_at", "public_metrics", "verified"]}
+  users.mentions:
+    args: {"id": "2244994945", "max_results": 10}
+  users.muting.list:
+    args: {"id": "1460323737035677698"}
+  users.muting.mute:
+    args: {"id": "1460323737035677698", "target_user_id": "2244994945"}
+  users.muting.unmute:
+    args: {"source_user_id": "2244994945", "target_user_id": "2244994945"}
+  users.myFollowers:
+    args: {}
+  users.myFollowing:
+    args: {}
+  users.ownedLists:
+    args: {"id": "1460323737035677698"}
+  users.pinnedLists.list:
+    args: {"id": "1460323737035677698"}
+  users.pinnedLists.pin:
+    args: {"id": "1460323737035677698", "list_id": "1460323737035677698"}
+  users.pinnedLists.unpin:
+    args: {"id": "1460323737035677698", "list_id": "1460323737035677698"}
+  users.posts:
+    args: {"id": "1460323737035677698"}
+  users.publicKeys.add:
+    args: {"id": "1460323737035677698", "public_key": {}}
+  users.publicKeys.get:
+    args: {"id": "1460323737035677698"}
+  users.publicKeys.getMany:
+    args: {"ids": ["1460323737035677698"]}
+  users.reposts.create:
+    args: {"id": "1460323737035677698", "tweet_id": "1460323737035677698"}
+  users.reposts.delete:
+    args: {"id": "1460323737035677698", "source_tweet_id": "1460323737035677698"}
+  users.repostsOfMe:
+    args: {}
+  users.search:
+    args: {"query": "XDevelopers", "max_results": 10}
+  users.sources.create:
+    args: {"id": "1460323737035677698", "name": "Launch week"}
+  users.sources.delete:
+    args: {"id": "1460323737035677698", "source_id": "1460323737035677698"}
+  users.sources.get:
+    args: {"id": "1460323737035677698", "source_id": "1460323737035677698"}
+  users.sources.list:
+    args: {"id": "1460323737035677698"}
+  users.sources.rename:
+    args: {"id": "1460323737035677698", "source_id": "1460323737035677698", "name": "Launch week"}
+  users.timeline:
+    args: {"id": "2244994945", "max_results": 10}
+  users.unblockDms:
+    args: {"id": "1460323737035677698"}
+  webhooks.create:
+    args: {"url": "https://example.com/x/webhooks"}
+  webhooks.delete:
+    args: {"webhook_id": "1460323737035677698"}
+  webhooks.list:
+    args: {}
+  webhooks.replay:
+    args: {"webhook_id": "1460323737035677698", "from_date": "123456789012", "to_date": "123456789012"}
+  webhooks.validate:
+    args: {"webhook_id": "1460323737035677698"}
+  tweets.create:
+    args: {"text": "Shipping the new release today."}
+  tweets.createReply:
+    args: {"text": "Thanks for the report, fixed in 1.2.1.", "inReplyToTweetId": "1460323737035677698"}
