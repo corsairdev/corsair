@@ -50,6 +50,13 @@ const nextConfig: NextConfig = {
 				destination: 'https://docs.corsair.dev/:path*',
 				permanent: true,
 			},
+			// Lug, the MCP gateway, is one of Corsair's products (Products menu).
+			// /mcp-gateway stays its page, so search keeps one address for it.
+			{
+				source: '/lug',
+				destination: '/mcp-gateway',
+				permanent: true,
+			},
 			// Agents look for auth.md on the company's domain too; hub serves it.
 			{
 				source: '/auth.md',

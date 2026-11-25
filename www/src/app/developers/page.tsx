@@ -11,9 +11,9 @@ import { TerminalTrioSection } from '@/components/landing/terminal-trio/terminal
 import { socialMetadata } from '@/lib/social-metadata';
 import { getGithubStarCount } from '@/server/github-stars';
 
-const TITLE = 'Corsair for developers';
+const TITLE = 'Hub: Corsair for developers';
 const DESCRIPTION =
-	'Add any integration to your product in minutes. Open-source TypeScript SDK for OAuth, token refresh, webhooks, per-user credentials and approvals, self-hosted or on Corsair Cloud.';
+	'Add any integration to your product in minutes. Open-source TypeScript SDK for OAuth, token refresh, webhooks, per-user credentials and approvals, self-hosted or hosted on Corsair Hub.';
 
 export const metadata: Metadata = {
 	title: TITLE,
