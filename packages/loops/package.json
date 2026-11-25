@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/loops",
   "version": "0.1.0",
-  "description": "Loops plugin for Corsair: manage contacts and mailing lists, send events and transactional email",
+  "description": "Loops plugin for Corsair: manage contacts, send events and transactional email, and read mailing lists and suppression status",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
