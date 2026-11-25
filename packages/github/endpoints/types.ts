@@ -478,12 +478,73 @@ const UsersGetHovercardInputSchema = z.object({
 	subjectId: z.string().optional(),
 });
 
+const GithubDateFilter = z
+	.string()
+	.regex(
+		/^(?:(?:>=|<=|>|<)?\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}\.\.\d{4}-\d{2}-\d{2})$/,
+		'Must be YYYY-MM-DD, optionally prefixed with >, >=, < or <=, or a range YYYY-MM-DD..YYYY-MM-DD',
+	);
+const dateFilter = (what: string) =>
+	GithubDateFilter.optional().describe(
+		`${what}: YYYY-MM-DD, with a >, >=, < or <= prefix, or a range such as 2025-01-01..2025-01-31`,
+	);
+
 const SearchIssuesInputSchema = z.object({
 	q: z
 		.string()
+		.optional()
 		.describe(
-			'Keywords then qualifiers: is:issue or is:pr (GitHub App user tokens get a 422 without one), repo:owner/name, author:, assignee:, label:, state:, updated:>=2025-01-31. Max 256 characters excluding operators and qualifiers, five AND/OR/NOT at most.',
+			'Keywords then qualifiers: is:issue or is:pr (GitHub App user tokens get a 422 without one), repo:owner/name, author:, assignee:, label:, state:, updated:>=2025-01-31. Max 256 characters excluding operators and qualifiers, five AND/OR/NOT at most. Optional: prefer the structured fields below; when both are given, an item must match both.',
 		),
+	keywords: z
+		.array(z.string().min(1))
+		.optional()
+		.describe('Words that must all appear'),
+	exactPhrase: z.string().optional().describe('Exact phrase that must appear'),
+	exclude: z
+		.array(z.string().min(1))
+		.optional()
+		.describe('Words that must not appear'),
+	in: z
+		.array(z.enum(['title', 'body', 'comments']))
+		.optional()
+		.describe(
+			'Limit the keywords to these fields; all three are searched when omitted',
+		),
+	type: z
+		.enum(['issue', 'pr'])
+		.optional()
+		.describe('issue: issues only; pr: pull requests only'),
+	state: z
+		.enum(['open', 'closed', 'merged', 'unmerged'])
+		.optional()
+		.describe('merged and unmerged apply to pull requests only'),
+	author: z.string().optional().describe('Login of the author, or "@me"'),
+	assignee: z.string().optional().describe('Login of an assignee, or "@me"'),
+	mentions: z.string().optional().describe('Login mentioned in the item'),
+	involves: z
+		.string()
+		.optional()
+		.describe('Login that authored, was assigned, mentioned or commented'),
+	reviewRequested: z
+		.string()
+		.optional()
+		.describe(
+			'Login whose review is requested and not yet given (pull requests)',
+		),
+	label: z
+		.array(z.string().min(1))
+		.optional()
+		.describe('Label names; the item must have all of them'),
+	excludeLabels: z
+		.array(z.string().min(1))
+		.optional()
+		.describe('Label names the item must not have'),
+	repo: z.string().optional().describe('One repository, as "owner/name"'),
+	org: z.string().optional().describe('All repositories of this organization'),
+	created: dateFilter('When it was created'),
+	updated: dateFilter('When it was last updated'),
+	closed: dateFilter('When it was closed'),
 	sort: z
 		.enum([
 			'comments',
@@ -505,6 +566,90 @@ const SearchIssuesInputSchema = z.object({
 	advancedSearch: z.boolean().optional(),
 	searchType: z.enum(['semantic', 'hybrid']).optional(),
 });
+
+export type SearchIssuesInput = z.infer<typeof SearchIssuesInputSchema>;
+
+const STRUCTURED_SEARCH_KEYS = [
+	'keywords',
+	'exactPhrase',
+	'exclude',
+	'in',
+	'type',
+	'state',
+	'author',
+	'assignee',
+	'mentions',
+	'involves',
+	'reviewRequested',
+	'label',
+	'excludeLabels',
+	'repo',
+	'org',
+	'created',
+	'updated',
+	'closed',
+] as const;
+
+// Quote what GitHub would split on or read as a qualifier or a label OR-list.
+function ghTerm(value: string): string {
+	const v = value.trim().replace(/"/g, '');
+	return /[\s,:]|^-/.test(v) ? `"${v}"` : v;
+}
+
+/**
+ * Build a GitHub issue and pull request search string from structured inputs.
+ * Qualifiers follow
+ * https://docs.github.com/en/search-github/searching-on-github/searching-issues-and-pull-requests.
+ * A user-given `q` is ANDed in.
+ */
+export function buildGithubIssueQuery(
+	input: Partial<SearchIssuesInput>,
+): string {
+	const parts: string[] = [];
+	const nonEmpty = (xs?: string[]) => (xs ?? []).filter((x) => x.trim());
+	const one = (name: string, v?: string) => {
+		if (v?.trim()) parts.push(`${name}:${ghTerm(v)}`);
+	};
+	parts.push(...nonEmpty(input.keywords).map(ghTerm));
+	if (input.exactPhrase?.trim()) {
+		parts.push(`"${input.exactPhrase.trim().replace(/"/g, '')}"`);
+	}
+	parts.push(...nonEmpty(input.exclude).map((w) => `-${ghTerm(w)}`));
+	if (input.in?.length) parts.push(`in:${[...new Set(input.in)].join(',')}`);
+	if (input.type) parts.push(`is:${input.type}`);
+	if (input.state) parts.push(`is:${input.state}`);
+	one('author', input.author);
+	one('assignee', input.assignee);
+	one('mentions', input.mentions);
+	one('involves', input.involves);
+	one('review-requested', input.reviewRequested);
+	parts.push(...nonEmpty(input.label).map((l) => `label:${ghTerm(l)}`));
+	parts.push(
+		...nonEmpty(input.excludeLabels).map((l) => `-label:${ghTerm(l)}`),
+	);
+	one('repo', input.repo);
+	one('org', input.org);
+	if (input.created) parts.push(`created:${input.created}`);
+	if (input.updated) parts.push(`updated:${input.updated}`);
+	if (input.closed) parts.push(`closed:${input.closed}`);
+
+	const structured = parts.join(' ');
+	const q = input.q?.trim();
+	if (!q) return structured;
+	if (!structured) return q;
+	return `${q} ${structured}`;
+}
+
+/** The /search/issues params: the compiled q plus sort, order and paging. */
+export function githubSearchIssuesParams(
+	input: SearchIssuesInput,
+): Record<string, string | number | boolean | undefined> {
+	const rest: Record<string, string | number | boolean | undefined> = {
+		...input,
+	} as Record<string, string | number | boolean | undefined>;
+	for (const k of STRUCTURED_SEARCH_KEYS) delete rest[k];
+	return { ...rest, q: buildGithubIssueQuery(input) };
+}
 
 const SearchRepositoriesInputSchema = z.object({
 	q: z.string(),

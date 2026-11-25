@@ -53,7 +53,7 @@ pnpm add @corsair-dev/github
 | `repositories.listStarred` | `github.api.repositories.listStarred` | `read` | List repositories starred by the authenticated user |
 | `repositories.star` | `github.api.repositories.star` | `write` | Star a repository for the authenticated user |
 | `repositories.unstar` | `github.api.repositories.unstar` | `write` | Unstar a repository for the authenticated user |
-| `search.issues` | `github.api.search.issues` | `read` | Search issues and pull requests with GitHub qualifiers in q, e.g. "is:issue is:open repo:owner/name assignee:login". users.getAuthenticated gives your own login. |
+| `search.issues` | `github.api.search.issues` | `read` | Search issues and pull requests with structured fields (keywords, type, state, author, assignee, label, repo, org, created, updated, ...) or a raw q of GitHub qualifiers; no qualifier syntax needed. users.getAuthenticated gives your own login. |
 | `search.repositories` | `github.api.search.repositories` | `read` | Search GitHub repositories |
 | `search.users` | `github.api.search.users` | `read` | Search GitHub users and organizations |
 | `users.get` | `github.api.users.get` | `read` | Get a user by username |

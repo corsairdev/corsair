@@ -1817,7 +1817,7 @@ const githubEndpointMeta = {
 	'search.issues': {
 		riskLevel: 'read',
 		description:
-			'Search issues and pull requests with GitHub qualifiers in q, e.g. "is:issue is:open repo:owner/name assignee:login". users.getAuthenticated gives your own login.',
+			'Search issues and pull requests with structured fields (keywords, type, state, author, assignee, label, repo, org, created, updated, ...) or a raw q of GitHub qualifiers; no qualifier syntax needed. users.getAuthenticated gives your own login.',
 	},
 	'search.repositories': {
 		riskLevel: 'read',
