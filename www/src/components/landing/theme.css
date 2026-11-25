@@ -617,13 +617,15 @@
 		transition: none;
 		transform: none !important;
 	}
+	/* !important: the nav link and trigger rules above use long :not() selectors that outweigh these. */
 	.site-menu-container,
 	.site-menu-container nav,
 	.site-menu-container nav img,
 	.site-menu-container nav a,
 	.site-menu-container nav span,
-	.site-menu-container nav .group {
-		transition: none;
+	.site-menu-container nav .group,
+	.site-menu-container nav .site-menu-trigger {
+		transition: none !important;
 	}
 }
 
