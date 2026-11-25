@@ -336,7 +336,7 @@ const gmailEndpointMeta = {
 	'messages.getAttachment': {
 		riskLevel: 'read',
 		description:
-			'Fetch an attachment of a message by partId (shown in search results and in messages.get with format full) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId',
+			'Fetch an attachment of a message by partId (shown in messages.get with format full, or in a database search of messages fetched with format full) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId',
 	},
 	'labels.list': {
 		riskLevel: 'read',

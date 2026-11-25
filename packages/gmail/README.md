@@ -25,7 +25,7 @@ pnpm add @corsair-dev/gmail
 | `labels.update` | `gmail.api.labels.update` | `write` | Update an existing label |
 | `messages.batchModify` | `gmail.api.messages.batchModify` | `write` | Add or remove labels from multiple messages in bulk |
 | `messages.get` | `gmail.api.messages.get` | `read` | Read one message. Default format is full, with body text base64url-encoded in payload.body.data, or for multipart messages in payload.parts[].body.data (parts nest); use format metadata for headers only. |
-| `messages.getAttachment` | `gmail.api.messages.getAttachment` | `read` | Fetch an attachment of a message by partId (shown in search results and in messages.get with format full) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId |
+| `messages.getAttachment` | `gmail.api.messages.getAttachment` | `read` | Fetch an attachment of a message by partId (shown in messages.get with format full, or in a database search of messages fetched with format full) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId |
 | `messages.list` | `gmail.api.messages.list` | `read` | Returns only id and threadId per message, no subject or body. Use messages.get to read one |
 | `messages.modify` | `gmail.api.messages.modify` | `write` | Add or remove labels from a message |
 | `messages.send` | `gmail.api.messages.send` | `write` | Send an email to one or more recipients |
