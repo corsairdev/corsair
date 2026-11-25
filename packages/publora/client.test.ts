@@ -161,10 +161,17 @@ describe('makePubloraRequest', () => {
 		mockFetch({
 			status: 400,
 			body: {
-				error: 'Media could not be downloaded',
+				error:
+					'Media ingestion failed for https://private.example.com/a.png?sig=s3cr3t',
 				code: 'MEDIA_URL_UNREACHABLE',
 				mediaResults: [
-					{ url: 'https://private.example.com/a.png?sig=s3cr3t', code: 'X' },
+					{
+						url: 'https://private.example.com/a.png?sig=s3cr3t',
+						ok: false,
+						code: 'MEDIA_URL_HTTP_ERROR',
+						error:
+							'Fetching https://private.example.com/a.png?sig=s3cr3t returned HTTP 403',
+					},
 				],
 			},
 		});
@@ -181,6 +188,10 @@ describe('makePubloraRequest', () => {
 		expect(error).toBeInstanceOf(ApiError);
 		expect(error.status).toBe(400);
 		expect(error.body.code).toBe('MEDIA_URL_UNREACHABLE');
+		expect(error.body.mediaResults).toEqual([
+			{ ok: false, code: 'MEDIA_URL_HTTP_ERROR' },
+		]);
+		expect(error.body.error).toBe('Media ingestion failed for [REDACTED]');
 		expect(error.request.body).toBe('[REDACTED]');
 		expect(error.request.headers).toBeUndefined();
 		const serialized = JSON.stringify({ ...error, message: error.message });

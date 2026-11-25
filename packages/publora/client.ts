@@ -139,21 +139,29 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+const URL_PATTERN = /\bhttps?:\/\/\S+/gi;
+
 /**
- * Publora echoes each failed media URL in `mediaResults[].url`; the URL is
- * the caller's data, so it is replaced. The rest of the body (`error`,
- * `code`, `field`, per-platform validation messages) is Publora's own text.
+ * Publora echoes each failed media URL in `mediaResults[].url` and again
+ * inside `mediaResults[].error` ("Fetching <signed URL> returned HTTP 403").
+ * Those URLs are the caller's data, so each entry keeps only `ok` and its
+ * stable `code`, and any URL left in a top-level string is replaced. The
+ * rest (`error`, `code`, `field`, per-platform validation) is Publora's own.
+ * Spec: the `mediaResults` 400 examples in https://docs.publora.com/openapi.json
  */
 function scrubResponseBody(body: unknown): unknown {
-	if (!isRecord(body) || !Array.isArray(body.mediaResults)) return body;
-	return {
-		...body,
-		mediaResults: body.mediaResults.map((result) =>
-			isRecord(result) && 'url' in result
-				? { ...result, url: REDACTED }
-				: result,
-		),
-	};
+	if (!isRecord(body)) return body;
+	const scrubbed: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(body)) {
+		scrubbed[key] =
+			typeof value === 'string' ? value.replace(URL_PATTERN, REDACTED) : value;
+	}
+	if (Array.isArray(body.mediaResults)) {
+		scrubbed.mediaResults = body.mediaResults.map((result) =>
+			isRecord(result) ? { ok: result.ok, code: result.code } : REDACTED,
+		);
+	}
+	return scrubbed;
 }
 
 /**
