@@ -116,7 +116,12 @@ await tenant.lob.api.zip.usZipLookup({ zip_code: '94107' });
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.lob.api.postcards.send({ to: 'adr_210a8d4b0b76d77b', front: '<html style="font-size:36px">Sale ends Friday</html>', back: '<html style="font-size:24px">Acme Logistics</html>' });
+await tenant.lob.api.postcards.send({
+	to: 'adr_210a8d4b0b76d77b',
+	front: '<html style="font-size:36px">Sale ends Friday</html>',
+	back: '<html style="font-size:24px">Acme Logistics</html>',
+	use_type: 'marketing',
+});
 ```
 
 
