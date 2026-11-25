@@ -334,6 +334,34 @@ describe('input rejection before a request is sent', () => {
 			}),
 		).rejects.toThrow(z.ZodError);
 	});
+
+	it('rejects an absent use_type on a send, though null passes', async () => {
+		// Lob marks use_type required but allows null, so the schema keeps it
+		// required-nullable: null is a value, absence is not.
+		const input = {
+			to: 'adr_210a8d4b0b76d77b',
+			front: '<html>x</html>',
+			back: '<html>y</html>',
+		};
+		await expect(
+			endpoints.postcards.send(
+				makeCtx(),
+				// unknown: the absent use_type is exactly what the rejection pins.
+				input as typeof input & { use_type: null },
+			),
+		).rejects.toThrow(z.ZodError);
+
+		mockFetch(jsonResponse(postcardOk));
+		await expect(
+			endpoints.postcards.send(makeCtx(), { ...input, use_type: null }),
+		).resolves.toMatchObject({ id: 'psc_208e45e48d271294' });
+	});
+
+	it('rejects an address list limit above 100', async () => {
+		await expect(
+			endpoints.addresses.list(makeCtx(), { limit: 101 }),
+		).rejects.toThrow(z.ZodError);
+	});
 });
 
 describe('error mapping through an endpoint', () => {
