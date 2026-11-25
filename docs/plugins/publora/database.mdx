@@ -1,0 +1,73 @@
+---
+title: "Publora database"
+sidebarTitle: "Database"
+description: "Publora local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
+---
+
+The Publora plugin syncs data locally. Use `corsair.publora.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Accounts
+
+Path: `publora.db.accounts.search`
+
+```ts
+const rows = await corsair.publora.db.accounts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `platformId` | `string` | equals, contains, startsWith, endsWith, in |
+| `username` | `string` | equals, contains, startsWith, endsWith, in |
+| `displayName` | `string` | equals, contains, startsWith, endsWith, in |
+| `profileImageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `profileUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `connectionStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `tokenStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `accessTokenExpiresAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `tokenExpiresIn` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastSuccessfulPost` | `string` | equals, contains, startsWith, endsWith, in |
+| `subscriptionType` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Posts
+
+Path: `publora.db.posts.search`
+
+```ts
+const rows = await corsair.publora.db.posts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `postGroupId` | `string` | equals, contains, startsWith, endsWith, in |
+| `content` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `scheduledTime` | `string` | equals, contains, startsWith, endsWith, in |
+| `createdAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

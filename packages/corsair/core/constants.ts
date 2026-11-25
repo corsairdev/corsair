@@ -558,6 +558,7 @@ export const BaseProviders = [
 	'prisma',
 	'productboard',
 	'proofly',
+	'publora',
 	'pushbullet',
 	'pushover',
 	'qdrant',
@@ -1346,6 +1347,7 @@ export const ProviderDisplayNames = {
 	prisma: 'Prisma',
 	productboard: 'Productboard',
 	proofly: 'Proofly',
+	publora: 'Publora',
 	pushbullet: 'Pushbullet',
 	pushover: 'Pushover',
 	qdrant: 'Qdrant',
@@ -2141,6 +2143,7 @@ export type AllProviders =
 	| 'prisma'
 	| 'productboard'
 	| 'proofly'
+	| 'publora'
 	| 'pushbullet'
 	| 'pushover'
 	| 'qdrant'

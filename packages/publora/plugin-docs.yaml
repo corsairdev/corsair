@@ -1,0 +1,58 @@
+displayName: Publora
+description: 'Draft, schedule and publish posts with text, media and first comments to LinkedIn, X, Instagram, Threads, TikTok, YouTube, Facebook Pages, Bluesky, Mastodon and Telegram, check plan quotas, upload media and receive signed post events.'
+domain: publora.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key on the API page of the Publora dashboard. The plugin sends it as `x-publora-key`. The free Starter plan includes the API (every network except X); X and webhooks need a paid plan.
+
+  Things to know:
+
+  - **Accounts are the targets.** `accounts.list` returns each connection's `platformId` (`linkedin-ABC123`) and `connectionStatus`. Pass the ids in `platforms` to `posts.create`, and only post to connections whose status is `active`. Instagram, TikTok and YouTube need an image or a video.
+  - **Draft, schedule or now.** `posts.create` without `scheduledTime` or `publishNow` saves a draft. A future ISO-8601 `scheduledTime` schedules it. `publishNow: true` publishes right away. The reply's `scheduledTime` is the time actually stored.
+  - **Check the plan first.** `accounts.getContext` returns the monthly and scheduled post quotas and the latest date a post can be scheduled. A post over a limit is refused with a code such as `POST_LIMIT_REACHED` or `SCHEDULE_HORIZON_REACHED`.
+  - **Media.** Public https files go in `mediaUrls`. For a local file, create a draft, call `media.createUpload` with its `postGroupId`, PUT the bytes to `uploadUrl` with the same Content-Type, then schedule the post with `posts.update`.
+  - **Retries do not double-post.** Pass `idempotencyKey` (sent as `Idempotency-Key`) to `posts.create` or `posts.update`: a repeat with the same body within 24 hours returns the first result. After a 5xx or network error the plugin retries reads only.
+  - **One post, many networks.** `posts.get` returns the group's `status` and, under `posts`, each network's status, `postedId` and `permalink`.
+  - **Editing.** `posts.update` works on drafts and scheduled posts. `platforms` replaces the whole target list; every other field is a patch.
+  - **Webhooks.** `webhooks.create` subscribes an HTTPS URL to `post.scheduled`, `post.published`, `post.failed` and `post.demoted`; the reply is the only time its signing secret is shown. Store it with `keys.set_webhook_signature` (or the `webhookSecret` option) and the plugin verifies each delivery's `X-Publora-Signature` before handling it.
+  - **Paging.** `posts.list` takes `page` (from 1) and `limit` (up to 100); `pagination.hasNextPage` says whether to ask for the next page.
+
+examples:
+  read:
+    path: accounts.list
+    title: List connected social accounts
+    args: {}
+  write:
+    path: posts.create
+    title: Schedule a post to one account
+    args:
+      content: Launching today
+      platforms:
+        - linkedin-ABC123
+      scheduledTime: '2026-12-01T15:00:00Z'
+apiExamples:
+  accounts.list: {}
+  accounts.getContext: {}
+  posts.create:
+    call: "{ content: 'Launching today', platforms: ['linkedin-ABC123'], mediaUrls: ['https://example.com/launch.png'], scheduledTime: '2026-12-01T15:00:00Z' }"
+  posts.get:
+    call: "{ postGroupId: 'POST_GROUP_ID' }"
+  posts.list:
+    call: "{ status: 'scheduled', limit: 20 }"
+  posts.update:
+    call: "{ postGroupId: 'POST_GROUP_ID', scheduledTime: '2026-12-02T15:00:00Z' }"
+  posts.delete:
+    call: "{ postGroupId: 'POST_GROUP_ID' }"
+  media.createUpload:
+    call: "{ postGroupId: 'POST_GROUP_ID', fileName: 'launch.png', contentType: 'image/png' }"
+  media.complete:
+    call: "{ mediaId: 'MEDIA_ID' }"
+  media.delete:
+    call: "{ mediaId: 'MEDIA_ID' }"
+  webhooks.list: {}
+  webhooks.create:
+    call: "{ name: 'Production', url: 'https://example.com/publora-events', events: ['post.published', 'post.failed'] }"
+  webhooks.update:
+    call: "{ id: 'WEBHOOK_ID', isActive: false }"
+  webhooks.delete:
+    call: "{ id: 'WEBHOOK_ID' }"

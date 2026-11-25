@@ -1,0 +1,789 @@
+---
+title: "Publora API reference"
+sidebarTitle: "API"
+description: "API reference for the Publora plugin in Corsair: every `publora.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### getContext
+
+`accounts.getContext`
+
+The plan, features, monthly and scheduled post quotas, latest allowed schedule date and allowed networks of the key's account. Check it before a batch of posts.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.accounts.getContext({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scheduledTime` | `string` | No | ISO 8601 date-time of a planned batch; selects its monthly quota period. Omit for the current period. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `context` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+  plan?: {
+    key?: string | null,
+    name?: string | null
+  } | null,
+  features?: Record<string, boolean> | null,
+  quotas?: {
+    monthlyPosts?: {
+      metric?: string | null,
+      scope?: string | null,
+      unit?: string | null,
+      limit?: number | null,
+      used?: number | null,
+      remaining?: number | null,
+      resetAt?: string | null
+    } | null,
+    scheduledPosts?: {
+      metric?: string | null,
+      scope?: string | null,
+      unit?: string | null,
+      limit?: number | null,
+      used?: number | null,
+      remaining?: number | null,
+      resetAt?: string | null
+    } | null,
+    scheduleHorizon?: {
+      limit?: number | null,
+      maxScheduledDate?: string | null
+    } | null,
+    connections?: {
+      metric?: string | null,
+      scope?: string | null,
+      unit?: string | null,
+      limit?: number | null,
+      used?: number | null,
+      remaining?: number | null,
+      resetAt?: string | null
+    } | null
+  } | null,
+  allowedPlatforms?: string[] | null,
+  serverTime?: string | null,
+  advisory?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`accounts.list`
+
+List connected social accounts (LinkedIn, X, Instagram, Threads, TikTok, YouTube, Facebook Pages, Bluesky, Mastodon, Telegram) with connection and token status. Their platformId values are the targets for posts.create.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.accounts.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `connections` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="connections full type">
+
+```ts
+{
+  platformId: string,
+  username?: string | null,
+  displayName?: string | null,
+  profileImageUrl?: string | null,
+  profileUrl?: string | null,
+  connectionStatus?: string | null,
+  tokenStatus?: string | null,
+  accessTokenExpiresAt?: string | null,
+  tokenExpiresIn?: string | null,
+  lastSuccessfulPost?: string | null,
+  lastError?: {
+    message?: string | null,
+    occurredAt?: string | null
+  } | null,
+  subscriptionType?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Media
+
+### complete
+
+`media.complete`
+
+Check an uploaded file right away instead of when the post is scheduled. Optional.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.media.complete({ mediaId: 'MEDIA_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mediaId` | `string` | Yes | mediaId from media.createUpload |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `mediaFile` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="mediaFile full type">
+
+```ts
+{
+  _id: string,
+  type?: string | null,
+  mimeType?: string | null,
+  fileName?: string | null,
+  url?: string | null,
+  status?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createUpload
+
+`media.createUpload`
+
+Get a pre-signed URL (valid for an hour) to PUT an image, video or PDF to, attached to a draft or scheduled post group. Use this for files that are not at a public URL.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.media.createUpload({ postGroupId: 'POST_GROUP_ID', fileName: 'launch.png', contentType: 'image/png' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postGroupId` | `string` | Yes | Post group to attach the file to (create a draft first) |
+| `fileName` | `string` | Yes | File name, e.g. "photo.jpg" |
+| `contentType` | `string` | Yes | MIME type: image/*, video/* or application/pdf |
+| `type` | `image \| video \| document` | No | Media type; inferred from contentType when omitted |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `uploadUrl` | `string` | Yes | — |
+| `fileUrl` | `string \| null` | No | — |
+| `mediaId` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`media.delete`
+
+Remove an uploaded file from its post group. A scheduled post goes back to draft.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.publora.api.media.delete({ mediaId: 'MEDIA_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mediaId` | `string` | Yes | mediaId of the attached file |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Posts
+
+### create
+
+`posts.create`
+
+Create one post for one or more connected accounts, with text, media URLs, per-network settings and first comments. Without scheduledTime or publishNow it is saved as a draft; with scheduledTime it is scheduled; publishNow publishes it right away and it cannot be recalled once live. An idempotencyKey makes a retry return the original post.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.publora.api.posts.create({ content: 'Launching today', platforms: ['linkedin-ABC123'], mediaUrls: ['https://example.com/launch.png'], scheduledTime: '2026-12-01T15:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | Post text. Required unless the only target is a LinkedIn repost. |
+| `platforms` | `string[]` | Yes | Connection ids from accounts.list (platformId, e.g. "linkedin-ABC123"), each at most once |
+| `scheduledTime` | `string` | No | ISO 8601 UTC date-time to publish at. Omit (and leave publishNow off) to save a draft. |
+| `publishNow` | `boolean` | No | Publish immediately. Cannot be combined with a future scheduledTime. |
+| `platformSettings` | `Record<string, Record<string, any>>` | No | Per-network settings keyed by platform, e.g. &#123; youtube: &#123; title, privacy &#125;, tiktok: &#123; viewerSetting &#125;, instagram: &#123; videoType: "REELS" &#125; &#125;. See https://docs.publora.com/endpoints/create-post |
+| `firstComments` | `object[]` | No | Up to three comments Publora posts under the published post (LinkedIn, X, Threads, Bluesky, Mastodon) |
+| `mediaUrls` | `string[]` | No | Public https image or video URLs that Publora downloads (images 25 MB, videos 150 MB, 300 MB in total). Instagram, TikTok and YouTube need media. |
+| `idempotencyKey` | `string` | No | Sent as the Idempotency-Key header. A repeat with the same key and body within 24 hours returns the first result instead of acting twice; the same key with another body is rejected with 422. |
+
+<AccordionGroup>
+<Accordion title="firstComments full type">
+
+```ts
+{
+  text: string,
+  platforms?: (linkedin | twitter | threads | bluesky | mastodon | instagram | facebook | youtube | tiktok | telegram)[],
+  delaySeconds?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `postGroupId` | `string` | Yes | — |
+| `scheduledTime` | `string \| null` | No | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="warnings full type">
+
+```ts
+{
+  code: string,
+  message?: string | null,
+  requested?: string | null,
+  effective?: string | null,
+  platforms?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`posts.delete`
+
+Delete a post group with all its network copies and media. Content already published on a network stays live.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.publora.api.posts.delete({ postGroupId: 'POST_GROUP_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postGroupId` | `string` | Yes | Post group id (postGroupId) from posts.create or posts.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`posts.get`
+
+Get one post group with its status, publish time, settings, attached media and each network's delivery state, including the live post id and link once published.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.posts.get({ postGroupId: 'POST_GROUP_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postGroupId` | `string` | Yes | Post group id (postGroupId) from posts.create or posts.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postGroupId` | `string` | Yes | — |
+| `content` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `scheduledTime` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `platforms` | `object[] \| null` | No | — |
+| `posts` | `object[] \| null` | No | — |
+| `mediaUrls` | `string[] \| null` | No | — |
+| `success` | `boolean` | No | — |
+| `platformSettings` | `Record<string, any> \| null` | No | — |
+| `media` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="platforms full type">
+
+```ts
+(string | {
+  platformId?: string | null,
+  platform?: string | null,
+  status?: string | null
+})[] | null
+```
+</Accordion>
+
+<Accordion title="posts full type">
+
+```ts
+{
+  platform?: string | null,
+  platformId?: string | null,
+  content?: string | null,
+  status?: string | null,
+  postedId?: string | null,
+  permalink?: string | null,
+  isThread?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="media full type">
+
+```ts
+{
+  mediaId?: string | null,
+  fileName?: string | null,
+  type?: string | null,
+  mimeType?: string | null,
+  status?: string | null,
+  url?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`posts.list`
+
+List posts, newest first, filtered by status, network and scheduled date. Page with page and limit; pagination.hasNextPage says whether another page exists.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.posts.list({ status: 'scheduled', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, starting at 1 |
+| `limit` | `number` | No | Posts per page (1-100, default 20) |
+| `status` | `draft \| scheduled \| published \| failed \| partially_published` | No | — |
+| `platform` | `twitter \| linkedin \| instagram \| threads \| tiktok \| youtube \| facebook \| bluesky \| mastodon \| telegram \| pinterest` | No | — |
+| `sortBy` | `createdAt \| updatedAt \| scheduledTime` | No | — |
+| `sortOrder` | `asc \| desc` | No | — |
+| `fromDate` | `string` | No | Only posts scheduled after this ISO 8601 date |
+| `toDate` | `string` | No | Only posts scheduled before this ISO 8601 date |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `posts` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  postGroupId: string,
+  content?: string | null,
+  status?: string | null,
+  scheduledTime?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  platforms?: (string | {
+    platformId?: string | null,
+    platform?: string | null,
+    status?: string | null
+  })[] | null,
+  posts?: {
+    platform?: string | null,
+    platformId?: string | null,
+    content?: string | null,
+    status?: string | null,
+    postedId?: string | null,
+    permalink?: string | null,
+    isThread?: boolean | null
+  }[] | null,
+  mediaUrls?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  limit?: number,
+  totalItems?: number,
+  totalPages?: number,
+  hasNextPage?: boolean,
+  hasPrevPage?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`posts.update`
+
+Change a draft or scheduled post: text, targets (the list is replaced), publish time, status, settings, first comments or extra media. publishNow publishes it immediately.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.publora.api.posts.update({ postGroupId: 'POST_GROUP_ID', scheduledTime: '2026-12-02T15:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postGroupId` | `string` | Yes | Post group id (postGroupId) from posts.create or posts.list |
+| `content` | `string` | No | Replacement post text |
+| `platforms` | `string[]` | No | Replacement target list (not merged). Send the complete final list of connection ids. |
+| `status` | `draft \| scheduled` | No | Move the post back to draft or schedule it |
+| `scheduledTime` | `string` | No | New ISO 8601 UTC publish time |
+| `publishNow` | `boolean` | No | Publish this draft or scheduled post immediately |
+| `platformSettings` | `Record<string, Record<string, any>>` | No | Per-network settings keyed by platform, e.g. &#123; youtube: &#123; title, privacy &#125;, tiktok: &#123; viewerSetting &#125;, instagram: &#123; videoType: "REELS" &#125; &#125;. See https://docs.publora.com/endpoints/create-post |
+| `firstComments` | `object[] \| null` | No | Replace the comments; null or [] removes them |
+| `mediaUrls` | `string[]` | No | Public https media URLs appended to the existing media |
+| `idempotencyKey` | `string` | No | Sent as the Idempotency-Key header. A repeat with the same key and body within 24 hours returns the first result instead of acting twice; the same key with another body is rejected with 422. |
+
+<AccordionGroup>
+<Accordion title="firstComments full type">
+
+```ts
+{
+  text: string,
+  platforms?: (linkedin | twitter | threads | bluesky | mastodon | instagram | facebook | youtube | tiktok | telegram)[],
+  delaySeconds?: number
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `message` | `string \| null` | No | — |
+| `scheduledTime` | `string \| null` | No | — |
+| `warnings` | `object[]` | No | — |
+| `postGroup` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="warnings full type">
+
+```ts
+{
+  code: string,
+  message?: string | null,
+  requested?: string | null,
+  effective?: string | null,
+  platforms?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="postGroup full type">
+
+```ts
+{
+  _id: string,
+  status?: string | null,
+  content?: string | null,
+  platforms?: string[] | null,
+  scheduledTime?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Subscribe an HTTPS URL to post.scheduled, post.published, post.failed and post.demoted events (up to 10 per account; needs a paid plan). The reply is the only time the signing secret is shown.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.webhooks.create({ name: 'Production', url: 'https://example.com/publora-events', events: ['post.published', 'post.failed'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | A name to recognise the subscription by |
+| `url` | `string` | Yes | Public HTTPS URL that receives the events |
+| `events` | `(post.scheduled \| post.published \| post.failed \| post.demoted \| token.expiring)[]` | Yes | post.scheduled, post.published, post.failed, post.demoted (token.expiring is accepted but not sent yet) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `webhook` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  _id: string,
+  name?: string | null,
+  url?: string | null,
+  events?: string[] | null,
+  isActive?: boolean | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  secret?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook subscription.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.publora.api.webhooks.delete({ id: 'WEBHOOK_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook id (_id) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhook subscriptions (signing secrets are not returned).
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `webhooks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  _id: string,
+  name?: string | null,
+  url?: string | null,
+  events?: string[] | null,
+  isActive?: boolean | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Change a subscription's name, URL or events, or pause and resume it.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.webhooks.update({ id: 'WEBHOOK_ID', isActive: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook id (_id) |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `events` | `(post.scheduled \| post.published \| post.failed \| post.demoted \| token.expiring)[]` | No | — |
+| `isActive` | `boolean` | No | Pause or resume deliveries |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `webhook` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  _id: string,
+  name?: string | null,
+  url?: string | null,
+  events?: string[] | null,
+  isActive?: boolean | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

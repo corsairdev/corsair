@@ -1,0 +1,165 @@
+---
+title: "Publora plugin"
+sidebarTitle: "Overview"
+description: "Draft, schedule and publish posts with text, media and first comments to LinkedIn, X, Instagram, Threads, TikTok, YouTube, Facebook Pages, Bluesky, Mastodon and Telegram, check plan quotas, upload media and receive signed post events."
+---
+
+Use **Publora** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+Create an API key on the API page of the Publora dashboard. The plugin sends it as `x-publora-key`. The free Starter plan includes the API (every network except X); X and webhooks need a paid plan.
+
+Things to know:
+
+- **Accounts are the targets.** `accounts.list` returns each connection's `platformId` (`linkedin-ABC123`) and `connectionStatus`. Pass the ids in `platforms` to `posts.create`, and only post to connections whose status is `active`. Instagram, TikTok and YouTube need an image or a video.
+- **Draft, schedule or now.** `posts.create` without `scheduledTime` or `publishNow` saves a draft. A future ISO-8601 `scheduledTime` schedules it. `publishNow: true` publishes right away. The reply's `scheduledTime` is the time actually stored.
+- **Check the plan first.** `accounts.getContext` returns the monthly and scheduled post quotas and the latest date a post can be scheduled. A post over a limit is refused with a code such as `POST_LIMIT_REACHED` or `SCHEDULE_HORIZON_REACHED`.
+- **Media.** Public https files go in `mediaUrls`. For a local file, create a draft, call `media.createUpload` with its `postGroupId`, PUT the bytes to `uploadUrl` with the same Content-Type, then schedule the post with `posts.update`.
+- **Retries do not double-post.** Pass `idempotencyKey` (sent as `Idempotency-Key`) to `posts.create` or `posts.update`: a repeat with the same body within 24 hours returns the first result. After a 5xx or network error the plugin retries reads only.
+- **One post, many networks.** `posts.get` returns the group's `status` and, under `posts`, each network's status, `postedId` and `permalink`.
+- **Editing.** `posts.update` works on drafts and scheduled posts. `platforms` replaces the whole target list; every other field is a patch.
+- **Webhooks.** `webhooks.create` subscribes an HTTPS URL to `post.scheduled`, `post.published`, `post.failed` and `post.demoted`; the reply is the only time its signing secret is shown. Store it with `keys.set_webhook_signature` (or the `webhookSecret` option) and the plugin verifies each delivery's `X-Publora-Signature` before handling it.
+- **Paging.** `posts.list` takes `page` (from 1) and `limit` (up to 100); `pagination.hasNextPage` says whether to ask for the next page.
+
+**What you get:**
+
+- 14 typed API operations
+- 2 synced entities (`accounts`, `posts`) for fast `.search()` / `.list()`
+- 4 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/publora better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/publora better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/publora better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/publora better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { publora } from '@corsair-dev/publora';
+
+export const corsair = createCorsair({
+	plugins: [
+		publora(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Publora API key before the first call: `pnpm corsair setup --plugin=publora --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+publora()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'publora',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List connected social accounts**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.publora.api.accounts.list({});
+```
+
+
+**Schedule a post to one account**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.publora.api.posts.create({
+	content: 'Launching today',
+	platforms: ['linkedin-ABC123'],
+	scheduledTime: '2026-12-01T15:00:00Z',
+});
+```
+
+
+See the full list on the [API](/plugins/publora/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.publora.db.<entity>.search()` and `.list()`: `accounts`, `posts`.
+
+See [Database](/plugins/publora/database) for filters and operators.
+
+## Webhooks
+
+This plugin registers **4** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/publora/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/publora/api">
+    Every `publora.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/publora/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/publora/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
