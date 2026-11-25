@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/twitter",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "X (Twitter) plugin for Corsair: the full X API v2 on api.x.com (posts, users, DMs, Chat, lists, Spaces, communities, trends, media, usage, compliance, webhooks) with OAuth 2.0 PKCE or app-only Bearer auth",
   "type": "module",
   "main": "./dist/index.js",

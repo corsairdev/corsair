@@ -12668,5 +12668,21 @@
     "version": "0.1.102",
     "isNew": false,
     "changes": []
+  },
+  {
+    "date": "2026-11-25",
+    "package": "@corsair-dev/twitter",
+    "dir": "packages/twitter",
+    "name": "X (Twitter)",
+    "version": "0.1.5",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "other",
+        "breaking": false,
+        "pr": 2746,
+        "title": "X (Twitter) plugin: full API v2 on api.x.com, OAuth 2.0 PKCE"
+      }
+    ]
   }
 ]
