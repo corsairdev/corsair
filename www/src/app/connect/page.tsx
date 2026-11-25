@@ -173,6 +173,28 @@ function CardHead({
 
 const stepText = 'text-[15px] leading-[1.6] text-[#1c1c1c99]';
 
+// The Claude app's steps are clicks on its Plugins page, so they get a clip (recorded 2026-11-25, no sound,
+// captions in the video). Dev's day-2 email links here, to #claude.
+function ClaudeVideo() {
+	return (
+		<figure className="flex flex-col gap-2">
+			<video
+				src="/videos/connect-claude.mp4"
+				poster="/videos/connect-claude-poster.jpg"
+				controls
+				muted
+				playsInline
+				preload="none"
+				aria-label="Adding Corsair in the Claude app, 34 seconds"
+				className="aspect-[640/427] w-full rounded-lg border border-[#e4e3ec] bg-[#f6f5fb]"
+			/>
+			<figcaption className={stepText}>
+				Watch it done in Claude, 34 seconds.
+			</figcaption>
+		</figure>
+	);
+}
+
 function Guide({
 	client,
 	guide,
@@ -224,6 +246,7 @@ function Guide({
 					))}
 				</ol>
 			) : null}
+			{client.id === 'claude' ? <ClaudeVideo /> : null}
 			{guide.note ? (
 				<Body className="text-sm md:text-sm">{guide.note}</Body>
 			) : null}
