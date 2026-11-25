@@ -2,7 +2,11 @@ import { logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { twitterGeneratedEndpointsNested } from './endpoints/catalog';
 import { twitterOperationFor } from './endpoints/openapi-schema';
-import { authProblem, fileNameFor } from './endpoints/operations';
+import {
+	authProblem,
+	fileNameFor,
+	parseWithBigInts,
+} from './endpoints/operations';
 import * as Tweets from './endpoints/tweets';
 import type { TwitterContext } from './index';
 import { buildCtx, mockFetch } from './test-helpers';
@@ -361,5 +365,146 @@ describe('helpers', () => {
 		expect(fileNameFor('chat.media.download', { media_hash_key: 'abc' })).toBe(
 			'abc',
 		);
+	});
+});
+
+describe('review fixes', () => {
+	it('redacts DM text and the token that X echoes back in an error', async () => {
+		mockFetch({
+			status: 400,
+			body: {
+				title: 'Invalid Request',
+				detail:
+					'Message "a private message only the recipient should read" was rejected for token x-user-token',
+				errors: [
+					{
+						message:
+							'text "a private message only the recipient should read" is a duplicate',
+					},
+				],
+			},
+		});
+		const error = (await endpointFor('directMessages.sendToParticipant')(
+			buildCtx(),
+			{
+				participant_id: '2244994945',
+				text: 'a private message only the recipient should read',
+			},
+		).catch((e: unknown) => e)) as ApiError;
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.status).toBe(400);
+		const dumped = JSON.stringify({ message: error.message, body: error.body });
+		expect(dumped).not.toContain('private message');
+		expect(dumped).not.toContain('x-user-token');
+		expect(error.message).toContain('[REDACTED]');
+	});
+
+	it("redacts a compliance download's signed token that X echoes back", async () => {
+		const ctx = buildCtx({ authType: 'api_key' });
+		mockFetch({
+			status: 403,
+			body: { detail: 'signed token sig-abc123-token-value expired' },
+		});
+		const error = (await endpointFor('compliance.jobs.downloadResults')(ctx, {
+			id: '1460323737035677698',
+			token: 'sig-abc123-token-value',
+		}).catch((e: unknown) => e)) as ApiError;
+		expect(error.status).toBe(403);
+		expect(JSON.stringify({ m: error.message, b: error.body })).not.toContain(
+			'sig-abc123',
+		);
+	});
+
+	it('refuses a media segment over 4 MB before reading it', async () => {
+		const { fetchMock } = mockFetch();
+		const tooBig = new Blob([new Uint8Array(4 * 1024 * 1024 + 1)]);
+		await expect(
+			endpointFor('media.upload.append')(buildCtx(), {
+				id: '1880028106020515840',
+				media: tooBig,
+				segment_index: 0,
+			}),
+		).rejects.toThrow(/larger than the 4 MB limit/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('keeps owner_id digits past 2^53 as a decimal string', async () => {
+		const raw =
+			'{"data":{"id":"s1","name":"Studio","owner_id":9007199254740993,"rtmp_url":"rtmp://x"}}';
+		mockFetch({
+			bytes: new TextEncoder().encode(raw),
+			headers: { 'content-type': 'application/json' },
+		});
+		const result = (await endpointFor('users.sources.get')(buildCtx(), {
+			id: '2244994945',
+			source_id: 's1',
+		})) as { data: { owner_id: string } };
+		expect(result.data.owner_id).toBe('9007199254740993');
+	});
+
+	it('parseWithBigInts leaves the same name inside a string alone', () => {
+		const text =
+			'{"data":{"note":"\\"owner_id\\": 5","owner_id":12345678901234567890}}';
+		expect(
+			parseWithBigInts(new TextEncoder().encode(text), ['owner_id']),
+		).toEqual({
+			data: { note: '"owner_id": 5', owner_id: '12345678901234567890' },
+		});
+	});
+
+	it('refuses subscriptions.* activity events with an app token', async () => {
+		const { fetchMock } = mockFetch();
+		await expect(
+			endpointFor('activity.subscriptions.create')(
+				buildCtx({ authType: 'api_key' }),
+				{
+					event_type: 'subscriptions.subscribe',
+					filter: { user_id: '2244994945' },
+				},
+			),
+		).rejects.toThrow(/user's OAuth 2\.0 token for subscriptions\.subscribe/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('takes exactly one bookmark selector and exactly one stream-rule action', async () => {
+		const { fetchMock } = mockFetch();
+		await expect(
+			endpointFor('users.bookmarks.create')(buildCtx(), {
+				id: '1',
+				tweet_id: '2',
+				tweet_ids: ['3'],
+			}),
+		).rejects.toThrow(/set exactly one of: tweet_id, tweet_ids/);
+		const ctx = buildCtx({ authType: 'api_key' });
+		await expect(
+			endpointFor('posts.streamRules.update')(ctx, { delete_all: false }),
+		).rejects.toThrow(/set exactly one of: add, delete, delete_all/);
+		await expect(
+			endpointFor('posts.streamRules.update')(ctx, {
+				delete_all: true,
+				add: [{ value: 'cat' }],
+			}),
+		).rejects.toThrow(/set exactly one of/);
+		expect(fetchMock).not.toHaveBeenCalled();
+		const { sent } = mockFetch({
+			body: { meta: { sent: '2026-11-25T00:00:00Z' } },
+		});
+		await endpointFor('posts.streamRules.update')(ctx, {
+			delete_all: true,
+			dry_run: true,
+		});
+		expect(sent[0]!.url).toBe(
+			'https://api.x.com/2/tweets/search/stream/rules?dry_run=true&delete_all=true',
+		);
+	});
+
+	it('broadcasts.update needs at least one field to change', async () => {
+		const { fetchMock } = mockFetch();
+		await expect(
+			endpointFor('broadcasts.update')(buildCtx(), { id: '1yNGaLgNbMdxj' }),
+		).rejects.toThrow(
+			/set at least one of: title, chat_option, live_category_id/,
+		);
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });

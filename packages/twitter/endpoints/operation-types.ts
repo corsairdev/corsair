@@ -2825,8 +2825,8 @@ export type TwitterCreateUserSourceResponseDataSource = {
 	is_stream_active?: boolean | null;
 	/** Label for the source. */
 	name?: string | null;
-	/** Owner's numeric user id. Exceeds the exact integer range of many JSON parsers. */
-	owner_id?: number | null;
+	/** Owner's numeric user id. Exceeds the exact integer range of many JSON parsers. Returned as a decimal string. */
+	owner_id?: string | null;
 	/** Ingest region as an AWS region name, e.g. `us-east-1` or `us-west-2`. Accepted as `region` when creating a source. */
 	rtmp_region?: string | null;
 	/** Stream key; equal to `id`. */
@@ -4741,8 +4741,8 @@ export type TwitterGetUserSourceResponseDataSource = {
 	is_stream_active?: boolean | null;
 	/** Label for the source. */
 	name?: string | null;
-	/** Owner's numeric user id. Exceeds the exact integer range of many JSON parsers. */
-	owner_id?: number | null;
+	/** Owner's numeric user id. Exceeds the exact integer range of many JSON parsers. Returned as a decimal string. */
+	owner_id?: string | null;
 	/** Ingest region as an AWS region name, e.g. `us-east-1` or `us-west-2`. Accepted as `region` when creating a source. */
 	rtmp_region?: string | null;
 	/** Stream key; equal to `id`. */
@@ -5475,8 +5475,8 @@ export type TwitterListUserSourcesResponseDataSources = {
 	is_stream_active?: boolean | null;
 	/** Label for the source. */
 	name?: string | null;
-	/** Owner's numeric user id. Exceeds the exact integer range of many JSON parsers. */
-	owner_id?: number | null;
+	/** Owner's numeric user id. Exceeds the exact integer range of many JSON parsers. Returned as a decimal string. */
+	owner_id?: string | null;
 	/** Ingest region as an AWS region name, e.g. `us-east-1` or `us-west-2`. Accepted as `region` when creating a source. */
 	rtmp_region?: string | null;
 	/** Stream key; equal to `id`. */
@@ -7211,8 +7211,8 @@ export type TwitterUpdateUserSourceResponseDataSource = {
 	is_stream_active?: boolean | null;
 	/** Label for the source. */
 	name?: string | null;
-	/** Owner's numeric user id. Exceeds the exact integer range of many JSON parsers. */
-	owner_id?: number | null;
+	/** Owner's numeric user id. Exceeds the exact integer range of many JSON parsers. Returned as a decimal string. */
+	owner_id?: string | null;
 	/** Ingest region as an AWS region name, e.g. `us-east-1` or `us-west-2`. Accepted as `region` when creating a source. */
 	rtmp_region?: string | null;
 	/** Stream key; equal to `id`. */

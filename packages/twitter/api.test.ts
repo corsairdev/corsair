@@ -10,7 +10,8 @@
  * X_ROTATED_TOKENS_FILE to have the new pair written there (mode 600) so it
  * can be stored before the old one is lost.
  */
-import { writeFileSync } from 'node:fs';
+import { randomBytes } from 'node:crypto';
+import { renameSync, writeFileSync } from 'node:fs';
 import type { TwitterContext } from './index';
 import { twitter } from './index';
 
@@ -50,16 +51,22 @@ async function refreshedToken(): Promise<string> {
 		// Past: forces the refresh.
 		expires_at: String(Math.floor(Date.now() / 1000) - 60),
 	};
+	// Written to a new private file (created 0600, refused if it exists) and
+	// renamed over the target, so the tokens are never readable by others even
+	// when X_ROTATED_TOKENS_FILE already exists with wider permissions.
 	const persist = () => {
-		if (!env.X_ROTATED_TOKENS_FILE) return;
+		const target = env.X_ROTATED_TOKENS_FILE;
+		if (!target) return;
+		const temporary = `${target}.${randomBytes(6).toString('hex')}.tmp`;
 		writeFileSync(
-			env.X_ROTATED_TOKENS_FILE,
+			temporary,
 			JSON.stringify({
 				access_token: state.access_token,
 				refresh_token: state.refresh_token,
 			}),
-			{ mode: 0o600 },
+			{ mode: 0o600, flag: 'wx' },
 		);
+		renameSync(temporary, target);
 	};
 	const keys = {
 		get_integration_credentials: async () => ({
@@ -126,7 +133,7 @@ live('X API v2 live reads', () => {
 		};
 		expect(me.data.id).toMatch(/^[0-9]+$/);
 		myId = me.data.id;
-		console.log(`[live] users.me: @${me.data.username}`);
+		console.log('[live] users.me: the token belongs to a user (id checked)');
 	});
 
 	it('users.getByUsername XDevelopers', async () => {

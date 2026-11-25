@@ -5269,9 +5269,9 @@ await corsair.twitter.api.articles.publish({ article_id: '1460323737035677698' }
 
 `bots.create`
 
-Creates a bot account in the calling app's project and returns its bearer token. Idempotent on handle: repeating the request for a handle that already names one of the project's bots returns that bot with a freshly minted token, revoking the previous one — safe to retry when a response was lost, since the replaced token was never seen.
+Creates a bot account in the calling app's project and returns its bearer token. Idempotent on handle: repeating the request for a handle that already names one of the project's bots returns that bot with a freshly minted token, revoking the previous one — safe to retry when a response was lost, since the replaced token was never seen. Repeating it for a handle the project already has revokes that bot's current token.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.twitter.api.bots.create({ handle: 'example' });
@@ -14384,7 +14384,7 @@ Ends one of the authenticated user's broadcasts. Only `state: END` is supported.
 **Risk:** `destructive`
 
 ```ts
-await corsair.twitter.api.broadcasts.end({ id: '1460323737035677698', state: '1460323737035677698' });
+await corsair.twitter.api.broadcasts.end({ id: '1yNGaLgNbMdxj', state: 'END' });
 ```
 
 **Input**
@@ -18439,7 +18439,7 @@ Changes the title, chat option or live category of one of the authenticated user
 **Risk:** `write`
 
 ```ts
-await corsair.twitter.api.broadcasts.update({ id: '1460323737035677698' });
+await corsair.twitter.api.broadcasts.update({ id: '1yNGaLgNbMdxj', title: 'Launch week Q&A' });
 ```
 
 **Input**
@@ -21186,9 +21186,9 @@ await corsair.twitter.api.calls.scheduled.cancel({ id: '1460323737035677698' });
 
 `calls.scheduled.create`
 
-Puts an X call on the authenticated user's X Calls calendar, with them as its organizer, and invites people to it. The call exists right away: share its join_url, or put an agent in it at start time with POST /2/calls/:id/join. A recurrence (an RFC 5545 RRULE) repeats it. Invitees get an email unless notify_invitees is false. Needs a user (OAuth 2.0) token. Needs the extra OAuth scope calls.write (pass scopes to the plugin).
+Puts an X call on the authenticated user's X Calls calendar, with them as its organizer, and invites people to it. The call exists right away: share its join_url, or put an agent in it at start time with POST /2/calls/:id/join. A recurrence (an RFC 5545 RRULE) repeats it. Invitees get an email unless notify_invitees is false. Invitees get an email unless notify_invitees is false. Needs a user (OAuth 2.0) token. Needs the extra OAuth scope calls.write (pass scopes to the plugin).
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.twitter.api.calls.scheduled.create({ start_time: '2026-11-01T00:00:00Z' });
@@ -23536,9 +23536,9 @@ await corsair.twitter.api.calls.scheduled.respond({ id: '1460323737035677698', r
 
 `calls.scheduled.update`
 
-Moves, renames or re-invites a scheduled call the authenticated user organizes. Only the fields sent change. For a recurring call, scope and occurrence_start_time pick the occurrences: all of them (the default), one, or one and every one after it. Needs a user (OAuth 2.0) token. Needs the extra OAuth scope calls.write (pass scopes to the plugin).
+Moves, renames or re-invites a scheduled call the authenticated user organizes. Only the fields sent change. For a recurring call, scope and occurrence_start_time pick the occurrences: all of them (the default), one, or one and every one after it. Invitees get an email about the change unless notify_invitees is false. Needs a user (OAuth 2.0) token. Needs the extra OAuth scope calls.write (pass scopes to the plugin).
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.twitter.api.calls.scheduled.update({ id: '1460323737035677698', start_time: '2026-11-01T00:00:00Z' });
@@ -38967,7 +38967,7 @@ await corsair.twitter.api.chat.groups.updateAdminSettings({ id: 'g14603237370356
 
 `chat.media.appendUpload`
 
-Appends media data to an XChat upload session. Needs a user (OAuth 2.0) token.
+Appends media data to an XChat upload session. Pass media as &#123; base64: "…" &#125;, &#123; url &#125; or a public URL string (a bare string is a URL, not base64); the plugin base64-encodes the bytes for X. Up to 4 MB per segment. Needs a user (OAuth 2.0) token.
 
 **Risk:** `write`
 
@@ -40590,7 +40590,7 @@ await corsair.twitter.api.chat.messageRequests.accept({ id: '1460323737035677698
 
 Retrieves the message request state of a 1:1 Chat conversation and its newest message events. Like opening the request in an X app, reading it marks the returned messages as delivered and updates the unread badge. Needs a user (OAuth 2.0) token.
 
-**Risk:** `read`
+**Risk:** `write`
 
 ```ts
 await corsair.twitter.api.chat.messageRequests.get({ id: '1460323737035677698' });
@@ -48058,15 +48058,15 @@ await corsair.twitter.api.compliance.jobs.list({ type: 'tweets' });
 
 `compliance.jobs.upload`
 
-Uploads the newline-delimited ID file for a Compliance Job using the signed URL returned at job creation. Needs app-only auth: X accepts only the app's Bearer token here (connect with authType 'api_key').
+Uploads the newline-delimited ID file for a Compliance Job using the signed URL returned at job creation. Pass file as &#123; base64 &#125; or a URL to a text file with one post or user ID per line. Needs app-only auth: X accepts only the app's Bearer token here (connect with authType 'api_key').
 
 **Risk:** `write`
 
 ```ts
 await corsair.twitter.api.compliance.jobs.upload({
 	id: '1460323737035677698',
-	token: '1460323737035677698',
-	file: { base64: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', filename: 'pixel.png', contentType: 'image/png' },
+	token: 'signed-upload-token-from-upload_url',
+	file: { base64: 'MTQ2MDMyMzczNzAzNTY3NzY5OAoxNDYwMzIzNzM3MDM1Njc3Njk5Cg==', filename: 'post-ids.txt', contentType: 'text/plain' },
 });
 ```
 
@@ -65948,7 +65948,7 @@ await corsair.twitter.api.media.subtitles.delete({ id: '1460323737035677698', me
 
 `media.upload.append`
 
-Appends one segment of the file to a chunked upload. Send the segment base64-encoded in media (raw bytes in multipart bodies) and its position in the file in segment_index, counting from 0. A segment can be up to 8 MB; in a JSON body keep it to 4 MB or less, because base64 adds a third. After the last segment, call Finalize Media Upload. Needs a user (OAuth 2.0) token.
+Appends one segment of the file to a chunked upload. Send the segment base64-encoded in media (raw bytes in multipart bodies) and its position in the file in segment_index, counting from 0. A segment can be up to 8 MB; in a JSON body keep it to 4 MB or less, because base64 adds a third. After the last segment, call Finalize Media Upload. Pass media as &#123; base64: "…" &#125;, &#123; url &#125; or a public URL string (a bare string is a URL, not base64); the plugin base64-encodes the bytes for X. Up to 4 MB per segment. Needs a user (OAuth 2.0) token.
 
 **Risk:** `write`
 
@@ -67554,7 +67554,7 @@ await corsair.twitter.api.media.upload.initialize({});
 
 `media.upload.single`
 
-Uploads a media file in one request and returns its id. Send the file base64-encoded in media (raw bytes in multipart bodies). For a Post, set media_category to tweet_image (JPG, PNG, GIF or WEBP, up to 5 MB) or tweet_gif, then pass the returned id in media.media_ids on Create or Edit Post. DM media uses dm_image or dm_gif. For video, use Initialize Media Upload. Needs a user (OAuth 2.0) token.
+Uploads a media file in one request and returns its id. Send the file base64-encoded in media (raw bytes in multipart bodies). For a Post, set media_category to tweet_image (JPG, PNG, GIF or WEBP, up to 5 MB) or tweet_gif, then pass the returned id in media.media_ids on Create or Edit Post. DM media uses dm_image or dm_gif. For video, use Initialize Media Upload. Pass media as &#123; base64: "…" &#125;, &#123; url &#125; or a public URL string (a bare string is a URL, not base64); the plugin base64-encodes the bytes for X. Up to 15 MB here; use the chunked upload (initialize, append, finalize) for video. Needs a user (OAuth 2.0) token.
 
 **Risk:** `write`
 
@@ -81854,12 +81854,14 @@ await corsair.twitter.api.posts.streamRules.list({});
 
 `posts.streamRules.update`
 
-Adds or deletes rules from the active rule set for the filtered stream. Exactly one of `add`, `delete`, or `?delete_all=true` must be specified. Use `?dry_run=true` to validate without committing. Needs app-only auth: X accepts only the app's Bearer token here (connect with authType 'api_key').
+Adds or deletes rules from the active rule set for the filtered stream. Exactly one of `add`, `delete`, or `?delete_all=true` must be specified. Use `?dry_run=true` to validate without committing. Send exactly one of add, delete or delete_all: true; dry_run checks the change without applying it. Needs app-only auth: X accepts only the app's Bearer token here (connect with authType 'api_key').
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.twitter.api.posts.streamRules.update({});
+await corsair.twitter.api.posts.streamRules.update({
+	add: [{ value: 'from:XDevelopers -is:retweet', tag: 'x-devs' }],
+});
 ```
 
 **Input**
@@ -92885,7 +92887,7 @@ await corsair.twitter.api.users.blockDms({ id: '1460323737035677698' });
 
 Causes the source User to block the target User. A block also removes any follow between the two Users, in both directions, and unblocking does not restore it. Each call blocks one account: block only accounts the authenticated User named or approved, because finding or reviewing accounts is not approval to block them. Needs a user (OAuth 2.0) token.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.twitter.api.users.blocking.block({ id: '1460323737035677698', target_user_id: '2244994945' });
@@ -94526,12 +94528,12 @@ await corsair.twitter.api.users.blocking.unblock({ source_user_id: '2244994945',
 
 `users.bookmarks.create`
 
-Adds one or more Posts to the authenticated user's Bookmarks. Supply `tweet_id` for a single Post, or `tweet_ids` (at most 25) to bookmark several in one request. Optional `folder_id` applies to every Post in the request. Billing and rate limits still apply per HTTP request. Needs a user (OAuth 2.0) token.
+Adds one or more Posts to the authenticated user's Bookmarks. Supply `tweet_id` for a single Post, or `tweet_ids` (at most 25) to bookmark several in one request. Optional `folder_id` applies to every Post in the request. Billing and rate limits still apply per HTTP request. Send tweet_id or tweet_ids, not both. Needs a user (OAuth 2.0) token.
 
 **Risk:** `write`
 
 ```ts
-await corsair.twitter.api.users.bookmarks.create({ id: '1460323737035677698', tweet_id: '1460323737035677698' });
+await corsair.twitter.api.users.bookmarks.create({ id: '2244994945', tweet_id: '1460323737035677698' });
 ```
 
 **Input**
@@ -98696,7 +98698,7 @@ Publishes or ends one of the authenticated user's broadcasts. `id` must be the a
 **Risk:** `destructive`
 
 ```ts
-await corsair.twitter.api.users.broadcasts.updateState({ id: '1460323737035677698', broadcast_id: '1460323737035677698', state: '1460323737035677698' });
+await corsair.twitter.api.users.broadcasts.updateState({ id: '2244994945', broadcast_id: '1yNGaLgNbMdxj', state: 'PUBLISH' });
 ```
 
 **Input**
@@ -121300,7 +121302,7 @@ await corsair.twitter.api.users.sources.create({ id: '1460323737035677698', name
     is360?: boolean | null,
     is_stream_active?: boolean | null,
     name?: string | null,
-    owner_id?: number | null,
+    owner_id?: string | null,
     rtmp_region?: string | null,
     rtmp_stream_key?: string | null,
     rtmp_url?: string | null,
@@ -122094,7 +122096,7 @@ await corsair.twitter.api.users.sources.get({ id: '1460323737035677698', source_
     is360?: boolean | null,
     is_stream_active?: boolean | null,
     name?: string | null,
-    owner_id?: number | null,
+    owner_id?: string | null,
     rtmp_region?: string | null,
     rtmp_stream_key?: string | null,
     rtmp_url?: string | null,
@@ -122501,7 +122503,7 @@ await corsair.twitter.api.users.sources.list({ id: '1460323737035677698' });
     is360?: boolean | null,
     is_stream_active?: boolean | null,
     name?: string | null,
-    owner_id?: number | null,
+    owner_id?: string | null,
     rtmp_region?: string | null,
     rtmp_stream_key?: string | null,
     rtmp_url?: string | null,
@@ -122910,7 +122912,7 @@ await corsair.twitter.api.users.sources.rename({ id: '1460323737035677698', sour
     is360?: boolean | null,
     is_stream_active?: boolean | null,
     name?: string | null,
-    owner_id?: number | null,
+    owner_id?: string | null,
     rtmp_region?: string | null,
     rtmp_stream_key?: string | null,
     rtmp_url?: string | null,

@@ -159,7 +159,7 @@ export async function makeXRequest(options: XRequest): Promise<unknown> {
 			rateLimitConfig: X_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		if (error instanceof ApiError) throw withoutRequestData(error);
+		if (error instanceof ApiError) throw withoutRequestData(error, options);
 		throw error;
 	}
 }
@@ -179,9 +179,26 @@ const REDACTED = '[REDACTED]';
  * (`{ title, detail, type }`, or `{ errors: [{ message }] }` on v2 and
  * `{ error, error_description }` on the OAuth routes).
  */
-export function withoutRequestData(error: ApiError): ApiError {
-	const sent = sentStrings(error.request);
-	const body = scrubSent(withoutEchoedValues(error.body), sent);
+export function withoutRequestData(
+	error: ApiError,
+	/**
+	 * What the plugin sent, before core redacted it: core already replaces a
+	 * `token` query value (the compliance download's signed token) with
+	 * [REDACTED] on `error.request`, and the Bearer token isn't there at all.
+	 */
+	sent?: Pick<XRequest, 'body' | 'query' | 'pathParameters' | 'key'>,
+): ApiError {
+	const sentList = sentStrings(
+		sent
+			? {
+					body: sent.body instanceof Blob ? undefined : sent.body,
+					query: sent.query,
+					path: sent.pathParameters,
+					key: sent.key,
+				}
+			: error.request,
+	);
+	const body = scrubSent(withoutEchoedValues(error.body), sentList);
 	const message = xErrorMessage(error.status, error.statusText, body);
 	return new ApiError(
 		{
@@ -304,7 +321,16 @@ type SentString = { text: string; wholeWord: boolean };
  * length doesn't exempt one; short ones are matched as whole words, so they
  * can't take out letters or digits inside other words.
  */
-function sentStrings(request: ApiError['request']): SentString[] {
+function sentStrings(request: {
+	// `unknown` because sent values are any JSON value.
+	body?: unknown;
+	// `unknown` because sent values are any JSON value.
+	query?: unknown;
+	// `unknown` because sent values are any JSON value.
+	path?: unknown;
+	/** The token, which core keeps on the config, not the request. */
+	key?: string;
+}): SentString[] {
 	const found = new Map<string, boolean>();
 	// `unknown` because a sent value is any JSON value.
 	const visit = (value: unknown, depth: number, secret: boolean) => {
@@ -335,6 +361,7 @@ function sentStrings(request: ApiError['request']): SentString[] {
 	visit(request.query, 0, false);
 	// An ID or a username in the path, at any length: X's 404 can quote it back.
 	visit(request.path, 0, true);
+	if (request.key) found.set(request.key, false);
 	return [...found]
 		.map(([text, wholeWord]) => ({ text, wholeWord }))
 		.sort((a, b) => b.text.length - a.text.length);

@@ -1913,7 +1913,18 @@
           }
         },
         "additionalProperties": false,
-        "required": ["id"]
+        "required": ["id"],
+        "anyOf": [
+          {
+            "required": ["title"]
+          },
+          {
+            "required": ["chat_option"]
+          },
+          {
+            "required": ["live_category_id"]
+          }
+        ]
       },
       "output": {
         "$ref": "UpdateBroadcastResponse"
@@ -10315,7 +10326,8 @@
             "$ref": "UpdateRulesDelete"
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "x-corsair-exactlyOne": [["add"], ["delete"], ["delete_all"]]
       },
       "output": {
         "$ref": "UpdateRulesResponse"
@@ -11830,14 +11842,7 @@
           }
         },
         "required": ["id"],
-        "anyOf": [
-          {
-            "required": ["tweet_id"]
-          },
-          {
-            "required": ["tweet_ids"]
-          }
-        ]
+        "x-corsair-exactlyOne": [["tweet_id"], ["tweet_ids"]]
       },
       "output": {
         "$ref": "CreateUsersBookmarkResponse"
@@ -15431,6 +15436,7 @@
       "response": "json",
       "auth": "user",
       "scopes": ["broadcast.read", "broadcast.write"],
+      "bigIntFields": ["owner_id"],
       "input": {
         "type": "object",
         "properties": {
@@ -15495,6 +15501,7 @@
       "response": "json",
       "auth": "user",
       "scopes": ["broadcast.read"],
+      "bigIntFields": ["owner_id"],
       "input": {
         "type": "object",
         "properties": {
@@ -15524,6 +15531,7 @@
       "response": "json",
       "auth": "user",
       "scopes": ["broadcast.read"],
+      "bigIntFields": ["owner_id"],
       "input": {
         "type": "object",
         "properties": {
@@ -15548,6 +15556,7 @@
       "response": "json",
       "auth": "user",
       "scopes": ["broadcast.read", "broadcast.write"],
+      "bigIntFields": ["owner_id"],
       "input": {
         "type": "object",
         "properties": {
@@ -20074,8 +20083,10 @@
           "description": "Label for the source."
         },
         "owner_id": {
-          "type": "integer",
-          "description": "Owner's numeric user id. Exceeds the exact integer range of many JSON parsers."
+          "type": "string",
+          "pattern": "^-?[0-9]+$",
+          "description": "Owner's numeric user id. Exceeds the exact integer range of many JSON parsers. Returned as a decimal string.",
+          "x-corsair-bigint": true
         },
         "rtmp_region": {
           "type": "string",
@@ -25367,8 +25378,10 @@
           "description": "Label for the source."
         },
         "owner_id": {
-          "type": "integer",
-          "description": "Owner's numeric user id. Exceeds the exact integer range of many JSON parsers."
+          "type": "string",
+          "pattern": "^-?[0-9]+$",
+          "description": "Owner's numeric user id. Exceeds the exact integer range of many JSON parsers. Returned as a decimal string.",
+          "x-corsair-bigint": true
         },
         "rtmp_region": {
           "type": "string",
@@ -27211,8 +27224,10 @@
           "description": "Label for the source."
         },
         "owner_id": {
-          "type": "integer",
-          "description": "Owner's numeric user id. Exceeds the exact integer range of many JSON parsers."
+          "type": "string",
+          "pattern": "^-?[0-9]+$",
+          "description": "Owner's numeric user id. Exceeds the exact integer range of many JSON parsers. Returned as a decimal string.",
+          "x-corsair-bigint": true
         },
         "rtmp_region": {
           "type": "string",
@@ -32949,8 +32964,10 @@
           "description": "Label for the source."
         },
         "owner_id": {
-          "type": "integer",
-          "description": "Owner's numeric user id. Exceeds the exact integer range of many JSON parsers."
+          "type": "string",
+          "pattern": "^-?[0-9]+$",
+          "description": "Owner's numeric user id. Exceeds the exact integer range of many JSON parsers. Returned as a decimal string.",
+          "x-corsair-bigint": true
         },
         "rtmp_region": {
           "type": "string",

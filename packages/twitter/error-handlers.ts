@@ -17,6 +17,27 @@ function status(error: Error): number | undefined {
 /** The longest wait for a rate-limit reset that is retried rather than reported. */
 export const X_MAX_RATE_LIMIT_WAIT_MS = 60_000;
 
+/**
+ * A 429 for a spent cap rather than a busy window: the monthly usage cap
+ * (`UsageCapExceeded`), or a 24-hour or monthly limit such as the DM cap.
+ * Waiting a minute doesn't refill it, so it is never retried.
+ */
+export function isQuotaExhausted(error: Error): boolean {
+	const body = error instanceof ApiError ? error.body : undefined;
+	const parts: string[] = [error.message];
+	if (typeof body === 'string') parts.push(body);
+	else if (body && typeof body === 'object') {
+		// `unknown` because the problem body's fields are narrowed one by one.
+		const fields = body as Record<string, unknown>;
+		for (const key of ['title', 'detail', 'type', 'reason']) {
+			if (typeof fields[key] === 'string') parts.push(fields[key] as string);
+		}
+	}
+	return /usage ?cap|cap ?exceeded|daily|monthly|24.?hour|quota/i.test(
+		parts.join(' '),
+	);
+}
+
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
@@ -30,6 +51,7 @@ export const errorHandlers = {
 		// (a 15-minute window, the 24-hour DM cap) goes back to the caller with
 		// its reset time instead of holding the call open.
 		handler: async (error: Error) => {
+			if (isQuotaExhausted(error)) return { maxRetries: 0 };
 			const wait = error instanceof ApiError ? error.retryAfter : undefined;
 			if (wait !== undefined && wait > 0 && wait <= X_MAX_RATE_LIMIT_WAIT_MS) {
 				return { maxRetries: 1, headersRetryAfterMs: wait };

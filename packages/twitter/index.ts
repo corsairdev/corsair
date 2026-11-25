@@ -20,6 +20,8 @@ import {
 	twitterGeneratedEndpointSchemas,
 	twitterGeneratedEndpointsNested,
 } from './endpoints';
+import { findTwitterOperation } from './endpoints/openapi-schema';
+import { authProblem } from './endpoints/operations';
 import {
 	TweetsCreateInputSchema,
 	TweetsCreateReplyInputSchema,
@@ -263,6 +265,16 @@ export function twitter<const T extends TwitterPluginOptions>(
 					throw new AuthMissingError('twitter', 'webhook_signature');
 				}
 				return res;
+			}
+
+			// A route that takes the other kind of token is refused before any
+			// credential is read: an expired user token would otherwise be
+			// refreshed (and its refresh token rotated) for a call X then refuses.
+			if (source === 'endpoint' && ctx.meteredOperationId) {
+				const operation = findTwitterOperation(ctx.meteredOperationId);
+				const kind = ctx.authType === 'api_key' ? 'api_key' : 'oauth_2';
+				const problem = operation && authProblem(operation, kind);
+				if (problem) throw new Error(problem);
 			}
 
 			if (source === 'endpoint' && options.key) {

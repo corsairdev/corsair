@@ -82,7 +82,7 @@ apiExamples:
   broadcasts.delete:
     args: {"id": "1460323737035677698"}
   broadcasts.end:
-    args: {"id": "1460323737035677698", "state": "1460323737035677698"}
+    args: {"id": "1yNGaLgNbMdxj", "state": "END"}
   broadcasts.get:
     args: {"id": "1460323737035677698"}
   broadcasts.list:
@@ -102,7 +102,7 @@ apiExamples:
   broadcasts.scheduled.update:
     args: {"id": "1460323737035677698", "scheduled_broadcast_id": "1460323737035677698", "scheduled_start_ms": "1460323737035677698", "scheduled_end_ms": "1460323737035677698"}
   broadcasts.update:
-    args: {"id": "1460323737035677698"}
+    args: {"id": "1yNGaLgNbMdxj", "title": "Launch week Q&A"}
   calls.create:
     args: {}
   calls.get:
@@ -236,7 +236,7 @@ apiExamples:
   compliance.jobs.list:
     args: {"type": "tweets"}
   compliance.jobs.upload:
-    args: {"id": "1460323737035677698", "token": "1460323737035677698", "file": {"base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==", "filename": "pixel.png", "contentType": "image/png"}}
+    args: {"id": "1460323737035677698", "token": "signed-upload-token-from-upload_url", "file": {"base64": "MTQ2MDMyMzczNzAzNTY3NzY5OAoxNDYwMzIzNzM3MDM1Njc3Njk5Cg==", "filename": "post-ids.txt", "contentType": "text/plain"}}
   connections.history:
     args: {}
   connections.terminateAll:
@@ -368,7 +368,7 @@ apiExamples:
   posts.streamRules.list:
     args: {}
   posts.streamRules.update:
-    args: {}
+    args: {"add": [{"value": "from:XDevelopers -is:retweet", "tag": "x-devs"}]}
   sources.create:
     args: {"name": "Launch week", "region": "1460323737035677698"}
   sources.delete:
@@ -416,7 +416,7 @@ apiExamples:
   users.blocking.unblock:
     args: {"source_user_id": "2244994945", "target_user_id": "2244994945"}
   users.bookmarks.create:
-    args: {"id": "1460323737035677698", "tweet_id": "1460323737035677698"}
+    args: {"id": "2244994945", "tweet_id": "1460323737035677698"}
   users.bookmarks.delete:
     args: {"id": "1460323737035677698", "tweet_id": "1460323737035677698"}
   users.bookmarks.folders.create:
@@ -436,7 +436,7 @@ apiExamples:
   users.broadcasts.list:
     args: {"id": "1460323737035677698"}
   users.broadcasts.updateState:
-    args: {"id": "1460323737035677698", "broadcast_id": "1460323737035677698", "state": "1460323737035677698"}
+    args: {"id": "2244994945", "broadcast_id": "1yNGaLgNbMdxj", "state": "PUBLISH"}
   users.followedLists.follow:
     args: {"id": "1460323737035677698", "list_id": "1460323737035677698"}
   users.followedLists.list:

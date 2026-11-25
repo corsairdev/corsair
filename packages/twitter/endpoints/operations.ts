@@ -3,7 +3,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { BinaryResponse, FileInput } from 'corsair/http';
 import { resolveFileInput, toFileOutput } from 'corsair/http';
 import type { XRequest } from '../client';
-import { makeXRequest, X_UPLOAD_MAX_BYTES } from '../client';
+import { makeXRequest } from '../client';
 import type { TwitterContext } from '../index';
 import type { TwitterOperationDefinition } from './manifest';
 import {
@@ -108,7 +108,20 @@ export type XTokenKind = 'oauth_2' | 'api_key';
 export function authProblem(
 	operation: TwitterOperationDefinition,
 	kind: XTokenKind,
+	// `unknown` because the input is checked before (or without) validation.
+	input?: Record<string, unknown>,
 ): string | undefined {
+	// X Activity subscriptions take an app token, except subscriptions.* events,
+	// which need the user's own token (the spec says so in prose).
+	if (
+		kind === 'api_key' &&
+		(operation.id === 'activity.subscriptions.create' ||
+			operation.id === 'activity.subscriptions.update') &&
+		typeof input?.event_type === 'string' &&
+		input.event_type.startsWith('subscriptions.')
+	) {
+		return `X needs a user's OAuth 2.0 token for ${input.event_type} subscriptions; connect with authType 'oauth_2'.`;
+	}
 	if (operation.auth === 'app' && kind === 'oauth_2') {
 		return `X accepts only app-only auth on ${operation.id}: connect the X plugin with authType 'api_key' and the app's Bearer token (developer console → Keys and tokens).`;
 	}
@@ -148,19 +161,61 @@ function isBinaryResponse(value: unknown): value is BinaryResponse {
 	);
 }
 
+const MB = 1024 * 1024;
+
+/**
+ * The largest file each upload route reads. X caps a chunked segment at 8 MB
+ * and asks for 4 MB or less in a JSON body (base64 adds a third); a one-shot
+ * upload takes images up to 5 MB and GIFs up to 15 MB. resolveFileInput
+ * checks the size before it reads the bytes, so a whole video passed as one
+ * segment is refused without being loaded.
+ */
+const UPLOAD_LIMITS: Record<string, number> = {
+	'media.upload.single': 15 * MB,
+	'media.upload.append': 4 * MB,
+	'chat.media.appendUpload': 4 * MB,
+	// A list of post or user IDs, one per line.
+	'compliance.jobs.upload': 100 * MB,
+};
+
+export function uploadLimitFor(id: string): number {
+	return UPLOAD_LIMITS[id] ?? 4 * MB;
+}
+
 async function fileBytes(
+	id: string,
 	value: FileInput | Blob,
 ): Promise<{ blob: Blob; filename: string }> {
 	const resolved = await resolveFileInput(value as FileInput, {
-		maxBytes: X_UPLOAD_MAX_BYTES,
+		maxBytes: uploadLimitFor(id),
 		fallbackName: 'file',
 	});
 	return { blob: resolved.file, filename: resolved.filename };
 }
 
-async function base64Of(value: FileInput | Blob): Promise<string> {
-	const { blob } = await fileBytes(value);
+async function base64Of(id: string, value: FileInput | Blob): Promise<string> {
+	const { blob } = await fileBytes(id, value);
 	return Buffer.from(await blob.arrayBuffer()).toString('base64');
+}
+
+/**
+ * Parses a JSON response whose `fields` carry integers past 2^53 (`owner_id`):
+ * each is quoted in the raw text first, so no digit is lost to a JSON number.
+ */
+export function parseWithBigInts(
+	bytes: Uint8Array,
+	fields: readonly string[],
+): unknown {
+	let text = new TextDecoder().decode(bytes);
+	if (text.trim().length === 0) return undefined;
+	for (const field of fields) {
+		const name = field.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+		text = text.replace(
+			new RegExp(`("${name}"\\s*:\\s*)(-?\\d+)(?=\\s*[,}\\]])`, 'g'),
+			'$1"$2"',
+		);
+	}
+	return JSON.parse(text);
 }
 
 /**
@@ -175,7 +230,12 @@ export function createTwitterOperation<Id extends TwitterOperationId>(
 		const operation = twitterOperationFor(id);
 		const kind: XTokenKind =
 			ctx.options?.authType === 'api_key' ? 'api_key' : 'oauth_2';
-		const problem = authProblem(operation, kind);
+		const problem = authProblem(
+			operation,
+			kind,
+			// `unknown` because only event_type is read, before validation.
+			(input ?? {}) as Record<string, unknown>,
+		);
 		if (problem) throw new Error(problem);
 
 		const parsedInput = getTwitterInputSchema(id).safeParse(input ?? {});
@@ -197,7 +257,7 @@ export function createTwitterOperation<Id extends TwitterOperationId>(
 				const value = valid[field.name];
 				if (field.base64 && value !== undefined && value !== null) {
 					// A file input (a URL, { url }, { base64 }, a Blob) goes out as base64.
-					valid[field.name] = await base64Of(value as FileInput | Blob);
+					valid[field.name] = await base64Of(id, value as FileInput | Blob);
 				}
 				continue;
 			}
@@ -220,7 +280,7 @@ export function createTwitterOperation<Id extends TwitterOperationId>(
 			request.body = valid;
 		} else if (operation.request === 'binary') {
 			const file = valid.file;
-			const { blob } = await fileBytes(file as FileInput | Blob);
+			const { blob } = await fileBytes(id, file as FileInput | Blob);
 			request.body = blob;
 			request.mediaType = 'application/octet-stream';
 		}
@@ -234,6 +294,13 @@ export function createTwitterOperation<Id extends TwitterOperationId>(
 			response = toFileOutput(binary.bytes, binary.contentType, {
 				filename: fileNameFor(id, parsedInput.data),
 			});
+		} else if (operation.bigIntFields?.length) {
+			// Read as bytes so the big integers can be quoted before JSON parsing.
+			request.responseType = 'binary';
+			const binary = await makeXRequest(request);
+			response = isBinaryResponse(binary)
+				? parseWithBigInts(binary.bytes, operation.bigIntFields)
+				: binary;
 		} else {
 			const body = await makeXRequest(request);
 			response = operation.response === 'empty' ? { success: true } : body;

@@ -1,7 +1,11 @@
 import { AuthMissingError } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { twitterOperations } from './endpoints/manifest';
-import { errorHandlers, X_MAX_RATE_LIMIT_WAIT_MS } from './error-handlers';
+import {
+	errorHandlers,
+	isQuotaExhausted,
+	X_MAX_RATE_LIMIT_WAIT_MS,
+} from './error-handlers';
 import { twitter, X_DEFAULT_SCOPES, X_EXTRA_SCOPES } from './index';
 import { mockFetch } from './test-helpers';
 
@@ -116,6 +120,15 @@ describe('twitter plugin', () => {
 			'directMessages.conversations.create',
 			'chat.messages.send',
 			'broadcasts.create',
+			// Revokes the token of a bot whose handle already exists.
+			'bots.create',
+			// Email the invitees unless notify_invitees is false.
+			'calls.scheduled.create',
+			'calls.scheduled.update',
+			// delete / delete_all removes the active rules.
+			'posts.streamRules.update',
+			// Also removes any follow between the accounts, for good.
+			'users.blocking.block',
 		]) {
 			expect([id, meta[id]?.riskLevel]).toEqual([id, 'destructive']);
 		}
@@ -128,8 +141,14 @@ describe('twitter plugin', () => {
 		expect(meta['users.following.follow']?.riskLevel).toBe('write');
 		expect(meta['users.me']?.riskLevel).toBe('read');
 		expect(meta['posts.search.recent']?.riskLevel).toBe('read');
+		// Reading a message request marks its messages delivered: not read-only.
+		expect(meta['chat.messageRequests.get']?.riskLevel).toBe('write');
+		expect(meta['chat.messageRequests.list']?.riskLevel).toBe('read');
 		for (const operation of twitterOperations) {
-			if (operation.method === 'GET') {
+			if (
+				operation.method === 'GET' &&
+				operation.id !== 'chat.messageRequests.get'
+			) {
 				expect([operation.id, meta[operation.id]?.riskLevel]).toEqual([
 					operation.id,
 					'read',
@@ -256,6 +275,39 @@ describe('key builder', () => {
 		expect(state.refreshToken).toBe('refresh-3');
 	});
 
+	it('refuses a route that takes the other token kind before reading or refreshing credentials', async () => {
+		const { keys, writes, state } = oauthKeys({
+			accessToken: 'old-access',
+			expiresAt: String(Math.floor(Date.now() / 1000) - 60),
+			refreshToken: 'refresh-1',
+		});
+		const { fetchMock } = mockFetch();
+		await expect(
+			keyBuilderOf(twitter())(
+				{
+					authType: 'oauth_2',
+					keys,
+					tenantId: 't-guard',
+					meteredOperationId: 'usage.get',
+				},
+				'endpoint',
+			),
+		).rejects.toThrow(/app-only auth on usage\.get/);
+		expect(fetchMock).not.toHaveBeenCalled();
+		expect(writes).toEqual([]);
+		expect(state.refreshToken).toBe('refresh-1');
+		await expect(
+			keyBuilderOf(twitter({ authType: 'api_key' }))(
+				{
+					authType: 'api_key',
+					keys: { get_api_key: async () => 'app-bearer' },
+					meteredOperationId: 'directMessages.events.list',
+				},
+				'endpoint',
+			),
+		).rejects.toThrow(/user's OAuth 2\.0 token/);
+	});
+
 	it('surfaces X refusing a spent refresh token with its error code', async () => {
 		const { keys } = oauthKeys({
 			accessToken: 'old-access',
@@ -309,6 +361,46 @@ describe('error handlers', () => {
 		).resolves.toEqual({
 			maxRetries: 0,
 		});
+	});
+
+	it('never retries a 429 for a spent daily or monthly cap', async () => {
+		const capped = (body: Record<string, string>) =>
+			new ApiError(
+				{
+					method: 'POST',
+					url: '/2/dm_conversations/with/{participant_id}/messages',
+				},
+				{
+					url: 'https://api.x.com/2/dm_conversations',
+					ok: false,
+					status: 429,
+					statusText: 'x',
+					body,
+				},
+				'X 429',
+				{ retryAfter: 5_000 },
+			);
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(
+				capped({
+					title: 'UsageCapExceeded',
+					detail: 'Usage cap exceeded: Monthly product cap',
+				}),
+			),
+		).resolves.toEqual({ maxRetries: 0 });
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(
+				capped({
+					title: 'Too Many Requests',
+					detail: 'You have reached the 24 hour limit for Direct Messages.',
+				}),
+			),
+		).resolves.toEqual({ maxRetries: 0 });
+		expect(
+			isQuotaExhausted(
+				capped({ title: 'Too Many Requests', detail: 'Too Many Requests' }),
+			),
+		).toBe(false);
 	});
 
 	it('routes 401, 403, 404, 400 and 5xx to their handlers without retrying', async () => {

@@ -52,6 +52,10 @@ export function mockFetch(...replies: MockReply[]): {
 			});
 			const reply = queue.shift() ?? { status: 200, body: {} };
 			const status = reply.status ?? 200;
+			// 204, 205 and 304 can't carry a body: the Response constructor throws on one.
+			if (status === 204 || status === 205 || status === 304) {
+				return new Response(null, { status, headers: reply.headers });
+			}
 			if (reply.bytes) {
 				return new Response(reply.bytes, {
 					status,
@@ -61,10 +65,14 @@ export function mockFetch(...replies: MockReply[]): {
 					},
 				});
 			}
-			return new Response(JSON.stringify(reply.body ?? {}), {
-				status,
-				headers: { 'content-type': 'application/json', ...reply.headers },
-			});
+			// An explicit `body: null` is sent as JSON null; only a missing body defaults to {}.
+			return new Response(
+				JSON.stringify(reply.body === undefined ? {} : reply.body),
+				{
+					status,
+					headers: { 'content-type': 'application/json', ...reply.headers },
+				},
+			);
 		},
 	);
 	global.fetch = fetchMock as unknown as typeof fetch;

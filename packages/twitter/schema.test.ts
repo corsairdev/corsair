@@ -63,13 +63,28 @@ describe('twitter-manifest.json', () => {
 	it('marks every path parameter as required and in the path', () => {
 		for (const operation of twitterOperations) {
 			const placeholders = [...operation.path.matchAll(/\{([^}]+)\}/g)].map(
-				(m) => m[1],
+				(m) => m[1] as string,
 			);
 			const fields = twitterInputFields(operation.id);
+			const required = Array.isArray(operation.input.required)
+				? (operation.input.required as string[])
+				: [];
 			for (const name of placeholders) {
 				expect([operation.id, fields.find((f) => f.name === name)?.in]).toEqual(
 					[operation.id, 'path'],
 				);
+				expect([operation.id, name, required.includes(name)]).toEqual([
+					operation.id,
+					name,
+					true,
+				]);
+			}
+			// And the input schema refuses a call without them.
+			if (placeholders.length > 0) {
+				expect([
+					operation.id,
+					getTwitterInputSchema(operation.id).safeParse({}).success,
+				]).toEqual([operation.id, false]);
 			}
 		}
 	});
@@ -120,6 +135,25 @@ describe('plugin-docs.yaml', () => {
 			TweetsCreateReplyInputSchema.safeParse(
 				docs.apiExamples['tweets.createReply']!.args,
 			).success,
+		).toBe(true);
+	});
+});
+
+describe('string checks', () => {
+	it('counts characters, not UTF-16 units, against length limits', () => {
+		const schema = getTwitterInputSchema('users.search');
+		// 50 supplementary-plane letters: 100 UTF-16 units, 50 characters.
+		const fifty = '𝐀'.repeat(50);
+		expect(schema.safeParse({ query: fifty }).success).toBe(true);
+		expect(schema.safeParse({ query: `${fifty}𝐀` }).success).toBe(false);
+		expect(schema.safeParse({ query: 'a'.repeat(50) }).success).toBe(true);
+		expect(schema.safeParse({ query: 'a'.repeat(51) }).success).toBe(false);
+	});
+
+	it("reads the spec's \\x{FFFF} code points as JavaScript does", () => {
+		expect(
+			getTwitterInputSchema('account.ensure').safeParse({ metadata: 'yearly' })
+				.success,
 		).toBe(true);
 	});
 });

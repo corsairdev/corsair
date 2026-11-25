@@ -48,10 +48,15 @@ function unionOf(options: z.ZodType[]): z.ZodType {
 // `unknown` is necessary because the keyword comes from provider JSON.
 function patternOf(value: unknown): RegExp | undefined {
 	if (typeof value !== 'string') return undefined;
+	// The spec writes code points PCRE-style (`\x{FFFF}`); JavaScript spells
+	// them `\u{FFFF}`, and only with the `u` flag. Without it, `\x{FFFF}` would
+	// compile as a literal "x" and refuse valid text.
+	const source = value.replace(/\\x\{([0-9A-Fa-f]{1,6})\}/g, '\\u{$1}');
+	// Unicode property classes (`\p{L}`, a display name or search term) also
+	// need the `u` flag; without it they match a literal "p{L}".
+	const unicode = source !== value || value.includes('\\p{');
 	try {
-		// Unicode property classes (`\p{L}`, a display name or search term) only
-		// mean something with the `u` flag; without it they match a literal "p{L}".
-		return new RegExp(value, value.includes('\\p{') ? 'u' : '');
+		return new RegExp(source, unicode ? 'u' : '');
 	} catch {
 		return undefined;
 	}
@@ -242,15 +247,25 @@ function schemaFromOpenApi(
 		const members = value.enum.filter((member) => member !== null);
 		schema = strict ? enumSchema(members) : openScalarSchema(type, members);
 	} else if (type === 'string') {
-		let stringSchema = z.string();
-		if (strict && typeof value.minLength === 'number') {
-			stringSchema = stringSchema.min(value.minLength);
-		}
-		if (strict && typeof value.maxLength === 'number') {
-			stringSchema = stringSchema.max(value.maxLength);
-		}
+		let stringSchema: z.ZodType<string> = z.string();
 		const pattern = strict ? patternOf(value.pattern) : undefined;
-		if (pattern) stringSchema = stringSchema.regex(pattern);
+		if (pattern) stringSchema = z.string().regex(pattern);
+		// JSON Schema lengths count characters (code points); zod's min/max count
+		// UTF-16 units, which would refuse 26 emoji under a 50-character limit.
+		const minLength = strict ? value.minLength : undefined;
+		const maxLength = strict ? value.maxLength : undefined;
+		if (typeof minLength === 'number') {
+			stringSchema = stringSchema.refine(
+				(text) => [...text].length >= minLength,
+				`must be at least ${minLength} characters`,
+			);
+		}
+		if (typeof maxLength === 'number') {
+			stringSchema = stringSchema.refine(
+				(text) => [...text].length <= maxLength,
+				`must be at most ${maxLength} characters`,
+			);
+		}
 		schema = stringSchema;
 	} else if (type === 'integer' || type === 'number') {
 		let numberSchema = z.number();
@@ -338,7 +353,8 @@ function schemaFromOpenApi(
 		// `unknown` is necessary because the spec leaves this JSON value untyped.
 		schema = z.unknown();
 	}
-	if (strict) schema = withRequiredAlternatives(schema, value);
+	if (strict)
+		schema = withExactlyOne(withRequiredAlternatives(schema, value), value);
 	return withDescription(nullable ? schema.nullable() : schema, value);
 }
 
@@ -385,6 +401,46 @@ function withRequiredAlternatives(
 	});
 }
 
+/** A selector counts as given when it is set and not `false` (`delete_all: false`). */
+// `unknown` because an input value is any validated JSON value.
+function given(value: unknown): boolean {
+	return value !== undefined && value !== null && value !== false;
+}
+
+/**
+ * `x-corsair-exactlyOne: [["tweet_id"], ["tweet_ids"]]`: selectors the spec
+ * says are mutually exclusive (in prose). Exactly one group must be given in
+ * full, and nothing from the other groups.
+ */
+function withExactlyOne(schema: z.ZodType, value: OpenApiDocument): z.ZodType {
+	const groups = value['x-corsair-exactlyOne'];
+	if (!Array.isArray(groups) || groups.length === 0) return schema;
+	const names = groups.map((group) =>
+		Array.isArray(group)
+			? group.filter(
+					// `unknown` because the group entries are parsed from the manifest JSON.
+					(name: unknown): name is string => typeof name === 'string',
+				)
+			: [],
+	);
+	return schema.superRefine((input, context) => {
+		if (!isRecord(input)) return;
+		const touched = names.filter((group) =>
+			group.some((name) => given(input[name])),
+		);
+		const complete = touched.filter((group) =>
+			group.every((name) => given(input[name])),
+		);
+		if (touched.length !== 1 || complete.length !== 1) {
+			context.addIssue({
+				code: 'custom',
+				path: [],
+				message: `set exactly one of: ${names.map((group) => group.join(' + ')).join(', ')}`,
+			});
+		}
+	});
+}
+
 /** What a call that answers 2xx with no body returns. */
 export const TwitterEmptyResponseSchema = z
 	.object({
@@ -403,6 +459,13 @@ const outputSchemaCache = new Map<string, z.ZodType>();
 const operationsById = new Map(
 	twitterOperations.map((operation) => [operation.id, operation]),
 );
+
+/** The operation by id, or undefined for one that isn't generated (`tweets.create`). */
+export function findTwitterOperation(
+	id: string,
+): TwitterOperationDefinition | undefined {
+	return operationsById.get(id);
+}
 
 export function twitterOperationFor(id: string): TwitterOperationDefinition {
 	const operation = operationsById.get(id);

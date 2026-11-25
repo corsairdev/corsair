@@ -882,9 +882,9 @@ export const twitterGeneratedEndpointMeta = {
 			'Publishes a draft Article, making it publicly visible. Needs a user (OAuth 2.0) token.',
 	},
 	'bots.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			"Creates a bot account in the calling app's project and returns its bearer token. Idempotent on handle: repeating the request for a handle that already names one of the project's bots returns that bot with a freshly minted token, revoking the previous one — safe to retry when a response was lost, since the replaced token was never seen.",
+			"Creates a bot account in the calling app's project and returns its bearer token. Idempotent on handle: repeating the request for a handle that already names one of the project's bots returns that bot with a freshly minted token, revoking the previous one — safe to retry when a response was lost, since the replaced token was never seen. Repeating it for a handle the project already has revokes that bot's current token.",
 	},
 	'bots.delete': {
 		riskLevel: 'destructive',
@@ -1063,9 +1063,9 @@ export const twitterGeneratedEndpointMeta = {
 			"Cancels a scheduled call the authenticated user organizes, and takes it off invitees' calendars. For a recurring call, scope and occurrence_start_time pick the occurrences: all of them (the default), one, or one and every one after it. Cancelling what is already cancelled succeeds. Needs a user (OAuth 2.0) token. Needs the extra OAuth scope calls.write (pass scopes to the plugin).",
 	},
 	'calls.scheduled.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			"Puts an X call on the authenticated user's X Calls calendar, with them as its organizer, and invites people to it. The call exists right away: share its join_url, or put an agent in it at start time with POST /2/calls/:id/join. A recurrence (an RFC 5545 RRULE) repeats it. Invitees get an email unless notify_invitees is false. Needs a user (OAuth 2.0) token. Needs the extra OAuth scope calls.write (pass scopes to the plugin).",
+			"Puts an X call on the authenticated user's X Calls calendar, with them as its organizer, and invites people to it. The call exists right away: share its join_url, or put an agent in it at start time with POST /2/calls/:id/join. A recurrence (an RFC 5545 RRULE) repeats it. Invitees get an email unless notify_invitees is false. Invitees get an email unless notify_invitees is false. Needs a user (OAuth 2.0) token. Needs the extra OAuth scope calls.write (pass scopes to the plugin).",
 	},
 	'calls.scheduled.get': {
 		riskLevel: 'read',
@@ -1083,9 +1083,9 @@ export const twitterGeneratedEndpointMeta = {
 			'Accepts, declines or tentatively accepts an invitation to a scheduled call for the authenticated user. For a recurring call, scope and occurrence_start_time pick the occurrences the answer is for: all of them (the default), one, or one and every one after it. Needs a user (OAuth 2.0) token. Needs the extra OAuth scope calls.write (pass scopes to the plugin).',
 	},
 	'calls.scheduled.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Moves, renames or re-invites a scheduled call the authenticated user organizes. Only the fields sent change. For a recurring call, scope and occurrence_start_time pick the occurrences: all of them (the default), one, or one and every one after it. Needs a user (OAuth 2.0) token. Needs the extra OAuth scope calls.write (pass scopes to the plugin).',
+			'Moves, renames or re-invites a scheduled call the authenticated user organizes. Only the fields sent change. For a recurring call, scope and occurrence_start_time pick the occurrences: all of them (the default), one, or one and every one after it. Invitees get an email about the change unless notify_invitees is false. Needs a user (OAuth 2.0) token. Needs the extra OAuth scope calls.write (pass scopes to the plugin).',
 	},
 	'chat.conversations.addKeys': {
 		riskLevel: 'write',
@@ -1256,7 +1256,7 @@ export const twitterGeneratedEndpointMeta = {
 	'chat.media.appendUpload': {
 		riskLevel: 'write',
 		description:
-			'Appends media data to an XChat upload session. Needs a user (OAuth 2.0) token.',
+			'Appends media data to an XChat upload session. Pass media as { base64: "…" }, { url } or a public URL string (a bare string is a URL, not base64); the plugin base64-encodes the bytes for X. Up to 4 MB per segment. Needs a user (OAuth 2.0) token.',
 	},
 	'chat.media.download': {
 		riskLevel: 'read',
@@ -1279,7 +1279,7 @@ export const twitterGeneratedEndpointMeta = {
 			"Accepts the other user's pending message request in a 1:1 Chat conversation, which moves to the authenticated user's inbox. Without a pending request, including after a successful accept, the response is 404. Replying to a request does not accept it. Needs a user (OAuth 2.0) token.",
 	},
 	'chat.messageRequests.get': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description:
 			'Retrieves the message request state of a 1:1 Chat conversation and its newest message events. Like opening the request in an X app, reading it marks the returned messages as delivered and updates the unread badge. Needs a user (OAuth 2.0) token.',
 	},
@@ -1372,7 +1372,7 @@ export const twitterGeneratedEndpointMeta = {
 	'compliance.jobs.upload': {
 		riskLevel: 'write',
 		description:
-			"Uploads the newline-delimited ID file for a Compliance Job using the signed URL returned at job creation. Needs app-only auth: X accepts only the app's Bearer token here (connect with authType 'api_key').",
+			"Uploads the newline-delimited ID file for a Compliance Job using the signed URL returned at job creation. Pass file as { base64 } or a URL to a text file with one post or user ID per line. Needs app-only auth: X accepts only the app's Bearer token here (connect with authType 'api_key').",
 	},
 	'connections.history': {
 		riskLevel: 'read',
@@ -1561,7 +1561,7 @@ export const twitterGeneratedEndpointMeta = {
 	'media.upload.append': {
 		riskLevel: 'write',
 		description:
-			'Appends one segment of the file to a chunked upload. Send the segment base64-encoded in media (raw bytes in multipart bodies) and its position in the file in segment_index, counting from 0. A segment can be up to 8 MB; in a JSON body keep it to 4 MB or less, because base64 adds a third. After the last segment, call Finalize Media Upload. Needs a user (OAuth 2.0) token.',
+			'Appends one segment of the file to a chunked upload. Send the segment base64-encoded in media (raw bytes in multipart bodies) and its position in the file in segment_index, counting from 0. A segment can be up to 8 MB; in a JSON body keep it to 4 MB or less, because base64 adds a third. After the last segment, call Finalize Media Upload. Pass media as { base64: "…" }, { url } or a public URL string (a bare string is a URL, not base64); the plugin base64-encodes the bytes for X. Up to 4 MB per segment. Needs a user (OAuth 2.0) token.',
 	},
 	'media.upload.finalize': {
 		riskLevel: 'write',
@@ -1581,7 +1581,7 @@ export const twitterGeneratedEndpointMeta = {
 	'media.upload.single': {
 		riskLevel: 'write',
 		description:
-			'Uploads a media file in one request and returns its id. Send the file base64-encoded in media (raw bytes in multipart bodies). For a Post, set media_category to tweet_image (JPG, PNG, GIF or WEBP, up to 5 MB) or tweet_gif, then pass the returned id in media.media_ids on Create or Edit Post. DM media uses dm_image or dm_gif. For video, use Initialize Media Upload. Needs a user (OAuth 2.0) token.',
+			'Uploads a media file in one request and returns its id. Send the file base64-encoded in media (raw bytes in multipart bodies). For a Post, set media_category to tweet_image (JPG, PNG, GIF or WEBP, up to 5 MB) or tweet_gif, then pass the returned id in media.media_ids on Create or Edit Post. DM media uses dm_image or dm_gif. For video, use Initialize Media Upload. Pass media as { base64: "…" }, { url } or a public URL string (a bare string is a URL, not base64); the plugin base64-encodes the bytes for X. Up to 15 MB here; use the chunked upload (initialize, append, finalize) for video. Needs a user (OAuth 2.0) token.',
 	},
 	'news.get': {
 		riskLevel: 'read',
@@ -1704,9 +1704,9 @@ export const twitterGeneratedEndpointMeta = {
 			"Returns the active filtered-stream rules for the authenticated app. Provide `ids` to fetch specific rules; omit it to list all rules. Needs app-only auth: X accepts only the app's Bearer token here (connect with authType 'api_key').",
 	},
 	'posts.streamRules.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			"Adds or deletes rules from the active rule set for the filtered stream. Exactly one of `add`, `delete`, or `?delete_all=true` must be specified. Use `?dry_run=true` to validate without committing. Needs app-only auth: X accepts only the app's Bearer token here (connect with authType 'api_key').",
+			"Adds or deletes rules from the active rule set for the filtered stream. Exactly one of `add`, `delete`, or `?delete_all=true` must be specified. Use `?dry_run=true` to validate without committing. Send exactly one of add, delete or delete_all: true; dry_run checks the change without applying it. Needs app-only auth: X accepts only the app's Bearer token here (connect with authType 'api_key').",
 	},
 	'sources.create': {
 		riskLevel: 'write',
@@ -1807,7 +1807,7 @@ export const twitterGeneratedEndpointMeta = {
 			'Blocks direct messages to or from a specific User by their ID for the authenticated user. Needs a user (OAuth 2.0) token.',
 	},
 	'users.blocking.block': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Causes the source User to block the target User. A block also removes any follow between the two Users, in both directions, and unblocking does not restore it. Each call blocks one account: block only accounts the authenticated User named or approved, because finding or reviewing accounts is not approval to block them. Needs a user (OAuth 2.0) token.',
 	},
@@ -1824,7 +1824,7 @@ export const twitterGeneratedEndpointMeta = {
 	'users.bookmarks.create': {
 		riskLevel: 'write',
 		description:
-			"Adds one or more Posts to the authenticated user's Bookmarks. Supply `tweet_id` for a single Post, or `tweet_ids` (at most 25) to bookmark several in one request. Optional `folder_id` applies to every Post in the request. Billing and rate limits still apply per HTTP request. Needs a user (OAuth 2.0) token.",
+			"Adds one or more Posts to the authenticated user's Bookmarks. Supply `tweet_id` for a single Post, or `tweet_ids` (at most 25) to bookmark several in one request. Optional `folder_id` applies to every Post in the request. Billing and rate limits still apply per HTTP request. Send tweet_id or tweet_ids, not both. Needs a user (OAuth 2.0) token.",
 	},
 	'users.bookmarks.delete': {
 		riskLevel: 'write',

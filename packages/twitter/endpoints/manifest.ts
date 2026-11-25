@@ -39,6 +39,11 @@ const OperationSchema = z
 		auth: z.enum(['user', 'app', 'any']),
 		/** OAuth 2.0 scopes X asks for on this route. */
 		scopes: z.array(z.string()).optional(),
+		/**
+		 * Response fields whose integers are past what a JSON number holds
+		 * exactly (`owner_id`): quoted in the raw text before parsing.
+		 */
+		bigIntFields: z.array(z.string()).optional(),
 		input: OpenApiSchemaDocument,
 		output: OpenApiSchemaDocument.optional(),
 	})
