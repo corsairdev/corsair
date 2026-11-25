@@ -139,6 +139,44 @@ describe('error handler matching', () => {
 		expect(keyedSend).toMatchObject({ maxRetries: 1 });
 	});
 
+	it('retries a transport failure for a read, never for a keyless send', async () => {
+		const dropped = new LobAPIError('fetch failed', {
+			method: 'GET',
+			transportFailure: true,
+		});
+		expect(run('TRANSPORT_ERROR', dropped)).toBe(true);
+		expect(await outcome('TRANSPORT_ERROR', dropped)).toMatchObject({
+			maxRetries: 1,
+		});
+
+		const keyedSend = await outcome(
+			'TRANSPORT_ERROR',
+			new LobAPIError('fetch failed', {
+				method: 'POST',
+				hasIdempotency: true,
+				transportFailure: true,
+			}),
+		);
+		expect(keyedSend).toMatchObject({ maxRetries: 1 });
+
+		const keylessSend = await outcome(
+			'TRANSPORT_ERROR',
+			new LobAPIError('fetch failed', { method: 'POST', transportFailure: true }),
+		);
+		expect(keylessSend).toMatchObject({ maxRetries: 0 });
+
+		// An HTTP error is not a transport failure even without a retryable shape.
+		expect(
+			run(
+				'TRANSPORT_ERROR',
+				new LobAPIError('Lob 400', { status: 400, method: 'GET' }),
+			),
+		).toBe(false);
+		// No builtin above TRANSPORT_ERROR claims a statusless error, but the
+		// flag is what routes it, not the absence of a status.
+		expect(run('SERVER_ERROR', dropped)).toBe(false);
+	});
+
 	it('keeps DEFAULT matching everything and last in the map', () => {
 		expect(run('DEFAULT', new Error('anything'))).toBe(true);
 		const keys = Object.keys(errorHandlers);
@@ -157,6 +195,26 @@ describe('error handler matching', () => {
 			names.indexOf('DEFAULT'),
 		);
 		expect(names.at(-1)).toBe('DEFAULT');
+	});
+
+	it('lets a caller handler for a builtin-covered status claim the error first', () => {
+		// The caller names UPSTREAM_ERROR for 503; the builtin SERVER_ERROR also
+		// matches 503 on a read. Core takes the first match in key order, so the
+		// caller's key must sit ahead of the builtin's, or its handler would
+		// never run even though its value is present.
+		const merged = mergeErrorHandlers(errorHandlers, {
+			UPSTREAM_ERROR: {
+				match: (error) => error instanceof LobAPIError && error.status === 503,
+				handler: async () => ({ maxRetries: 7 }),
+			},
+		});
+		const entries = merged as Record<string, HandlerEntry>;
+		const error = new LobAPIError('Lob 503', { status: 503, method: 'GET' });
+		const firstMatch = Object.entries(entries).find(
+			([, entry]) => entry.match(error),
+		)?.[0];
+		expect(firstMatch).toBe('UPSTREAM_ERROR');
+		expect(Object.keys(entries).at(-1)).toBe('DEFAULT');
 	});
 
 	it('lets a caller override a builtin handler and keeps the fallback', async () => {

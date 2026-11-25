@@ -113,10 +113,17 @@ export function mergeErrorHandlers(
 	user: CorsairErrorHandler | undefined,
 ): CorsairErrorHandler {
 	if (!user) return builtin;
-	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
 	const { DEFAULT: userDefault, ...userRest } = user;
+	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
+	// Caller keys first, then builtins the caller did not name: core takes the
+	// first match in key order, so a plain spread would resolve a caller
+	// handler whose key a builtin does not share to the builtin that runs
+	// earlier and matches the same error.
+	const merged: CorsairErrorHandler = { ...userRest };
+	for (const [name, entry] of Object.entries(builtinRest)) {
+		if (!(name in merged)) merged[name] = entry;
+	}
 	const fallback = userDefault ?? builtinDefault;
-	return fallback
-		? { ...builtinRest, ...userRest, DEFAULT: fallback }
-		: { ...builtinRest, ...userRest };
+	if (fallback) merged.DEFAULT = fallback;
+	return merged;
 }
