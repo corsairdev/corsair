@@ -1,5 +1,4 @@
 # Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
 displayName: "Listclean"
 description: Email verification with Listclean - verify single addresses or batches of up to 3000, poll bulk jobs, download cleaned results, read verification logs and analytics, delete lists and check the credit balance.
 domain: listclean.xyz
