@@ -135,7 +135,18 @@ const ContactsFindResponseSchema = z.array(ContactSchema);
 // contacts.create
 
 const ContactsCreateInputSchema = ContactFieldsSchema.superRefine(
-	rejectReservedProperties,
+	(value, ctx) => {
+		rejectReservedProperties(value, ctx);
+		// The spec's create request is ContactFields with required: ['email'];
+		// unlike update, create has no userId-only form, and Loops answers 400
+		// for one, so require the email here instead of spending the call.
+		if (!value.email) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'Provide an email to create a contact.',
+			});
+		}
+	},
 );
 
 const ContactWriteResponseSchema = z.object({

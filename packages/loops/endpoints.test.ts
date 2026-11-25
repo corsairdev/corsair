@@ -177,6 +177,13 @@ describe('Loops input validation', () => {
 		).rejects.toThrow();
 	});
 
+	it('rejects contacts.create with no email', () => {
+		// Loops answers 400 for an identifier-less create; fail before the call.
+		expect(() =>
+			endpoints.contacts.create(makeCtx(), { firstName: 'Alex' }),
+		).rejects.toThrow(/Provide an email/);
+	});
+
 	it('rejects a custom property named email, which would overwrite the selector', () => {
 		expect(() =>
 			endpoints.contacts.update(makeCtx(), {
