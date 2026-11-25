@@ -427,6 +427,7 @@ export const BaseProviders = [
 	'linguapop',
 	'linkedin',
 	'linkup',
+	'listclean',
 	'listennotes',
 	'litescrape',
 	'livesession',
@@ -1215,6 +1216,7 @@ export const ProviderDisplayNames = {
 	linguapop: 'Linguapop',
 	linkedin: 'LinkedIn',
 	linkup: 'Linkup',
+	listclean: 'Listclean',
 	listennotes: 'Listen Notes',
 	litescrape: 'LiteScrape',
 	livesession: 'LiveSession',
@@ -2010,6 +2012,7 @@ export type AllProviders =
 	| 'linguapop'
 	| 'linkedin'
 	| 'linkup'
+	| 'listclean'
 	| 'listennotes'
 	| 'litescrape'
 	| 'livesession'
