@@ -431,6 +431,7 @@ export const BaseProviders = [
 	'litescrape',
 	'livesession',
 	'logodev',
+	'loops',
 	'loyverse',
 	'magichour',
 	'mailboxlayer',
@@ -1219,6 +1220,7 @@ export const ProviderDisplayNames = {
 	litescrape: 'LiteScrape',
 	livesession: 'LiveSession',
 	logodev: 'Logo.dev',
+	loops: 'Loops',
 	loyverse: 'Loyverse',
 	magichour: 'Magic Hour',
 	mailboxlayer: 'MailboxLayer',
@@ -2014,6 +2016,7 @@ export type AllProviders =
 	| 'litescrape'
 	| 'livesession'
 	| 'logodev'
+	| 'loops'
 	| 'loyverse'
 	| 'magichour'
 	| 'mailboxlayer'
