@@ -161,7 +161,10 @@ describe('error handler matching', () => {
 
 		const keylessSend = await outcome(
 			'TRANSPORT_ERROR',
-			new LobAPIError('fetch failed', { method: 'POST', transportFailure: true }),
+			new LobAPIError('fetch failed', {
+				method: 'POST',
+				transportFailure: true,
+			}),
 		);
 		expect(keylessSend).toMatchObject({ maxRetries: 0 });
 
@@ -210,8 +213,8 @@ describe('error handler matching', () => {
 		});
 		const entries = merged as Record<string, HandlerEntry>;
 		const error = new LobAPIError('Lob 503', { status: 503, method: 'GET' });
-		const firstMatch = Object.entries(entries).find(
-			([, entry]) => entry.match(error),
+		const firstMatch = Object.entries(entries).find(([, entry]) =>
+			entry.match(error),
 		)?.[0];
 		expect(firstMatch).toBe('UPSTREAM_ERROR');
 		expect(Object.keys(entries).at(-1)).toBe('DEFAULT');
