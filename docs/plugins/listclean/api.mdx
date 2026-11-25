@@ -89,14 +89,18 @@ await corsair.listclean.api.lists.getList({ list_id: 159261 });
 |------|------|----------|-------------|
 | `list_id` | `number` | Yes | The list id, as `startBatchVerification` answered it or `listLists` reported it. |
 
-Answers an array holding the one list, so the status reads as 0.status. This is the poll for a startBatchVerification job.
+Listclean answers an array holding the one list; the plugin unwraps it, so the status reads as list.status. This is the poll for a startBatchVerification job.
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list` | `object` | Yes | The one list with this id. |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="list full type">
 
 ```ts
 {
@@ -140,10 +144,11 @@ Answers an array holding the one list, so the status reads as 0.status. This is 
       USD?: number | null
     } | null
   } | null
-}[]
+}
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---

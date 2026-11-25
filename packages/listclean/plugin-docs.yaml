@@ -10,7 +10,7 @@ overviewNote: |
 
   - **Every answer is one envelope.** `{ success, error_code, message, data }` where `success` is an integer: `1` on success, `0` on failure, even over a 2xx status. The plugin throws on `success: 0` and on non-JSON bodies, so a 404 HTML page never comes back as an empty result.
   - **Billed calls.** `verify.verifyEmail` spends one credit per call, and `verify.startBatchVerification` spends one credit per address when the job runs. Both carry `replayable: false`, so a lost answer or a 5xx is never retried and may have already been charged. Check `account.getCredits` first; signup comes with 25 free credits.
-  - **Bulk verification is a job.** `verify.startBatchVerification` answers `list_id`. Poll `lists.getList`, whose `0.status` moves `SUBMITTED`, `INPROCESS`, `COMPLETED`. Listclean documents no failed status for this flow. Once `COMPLETED`, download rows with `lists.getListResults`, choosing `clean`, `dirty` or `unknown`.
+  - **Bulk verification is a job.** `verify.startBatchVerification` answers `list_id`. Poll `lists.getList`, whose `list.status` moves `SUBMITTED`, `INPROCESS`, `COMPLETED`. Listclean documents no failed status for this flow. Once `COMPLETED`, download rows with `lists.getListResults`, choosing `clean`, `dirty` or `unknown`.
   - **Analytics shapes are undocumented.** Listclean's spec leaves `total_summary`, `datewise_summary` and `graph_summary` without inner fields, so those come back exactly as the API sends them rather than typed.
   - **Deletes are permanent.** `lists.delete` cannot be undone and the results cannot be fetched afterwards.
   - **Deferred for a later release.** The chunked CSV upload flow (`/uploads/`) and the account profile read/update are not in this plugin, and neither is the CSV download, which the JSON download covers.
@@ -53,7 +53,7 @@ apiNotes:
   verify.getVerificationLogs: 'The range spans at most 30 days and end_date cannot be in the future. Paging is a start offset with a limit of at most 100, 10 by default. error_code on a log row is a string, unlike the integer on the envelope.'
   verify.getAnalytics: 'Listclean documents no inner fields for total_summary, datewise_summary or graph_summary, so they are passed through untyped.'
   lists.listLists: 'Answers total, an opaque cursor integer and the lists. Listclean documents no way to send the cursor back, so there is no paging input here.'
-  lists.getList: 'Answers an array holding the one list, so the status reads as 0.status. This is the poll for a startBatchVerification job.'
+  lists.getList: 'Listclean answers an array holding the one list; the plugin unwraps it, so the status reads as list.status. This is the poll for a startBatchVerification job.'
   lists.getListResults: 'Download the verified rows of one type as a JSON array. This route answers a bare JSON stream, not the envelope. The list must be COMPLETED for rows to exist.'
   lists.delete: 'Permanent. The answer carries only a message string, which the plugin requires before reporting success.'
   account.getCredits: 'Free. Answers the remaining balance; a verification spends one credit per address.'

@@ -1,5 +1,6 @@
 import type { EndpointJob } from 'corsair/core';
 import type { z } from 'zod';
+import { firstList } from './endpoints/lists';
 import { ListcleanEndpointOutputSchemas } from './endpoints/types';
 import { listclean } from './index';
 import { SINGLE_LIST } from './test-fixtures';
@@ -54,6 +55,10 @@ describe('Listclean jobs', () => {
 		expect(meta[job.status.op]).toBeDefined();
 		expect(job.status.op).toBe('lists.getList');
 		expect(job.status.idArg).toBe('list_id');
+		// The polling engine resolves object dot paths; a numeric segment would
+		// be unproven against it, so the path must not index an array.
+		expect(job.status.statusPath).toBe('list.status');
+		expect(job.status.statusPath).not.toMatch(/(^|\.)\d/);
 		expect(job.cancel).toBeUndefined();
 	});
 
@@ -68,7 +73,9 @@ describe('Listclean jobs', () => {
 	it('finds the status where the job says, in the documented read answer', () => {
 		const { job } = jobs[0]![1];
 		for (const status of STATUSES) {
-			const parsed = outputs[job.status.op]!.parse(read(status));
+			// The endpoint derives `list` from Listclean's one-element array
+			// before the schema parses; the test applies the same derivation.
+			const parsed = outputs[job.status.op]!.parse(firstList(read(status)));
 			expect(at(parsed, job.status.statusPath)).toBe(status);
 		}
 	});

@@ -103,16 +103,27 @@ describe('Listclean output parsing', () => {
 		expect(result.total).toBe(7);
 	});
 
-	it('lists.getList answers the array Listclean sends and reads the status at 0.status', async () => {
+	it('lists.getList unwraps the one-element array Listclean sends, so the status reads at list.status', async () => {
 		mockFetch(ok(SINGLE_LIST));
 
 		const result = await endpoints.lists.getList(makeCtx(), {
 			list_id: 159261,
 		});
 
-		expect(Array.isArray(result)).toBe(true);
-		expect(result[0]?.status).toBe('COMPLETED');
-		expect(result[0]?.list_id).toBe(159261);
+		expect(Array.isArray(result)).toBe(false);
+		expect(result.list.status).toBe('COMPLETED');
+		expect(result.list.list_id).toBe(159261);
+	});
+
+	it('lists.getList rejects an empty answer instead of returning a fake list', async () => {
+		mockFetch(ok([]));
+
+		const error = await captureError(
+			endpoints.lists.getList(makeCtx(), { list_id: 159261 }),
+		);
+
+		expect(error).toBeInstanceOf(Error);
+		expect((error as Error).name).toBe('ZodError');
 	});
 
 	it('lists.getListResults parses the JSON stream rows', async () => {

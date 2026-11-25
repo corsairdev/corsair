@@ -125,16 +125,16 @@ const defaultAuthType = 'api_key' as const;
 
 /**
  * The batch job: submit answers `list_id`, and the status read is
- * `lists.getList`, which answers an array holding the one list, so its
- * `0.status` moves SUBMITTED → INPROCESS → COMPLETED. Listclean documents no
- * failed status for this flow, so `failed` is empty.
+ * `lists.getList`, whose endpoint unwraps Listclean's one-element array into
+ * `list`, so `list.status` moves SUBMITTED → INPROCESS → COMPLETED. Listclean
+ * documents no failed status for this flow, so `failed` is empty.
  */
 const BATCH_JOB = {
 	idPath: 'list_id',
 	status: {
 		op: 'lists.getList',
 		idArg: 'list_id',
-		statusPath: '0.status',
+		statusPath: 'list.status',
 		done: ['COMPLETED'],
 		failed: [],
 	},

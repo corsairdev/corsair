@@ -350,12 +350,16 @@ const GetListInputSchema = z.object({ list_id: ListIdSchema });
 
 export type GetListInput = z.infer<typeof GetListInputSchema>;
 
-// Listclean answers with an array holding the one list, not an object; the
-// job status read addresses it as `0.status`.
+// Listclean answers with an array holding the one list, not an object. The
+// endpoint unwraps that one element into `list`, so callers read the bulk
+// job's status at `list.status` instead of an array index.
 const GetListResponseSchema = z
-	.array(ListSchema)
+	.object({
+		list: ListSchema.describe('The one list with this id.'),
+	})
+	.loose()
 	.describe(
-		'Listclean answers an array holding the one list with this id, so its status reads as `0.status`.',
+		'The list Listclean answered for this id. Its status moves SUBMITTED, INPROCESS, COMPLETED as a batch job runs.',
 	);
 
 export type GetListResponse = z.infer<typeof GetListResponseSchema>;

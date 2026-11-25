@@ -27,6 +27,23 @@ export const listLists: ListcleanEndpoints['listsListLists'] = (ctx, input) =>
 		},
 	);
 
+/**
+ * Listclean answers `data` as an array holding the one list for this id. The
+ * endpoint unwraps that element into `list` before the output schema parses,
+ * so the bulk job's status reads at the object path `list.status`.
+ */
+// unknown: the payload is the untyped envelope data until the output schema
+// validates the unwrapped list.
+export function firstList(raw: unknown): unknown {
+	const list = asRecordArray(raw)?.[0];
+	return { list };
+}
+
+// unknown: the payload's shape is the provider's until the schema parses it.
+function asRecordArray(raw: unknown): Record<string, unknown>[] | undefined {
+	return Array.isArray(raw) ? (raw as Record<string, unknown>[]) : undefined;
+}
+
 export const getList: ListcleanEndpoints['listsGetList'] = (ctx, input) =>
 	call(
 		ctx,
@@ -42,13 +59,13 @@ export const getList: ListcleanEndpoints['listsGetList'] = (ctx, input) =>
 			replayable: true,
 		}),
 		{
-			shape: envelopeData,
-			// The bulk job status read: `0.status` moves SUBMITTED, INPROCESS,
+			shape: (raw) => firstList(envelopeData(raw)),
+			// The bulk job status read: `list.status` moves SUBMITTED, INPROCESS,
 			// COMPLETED, so the status is what a log needs. LogFields rejects
 			// null, so a nullish status passes as undefined.
 			log: (_, result) => ({
-				listId: result[0]?.list_id,
-				status: result[0]?.status ?? undefined,
+				listId: result.list.list_id,
+				status: result.list.status ?? undefined,
 			}),
 		},
 	);

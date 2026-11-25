@@ -91,7 +91,7 @@ describe('Listclean plugin', () => {
 			status: {
 				op: 'lists.getList',
 				idArg: 'list_id',
-				statusPath: '0.status',
+				statusPath: 'list.status',
 				done: ['COMPLETED'],
 				failed: [],
 			},
