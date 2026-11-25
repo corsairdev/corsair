@@ -26,8 +26,9 @@ const CLIENTS: { name: string; body: ReactNode }[] = [
 		name: 'Claude',
 		body: (
 			<>
-				Open <strong>Plugins → Add → Add custom connector</strong>, paste the
-				address, select <strong>Continue</strong>, then <strong>Add</strong>.
+				Open <strong>Plugins → Add → Add custom connector</strong>, name it
+				Corsair, paste the address, select <strong>Continue</strong>, then{' '}
+				<strong>Add</strong>.
 			</>
 		),
 	},
