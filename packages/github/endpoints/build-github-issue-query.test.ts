@@ -2,14 +2,44 @@ import { makeGithubRequest } from '../client';
 import type { GithubContext } from '../index';
 import { issues } from './search';
 import type { SearchIssuesInput } from './types';
-import { buildGithubIssueQuery, githubSearchIssuesParams } from './types';
+import {
+	buildGithubIssueQuery,
+	GithubEndpointInputSchemas,
+	githubSearchIssuesParams,
+} from './types';
 
 jest.mock('../client', () => ({
 	...jest.requireActual('../client'),
 	makeGithubRequest: jest.fn().mockResolvedValue({ items: [] }),
 }));
 
+describe('searchIssues date validation', () => {
+	const parse = (v: string) =>
+		GithubEndpointInputSchemas.searchIssues.safeParse({ updated: v }).success;
+	it('rejects impossible calendar dates in comparisons and ranges', () => {
+		expect(parse('2025-02-30')).toBe(false);
+		expect(parse('>=2025-13-01')).toBe(false);
+		expect(parse('2025-01-01..2025-02-30')).toBe(false);
+		expect(parse('2025-02-29')).toBe(false);
+	});
+	it('keeps valid dates', () => {
+		expect(parse('2024-02-29')).toBe(true);
+		expect(parse('>=2025-01-31')).toBe(true);
+		expect(parse('2025-01-01..2025-01-31')).toBe(true);
+	});
+});
+
 describe('buildGithubIssueQuery', () => {
+	it('quotes Boolean operator words in structured keywords', () => {
+		expect(
+			buildGithubIssueQuery({ keywords: ['connection', 'NOT', 'timeout'] }),
+		).toBe('connection "NOT" timeout');
+		expect(buildGithubIssueQuery({ keywords: ['a', 'OR', 'AND'] })).toBe(
+			'a "OR" "AND"',
+		);
+		expect(buildGithubIssueQuery({ q: 'a OR b' })).toBe('a OR b');
+	});
+
 	it('returns an empty query for empty input', () => {
 		expect(buildGithubIssueQuery({})).toBe('');
 		expect(

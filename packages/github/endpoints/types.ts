@@ -478,11 +478,20 @@ const UsersGetHovercardInputSchema = z.object({
 	subjectId: z.string().optional(),
 });
 
+const isCalendarDate = (value: string): boolean => {
+	const [y, m, d] = value.split('-').map(Number);
+	const date = new Date(Date.UTC(y as number, (m as number) - 1, d as number));
+	return date.getUTCMonth() === (m as number) - 1 && date.getUTCDate() === d;
+};
 const GithubDateFilter = z
 	.string()
 	.regex(
 		/^(?:(?:>=|<=|>|<)?\d{4}-\d{2}-\d{2}|\d{4}-\d{2}-\d{2}\.\.\d{4}-\d{2}-\d{2})$/,
 		'Must be YYYY-MM-DD, optionally prefixed with >, >=, < or <=, or a range YYYY-MM-DD..YYYY-MM-DD',
+	)
+	.refine(
+		(v) => v.match(/\d{4}-\d{2}-\d{2}/g)?.every(isCalendarDate) ?? false,
+		'Must be a real calendar date',
 	);
 const dateFilter = (what: string) =>
 	GithubDateFilter.optional().describe(
@@ -590,10 +599,10 @@ const STRUCTURED_SEARCH_KEYS = [
 	'closed',
 ] as const;
 
-// Quote what GitHub would split on or read as a qualifier or a label OR-list.
+// Quote what GitHub would split on or read as a qualifier, a label OR-list or a Boolean operator.
 function ghTerm(value: string): string {
 	const v = value.trim().replace(/"/g, '');
-	return /[\s,:]|^-/.test(v) ? `"${v}"` : v;
+	return /[\s,:]|^-|^(?:AND|OR|NOT)$/.test(v) ? `"${v}"` : v;
 }
 
 /**
