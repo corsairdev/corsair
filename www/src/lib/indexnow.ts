@@ -20,8 +20,8 @@ export type IndexNowPayload = {
 };
 
 /**
- * Keeps only https URLs on corsair.dev (a request may name one host only),
- * drops duplicates and fragments, and caps the list at the protocol limit.
+ * Keeps only https URLs on corsair.dev (a request may name one host only) and
+ * drops duplicates and fragments. No cap here: callers batch the list.
  */
 export function indexNowUrls(urls: Iterable<string>): string[] {
 	const seen = new Set<string>();
@@ -35,7 +35,6 @@ export function indexNowUrls(urls: Iterable<string>): string[] {
 		if (url.protocol !== 'https:' || url.host !== INDEXNOW_HOST) continue;
 		url.hash = '';
 		seen.add(url.toString());
-		if (seen.size === INDEXNOW_MAX_URLS) break;
 	}
 	return [...seen];
 }
@@ -45,7 +44,8 @@ export function indexNowPayload(urls: Iterable<string>): IndexNowPayload {
 		host: INDEXNOW_HOST,
 		key: INDEXNOW_KEY,
 		keyLocation: INDEXNOW_KEY_LOCATION,
-		urlList: indexNowUrls(urls),
+		// One request takes at most INDEXNOW_MAX_URLS; the rest are dropped.
+		urlList: indexNowUrls(urls).slice(0, INDEXNOW_MAX_URLS),
 	};
 }
 
@@ -82,14 +82,20 @@ export function blogPostIndexNowUrls(slug: string | undefined): string[] {
 	return urls;
 }
 
-/** The <loc> entries of a sitemap.xml document. */
+const XML_ENTITIES: Record<string, string> = {
+	amp: '&',
+	lt: '<',
+	gt: '>',
+	quot: '"',
+	apos: "'",
+};
+
+/** The <loc> entries of a sitemap.xml document, XML references decoded once. */
 export function sitemapLocs(xml: string): string[] {
 	return [...xml.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)].map((match) =>
-		match[1]
-			.replaceAll('&amp;', '&')
-			.replaceAll('&lt;', '<')
-			.replaceAll('&gt;', '>')
-			.replaceAll('&quot;', '"')
-			.replaceAll('&apos;', "'"),
+		match[1].replace(
+			/&(amp|lt|gt|quot|apos);/g,
+			(_, name: string) => XML_ENTITIES[name],
+		),
 	);
 }

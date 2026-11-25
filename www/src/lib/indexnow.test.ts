@@ -42,16 +42,24 @@ describe('indexNowUrls', () => {
 		);
 	});
 
-	it('stops at the protocol limit', () => {
+	it('keeps every URL past the protocol limit, for the caller to batch', () => {
 		const many = Array.from(
-			{ length: INDEXNOW_MAX_URLS + 5 },
+			{ length: INDEXNOW_MAX_URLS + 1 },
 			(_, i) => `https://corsair.dev/p/${i}`,
 		);
-		assert.equal(indexNowUrls(many).length, INDEXNOW_MAX_URLS);
+		assert.equal(indexNowUrls(many).length, INDEXNOW_MAX_URLS + 1);
 	});
 });
 
 describe('indexNowPayload', () => {
+	it('caps one request at the protocol limit', () => {
+		const many = Array.from(
+			{ length: INDEXNOW_MAX_URLS + 1 },
+			(_, i) => `https://corsair.dev/p/${i}`,
+		);
+		assert.equal(indexNowPayload(many).urlList.length, INDEXNOW_MAX_URLS);
+	});
+
 	it('names the host, key and key location', () => {
 		assert.deepEqual(indexNowPayload(['https://corsair.dev/']), {
 			host: 'corsair.dev',
@@ -129,6 +137,12 @@ describe('sitemapLocs', () => {
 		assert.deepEqual(sitemapLocs(xml), [
 			'https://corsair.dev',
 			'https://corsair.dev/a?x=1&y=2',
+		]);
+	});
+
+	it('decodes each reference once, so &amp;lt; stays a literal &lt;', () => {
+		assert.deepEqual(sitemapLocs('<loc>https://corsair.dev/a&amp;lt;b</loc>'), [
+			'https://corsair.dev/a&lt;b',
 		]);
 	});
 });
