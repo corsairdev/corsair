@@ -44,10 +44,17 @@ module.exports = {
 		],
 	},
 	moduleNameMapper: {
+		'^corsair$': '<rootDir>/../corsair/index.ts',
+		'^corsair/core$': '<rootDir>/../corsair/core.ts',
+		'^corsair/hub$': '<rootDir>/../corsair/hub.ts',
 		'^corsair/http$': '<rootDir>/../corsair/http.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
+	// api.test.ts calls the real X API, and X bills every read; `pnpm
+	// test:live` runs it explicitly. Default `pnpm test` ignores it even when
+	// the X tokens are exported.
+	testPathIgnorePatterns: ['/node_modules/', '/dist/', 'api\\.test\\.ts'],
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,
 	verbose: true,
