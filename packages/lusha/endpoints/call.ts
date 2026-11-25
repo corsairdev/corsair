@@ -39,7 +39,15 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 }
 
 /** Billing fields are nullish in the schema and LogFields rejects null. */
-export function billingLog(result: { billing?: { creditsCharged?: number | null | undefined; resultsReturned?: number | null | undefined } | null | undefined }): LogFields {
+export function billingLog(result: {
+	billing?:
+		| {
+				creditsCharged?: number | null | undefined;
+				resultsReturned?: number | null | undefined;
+		  }
+		| null
+		| undefined;
+}): LogFields {
 	return {
 		creditsCharged: result.billing?.creditsCharged ?? undefined,
 		resultsReturned: result.billing?.resultsReturned ?? undefined,

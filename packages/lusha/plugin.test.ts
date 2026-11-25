@@ -44,7 +44,10 @@ describe('lusha plugin', () => {
 	type MetaEntry = { riskLevel: string; description: string; job?: unknown };
 	// unknown: endpointMeta's exact generic type varies with the plugin tree,
 	// and only the two string fields are read.
-	const meta = plugin.endpointMeta as unknown as Record<string, MetaEntry | undefined>;
+	const meta = plugin.endpointMeta as unknown as Record<
+		string,
+		MetaEntry | undefined
+	>;
 
 	/** Reads a meta entry that must exist, so a missing one fails loudly. */
 	function required(name: string): MetaEntry {
@@ -87,7 +90,9 @@ describe('lusha plugin', () => {
 
 	it('names the credit cost on every metered operation', () => {
 		for (const operation of METERED) {
-			expect(required(operation).description).toMatch(/charge|Metered|credits/i);
+			expect(required(operation).description).toMatch(
+				/charge|Metered|credits/i,
+			);
 		}
 		// account.usage and the job poll are free, and say so.
 		expect(required('account.getAccountUsage').description).toMatch(/Free/);

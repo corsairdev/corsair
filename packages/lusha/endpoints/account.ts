@@ -1,4 +1,4 @@
-import type { LushaContext, LushaEndpoints } from '..';
+import type { LushaEndpoints } from '..';
 import { call } from './call';
 import {
 	LushaEndpointInputSchemas as Inputs,

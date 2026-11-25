@@ -2,7 +2,11 @@
 // examples (https://docs.lusha.com/openapi.json). No key was available when
 // these were captured, so they are spec-verified, not live-verified.
 
-export const billing = { creditsCharged: 3, resultsReturned: 1, lowBalance: false };
+export const billing = {
+	creditsCharged: 3,
+	resultsReturned: 1,
+	lowBalance: false,
+};
 
 export const contactSearchResponse = {
 	requestId: '3c7f6d96-4a72-40cd-96c1-2efcfabeb727',
@@ -24,7 +28,9 @@ export const contactSearchResponse = {
 				industry: 'internet',
 			},
 			location: { country: 'Israel', state: null, city: 'Tel Aviv' },
-			socialLinks: { linkedin: 'https://www.linkedin.com/in/orit-shilvock-6243bb5' },
+			socialLinks: {
+				linkedin: 'https://www.linkedin.com/in/orit-shilvock-6243bb5',
+			},
 			has: ['emails', 'phones'],
 			canReveal: [
 				{ field: 'emails', credits: 1, availability: 'available' },
@@ -74,7 +80,9 @@ export const enrichedContact = {
 		},
 	],
 	company: { id: '16303253', name: 'Lusha', domain: 'lusha.com' },
-	socialLinks: { linkedin: 'https://www.linkedin.com/in/orit-shilvock-6243bb5' },
+	socialLinks: {
+		linkedin: 'https://www.linkedin.com/in/orit-shilvock-6243bb5',
+	},
 	previousEmployment: [{ company: 'Acme', title: 'Sales Director' }],
 	linkedinFollowers: 1200,
 	linkedinConnections: 500,
@@ -145,7 +153,9 @@ export const enrichedCompany = {
 	industry: 'internet',
 	subIndustry: 'data intelligence',
 	specialities: ['sales intelligence', 'contact data'],
-	sicCodes: [{ code: 7371, description: 'Custom computer programming services' }],
+	sicCodes: [
+		{ code: 7371, description: 'Custom computer programming services' },
+	],
 	naicsCodes: [{ code: 5112, description: 'Software publishers' }],
 	location: {
 		city: 'Tel Aviv',
@@ -202,9 +212,19 @@ export const searchAndEnrichContactsResponse = {
 export const accountUsageResponse = {
 	credits: { total: 5000, used: 1200, remaining: 3800 },
 	rateLimits: {
-		daily: { limit: 100000, used: 500, remaining: 99500, resetsAt: '2026-11-26T00:00:00Z' },
+		daily: {
+			limit: 100000,
+			used: 500,
+			remaining: 99500,
+			resetsAt: '2026-11-26T00:00:00Z',
+		},
 		hourly: null,
-		minute: { limit: 1500, used: 3, remaining: 1497, resetsAt: '2026-11-25T15:10:00Z' },
+		minute: {
+			limit: 1500,
+			used: 3,
+			remaining: 1497,
+			resetsAt: '2026-11-25T15:10:00Z',
+		},
 	},
 	plan: {
 		category: 'professional',

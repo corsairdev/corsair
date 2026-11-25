@@ -188,8 +188,7 @@ export type ExternalLushaPlugin<T extends LushaPluginOptions> =
 const defaultAuthType = 'api_key' as const;
 
 export function lusha<const T extends LushaPluginOptions>(
-	incomingOptions: LushaPluginOptions &
-		T = {} as LushaPluginOptions & T,
+	incomingOptions: LushaPluginOptions & T = {} as LushaPluginOptions & T,
 ): ExternalLushaPlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -224,23 +223,23 @@ export function lusha<const T extends LushaPluginOptions>(
 export { LushaAPIError } from './client';
 
 export type {
-	LushaEndpointInputs,
-	LushaEndpointOutputs,
-	LushaContactSearchItem,
-	PersonSearchContactsInput,
-	PersonSearchContactsResponse,
-	PersonEnrichContactsInput,
-	PersonEnrichContactsResponse,
-	PersonSearchAndEnrichContactsInput,
-	PersonSearchAndEnrichContactsResponse,
-	CompanySearchCompaniesInput,
-	CompanySearchCompaniesResponse,
+	AccountGetAccountUsageInput,
+	AccountGetAccountUsageResponse,
 	CompanyEnrichCompaniesInput,
 	CompanyEnrichCompaniesResponse,
 	CompanySearchAndEnrichCompaniesInput,
 	CompanySearchAndEnrichCompaniesResponse,
-	AccountGetAccountUsageInput,
-	AccountGetAccountUsageResponse,
+	CompanySearchCompaniesInput,
+	CompanySearchCompaniesResponse,
 	JobsGetContactsEnrichJobInput,
 	JobsGetContactsEnrichJobResponse,
+	LushaContactSearchItem,
+	LushaEndpointInputs,
+	LushaEndpointOutputs,
+	PersonEnrichContactsInput,
+	PersonEnrichContactsResponse,
+	PersonSearchAndEnrichContactsInput,
+	PersonSearchAndEnrichContactsResponse,
+	PersonSearchContactsInput,
+	PersonSearchContactsResponse,
 } from './endpoints/types';

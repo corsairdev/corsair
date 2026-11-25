@@ -31,7 +31,10 @@ export function segment(value: string): string {
 
 // unknown: error bodies arrive as arbitrary JSON; the helpers narrow one
 // field at a time rather than typing Lusha's whole error shape.
-function readString(record: Record<string, unknown>, key: string): string | undefined {
+function readString(
+	record: Record<string, unknown>,
+	key: string,
+): string | undefined {
 	const value = record[key];
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
@@ -109,7 +112,10 @@ export class LushaAPIError extends Error {
 
 	/** 402, or the documented message (matched defensively in case the status differs). */
 	get outOfCredits(): boolean {
-		return this.status === 402 || this.message.toLowerCase().includes(INSUFFICIENT_CREDITS_MESSAGE);
+		return (
+			this.status === 402 ||
+			this.message.toLowerCase().includes(INSUFFICIENT_CREDITS_MESSAGE)
+		);
 	}
 }
 

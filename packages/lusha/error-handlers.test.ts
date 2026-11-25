@@ -8,7 +8,12 @@ function handler(name: keyof typeof errorHandlers) {
 /** Builds an error the way client.ts does for an HTTP status. */
 function httpError(
 	message: string,
-	options: { status?: number; method?: string; retryAfter?: number; safeToReplay?: boolean },
+	options: {
+		status?: number;
+		method?: string;
+		retryAfter?: number;
+		safeToReplay?: boolean;
+	},
 ): LushaAPIError {
 	return new LushaAPIError(message, options);
 }
@@ -55,7 +60,9 @@ describe('Lusha error handler matching', () => {
 	});
 
 	it('matches 401 to auth and 403 to permission, separately', () => {
-		const unauthorized = httpError('Lusha 401: Missing API key', { status: 401 });
+		const unauthorized = httpError('Lusha 401: Missing API key', {
+			status: 401,
+		});
 		const forbidden = httpError('Lusha 403: Forbidden', { status: 403 });
 		expect(handler('AUTH_ERROR').match(unauthorized)).toBe(true);
 		expect(handler('PERMISSION_ERROR').match(unauthorized)).toBe(false);
@@ -74,7 +81,9 @@ describe('Lusha error handler matching', () => {
 				),
 			).toBe(true);
 		}
-		expect(handler('VALIDATION_ERROR').match(new SyntaxError('bad json'))).toBe(false);
+		expect(handler('VALIDATION_ERROR').match(new SyntaxError('bad json'))).toBe(
+			false,
+		);
 	});
 
 	it('matches a ZodError to validation', () => {
@@ -117,8 +126,14 @@ describe('Lusha error handler matching', () => {
 	});
 
 	it('sends a 408 to the timeout handler and honours replay safety', async () => {
-		const safe = httpError('Lusha 408: timeout', { status: 408, safeToReplay: true });
-		const metered = httpError('Lusha 408: timeout', { status: 408, safeToReplay: false });
+		const safe = httpError('Lusha 408: timeout', {
+			status: 408,
+			safeToReplay: true,
+		});
+		const metered = httpError('Lusha 408: timeout', {
+			status: 408,
+			safeToReplay: false,
+		});
 		expect(handler('TIMEOUT_ERROR').match(safe)).toBe(true);
 		const safePlan = await handler('TIMEOUT_ERROR').handler(safe);
 		const meteredPlan = await handler('TIMEOUT_ERROR').handler(metered);
@@ -148,7 +163,8 @@ describe('mergeErrorHandlers', () => {
 	it('lets the caller override a builtin value by name', async () => {
 		const merged = mergeErrorHandlers(builtin, {
 			RATE_LIMIT_ERROR: {
-				match: (error: Error) => error instanceof LushaAPIError && error.isRateLimit,
+				match: (error: Error) =>
+					error instanceof LushaAPIError && error.isRateLimit,
 				handler: async () => ({ maxRetries: 1 }),
 			},
 		});

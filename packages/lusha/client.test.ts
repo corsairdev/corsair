@@ -105,10 +105,13 @@ describe('Lusha client', () => {
 
 	it('keeps a gateway Retry-After on the error', async () => {
 		mockFetch(
-			jsonResponse({ statusCode: 429, message: 'Too Many Requests' }, {
-				status: 429,
-				headers: { 'Retry-After': '7' },
-			}),
+			jsonResponse(
+				{ statusCode: 429, message: 'Too Many Requests' },
+				{
+					status: 429,
+					headers: { 'Retry-After': '7' },
+				},
+			),
 		);
 
 		const error = await captureError(
@@ -169,16 +172,22 @@ describe('Lusha client', () => {
 	});
 
 	it('flags the documented out-of-credits message from any status', () => {
-		const byStatus = new LushaAPIError('Lusha 402: Insufficient credits for this operation', {
-			status: 402,
-		});
+		const byStatus = new LushaAPIError(
+			'Lusha 402: Insufficient credits for this operation',
+			{
+				status: 402,
+			},
+		);
 		const byMessage = new LushaAPIError(
 			'Lusha 429: Insufficient credits for this operation',
 			{ status: 429 },
 		);
 		expect(byStatus.outOfCredits).toBe(true);
 		expect(byMessage.outOfCredits).toBe(true);
-		expect(new LushaAPIError('Lusha 429: Too many requests', { status: 429 }).outOfCredits).toBe(false);
+		expect(
+			new LushaAPIError('Lusha 429: Too many requests', { status: 429 })
+				.outOfCredits,
+		).toBe(false);
 	});
 
 	// The key-hygiene check on the error surface: message and inspect output
@@ -186,7 +195,11 @@ describe('Lusha client', () => {
 	it('keeps the key and the raw body off the error surface', async () => {
 		mockFetch(
 			jsonResponse(
-				{ statusCode: 400, message: 'Validation failed', errors: ['contacts must be an array'] },
+				{
+					statusCode: 400,
+					message: 'Validation failed',
+					errors: ['contacts must be an array'],
+				},
 				{ status: 400 },
 			),
 		);

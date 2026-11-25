@@ -279,8 +279,7 @@ const ContactSearchItemSchema = z
 			item.email !== undefined,
 			item.firstName !== undefined &&
 				item.lastName !== undefined &&
-				(item.companyName !== undefined ||
-					item.companyDomain !== undefined),
+				(item.companyName !== undefined || item.companyDomain !== undefined),
 		].filter(Boolean).length;
 		if (identifiers !== 1) {
 			ctx.addIssue({
@@ -298,7 +297,9 @@ const SearchContactsInputSchema = z.object({
 		.array(ContactSearchItemSchema)
 		.min(1)
 		.max(MAX_BATCH)
-		.describe('1 to 100 contacts to look up, each with exactly one identifier.'),
+		.describe(
+			'1 to 100 contacts to look up, each with exactly one identifier.',
+		),
 	options: SearchOptionsSchema.optional(),
 	signals: ContactSignalsDtoSchema.optional(),
 });
@@ -444,7 +445,9 @@ const SearchAndEnrichContactsInputSchema = z.object({
 		.array(ContactSearchItemSchema)
 		.min(1)
 		.max(MAX_BATCH)
-		.describe('1 to 100 contacts to look up, each with exactly one identifier.'),
+		.describe(
+			'1 to 100 contacts to look up, each with exactly one identifier.',
+		),
 	reveal: ContactRevealSchema,
 	options: SearchOptionsSchema.optional(),
 });

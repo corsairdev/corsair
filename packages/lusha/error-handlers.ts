@@ -73,8 +73,7 @@ export const errorHandlers = {
 			(error instanceof LushaAPIError && error.status === 408) ||
 			error.name === 'TimeoutError',
 		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof LushaAPIError && error.safeToReplay ? 1 : 0,
+			maxRetries: error instanceof LushaAPIError && error.safeToReplay ? 1 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -100,8 +99,7 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			error instanceof LushaAPIError && error.status === undefined,
 		handler: async (error: Error) => ({
-			maxRetries:
-				error instanceof LushaAPIError && error.safeToReplay ? 1 : 0,
+			maxRetries: error instanceof LushaAPIError && error.safeToReplay ? 1 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},

@@ -75,7 +75,9 @@ describe('retry behaviour through createCorsair', () => {
 			respond(rateLimitedBody, 429, { 'Retry-After': '0' });
 			respond(accountUsageResponse);
 
-			await expect(corsair.lusha.api.account.getAccountUsage({})).resolves.toMatchObject({
+			await expect(
+				corsair.lusha.api.account.getAccountUsage({}),
+			).resolves.toMatchObject({
 				credits: { remaining: 3800 },
 			});
 			expect(fetchMock).toHaveBeenCalledTimes(2);

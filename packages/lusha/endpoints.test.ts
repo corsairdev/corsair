@@ -52,7 +52,9 @@ describe('Lusha output parsing', () => {
 			reveal: ['emails', 'phones'],
 		});
 
-		expect(result.results[0]?.emails?.[0]?.email).toBe('orit.shilvock@lusha.com');
+		expect(result.results[0]?.emails?.[0]?.email).toBe(
+			'orit.shilvock@lusha.com',
+		);
 		expect(result.results[0]?.phones?.[0]?.doNotCall).toBe(false);
 		// Omitted when the waterfall did not run.
 		expect(result.status).toBeUndefined();
@@ -87,10 +89,10 @@ describe('Lusha output parsing', () => {
 	it('searchAndEnrichContacts parses enriched results', async () => {
 		mockFetch(jsonResponse(searchAndEnrichContactsResponse));
 
-		const result = await endpoints.person.searchAndEnrichContacts(
-			makeCtx(),
-			{ contacts: [{ email: 'orit.shilvock@lusha.com' }], reveal: ['emails'] },
-		);
+		const result = await endpoints.person.searchAndEnrichContacts(makeCtx(), {
+			contacts: [{ email: 'orit.shilvock@lusha.com' }],
+			reveal: ['emails'],
+		});
 
 		expect(result.results[0]?.fullName).toBe('Orit Shilvock');
 	});
@@ -103,7 +105,9 @@ describe('Lusha output parsing', () => {
 		});
 
 		expect(result.results[0]?.employeeCount?.exact).toBe(400);
-		expect(result.results[0]?.canReveal?.[0]?.field).toBe('employeesByDepartment');
+		expect(result.results[0]?.canReveal?.[0]?.field).toBe(
+			'employeesByDepartment',
+		);
 	});
 
 	it('enrichCompanies parses firmographics', async () => {
@@ -121,10 +125,9 @@ describe('Lusha output parsing', () => {
 	it('searchAndEnrichCompanies parses enriched companies', async () => {
 		mockFetch(jsonResponse(searchAndEnrichCompaniesResponse));
 
-		const result = await endpoints.company.searchAndEnrichCompanies(
-			makeCtx(),
-			{ companies: [{ domain: 'lusha.com' }] },
-		);
+		const result = await endpoints.company.searchAndEnrichCompanies(makeCtx(), {
+			companies: [{ domain: 'lusha.com' }],
+		});
 
 		expect(result.results[0]?.id).toBe('16303253');
 	});
@@ -231,8 +234,9 @@ describe('Lusha rejections', () => {
 describe('Lusha input validation', () => {
 	it('rejects a contact with no identifier', () => {
 		expect(
-			Inputs.personSearchContacts.safeParse({ contacts: [{ firstName: 'Orit' }] })
-				.success,
+			Inputs.personSearchContacts.safeParse({
+				contacts: [{ firstName: 'Orit' }],
+			}).success,
 		).toBe(false);
 	});
 
@@ -250,10 +254,16 @@ describe('Lusha input validation', () => {
 		const parse = (contact: Record<string, unknown>) =>
 			Inputs.personSearchContacts.safeParse({ contacts: [contact] }).success;
 		expect(parse({ id: '4389064654' })).toBe(true);
-		expect(parse({ linkedinUrl: 'https://www.linkedin.com/in/someone' })).toBe(true);
+		expect(parse({ linkedinUrl: 'https://www.linkedin.com/in/someone' })).toBe(
+			true,
+		);
 		expect(parse({ email: 'orit.shilvock@lusha.com' })).toBe(true);
 		expect(
-			parse({ firstName: 'Orit', lastName: 'Shilvock', companyDomain: 'lusha.com' }),
+			parse({
+				firstName: 'Orit',
+				lastName: 'Shilvock',
+				companyDomain: 'lusha.com',
+			}),
 		).toBe(true);
 		expect(
 			parse({ firstName: 'Orit', lastName: 'Shilvock', companyName: 'Lusha' }),
@@ -278,13 +288,15 @@ describe('Lusha input validation', () => {
 
 	it('rejects more than 100 contacts', () => {
 		const contacts = Array.from({ length: 101 }, () => ({ id: '4389064654' }));
-		expect(
-			Inputs.personSearchContacts.safeParse({ contacts }).success,
-		).toBe(false);
+		expect(Inputs.personSearchContacts.safeParse({ contacts }).success).toBe(
+			false,
+		);
 	});
 
 	it('rejects an empty ids list on enrich', () => {
-		expect(Inputs.personEnrichContacts.safeParse({ ids: [] }).success).toBe(false);
+		expect(Inputs.personEnrichContacts.safeParse({ ids: [] }).success).toBe(
+			false,
+		);
 	});
 
 	it('rejects a reveal token the API does not document', () => {
@@ -326,4 +338,3 @@ describe('Lusha input validation', () => {
 		).toBe(false);
 	});
 });
-
