@@ -68,6 +68,9 @@ export const create: LinklyEndpoints['linksCreate'] = (ctx, input) =>
 		},
 		input,
 		(parsed) => ({
+			// The spec documents two create paths for the same capability: this
+			// one and POST /workspace/{id}/links. The docs and examples all use
+			// POST /link, so that is the one wrapped here.
 			method: 'POST',
 			path: '/api/v1/link',
 			body: parsed,
