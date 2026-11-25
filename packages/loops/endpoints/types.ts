@@ -32,6 +32,8 @@ const RESERVED_BODY_FIELDS = [
 	'customProperties',
 ] as const;
 
+// unknown: the caller's input type carries the fixed fields; only the
+// customProperties map is checked here.
 function rejectReservedProperties<
 	T extends { customProperties?: Record<string, unknown> },
 >(value: T, ctx: z.RefinementCtx): void {

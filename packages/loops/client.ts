@@ -102,6 +102,7 @@ function readString(
  * Reads the error text Loops sends. `message` is the supported field; `error`
  * is a deprecated duplicate kept for older bodies, so it is only a fallback.
  */
+// unknown: the body is an untyped error body until asRecord narrows it.
 export function describeLoopsError(
 	status: number | undefined,
 	body: unknown,
@@ -111,6 +112,7 @@ export function describeLoopsError(
 	return readString(record, 'message') ?? readString(record, 'error') ?? fallback;
 }
 
+// unknown: the body is an untyped error body; asRecord reads fields off it.
 function loopsErrorFrom(
 	status: number | undefined,
 	body: unknown,
@@ -140,10 +142,16 @@ function loopsErrorFrom(
 
 // A 2xx body that still says `success: false` is a failure: Loops answers
 // contact-update validation errors with 200 and the false envelope.
+// unknown: the body can be any JSON value until asRecord narrows it.
 function isFailureEnvelope(body: unknown): boolean {
 	return asRecord(body)?.success === false;
 }
 
+/**
+ * Makes one request against the Loops API and returns the parsed JSON body.
+ */
+// unknown: callers parse the body with the endpoint's zod output schema; the
+// client cannot know it. Bare arrays, envelopes and nulls all pass through.
 export async function makeLoopsRequest(
 	apiKey: string,
 	req: LoopsRequest,
@@ -168,6 +176,8 @@ export async function makeLoopsRequest(
 	};
 
 	try {
+		// unknown: the generic stays unknown; the endpoint's output schema owns
+		// the contract, and typing it here would skip that parse.
 		const raw = await request<unknown>(config, requestOptions, {
 			rateLimitConfig: LOOPS_RATE_LIMIT_CONFIG,
 		});

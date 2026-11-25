@@ -37,7 +37,7 @@ export const errorHandlers = {
 		match: (error: Error) => asLoopsError(error)?.status === 409,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 400 invalid input, 404 unknown resource, 405 wrong method, and the
+	// 400 invalid input, 404 not-found, 405 wrong method, and the
 	// success:false envelope that arrived inside a 2xx.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
