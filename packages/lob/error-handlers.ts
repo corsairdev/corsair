@@ -86,6 +86,20 @@ export const errorHandlers = {
 				: { maxRetries: 0 };
 		},
 	},
+	// A dropped connection, reset or DNS failure: the request never reached
+	// Lob, so nothing above matches (no status, no body code). A read can be
+	// sent again as is; a send cannot, because Lob may have applied it before
+	// the connection dropped.
+	TRANSPORT_ERROR: {
+		match: (error: Error) =>
+			error instanceof LobAPIError && error.transportFailure,
+		handler: async (error: Error) => {
+			const lob = asLobError(error);
+			return lob && canReplay(lob)
+				? { maxRetries: 1, retryStrategy: 'exponential_backoff' as const }
+				: { maxRetries: 0 };
+		},
+	},
 	DEFAULT: {
 		match: () => true,
 		handler: async () => ({ maxRetries: 0 }),

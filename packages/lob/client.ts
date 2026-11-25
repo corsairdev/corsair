@@ -57,6 +57,13 @@ export class LobAPIError extends Error {
 	readonly method?: string;
 	/** True when the request carried an Idempotency-Key, so a replay is safe. */
 	readonly hasIdempotency: boolean;
+	/**
+	 * True when the request never reached Lob: connection reset, DNS failure,
+	 * abort. Such an error carries no status, so without this flag it would
+	 * fall through every handler to DEFAULT and a dropped read would never
+	 * retry.
+	 */
+	readonly transportFailure: boolean;
 
 	constructor(
 		message: string,
@@ -66,6 +73,7 @@ export class LobAPIError extends Error {
 			retryAfter?: number;
 			method?: LobRequest['method'];
 			hasIdempotency?: boolean;
+			transportFailure?: boolean;
 			cause?: Error;
 		} = {},
 	) {
@@ -76,6 +84,7 @@ export class LobAPIError extends Error {
 		this.retryAfter = options.retryAfter;
 		this.method = options.method;
 		this.hasIdempotency = options.hasIdempotency ?? false;
+		this.transportFailure = options.transportFailure ?? false;
 	}
 
 	/** A 429 by status or by body code; gateways may drop the body. */
@@ -167,8 +176,13 @@ export async function makeLobRequest(
 				cause: error instanceof Error ? error : undefined,
 				method,
 				hasIdempotency,
+				transportFailure: true,
 			});
 		}
-		throw new LobAPIError('Unknown Lob error', { method, hasIdempotency });
+		throw new LobAPIError('Unknown Lob error', {
+			method,
+			hasIdempotency,
+			transportFailure: true,
+		});
 	}
 }

@@ -191,3 +191,67 @@ describe('5xx replay safety', () => {
 		}
 	}, 30_000);
 });
+
+describe('transport-failure retries through createCorsair', () => {
+	it('retries a dropped connection on a read', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+			respond(balanceOk);
+
+			const result = await corsair.lob.api.account.getBalance({});
+			expect(result.balance).toBe(42.5);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	}, 30_000);
+
+	it('gives up when the connection keeps dropping on a read', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			// The handler allows 1 retry, so 2 attempts in total.
+			fetchMock.mockRejectedValue(new TypeError('fetch failed'));
+
+			await expect(
+				corsair.lob.api.account.getBalance({}),
+			).rejects.toMatchObject({ transportFailure: true });
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	}, 30_000);
+
+	it('does not retry a dropped connection on a keyless send', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+
+			await expect(
+				corsair.lob.api.postcards.send(postcardInput),
+			).rejects.toMatchObject({ transportFailure: true });
+			// Exactly one attempt: Lob may have applied the send before the
+			// connection dropped.
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('retries a dropped connection on an idempotency-keyed send', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+			respond(postcardOk);
+
+			const result = await corsair.lob.api.postcards.send({
+				...postcardInput,
+				idempotency_key: 'order-42',
+			});
+			expect(result.id).toBe('psc_208e45e48d271294');
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	}, 30_000);
+});
