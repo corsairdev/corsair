@@ -4,7 +4,7 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 /**
  * Official Publora REST host. Every path below is relative to `/api/v1`.
@@ -124,7 +124,65 @@ export async function makePubloraRequest<T>(
 		query: compact && Object.keys(compact).length > 0 ? compact : undefined,
 	};
 
-	return await request<T>(config, requestOptions, {
-		rateLimitConfig: PUBLORA_RATE_LIMIT_CONFIG,
-	});
+	try {
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: PUBLORA_RATE_LIMIT_CONFIG,
+		});
+	} catch (error) {
+		throw error instanceof ApiError ? withoutRequestData(error) : error;
+	}
+}
+
+const REDACTED = '[REDACTED]';
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+/**
+ * Publora echoes each failed media URL in `mediaResults[].url`; the URL is
+ * the caller's data, so it is replaced. The rest of the body (`error`,
+ * `code`, `field`, per-platform validation messages) is Publora's own text.
+ */
+function scrubResponseBody(body: unknown): unknown {
+	if (!isRecord(body) || !Array.isArray(body.mediaResults)) return body;
+	return {
+		...body,
+		mediaResults: body.mediaResults.map((result) =>
+			isRecord(result) && 'url' in result
+				? { ...result, url: REDACTED }
+				: result,
+		),
+	};
+}
+
+/**
+ * Rebuilds the ApiError without the request body (post text, connection ids,
+ * media and webhook URLs) and headers (the API key), keeping status,
+ * statusText, Publora's error body and the rate-limit metadata the error
+ * handlers and core read (R8).
+ */
+export function withoutRequestData(error: ApiError): ApiError {
+	return new ApiError(
+		{
+			...error.request,
+			body: error.request.body === undefined ? undefined : REDACTED,
+			formData: undefined,
+			headers: undefined,
+		},
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: scrubResponseBody(error.body),
+		},
+		error.message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }

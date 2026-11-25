@@ -157,6 +157,38 @@ describe('makePubloraRequest', () => {
 		expect((error as ApiError).body).toEqual({ error: 'Post group not found' });
 	});
 
+	it('strips what was sent from a propagated error, keeping status and code', async () => {
+		mockFetch({
+			status: 400,
+			body: {
+				error: 'Media could not be downloaded',
+				code: 'MEDIA_URL_UNREACHABLE',
+				mediaResults: [
+					{ url: 'https://private.example.com/a.png?sig=s3cr3t', code: 'X' },
+				],
+			},
+		});
+
+		const error = (await makePubloraRequest('create-post', 'sk_test.key', {
+			method: 'POST',
+			body: {
+				content: 'Call jane@example.com about the launch',
+				platforms: ['linkedin-ABC123'],
+				mediaUrls: ['https://private.example.com/a.png?sig=s3cr3t'],
+			},
+		}).catch((e: unknown) => e)) as ApiError;
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.status).toBe(400);
+		expect(error.body.code).toBe('MEDIA_URL_UNREACHABLE');
+		expect(error.request.body).toBe('[REDACTED]');
+		expect(error.request.headers).toBeUndefined();
+		const serialized = JSON.stringify({ ...error, message: error.message });
+		expect(serialized).not.toContain('jane@example.com');
+		expect(serialized).not.toContain('s3cr3t');
+		expect(serialized).not.toContain('sk_test.key');
+	});
+
 	it('retries a 429 that carries Retry-After', async () => {
 		mockFetchSequence([
 			{
