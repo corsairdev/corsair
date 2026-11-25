@@ -40,7 +40,7 @@ pnpm add @corsair-dev/slack
 | `messages.delete` | `slack.api.messages.delete` | `destructive` | Delete a message [DESTRUCTIVE] |
 | `messages.getPermalink` | `slack.api.messages.getPermalink` | `read` | Get a permalink for a message |
 | `messages.post` | `slack.api.messages.post` | `write` | Post a message to a channel |
-| `messages.search` | `slack.api.messages.search` | `read` | Search messages with Slack search syntax, e.g. "deploy in:#channel from:@user". Needs a user token. |
+| `messages.search` | `slack.api.messages.search` | `read` | Search messages with structured fields (keywords, in, from, with, after, before, on, during, hasPin, hasReaction, isThread, ...) or a raw query in Slack search syntax; no modifier syntax needed. Needs a user token. |
 | `messages.update` | `slack.api.messages.update` | `write` | Update an existing message |
 | `reactions.add` | `slack.api.reactions.add` | `write` | Add a reaction emoji to a message |
 | `reactions.get` | `slack.api.reactions.get` | `read` | Get reactions for a message |

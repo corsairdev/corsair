@@ -281,12 +281,71 @@ const MessagesGetPermalinkInputSchema = z.object({
 	message_ts: z.string(),
 });
 
+const SlackDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be YYYY-MM-DD');
+
 const MessagesSearchInputSchema = z.object({
 	query: z
 		.string()
+		.optional()
 		.describe(
-			'Slack search string; modifiers such as in:#channel, from:@user and has: narrow it.',
+			'Slack search string; modifiers such as in:#channel, from:@user and has: narrow it. Optional: prefer the structured fields below; when both are given, a message must match both.',
 		),
+	keywords: z
+		.array(z.string().min(1))
+		.optional()
+		.describe('Words that must all appear in the message'),
+	exactPhrase: z
+		.string()
+		.optional()
+		.describe('Exact phrase that must appear in the message'),
+	exclude: z
+		.array(z.string().min(1))
+		.optional()
+		.describe('Words that must not appear in the message'),
+	in: z
+		.string()
+		.optional()
+		.describe('Channel name, e.g. "team-marketing" (the # is added for you)'),
+	notIn: z
+		.array(z.string().min(1))
+		.optional()
+		.describe('Channel names to leave out of the results'),
+	from: z
+		.string()
+		.optional()
+		.describe('Sender display name, e.g. "Sara" (the @ is added for you)'),
+	notFrom: z
+		.array(z.string().min(1))
+		.optional()
+		.describe('Sender display names to leave out of the results'),
+	with: z
+		.string()
+		.optional()
+		.describe('Display name of a person: threads and DMs with them'),
+	after: SlackDate.optional().describe(
+		'Only messages after this date (YYYY-MM-DD)',
+	),
+	before: SlackDate.optional().describe(
+		'Only messages before this date (YYYY-MM-DD)',
+	),
+	on: SlackDate.optional().describe('Only messages on this date (YYYY-MM-DD)'),
+	during: z
+		.string()
+		.optional()
+		.describe('A month or year, e.g. "august" or "2025"'),
+	hasPin: z.boolean().optional().describe('true: only pinned messages'),
+	hasReaction: z
+		.string()
+		.optional()
+		.describe('Emoji name of a reaction on the message, e.g. "eyes"'),
+	isSaved: z
+		.boolean()
+		.optional()
+		.describe('true: only messages you saved for later'),
+	isThread: z
+		.boolean()
+		.optional()
+		.describe('true: only messages that are part of a thread'),
 	sort: z
 		.enum(['score', 'timestamp'])
 		.optional()
@@ -302,6 +361,82 @@ const MessagesSearchInputSchema = z.object({
 		.optional()
 		.describe('Results per page, default 20, at most 100.'),
 });
+
+export type MessagesSearchInput = z.infer<typeof MessagesSearchInputSchema>;
+
+const STRUCTURED_SEARCH_KEYS = [
+	'keywords',
+	'exactPhrase',
+	'exclude',
+	'in',
+	'notIn',
+	'from',
+	'notFrom',
+	'with',
+	'after',
+	'before',
+	'on',
+	'during',
+	'hasPin',
+	'hasReaction',
+	'isSaved',
+	'isThread',
+] as const;
+
+// A word that is quoted, or that Slack would read as a modifier or exclusion.
+function slackTerm(value: string): string {
+	const v = value.trim().replace(/"/g, '');
+	return /[\s:]|^-/.test(v) ? `"${v}"` : v;
+}
+
+// Channel and person names are written after # or @ with no spaces.
+const handle = (prefix: '#' | '@', v: string) =>
+	`${prefix}${v.trim().replace(/^[#@]/, '').replace(/\s+/g, '-')}`;
+
+/**
+ * Build a Slack search string from structured inputs. Modifiers follow
+ * https://slack.com/help/articles/202528808-Search-in-Slack. A user-given
+ * `query` is ANDed in.
+ */
+export function buildSlackSearchQuery(
+	input: Partial<MessagesSearchInput>,
+): string {
+	const parts: string[] = [];
+	const nonEmpty = (xs?: string[]) => (xs ?? []).filter((x) => x.trim());
+	parts.push(...nonEmpty(input.keywords).map(slackTerm));
+	if (input.exactPhrase?.trim()) {
+		parts.push(`"${input.exactPhrase.trim().replace(/"/g, '')}"`);
+	}
+	parts.push(...nonEmpty(input.exclude).map((w) => `-${slackTerm(w)}`));
+	if (input.in?.trim()) parts.push(`in:${handle('#', input.in)}`);
+	parts.push(...nonEmpty(input.notIn).map((c) => `-in:${handle('#', c)}`));
+	if (input.from?.trim()) parts.push(`from:${handle('@', input.from)}`);
+	parts.push(...nonEmpty(input.notFrom).map((u) => `-from:${handle('@', u)}`));
+	if (input.with?.trim()) parts.push(`with:${handle('@', input.with)}`);
+	if (input.after) parts.push(`after:${input.after}`);
+	if (input.before) parts.push(`before:${input.before}`);
+	if (input.on) parts.push(`on:${input.on}`);
+	if (input.during?.trim()) parts.push(`during:${input.during.trim()}`);
+	if (input.hasPin) parts.push('has:pin');
+	if (input.hasReaction?.trim()) {
+		parts.push(`has::${input.hasReaction.trim().replace(/^:|:$/g, '')}:`);
+	}
+	if (input.isSaved) parts.push('is:saved');
+	if (input.isThread) parts.push('is:thread');
+
+	const structured = parts.join(' ');
+	const q = input.query?.trim();
+	if (!q) return structured;
+	if (!structured) return q;
+	return `${q} ${structured}`;
+}
+
+/** The search.messages params: the compiled query plus the paging fields. */
+export function slackSearchParams(input: MessagesSearchInput) {
+	const rest: Record<string, unknown> = { ...input };
+	for (const k of STRUCTURED_SEARCH_KEYS) delete rest[k];
+	return { ...rest, query: buildSlackSearchQuery(input) };
+}
 
 const PostMessageInputSchema = z.object({
 	channel: z.string(),
