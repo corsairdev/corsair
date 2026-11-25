@@ -1,0 +1,82 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: 'Lob'
+description: 'Address verification and print mail with Lob - verify US and international addresses, autocomplete and look up ZIP codes, manage the address book, send and track postcards and letters, and read the account balance.'
+domain: lob.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key in the Lob dashboard under Settings, API keys (dashboard.lob.com/settings/api-keys). The plugin sends it as HTTP Basic auth with an empty password. Before you call anything:
+
+  - **Test vs live keys.** Keys prefixed `test_` never print, mail, or verify real addresses: verifications return simulated outcomes and mailpieces stay virtual. Keys prefixed `live_` spend real money per mailpiece and per verification.
+  - **Sends are physical.** `postcards.send` and `letters.send` dispatch print jobs that cannot be recalled once in production, and each piece is billed. Pass an `idempotency_key` (at most 256 characters): Lob returns the original piece for 24 hours instead of mailing a duplicate.
+  - **Bulk US verification needs a live key.** `usVerifications.bulk` answers a dummy response on a `test_` key; the single verification works in both modes.
+  - **Rate limits.** Lob allows 150 requests per 5 seconds per key and endpoint (300 for the two US verification endpoints), and answers 429 with no `Retry-After` header. The plugin waits 5 seconds between retries, up to 2 times.
+  - **Mailpieces land as addresses.** When you send with inline addresses, the response expands `to` and `from` into full address objects.
+  - **Letter paper size.** `letters.send` accepts `size` only when the account pins `Lob-Version` 2024-01-01 or newer; older versions reject it.
+  - **Cancels.** The plugin does not wrap mailpiece cancels or the marketing suite (campaigns, templates, uploads). It also does not receive Lob webhooks; track deliveries by reading a mailpiece with `postcards.get` or `letters.get`.
+examples:
+  read:
+    path: zip.usZipLookup
+    title: Look up the cities behind a ZIP code
+    args:
+      zip_code: '94107'
+  write:
+    path: postcards.send
+    title: Mail a postcard to a saved address
+    args:
+      to: 'adr_210a8d4b0b76d77b'
+      front: '<html style="font-size:36px">Sale ends Friday</html>'
+      back: '<html style="font-size:24px">Acme Logistics</html>'
+apiExamples:
+  usVerifications.verify:
+    call: "{ primary_line: '210 King Street', city: 'San Francisco', state: 'CA', zip_code: '94107', case: 'proper' }"
+  usVerifications.bulk:
+    call: "{ addresses: [{ primary_line: '210 King Street', zip_code: '94107' }, { primary_line: 'Ave Wilson Churchill 123', city: 'Rio Piedras', state: 'PR', zip_code: '00926' }] }"
+  intlVerifications.verify:
+    call: "{ primary_line: '123 Paramount Rd', city: 'Toronto', state: 'ON', postal_code: 'M5V 2T6', country: 'CA' }"
+  autocomplete.usAutocomplete:
+    call: "{ address_prefix: '185 Industrial P', valid_addresses: true }"
+  zip.usZipLookup: {}
+  addresses.create:
+    call: "{ name: 'Jordan Lee', address_line1: '210 King St Ste 6100', address_city: 'San Francisco', address_state: 'CA', address_zip: '94107-1741' }"
+  addresses.get:
+    call: "{ id: 'adr_d0c7d5ac3f7e6b4' }"
+  addresses.list:
+    call: "{ limit: 20, include: ['total_count'], after: 'adr_d0c7d5ac3f7e6b4' }"
+  addresses.delete:
+    call: "{ id: 'adr_d0c7d5ac3f7e6b4' }"
+  postcards.send:
+    call: "{ to: 'adr_210a8d4b0b76d77b', front: '<html style=\"font-size:36px\">Sale ends Friday</html>', back: '<html style=\"font-size:24px\">Acme Logistics</html>', use_type: 'marketing', idempotency_key: 'welcome-series-42' }"
+  postcards.get:
+    call: "{ id: 'psc_208e45e48d271294' }"
+  letters.send:
+    call: "{ to: 'adr_210a8d4b0b76d77b', from: 'adr_fa64eaa6b3f335', file: '<html>Invoice 1234 due Friday</html>', color: false, use_type: 'operational', idempotency_key: 'invoice-1234' }"
+  letters.get:
+    call: "{ id: 'ltr_489a2ce9d621bde' }"
+  account.getBalance: {}
+apiNotes:
+  usVerifications.verify:
+    'Verify with either the single-line `address` field, or the component fields (`primary_line` plus `zip_code`, or `primary_line` plus `city` and `state`). Test keys simulate outcomes: a primary line containing `undeliverable` comes back undeliverable.'
+  usVerifications.bulk:
+    'Requires a live API key; a test key answers a dummy response. Each input row returns a verification or a row error, and the top-level `errors` flag says whether any row failed.'
+  intlVerifications.verify:
+    'The `country` code selects international processing; it must not be US. A live key bills each verification.'
+  autocomplete.usAutocomplete:
+    '`geo_ip_sort` ranks by caller IP; the plugin does not send the `X-Forwarded-For` header Lob uses to pass the end user IP through.'
+  zip.usZipLookup:
+    'Accepts exactly five digits. The first city in `cities` is the USPS default and carries `preferred: true`.'
+  addresses.create:
+    'Lob requires `name` or `company` (at least one). Omitting `address_country` means US, which requires the city, two-letter state and a US ZIP.'
+  addresses.delete:
+    'Marks the entry deleted. Lob does not restore it, and mail already queued to that address still processes.'
+  addresses.list:
+    'Page with `before` or `after` (never both), up to 100 rows. `total_count` arrives only when you pass `include: [''total_count'']`.'
+  postcards.send:
+    'Bills a physical mailpiece. `use_type` is required by Lob and accepts `marketing`, `operational`, or `null`; `size` defaults to 4x6. With an `idempotency_key`, replays within 24 hours return the original piece.'
+  postcards.get:
+    'The signed `url` expires after 30 days. `status` moves through `rendered` and `processed` (or `failed` with a `failure_reason`).'
+  letters.send:
+    'Bills a physical mailpiece. `color` is required by Lob (defaults to false server-side). `extra_service` adds certified or registered tracking and its fees. With an `idempotency_key`, replays within 24 hours return the original piece.'
+  letters.get:
+    '`tracking_number` and `tracking_events` appear on certified and registered mail.'
+  account.getBalance:
+    'Returns the Lob Credits balance; it can be negative.'

@@ -1,0 +1,919 @@
+---
+title: "Lob API reference"
+sidebarTitle: "API"
+description: "API reference for the Lob plugin in Corsair: every `lob.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getBalance
+
+`account.getBalance`
+
+Read the account's current Lob Credits balance
+
+**Risk:** `read`
+
+```ts
+await corsair.lob.api.account.getBalance({});
+```
+
+**Input:** _empty object_
+
+Returns the Lob Credits balance; it can be negative.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `balance` | `number` | Yes | The account's Lob Credits balance. |
+
+
+
+---
+
+## Addresses
+
+### create
+
+`addresses.create`
+
+Create a US or international address in the Lob address book for reuse as a mail to or from address
+
+**Risk:** `write`
+
+```ts
+await corsair.lob.api.addresses.create({ name: 'Jordan Lee', address_line1: '210 King St Ste 6100', address_city: 'San Francisco', address_state: 'CA', address_zip: '94107-1741' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `company` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `email` | `string` | No | — |
+| `address_line1` | `string` | Yes | Street address. Up to 64 characters for US addresses. |
+| `address_line2` | `string` | No | — |
+| `address_city` | `string` | No | — |
+| `address_state` | `string` | No | — |
+| `address_zip` | `string` | No | — |
+| `address_country` | `string` | No | Two-letter ISO country code. Omit or pass 'US' for a US address. |
+| `description` | `string` | No | Internal note, up to 255 characters. |
+| `metadata` | `Record<string, string>` | No | — |
+
+Lob requires `name` or `company` (at least one). Omitting `address_country` means US, which requires the city, two-letter state and a US ZIP.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `address_line1` | `string \| null` | No | — |
+| `address_line2` | `string \| null` | No | — |
+| `address_city` | `string \| null` | No | — |
+| `address_state` | `string \| null` | No | — |
+| `address_zip` | `string \| null` | No | — |
+| `address_country` | `string \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | String-to-string map; Lob caps the serialized form at 500 characters. |
+| `recipient_moved` | `boolean \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+| `object` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`addresses.delete`
+
+Permanently delete an address book entry. Lob marks it deleted and does not restore it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.lob.api.addresses.delete({ id: 'adr_d0c7d5ac3f7e6b4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The address's ID, prefixed with adr_. |
+
+Marks the entry deleted. Lob does not restore it, and mail already queued to that address still processes.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+
+
+
+---
+
+### get
+
+`addresses.get`
+
+Read one address book entry by its adr_ ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lob.api.addresses.get({ id: 'adr_d0c7d5ac3f7e6b4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The address's ID, prefixed with adr_. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `address_line1` | `string \| null` | No | — |
+| `address_line2` | `string \| null` | No | — |
+| `address_city` | `string \| null` | No | — |
+| `address_state` | `string \| null` | No | — |
+| `address_zip` | `string \| null` | No | — |
+| `address_country` | `string \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | String-to-string map; Lob caps the serialized form at 500 characters. |
+| `recipient_moved` | `boolean \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+| `object` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`addresses.list`
+
+Page through the address book with before/after cursors, optional metadata and date filters
+
+**Risk:** `read`
+
+```ts
+await corsair.lob.api.addresses.list({ limit: 20, include: ['total_count'], after: 'adr_d0c7d5ac3f7e6b4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Rows per page, 1-100. Defaults to 10. |
+| `before` | `string` | No | Cursor: rows created before this address ID. |
+| `after` | `string` | No | Cursor: rows created after this address ID. |
+| `include` | `total_count[]` | No | Pass ['total_count'] to have total_count filled in. |
+| `date_created` | `object` | No | ISO 8601 bounds on the creation timestamp. |
+| `metadata` | `Record<string, string>` | No | Only rows whose metadata carries every given key and value. |
+
+Page with `before` or `after` (never both), up to 100 rows. `total_count` arrives only when you pass `include: ['total_count']`.
+
+<AccordionGroup>
+<Accordion title="date_created full type">
+
+```ts
+{
+  gt?: string,
+  gte?: string,
+  lt?: string,
+  lte?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string \| null` | No | — |
+| `next_url` | `string \| null` | No | Pre-built URL for the next page; null on the last page. |
+| `previous_url` | `string \| null` | No | — |
+| `count` | `number \| null` | No | — |
+| `total_count` | `number \| null` | No | Present only when the request passed include: [total_count]. |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  company?: string | null,
+  phone?: string | null,
+  email?: string | null,
+  address_line1?: string | null,
+  address_line2?: string | null,
+  address_city?: string | null,
+  address_state?: string | null,
+  address_zip?: string | null,
+  address_country?: string | null,
+  metadata?: Record<string, string> | null,
+  recipient_moved?: boolean | null,
+  date_created?: string | null,
+  date_modified?: string | null,
+  deleted?: boolean | null,
+  object?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Autocomplete
+
+### usAutocomplete
+
+`autocomplete.usAutocomplete`
+
+Complete a partial US address into up to 10 suggestion lines, optionally restricted to deliverable addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.lob.api.autocomplete.usAutocomplete({ address_prefix: '185 Industrial P', valid_addresses: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address_prefix` | `string` | Yes | Partial primary line to complete, such as '185 Industrial P'. |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zip_code` | `string` | No | — |
+| `geo_ip_sort` | `boolean` | No | True to rank suggestions by distance to the caller IP; needs the X-Forwarded-For header Lob documents, which this plugin does not send. |
+| `case` | `upper \| proper` | No | Casing of the returned address lines: 'upper' (default) or 'proper'. |
+| `valid_addresses` | `boolean` | No | True to return only deliverable addresses. |
+
+`geo_ip_sort` ranks by caller IP; the plugin does not send the `X-Forwarded-For` header Lob uses to pass the end user IP through.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `suggestions` | `object[]` | Yes | Up to 10 completed address lines. |
+| `object` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  primary_line: string,
+  city: string,
+  state: string,
+  zip_code: string,
+  object?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Intl Verifications
+
+### verify
+
+`intlVerifications.verify`
+
+Verify one international address and get its deliverability, coverage level and parsed components
+
+**Risk:** `read`
+
+```ts
+await corsair.lob.api.intlVerifications.verify({ primary_line: '123 Paramount Rd', city: 'Toronto', state: 'ON', postal_code: 'M5V 2T6', country: 'CA' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipient` | `string` | No | — |
+| `primary_line` | `string` | No | Delivery line, such as 'Delancey Street 123'. |
+| `secondary_line` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `postal_code` | `string` | No | — |
+| `country` | `AD \| AE \| AF \| AG \| AI \| AL \| AN \| AO \| AQ \| AR \| AT \| AU \| AW \| AZ \| BA \| BB \| BD \| BE \| BF \| BG \| BH \| BI \| BJ \| BM \| BN \| BO \| BQ \| BR \| BS \| BT \| BW \| BY \| BZ \| CA \| CD \| CG \| CH \| CI \| CK \| CL \| CM \| CN \| CO \| CR \| CS \| CU \| CV \| CW \| CY \| CZ \| DE \| DJ \| DK \| DM \| DO \| DZ \| EC \| EE \| EG \| EH \| ER \| ES \| ET \| FI \| FJ \| FK \| FO \| FR \| GA \| GB \| GD \| GE \| GH \| GI \| GL \| GM \| GN \| GQ \| GR \| GS \| GT \| GW \| GY \| HK \| HN \| HR \| HT \| HU \| ID \| IE \| IL \| IN \| IO \| IQ \| IR \| IS \| IT \| JM \| JO \| JP \| KE \| KG \| KH \| KI \| KM \| KN \| KP \| KR \| KW \| KY \| KZ \| LA \| LB \| LC \| LI \| LK \| LR \| LS \| LT \| LU \| LV \| LY \| MA \| MC \| MD \| ME \| MG \| MK \| ML \| MM \| MN \| MO \| MR \| MS \| MT \| MU \| MV \| MW \| MX \| MY \| MZ \| NA \| NE \| NF \| NG \| NI \| NL \| NO \| NP \| NR \| NU \| NZ \| OM \| PA \| PE \| PG \| PH \| PK \| PL \| PN \| PT \| PY \| QA \| RO \| RS \| RU \| RW \| SA \| SB \| SC \| SD \| SE \| SG \| SH \| SI \| SK \| SL \| SM \| SN \| SO \| SR \| SS \| ST \| SV \| SX \| SY \| SZ \| TC \| TD \| TG \| TH \| TJ \| TK \| TL \| TM \| TN \| TO \| TR \| TT \| TV \| TW \| TZ \| UA \| UG \| UY \| UZ \| VA \| VC \| VE \| VG \| VN \| VU \| WS \| YE \| ZA \| ZM \| ZW` | Yes | Two-letter ISO 3166-1 alpha-2 country code. Outside the US and US territories this selects international processing. |
+| `address` | `string` | No | Full address on one line. When set, it replaces the component fields. |
+
+The `country` code selects international processing; it must not be US. A live key bills each verification.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `recipient` | `string \| null` | No | — |
+| `primary_line` | `string \| null` | No | — |
+| `secondary_line` | `string \| null` | No | — |
+| `last_line` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `coverage` | `SUBBUILDING \| HOUSENUMBER/BUILDING \| STREET \| LOCALITY \| SPARSE \| null` | No | — |
+| `deliverability` | `deliverable \| deliverable_missing_info \| undeliverable \| no_match \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `components` | `Record<string, any> \| null` | No | — |
+| `object` | `string \| null` | No | — |
+
+
+
+---
+
+## Letters
+
+### get
+
+`letters.get`
+
+Read one letter by its ltr_ ID, including tracking number and events on certified or registered mail
+
+**Risk:** `read`
+
+```ts
+await corsair.lob.api.letters.get({ id: 'ltr_489a2ce9d621bde' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The letter's ID, prefixed with ltr_. |
+
+`tracking_number` and `tracking_events` appear on certified and registered mail.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `to` | `Record<string, any> \| null` | No | — |
+| `from` | `Record<string, any> \| null` | No | — |
+| `carrier` | `string \| null` | No | — |
+| `thumbnails` | `Record<string, any> \| null` | No | — |
+| `expected_delivery_date` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+| `template_version_id` | `string \| null` | No | — |
+| `tracking_events` | `Record<string, any>[] \| null` | No | — |
+| `tracking_number` | `string \| null` | No | Present on certified and registered mail. |
+| `extra_service` | `string \| null` | No | — |
+| `return_address` | `Record<string, any> \| null` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `use_type` | `string \| null` | No | — |
+| `fsc` | `boolean \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `failure_reason` | `Record<string, any> \| null` | No | — |
+| `color` | `boolean \| null` | No | — |
+| `double_sided` | `boolean \| null` | No | — |
+| `address_placement` | `string \| null` | No | — |
+| `perforated_page` | `number \| null` | No | — |
+| `return_envelope` | `boolean \| null` | No | — |
+| `mail_type` | `string \| null` | No | — |
+| `merge_variables` | `Record<string, any> \| null` | No | — |
+| `send_date` | `string \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+| `object` | `string \| null` | No | — |
+
+
+
+---
+
+### send
+
+`letters.send`
+
+Send a real letter that Lob prints, stuffs and mails. Each piece is billed and cannot be recalled once in production; pass an idempotency_key so a replay returns the original instead of mailing twice
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.lob.api.letters.send({ to: 'adr_210a8d4b0b76d77b', from: 'adr_fa64eaa6b3f335', file: '<html>Invoice 1234 due Friday</html>', color: false, use_type: 'operational', idempotency_key: 'invoice-1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `to` | `string \| object` | Yes | Recipient: an address ID (adr_...) or an inline address. |
+| `from` | `string \| object` | Yes | Return address: an address ID (adr_...) or an inline address. |
+| `file` | `string \| string \| string` | Yes | HTML string (up to 10000 characters), tmpl_... template ID, or an https URL to an html, pdf, png or jpg file. |
+| `color` | `boolean` | Yes | Print in color. Lob requires this field; it defaults to false when omitted server-side. |
+| `extra_service` | `certified \| certified_return_receipt \| registered \| null` | No | Adds USPS tracking; certified and registered add fees. |
+| `double_sided` | `boolean` | No | Print on both sides of the paper. Defaults to true. |
+| `address_placement` | `top_first_page \| insert_blank_page \| bottom_first_page_center \| bottom_first_page` | No | Where the address window sits. Defaults to 'top_first_page'. |
+| `size` | `us_letter \| us_legal` | No | Paper size. Defaults to 'us_letter'; only accepted with Lob-Version 2024-01-01 or newer. |
+| `use_type` | `marketing \| operational \| null` | Yes | The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. Pass null for personal correspondence. |
+| `mail_type` | `usps_first_class \| usps_standard` | No | Postage class. Defaults to 'usps_first_class'. |
+| `merge_variables` | `Record<string, any> \| null` | No | Per-mailpiece template variables, keyed by merge variable name. |
+| `send_date` | `string` | No | ISO 8601 date (2026-01-01) or datetime; Lob schedules production after it, up to 180 days out. |
+| `description` | `string` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `idempotency_key` | `string` | No | Deduplication key, at most 256 characters. Lob replays within 24 hours return the original mailpiece instead of creating a duplicate. |
+
+Bills a physical mailpiece. `color` is required by Lob (defaults to false server-side). `extra_service` adds certified or registered tracking and its fees. With an `idempotency_key`, replays within 24 hours return the original piece.
+
+<AccordionGroup>
+<Accordion title="to full type">
+
+```ts
+string | {
+  name?: string,
+  company?: string,
+  phone?: string,
+  email?: string,
+  address_line1: string,
+  address_line2?: string,
+  address_city?: string,
+  address_state?: string,
+  address_zip?: string,
+  address_country?: string
+}
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+string | {
+  name?: string,
+  company?: string,
+  phone?: string,
+  email?: string,
+  address_line1: string,
+  address_line2?: string,
+  address_city?: string,
+  address_state?: string,
+  address_zip?: string,
+  address_country?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `to` | `Record<string, any> \| null` | No | — |
+| `from` | `Record<string, any> \| null` | No | — |
+| `carrier` | `string \| null` | No | — |
+| `thumbnails` | `Record<string, any> \| null` | No | — |
+| `expected_delivery_date` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `template_id` | `string \| null` | No | — |
+| `template_version_id` | `string \| null` | No | — |
+| `tracking_events` | `Record<string, any>[] \| null` | No | — |
+| `tracking_number` | `string \| null` | No | Present on certified and registered mail. |
+| `extra_service` | `string \| null` | No | — |
+| `return_address` | `Record<string, any> \| null` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `use_type` | `string \| null` | No | — |
+| `fsc` | `boolean \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `failure_reason` | `Record<string, any> \| null` | No | — |
+| `color` | `boolean \| null` | No | — |
+| `double_sided` | `boolean \| null` | No | — |
+| `address_placement` | `string \| null` | No | — |
+| `perforated_page` | `number \| null` | No | — |
+| `return_envelope` | `boolean \| null` | No | — |
+| `mail_type` | `string \| null` | No | — |
+| `merge_variables` | `Record<string, any> \| null` | No | — |
+| `send_date` | `string \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+| `object` | `string \| null` | No | — |
+
+
+
+---
+
+## Postcards
+
+### get
+
+`postcards.get`
+
+Read one postcard by its psc_ ID, including print status and the signed PDF preview URL
+
+**Risk:** `read`
+
+```ts
+await corsair.lob.api.postcards.get({ id: 'psc_208e45e48d271294' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The postcard's ID, prefixed with psc_. |
+
+The signed `url` expires after 30 days. `status` moves through `rendered` and `processed` (or `failed` with a `failure_reason`).
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `size` | `string \| null` | No | — |
+| `to` | `Record<string, any> \| null` | No | — |
+| `from` | `Record<string, any> \| null` | No | — |
+| `carrier` | `string \| null` | No | — |
+| `thumbnails` | `Record<string, any> \| null` | No | — |
+| `expected_delivery_date` | `string \| null` | No | — |
+| `url` | `string \| null` | No | Signed PDF preview; expires after 30 days. |
+| `front_template_id` | `string \| null` | No | — |
+| `back_template_id` | `string \| null` | No | — |
+| `front_template_version_id` | `string \| null` | No | — |
+| `back_template_version_id` | `string \| null` | No | — |
+| `tracking_events` | `Record<string, any>[] \| null` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `use_type` | `string \| null` | No | — |
+| `fsc` | `boolean \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `failure_reason` | `Record<string, any> \| null` | No | — |
+| `mail_type` | `string \| null` | No | — |
+| `merge_variables` | `Record<string, any> \| null` | No | — |
+| `send_date` | `string \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+| `object` | `string \| null` | No | — |
+
+
+
+---
+
+### send
+
+`postcards.send`
+
+Send a real postcard that Lob prints and mails. Each piece is billed and cannot be recalled once in production; pass an idempotency_key so a replay returns the original instead of mailing twice
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.lob.api.postcards.send({ to: 'adr_210a8d4b0b76d77b', front: '<html style="font-size:36px">Sale ends Friday</html>', back: '<html style="font-size:24px">Acme Logistics</html>', use_type: 'marketing', idempotency_key: 'welcome-series-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `to` | `string \| object` | Yes | Recipient: an address ID (adr_...) or an inline address. |
+| `from` | `string \| object` | No | Return address. Lob falls back to a permanent return address on file when omitted. |
+| `front` | `string \| string \| string` | Yes | HTML string (up to 10000 characters), tmpl_... template ID, or an https URL to an html, pdf, png or jpg file. |
+| `back` | `string \| string \| string` | Yes | HTML string (up to 10000 characters), tmpl_... template ID, or an https URL to an html, pdf, png or jpg file. |
+| `size` | `4x6 \| 6x9 \| 6x11` | No | Postcard size. Defaults to '4x6'. |
+| `use_type` | `marketing \| operational \| null` | Yes | The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. Pass null for personal correspondence. |
+| `mail_type` | `usps_first_class \| usps_standard` | No | Postage class. Defaults to 'usps_first_class'. |
+| `merge_variables` | `Record<string, any> \| null` | No | Per-mailpiece template variables, keyed by merge variable name. |
+| `send_date` | `string` | No | ISO 8601 date (2026-01-01) or datetime; Lob schedules production after it, up to 180 days out. |
+| `description` | `string` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `idempotency_key` | `string` | No | Deduplication key, at most 256 characters. Lob replays within 24 hours return the original mailpiece instead of creating a duplicate. |
+
+Bills a physical mailpiece. `use_type` is required by Lob and accepts `marketing`, `operational`, or `null`; `size` defaults to 4x6. With an `idempotency_key`, replays within 24 hours return the original piece.
+
+<AccordionGroup>
+<Accordion title="to full type">
+
+```ts
+string | {
+  name?: string,
+  company?: string,
+  phone?: string,
+  email?: string,
+  address_line1: string,
+  address_line2?: string,
+  address_city?: string,
+  address_state?: string,
+  address_zip?: string,
+  address_country?: string
+}
+```
+</Accordion>
+
+<Accordion title="from full type">
+
+```ts
+string | {
+  name?: string,
+  company?: string,
+  phone?: string,
+  email?: string,
+  address_line1: string,
+  address_line2?: string,
+  address_city?: string,
+  address_state?: string,
+  address_zip?: string,
+  address_country?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `size` | `string \| null` | No | — |
+| `to` | `Record<string, any> \| null` | No | — |
+| `from` | `Record<string, any> \| null` | No | — |
+| `carrier` | `string \| null` | No | — |
+| `thumbnails` | `Record<string, any> \| null` | No | — |
+| `expected_delivery_date` | `string \| null` | No | — |
+| `url` | `string \| null` | No | Signed PDF preview; expires after 30 days. |
+| `front_template_id` | `string \| null` | No | — |
+| `back_template_id` | `string \| null` | No | — |
+| `front_template_version_id` | `string \| null` | No | — |
+| `back_template_version_id` | `string \| null` | No | — |
+| `tracking_events` | `Record<string, any>[] \| null` | No | — |
+| `campaign_id` | `string \| null` | No | — |
+| `use_type` | `string \| null` | No | — |
+| `fsc` | `boolean \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `failure_reason` | `Record<string, any> \| null` | No | — |
+| `mail_type` | `string \| null` | No | — |
+| `merge_variables` | `Record<string, any> \| null` | No | — |
+| `send_date` | `string \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `date_created` | `string \| null` | No | — |
+| `date_modified` | `string \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+| `object` | `string \| null` | No | — |
+
+
+
+---
+
+## Us Verifications
+
+### bulk
+
+`usVerifications.bulk`
+
+Verify up to 20 US addresses in one synchronous call; each row comes back as a verification or a per-row error
+
+**Risk:** `read`
+
+```ts
+await corsair.lob.api.usVerifications.bulk({ addresses: [{ primary_line: '210 King Street', zip_code: '94107' }, { primary_line: 'Ave Wilson Churchill 123', city: 'Rio Piedras', state: 'PR', zip_code: '00926' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addresses` | `object[]` | Yes | Up to 20 US addresses, verified synchronously in one call. |
+| `case` | `upper \| proper` | No | Casing of the returned address lines: 'upper' (default) or 'proper'. |
+
+Requires a live API key; a test key answers a dummy response. Each input row returns a verification or a row error, and the top-level `errors` flag says whether any row failed.
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+{
+  recipient?: string,
+  primary_line?: string,
+  secondary_line?: string,
+  urbanization?: string,
+  city?: string,
+  state?: string,
+  zip_code?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `addresses` | `object[]` | Yes | One result per input, in order: a verification, or a row error whose 'error' object carries message and code. |
+| `errors` | `boolean` | Yes | True when at least one row failed. |
+
+<AccordionGroup>
+<Accordion title="addresses full type">
+
+```ts
+(
+  {
+    id?: string | null,
+    recipient?: string | null,
+    primary_line?: string | null,
+    secondary_line?: string | null,
+    urbanization?: string | null,
+    last_line?: string | null,
+    deliverability?: deliverable | deliverable_unnecessary_unit | deliverable_incorrect_unit | deliverable_missing_unit | undeliverable | null,
+    valid_address?: boolean | null,
+    components?: Record<string, any> | null,
+    deliverability_analysis?: Record<string, any> | null,
+    lob_confidence_score?: {
+      score?: number | null,
+      level?: string | null
+    } | null,
+    object?: string | null
+  } | {
+    error: {
+      message?: string | null,
+      status_code?: number | null,
+      code?: string | null
+    }
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### verify
+
+`usVerifications.verify`
+
+Verify one US address with USPS data and get its deliverability, standardized components and confidence score
+
+**Risk:** `read`
+
+```ts
+await corsair.lob.api.usVerifications.verify({ primary_line: '210 King Street', city: 'San Francisco', state: 'CA', zip_code: '94107', case: 'proper' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipient` | `string` | No | — |
+| `primary_line` | `string` | No | Delivery line, such as '210 King Street'. |
+| `secondary_line` | `string` | No | — |
+| `urbanization` | `string` | No | Puerto Rico urbanization name, when the address has one. |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zip_code` | `string` | No | — |
+| `address` | `string` | No | Full address on one line. When set, it replaces the component fields. |
+| `case` | `upper \| proper` | No | Casing of the returned address lines: 'upper' (default) or 'proper'. |
+
+Verify with either the single-line `address` field, or the component fields (`primary_line` plus `zip_code`, or `primary_line` plus `city` and `state`). Test keys simulate outcomes: a primary line containing `undeliverable` comes back undeliverable.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `recipient` | `string \| null` | No | — |
+| `primary_line` | `string \| null` | No | — |
+| `secondary_line` | `string \| null` | No | — |
+| `urbanization` | `string \| null` | No | — |
+| `last_line` | `string \| null` | No | — |
+| `deliverability` | `deliverable \| deliverable_unnecessary_unit \| deliverable_incorrect_unit \| deliverable_missing_unit \| undeliverable \| null` | No | — |
+| `valid_address` | `boolean \| null` | No | — |
+| `components` | `Record<string, any> \| null` | No | — |
+| `deliverability_analysis` | `Record<string, any> \| null` | No | — |
+| `lob_confidence_score` | `object \| null` | No | — |
+| `object` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="lob_confidence_score full type">
+
+```ts
+{
+  score?: number | null,
+  level?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Zip
+
+### usZipLookup
+
+`zip.usZipLookup`
+
+Look up a 5-digit US ZIP code and get its cities, county, FIPS code and default city
+
+**Risk:** `read`
+
+```ts
+await corsair.lob.api.zip.usZipLookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zip_code` | `string` | Yes | A 5-digit US ZIP code, such as 94107. |
+
+Accepts exactly five digits. The first city in `cities` is the USPS default and carries `preferred: true`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `zip_code` | `string` | Yes | — |
+| `cities` | `object[]` | Yes | Cities sharing the ZIP; the USPS default city is first with preferred: true. |
+| `zip_code_type` | `string \| null` | No | — |
+| `object` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="cities full type">
+
+```ts
+{
+  city: string,
+  state: string,
+  county: string,
+  county_fips: string,
+  preferred: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
