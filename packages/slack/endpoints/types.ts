@@ -1,3 +1,4 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 const ChannelsArchiveInputSchema = z.object({
@@ -234,6 +235,14 @@ const FilesGetInputSchema = z.object({
 	limit: z.number().optional(),
 	page: z.number().optional(),
 	count: z.number().optional(),
+});
+
+const FilesDownloadInputSchema = z.object({
+	file: z
+		.string()
+		.describe(
+			'Slack file id such as F0CL9G3CAR2, from files[] in channels.getHistory or files.list.',
+		),
 });
 
 const FilesListInputSchema = z.object({
@@ -600,6 +609,7 @@ export const SlackEndpointInputSchemas = {
 	userGroupsEnable: UserGroupsEnableInputSchema,
 	userGroupsList: UserGroupsListInputSchema,
 	userGroupsUpdate: UserGroupsUpdateInputSchema,
+	filesDownload: FilesDownloadInputSchema,
 	filesGet: FilesGetInputSchema,
 	filesList: FilesListInputSchema,
 	filesUpload: FilesUploadInputSchema,
@@ -1136,6 +1146,7 @@ export const SlackEndpointOutputSchemas = {
 	userGroupsEnable: UsergroupsEnableResponseSchema,
 	userGroupsList: UsergroupsListResponseSchema,
 	userGroupsUpdate: UsergroupsUpdateResponseSchema,
+	filesDownload: FileOutputSchema,
 	filesGet: FilesInfoResponseSchema,
 	filesList: FilesListResponseSchema,
 	filesUpload: FilesUploadResponseSchema,

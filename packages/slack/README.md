@@ -34,6 +34,7 @@ pnpm add @corsair-dev/slack
 | `channels.setPurpose` | `slack.api.channels.setPurpose` | `write` | Set the purpose of a channel |
 | `channels.setTopic` | `slack.api.channels.setTopic` | `write` | Set the topic of a channel |
 | `channels.unarchive` | `slack.api.channels.unarchive` | `write` | Unarchive a channel |
+| `files.download` | `slack.api.files.download` | `read` | Download one file's content by id (an image, PDF or any upload). Needs a token that can see the file; private channels and DMs need the user token. |
 | `files.get` | `slack.api.files.get` | `read` | Get metadata of one file by id, not its content. |
 | `files.list` | `slack.api.files.list` | `read` | List file metadata, not file content. Filter by channel, user, types or ts_from/ts_to. |
 | `files.upload` | `slack.api.files.upload` | `write` | Upload a file to Slack |

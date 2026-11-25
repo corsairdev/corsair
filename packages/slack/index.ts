@@ -118,6 +118,7 @@ export type SlackEndpoints = {
 	userGroupsEnable: SlackEndpoint<'userGroupsEnable'>;
 	userGroupsList: SlackEndpoint<'userGroupsList'>;
 	userGroupsUpdate: SlackEndpoint<'userGroupsUpdate'>;
+	filesDownload: SlackEndpoint<'filesDownload'>;
 	filesGet: SlackEndpoint<'filesGet'>;
 	filesList: SlackEndpoint<'filesList'>;
 	filesUpload: SlackEndpoint<'filesUpload'>;
@@ -174,6 +175,7 @@ const slackEndpointsNested = {
 		update: UserGroups.update,
 	},
 	files: {
+		download: Files.download,
 		get: Files.get,
 		list: Files.list,
 		upload: Files.upload,
@@ -315,6 +317,10 @@ export const slackEndpointSchemas = {
 	'userGroups.update': {
 		input: SlackEndpointInputSchemas.userGroupsUpdate,
 		output: SlackEndpointOutputSchemas.userGroupsUpdate,
+	},
+	'files.download': {
+		input: SlackEndpointInputSchemas.filesDownload,
+		output: SlackEndpointOutputSchemas.filesDownload,
 	},
 	'files.get': {
 		input: SlackEndpointInputSchemas.filesGet,
@@ -534,6 +540,11 @@ const slackEndpointMeta = {
 	'userGroups.update': {
 		riskLevel: 'write',
 		description: 'Update a user group',
+	},
+	'files.download': {
+		riskLevel: 'read',
+		description:
+			"Download one file's content by id (an image, PDF or any upload). Needs a token that can see the file; private channels and DMs need the user token.",
 	},
 	'files.get': {
 		riskLevel: 'read',
