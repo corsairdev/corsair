@@ -112,13 +112,17 @@ const ContactsFindInputSchema = z
 
 const ContactSchema = z
 	.object({
+		// id and email identify the record, so a contact without one of them is
+		// not usable by any caller and fails the parse loudly.
 		id: z.string(),
 		email: z.string(),
+		// The spec's Contact schema declares no required fields, so older or
+		// partial contacts can omit any non-identity field.
 		firstName: z.string().nullish(),
 		lastName: z.string().nullish(),
-		source: z.string(),
-		subscribed: z.boolean(),
-		userGroup: z.string(),
+		source: z.string().nullish(),
+		subscribed: z.boolean().nullish(),
+		userGroup: z.string().nullish(),
 		userId: z.string().nullish(),
 		mailingLists: MailingListsSchema.optional(),
 		optInStatus: z.enum(['accepted', 'pending', 'rejected']).nullish(),

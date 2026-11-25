@@ -7,6 +7,7 @@ import { LoopsAPIError } from './client';
 import {
 	contactPropertiesResponse,
 	contactResponse,
+	contactWithoutUserGroupResponse,
 	duplicateContactResponse,
 	invalidKeyResponse,
 	mailingListsResponse,
@@ -39,6 +40,18 @@ describe('Loops output parsing', () => {
 		expect(result).toHaveLength(1);
 		expect(result[0]?.id).toBe('clh3k9m2p4q6r8s0t2v4x6z8');
 		expect(result[0]?.favoriteColor).toBe('blue');
+	});
+
+	it('parses a contact that omits userGroup and userId', async () => {
+		// The spec requires no Contact fields beyond the identity pair.
+		mockFetch(ok([contactWithoutUserGroupResponse]));
+
+		const result = await endpoints.contacts.find(makeCtx(), {
+			email: 'alex@company.com',
+		});
+
+		expect(result).toHaveLength(1);
+		expect(result[0]?.userGroup).toBeUndefined();
 	});
 
 	it('parses the bare mailing list array with a null description', async () => {

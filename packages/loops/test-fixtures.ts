@@ -19,6 +19,19 @@ export const contactResponse = {
 	favoriteColor: 'blue',
 };
 
+// The spec's Contact schema declares no required fields, so a contact from an
+// older team can omit userGroup (and the other non-identity fields).
+export const contactWithoutUserGroupResponse = {
+	id: 'clh3k9m2p4q6r8s0t2v4x6z8',
+	email: 'alex@company.com',
+	firstName: 'Alex',
+	lastName: null,
+	source: 'API',
+	subscribed: true,
+	userId: null,
+	optInStatus: null,
+};
+
 export const apiKeyResponse = { success: true, teamName: 'Company name' };
 
 export const idResponse = { success: true, id: 'cll42l54f20i1la0lfooe3z12' };
