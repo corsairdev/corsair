@@ -5,6 +5,13 @@ import {
 	LoopsEndpointOutputSchemas as Outputs,
 } from './types';
 
+// Deliberately unbuilt, per the first-PR scope: DELETE /v1/contacts/suppression
+// (destructive, quota-limited) and POST /v1/contacts/properties (create a
+// property definition), both sharing paths with reads built here. The gated
+// content and workflow endpoint groups (campaigns, transactional-emails,
+// email-messages, workflows, themes, components, footers, uploads, segments,
+// event-patterns) stay out until the team has that feature enabled.
+
 export const find: LoopsEndpoints['contactsFind'] = (ctx, input) =>
 	call(
 		ctx,
