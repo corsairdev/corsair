@@ -141,6 +141,7 @@ Takes `ids` and optional `reveal` tokens (employeesByDepartment, employeesByLoca
 
 ```ts
 {
+  clientReferenceId?: string | null,
   id?: string | null,
   name?: string | null,
   alternativeName?: string | null,
@@ -381,6 +382,7 @@ Combines both steps: `companies` search entries plus `reveal` tokens. Metered pe
 
 ```ts
 {
+  clientReferenceId?: string | null,
   id?: string | null,
   name?: string | null,
   alternativeName?: string | null,
@@ -724,6 +726,7 @@ Free. Takes the `jobId` from a partial enrich response. `processing` carries `re
 
 ```ts
 {
+  clientReferenceId?: string | null,
   id?: string | null,
   firstName?: string | null,
   lastName?: string | null,
@@ -843,6 +846,7 @@ Takes `ids` (1 to 100 from search results), optional `reveal` (`emails`, `phones
 
 ```ts
 {
+  clientReferenceId?: string | null,
   id?: string | null,
   firstName?: string | null,
   lastName?: string | null,
@@ -1023,6 +1027,7 @@ Combines both steps: `contacts` search entries plus `reveal`. Returns full conta
 
 ```ts
 {
+  clientReferenceId?: string | null,
   id?: string | null,
   firstName?: string | null,
   lastName?: string | null,

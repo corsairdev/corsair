@@ -398,6 +398,7 @@ const MissingDataPointSchema = z
 
 const EnrichedContactSchema = z
 	.object({
+		clientReferenceId: z.string().nullish(),
 		id: z.string().nullish(),
 		firstName: z.string().nullish(),
 		lastName: z.string().nullish(),
@@ -623,6 +624,7 @@ const WebsiteTrafficSchema = z
 
 const EnrichedCompanySchema = z
 	.object({
+		clientReferenceId: z.string().nullish(),
 		id: z.string().nullish(),
 		name: z.string().nullish(),
 		alternativeName: z.string().nullish(),
