@@ -70,3 +70,22 @@ test('omitted list parameters are left out of the query', async () => {
 	const params = await lastQuery(messages.get as AnyEndpoint, { id: 'm1' });
 	expect(params.has('metadataHeaders')).toBe(false);
 });
+
+describe('messages.list structured search', () => {
+	it('sends the compiled query as q and not the structured fields', async () => {
+		const params = await lastQuery(messages.list, {
+			q: 'urgent',
+			from: ['a@x.com'],
+			hasAttachment: true,
+			maxResults: 5,
+		});
+		expect(params.get('q')).toBe('urgent from:a@x.com has:attachment');
+		expect(params.get('from')).toBeNull();
+		expect(params.get('maxResults')).toBe('5');
+	});
+
+	it('omits q when nothing is searched', async () => {
+		const params = await lastQuery(messages.list, {});
+		expect(params.has('q')).toBe(false);
+	});
+});
