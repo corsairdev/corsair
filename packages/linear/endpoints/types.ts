@@ -24,6 +24,7 @@ const StringComparatorSchema = z
 	.object({
 		eq: z.string(),
 		neq: z.string(),
+		eqIgnoreCase: z.string(),
 		in: z.array(z.string()),
 		nin: z.array(z.string()),
 		contains: z.string(),
@@ -91,14 +92,33 @@ const ProjectFilterSchema = z
 	.partial()
 	.strict();
 
+const NumberComparatorSchema = z
+	.object({
+		eq: z.number(),
+		neq: z.number(),
+		lt: z.number(),
+		lte: z.number(),
+		gt: z.number(),
+		gte: z.number(),
+	})
+	.partial()
+	.strict();
+
+const TeamFilterSchema = z
+	.object({ id: IdComparatorSchema, key: StringComparatorSchema })
+	.partial()
+	.strict();
+
 // The subset of Linear's IssueFilter this plugin supports; unsupported keys are rejected.
 export type IssueFilter = {
 	createdAt?: z.infer<typeof DateComparatorSchema>;
 	updatedAt?: z.infer<typeof DateComparatorSchema>;
 	title?: z.infer<typeof StringComparatorSchema>;
 	description?: z.infer<typeof StringComparatorSchema>;
-	team?: { id?: z.infer<typeof IdComparatorSchema> };
+	team?: z.infer<typeof TeamFilterSchema>;
 	assignee?: z.infer<typeof AssigneeFilterSchema>;
+	creator?: z.infer<typeof AssigneeFilterSchema>;
+	priority?: z.infer<typeof NumberComparatorSchema>;
 	state?: z.infer<typeof StateFilterSchema>;
 	labels?: z.infer<typeof LabelsFilterSchema>;
 	project?: z.infer<typeof ProjectFilterSchema>;
@@ -113,8 +133,10 @@ export const IssueFilterSchema: z.ZodType<IssueFilter> = z.lazy(() =>
 			updatedAt: DateComparatorSchema,
 			title: StringComparatorSchema,
 			description: StringComparatorSchema,
-			team: z.object({ id: IdComparatorSchema }).partial().strict(),
+			team: TeamFilterSchema,
 			assignee: AssigneeFilterSchema,
+			creator: AssigneeFilterSchema,
+			priority: NumberComparatorSchema,
 			state: StateFilterSchema,
 			labels: LabelsFilterSchema,
 			project: ProjectFilterSchema,
@@ -136,10 +158,137 @@ const IssuesListInputSchema = z.object({
 		.optional()
 		.describe('pageInfo.endCursor from the previous page.'),
 	filter: IssueFilterSchema.optional().describe(
-		'Server-side filter on assignee (isMe or id), state (type or name), labels.some (name), project (id), plus createdAt, updatedAt, title, description, team, and/or.',
+		'Raw IssueFilter, ANDed with the structured fields above. Server-side filter on assignee (isMe or id), state (type or name), labels.some (name), project (id), plus createdAt, updatedAt, title, description, team, and/or.',
 	),
+	keywords: z
+		.array(z.string().min(1))
+		.optional()
+		.describe(
+			'Words that must each appear in the title or the description (case-insensitive)',
+		),
+	assignee: z
+		.string()
+		.optional()
+		.describe(
+			'"me" for the connected user, an email address, or a name (matches names containing it, case-insensitive)',
+		),
+	creator: z
+		.string()
+		.optional()
+		.describe('Who created the issue: "me", an email address, or a name'),
+	stateName: z
+		.string()
+		.optional()
+		.describe('Workflow state name such as "In Progress" (case-insensitive)'),
+	stateType: z
+		.enum([
+			'triage',
+			'backlog',
+			'unstarted',
+			'started',
+			'completed',
+			'canceled',
+		])
+		.optional()
+		.describe('Workflow state type'),
+	teamKey: z
+		.string()
+		.optional()
+		.describe('Short team key such as "ENG" (not the UUID, which is teamId)'),
+	label: z
+		.array(z.string().min(1))
+		.optional()
+		.describe(
+			'Label names (case-insensitive); the issue must have all of them',
+		),
+	priority: IssuePrioritySchema.optional().describe(
+		'0 none, 1 urgent, 2 high, 3 medium, 4 low',
+	),
+	createdAfter: z
+		.string()
+		.optional()
+		.describe(
+			'Created at or after this ISO 8601 date or time, e.g. 2025-01-31',
+		),
+	createdBefore: z
+		.string()
+		.optional()
+		.describe('Created at or before this ISO 8601 date or time'),
+	updatedAfter: z
+		.string()
+		.optional()
+		.describe('Updated at or after this ISO 8601 date or time'),
+	updatedBefore: z
+		.string()
+		.optional()
+		.describe('Updated at or before this ISO 8601 date or time'),
 	orderBy: z.enum(['createdAt', 'updatedAt']).optional(),
 });
+
+export type IssuesListInput = z.infer<typeof IssuesListInputSchema>;
+
+const userFilter = (who: string) => {
+	const v = who.trim();
+	if (v.toLowerCase() === 'me') return { isMe: { eq: true } };
+	return v.includes('@')
+		? { email: { eq: v } }
+		: { name: { containsIgnoreCase: v } };
+};
+
+/**
+ * Build Linear's IssueFilter from structured inputs, ANDed with `teamId` and a
+ * raw `filter`. Comparators follow https://linear.app/developers/filtering;
+ * field names are those of Linear's published IssueFilter input type.
+ * Returns undefined when nothing is set.
+ */
+export function buildLinearIssueFilter(
+	input: Partial<IssuesListInput>,
+): IssueFilter | undefined {
+	const all: IssueFilter[] = [];
+	const has = (v?: string) => !!v?.trim();
+	if (input.teamId) all.push({ team: { id: { eq: input.teamId } } });
+	if (has(input.teamKey)) {
+		all.push({
+			team: { key: { eq: (input.teamKey as string).trim().toUpperCase() } },
+		});
+	}
+	for (const w of (input.keywords ?? []).filter(has)) {
+		const c = { containsIgnoreCase: w.trim() };
+		all.push({ or: [{ title: c }, { description: c }] });
+	}
+	if (has(input.assignee)) {
+		all.push({ assignee: userFilter(input.assignee as string) });
+	}
+	if (has(input.creator)) {
+		all.push({ creator: userFilter(input.creator as string) });
+	}
+	if (has(input.stateName)) {
+		all.push({
+			state: { name: { eqIgnoreCase: (input.stateName as string).trim() } },
+		});
+	}
+	if (input.stateType) all.push({ state: { type: { eq: input.stateType } } });
+	for (const l of (input.label ?? []).filter(has)) {
+		all.push({ labels: { some: { name: { eqIgnoreCase: l.trim() } } } });
+	}
+	if (input.priority !== undefined) {
+		all.push({ priority: { eq: input.priority } });
+	}
+	const range = (gte?: string, lte?: string) => {
+		const r: { gte?: string; lte?: string } = {};
+		if (has(gte)) r.gte = (gte as string).trim();
+		if (has(lte)) r.lte = (lte as string).trim();
+		return Object.keys(r).length ? r : undefined;
+	};
+	const created = range(input.createdAfter, input.createdBefore);
+	if (created) all.push({ createdAt: created });
+	const updated = range(input.updatedAfter, input.updatedBefore);
+	if (updated) all.push({ updatedAt: updated });
+	if (input.filter) all.push(input.filter);
+
+	if (all.length === 0) return undefined;
+	return all.length === 1 ? all[0] : { and: all };
+}
 
 const IssuesGetInputSchema = z.object({
 	id: z.string(),

@@ -232,3 +232,21 @@ describe('linear issue rows keep assignee and state', () => {
 		).toBeNull();
 	});
 });
+
+describe('linear issues.list structured search', () => {
+	it('compiles structured fields into the GraphQL filter', async () => {
+		await list(ctx, { assignee: 'me', stateType: 'started', teamKey: 'ENG' });
+		expect(sent().variables.filter).toEqual({
+			and: [
+				{ team: { key: { eq: 'ENG' } } },
+				{ assignee: { isMe: { eq: true } } },
+				{ state: { type: { eq: 'started' } } },
+			],
+		});
+	});
+
+	it('sends no filter when nothing is searched', async () => {
+		await list(ctx, {});
+		expect(sent().variables.filter).toBeUndefined();
+	});
+});
