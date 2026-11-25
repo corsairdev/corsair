@@ -66,6 +66,8 @@ describe('lusha plugin', () => {
 	});
 
 	it('registers every advertised operation', () => {
+		// unknown: the endpoint tree's function type varies with the plugin
+		// generic, and only the group and operation keys are walked.
 		expect(flatten(plugin.endpoints as Record<string, unknown>)).toEqual(
 			[...OPERATIONS].sort(),
 		);
@@ -109,6 +111,8 @@ describe('lusha plugin', () => {
 	});
 
 	it('receives no webhooks', () => {
+		// unknown: the webhook map's value type varies with the plugin generic,
+		// and only the keys are asserted on.
 		expect(Object.keys(plugin.webhooks as Record<string, unknown>)).toEqual([]);
 		expect(plugin.pluginWebhookMatcher?.({ headers: {}, body: '' })).toBe(
 			false,

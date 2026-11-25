@@ -299,6 +299,14 @@ describe('Lusha input validation', () => {
 		);
 	});
 
+	it('rejects more than 100 ids on enrich', () => {
+		const ids = Array.from({ length: 101 }, () => '4389064654');
+		expect(Inputs.personEnrichContacts.safeParse({ ids }).success).toBe(false);
+		expect(Inputs.companyEnrichCompanies.safeParse({ ids }).success).toBe(
+			false,
+		);
+	});
+
 	it('rejects a reveal token the API does not document', () => {
 		expect(
 			Inputs.personEnrichContacts.safeParse({
