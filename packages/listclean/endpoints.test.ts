@@ -203,6 +203,21 @@ describe('Listclean rejections', () => {
 		expect((error as Error).name).toBe('ZodError');
 	});
 
+	it('rejects a log query whose end_date is in the future, which the API documents as invalid', async () => {
+		mockFetch(ok([]));
+
+		const error = await captureError(
+			endpoints.verify.getVerificationLogs(makeCtx(), {
+				start_date: '2026-11-01',
+				// Far enough ahead to stay future however long this suite runs.
+				end_date: '2999-01-01',
+			}),
+		);
+
+		expect(error).toBeInstanceOf(Error);
+		expect((error as Error).message).toContain('cannot be in the future');
+	});
+
 	it('surfaces an HTML 404 as a ListcleanAPIError, not an empty page', async () => {
 		mockFetch(new Response('<!DOCTYPE html>', { status: 404 }));
 

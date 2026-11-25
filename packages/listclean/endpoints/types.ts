@@ -175,8 +175,9 @@ const DateStringSchema = z
 type RangeInput = { start_date: string; end_date: string };
 
 // The range rules are checked here rather than left to the provider, so a bad
-// range fails before it can cost a call. Unparseable dates are left to the
-// format check above.
+// range fails before it can cost a call. The future rule is documented on both
+// routes' end_date; the 30-day cap only on the logs route. Unparseable dates
+// are left to the format check above.
 function refineRange(maxDays?: number) {
 	return (value: RangeInput, refine: z.RefinementCtx) => {
 		const start = Date.parse(value.start_date);
@@ -187,6 +188,13 @@ function refineRange(maxDays?: number) {
 				code: z.ZodIssueCode.custom,
 				path: ['end_date'],
 				message: 'end_date must not be before start_date.',
+			});
+		}
+		if (end > Date.now()) {
+			refine.addIssue({
+				code: z.ZodIssueCode.custom,
+				path: ['end_date'],
+				message: 'end_date cannot be in the future.',
 			});
 		}
 		if (maxDays !== undefined && end - start > maxDays * 86_400_000) {
