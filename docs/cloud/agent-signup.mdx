@@ -137,7 +137,7 @@ An agent that signs itself up isn't done until the client it runs in lists Corsa
     claude mcp list
     ```
 
-    `claude mcp list` should say Connected.
+    `claude mcp list` should say Connected. Claude Code loads a server added mid-session only after a restart; `claude --continue` restarts it and keeps the conversation.
   </Tab>
   <Tab title="Codex">
     `codex mcp add` reads a bearer token only from an environment variable, so add the server to `~/.codex/config.toml` instead:
@@ -148,7 +148,7 @@ An agent that signs itself up isn't done until the client it runs in lists Corsa
     http_headers = { Authorization = "Bearer <api_key>" }
     ```
 
-    `codex mcp list` then shows `corsair`. Codex loads its tools in the next session.
+    `codex mcp list` then shows `corsair`.
   </Tab>
   <Tab title="OpenCode">
     ```bash
