@@ -14,7 +14,11 @@ import {
 	Section,
 	textLink,
 } from '@/components/gateway/gateway-ui';
-import type { ClientGuide, GatewayClient } from '@/lib/gateway-content';
+import type {
+	ClientGuide,
+	GatewayClient,
+	GuideVideo,
+} from '@/lib/gateway-content';
 import { getGatewayContent } from '@/lib/gateway-content';
 import {
 	APP_URL,
@@ -173,24 +177,22 @@ function CardHead({
 
 const stepText = 'text-[15px] leading-[1.6] text-[#1c1c1c99]';
 
-// The Claude app's steps are clicks on its Plugins page, so they get a clip (recorded 2026-11-25, no sound,
-// captions in the video). Dev's day-2 email links here, to #claude.
-function ClaudeVideo() {
+// A clip of the setup, from Hub's guide (the Claude app's Plugins page today). Dev's day-2 email links to
+// #claude. Muted, captions in the video; it loads only when played.
+function GuideClip({ video }: { video: GuideVideo }) {
 	return (
 		<figure className="flex flex-col gap-2">
 			<video
-				src="/videos/connect-claude.mp4"
-				poster="/videos/connect-claude-poster.jpg"
+				src={video.src}
+				poster={video.poster}
 				controls
 				muted
 				playsInline
 				preload="none"
-				aria-label="Adding Corsair in the Claude app, 34 seconds"
+				aria-label={video.label}
 				className="aspect-[640/427] w-full rounded-lg border border-[#e4e3ec] bg-[#f6f5fb]"
 			/>
-			<figcaption className={stepText}>
-				Watch it done in Claude, 34 seconds.
-			</figcaption>
+			<figcaption className={stepText}>{video.label}.</figcaption>
 		</figure>
 	);
 }
@@ -246,7 +248,7 @@ function Guide({
 					))}
 				</ol>
 			) : null}
-			{client.id === 'claude' ? <ClaudeVideo /> : null}
+			{guide.video ? <GuideClip video={guide.video} /> : null}
 			{guide.note ? (
 				<Body className="text-sm md:text-sm">{guide.note}</Body>
 			) : null}
