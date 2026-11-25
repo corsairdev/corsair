@@ -12643,5 +12643,21 @@
     "version": "0.1.101",
     "isNew": false,
     "changes": []
+  },
+  {
+    "date": "2026-11-25",
+    "package": "@corsair-dev/slack",
+    "dir": "packages/slack",
+    "name": "Slack",
+    "version": "0.1.13",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2734,
+        "title": "Add files.download"
+      }
+    ]
   }
 ]
