@@ -1,7 +1,7 @@
-import { get as exampleGet } from './example';
+import * as Account from './account';
+import * as Company from './company';
+import * as Jobs from './jobs';
+import * as Person from './person';
 
-export const Example = {
-	get: exampleGet,
-};
-
+export { Account, Company, Jobs, Person };
 export * from './types';
