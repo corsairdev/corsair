@@ -15,6 +15,17 @@ async function createClient(options: Parameters<typeof listclean>[0]) {
 	return { corsair, testDb };
 }
 
+/**
+ * A client whose key lives on the account, not in the plugin options: this is
+ * the path a Hub tenant takes, so it must resolve end to end.
+ */
+async function createStoredKeyClient() {
+	const client = await createClient({});
+	await client.corsair.listclean.keys.issue_new_dek();
+	await client.corsair.listclean.keys.set_api_key('stored-key');
+	return client;
+}
+
 let fetchMock: jest.SpyInstance;
 
 // unknown: a response body is arbitrary JSON.
@@ -64,6 +75,23 @@ async function withFakeTimers<T>(run: Promise<T>): Promise<T> {
 }
 
 describe('retry behaviour', () => {
+	it('resolves a key stored on the account when the plugin has no inline key', async () => {
+		const { corsair, testDb } = await createStoredKeyClient();
+		try {
+			respond(envelopeOk({ credits: 30 }));
+
+			const result = await corsair.listclean.api.account.getCredits({});
+
+			expect(result.credits).toBe(30);
+			const headers = new Headers(fetchMock.mock.calls[0]?.[1]?.headers);
+			// The stored key rode the X-Auth-Token header, proving
+			// ctx.keys.get_api_key() resolved it end to end.
+			expect(headers.get('X-Auth-Token')).toBe('stored-key');
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
 	it('retries a 429 on a read and returns the next response', async () => {
 		jest.useFakeTimers();
 		const { corsair, testDb } = await createClient({ key: API_KEY });
