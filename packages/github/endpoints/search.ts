@@ -6,6 +6,7 @@ import type {
 	SearchRepositoriesResponse,
 	SearchUsersResponse,
 } from './types';
+import { githubSearchIssuesParams } from './types';
 
 // The plugin exposes camelCase inputs (perPage, advancedSearch, searchType)
 // for internal consistency; GitHub's Search API expects snake_case query keys,
@@ -32,7 +33,7 @@ export const issues: GithubEndpoints['searchIssues'] = async (ctx, input) => {
 	const result = await makeGithubRequest<SearchIssuesResponse>(
 		'/search/issues',
 		ctx,
-		{ query: toSnakeCase(input) },
+		{ query: toSnakeCase(githubSearchIssuesParams(input)) },
 	);
 
 	if (result.items && ctx.db.issues) {
@@ -55,7 +56,7 @@ export const issues: GithubEndpoints['searchIssues'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'github.search.issues',
-		loggableInput(input),
+		loggableInput(githubSearchIssuesParams(input)),
 		'completed',
 	);
 	return result;
