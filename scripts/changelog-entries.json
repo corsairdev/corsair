@@ -12537,5 +12537,11 @@
     "version": "0.1.97",
     "isNew": false,
     "changes": []
+  },
+  {
+    "date": "2026-11-25",
+    "package": "cloud",
+    "version": "0.2.33",
+    "changes": []
   }
 ]
