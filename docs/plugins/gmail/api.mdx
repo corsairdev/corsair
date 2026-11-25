@@ -861,7 +861,7 @@ await corsair.gmail.api.messages.get({});
 
 `messages.getAttachment`
 
-Fetch an attachment of a message by partId (shown in search results and in messages.get with format full) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId
+Fetch an attachment of a message by partId (shown in messages.get with format full, or in a database search of messages fetched with format full) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId
 
 **Risk:** `read`
 
@@ -875,7 +875,7 @@ await corsair.gmail.api.messages.getAttachment({});
 |------|------|----------|-------------|
 | `userId` | `string` | No | — |
 | `messageId` | `string` | Yes | — |
-| `partId` | `string` | No | partId of an attachment part, e.g. "1.2"; shown in search results and in messages.get with format full. Give partId or attachmentId |
+| `partId` | `string` | No | partId of an attachment part, e.g. "1.2"; shown in messages.get with format full, or in a database search of messages fetched with format full. Give partId or attachmentId |
 | `attachmentId` | `string` | No | Gmail attachmentId, if already known. Give partId or attachmentId; with partId, the part's own attachment is read. |
 
 
