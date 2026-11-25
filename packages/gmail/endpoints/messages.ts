@@ -4,6 +4,7 @@ import { makeAuthenticatedGmailRequest } from '../client';
 import type { GmailBoundEndpoints, GmailEndpoints } from '../index';
 import type { Message, MessagePart } from '../types';
 import type { GmailEndpointOutputs } from './types';
+import { buildGmailQuery } from './types';
 
 function getHeaderValue(
 	part: MessagePart | undefined,
@@ -82,12 +83,13 @@ function extractBody(message: Message): string | undefined {
 }
 
 export const list: GmailEndpoints['messagesList'] = async (ctx, input) => {
+	const q = buildGmailQuery(input) || undefined;
 	const result = await makeAuthenticatedGmailRequest<
 		GmailEndpointOutputs['messagesList']
 	>(`/users/${input.userId || 'me'}/messages`, ctx, {
 		method: 'GET',
 		query: {
-			q: input.q,
+			q,
 			maxResults: input.maxResults,
 			pageToken: input.pageToken,
 			labelIds: input.labelIds,
