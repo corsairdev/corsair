@@ -6,15 +6,12 @@ describe('Lusha schema', () => {
 		expect(LushaSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof LushaSchema.entities).toBe('object');
-		expect(LushaSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(LushaSchema.entities))).toBe(true);
-		for (const entity of Object.values(LushaSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+	it('declares entities as an empty object, not an array', () => {
+		// Lusha is a read-only credits-metered data provider: nothing here is
+		// worth syncing into the local database, so the map is empty on
+		// purpose. Asserted on the value itself, because Object.keys always
+		// returns an array and could never fail.
+		expect(LushaSchema.entities).toEqual({});
+		expect(Array.isArray(LushaSchema.entities)).toBe(false);
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.

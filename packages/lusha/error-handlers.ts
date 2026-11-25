@@ -50,7 +50,8 @@ export const errorHandlers = {
 			error instanceof LushaAPIError && error.isPermissionError,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 400 bad request, 404 unknown record or job id (stop polling), 409
+	// 400 bad request, 404 a record or job id that does not exist (stop
+	// polling), 409
 	// duplicate table name, 451 legal block. Repeating sends the same request.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {

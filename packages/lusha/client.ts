@@ -29,7 +29,8 @@ export function segment(value: string): string {
 	return encodeURIComponent(value);
 }
 
-// unknown: the body is an untyped error body until the helpers narrow it.
+// unknown: error bodies arrive as arbitrary JSON; the helpers narrow one
+// field at a time rather than typing Lusha's whole error shape.
 function readString(record: Record<string, unknown>, key: string): string | undefined {
 	const value = record[key];
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
@@ -148,6 +149,8 @@ function configWith(apiKey: string): OpenAPIConfig {
  * soft miss (an `error` object inside a result) is documented data and is
  * parsed by the output schema.
  */
+// unknown: the return is untyped because callers parse it with the endpoint's
+// zod output schema, and `request` is generic over the same untyped body.
 export async function makeLushaRequest(
 	apiKey: string,
 	{ method, path, body, metered }: LushaRequest,

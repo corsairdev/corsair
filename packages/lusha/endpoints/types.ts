@@ -772,7 +772,9 @@ const JobCoverSchema = z
 const GetContactsEnrichJobResponseSchema = z
 	.object({
 		jobId: z.string().nullish(),
-		status: z.enum(LUSHA_JOB_STATUSES).nullish(),
+		// Spec-required and the field callers branch on: a missing value must
+		// fail loudly rather than read as "still running" forever.
+		status: z.enum(LUSHA_JOB_STATUSES),
 		requestId: z.string().nullish(),
 		expiresAt: z.string().nullish(),
 		/** `processing` only: seconds to wait before polling again. */
