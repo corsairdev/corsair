@@ -12609,5 +12609,30 @@
     "version": "0.1.99",
     "isNew": false,
     "changes": []
+  },
+  {
+    "date": "2026-11-25",
+    "package": "@corsair-dev/gmail",
+    "dir": "packages/gmail",
+    "name": "Gmail",
+    "version": "0.1.12",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2739,
+        "title": "Structured search inputs for messages.list"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-25",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.100",
+    "isNew": false,
+    "changes": []
   }
 ]
