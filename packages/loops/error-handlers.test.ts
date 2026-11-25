@@ -164,6 +164,31 @@ describe('mergeErrorHandlers', () => {
 		expect(keys.indexOf('QUOTA_ERROR')).toBeLessThan(keys.indexOf('DEFAULT'));
 	});
 
+	it('lets a caller handler under a builtin-covered key win', async () => {
+		// Core takes the first key whose match passes, so a builtin AUTH_ERROR
+		// placed before the caller's would claim every 401 first.
+		const merged = mergeErrorHandlers(builtin, {
+			AUTH_ERROR: {
+				match: () => true,
+				handler: async () => ({ maxRetries: 7 }),
+			},
+		});
+
+		const error = new Error('Loops 401: Invalid API key');
+		const context = {
+			pluginId: 'loops',
+			operation: 'test',
+			input: {},
+			originalError: error,
+		};
+		expect(merged.AUTH_ERROR?.match(error, context)).toBe(true);
+		await expect(merged.AUTH_ERROR?.handler(error, context)).resolves.toEqual({
+			maxRetries: 7,
+		});
+		const keys = Object.keys(merged);
+		expect(keys.indexOf('AUTH_ERROR')).toBeLessThan(keys.indexOf('DEFAULT'));
+	});
+
 	it('keeps DEFAULT last when the caller overrides it', () => {
 		const merged = mergeErrorHandlers(builtin, {
 			DEFAULT: { match: () => true, handler: async () => ({ maxRetries: 9 }) },
