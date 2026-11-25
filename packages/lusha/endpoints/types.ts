@@ -124,8 +124,8 @@ const LocationSchema = z
 		state: z.string().nullish(),
 		city: z.string().nullish(),
 		zipCode: z.string().nullish(),
-		// unknown: [longitude, latitude] when present; passed through as sent.
-		coordinates: z.array(z.unknown()).nullish(),
+		// Lusha sends [longitude, latitude] when present.
+		coordinates: z.array(z.number()).nullish(),
 		isEuContact: z.boolean().nullish(),
 	})
 	.loose();
@@ -596,9 +596,9 @@ const EnrichedCompanySchema = z
 		popularityTier: z.number().nullish(),
 		logoUrl: z.string().nullish(),
 		businessModel: z.array(z.string()).nullish(),
-		// unknown: per-entry objects, passed through as Lusha sends them.
-		phones: z.array(z.record(z.string(), z.unknown())).nullish(),
-		emails: z.array(z.record(z.string(), z.unknown())).nullish(),
+		// Company phone/email entries carry a subset of the contact fields.
+		phones: z.array(PhoneNumberSchema).nullish(),
+		emails: z.array(EmailAddressSchema).nullish(),
 		keywords: z.array(z.string()).nullish(),
 		openJobs: z
 			.object({

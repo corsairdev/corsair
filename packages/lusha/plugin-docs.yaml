@@ -7,14 +7,14 @@ overviewNote: |
 
   Things to know before you call:
 
-  - **Searches and enrichment cost credits.** Every `person.*` and `company.*` call charges credits from your account pool per result or per revealed field, and a repeat of the same call charges again. When the account runs out, Lusha answers HTTP 402 `Insufficient credits for this operation`; the plugin reports this as a fatal error and does not retry it. `account.usage` and the job poll are free. Lusha's free plan includes a small monthly credit allowance, but useful enrichment volume generally needs a paid plan.
+  - **Searches and enrichment cost credits.** Every `person.*` and `company.*` call charges credits from your account pool per result or per revealed field, and a repeat of the same call charges again. When the account runs out, Lusha answers HTTP 402 `Insufficient credits for this operation`; the plugin reports this as a fatal error and does not retry it. `account.getAccountUsage` and the job poll are free. Lusha's free plan includes a small monthly credit allowance, but useful enrichment volume generally needs a paid plan.
   - **Search first, enrich second.** `person.searchContacts` and `company.searchCompanies` match records by email, LinkedIn URL, name plus company, or domain, and return previews that say which data points exist (`has`) and what revealing them costs (`canReveal`). `person.enrichContacts` and `company.enrichCompanies` take ids from those previews and return the full records with emails or phones (contacts) and premium firmographics (companies).
   - **Enrichment can continue in the background.** A contact enrich call may answer with `status: 'partial'` and a `job`; poll `jobs.getContactsEnrichJob` with that job id until it reports `complete` (its `contacts` merge into the ones you already have, by `id`), `expired` or `failed`. The poll is free.
-  - **Rate limits are per account.** The default window is 25 requests per second and `account.usage` is capped at 5 requests per minute. The plugin retries a 429 with backoff; Lusha sends no `Retry-After` header.
+  - **Rate limits are per account.** The default window is 25 requests per second and `account.getAccountUsage` is capped at 5 requests per minute. The plugin retries a 429 with backoff; Lusha sends no `Retry-After` header.
   - **Ids are Lusha's own strings** (for example `4389064654`), returned as `id` on every search result.
 examples:
   read:
-    path: account.usage
+    path: account.getAccountUsage
     title: Read remaining credits and plan limits
     args: {}
 apiExamples:
@@ -30,7 +30,7 @@ apiExamples:
     call: "{ ids: ['16303253'], reveal: ['employeesByDepartment', 'competitors'] }"
   company.searchAndEnrichCompanies:
     call: "{ companies: [{ domain: 'lusha.com' }], reveal: ['directParent', 'ultimateParent'] }"
-  account.usage: {}
+  account.getAccountUsage: {}
   jobs.getContactsEnrichJob:
     call: "{ jobId: 'wf_3f2b9c1e-4a7d-4f3b-9c2e-1d6a5b8c7e90' }"
 apiNotes:
@@ -46,7 +46,7 @@ apiNotes:
     Takes `ids` and optional `reveal` tokens (employeesByDepartment, employeesByLocation, employeesBySeniority, competitors, estimatedAnnualItSpend, monthlyWebsiteTraffic, openJobsTotal, openJobsByDepartment, openJobsByLocation, openJobsBySeniority, directParent, ultimateParent). Omitting `reveal` returns base firmographics only. Each reveal field is charged separately per result.
   company.searchAndEnrichCompanies: |
     Combines both steps: `companies` search entries plus `reveal` tokens. Metered per result and per reveal field.
-  account.usage: |
+  account.getAccountUsage: |
     Free. Returns `credits` (`total`, `used`, `remaining`), `rateLimits` for the daily, hourly and minute windows (a window may be null), `plan` and a `pricing` map of action name to `{ credits, perQuantity }`. Lusha caps this endpoint at 5 requests per minute.
   jobs.getContactsEnrichJob: |
     Free. Takes the `jobId` from a partial enrich response. `processing` carries `retryAfter` (seconds) and `covers`; `complete` carries `contacts` and `creditsCharged`; `expired` and `failed` (with `reason`) are terminal and keep what enrich already returned.

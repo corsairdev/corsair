@@ -3587,6 +3587,14 @@
                 ]
               },
               {
+                "group": "Lusha",
+                "pages": [
+                  "plugins/lusha/overview",
+                  "plugins/lusha/api",
+                  "plugins/lusha/database"
+                ]
+              },
+              {
                 "group": "Magic Hour",
                 "pages": [
                   "plugins/magichour/overview",

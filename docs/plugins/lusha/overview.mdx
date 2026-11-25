@@ -1,0 +1,134 @@
+---
+title: "Lusha plugin"
+sidebarTitle: "Overview"
+description: "B2B contact and company data with Lusha - search contacts and companies by email, LinkedIn URL or domain, reveal their emails and phone numbers plus company firmographics, follow async enrich jobs and read account credit usage."
+---
+
+Use **Lusha** through Corsair: one client, typed API calls.
+
+Create an API key at https://dashboard.lusha.com/api/manage-api-keys (sign up at https://auth.lusha.com/signup first). The plugin sends it in Lusha's `api_key` header; a different spelling is rejected.
+
+Things to know before you call:
+
+- **Searches and enrichment cost credits.** Every `person.*` and `company.*` call charges credits from your account pool per result or per revealed field, and a repeat of the same call charges again. When the account runs out, Lusha answers HTTP 402 `Insufficient credits for this operation`; the plugin reports this as a fatal error and does not retry it. `account.getAccountUsage` and the job poll are free. Lusha's free plan includes a small monthly credit allowance, but useful enrichment volume generally needs a paid plan.
+- **Search first, enrich second.** `person.searchContacts` and `company.searchCompanies` match records by email, LinkedIn URL, name plus company, or domain, and return previews that say which data points exist (`has`) and what revealing them costs (`canReveal`). `person.enrichContacts` and `company.enrichCompanies` take ids from those previews and return the full records with emails or phones (contacts) and premium firmographics (companies).
+- **Enrichment can continue in the background.** A contact enrich call may answer with `status: 'partial'` and a `job`; poll `jobs.getContactsEnrichJob` with that job id until it reports `complete` (its `contacts` merge into the ones you already have, by `id`), `expired` or `failed`. The poll is free.
+- **Rate limits are per account.** The default window is 25 requests per second and `account.getAccountUsage` is capped at 5 requests per minute. The plugin retries a 429 with backoff; Lusha sends no `Retry-After` header.
+- **Ids are Lusha's own strings** (for example `4389064654`), returned as `id` on every search result.
+
+**What you get:**
+
+- 8 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/lusha better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/lusha better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/lusha better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/lusha better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { lusha } from '@corsair-dev/lusha';
+
+export const corsair = createCorsair({
+	plugins: [
+		lusha(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Lusha API key before the first call: `pnpm corsair setup --plugin=lusha --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+lusha()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'lusha',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read remaining credits and plan limits**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.lusha.api.account.getAccountUsage({});
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/lusha/api) reference._
+
+
+See the full list on the [API](/plugins/lusha/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/lusha/api">
+    Every `lusha.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

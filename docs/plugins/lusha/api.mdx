@@ -1,0 +1,1186 @@
+---
+title: "Lusha API reference"
+sidebarTitle: "API"
+description: "API reference for the Lusha plugin in Corsair: every `lusha.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getAccountUsage
+
+`account.getAccountUsage`
+
+Read the account credit balance, rate-limit windows, plan and per-action pricing map. Free, but Lusha caps it at 5 requests per minute.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.account.getAccountUsage({});
+```
+
+**Input:** _empty object_
+
+Free. Returns `credits` (`total`, `used`, `remaining`), `rateLimits` for the daily, hourly and minute windows (a window may be null), `plan` and a `pricing` map of action name to `{ credits, perQuantity }`. Lusha caps this endpoint at 5 requests per minute.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credits` | `object \| null` | No | — |
+| `rateLimits` | `object \| null` | No | — |
+| `plan` | `object \| null` | No | — |
+| `pricing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="credits full type">
+
+```ts
+{
+  total?: number | null,
+  used?: number | null,
+  remaining?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="rateLimits full type">
+
+```ts
+{
+  daily?: {
+    limit?: number | null,
+    used?: number | null,
+    remaining?: number | null,
+    resetsAt?: string | null
+  } | null,
+  hourly?: {
+    limit?: number | null,
+    used?: number | null,
+    remaining?: number | null,
+    resetsAt?: string | null
+  } | null,
+  minute?: {
+    limit?: number | null,
+    used?: number | null,
+    remaining?: number | null,
+    resetsAt?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="plan full type">
+
+```ts
+{
+  category?: string | null,
+  renewalType?: string | null,
+  startDate?: string | null,
+  endDate?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="pricing full type">
+
+```ts
+Record<string, {
+  credits?: number | null,
+  perQuantity?: number | null
+}> | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Company
+
+### enrichCompanies
+
+`company.enrichCompanies`
+
+Reveal full firmographics for up to 100 company ids, including premium fields named in reveal (each charged separately per result). Omitting reveal returns base firmographics only. Metered, and every call re-charges.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.company.enrichCompanies({ ids: ['16303253'], reveal: ['employeesByDepartment', 'competitors'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | 1 to 100 ids from a search result. |
+| `reveal` | `(employeesByDepartment \| employeesByLocation \| employeesBySeniority \| competitors \| estimatedAnnualItSpend \| monthlyWebsiteTraffic \| openJobsTotal \| openJobsByDepartment \| openJobsByLocation \| openJobsBySeniority \| directParent \| ultimateParent)[]` | No | Premium fields to reveal, each charged separately per result: employeesByDepartment, employeesByLocation, employeesBySeniority, competitors, estimatedAnnualItSpend, monthlyWebsiteTraffic, openJobsTotal, openJobsByDepartment, openJobsByLocation, openJobsBySeniority, directParent, ultimateParent. Omitting reveal returns base firmographics only. |
+| `tableId` | `string` | No | Also add these companies to this table and fill its columns. |
+
+Takes `ids` and optional `reveal` tokens (employeesByDepartment, employeesByLocation, employeesBySeniority, competitors, estimatedAnnualItSpend, monthlyWebsiteTraffic, openJobsTotal, openJobsByDepartment, openJobsByLocation, openJobsBySeniority, directParent, ultimateParent). Omitting `reveal` returns base firmographics only. Each reveal field is charged separately per result.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+| `tableWrite` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  alternativeName?: string | null,
+  domain?: string | null,
+  alternativeDomains?: string[] | null,
+  description?: string | null,
+  companyType?: string | null,
+  yearFounded?: number | null,
+  employeeCount?: {
+    exact?: number | null,
+    min?: number | null,
+    max?: number | null
+  } | null,
+  industry?: string | null,
+  subIndustry?: string | null,
+  specialities?: string[] | null,
+  sicCodes?: {
+    code?: number | null,
+    description?: string | null
+  }[] | null,
+  naicsCodes?: {
+    code?: number | null,
+    description?: string | null
+  }[] | null,
+  location?: {
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null,
+    state?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    coordinates?: number[] | null,
+    isEuContact?: boolean | null
+  } | null,
+  additionalLocations?: {
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null,
+    state?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    coordinates?: number[] | null,
+    isEuContact?: boolean | null
+  }[] | null,
+  socialLinks?: {
+    linkedin?: string | null,
+    xUrl?: string | null
+  } | null,
+  linkedinFollowers?: number | null,
+  funding?: {
+    rounds?: Record<string, any>[] | null,
+    totalRounds?: number | null,
+    totalRoundsAmount?: number | null,
+    currency?: string | null,
+    isIpo?: boolean | null,
+    lastRoundType?: string | null,
+    lastRoundAmount?: number | null,
+    lastRoundDate?: string | null
+  } | null,
+  revenueRange?: {
+    exact?: number | null,
+    min?: number | null,
+    max?: number | null
+  } | null,
+  technologies?: string[] | null,
+  popularityTier?: number | null,
+  logoUrl?: string | null,
+  businessModel?: string[] | null,
+  phones?: {
+    number?: string | null,
+    type?: string | null,
+    doNotCall?: boolean | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  emails?: {
+    email?: string | null,
+    type?: string | null,
+    confidence?: string | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  keywords?: string[] | null,
+  openJobs?: {
+    total?: number | null,
+    byDepartment?: Record<string, any>[] | null,
+    byLocation?: Record<string, any>[] | null,
+    bySeniority?: Record<string, any>[] | null
+  } | null,
+  estimatedAnnualItSpend?: Record<string, any> | null,
+  monthlyWebsiteTraffic?: Record<string, any> | null,
+  employeesByDepartment?: Record<string, any>[] | null,
+  employeesByLocation?: Record<string, any>[] | null,
+  employeesBySeniority?: Record<string, any>[] | null,
+  competitors?: Record<string, any>[] | null,
+  directParent?: {
+    lushaCompanyId?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    hqCountry?: string | null
+  } | null,
+  ultimateParent?: {
+    lushaCompanyId?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    hqCountry?: string | null
+  } | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="tableWrite full type">
+
+```ts
+{
+  tableId?: string | null,
+  added?: number | null,
+  alreadyPresent?: number | null,
+  columnsCreated?: number | null,
+  rowsProcessed?: number | null,
+  rowsCharged?: number | null,
+  rowsAlreadyPaidInTable?: number | null,
+  creditsCharged?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchAndEnrichCompanies
+
+`company.searchAndEnrichCompanies`
+
+Search up to 100 companies by id, name or domain and return their full firmographics in one call. Metered: charged per result and per reveal field.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.company.searchAndEnrichCompanies({ companies: [{ domain: 'lusha.com' }], reveal: ['directParent', 'ultimateParent'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companies` | `object[]` | Yes | 1 to 100 companies, each identified by id, name or domain. |
+| `reveal` | `(employeesByDepartment \| employeesByLocation \| employeesBySeniority \| competitors \| estimatedAnnualItSpend \| monthlyWebsiteTraffic \| openJobsTotal \| openJobsByDepartment \| openJobsByLocation \| openJobsBySeniority \| directParent \| ultimateParent)[]` | No | Premium fields to reveal, each charged separately per result: employeesByDepartment, employeesByLocation, employeesBySeniority, competitors, estimatedAnnualItSpend, monthlyWebsiteTraffic, openJobsTotal, openJobsByDepartment, openJobsByLocation, openJobsBySeniority, directParent, ultimateParent. Omitting reveal returns base firmographics only. |
+| `options` | `object` | No | — |
+
+Combines both steps: `companies` search entries plus `reveal` tokens. Metered per result and per reveal field.
+
+<AccordionGroup>
+<Accordion title="companies full type">
+
+```ts
+{
+  clientReferenceId?: string,
+  id?: string,
+  name?: string,
+  domain?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  includePartialProfiles?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  alternativeName?: string | null,
+  domain?: string | null,
+  alternativeDomains?: string[] | null,
+  description?: string | null,
+  companyType?: string | null,
+  yearFounded?: number | null,
+  employeeCount?: {
+    exact?: number | null,
+    min?: number | null,
+    max?: number | null
+  } | null,
+  industry?: string | null,
+  subIndustry?: string | null,
+  specialities?: string[] | null,
+  sicCodes?: {
+    code?: number | null,
+    description?: string | null
+  }[] | null,
+  naicsCodes?: {
+    code?: number | null,
+    description?: string | null
+  }[] | null,
+  location?: {
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null,
+    state?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    coordinates?: number[] | null,
+    isEuContact?: boolean | null
+  } | null,
+  additionalLocations?: {
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null,
+    state?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    coordinates?: number[] | null,
+    isEuContact?: boolean | null
+  }[] | null,
+  socialLinks?: {
+    linkedin?: string | null,
+    xUrl?: string | null
+  } | null,
+  linkedinFollowers?: number | null,
+  funding?: {
+    rounds?: Record<string, any>[] | null,
+    totalRounds?: number | null,
+    totalRoundsAmount?: number | null,
+    currency?: string | null,
+    isIpo?: boolean | null,
+    lastRoundType?: string | null,
+    lastRoundAmount?: number | null,
+    lastRoundDate?: string | null
+  } | null,
+  revenueRange?: {
+    exact?: number | null,
+    min?: number | null,
+    max?: number | null
+  } | null,
+  technologies?: string[] | null,
+  popularityTier?: number | null,
+  logoUrl?: string | null,
+  businessModel?: string[] | null,
+  phones?: {
+    number?: string | null,
+    type?: string | null,
+    doNotCall?: boolean | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  emails?: {
+    email?: string | null,
+    type?: string | null,
+    confidence?: string | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  keywords?: string[] | null,
+  openJobs?: {
+    total?: number | null,
+    byDepartment?: Record<string, any>[] | null,
+    byLocation?: Record<string, any>[] | null,
+    bySeniority?: Record<string, any>[] | null
+  } | null,
+  estimatedAnnualItSpend?: Record<string, any> | null,
+  monthlyWebsiteTraffic?: Record<string, any> | null,
+  employeesByDepartment?: Record<string, any>[] | null,
+  employeesByLocation?: Record<string, any>[] | null,
+  employeesBySeniority?: Record<string, any>[] | null,
+  competitors?: Record<string, any>[] | null,
+  directParent?: {
+    lushaCompanyId?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    hqCountry?: string | null
+  } | null,
+  ultimateParent?: {
+    lushaCompanyId?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    hqCountry?: string | null
+  } | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchCompanies
+
+`company.searchCompanies`
+
+Look up up to 100 companies by id, name or domain and get firmographic previews. Metered: Lusha charges credits per matched result.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.company.searchCompanies({ companies: [{ domain: 'lusha.com' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companies` | `object[]` | Yes | 1 to 100 companies, each identified by id, name or domain. |
+| `options` | `object` | No | — |
+| `signals` | `object` | No | — |
+
+Takes `companies` (1 to 100 entries, each with `id`, `name` or `domain`) and optional company `signals`. Returns firmographic previews plus `billing`. Metered per result.
+
+<AccordionGroup>
+<Accordion title="companies full type">
+
+```ts
+{
+  clientReferenceId?: string,
+  id?: string,
+  name?: string,
+  domain?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  includePartialProfiles?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="signals full type">
+
+```ts
+{
+  types: (allSignals | linkedinActivityIntent | websiteTrafficDecrease | websiteTrafficIncrease | itSpendIncrease | itSpendDecrease | linkedinFollowersIncrease | linkedinFollowersDecrease | surgeInHiring | headcountIncrease1m | headcountIncrease3m | headcountIncrease6m | headcountIncrease12m | headcountDecrease1m | headcountDecrease3m | headcountDecrease6m | headcountDecrease12m | surgeInHiringByDepartment | surgeInHiringByLocation | riskNews | commercialActivityNews | corporateStrategyNews | financialEventsNews | peopleNews | marketIntelligenceNews | productActivityNews | newJobPost | newIntentTopic | intentScoreIncrease | intentScoreDecrease | intentTopicRemoved)[],
+  startDate?: string,
+  maxResultsPerSignal?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  clientReferenceId?: string | null,
+  id?: string | null,
+  name?: string | null,
+  domain?: string | null,
+  employeeCount?: {
+    exact?: number | null,
+    min?: number | null,
+    max?: number | null
+  } | null,
+  industry?: string | null,
+  location?: {
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null,
+    state?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    coordinates?: number[] | null,
+    isEuContact?: boolean | null
+  } | null,
+  socialLinks?: {
+    linkedin?: string | null,
+    xUrl?: string | null
+  } | null,
+  has?: string[] | null,
+  canReveal?: {
+    field?: string | null,
+    credits?: number | null
+  }[] | null,
+  signalTypes?: string[] | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Jobs
+
+### getContactsEnrichJob
+
+`jobs.getContactsEnrichJob`
+
+Where a partial contacts enrich job stands: processing (poll again after retryAfter seconds), complete (contacts to merge by id plus creditsCharged), or the terminal expired and failed. Free.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.jobs.getContactsEnrichJob({ jobId: 'wf_3f2b9c1e-4a7d-4f3b-9c2e-1d6a5b8c7e90' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | The job id from a partial enrichContacts response. |
+
+Free. Takes the `jobId` from a partial enrich response. `processing` carries `retryAfter` (seconds) and `covers`; `complete` carries `contacts` and `creditsCharged`; `expired` and `failed` (with `reason`) are terminal and keep what enrich already returned.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string \| null` | No | — |
+| `status` | `processing \| complete \| expired \| failed` | Yes | — |
+| `requestId` | `string \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+| `retryAfter` | `number \| null` | No | — |
+| `covers` | `object[] \| null` | No | — |
+| `contacts` | `object[] \| null` | No | — |
+| `creditsCharged` | `number \| null` | No | — |
+| `reason` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="covers full type">
+
+```ts
+{
+  contactId?: string | null,
+  refId?: string | null,
+  dataPoints?: string[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="contacts full type">
+
+```ts
+{
+  id?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  fullName?: string | null,
+  jobTitle?: {
+    title?: string | null,
+    departments?: string[] | null,
+    seniority?: string | null,
+    startDate?: string | null
+  } | null,
+  location?: {
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null,
+    state?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    coordinates?: number[] | null,
+    isEuContact?: boolean | null
+  } | null,
+  tags?: {
+    id?: string | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  emails?: {
+    email?: string | null,
+    type?: string | null,
+    confidence?: string | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  phones?: {
+    number?: string | null,
+    type?: string | null,
+    doNotCall?: boolean | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  company?: {
+    id?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    industry?: string | null
+  } | null,
+  socialLinks?: {
+    linkedin?: string | null,
+    xUrl?: string | null
+  } | null,
+  previousEmployment?: Record<string, any>[] | null,
+  linkedinFollowers?: number | null,
+  linkedinConnections?: number | null,
+  partialProfile?: boolean | null,
+  updateDate?: string | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null,
+  missingDataPoints?: {
+    type?: string | null,
+    status?: string | null,
+    description?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Person
+
+### enrichContacts
+
+`person.enrichContacts`
+
+Reveal emails and phone numbers for up to 100 contact ids from search results. Metered: charged per revealed data point, and every call re-charges. May answer status partial with a job; follow it with jobs.getContactsEnrichJob until it reports complete, expired or failed.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.person.enrichContacts({ ids: ['4389064654'], reveal: ['emails', 'phones'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | 1 to 100 ids from a search result. |
+| `reveal` | `(emails \| phones)[]` | No | Data points to reveal, each charged per result: emails, phones. |
+| `waterfallEnabled` | `boolean` | No | Allow the Data Waterfall to fall through to your enabled third-party providers when Lusha has no match. Defaults to true when the waterfall is enabled on your account; false means Lusha data only. |
+| `tableId` | `string` | No | Also add these contacts to this table and fill its columns. |
+
+Takes `ids` (1 to 100 from search results), optional `reveal` (`emails`, `phones`), `waterfallEnabled` and `tableId`. Returns enriched contacts with `emails` and `phones` arrays, plus `billing`. May answer `status: 'partial'` with a `job`: poll `jobs.getContactsEnrichJob` until it reports `complete`, `expired` or `failed`, and merge its `contacts` into the results by `id`. Metered per revealed data point.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+| `tableWrite` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+| `status` | `completed \| partial \| halted \| OUT_OF_CREDITS \| PARTIAL_OUT_OF_CREDITS \| null` | No | — |
+| `statusDescription` | `string \| null` | No | — |
+| `statusReason` | `WATERFALL_NOT_CONFIGURED \| WATERFALL_NOT_IN_PLAN \| WATERFALL_DISABLED \| null` | No | — |
+| `job` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  fullName?: string | null,
+  jobTitle?: {
+    title?: string | null,
+    departments?: string[] | null,
+    seniority?: string | null,
+    startDate?: string | null
+  } | null,
+  location?: {
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null,
+    state?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    coordinates?: number[] | null,
+    isEuContact?: boolean | null
+  } | null,
+  tags?: {
+    id?: string | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  emails?: {
+    email?: string | null,
+    type?: string | null,
+    confidence?: string | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  phones?: {
+    number?: string | null,
+    type?: string | null,
+    doNotCall?: boolean | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  company?: {
+    id?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    industry?: string | null
+  } | null,
+  socialLinks?: {
+    linkedin?: string | null,
+    xUrl?: string | null
+  } | null,
+  previousEmployment?: Record<string, any>[] | null,
+  linkedinFollowers?: number | null,
+  linkedinConnections?: number | null,
+  partialProfile?: boolean | null,
+  updateDate?: string | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null,
+  missingDataPoints?: {
+    type?: string | null,
+    status?: string | null,
+    description?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="tableWrite full type">
+
+```ts
+{
+  tableId?: string | null,
+  added?: number | null,
+  alreadyPresent?: number | null,
+  columnsCreated?: number | null,
+  rowsProcessed?: number | null,
+  rowsCharged?: number | null,
+  rowsAlreadyPaidInTable?: number | null,
+  creditsCharged?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="job full type">
+
+```ts
+{
+  id?: string | null,
+  status?: processing | null,
+  expiresAt?: string | null,
+  retryAfter?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchAndEnrichContacts
+
+`person.searchAndEnrichContacts`
+
+Search up to 100 contacts by email, LinkedIn URL or name plus company and return their full enriched records in one call. Metered: charged per result and per revealed field.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.person.searchAndEnrichContacts({ contacts: [{ linkedinUrl: 'https://www.linkedin.com/in/someone' }], reveal: ['emails'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | 1 to 100 contacts to look up, each with exactly one identifier. |
+| `reveal` | `(emails \| phones)[]` | No | Data points to reveal, each charged per result: emails, phones. |
+| `options` | `object` | No | — |
+
+Combines both steps: `contacts` search entries plus `reveal`. Returns full contacts in one call. Metered.
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  clientReferenceId?: string,
+  id?: string,
+  linkedinUrl?: string,
+  email?: string,
+  firstName?: string,
+  lastName?: string,
+  companyName?: string,
+  companyDomain?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  includePartialProfiles?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+| `billing` | `object \| null` | No | — |
+| `status` | `completed \| partial \| halted \| OUT_OF_CREDITS \| PARTIAL_OUT_OF_CREDITS \| null` | No | — |
+| `statusDescription` | `string \| null` | No | — |
+| `statusReason` | `WATERFALL_NOT_CONFIGURED \| WATERFALL_NOT_IN_PLAN \| WATERFALL_DISABLED \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  fullName?: string | null,
+  jobTitle?: {
+    title?: string | null,
+    departments?: string[] | null,
+    seniority?: string | null,
+    startDate?: string | null
+  } | null,
+  location?: {
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null,
+    state?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    coordinates?: number[] | null,
+    isEuContact?: boolean | null
+  } | null,
+  tags?: {
+    id?: string | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  emails?: {
+    email?: string | null,
+    type?: string | null,
+    confidence?: string | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  phones?: {
+    number?: string | null,
+    type?: string | null,
+    doNotCall?: boolean | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  company?: {
+    id?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    industry?: string | null
+  } | null,
+  socialLinks?: {
+    linkedin?: string | null,
+    xUrl?: string | null
+  } | null,
+  previousEmployment?: Record<string, any>[] | null,
+  linkedinFollowers?: number | null,
+  linkedinConnections?: number | null,
+  partialProfile?: boolean | null,
+  updateDate?: string | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null,
+  missingDataPoints?: {
+    type?: string | null,
+    status?: string | null,
+    description?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchContacts
+
+`person.searchContacts`
+
+Look up up to 100 contacts by id, LinkedIn URL, email, or name plus company, and get previews that say which data points exist and what revealing them costs. Metered: Lusha charges credits per matched result.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.person.searchContacts({ contacts: [{ email: 'someone@lusha.com' }, { firstName: 'Orit', lastName: 'Shilvock', companyName: 'Lusha' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | 1 to 100 contacts to look up, each with exactly one identifier. |
+| `options` | `object` | No | — |
+| `signals` | `object` | No | — |
+
+Takes `contacts` (1 to 100 entries, each with exactly one identifier: `id`, `linkedinUrl`, `email`, or `firstName` plus `lastName` with `companyName` or `companyDomain`) and optional `options.includePartialProfiles` and contact `signals`. Returns previews with `has`, `canReveal` (each with its credit cost) and `signalTypes`, plus `billing` with the credits charged. Metered: charged per matched result.
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  clientReferenceId?: string,
+  id?: string,
+  linkedinUrl?: string,
+  email?: string,
+  firstName?: string,
+  lastName?: string,
+  companyName?: string,
+  companyDomain?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  includePartialProfiles?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="signals full type">
+
+```ts
+{
+  types: (allSignals | promotion | companyChange)[],
+  startDate?: string,
+  maxResultsPerSignal?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  clientReferenceId?: string | null,
+  id?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  jobTitle?: {
+    title?: string | null,
+    departments?: string[] | null,
+    seniority?: string | null,
+    startDate?: string | null
+  } | null,
+  company?: {
+    id?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    industry?: string | null
+  } | null,
+  location?: {
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null,
+    state?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    coordinates?: number[] | null,
+    isEuContact?: boolean | null
+  } | null,
+  socialLinks?: {
+    linkedin?: string | null,
+    xUrl?: string | null
+  } | null,
+  has?: string[] | null,
+  canReveal?: {
+    field?: string | null,
+    credits?: number | null,
+    source?: string | null,
+    availability?: string | null,
+    vendors?: string[] | null
+  }[] | null,
+  signalTypes?: string[] | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
