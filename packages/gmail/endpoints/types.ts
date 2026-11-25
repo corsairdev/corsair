@@ -29,7 +29,15 @@ const GMAIL_LABEL_IDS_DESCRIPTION =
 const GMAIL_INCLUDE_SPAM_TRASH_DESCRIPTION =
 	'Spam and trash are left out unless this is true.';
 
-const GmailDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be YYYY-MM-DD');
+const isCalendarDate = (value: string): boolean => {
+	const [y, m, d] = value.split('-').map(Number);
+	const date = new Date(Date.UTC(y as number, (m as number) - 1, d as number));
+	return date.getUTCMonth() === (m as number) - 1 && date.getUTCDate() === d;
+};
+const GmailDate = z
+	.string()
+	.regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be YYYY-MM-DD')
+	.refine(isCalendarDate, 'Must be a real calendar date');
 const GmailSize = z
 	.union([z.number().int().positive(), z.string().regex(/^\d+[KMG]?$/i)])
 	.describe('Bytes, or a number with a K, M or G suffix such as "5M"');
@@ -58,7 +66,7 @@ const MessagesListInputSchema = z.object({
 		.optional()
 		.describe('Exact phrase that must appear in the message'),
 	anyOf: z
-		.array(z.string().min(1))
+		.array(z.string().trim().min(1))
 		.min(2)
 		.optional()
 		.describe(
@@ -172,7 +180,11 @@ export function buildGmailQuery(input: Partial<MessagesListInput>): string {
 	);
 	if (input.subject?.trim()) {
 		const s = input.subject.trim().replace(/"/g, '');
-		parts.push(/\s/.test(s) ? `subject:(${s})` : `subject:${term(s)}`);
+		parts.push(
+			/\s/.test(s)
+				? `subject:(${s.split(/\s+/).map(term).join(' ')})`
+				: `subject:${term(s)}`,
+		);
 	}
 	parts.push(...operator('from', input.from));
 	parts.push(...operator('to', input.to));

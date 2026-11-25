@@ -1,7 +1,29 @@
 import type { MessagesListInput } from './types';
-import { buildGmailQuery } from './types';
+import { buildGmailQuery, GmailEndpointInputSchemas } from './types';
+
+const listInput = GmailEndpointInputSchemas.messagesList;
+
+describe('messagesList input validation', () => {
+	it('rejects impossible calendar dates and keeps leap days', () => {
+		expect(listInput.safeParse({ after: '2025-02-30' }).success).toBe(false);
+		expect(listInput.safeParse({ before: '2025-99-99' }).success).toBe(false);
+		expect(listInput.safeParse({ after: '2025-02-29' }).success).toBe(false);
+		expect(listInput.safeParse({ after: '2024-02-29' }).success).toBe(true);
+	});
+
+	it('rejects whitespace-only anyOf terms', () => {
+		expect(listInput.safeParse({ anyOf: [' ', '\t'] }).success).toBe(false);
+		expect(listInput.safeParse({ anyOf: ['a', 'b'] }).success).toBe(true);
+	});
+});
 
 describe('buildGmailQuery', () => {
+	it('quotes reserved words in a multiword subject', () => {
+		expect(buildGmailQuery({ subject: 'budget OR forecast' })).toBe(
+			'subject:(budget "OR" forecast)',
+		);
+	});
+
 	it('returns an empty query for empty input', () => {
 		expect(buildGmailQuery({})).toBe('');
 		expect(buildGmailQuery({ keywords: [], from: [], anyOf: [] })).toBe('');
