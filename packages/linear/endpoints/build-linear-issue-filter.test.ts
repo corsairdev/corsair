@@ -2,6 +2,15 @@ import type { IssuesListInput } from './types';
 import { buildLinearIssueFilter, LinearEndpointInputSchemas } from './types';
 
 describe('buildLinearIssueFilter', () => {
+	it('accepts the duplicate workflow state type', () => {
+		const input = LinearEndpointInputSchemas.issuesList.parse({
+			stateType: 'duplicate',
+		});
+		expect(buildLinearIssueFilter(input)).toEqual({
+			state: { type: { eq: 'duplicate' } },
+		});
+	});
+
 	it('returns undefined for empty input', () => {
 		expect(buildLinearIssueFilter({})).toBeUndefined();
 		expect(

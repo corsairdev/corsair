@@ -188,6 +188,7 @@ const IssuesListInputSchema = z.object({
 			'started',
 			'completed',
 			'canceled',
+			'duplicate',
 		])
 		.optional()
 		.describe('Workflow state type'),
