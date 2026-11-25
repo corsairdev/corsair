@@ -83,9 +83,9 @@ describe('Loops plugin definition', () => {
 
 	it('prefers the inline key over the stored one', async () => {
 		const withInline = loops({ key: 'inline-key' });
-		await expect(
-			buildKey(withInline, keyContext('stored-key')),
-		).resolves.toBe('inline-key');
+		await expect(buildKey(withInline, keyContext('stored-key'))).resolves.toBe(
+			'inline-key',
+		);
 	});
 
 	it('falls back to the stored key', async () => {

@@ -130,8 +130,9 @@ const ContactsFindResponseSchema = z.array(ContactSchema);
 
 // contacts.create
 
-const ContactsCreateInputSchema =
-	ContactFieldsSchema.superRefine(rejectReservedProperties);
+const ContactsCreateInputSchema = ContactFieldsSchema.superRefine(
+	rejectReservedProperties,
+);
 
 const ContactWriteResponseSchema = z.object({
 	success: z.literal(true),
@@ -216,7 +217,9 @@ const EventsSendInputSchema = z
 		userId: z.string().optional(),
 		eventProperties: TemplateDataSchema.optional(),
 		mailingLists: MailingListsSchema.optional(),
-		customProperties: z.record(z.string(), CustomPropertyValueSchema).optional(),
+		customProperties: z
+			.record(z.string(), CustomPropertyValueSchema)
+			.optional(),
 	})
 	.superRefine((value, ctx) => {
 		rejectReservedProperties(value, ctx);

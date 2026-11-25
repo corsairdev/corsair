@@ -3579,6 +3579,14 @@
                 ]
               },
               {
+                "group": "Loops",
+                "pages": [
+                  "plugins/loops/overview",
+                  "plugins/loops/api",
+                  "plugins/loops/database"
+                ]
+              },
+              {
                 "group": "Loyverse",
                 "pages": [
                   "plugins/loyverse/overview",

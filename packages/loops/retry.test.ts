@@ -1,7 +1,11 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { loops } from './index';
-import { contactResponse, rateLimitedResponse, sentResponse } from './test-fixtures';
+import {
+	contactResponse,
+	rateLimitedResponse,
+	sentResponse,
+} from './test-fixtures';
 
 /**
  * The endpoints call the HTTP client, which is configured with

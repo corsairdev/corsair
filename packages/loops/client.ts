@@ -109,7 +109,9 @@ export function describeLoopsError(
 	fallback: string,
 ): string {
 	const record = asRecord(body);
-	return readString(record, 'message') ?? readString(record, 'error') ?? fallback;
+	return (
+		readString(record, 'message') ?? readString(record, 'error') ?? fallback
+	);
 }
 
 // unknown: the body is an untyped error body; asRecord reads fields off it.

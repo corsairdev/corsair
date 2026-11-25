@@ -1,0 +1,144 @@
+---
+title: "Loops plugin"
+sidebarTitle: "Overview"
+description: "Email platform for software companies with Loops - create and update contacts, send events and transactional email, and read mailing lists, contact properties and suppression status."
+---
+
+Use **Loops** through Corsair: one client, typed API calls.
+
+Create a key in Loops under Settings, API (https://app.loops.so/settings?page=api) and paste it as the API key. One key per team; it has full account access, so keep it server-side.
+
+- **Real email.** `events.send` can trigger workflows that email real people, and `transactional.send` delivers a published transactional email to a real inbox. `transactionalId` is the id of a transactional email you created in the Loops dashboard, not the recipient.
+- **Upserts.** `contacts.update` creates the contact when no match exists, so it cannot fail with not-found. `contacts.create` answers 409 when the email or userId already exists.
+- **Deleting a contact is permanent.** `contacts.delete` removes the contact and its subscriptions; there is no restore call.
+- **Custom properties.** Pass them under `customProperties`; values can be strings (max 500 characters), numbers or booleans, and they land on the request body beside the fixed fields, so a key like `email` or `userId` there is rejected.
+- **Success envelope.** Every answer carries `success`. A 2xx body with `success: false` is still a failure and the client throws a `LoopsAPIError` with the API's message; validation failures also carry `path` and sometimes `transactionalId`.
+- **Feature gating.** Campaign, transactional-email, workflow and other content endpoints answer 401 with a "not enabled for this team" message when the team has not turned that feature on. The plugin surfaces that as a distinct error, because the key itself is valid. This plugin wraps only the ungated endpoints.
+- **Rate limits.** 10 requests per second per team. Loops sends `x-ratelimit-limit` and `x-ratelimit-remaining` but no Retry-After; the plugin retries a 429 up to three times with exponential backoff.
+- **Idempotency.** `transactional.send` accepts an `idempotencyKey` (max 100 characters). Reusing one within 24 hours answers 409 instead of sending a duplicate. Passing a key also lets the plugin replay a 5xx safely; other writes are never replayed.
+- **Webhooks.** Loops sends webhook events to one endpoint configured in its dashboard, and this plugin does not receive them.
+
+**What you get:**
+
+- 10 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/loops better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/loops better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/loops better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/loops better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { loops } from '@corsair-dev/loops';
+
+export const corsair = createCorsair({
+	plugins: [
+		loops(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Loops API key before the first call: `pnpm corsair setup --plugin=loops --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+loops()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'loops',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List mailing lists**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.loops.api.lists.list({});
+```
+
+
+**Create a contact with a custom property**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.loops.api.contacts.create({
+	email: 'jordan@acme-logistics.com',
+	firstName: 'Jordan',
+	subscribed: true,
+	customProperties: { planName: 'Pro' },
+});
+```
+
+
+See the full list on the [API](/plugins/loops/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/loops/api">
+    Every `loops.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

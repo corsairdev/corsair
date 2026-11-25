@@ -50,9 +50,7 @@ describeIfKey('Loops live API', () => {
 
 		expect(Array.isArray(result)).toBe(true);
 		for (const property of result) {
-			expect(['string', 'number', 'boolean', 'date']).toContain(
-				property.type,
-			);
+			expect(['string', 'number', 'boolean', 'date']).toContain(property.type);
 		}
 	});
 

@@ -1,8 +1,4 @@
-import {
-	LOOPS_API_BASE,
-	LoopsAPIError,
-	makeLoopsRequest,
-} from './client';
+import { LOOPS_API_BASE, LoopsAPIError, makeLoopsRequest } from './client';
 import {
 	apiKeyResponse,
 	contactResponse,
@@ -74,9 +70,7 @@ describe('Loops client', () => {
 		);
 
 		expect(caught).toBeInstanceOf(LoopsAPIError);
-		expect((caught as LoopsAPIError).message).toContain(
-			'Email already exists',
-		);
+		expect((caught as LoopsAPIError).message).toContain('Email already exists');
 		expect((caught as LoopsAPIError).envelopeFailure).toBe(true);
 	});
 
@@ -188,9 +182,7 @@ describe('Loops client', () => {
 			}),
 		);
 
-		expect((caught as LoopsAPIError).message).not.toContain(
-			'secret-key-value',
-		);
+		expect((caught as LoopsAPIError).message).not.toContain('secret-key-value');
 		expect((caught as Error).cause).toBeUndefined();
 	});
 

@@ -161,9 +161,7 @@ describe('mergeErrorHandlers', () => {
 		});
 
 		const keys = Object.keys(merged);
-		expect(keys.indexOf('QUOTA_ERROR')).toBeLessThan(
-			keys.indexOf('DEFAULT'),
-		);
+		expect(keys.indexOf('QUOTA_ERROR')).toBeLessThan(keys.indexOf('DEFAULT'));
 	});
 
 	it('keeps DEFAULT last when the caller overrides it', () => {

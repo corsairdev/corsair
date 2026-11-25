@@ -40,9 +40,7 @@ export type LoopsKeyBuilderContext = KeyBuilderContext<LoopsPluginOptions>;
 
 export type LoopsBoundEndpoints = BindEndpoints<typeof loopsEndpointsNested>;
 
-type LoopsEndpoint<
-	K extends keyof LoopsEndpointOutputs,
-> = CorsairEndpoint<
+type LoopsEndpoint<K extends keyof LoopsEndpointOutputs> = CorsairEndpoint<
 	LoopsContext,
 	LoopsEndpointInputs[K],
 	LoopsEndpointOutputs[K]
@@ -125,9 +123,7 @@ export const loopsEndpointSchemas = {
 		input: LoopsEndpointInputSchemas.listsList,
 		output: LoopsEndpointOutputSchemas.listsList,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<
-	typeof loopsEndpointsNested
->;
+} as const satisfies RequiredPluginEndpointSchemas<typeof loopsEndpointsNested>;
 
 const defaultAuthType = 'api_key' as const;
 

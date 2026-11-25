@@ -5,8 +5,8 @@ jest.mock('corsair/core', () => {
 
 import {
 	apiKeyResponse,
-	contactResponse,
 	contactPropertiesResponse,
+	contactResponse,
 	deletedResponse,
 	idResponse,
 	mailingListsResponse,

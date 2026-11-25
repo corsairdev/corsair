@@ -5,8 +5,8 @@ jest.mock('corsair/core', () => {
 
 import { LoopsAPIError } from './client';
 import {
-	contactResponse,
 	contactPropertiesResponse,
+	contactResponse,
 	duplicateContactResponse,
 	invalidKeyResponse,
 	mailingListsResponse,
@@ -116,9 +116,7 @@ describe('Loops output parsing', () => {
 		);
 
 		expect(caught).toBeInstanceOf(LoopsAPIError);
-		expect((caught as LoopsAPIError).message).toContain(
-			'Email already exists',
-		);
+		expect((caught as LoopsAPIError).message).toContain('Email already exists');
 	});
 
 	it('carries the validation path and transactionalId from a 400 body', async () => {

@@ -1,0 +1,425 @@
+---
+title: "Loops API reference"
+sidebarTitle: "API"
+description: "API reference for the Loops plugin in Corsair: every `loops.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Apikey
+
+### verifyConnection
+
+`apikey.verifyConnection`
+
+Verify the API key and return the team name it belongs to
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.apikey.verifyConnection({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `teamName` | `string` | Yes | — |
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact with fixed and custom properties; answers 409 when the email or userId already exists
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.contacts.create({ email: 'jordan@acme-logistics.com', firstName: 'Jordan', customProperties: { planName: 'Pro' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `source` | `string` | No | — |
+| `subscribed` | `boolean` | No | — |
+| `userGroup` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `mailingLists` | `Record<string, boolean>` | No | — |
+| `customProperties` | `Record<string, string \| number \| boolean>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Permanently delete a contact by email or userId; the contact and its subscriptions cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.loops.api.contacts.delete({ userId: 'usr_7f8e9d0c1b2a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `userId` | `string` | No | — |
+
+Permanent. Loops answers 404 when the contact does not exist.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### find
+
+`contacts.find`
+
+Find contacts by email or user ID; answers an empty array when none match
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.contacts.find({ email: 'alex@company.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `userId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  firstName?: string | null,
+  lastName?: string | null,
+  source: string,
+  subscribed: boolean,
+  userGroup: string,
+  userId?: string | null,
+  mailingLists?: Record<string, boolean>,
+  optInStatus?: accepted | pending | rejected | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSuppression
+
+`contacts.getSuppression`
+
+Read whether a contact is suppressed from emails and the quota left for removing suppressions
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.contacts.getSuppression({ email: 'alex@company.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `userId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | — |
+| `isSuppressed` | `boolean` | Yes | — |
+| `removalQuota` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  userId?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="removalQuota full type">
+
+```ts
+{
+  limit: number,
+  remaining: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listProperties
+
+`contacts.listProperties`
+
+List the contact property definitions, all of them or only the custom ones
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.contacts.listProperties({ list: 'custom' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list` | `all \| custom` | No | — |
+
+Pass list: 'all' or list: 'custom'; the answer is a bare array, not a paginated envelope.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  key: string,
+  label: string,
+  type: string | number | boolean | date
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update a contact found by email or userId, creating it when no match exists (upsert)
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.contacts.update({ userId: 'usr_7f8e9d0c1b2a', lastName: 'Rivera' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `source` | `string` | No | — |
+| `subscribed` | `boolean` | No | — |
+| `userGroup` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `mailingLists` | `Record<string, boolean>` | No | — |
+| `customProperties` | `Record<string, string \| number \| boolean>` | No | — |
+
+Updates by email or userId and upserts when no match exists, so a typo in the selector silently creates a new contact.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Events
+
+### send
+
+`events.send`
+
+Send an event for a contact; this can trigger workflows that email real people
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.events.send({ eventName: 'signup', email: 'alex@company.com', eventProperties: { plan: 'pro' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventName` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `eventProperties` | `object` | No | Values are defined by the events email templates |
+| `mailingLists` | `Record<string, boolean>` | No | — |
+| `customProperties` | `Record<string, string \| number \| boolean>` | No | — |
+
+Needs eventName and one of email or userId. Fires any workflow that listens for the event, which can send email to the contact.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+## Lists
+
+### list
+
+`lists.list`
+
+List every mailing list in the team
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.lists.list({});
+```
+
+**Input:** _empty object_
+
+The answer is a bare array. There is no pagination on this endpoint.
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  isPublic: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Transactional
+
+### send
+
+`transactional.send`
+
+Send a published transactional email to a real inbox; pass an idempotencyKey (max 100 chars) to make a retry within 24 hours return 409 instead of a duplicate
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.transactional.send({ email: 'alex@company.com', transactionalId: 'cll42l54f20i1la0lfooe3z12', dataVariables: { name: 'Alex' }, idempotencyKey: '0e8e17e0-3e73-4c8b-b7c9-2a5a6d3f9c1d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `transactionalId` | `string` | Yes | — |
+| `addToAudience` | `boolean` | No | — |
+| `dataVariables` | `object` | No | Values are the data variables the transactional email declares |
+| `attachments` | `object[]` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+The transactionalId must name a published transactional email. Requires the data variables that email declares; missing ones answer 400 with their names in the message.
+
+<AccordionGroup>
+<Accordion title="attachments full type">
+
+```ts
+{
+  filename: string,
+  contentType: string,
+  data: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+

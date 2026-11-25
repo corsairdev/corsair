@@ -77,7 +77,8 @@ export function restoreFetchMock(): void {
 }
 
 export function currentFetch(): jest.SpyInstance {
-	if (!spy) throw new Error('installFetchMock() must run before currentFetch()');
+	if (!spy)
+		throw new Error('installFetchMock() must run before currentFetch()');
 	return spy;
 }
 

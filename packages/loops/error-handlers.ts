@@ -56,7 +56,8 @@ export const errorHandlers = {
 	// requests that carry an Idempotency-Key.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			(asLoopsError(error)?.status ?? 0) >= 500 && asLoopsError(error)!.canReplay,
+			(asLoopsError(error)?.status ?? 0) >= 500 &&
+			asLoopsError(error)!.canReplay,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

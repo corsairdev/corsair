@@ -1,4 +1,59 @@
 # Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "Loops"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: Loops
+description: Email platform for software companies with Loops - create and update contacts, send events and transactional email, and read mailing lists, contact properties and suppression status.
+domain: loops.so
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in Loops under Settings, API (https://app.loops.so/settings?page=api) and paste it as the API key. One key per team; it has full account access, so keep it server-side.
+
+  - **Real email.** `events.send` can trigger workflows that email real people, and `transactional.send` delivers a published transactional email to a real inbox. `transactionalId` is the id of a transactional email you created in the Loops dashboard, not the recipient.
+  - **Upserts.** `contacts.update` creates the contact when no match exists, so it cannot fail with not-found. `contacts.create` answers 409 when the email or userId already exists.
+  - **Deleting a contact is permanent.** `contacts.delete` removes the contact and its subscriptions; there is no restore call.
+  - **Custom properties.** Pass them under `customProperties`; values can be strings (max 500 characters), numbers or booleans, and they land on the request body beside the fixed fields, so a key like `email` or `userId` there is rejected.
+  - **Success envelope.** Every answer carries `success`. A 2xx body with `success: false` is still a failure and the client throws a `LoopsAPIError` with the API's message; validation failures also carry `path` and sometimes `transactionalId`.
+  - **Feature gating.** Campaign, transactional-email, workflow and other content endpoints answer 401 with a "not enabled for this team" message when the team has not turned that feature on. The plugin surfaces that as a distinct error, because the key itself is valid. This plugin wraps only the ungated endpoints.
+  - **Rate limits.** 10 requests per second per team. Loops sends `x-ratelimit-limit` and `x-ratelimit-remaining` but no Retry-After; the plugin retries a 429 up to three times with exponential backoff.
+  - **Idempotency.** `transactional.send` accepts an `idempotencyKey` (max 100 characters). Reusing one within 24 hours answers 409 instead of sending a duplicate. Passing a key also lets the plugin replay a 5xx safely; other writes are never replayed.
+  - **Webhooks.** Loops sends webhook events to one endpoint configured in its dashboard, and this plugin does not receive them.
+examples:
+  read:
+    path: lists.list
+    title: List mailing lists
+    args: {}
+  write:
+    path: contacts.create
+    title: Create a contact with a custom property
+    args:
+      email: jordan@acme-logistics.com
+      firstName: Jordan
+      subscribed: true
+      customProperties:
+        planName: Pro
+apiExamples:
+  apikey.verifyConnection:
+    call: '{}'
+  contacts.find:
+    call: "{ email: 'alex@company.com' }"
+  contacts.create:
+    call: "{ email: 'jordan@acme-logistics.com', firstName: 'Jordan', customProperties: { planName: 'Pro' } }"
+  contacts.update:
+    call: "{ userId: 'usr_7f8e9d0c1b2a', lastName: 'Rivera' }"
+  contacts.delete:
+    call: "{ userId: 'usr_7f8e9d0c1b2a' }"
+  contacts.listProperties:
+    call: "{ list: 'custom' }"
+  contacts.getSuppression:
+    call: "{ email: 'alex@company.com' }"
+  events.send:
+    call: "{ eventName: 'signup', email: 'alex@company.com', eventProperties: { plan: 'pro' } }"
+  transactional.send:
+    call: "{ email: 'alex@company.com', transactionalId: 'cll42l54f20i1la0lfooe3z12', dataVariables: { name: 'Alex' }, idempotencyKey: '0e8e17e0-3e73-4c8b-b7c9-2a5a6d3f9c1d' }"
+  lists.list:
+    call: '{}'
+apiNotes:
+  contacts.update: 'Updates by email or userId and upserts when no match exists, so a typo in the selector silently creates a new contact.'
+  contacts.delete: 'Permanent. Loops answers 404 when the contact does not exist.'
+  events.send: 'Needs eventName and one of email or userId. Fires any workflow that listens for the event, which can send email to the contact.'
+  transactional.send: 'The transactionalId must name a published transactional email. Requires the data variables that email declares; missing ones answer 400 with their names in the message.'
+  contacts.listProperties: "Pass list: 'all' or list: 'custom'; the answer is a bare array, not a paginated envelope."
+  lists.list: 'The answer is a bare array. There is no pagination on this endpoint.'
