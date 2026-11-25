@@ -1,0 +1,79 @@
+displayName: Linkhut
+description: Save, find and organise bookmarks and tags on linkhut - add, read and delete bookmarks, page through all of them, count them per day, get tag suggestions and rename or delete tags.
+domain: ln.ht
+recommendedAuth: api_key
+overviewNote: |
+  Linkhut is an open-source social bookmarking service at ln.ht. Create a personal
+  access token in the web app under https://ln.ht/_/oauth/personal-token (log in
+  first; the token is shown once and you can revoke it on the same page), and store
+  it as the API key. The plugin sends it as an `Authorization: Bearer` header.
+
+  Things to know before you call:
+
+  - **Every method is a GET**, including `posts.delete` and `tags.delete`. That is
+    how linkhut works, so a destructive call looks identical on the wire to a read.
+    The plugin marks the deletes destructive and never replays them after a
+    network failure or a 5xx.
+  - **Writes can fail at HTTP 200.** A write answers `{ "result_code": "done" }`.
+    The documented failure is `{ "result_code": "something went wrong" }`, which
+    can arrive with a 200 status. The plugin raises it as a `LinkhutAPIError`
+    instead of returning it, so a failed write never looks like a success.
+  - **`posts.add` is an upsert keyed by url.** Existing bookmarks are replaced by
+    default; pass `replace: 'no'` to leave one unchanged. A retried add converges,
+    so the plugin allows the retry.
+  - **Etiquette.** The docs ask for at least one second between requests and an
+    identifiable User-Agent; the plugin does both. A 500 or an HTTP 999 means you
+    were throttled. The plugin retries reads with backoff; without a `Retry-After`
+    header the first wait is one second.
+  - **Paging.** `posts.all` pages by offset: it takes `start` and `results`
+    (default 1000, maximum 100000) and `fromdt`/`todt` bounds, and the plugin
+    derives `nextStart`, null on the last page. `posts.recent` has no offset.
+  - **Webhooks.** The plugin does not receive webhooks; linkhut sends none.
+examples:
+  read:
+    path: posts.recent
+    title: Read the five most recent bookmarks
+    args:
+      count: 5
+  write:
+    path: posts.add
+    title: Save a bookmark with two tags
+    args:
+      url: 'https://sourcehut.org/'
+      description: sourcehut
+      tags:
+        - git
+        - oss
+apiExamples:
+  posts.lastUpdated: {}
+  posts.get:
+    call: "{ dt: '2020-12-24T00:00:00Z', meta: 'yes' }"
+  posts.recent:
+    call: "{ tag: 'oss', count: 20 }"
+  posts.all:
+    call: "{ start: 0, results: 1000, fromdt: '2020-01-01T00:00:00Z' }"
+  posts.dates:
+    call: "{ tag: 'oss' }"
+  posts.suggest:
+    call: "{ url: 'https://sourcehut.org/' }"
+  posts.add:
+    call: "{ url: 'https://sourcehut.org/', description: 'sourcehut', extended: 'the hackers forge', tags: ['git', 'oss'], shared: 'no' }"
+  posts.delete:
+    call: "{ url: 'https://sourcehut.org/' }"
+  tags.get: {}
+  tags.rename:
+    call: "{ old: 'oss', new: 'open-source' }"
+  tags.delete:
+    call: "{ tag: 'old' }"
+apiNotes:
+  posts.lastUpdated: 'Answers `{ update_time }`, the UTC time of the last bookmark change. The field can be missing for an account with no bookmarks.'
+  posts.get: 'The bookmarks of one day: `dt` defaults to the most recent day that has one. `tag` filters, `url` fetches one bookmark regardless of date, `hashes` takes URL MD5 values, and `meta: yes` adds the change signature. `shared` and `toread` arrive as the strings `yes`/`no`.'
+  posts.recent: 'Up to `count` recent bookmarks, default 15, maximum 100, with an optional `tag` filter. There is no offset, so this is the first page only.'
+  posts.all: 'A bare array of bookmarks, not wrapped in an object. `start` is the offset, `results` the page size (default 1000, maximum 100000), and `fromdt`/`todt` bound the saved time. The plugin adds `nextStart`, the next offset while the page came back full and null on the last page.'
+  posts.dates: 'Answers `{ dates }`, a map from UTC day to the number of bookmarks saved on it, with an optional `tag` filter.'
+  posts.suggest: 'Popular and recommended tags for a url, merged into `{ popular, recommended }` lists whatever order linkhut answers with.'
+  posts.add: 'Saves a bookmark, upserting by url: an existing bookmark for the same url is replaced unless `replace: no`. `description` is required, `tags` is sent comma delimited, `shared: no` makes the bookmark private and `toread: yes` marks it unread.'
+  posts.delete: 'Deletes the bookmark for a url. There is no undo in the API, and the plugin never replays the call after a network failure or a 5xx.'
+  tags.get: 'A flat map from tag name to the number of bookmarks that carry it.'
+  tags.rename: 'Renames `old` to `new` on every bookmark that carries the tag.'
+  tags.delete: 'Removes a tag from every bookmark. The bookmarks stay; the tag cannot be restored, and the plugin never replays the call after a failure.'
