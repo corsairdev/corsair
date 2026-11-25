@@ -228,16 +228,47 @@ Takes `ids` and optional `reveal` tokens (employeesByDepartment, employeesByLoca
   keywords?: string[] | null,
   openJobs?: {
     total?: number | null,
-    byDepartment?: Record<string, any>[] | null,
-    byLocation?: Record<string, any>[] | null,
-    bySeniority?: Record<string, any>[] | null
+    byDepartment?: {
+      department?: string | null,
+      count?: number | null
+    }[] | null,
+    byLocation?: {
+      location?: string | null,
+      count?: number | null
+    }[] | null,
+    bySeniority?: {
+      seniority?: string | null,
+      count?: number | null
+    }[] | null
   } | null,
-  estimatedAnnualItSpend?: Record<string, any> | null,
-  monthlyWebsiteTraffic?: Record<string, any> | null,
-  employeesByDepartment?: Record<string, any>[] | null,
-  employeesByLocation?: Record<string, any>[] | null,
-  employeesBySeniority?: Record<string, any>[] | null,
-  competitors?: Record<string, any>[] | null,
+  estimatedAnnualItSpend?: {
+    value?: number | null,
+    currency?: string | null,
+    valueUsd?: number | null
+  } | null,
+  monthlyWebsiteTraffic?: {
+    visits?: number | null,
+    momChangePercent?: number | null,
+    month?: string | null
+  } | null,
+  employeesByDepartment?: {
+    department?: string | null,
+    count?: number | null
+  }[] | null,
+  employeesByLocation?: {
+    country?: string | null,
+    state?: string | null,
+    count?: number | null
+  }[] | null,
+  employeesBySeniority?: {
+    seniority?: string | null,
+    count?: number | null
+  }[] | null,
+  competitors?: {
+    id?: string | null,
+    name?: string | null,
+    domain?: string | null
+  }[] | null,
   directParent?: {
     lushaCompanyId?: string | null,
     name?: string | null,
@@ -437,16 +468,47 @@ Combines both steps: `companies` search entries plus `reveal` tokens. Metered pe
   keywords?: string[] | null,
   openJobs?: {
     total?: number | null,
-    byDepartment?: Record<string, any>[] | null,
-    byLocation?: Record<string, any>[] | null,
-    bySeniority?: Record<string, any>[] | null
+    byDepartment?: {
+      department?: string | null,
+      count?: number | null
+    }[] | null,
+    byLocation?: {
+      location?: string | null,
+      count?: number | null
+    }[] | null,
+    bySeniority?: {
+      seniority?: string | null,
+      count?: number | null
+    }[] | null
   } | null,
-  estimatedAnnualItSpend?: Record<string, any> | null,
-  monthlyWebsiteTraffic?: Record<string, any> | null,
-  employeesByDepartment?: Record<string, any>[] | null,
-  employeesByLocation?: Record<string, any>[] | null,
-  employeesBySeniority?: Record<string, any>[] | null,
-  competitors?: Record<string, any>[] | null,
+  estimatedAnnualItSpend?: {
+    value?: number | null,
+    currency?: string | null,
+    valueUsd?: number | null
+  } | null,
+  monthlyWebsiteTraffic?: {
+    visits?: number | null,
+    momChangePercent?: number | null,
+    month?: string | null
+  } | null,
+  employeesByDepartment?: {
+    department?: string | null,
+    count?: number | null
+  }[] | null,
+  employeesByLocation?: {
+    country?: string | null,
+    state?: string | null,
+    count?: number | null
+  }[] | null,
+  employeesBySeniority?: {
+    seniority?: string | null,
+    count?: number | null
+  }[] | null,
+  competitors?: {
+    id?: string | null,
+    name?: string | null,
+    domain?: string | null
+  }[] | null,
   directParent?: {
     lushaCompanyId?: string | null,
     name?: string | null,

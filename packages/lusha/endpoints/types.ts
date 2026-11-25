@@ -409,7 +409,8 @@ const EnrichedContactSchema = z
 		phones: z.array(PhoneNumberSchema).nullish(),
 		company: CompanyRefSchema.nullish(),
 		socialLinks: SocialLinksSchema.nullish(),
-		// unknown: per-employer objects, passed through as Lusha sends them.
+		// unknown: the spec types neither the rounds nor previous employment
+		// rows, so these pass through as Lusha sends them.
 		previousEmployment: z.array(z.record(z.string(), z.unknown())).nullish(),
 		linkedinFollowers: z.number().nullish(),
 		linkedinConnections: z.number().nullish(),
@@ -560,7 +561,8 @@ const SicCodeSchema = z
 const CompanyFundingSchema = z
 	.object({
 		rounds: z
-			// unknown: per-round objects, passed through as Lusha sends them.
+			// unknown: the spec types neither the rounds nor previous employment
+			// rows, so these pass through as Lusha sends them.
 			.array(z.record(z.string(), z.unknown()))
 			.nullish(),
 		totalRounds: z.number().nullish(),
@@ -570,6 +572,52 @@ const CompanyFundingSchema = z
 		lastRoundType: z.string().nullish(),
 		lastRoundAmount: z.number().nullish(),
 		lastRoundDate: z.string().nullish(),
+	})
+	.loose();
+
+// Reveal payloads, as the spec types them (V3EnrichedCompany rows).
+
+const DepartmentCountSchema = z
+	.object({ department: z.string().nullish(), count: z.number().nullish() })
+	.loose();
+
+const LocationCountSchema = z
+	.object({ location: z.string().nullish(), count: z.number().nullish() })
+	.loose();
+
+const SeniorityCountSchema = z
+	.object({ seniority: z.string().nullish(), count: z.number().nullish() })
+	.loose();
+
+const CountryStateCountSchema = z
+	.object({
+		country: z.string().nullish(),
+		state: z.string().nullish(),
+		count: z.number().nullish(),
+	})
+	.loose();
+
+const CompetitorSchema = z
+	.object({
+		id: z.string().nullish(),
+		name: z.string().nullish(),
+		domain: z.string().nullish(),
+	})
+	.loose();
+
+const ItSpendSchema = z
+	.object({
+		value: z.number().nullish(),
+		currency: z.string().nullish(),
+		valueUsd: z.number().nullish(),
+	})
+	.loose();
+
+const WebsiteTrafficSchema = z
+	.object({
+		visits: z.number().nullish(),
+		momChangePercent: z.number().nullish(),
+		month: z.string().nullish(),
 	})
 	.loose();
 
@@ -606,45 +654,18 @@ const EnrichedCompanySchema = z
 		openJobs: z
 			.object({
 				total: z.number().nullish(),
-				byDepartment: z
-					// unknown: per-department rows, passed through as Lusha sends them.
-					.array(z.record(z.string(), z.unknown()))
-					.nullish(),
-				byLocation: z
-					// unknown: per-location rows, passed through as Lusha sends them.
-					.array(z.record(z.string(), z.unknown()))
-					.nullish(),
-				bySeniority: z
-					// unknown: per-seniority rows, passed through as Lusha sends them.
-					.array(z.record(z.string(), z.unknown()))
-					.nullish(),
+				byDepartment: z.array(DepartmentCountSchema).nullish(),
+				byLocation: z.array(LocationCountSchema).nullish(),
+				bySeniority: z.array(SeniorityCountSchema).nullish(),
 			})
 			.loose()
 			.nullish(),
-		estimatedAnnualItSpend: z
-			// unknown: spend breakdown, passed through as Lusha sends it.
-			.record(z.string(), z.unknown())
-			.nullish(),
-		monthlyWebsiteTraffic: z
-			// unknown: traffic series, passed through as Lusha sends it.
-			.record(z.string(), z.unknown())
-			.nullish(),
-		employeesByDepartment: z
-			// unknown: per-department rows, passed through as Lusha sends them.
-			.array(z.record(z.string(), z.unknown()))
-			.nullish(),
-		employeesByLocation: z
-			// unknown: per-location rows, passed through as Lusha sends them.
-			.array(z.record(z.string(), z.unknown()))
-			.nullish(),
-		employeesBySeniority: z
-			// unknown: per-seniority rows, passed through as Lusha sends them.
-			.array(z.record(z.string(), z.unknown()))
-			.nullish(),
-		competitors: z
-			// unknown: per-competitor rows, passed through as Lusha sends them.
-			.array(z.record(z.string(), z.unknown()))
-			.nullish(),
+		estimatedAnnualItSpend: ItSpendSchema.nullish(),
+		monthlyWebsiteTraffic: WebsiteTrafficSchema.nullish(),
+		employeesByDepartment: z.array(DepartmentCountSchema).nullish(),
+		employeesByLocation: z.array(CountryStateCountSchema).nullish(),
+		employeesBySeniority: z.array(SeniorityCountSchema).nullish(),
+		competitors: z.array(CompetitorSchema).nullish(),
 		directParent: ParentCompanySchema.nullish(),
 		ultimateParent: ParentCompanySchema.nullish(),
 		error: ItemErrorSchema.nullish(),
