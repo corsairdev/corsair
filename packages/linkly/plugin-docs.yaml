@@ -1,4 +1,72 @@
 # Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "Linkly"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: Linkly
+description: Link tracking and URL shortening with Linkly - create and update tracked short links, move them to trash and restore them, export workspaces, read click analytics, and manage click webhook subscriptions.
+domain: linklyhq.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key in Linkly under Settings, API Keys at app.linklyhq.com. The key is
+  available on every plan, including the free one. Every workspace-scoped call takes a
+  `workspace_id` input; `workspaces.listWorkspaces` lists the IDs your key can reach.
+
+  Things to know before you send:
+
+  - **Create and update share one endpoint.** `links.create` POSTs a new link; `links.update`
+    is the same call with the link's `id`, updating it in place. A repeat of `links.update`
+    can never create a duplicate, which is why it is safe to retry.
+  - **Deleting is soft.** `links.delete` moves a link to the trash and its short URL stops
+    redirecting straight away. `links.restore` takes links back out; a restored link whose
+    back-half is already taken on the domain is reported under `conflicts`. Deleting a link
+    that is already in the trash is a harmless no-op.
+  - **Click analytics has its own quota.** The link API allows 20 requests per second, but
+    analytics is limited to 50 requests per hour per workspace, and Linkly sends no
+    `Retry-After` header. The plugin retries a 429 three times with backoff; an exhausted
+    hourly quota will still fail after those attempts.
+  - **`links.list` paging.** The API defaults to 1000 rows per page, the largest page it
+    serves; `page_number` and `total_pages` in the answer tell you where you are.
+  - **Webhooks.** `webhooks.subscribe` and `webhooks.unsubscribe` manage the URLs that
+    Linkly POSTs a click event to. The deliveries arrive at that URL; this plugin does not
+    receive them, so point the URL at your own server.
+  - **Export.** `links.export` returns every link in the workspace at once, unpaginated.
+examples:
+  read:
+    path: links.list
+    title: List links in a workspace
+    args:
+      workspace_id: 42
+      page_size: 50
+  write:
+    path: links.create
+    title: Create a tracked short link
+    args:
+      workspace_id: 42
+      url: https://www.example.com/summer-sale
+      name: Summer sale
+      utm_source: newsletter
+apiExamples:
+  workspaces.listWorkspaces: {}
+  links.list:
+    call: "{ workspace_id: 42, page_size: 50 }"
+  links.get:
+    call: "{ id: 41657524, workspace_id: 42 }"
+  links.create:
+    call: "{ workspace_id: 42, url: 'https://www.example.com/summer-sale', name: 'Summer sale', utm_source: 'newsletter' }"
+  links.update:
+    call: "{ id: 41657524, workspace_id: 42, enabled: false }"
+  links.delete:
+    call: "{ workspace_id: 42, id: 41657524 }"
+  links.restore:
+    call: "{ workspace_id: 42, ids: [30, 31] }"
+  links.export:
+    call: "{ workspace_id: 42 }"
+  clicks.getTimeSeries:
+    call: "{ workspace_id: 42, start: '2026-06-01', end: '2026-06-30' }"
+  clicks.getCounters:
+    call: "{ workspace_id: 42, counter: 'country', start: '2026-06-01', end: '2026-06-30' }"
+  domains.list:
+    call: "{ workspace_id: 42 }"
+  webhooks.list:
+    call: "{ workspace_id: 42 }"
+  webhooks.subscribe:
+    call: "{ workspace_id: 42, url: 'https://hooks.example.com/linkly' }"
+  webhooks.unsubscribe:
+    call: "{ workspace_id: 42, hook_id: 'https://hooks.example.com/linkly' }"

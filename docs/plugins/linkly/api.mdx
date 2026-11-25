@@ -1,0 +1,964 @@
+---
+title: "Linkly API reference"
+sidebarTitle: "API"
+description: "API reference for the Linkly plugin in Corsair: every `linkly.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Clicks
+
+### getCounters
+
+`clicks.getCounters`
+
+Group a workspace’s clicks by one dimension, such as country or UTM campaign, ordered by count
+
+**Risk:** `read`
+
+```ts
+await corsair.linkly.api.clicks.getCounters({ workspace_id: 42, counter: 'country', start: '2026-06-01', end: '2026-06-30' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace that owns the links. Find IDs with workspaces.listWorkspaces. |
+| `counter` | `country \| city \| region \| platform \| destination \| referer \| bot_name \| isp \| link_id \| remote_ip \| top_params \| ad_network \| utm_source \| utm_medium \| utm_campaign \| utm_content \| utm_term` | Yes | The dimension to group clicks by. |
+| `link_id` | `string` | No | A link ID, e.g. "30". One ID also works in link_ids. |
+| `link_ids` | `string` | No | Hyphen-separated link IDs, e.g. "24-25-26". |
+| `start` | `string` | No | YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ. |
+| `end` | `string` | No | YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ. |
+| `country` | `string` | No | ISO 3166-1 alpha-2 code, e.g. US. |
+| `bots` | `boolean` | No | Include bot clicks. Defaults to false. |
+| `unique` | `boolean` | No | Count unique visitors only. |
+| `format` | `json \| csv \| tsv` | No | Defaults to 'json'. This plugin parses the json shape. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | Clicks across all groups, including groups beyond the top 10,000 returned. |
+| `values` | `object[]` | Yes | Ordered by count, highest first. |
+
+<AccordionGroup>
+<Accordion title="values full type">
+
+```ts
+{
+  count: number,
+  value?: string | {
+    id: number,
+    url: string,
+    full_url: string,
+    workspace_id: number,
+    name?: string | null,
+    note?: string | null,
+    domain?: string | null,
+    slug?: string | null,
+    enabled?: boolean | null,
+    deleted?: boolean | null,
+    password?: string | null,
+    cloaking?: boolean | null,
+    forward_params?: boolean | null,
+    hide_referrer?: boolean | null,
+    block_bots?: boolean | null,
+    skip_social_crawler_tracking?: boolean | null,
+    public_analytics?: boolean | null,
+    privacy_mode?: boolean | null,
+    sticky_rotator?: boolean | null,
+    head_tags?: string | null,
+    body_tags?: string | null,
+    linkify_words?: string | null,
+    replacements?: string | null,
+    utm_source?: string | null,
+    utm_medium?: string | null,
+    utm_campaign?: string | null,
+    utm_term?: string | null,
+    utm_content?: string | null,
+    og_title?: string | null,
+    og_description?: string | null,
+    og_image?: string | null,
+    fb_pixel_id?: string | null,
+    tiktok_pixel_id?: string | null,
+    ga4_tag_id?: string | null,
+    gtm_id?: string | null,
+    expiry_datetime?: string | null,
+    expiry_destination?: string | null,
+    expiry_clicks?: number | null,
+    rules?: {
+      matches?: string | null,
+      percentage?: number | null,
+      url?: string | null,
+      what?: string | null
+    }[] | null,
+    webhooks?: string[] | null,
+    notify_user_ids?: number[] | null,
+    notify_slack?: boolean | null,
+    qr_styles?: object | null,
+    metadata?: Record<string, string> | null,
+    created_by_user_id?: number | null
+  } | null,
+  key?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTimeSeries
+
+`clicks.getTimeSeries`
+
+Read click counts over time for a workspace, filtered by link, date range, country and device, optionally pivoted into a links-by-date matrix
+
+**Risk:** `read`
+
+```ts
+await corsair.linkly.api.clicks.getTimeSeries({ workspace_id: 42, start: '2026-06-01', end: '2026-06-30' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace that owns the links. Find IDs with workspaces.listWorkspaces. |
+| `link_id` | `string` | No | A link ID, e.g. "30". One ID also works in link_ids. |
+| `link_ids` | `string` | No | Hyphen-separated link IDs, e.g. "24-25-26". |
+| `start` | `string` | No | YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ. |
+| `end` | `string` | No | YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ. |
+| `country` | `string` | No | ISO 3166-1 alpha-2 code, e.g. US. |
+| `browser` | `string` | No | — |
+| `platform` | `string` | No | — |
+| `referer` | `string` | No | — |
+| `isp` | `string` | No | — |
+| `bots` | `boolean` | No | Include bot clicks. Defaults to false. |
+| `unique` | `boolean` | No | Count unique visitors only. |
+| `format` | `json \| csv \| tsv` | No | Defaults to 'json'. This plugin parses the json shape. |
+| `pivot` | `link_id` | No | Return a matrix instead of a time series: dates as rows, links as columns. |
+| `timezone` | `string` | No | IANA name for bucket boundaries, e.g. America/New_York. Data is stored in UTC. |
+| `frequency` | `day \| hour` | No | Bucket size. Defaults to 'day'. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  traffic: {
+    t: string,
+    y?: number | null
+  }[]
+} | {
+  links: {
+    id: number,
+    name?: string | null,
+    full_url: string
+  }[],
+  data: {
+    date: string,
+    clicks: Record<string, number | null>
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Domains
+
+### list
+
+`domains.list`
+
+List the custom domains attached to a workspace, usable as links.create domain values
+
+**Risk:** `read`
+
+```ts
+await corsair.linkly.api.domains.list({ workspace_id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace that owns the links. Find IDs with workspaces.listWorkspaces. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domains` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="domains full type">
+
+```ts
+{
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Links
+
+### create
+
+`links.create`
+
+Create a tracked short link in a workspace, with its destination, UTM fields and optional rules
+
+**Risk:** `write`
+
+```ts
+await corsair.linkly.api.links.create({ workspace_id: 42, url: 'https://www.example.com/summer-sale', name: 'Summer sale', utm_source: 'newsletter' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace that owns the links. Find IDs with workspaces.listWorkspaces. |
+| `url` | `string` | Yes | The destination URL. Required to create. |
+| `name` | `string` | No | Display name, shown in the dashboard. |
+| `note` | `string` | No | — |
+| `domain` | `string` | No | A custom domain attached to the workspace, e.g. go.yourcompany.com. List them with domains.list. |
+| `slug` | `string` | No | The back-half of the short URL. Auto-generated when omitted. |
+| `enabled` | `boolean` | No | Defaults to true. |
+| `deleted` | `boolean` | No | — |
+| `cloaking` | `boolean` | No | — |
+| `forward_params` | `boolean` | No | — |
+| `hide_referrer` | `boolean` | No | — |
+| `block_bots` | `boolean` | No | — |
+| `head_tags` | `string` | No | HTML injected into &lt;head&gt; on the cloaking page. |
+| `body_tags` | `string` | No | HTML injected into &lt;body&gt; on the cloaking page. |
+| `linkify_words` | `string` | No | — |
+| `replacements` | `string` | No | — |
+| `utm_source` | `string` | No | — |
+| `utm_medium` | `string` | No | — |
+| `utm_campaign` | `string` | No | — |
+| `utm_term` | `string` | No | — |
+| `utm_content` | `string` | No | — |
+| `og_title` | `string` | No | — |
+| `og_description` | `string` | No | — |
+| `og_image` | `string` | No | — |
+| `fb_pixel_id` | `string` | No | — |
+| `tiktok_pixel_id` | `string` | No | — |
+| `ga4_tag_id` | `string` | No | — |
+| `gtm_id` | `string` | No | — |
+| `expiry_datetime` | `string` | No | ISO 8601 instant, e.g. 2026-12-31T23:59:59Z. After this time visitors go to expiry_destination. The year must be between 2000 and 2100. |
+| `expiry_destination` | `string` | No | Where visitors go once the link has expired. Must start with http. |
+| `expiry_clicks` | `number` | No | Expire the link after this many clicks. |
+| `rules` | `object[]` | No | Click routing rules, e.g. send matches to another URL or split traffic. Only sent as JSON. |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+  url: string,
+  matches?: string,
+  what?: string,
+  percentage?: string,
+  rule_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `url` | `string` | Yes | — |
+| `full_url` | `string` | Yes | The public short URL, e.g. https://l.linklyhq.com/l/2TQ. |
+| `workspace_id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `enabled` | `boolean \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+| `password` | `string \| null` | No | — |
+| `cloaking` | `boolean \| null` | No | — |
+| `forward_params` | `boolean \| null` | No | — |
+| `hide_referrer` | `boolean \| null` | No | — |
+| `block_bots` | `boolean \| null` | No | — |
+| `skip_social_crawler_tracking` | `boolean \| null` | No | — |
+| `public_analytics` | `boolean \| null` | No | — |
+| `privacy_mode` | `boolean \| null` | No | — |
+| `sticky_rotator` | `boolean \| null` | No | — |
+| `head_tags` | `string \| null` | No | — |
+| `body_tags` | `string \| null` | No | — |
+| `linkify_words` | `string \| null` | No | — |
+| `replacements` | `string \| null` | No | — |
+| `utm_source` | `string \| null` | No | — |
+| `utm_medium` | `string \| null` | No | — |
+| `utm_campaign` | `string \| null` | No | — |
+| `utm_term` | `string \| null` | No | — |
+| `utm_content` | `string \| null` | No | — |
+| `og_title` | `string \| null` | No | — |
+| `og_description` | `string \| null` | No | — |
+| `og_image` | `string \| null` | No | — |
+| `fb_pixel_id` | `string \| null` | No | — |
+| `tiktok_pixel_id` | `string \| null` | No | — |
+| `ga4_tag_id` | `string \| null` | No | — |
+| `gtm_id` | `string \| null` | No | — |
+| `expiry_datetime` | `string \| null` | No | — |
+| `expiry_destination` | `string \| null` | No | — |
+| `expiry_clicks` | `number \| null` | No | — |
+| `rules` | `object[] \| null` | No | — |
+| `webhooks` | `string[] \| null` | No | — |
+| `notify_user_ids` | `number[] \| null` | No | — |
+| `notify_slack` | `boolean \| null` | No | — |
+| `qr_styles` | `object \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `created_by_user_id` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+  matches?: string | null,
+  percentage?: number | null,
+  url?: string | null,
+  what?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`links.delete`
+
+Move a link to the trash: its short URL stops redirecting straight away. links.restore can undo this while the link is still in the trash, and deleting a trashed link again is a harmless no-op
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.linkly.api.links.delete({ workspace_id: 42, id: 41657524 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace that owns the links. Find IDs with workspaces.listWorkspaces. |
+| `id` | `number` | Yes | The link to move to the trash. |
+
+
+
+**Output:** `string`
+
+
+---
+
+### export
+
+`links.export`
+
+Export every link in a workspace with their click counts, unpaginated
+
+**Risk:** `read`
+
+```ts
+await corsair.linkly.api.links.export({ workspace_id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace that owns the links. Find IDs with workspaces.listWorkspaces. |
+| `format` | `json \| csv` | No | Defaults to 'json'. This plugin parses the json shape. |
+| `search` | `string` | No | Only links matching this search. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number | null,
+  url: string,
+  full_url: string,
+  workspace_id?: number | null,
+  name?: string | null,
+  note?: string | null,
+  domain?: string | null,
+  slug?: string | null,
+  enabled?: boolean | null,
+  deleted?: boolean | null,
+  cloaking?: boolean | null,
+  forward_params?: boolean | null,
+  hide_referrer?: boolean | null,
+  block_bots?: boolean | null,
+  public_analytics?: boolean | null,
+  head_tags?: string | null,
+  body_tags?: string | null,
+  linkify_words?: string | null,
+  replacements?: string | null,
+  utm_source?: string | null,
+  utm_medium?: string | null,
+  utm_campaign?: string | null,
+  utm_term?: string | null,
+  utm_content?: string | null,
+  og_title?: string | null,
+  og_description?: string | null,
+  og_image?: string | null,
+  fb_pixel_id?: string | null,
+  tiktok_pixel_id?: string | null,
+  ga4_tag_id?: string | null,
+  gtm_id?: string | null,
+  rules?: {
+    matches?: string | null,
+    percentage?: number | null,
+    url?: string | null,
+    what?: string | null
+  }[] | null,
+  metadata?: Record<string, string> | null,
+  clicks_total?: number | null,
+  clicks_today?: number | null,
+  clicks_thirty_days?: number | null,
+  human_clicks_total?: number | null,
+  human_clicks_today?: number | null,
+  human_clicks_thirty_days?: number | null,
+  human_clicks_previous_day?: number | null,
+  sparkline?: number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`links.get`
+
+Read one link by ID: destination, short URL and settings, without click counts
+
+**Risk:** `read`
+
+```ts
+await corsair.linkly.api.links.get({ id: 41657524, workspace_id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `workspace_id` | `number` | No | Optional. The workspace the link belongs to. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `url` | `string` | Yes | — |
+| `full_url` | `string` | Yes | The public short URL, e.g. https://l.linklyhq.com/l/2TQ. |
+| `workspace_id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `enabled` | `boolean \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+| `password` | `string \| null` | No | — |
+| `cloaking` | `boolean \| null` | No | — |
+| `forward_params` | `boolean \| null` | No | — |
+| `hide_referrer` | `boolean \| null` | No | — |
+| `block_bots` | `boolean \| null` | No | — |
+| `skip_social_crawler_tracking` | `boolean \| null` | No | — |
+| `public_analytics` | `boolean \| null` | No | — |
+| `privacy_mode` | `boolean \| null` | No | — |
+| `sticky_rotator` | `boolean \| null` | No | — |
+| `head_tags` | `string \| null` | No | — |
+| `body_tags` | `string \| null` | No | — |
+| `linkify_words` | `string \| null` | No | — |
+| `replacements` | `string \| null` | No | — |
+| `utm_source` | `string \| null` | No | — |
+| `utm_medium` | `string \| null` | No | — |
+| `utm_campaign` | `string \| null` | No | — |
+| `utm_term` | `string \| null` | No | — |
+| `utm_content` | `string \| null` | No | — |
+| `og_title` | `string \| null` | No | — |
+| `og_description` | `string \| null` | No | — |
+| `og_image` | `string \| null` | No | — |
+| `fb_pixel_id` | `string \| null` | No | — |
+| `tiktok_pixel_id` | `string \| null` | No | — |
+| `ga4_tag_id` | `string \| null` | No | — |
+| `gtm_id` | `string \| null` | No | — |
+| `expiry_datetime` | `string \| null` | No | — |
+| `expiry_destination` | `string \| null` | No | — |
+| `expiry_clicks` | `number \| null` | No | — |
+| `rules` | `object[] \| null` | No | — |
+| `webhooks` | `string[] \| null` | No | — |
+| `notify_user_ids` | `number[] \| null` | No | — |
+| `notify_slack` | `boolean \| null` | No | — |
+| `qr_styles` | `object \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `created_by_user_id` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+  matches?: string | null,
+  percentage?: number | null,
+  url?: string | null,
+  what?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`links.list`
+
+List the links in a workspace with their click counts, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.linkly.api.links.list({ workspace_id: 42, page_size: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace that owns the links. Find IDs with workspaces.listWorkspaces. |
+| `search` | `string` | No | Match link names, URLs, slugs and notes. |
+| `page` | `number` | No | 1-based page. Defaults to 1. |
+| `page_size` | `number` | No | Rows per page. Defaults to 1000. |
+| `sort_by` | `string` | No | Column to sort, e.g. 'clicks_total' or 'created_at'. |
+| `sort_dir` | `desc \| asc` | No | Sort direction. Defaults to 'desc'. |
+| `deleted` | `boolean` | No | Set true to page through the trash instead of live links. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `links` | `object[]` | Yes | — |
+| `page_number` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `total_entries` | `number` | Yes | — |
+| `total_pages` | `number` | Yes | — |
+| `total_rows` | `number \| null` | No | — |
+| `workspace_link_count` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  id?: number | null,
+  url: string,
+  full_url: string,
+  workspace_id?: number | null,
+  name?: string | null,
+  note?: string | null,
+  domain?: string | null,
+  slug?: string | null,
+  enabled?: boolean | null,
+  deleted?: boolean | null,
+  cloaking?: boolean | null,
+  forward_params?: boolean | null,
+  hide_referrer?: boolean | null,
+  block_bots?: boolean | null,
+  public_analytics?: boolean | null,
+  head_tags?: string | null,
+  body_tags?: string | null,
+  linkify_words?: string | null,
+  replacements?: string | null,
+  utm_source?: string | null,
+  utm_medium?: string | null,
+  utm_campaign?: string | null,
+  utm_term?: string | null,
+  utm_content?: string | null,
+  og_title?: string | null,
+  og_description?: string | null,
+  og_image?: string | null,
+  fb_pixel_id?: string | null,
+  tiktok_pixel_id?: string | null,
+  ga4_tag_id?: string | null,
+  gtm_id?: string | null,
+  rules?: {
+    matches?: string | null,
+    percentage?: number | null,
+    url?: string | null,
+    what?: string | null
+  }[] | null,
+  metadata?: Record<string, string> | null,
+  clicks_total?: number | null,
+  clicks_today?: number | null,
+  clicks_thirty_days?: number | null,
+  human_clicks_total?: number | null,
+  human_clicks_today?: number | null,
+  human_clicks_thirty_days?: number | null,
+  human_clicks_previous_day?: number | null,
+  sparkline?: number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### restore
+
+`links.restore`
+
+Take deleted links out of the trash by ID; a restored link whose back-half is taken reports a conflict
+
+**Risk:** `write`
+
+```ts
+await corsair.linkly.api.links.restore({ workspace_id: 42, ids: [30, 31] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace that owns the links. Find IDs with workspaces.listWorkspaces. |
+| `ids` | `number[]` | Yes | Link IDs to take out of the trash. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `restored` | `number \| null` | No | — |
+| `conflicts` | `object[] \| null` | No | Restored links whose back-half is already taken on the domain. The conflict lists what is in the way. |
+
+<AccordionGroup>
+<Accordion title="conflicts full type">
+
+```ts
+{
+  id?: number | null,
+  domain?: string | null,
+  slug?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`links.update`
+
+Update an existing link in place by sending its ID with the fields to change
+
+**Risk:** `write`
+
+```ts
+await corsair.linkly.api.links.update({ id: 41657524, workspace_id: 42, enabled: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The link to update. POST /link with an id updates in place. |
+| `workspace_id` | `number` | Yes | The workspace that owns the links. Find IDs with workspaces.listWorkspaces. |
+| `url` | `string` | No | A new destination URL. |
+| `name` | `string` | No | Display name, shown in the dashboard. |
+| `note` | `string` | No | — |
+| `domain` | `string` | No | A custom domain attached to the workspace, e.g. go.yourcompany.com. List them with domains.list. |
+| `slug` | `string` | No | The back-half of the short URL. Auto-generated when omitted. |
+| `enabled` | `boolean` | No | Defaults to true. |
+| `deleted` | `boolean` | No | — |
+| `cloaking` | `boolean` | No | — |
+| `forward_params` | `boolean` | No | — |
+| `hide_referrer` | `boolean` | No | — |
+| `block_bots` | `boolean` | No | — |
+| `head_tags` | `string` | No | HTML injected into &lt;head&gt; on the cloaking page. |
+| `body_tags` | `string` | No | HTML injected into &lt;body&gt; on the cloaking page. |
+| `linkify_words` | `string` | No | — |
+| `replacements` | `string` | No | — |
+| `utm_source` | `string` | No | — |
+| `utm_medium` | `string` | No | — |
+| `utm_campaign` | `string` | No | — |
+| `utm_term` | `string` | No | — |
+| `utm_content` | `string` | No | — |
+| `og_title` | `string` | No | — |
+| `og_description` | `string` | No | — |
+| `og_image` | `string` | No | — |
+| `fb_pixel_id` | `string` | No | — |
+| `tiktok_pixel_id` | `string` | No | — |
+| `ga4_tag_id` | `string` | No | — |
+| `gtm_id` | `string` | No | — |
+| `expiry_datetime` | `string` | No | ISO 8601 instant, e.g. 2026-12-31T23:59:59Z. After this time visitors go to expiry_destination. The year must be between 2000 and 2100. |
+| `expiry_destination` | `string` | No | Where visitors go once the link has expired. Must start with http. |
+| `expiry_clicks` | `number` | No | Expire the link after this many clicks. |
+| `rules` | `object[]` | No | Click routing rules, e.g. send matches to another URL or split traffic. Only sent as JSON. |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+  url: string,
+  matches?: string,
+  what?: string,
+  percentage?: string,
+  rule_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `url` | `string` | Yes | — |
+| `full_url` | `string` | Yes | The public short URL, e.g. https://l.linklyhq.com/l/2TQ. |
+| `workspace_id` | `number` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `note` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `slug` | `string \| null` | No | — |
+| `enabled` | `boolean \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+| `password` | `string \| null` | No | — |
+| `cloaking` | `boolean \| null` | No | — |
+| `forward_params` | `boolean \| null` | No | — |
+| `hide_referrer` | `boolean \| null` | No | — |
+| `block_bots` | `boolean \| null` | No | — |
+| `skip_social_crawler_tracking` | `boolean \| null` | No | — |
+| `public_analytics` | `boolean \| null` | No | — |
+| `privacy_mode` | `boolean \| null` | No | — |
+| `sticky_rotator` | `boolean \| null` | No | — |
+| `head_tags` | `string \| null` | No | — |
+| `body_tags` | `string \| null` | No | — |
+| `linkify_words` | `string \| null` | No | — |
+| `replacements` | `string \| null` | No | — |
+| `utm_source` | `string \| null` | No | — |
+| `utm_medium` | `string \| null` | No | — |
+| `utm_campaign` | `string \| null` | No | — |
+| `utm_term` | `string \| null` | No | — |
+| `utm_content` | `string \| null` | No | — |
+| `og_title` | `string \| null` | No | — |
+| `og_description` | `string \| null` | No | — |
+| `og_image` | `string \| null` | No | — |
+| `fb_pixel_id` | `string \| null` | No | — |
+| `tiktok_pixel_id` | `string \| null` | No | — |
+| `ga4_tag_id` | `string \| null` | No | — |
+| `gtm_id` | `string \| null` | No | — |
+| `expiry_datetime` | `string \| null` | No | — |
+| `expiry_destination` | `string \| null` | No | — |
+| `expiry_clicks` | `number \| null` | No | — |
+| `rules` | `object[] \| null` | No | — |
+| `webhooks` | `string[] \| null` | No | — |
+| `notify_user_ids` | `number[] \| null` | No | — |
+| `notify_slack` | `boolean \| null` | No | — |
+| `qr_styles` | `object \| null` | No | — |
+| `metadata` | `Record<string, string> \| null` | No | — |
+| `created_by_user_id` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+  matches?: string | null,
+  percentage?: number | null,
+  url?: string | null,
+  what?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### list
+
+`webhooks.list`
+
+List the webhook URLs registered on a workspace to receive a POST for each click
+
+**Risk:** `read`
+
+```ts
+await corsair.linkly.api.webhooks.list({ workspace_id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace that owns the links. Find IDs with workspaces.listWorkspaces. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### subscribe
+
+`webhooks.subscribe`
+
+Register a webhook URL on a workspace; Linkly then POSTs there for every click. Deliveries arrive at that URL, not to this plugin
+
+**Risk:** `write`
+
+```ts
+await corsair.linkly.api.webhooks.subscribe({ workspace_id: 42, url: 'https://hooks.example.com/linkly' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace that owns the links. Find IDs with workspaces.listWorkspaces. |
+| `url` | `string` | Yes | Receives a POST for every click in the workspace. Respond 2xx quickly; delivery is fire-and-forget with no retries. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The webhook URL. Pass it to webhooks.unsubscribe. |
+
+
+
+---
+
+### unsubscribe
+
+`webhooks.unsubscribe`
+
+Remove a webhook registration from a workspace by its URL, so it stops receiving click events
+
+**Risk:** `write`
+
+```ts
+await corsair.linkly.api.webhooks.unsubscribe({ workspace_id: 42, hook_id: 'https://hooks.example.com/linkly' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace that owns the links. Find IDs with workspaces.listWorkspaces. |
+| `hook_id` | `string` | Yes | The webhook URL, exactly as webhooks.list or webhooks.subscribe returned it. Encoded into the path for you. |
+
+
+
+**Output:** `string`
+
+
+---
+
+## Workspaces
+
+### listWorkspaces
+
+`workspaces.listWorkspaces`
+
+List the workspaces the API key can reach, with their IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.linkly.api.workspaces.listWorkspaces({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
