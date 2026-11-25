@@ -12600,5 +12600,14 @@
         "title": "Structured search inputs for messages.search"
       }
     ]
+  },
+  {
+    "date": "2026-11-25",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.99",
+    "isNew": false,
+    "changes": []
   }
 ]
