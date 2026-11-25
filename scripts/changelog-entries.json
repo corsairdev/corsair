@@ -12543,5 +12543,46 @@
     "package": "cloud",
     "version": "0.2.33",
     "changes": []
+  },
+  {
+    "date": "2026-11-25",
+    "package": "@corsair-dev/github",
+    "dir": "packages/github",
+    "name": "GitHub",
+    "version": "0.1.22",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2742,
+        "title": "Structured search inputs for search.issues"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-25",
+    "package": "@corsair-dev/linear",
+    "dir": "packages/linear",
+    "name": "Linear",
+    "version": "0.1.10",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2743,
+        "title": "Structured search inputs for issues.list"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-25",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.98",
+    "isNew": false,
+    "changes": []
   }
 ]
