@@ -1,0 +1,108 @@
+import type { ListcleanEndpoints } from '..';
+import { envelopeData, envelopeMessage, segment } from '../client';
+import { call } from './call';
+import {
+	ListcleanEndpointInputSchemas as Inputs,
+	ListcleanEndpointOutputSchemas as Outputs,
+} from './types';
+
+export const listLists: ListcleanEndpoints['listsListLists'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'lists.listLists',
+			input: Inputs.listsListLists,
+			output: Outputs.listsListLists,
+		},
+		input,
+		// The documented path carries a trailing slash; /credits/ shows the API
+		// is strict about slashes elsewhere, so the spec spelling is kept.
+		() => ({ method: 'GET', path: '/lists/', replayable: true }),
+		{
+			shape: envelopeData,
+			log: (_, result) => ({
+				count: result.lists.length,
+				total: result.total ?? undefined,
+			}),
+		},
+	);
+
+export const getList: ListcleanEndpoints['listsGetList'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'lists.getList',
+			input: Inputs.listsGetList,
+			output: Outputs.listsGetList,
+		},
+		input,
+		({ list_id }) => ({
+			method: 'GET',
+			path: `/lists/${segment(list_id)}`,
+			replayable: true,
+		}),
+		{
+			shape: envelopeData,
+			// The bulk job status read: `0.status` moves SUBMITTED, INPROCESS,
+			// COMPLETED, so the status is what a log needs. LogFields rejects
+			// null, so a nullish status passes as undefined.
+			log: (_, result) => ({
+				listId: result[0]?.list_id,
+				status: result[0]?.status ?? undefined,
+			}),
+		},
+	);
+
+export const getListResults: ListcleanEndpoints['listsGetListResults'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		{
+			event: 'lists.getListResults',
+			input: Inputs.listsGetListResults,
+			output: Outputs.listsGetListResults,
+		},
+		input,
+		({ list_id, type }) => ({
+			method: 'GET',
+			path: `/downloads/json/${segment(list_id)}/${segment(type)}`,
+			// This route answers a bare JSON stream instead of the envelope.
+			download: true,
+			replayable: true,
+		}),
+		{
+			log: ({ list_id, type }, result) => ({
+				listId: list_id,
+				type,
+				count: result.length,
+			}),
+		},
+	);
+
+// `delete` is a reserved word, so the function is `remove` and it is
+// registered under the `delete:` key.
+export const remove: ListcleanEndpoints['listsDelete'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'lists.delete',
+			input: Inputs.listsDelete,
+			output: Outputs.listsDelete,
+		},
+		input,
+		({ list_id }) => ({
+			method: 'DELETE',
+			path: `/lists/${segment(list_id)}`,
+			// Destructive: after a lost answer the only safe check is reading the
+			// lists first, so this is never replayed.
+			replayable: false,
+		}),
+		{
+			// No `data` on this answer: the documented `message` string must
+			// arrive for the call to count as a success.
+			shape: (raw) => ({ message: envelopeMessage(raw) }),
+			log: ({ list_id }) => ({ listId: list_id }),
+		},
+	);

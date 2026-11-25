@@ -1,0 +1,60 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Listclean"
+description: Email verification with Listclean - verify single addresses or batches of up to 3000, poll bulk jobs, download cleaned results, read verification logs and analytics, delete lists and check the credit balance.
+domain: listclean.xyz
+recommendedAuth: api_key
+overviewNote: |
+  Create an API token at app.listclean.xyz under Integration/API > API tokens, then Add. The token is sent in the `X-Auth-Token` header as a plain value, with no Bearer prefix.
+
+  Things to know before you call:
+
+  - **Every answer is one envelope.** `{ success, error_code, message, data }` where `success` is an integer: `1` on success, `0` on failure, even over a 2xx status. The plugin throws on `success: 0` and on non-JSON bodies, so a 404 HTML page never comes back as an empty result.
+  - **Billed calls.** `verify.verifyEmail` spends one credit per call, and `verify.startBatchVerification` spends one credit per address when the job runs. Both carry `replayable: false`, so a lost answer or a 5xx is never retried and may have already been charged. Check `account.getCredits` first; signup comes with 25 free credits.
+  - **Bulk verification is a job.** `verify.startBatchVerification` answers `list_id`. Poll `lists.getList`, whose `0.status` moves `SUBMITTED`, `INPROCESS`, `COMPLETED`. Listclean documents no failed status for this flow. Once `COMPLETED`, download rows with `lists.getListResults`, choosing `clean`, `dirty` or `unknown`.
+  - **Analytics shapes are undocumented.** Listclean's spec leaves `total_summary`, `datewise_summary` and `graph_summary` without inner fields, so those come back exactly as the API sends them rather than typed.
+  - **Deletes are permanent.** `lists.delete` cannot be undone and the results cannot be fetched afterwards.
+  - **Deferred for a later release.** The chunked CSV upload flow (`/uploads/`) and the account profile read/update are not in this plugin, and neither is the CSV download, which the JSON download covers.
+  - **Webhooks.** Listclean sends none, and the plugin does not receive any.
+examples:
+  read:
+    path: verify.verifyEmail
+    title: Verify one address
+    args:
+      email: test@example.com
+  write:
+    path: verify.startBatchVerification
+    title: Start a batch verification
+    args:
+      emails:
+        - user1@example.com
+        - user2@example.com
+apiExamples:
+  verify.verifyEmail:
+    call: "{ email: 'myselfi.itba@gmail.com' }"
+  verify.startBatchVerification:
+    call: "{ emails: ['user1@example.com', 'user2@example.com'], filename: 'october-leads.csv' }"
+  verify.getVerificationLogs:
+    call: "{ start_date: '2026-11-01', end_date: '2026-11-25', status: 'dirty' }"
+  verify.getAnalytics:
+    call: "{ start_date: '2026-11-01', end_date: '2026-11-25' }"
+  lists.listLists:
+    call: "{}"
+  lists.getList:
+    call: "{ list_id: 159261 }"
+  lists.getListResults:
+    call: "{ list_id: 159261, type: 'clean' }"
+  lists.delete:
+    call: "{ list_id: 159261 }"
+  account.getCredits:
+    call: "{}"
+apiNotes:
+  verify.verifyEmail: 'Spends one credit even when the address cannot be resolved. The verdict is one of clean, dirty, unknown or error, and remarks explains it. Answers the MX records, the mail service provider and the local and domain parts.'
+  verify.startBatchVerification: 'Takes up to 3000 addresses and answers the list_id of the async job. Never retried by the plugin: a repeat would start a second billed job.'
+  verify.getVerificationLogs: 'The range spans at most 30 days and end_date cannot be in the future. Paging is a start offset with a limit of at most 100, 10 by default. error_code on a log row is a string, unlike the integer on the envelope.'
+  verify.getAnalytics: 'Listclean documents no inner fields for total_summary, datewise_summary or graph_summary, so they are passed through untyped.'
+  lists.listLists: 'Answers total, an opaque cursor integer and the lists. Listclean documents no way to send the cursor back, so there is no paging input here.'
+  lists.getList: 'Answers an array holding the one list, so the status reads as 0.status. This is the poll for a startBatchVerification job.'
+  lists.getListResults: 'Download the verified rows of one type as a JSON array. This route answers a bare JSON stream, not the envelope. The list must be COMPLETED for rows to exist.'
+  lists.delete: 'Permanent. The answer carries only a message string, which the plugin requires before reporting success.'
+  account.getCredits: 'Free. Answers the remaining balance; a verification spends one credit per address.'
