@@ -60,6 +60,14 @@ afterEach(() => {
 });
 
 describe('slack files.download', () => {
+	it('refuses an oversize file before fetching its content', async () => {
+		serve({ ...file, size: 25 * 1024 * 1024 + 1 });
+		await expect(download(ctxOf(null), { file: 'F1' })).rejects.toMatchObject({
+			code: 'file_too_large',
+		});
+		expect(asked.map((a) => a.url.pathname)).toEqual(['/api/files.info']);
+	});
+
 	it('returns the bytes intact with the file name and type', async () => {
 		const out = await download(ctxOf(null), { file: 'F1' });
 		expect(out).toMatchObject({

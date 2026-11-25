@@ -1,5 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
 import { toFileOutput } from 'corsair/http';
+
+// Matches core's DOWNLOAD_MAX_BYTES (async-core/public-download.ts), which corsair/http does not export.
+const DOWNLOAD_MAX_BYTES = 25 * 1024 * 1024;
+
 import { downloadSlackFile, makeSlackRequest, SlackAPIError } from '../client';
 import type { SlackBoundEndpoints, SlackEndpoints } from '../index';
 import type { SlackEndpointOutputs } from './types';
@@ -107,6 +111,15 @@ export const download: SlackEndpoints['filesDownload'] = async (ctx, input) => {
 		throw new SlackAPIError(
 			`File ${input.file} is not hosted by Slack or has no private download URL, so it cannot be downloaded.`,
 			'file_not_downloadable',
+		);
+	}
+
+	// request() buffers the whole body, so the size files.info reports is the only
+	// guard before the allocation.
+	if (typeof file.size === 'number' && file.size > DOWNLOAD_MAX_BYTES) {
+		throw new SlackAPIError(
+			`File ${input.file} is ${file.size} bytes, over the ${DOWNLOAD_MAX_BYTES}-byte download limit.`,
+			'file_too_large',
 		);
 	}
 
