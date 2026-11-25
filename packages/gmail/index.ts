@@ -306,7 +306,7 @@ const gmailEndpointMeta = {
 	'messages.list': {
 		riskLevel: 'read',
 		description:
-			'Returns only id and threadId per message, no subject or body. Use messages.get to read one',
+			'Search messages with structured fields (keywords, from, to, subject, after, before, hasAttachment, label, in, isUnread, ...) or a raw q; no Gmail syntax needed. Returns only id and threadId per message, no subject or body. Use messages.get to read one',
 	},
 	'messages.get': {
 		riskLevel: 'read',

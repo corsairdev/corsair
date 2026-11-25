@@ -3971,7 +3971,7 @@ await corsair.github.api.repositories.unstar({});
 
 `search.issues`
 
-Search issues and pull requests with GitHub qualifiers in q, e.g. "is:issue is:open repo:owner/name assignee:login". users.getAuthenticated gives your own login.
+Search issues and pull requests with structured fields (keywords, type, state, author, assignee, label, repo, org, created, updated, ...) or a raw q of GitHub qualifiers; no qualifier syntax needed. users.getAuthenticated gives your own login.
 
 **Risk:** `read`
 
@@ -3983,7 +3983,25 @@ await corsair.github.api.search.issues({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `q` | `string` | Yes | Keywords then qualifiers: is:issue or is:pr (GitHub App user tokens get a 422 without one), repo:owner/name, author:, assignee:, label:, state:, updated:&gt;=2025-01-31. Max 256 characters excluding operators and qualifiers, five AND/OR/NOT at most. |
+| `q` | `string` | No | Keywords then qualifiers: is:issue or is:pr (GitHub App user tokens get a 422 without one), repo:owner/name, author:, assignee:, label:, state:, updated:&gt;=2025-01-31. Max 256 characters excluding operators and qualifiers, five AND/OR/NOT at most. Optional: prefer the structured fields below; when both are given, an item must match both. |
+| `keywords` | `string[]` | No | Words that must all appear |
+| `exactPhrase` | `string` | No | Exact phrase that must appear |
+| `exclude` | `string[]` | No | Words that must not appear |
+| `in` | `(title \| body \| comments)[]` | No | Limit the keywords to these fields; all three are searched when omitted |
+| `type` | `issue \| pr` | No | issue: issues only; pr: pull requests only |
+| `state` | `open \| closed \| merged \| unmerged` | No | merged and unmerged apply to pull requests only |
+| `author` | `string` | No | Login of the author, or "@me" |
+| `assignee` | `string` | No | Login of an assignee, or "@me" |
+| `mentions` | `string` | No | Login mentioned in the item |
+| `involves` | `string` | No | Login that authored, was assigned, mentioned or commented |
+| `reviewRequested` | `string` | No | Login whose review is requested and not yet given (pull requests) |
+| `label` | `string[]` | No | Label names; the item must have all of them |
+| `excludeLabels` | `string[]` | No | Label names the item must not have |
+| `repo` | `string` | No | One repository, as "owner/name" |
+| `org` | `string` | No | All repositories of this organization |
+| `created` | `string` | No | When it was created: YYYY-MM-DD, with a &gt;, &gt;=, &lt; or &lt;= prefix, or a range such as 2025-01-01..2025-01-31 |
+| `updated` | `string` | No | When it was last updated: YYYY-MM-DD, with a &gt;, &gt;=, &lt; or &lt;= prefix, or a range such as 2025-01-01..2025-01-31 |
+| `closed` | `string` | No | When it was closed: YYYY-MM-DD, with a &gt;, &gt;=, &lt; or &lt;= prefix, or a range such as 2025-01-01..2025-01-31 |
 | `sort` | `comments \| reactions \| reactions-+1 \| reactions--1 \| reactions-smile \| reactions-thinking_face \| reactions-heart \| reactions-tada \| interactions \| created \| updated` | No | — |
 | `order` | `asc \| desc` | No | — |
 | `perPage` | `number` | No | — |

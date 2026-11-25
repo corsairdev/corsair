@@ -900,7 +900,7 @@ await corsair.gmail.api.messages.getAttachment({});
 
 `messages.list`
 
-Returns only id and threadId per message, no subject or body. Use messages.get to read one
+Search messages with structured fields (keywords, from, to, subject, after, before, hasAttachment, label, in, isUnread, ...) or a raw q; no Gmail syntax needed. Returns only id and threadId per message, no subject or body. Use messages.get to read one
 
 **Risk:** `read`
 
@@ -913,7 +913,25 @@ await corsair.gmail.api.messages.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `userId` | `string` | No | — |
-| `q` | `string` | No | Same syntax as the Gmail search box, e.g. "from:alice newer_than:7d" or "after:2025/01/31 has:attachment". |
+| `q` | `string` | No | Same syntax as the Gmail search box, e.g. "from:alice newer_than:7d" or "after:2025/01/31 has:attachment". Optional: prefer the structured fields below; when both are given, a message must match both. |
+| `keywords` | `string[]` | No | Words that must all appear in the message (AND logic) |
+| `exactPhrase` | `string` | No | Exact phrase that must appear in the message |
+| `anyOf` | `string[]` | No | At least one of these words must appear (OR logic, minimum 2 items) |
+| `exclude` | `string[]` | No | Words that must not appear in the message |
+| `subject` | `string` | No | Words that must appear in the subject line |
+| `from` | `string[]` | No | Sender: email address or name; several match any of them |
+| `to` | `string[]` | No | Recipient in the To field: email address or name; several match any of them |
+| `cc` | `string[]` | No | Recipient in the Cc field: email address or name; several match any of them |
+| `after` | `string` | No | Only messages sent on or after this date (YYYY-MM-DD) |
+| `before` | `string` | No | Only messages sent before this date (YYYY-MM-DD) |
+| `hasAttachment` | `boolean` | No | true: only messages with an attachment |
+| `filename` | `string` | No | Attachment file name or type, e.g. "report.pdf" or "pdf" |
+| `label` | `string` | No | Label name (not id), e.g. "work". Spaces in a name are written as hyphens. |
+| `in` | `inbox \| sent \| drafts \| trash \| spam \| snoozed \| anywhere` | No | Mailbox location; "anywhere" also searches spam and trash |
+| `isUnread` | `boolean` | No | true: only unread messages; false: only read messages |
+| `isStarred` | `boolean` | No | true: only starred messages; false: only unstarred ones |
+| `larger` | `number \| string` | No | Bytes, or a number with a K, M or G suffix such as "5M" |
+| `smaller` | `number \| string` | No | Bytes, or a number with a K, M or G suffix such as "5M" |
 | `maxResults` | `number` | No | Defaults to 100, at most 500. Follow nextPageToken for more. |
 | `pageToken` | `string` | No | — |
 | `labelIds` | `string[]` | No | Label ids such as INBOX, UNREAD or Label_123, not label names; all of them must match. labels.list returns the ids. |

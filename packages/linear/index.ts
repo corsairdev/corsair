@@ -313,7 +313,7 @@ const linearEndpointMeta = {
 	'issues.list': {
 		riskLevel: 'read',
 		description:
-			'Lists issues, newest created first, across the workspace or one team; filter by assignee, state, labels or project.',
+			'Lists issues, newest created first, across the workspace or one team. Search with structured fields (keywords, assignee, creator, stateName, stateType, teamKey, label, priority, createdAfter, updatedAfter, ...) or a raw filter; no GraphQL needed.',
 	},
 	'issues.get': {
 		riskLevel: 'read',

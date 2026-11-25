@@ -19,7 +19,7 @@ pnpm add @corsair-dev/linear
 | `issues.create` | `linear.api.issues.create` | `write` | Create a new issue |
 | `issues.delete` | `linear.api.issues.delete` | `destructive` | Permanently delete an issue [DESTRUCTIVE · IRREVERSIBLE] |
 | `issues.get` | `linear.api.issues.get` | `read` | Reads one issue; id is the UUID or an identifier such as "ENG-123". |
-| `issues.list` | `linear.api.issues.list` | `read` | Lists issues, newest created first, across the workspace or one team; filter by assignee, state, labels or project. |
+| `issues.list` | `linear.api.issues.list` | `read` | Lists issues, newest created first, across the workspace or one team. Search with structured fields (keywords, assignee, creator, stateName, stateType, teamKey, label, priority, createdAfter, updatedAfter, ...) or a raw filter; no GraphQL needed. |
 | `issues.update` | `linear.api.issues.update` | `write` | Update an existing issue |
 | `projects.create` | `linear.api.projects.create` | `write` | Create a new project |
 | `projects.delete` | `linear.api.projects.delete` | `destructive` | Permanently delete a project [DESTRUCTIVE · IRREVERSIBLE] |
