@@ -87,6 +87,8 @@ curl -X POST \
 
 Every field is optional. `harness` names the client the agent runs in, such as `claude-code`, `codex` or `cursor`. Without `human_email`, nobody gets an email. Give your person `claim_url` instead, or send the email later with `/resend`.
 
+Your person reads `agent_name` in the email subject: "Research Assistant set up Corsair for you". Use your agent's own name or its client's. Without one, or with "Lug" or "Corsair", Corsair uses the client named in `harness` (`codex` becomes "Codex").
+
 The response is `201`:
 
 ```json
@@ -105,29 +107,59 @@ The response is `201`:
     "expires_at": "2026-11-29T12:00:00.000Z"
   },
   "setup": {
-    "header": "Authorization: Bearer mcpk_...",
-    "claude_code": "claude mcp add ...",
+    "note": "Replace <api_key> with your api_key.",
+    "header": "Authorization: Bearer <api_key>",
+    "claude_code": "claude mcp add --scope user --transport http corsair ...",
+    "codex": "[mcp_servers.corsair]\nurl = ...",
+    "opencode": "opencode mcp add corsair --global ...",
     "mcp_json": { "mcpServers": { "corsair": "..." } }
   },
-  "message": "Corsair account made. Store api_key now: ..."
+  "message": "Corsair account made. Finish in three steps. 1. Store api_key: ..."
 }
 ```
 
 If `human_email` already has a Corsair account, the response is `202` with `"status": "approval_pending"`, and `mcp_url`, `handle` and `setup` are `null`. No account is made. Store `api_key` anyway: it starts working once your person approves you, on a link on their account. Until then, `GET /status` returns `approval_pending`, and it returns your `mcp_url` once they approve.
 
-Store `api_key` right away. Corsair shows it once and keeps only a hash. `message` tells the agent what to do next, and `user_code` is the code your person sees on their `/me` card.
+Store `api_key` right away, in a file only the agent can read, such as `~/.config/corsair/key` with mode 600: not in `/tmp` or the project directory. Corsair shows it once and keeps only a hash. `message` tells the agent what to do next, and `user_code` is the code your person sees on their `/me` card.
 
 ### Connect to the MCP server
 
-Send the key as a Bearer header to `mcp_url`. `setup` in the response has the Claude Code command and an `mcpServers` block with your address and key filled in.
+Send the key as a Bearer header to `mcp_url`. `setup` in the response has the command or config for Claude Code, Codex, OpenCode and `mcpServers` clients, with your address filled in and `<api_key>` where the key goes. The key itself is only in `api_key`, so an agent that prints the response doesn't copy it into its log again.
+
+An agent that signs itself up isn't done until the client it runs in lists Corsair. Coding agents tend to make the account, check the key and stop there, offering to connect if the person wants. auth.md makes connecting the last of three numbered steps so they finish it.
 
 <Tabs>
   <Tab title="Claude Code">
     ```bash
-    claude mcp add --transport http corsair \
+    claude mcp add --scope user --transport http corsair \
       https://agent-k3x9q2ab.lug.dev/agent \
-      --header "Authorization: Bearer mcpk_..."
+      --header "Authorization: Bearer <api_key>"
+    claude mcp list
     ```
+
+    `claude mcp list` should say Connected.
+  </Tab>
+  <Tab title="Codex">
+    `codex mcp add` reads a bearer token only from an environment variable, so add the server to `~/.codex/config.toml` instead:
+
+    ```toml
+    [mcp_servers.corsair]
+    url = "https://agent-k3x9q2ab.lug.dev/agent"
+    http_headers = { Authorization = "Bearer <api_key>" }
+    ```
+
+    `codex mcp list` then shows `corsair`. Codex loads its tools in the next session.
+  </Tab>
+  <Tab title="OpenCode">
+    ```bash
+    opencode mcp add corsair --global \
+      --url https://agent-k3x9q2ab.lug.dev/agent \
+      --header "Authorization=Bearer <api_key>"
+    opencode reload
+    opencode mcp list
+    ```
+
+    OpenCode takes the header as `name=value`. `--global` keeps the key out of the project's `opencode.json`. It can take a few seconds for `opencode mcp list` to say connected.
   </Tab>
   <Tab title="Cursor">
     Add this to `~/.cursor/mcp.json`, or `.cursor/mcp.json` in a project. Cursor fills in `${env:CORSAIR_API_KEY}` from the environment, so the key stays out of a file you might commit. Set `CORSAIR_API_KEY` to your key in your shell profile, then restart Cursor.
@@ -181,7 +213,7 @@ Send the key as a Bearer header to `mcp_url`. `setup` in the response has the Cl
 </Tabs>
 
 <Note>
-The address can change once. If your person already has a handle and claims an account the agent made first, its link moves to their handle and the old address stops working. The key stays the same. Read the new `mcp_url` from `GET /status` and point your client at it: in Claude Code, run `claude mcp remove corsair` and add it again with the new address; in Cursor or VS Code, change `url` in `mcp.json`.
+The address can change once. If your person already has a handle and claims an account the agent made first, its link moves to their handle and the old address stops working. The key stays the same. Read the new `mcp_url` from `GET /status` and point your client at it: in Claude Code, run `claude mcp remove corsair` and add it again with the new address; in Codex, change `url` in `~/.codex/config.toml`; in OpenCode, change `url` in `~/.config/opencode/opencode.json`; in Cursor or VS Code, change `url` in `mcp.json`.
 </Note>
 
 The agent gets the same tools as any [Corsair MCP](/cloud/mcp#what-the-agent-can-do) client. `list_integrations` shows the built-in apps from the first call.
