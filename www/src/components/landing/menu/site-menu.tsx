@@ -3,14 +3,15 @@
 import type { Icon } from '@phosphor-icons/react';
 import {
 	ArrowUpRight,
+	Article,
 	BookOpen,
 	CaretDown,
 	Code,
 	DiscordLogo,
 	GithubLogo,
 	PlugsConnected,
+	Robot,
 	Scales,
-	Sparkle,
 	SquaresFour,
 } from '@phosphor-icons/react';
 import Image from 'next/image';
@@ -54,11 +55,12 @@ type ExploreLink = {
 	external?: boolean;
 };
 
+/** Pages the bar itself doesn't link (Skills, Pricing and Docs are already there), so nothing shows twice. */
 const EXPLORE_LINKS: readonly ExploreLink[] = [
 	{ href: '/integrations', label: 'Integrations', icon: SquaresFour },
-	{ href: '/skills', label: 'Skills', icon: Sparkle },
+	{ href: '/connect', label: 'Connect an agent', icon: Robot },
 	{ href: '/compare', label: 'Compare', icon: Scales },
-	{ href: DOCS_URL, label: 'Docs', icon: BookOpen, external: true },
+	{ href: '/blog', label: 'Blog', icon: Article },
 ];
 
 /** Beside Products on the desktop bar; Docs (external) follows them. */
@@ -425,10 +427,7 @@ export function SiteMenu() {
 						))}
 					</div>
 					<div className="mt-4 grid grid-cols-2 gap-2">
-						{[
-							...NAV_LINKS,
-							{ href: '/integrations', label: 'Integrations' },
-						].map((link) => (
+						{[...NAV_LINKS, ...EXPLORE_LINKS].map((link) => (
 							<Link
 								key={link.href}
 								href={link.href}
