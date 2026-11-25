@@ -884,7 +884,7 @@ export const twitterGeneratedEndpointMeta = {
 	'bots.create': {
 		riskLevel: 'destructive',
 		description:
-			"Creates a bot account in the calling app's project and returns its bearer token. Idempotent on handle: repeating the request for a handle that already names one of the project's bots returns that bot with a freshly minted token, revoking the previous one — safe to retry when a response was lost, since the replaced token was never seen. Repeating it for a handle the project already has revokes that bot's current token.",
+			"Creates a bot account in the calling app's project and returns its bearer token. Repeating the request for a handle the project already has returns that bot with a new token and revokes the previous one, so a retry can revoke a token another caller just received. Coordinate retries for the same handle.",
 	},
 	'bots.delete': {
 		riskLevel: 'destructive',
