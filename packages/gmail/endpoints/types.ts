@@ -267,7 +267,7 @@ const MessagesGetAttachmentInputSchema = z.object({
 		.string()
 		.optional()
 		.describe(
-			'partId of a part from messages.get with format full, e.g. "1.2". Give partId or attachmentId',
+			'partId of an attachment part, e.g. "1.2"; shown in messages.get with format full, or in a database search of messages fetched with format full. Give partId or attachmentId',
 		),
 	attachmentId: z
 		.string()
