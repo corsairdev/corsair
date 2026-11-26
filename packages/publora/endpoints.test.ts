@@ -335,10 +335,13 @@ const OPERATIONS: [string, (ctx: Ctx) => Promise<unknown>, string, string][] = [
 ];
 
 describe('routing', () => {
-	it('covers every declared operation', () => {
-		expect(OPERATIONS.map(([path]) => path).sort()).toEqual(
-			Object.keys(publoraEndpointSchemas).sort(),
+	// The operations added later are covered in endpoints-extra.test.ts,
+	// which also checks that every declared operation is covered somewhere.
+	it('covers every operation of the first version', () => {
+		expect(Object.keys(publoraEndpointSchemas)).toEqual(
+			expect.arrayContaining(OPERATIONS.map(([path]) => path)),
 		);
+		expect(OPERATIONS).toHaveLength(14);
 	});
 
 	for (const [path, invoke, method, expectedPath] of OPERATIONS) {
