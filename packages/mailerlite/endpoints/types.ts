@@ -17,9 +17,7 @@ const SUBSCRIBER_STATUSES = [
 const subscriberStatus = z.enum(SUBSCRIBER_STATUSES);
 
 /** Comma-separated repetition of a string enum, as the docs describe. */
-function commaList<const T extends readonly [string, ...string[]]>(
-	values: T,
-) {
+function commaList<const T extends readonly [string, ...string[]]>(values: T) {
 	const member = values.join('|');
 	return z
 		.string()
@@ -32,7 +30,10 @@ function commaList<const T extends readonly [string, ...string[]]>(
 /** `yyyy-MM-dd HH:mm:ss`, the format every MailerLite timestamp uses. */
 const timestamp = z
 	.string()
-	.regex(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/, 'Must be yyyy-MM-dd HH:mm:ss');
+	.regex(
+		/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/,
+		'Must be yyyy-MM-dd HH:mm:ss',
+	);
 
 /** `Y-m-d`, the format every MailerLite date filter uses. */
 const date = z
@@ -154,7 +155,9 @@ const SubscribersListInputSchema = z.object({
 		.string()
 		.optional()
 		.describe('Cursor for the page to return, read from meta.next_cursor'),
-	sort: sortField('id|created_at|subscribed_at|unsubscribed_at|email|signup_date')
+	sort: sortField(
+		'id|created_at|subscribed_at|unsubscribed_at|email|signup_date',
+	)
 		.optional()
 		.describe('Sort field, prefix with - for descending order'),
 	include: z
@@ -214,16 +217,22 @@ const UpsertBodySchema = {
 		),
 	subscribed_at: timestamp
 		.optional()
-		.describe('Subscribe time, yyyy-MM-dd HH:mm:ss, at most one hour in the future'),
+		.describe(
+			'Subscribe time, yyyy-MM-dd HH:mm:ss, at most one hour in the future',
+		),
 	ip_address: z
 		.string()
 		.optional()
-		.describe('Signup IP address. A value that is not a valid IP address is ignored'),
+		.describe(
+			'Signup IP address. A value that is not a valid IP address is ignored',
+		),
 	opted_in_at: timestamp.optional().describe('Opt-in confirmation time'),
 	optin_ip: z
 		.string()
 		.optional()
-		.describe('Confirmation IP address. A value that is not a valid IP address is ignored'),
+		.describe(
+			'Confirmation IP address. A value that is not a valid IP address is ignored',
+		),
 	unsubscribed_at: timestamp
 		.optional()
 		.describe('Unsubscribe time; only used together with status unsubscribed'),
@@ -236,16 +245,22 @@ const UpsertBodySchema = {
 	double_optin: z
 		.boolean()
 		.optional()
-		.describe('Whether a new subscriber starts as unconfirmed. Ignored by most API tokens'),
+		.describe(
+			'Whether a new subscriber starts as unconfirmed. Ignored by most API tokens',
+		),
 	notes: z
 		.array(z.string().max(10000))
 		.optional()
-		.describe('Free-text notes, each up to 10000 characters. Ignored for existing subscribers'),
+		.describe(
+			'Free-text notes, each up to 10000 characters. Ignored for existing subscribers',
+		),
 } as const;
 
 const SubscribersUpsertInputSchema = z.object({ ...UpsertBodySchema });
 
-export type SubscribersUpsertInput = z.input<typeof SubscribersUpsertInputSchema>;
+export type SubscribersUpsertInput = z.input<
+	typeof SubscribersUpsertInputSchema
+>;
 
 const SubscribersUpsertResponseSchema = SubscriberResponseSchema;
 
@@ -266,7 +281,9 @@ const SubscribersUpdateInputSchema = z.object({
 		),
 	fields: fieldValues
 		.optional()
-		.describe('Custom field values keyed by field key. Pass null to clear a field'),
+		.describe(
+			'Custom field values keyed by field key. Pass null to clear a field',
+		),
 	groups: z
 		.array(z.string())
 		.optional()
@@ -285,7 +302,9 @@ const SubscribersUpdateInputSchema = z.object({
 	unsubscribed_at: timestamp.optional().describe('Unsubscribe time'),
 });
 
-export type SubscribersUpdateInput = z.input<typeof SubscribersUpdateInputSchema>;
+export type SubscribersUpdateInput = z.input<
+	typeof SubscribersUpdateInputSchema
+>;
 
 const SubscribersUpdateResponseSchema = SubscriberResponseSchema;
 
@@ -299,7 +318,9 @@ const SubscribersDeleteInputSchema = z.object({
 	subscriberId: SubscriberIdSchema.describe('Subscriber id'),
 });
 
-export type SubscribersDeleteInput = z.input<typeof SubscribersDeleteInputSchema>;
+export type SubscribersDeleteInput = z.input<
+	typeof SubscribersDeleteInputSchema
+>;
 
 /** A delete answers 204 with no body; the endpoint derives the result. */
 const DeleteResponseSchema = z.object({
@@ -352,7 +373,9 @@ const GroupsListInputSchema = z.object({
 		.describe('Only groups whose name contains this value'),
 	sort: sortField('id|name|active_count|open_rate|click_rate|created_at')
 		.optional()
-		.describe('Sort field, prefix with - for descending order. Defaults to name'),
+		.describe(
+			'Sort field, prefix with - for descending order. Defaults to name',
+		),
 	limit: z
 		.number()
 		.int()
@@ -381,11 +404,7 @@ export type GroupsListResponse = z.infer<typeof GroupsListResponseSchema>;
 // groups.create
 
 const GroupsCreateInputSchema = z.object({
-	name: z
-		.string()
-		.min(1)
-		.max(255)
-		.describe('Group name, up to 255 characters'),
+	name: z.string().min(1).max(255).describe('Group name, up to 255 characters'),
 });
 
 export type GroupsCreateInput = z.input<typeof GroupsCreateInputSchema>;
@@ -423,7 +442,9 @@ const FieldsListInputSchema = z.object({
 		.describe('Only fields of these types, comma separated'),
 	sort: sortField('name|type')
 		.optional()
-		.describe('Sort field, prefix with - for descending order. Defaults to name'),
+		.describe(
+			'Sort field, prefix with - for descending order. Defaults to name',
+		),
 	limit: z
 		.number()
 		.int()
@@ -546,12 +567,16 @@ const CampaignEmailInputSchema = z.object({
 		.string()
 		.max(255)
 		.optional()
-		.describe('Subject line, up to 255 characters. Required unless this is a multivariate campaign'),
+		.describe(
+			'Subject line, up to 255 characters. Required unless this is a multivariate campaign',
+		),
 	from_name: z
 		.string()
 		.max(255)
 		.optional()
-		.describe('Sender name, up to 255 characters. Required unless this is a multivariate campaign'),
+		.describe(
+			'Sender name, up to 255 characters. Required unless this is a multivariate campaign',
+		),
 	from: z
 		.string()
 		.email()
@@ -563,7 +588,9 @@ const CampaignEmailInputSchema = z.object({
 		.string()
 		.email()
 		.optional()
-		.describe('Reply-to address. Must already be verified on the MailerLite account'),
+		.describe(
+			'Reply-to address. Must already be verified on the MailerLite account',
+		),
 	content: z
 		.string()
 		.optional()
@@ -580,7 +607,9 @@ const CampaignEmailInputSchema = z.object({
 		.number()
 		.int()
 		.optional()
-		.describe('Simple-editor template to start from; allowed only when editor is simple'),
+		.describe(
+			'Simple-editor template to start from; allowed only when editor is simple',
+		),
 });
 
 const AbSettingsSchema = z
@@ -592,15 +621,24 @@ const AbSettingsSchema = z
 			.enum(['o', 'c'])
 			.optional()
 			.describe('Metric for picking the winner: o for opens, c for clicks'),
-		after_time_amount: z.number().int().optional().describe('Wait before picking the winner'),
-		after_time_unit: z.enum(['h', 'd']).optional().describe('Unit for the wait: h or d'),
+		after_time_amount: z
+			.number()
+			.int()
+			.optional()
+			.describe('Wait before picking the winner'),
+		after_time_unit: z
+			.enum(['h', 'd'])
+			.optional()
+			.describe('Unit for the wait: h or d'),
 		test_split: z
 			.number()
 			.int()
 			.min(5)
 			.max(100)
 			.optional()
-			.describe('Percentage of recipients who receive the test, 5-25 for subject and sender, 100 for sending_time'),
+			.describe(
+				'Percentage of recipients who receive the test, 5-25 for subject and sender, 100 for sending_time',
+			),
 		b_value: z
 			.object({
 				subject: z.string().max(255).optional(),
@@ -618,7 +656,9 @@ const ResendSettingsSchema = z
 		test_type: z.literal('subject').describe('What the resend varies'),
 		select_winner_by: z
 			.enum(['o', 'c'])
-			.describe('Who receives the second email: o for non-openers, c for non-clickers'),
+			.describe(
+				'Who receives the second email: o for non-openers, c for non-clickers',
+			),
 		b_value: z
 			.object({ subject: z.string().max(255) })
 			.describe('The content of the resent email'),
@@ -673,7 +713,9 @@ const MultivariateSettingsSchema = z
 			.min(1)
 			.max(100)
 			.optional()
-			.describe('100 when there are fewer than 1000 recipients per variant, otherwise at most 50'),
+			.describe(
+				'100 when there are fewer than 1000 recipients per variant, otherwise at most 50',
+			),
 	})
 	.loose();
 
@@ -682,7 +724,9 @@ const SettingsSchema = z
 		ecommerce_tracking: z
 			.boolean()
 			.optional()
-			.describe('Enable e-commerce link tracking when the content contains shop URLs'),
+			.describe(
+				'Enable e-commerce link tracking when the content contains shop URLs',
+			),
 	})
 	.loose();
 
@@ -725,8 +769,7 @@ const CampaignsCreateInputSchema = z
 		if (!multivariate && input.emails.length !== 1) {
 			ctx.addIssue({
 				code: 'custom',
-				message:
-					'A non-multivariate campaign takes exactly one email object',
+				message: 'A non-multivariate campaign takes exactly one email object',
 				path: ['emails'],
 			});
 		}
@@ -781,14 +824,18 @@ const ScheduleSchema = z
 	.object({
 		date: date
 			.optional()
-			.describe('Send date, Y-m-d, in the future. For timezone_based, after today'),
+			.describe(
+				'Send date, Y-m-d, in the future. For timezone_based, after today',
+			),
 		hours: hour.optional().describe('Send hour, HH'),
 		minutes: minute.optional().describe('Send minute, ii'),
 		timezone_id: z
 			.number()
 			.int()
 			.optional()
-			.describe('Timezone for the send time, by timezone id. Defaults to the account timezone'),
+			.describe(
+				'Timezone for the send time, by timezone id. Defaults to the account timezone',
+			),
 	})
 	.loose();
 
@@ -827,8 +874,9 @@ const CampaignsScheduleInputSchema = z
 		schedule: ScheduleSchema.optional().describe(
 			'Send time, used by the scheduled, timezone_based and smart_sending deliveries',
 		),
-		resend: ResendScheduleSchema.optional()
-			.describe('Second-send time, for auto-resend campaigns only'),
+		resend: ResendScheduleSchema.optional().describe(
+			'Second-send time, for auto-resend campaigns only',
+		),
 		sending_time_test_schedule: z
 			.array(SendingTimeEntrySchema)
 			.optional()
@@ -861,7 +909,9 @@ const CampaignsScheduleInputSchema = z
 		}
 	});
 
-export type CampaignsScheduleInput = z.input<typeof CampaignsScheduleInputSchema>;
+export type CampaignsScheduleInput = z.input<
+	typeof CampaignsScheduleInputSchema
+>;
 
 const CampaignsScheduleResponseSchema = CampaignResponseSchema;
 
@@ -922,10 +972,7 @@ const ActivityAggregationsSchema = z
 	.loose();
 
 const CampaignsActivityInputSchema = z.object({
-	campaignId: z
-		.string()
-		.min(1)
-		.describe('Id of a sent campaign'),
+	campaignId: z.string().min(1).describe('Id of a sent campaign'),
 	filterType: z
 		.enum([
 			'opened',
@@ -946,12 +993,7 @@ const CampaignsActivityInputSchema = z.object({
 		.optional()
 		.describe('Only the activity of the subscriber with this email address'),
 	limit: z
-		.union([
-			z.literal(10),
-			z.literal(25),
-			z.literal(50),
-			z.literal(100),
-		])
+		.union([z.literal(10), z.literal(25), z.literal(50), z.literal(100)])
 		.optional()
 		.describe('Recipients per page: 10, 25, 50 or 100'),
 	sort: sortField('id|clicks_count|opens_count')
@@ -969,7 +1011,9 @@ const CampaignsActivityInputSchema = z.object({
 		.describe('Relations to embed in the response'),
 });
 
-export type CampaignsActivityInput = z.input<typeof CampaignsActivityInputSchema>;
+export type CampaignsActivityInput = z.input<
+	typeof CampaignsActivityInputSchema
+>;
 
 const CampaignsActivityResponseSchema = z.object({
 	data: z.array(SubscriberActivitySchema),

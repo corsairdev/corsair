@@ -6,7 +6,6 @@ jest.mock('corsair/core', () => {
 import {
 	campaign,
 	campaignsListResponse,
-	field,
 	fieldsListResponse,
 	group,
 	groupsListResponse,
@@ -294,7 +293,12 @@ describe('campaigns requests', () => {
 
 		expect(sentBody()).toEqual({
 			delivery: 'scheduled',
-			schedule: { date: '2026-12-01', hours: '09', minutes: '30', timezone_id: 4 },
+			schedule: {
+				date: '2026-12-01',
+				hours: '09',
+				minutes: '30',
+				timezone_id: 4,
+			},
 		});
 	});
 

@@ -58,7 +58,9 @@ describe('non-retryable statuses', () => {
 	it('treats 401 as an auth failure', async () => {
 		const error = apiError(401, { message: 'Unauthenticated.' });
 		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
-		await expect(decide(errorHandlers, error)).resolves.toEqual({ maxRetries: 0 });
+		await expect(decide(errorHandlers, error)).resolves.toEqual({
+			maxRetries: 0,
+		});
 	});
 
 	it('treats 403 as a permission failure', () => {
@@ -66,7 +68,11 @@ describe('non-retryable statuses', () => {
 	});
 
 	it('treats 404 and 422 as validation failures', () => {
-		expect(errorHandlers.VALIDATION_ERROR.match(apiError(404, { message: 'Resource does not exist.' }))).toBe(true);
+		expect(
+			errorHandlers.VALIDATION_ERROR.match(
+				apiError(404, { message: 'Resource does not exist.' }),
+			),
+		).toBe(true);
 		expect(
 			errorHandlers.VALIDATION_ERROR.match(
 				apiError(422, { message: 'The given data was invalid.' }),
@@ -82,7 +88,9 @@ describe('replay safety', () => {
 		});
 
 		expect(errorHandlers.SERVER_ERROR.match(error)).toBe(false);
-		await expect(decide(errorHandlers, error)).resolves.toEqual({ maxRetries: 0 });
+		await expect(decide(errorHandlers, error)).resolves.toEqual({
+			maxRetries: 0,
+		});
 	});
 
 	it('replays a 5xx on the email upsert, which upserts by design', async () => {
@@ -92,7 +100,10 @@ describe('replay safety', () => {
 
 		expect(errorHandlers.SERVER_ERROR.match(error)).toBe(true);
 		const result = await errorHandlers.SERVER_ERROR.handler();
-		expect(result).toEqual({ maxRetries: 2, retryStrategy: 'exponential_backoff' });
+		expect(result).toEqual({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff',
+		});
 	});
 
 	it('replays a transport failure on a read', async () => {
@@ -104,7 +115,10 @@ describe('replay safety', () => {
 
 		expect(errorHandlers.TRANSPORT_ERROR.match(error)).toBe(true);
 		const result = await errorHandlers.TRANSPORT_ERROR.handler(error);
-		expect(result).toEqual({ maxRetries: 2, retryStrategy: 'exponential_backoff' });
+		expect(result).toEqual({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff',
+		});
 	});
 
 	it('never replays a transport failure on a schedule send', async () => {
@@ -114,7 +128,9 @@ describe('replay safety', () => {
 			transport: true,
 		});
 
-		await expect(decide(errorHandlers, error)).resolves.toEqual({ maxRetries: 0 });
+		await expect(decide(errorHandlers, error)).resolves.toEqual({
+			maxRetries: 0,
+		});
 	});
 });
 

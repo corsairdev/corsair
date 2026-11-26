@@ -1,4 +1,4 @@
-import type { MailerLiteContext, MailerLiteEndpoints } from '..';
+import type { MailerLiteEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {
@@ -98,10 +98,7 @@ export const upsert: MailerLiteEndpoints['subscribersUpsert'] = (ctx, input) =>
 		{ log: (_, result) => ({ subscriberId: result.data.id }) },
 	);
 
-export const update: MailerLiteEndpoints['subscribersUpdate'] = (
-	ctx,
-	input,
-) =>
+export const update: MailerLiteEndpoints['subscribersUpdate'] = (ctx, input) =>
 	call(
 		ctx,
 		{
@@ -140,10 +137,7 @@ export const update: MailerLiteEndpoints['subscribersUpdate'] = (
 		{ log: (_, result) => ({ subscriberId: result.data.id }) },
 	);
 
-export const remove: MailerLiteEndpoints['subscribersDelete'] = (
-	ctx,
-	input,
-) =>
+export const remove: MailerLiteEndpoints['subscribersDelete'] = (ctx, input) =>
 	call(
 		ctx,
 		{

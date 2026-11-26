@@ -3,6 +3,7 @@ jest.mock('corsair/core', () => {
 	return { ...actual, logEventFromContext: jest.fn().mockResolvedValue('evt') };
 });
 
+import { MailerLiteEndpointInputSchemas as Inputs } from './endpoints/types';
 import {
 	campaign,
 	campaignsListResponse,
@@ -22,7 +23,6 @@ import {
 	noContent,
 	restoreFetchMock,
 } from './test-helpers';
-import { MailerLiteEndpointInputSchemas as Inputs } from './endpoints/types';
 
 beforeEach(installFetchMock);
 afterEach(restoreFetchMock);
@@ -180,9 +180,7 @@ describe('rejection shapes', () => {
 	});
 
 	it('rejects a malformed known field', async () => {
-		mockFetch(
-			jsonResponse({ data: { ...subscriber, email: 12345, id: '1' } }),
-		);
+		mockFetch(jsonResponse({ data: { ...subscriber, email: 12345, id: '1' } }));
 
 		await expect(
 			endpoints.subscribers.get(makeCtx(), { subscriberId: '1' }),
@@ -198,16 +196,24 @@ describe('rejection shapes', () => {
 
 describe('input constraint rejections', () => {
 	it('rejects an invalid email on upsert', () => {
-		expect(Inputs.subscribersUpsert.safeParse({ email: 'not-an-email' }).success).toBe(false);
+		expect(
+			Inputs.subscribersUpsert.safeParse({ email: 'not-an-email' }).success,
+		).toBe(false);
 	});
 
 	it('rejects a group name over 255 characters', () => {
-		expect(Inputs.groupsCreate.safeParse({ name: 'x'.repeat(256) }).success).toBe(false);
-		expect(Inputs.groupsCreate.safeParse({ name: 'x'.repeat(255) }).success).toBe(true);
+		expect(
+			Inputs.groupsCreate.safeParse({ name: 'x'.repeat(256) }).success,
+		).toBe(false);
+		expect(
+			Inputs.groupsCreate.safeParse({ name: 'x'.repeat(255) }).success,
+		).toBe(true);
 	});
 
 	it('rejects a subscriber limit over the 1000 cap', () => {
-		expect(Inputs.subscribersList.safeParse({ limit: 1001 }).success).toBe(false);
+		expect(Inputs.subscribersList.safeParse({ limit: 1001 }).success).toBe(
+			false,
+		);
 	});
 
 	it('rejects a note longer than 10000 characters', () => {
@@ -220,12 +226,16 @@ describe('input constraint rejections', () => {
 	});
 
 	it('rejects a field type filter outside the documented enum', () => {
-		expect(Inputs.fieldsList.safeParse({ filterType: 'banana' }).success).toBe(false);
+		expect(Inputs.fieldsList.safeParse({ filterType: 'banana' }).success).toBe(
+			false,
+		);
 	});
 
 	it('rejects a malformed sort field', () => {
 		expect(Inputs.groupsList.safeParse({ sort: 'banana' }).success).toBe(false);
-		expect(Inputs.groupsList.safeParse({ sort: '-active_count' }).success).toBe(true);
+		expect(Inputs.groupsList.safeParse({ sort: '-active_count' }).success).toBe(
+			true,
+		);
 	});
 
 	it('rejects more than one email on a regular campaign', () => {
@@ -273,15 +283,19 @@ describe('input constraint rejections', () => {
 			Inputs.campaignsCreate.safeParse({
 				name: 'c',
 				type: 'ab',
-				emails: [{ subject: 's', from_name: 'n', from: 'sender@mailerlite.io' }],
+				emails: [
+					{ subject: 's', from_name: 'n', from: 'sender@mailerlite.io' },
+				],
 			}).success,
 		).toBe(false);
 	});
 
 	it('rejects a scheduled delivery without a date', () => {
 		expect(
-			Inputs.campaignsSchedule.safeParse({ campaignId: '1', delivery: 'scheduled' })
-				.success,
+			Inputs.campaignsSchedule.safeParse({
+				campaignId: '1',
+				delivery: 'scheduled',
+			}).success,
 		).toBe(false);
 	});
 
@@ -307,8 +321,14 @@ describe('input constraint rejections', () => {
 	});
 
 	it('rejects an activity limit outside the 10/25/50/100 enum', () => {
-		expect(Inputs.campaignsActivity.safeParse({ campaignId: '1', limit: 30 }).success).toBe(false);
-		expect(Inputs.campaignsActivity.safeParse({ campaignId: '1', limit: 50 }).success).toBe(true);
+		expect(
+			Inputs.campaignsActivity.safeParse({ campaignId: '1', limit: 30 })
+				.success,
+		).toBe(false);
+		expect(
+			Inputs.campaignsActivity.safeParse({ campaignId: '1', limit: 50 })
+				.success,
+		).toBe(true);
 	});
 
 	it('rejects an activity type filter outside the documented enum', () => {

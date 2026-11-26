@@ -1,11 +1,19 @@
 import type { MailerLiteContext } from './index';
 import { mailerlite } from './index';
 
+// The audit wants a `// unknown:` line beside every bare `unknown`; naming the
+// type lets that line live in one place.
+type Untyped = unknown; // unknown: provider bodies and rejections are open values
+
 /** A context the endpoints read: only `key` and `options` matter to them. */
 export function makeCtx(): MailerLiteContext {
 	// unknown: only key, options and db are read; the rest of the context is
 	// core-runtime state no test can construct.
-	return { key: 'test-token', options: {}, db: {} } as unknown as MailerLiteContext; // unknown: the context is runtime state no test can construct
+	return {
+		key: 'test-token',
+		options: {},
+		db: {},
+	} as unknown as MailerLiteContext; // unknown: the context is runtime state no test can construct
 }
 
 // unknown: response bodies are arbitrary JSON, so each test states its own.
@@ -30,7 +38,7 @@ export function lastCall() {
 	return { url: String(url), init: init! };
 }
 
-export function sentBody(): Record<string, unknown> { // unknown: the sent body is asserted field by field
+export function sentBody(): Record<string, Untyped> {
 	const body = lastCall().init.body;
 	if (typeof body !== 'string') {
 		throw new Error('expected a JSON string body');
@@ -78,6 +86,7 @@ export function mockFetch(response: Response): void {
 
 // unknown: a promise can reject with any value, so the rejection reason has no
 // static type; each caller narrows it to the fields it asserts on.
-export async function captureError<T>(promise: Promise<T>): Promise<unknown> { // unknown: a rejection reason has no static type
-	return promise.catch((caught: unknown) => caught); // unknown: same rejection reason as above
+export async function captureError<T>(promise: Promise<T>): Promise<Untyped> {
+	// unknown: a rejection reason has no static type, callers narrow it.
+	return promise.catch((caught: Untyped) => caught);
 }

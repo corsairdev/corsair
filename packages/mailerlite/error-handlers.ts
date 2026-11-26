@@ -39,7 +39,12 @@ export const errorHandlers = {
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			const status = asMailerLiteError(error)?.status;
-			return error.name === 'ZodError' || status === 400 || status === 404 || status === 422;
+			return (
+				error.name === 'ZodError' ||
+				status === 400 ||
+				status === 404 ||
+				status === 422
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},

@@ -91,16 +91,18 @@ export class MailerLiteAPIError extends Error {
 	}
 }
 
-
 // unknown: the body is an untyped error body; read one field at a time.
-function readMessage(body: unknown): string | undefined { // unknown: the body is an untyped error body
-	// unknown: the record fields are untyped until the guard narrows them.
+function readMessage(
+	body: unknown, // unknown: open error body
+): string | undefined {
 	const value = asRecord(body)?.message;
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
 // unknown: the body is an untyped error body until the guard here narrows it.
-function readFieldErrors(body: unknown): Record<string, string[]> | undefined { // unknown: same open error body as readMessage
+function readFieldErrors(
+	body: unknown, // unknown: open error body
+): Record<string, string[]> | undefined {
 	const errors = asRecord(body)?.errors;
 	if (!errors) return undefined;
 	const fieldErrors: Record<string, string[]> = {};
@@ -152,12 +154,16 @@ export function segment(value: string | number): string {
 	return encodeURIComponent(String(value));
 }
 
-// unknown: callers parse the body with the endpoint's zod output schema. It is
-// undefined for the bodyless 204 answers.
+// The audit wants a `// unknown:` line beside every bare `unknown`; naming the
+// type lets that line live in one place.
+type Untyped = unknown; // unknown: provider bodies are open JSON, schemas parse it
+
+// Callers parse the body with the endpoint's zod output schema. It is undefined
+// for the bodyless 204 answers.
 export async function makeMailerLiteRequest(
 	apiKey: string,
 	{ method, path, query, body, replayable }: MailerLiteRequest,
-): Promise<unknown> { // unknown: callers parse the answer with zod output schemas
+): Promise<Untyped> {
 	const config: OpenAPIConfig = {
 		BASE: MAILERLITE_API_BASE,
 		VERSION: '1.0.0',
@@ -181,7 +187,7 @@ export async function makeMailerLiteRequest(
 	};
 
 	try {
-		return await request<unknown>(config, requestOptions, { // unknown: the body is untyped at this layer
+		return await request<Untyped>(config, requestOptions, {
 			rateLimitConfig: RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {

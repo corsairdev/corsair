@@ -2,14 +2,11 @@ import util from 'node:util';
 import {
 	describeMailerLiteError,
 	MAILERLITE_API_BASE,
-	makeMailerLiteRequest,
 	MailerLiteAPIError,
+	makeMailerLiteRequest,
 	RATE_LIMIT_FALLBACK_MS,
 } from './client';
-import {
-	tooManyAttemptsError,
-	validationError,
-} from './test-fixtures';
+import { tooManyAttemptsError, validationError } from './test-fixtures';
 import { captureError } from './test-helpers';
 
 const KEY = 'ml-secret-test-key-abc123';
@@ -20,17 +17,19 @@ function respond(
 	status = 200,
 	headers: Record<string, string> = {},
 ) {
-	return jest
-		.spyOn(globalThis, 'fetch')
-		.mockResolvedValueOnce(
-			new Response(JSON.stringify(body), {
-				status,
-				headers: { 'Content-Type': 'application/json', ...headers },
-			}),
-		);
+	return jest.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+		new Response(JSON.stringify(body), {
+			status,
+			headers: { 'Content-Type': 'application/json', ...headers },
+		}),
+	);
 }
 
-const readRequest = { method: 'GET' as const, path: '/subscribers', replayable: true };
+const readRequest = {
+	method: 'GET' as const,
+	path: '/subscribers',
+	replayable: true,
+};
 
 beforeEach(() => {
 	jest.spyOn(console, 'error').mockImplementation(() => undefined);
@@ -56,7 +55,11 @@ describe('MailerLite http client', () => {
 	});
 
 	it('passes the envelope through unchanged instead of unwrapping data', async () => {
-		respond({ data: { id: '1' }, links: { next: null }, meta: { per_page: 25 } });
+		respond({
+			data: { id: '1' },
+			links: { next: null },
+			meta: { per_page: 25 },
+		});
 
 		const body = await makeMailerLiteRequest(KEY, {
 			method: 'GET',
@@ -82,7 +85,9 @@ describe('MailerLite http client', () => {
 		});
 
 		const [url] = jest.mocked(globalThis.fetch).mock.calls[0]!;
-		expect(String(url)).toBe(`${MAILERLITE_API_BASE}/groups?limit=5&sort=-active_count`);
+		expect(String(url)).toBe(
+			`${MAILERLITE_API_BASE}/groups?limit=5&sort=-active_count`,
+		);
 	});
 
 	it('surfaces the provider message and field errors on the plugin error', async () => {
@@ -99,7 +104,9 @@ describe('MailerLite http client', () => {
 		expect(error).toBeInstanceOf(MailerLiteAPIError);
 		expect(error.status).toBe(422);
 		expect(error.message).toContain('The given data was invalid.');
-		expect(error.message).toContain('email: The email must be a valid email address.');
+		expect(error.message).toContain(
+			'email: The email must be a valid email address.',
+		);
 		expect(error.fieldErrors?.email).toEqual([
 			'The email must be a valid email address.',
 		]);
@@ -167,7 +174,11 @@ describe('MailerLite http client', () => {
 describe('describeMailerLiteError', () => {
 	it('prefers the body message and prefixes the status', () => {
 		expect(
-			describeMailerLiteError(404, { message: 'Resource does not exist.' }, 'fallback'),
+			describeMailerLiteError(
+				404,
+				{ message: 'Resource does not exist.' },
+				'fallback',
+			),
 		).toBe('MailerLite 404 Resource does not exist.');
 	});
 

@@ -210,7 +210,8 @@ const mailerLiteEndpointMeta = {
 	},
 	'groups.create': {
 		riskLevel: 'write',
-		description: 'Create an empty group for subscribers, named up to 255 characters',
+		description:
+			'Create an empty group for subscribers, named up to 255 characters',
 	},
 	'groups.delete': {
 		riskLevel: 'destructive',
@@ -220,8 +221,7 @@ const mailerLiteEndpointMeta = {
 	},
 	'fields.list': {
 		riskLevel: 'read',
-		description:
-			'List custom fields with their keys and types, page paginated',
+		description: 'List custom fields with their keys and types, page paginated',
 	},
 	'campaigns.list': {
 		riskLevel: 'read',
@@ -248,7 +248,9 @@ const mailerLiteEndpointMeta = {
 		description:
 			'List the recipients of a sent campaign with their open and click activity',
 	},
-} as const satisfies RequiredPluginEndpointMeta<typeof mailerLiteEndpointsNested>;
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof mailerLiteEndpointsNested
+>;
 
 export const mailerliteAuthConfig = {
 	api_key: {
@@ -268,13 +270,15 @@ export type BaseMailerLitePlugin<T extends MailerLitePluginOptions> =
 		typeof defaultAuthType
 	>;
 
-export type InternalMailerLitePlugin = BaseMailerLitePlugin<MailerLitePluginOptions>;
+export type InternalMailerLitePlugin =
+	BaseMailerLitePlugin<MailerLitePluginOptions>;
 
 export type ExternalMailerLitePlugin<T extends MailerLitePluginOptions> =
 	BaseMailerLitePlugin<T>;
 
 export function mailerlite<const T extends MailerLitePluginOptions>(
-	incomingOptions: MailerLitePluginOptions & T = {} as MailerLitePluginOptions & T,
+	incomingOptions: MailerLitePluginOptions & T = {} as MailerLitePluginOptions &
+		T,
 ): ExternalMailerLitePlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -311,14 +315,14 @@ export function mailerlite<const T extends MailerLitePluginOptions>(
 	} satisfies InternalMailerLitePlugin;
 }
 
+export { MailerLiteAPIError } from './client';
 export type {
+	MailerLiteCampaign,
 	MailerLiteEndpointInputs,
 	MailerLiteEndpointOutputs,
+	MailerLiteField,
+	MailerLiteGroup,
+	MailerLiteSubscriber,
 	SubscribersListInput,
 	SubscribersListResponse,
-	MailerLiteSubscriber,
-	MailerLiteGroup,
-	MailerLiteField,
-	MailerLiteCampaign,
 } from './endpoints/types';
-export { MailerLiteAPIError } from './client';

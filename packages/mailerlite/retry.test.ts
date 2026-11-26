@@ -101,9 +101,7 @@ describe('retries through createCorsair', () => {
 			}
 
 			const promise = corsair.mailerlite.api.groups.list({});
-			const run = captureError(promise) as Promise<
-				'resolved' | Error
-			>;
+			const run = captureError(promise) as Promise<'resolved' | Error>;
 			await jest.advanceTimersByTimeAsync(4 * 60_000);
 			const outcome = await run;
 
@@ -140,7 +138,9 @@ describe('retries through createCorsair', () => {
 		jest.useFakeTimers();
 		try {
 			respond({ message: 'Server error' }, 502);
-			respond({ data: { id: '1', email: 'dummy@example.com', status: 'active' } });
+			respond({
+				data: { id: '1', email: 'dummy@example.com', status: 'active' },
+			});
 
 			const promise = corsair.mailerlite.api.subscribers.upsert({
 				email: 'dummy@example.com',

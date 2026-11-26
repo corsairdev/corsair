@@ -1,6 +1,6 @@
 import { AuthMissingError } from 'corsair/core';
 import type { MailerLiteKeyBuilderContext } from './index';
-import { mailerlite, mailerLiteEndpointSchemas } from './index';
+import { mailerLiteEndpointSchemas, mailerlite } from './index';
 
 const OPERATIONS = [
 	'campaigns.activity',
@@ -31,10 +31,14 @@ type KeyBuilder = (
 	source: string,
 ) => Promise<string>;
 
-function flatten(endpoints: Record<string, unknown>): string[] { // unknown: only keys are walked, handler leaf types never used
+function flatten(
+	endpoints: Record<string, unknown>, // unknown: keys only
+): string[] {
 	const paths: string[] = [];
 	for (const [group, members] of Object.entries(endpoints)) {
-		for (const name of Object.keys(members as Record<string, unknown>)) { // unknown: keys only, no leaf types
+		for (const name of Object.keys(
+			members as Record<string, unknown>, // unknown: keys only
+		)) {
 			paths.push(`${group}.${name}`);
 		}
 	}
@@ -51,14 +55,14 @@ describe('mailerlite plugin definition', () => {
 	});
 
 	it('registers exactly the sixteen operations', () => {
-		// unknown: only the keys are walked, never the handler leaf type.
-		expect(flatten(plugin.endpoints as Record<string, unknown>)).toEqual([ // unknown: keys only, no leaf types
-			...OPERATIONS,
-		]);
+		const map = plugin.endpoints as Record<string, unknown>; // unknown: keys only
+		expect(flatten(map)).toEqual([...OPERATIONS]);
 	});
 
 	it('has an input and output schema for every operation', () => {
-		expect(Object.keys(mailerLiteEndpointSchemas).sort()).toEqual([...OPERATIONS]);
+		expect(Object.keys(mailerLiteEndpointSchemas).sort()).toEqual([
+			...OPERATIONS,
+		]);
 		for (const schemas of Object.values(mailerLiteEndpointSchemas)) {
 			expect(typeof schemas.input.safeParse).toBe('function');
 			expect(typeof schemas.output.safeParse).toBe('function');
@@ -106,15 +110,17 @@ describe('mailerlite plugin definition', () => {
 
 	it('declares no webhooks, because no inbound deliveries are handled', () => {
 		expect(plugin.webhooks).toEqual({});
-		expect(plugin.pluginWebhookMatcher?.({ headers: {}, body: {} })).toBe(false);
+		expect(plugin.pluginWebhookMatcher?.({ headers: {}, body: {} })).toBe(
+			false,
+		);
 	});
 });
 
 describe('mailerlite keyBuilder', () => {
 	const plugin = mailerlite();
-	// unknown: keyBuilder is read off the plugin object, whose type hides it.
-	const keyBuilderOf = (candidate: { keyBuilder?: unknown }): KeyBuilder => // unknown: read off the plugin object, whose type hides it
-		candidate.keyBuilder as KeyBuilder;
+	const keyBuilderOf = (candidate: {
+		keyBuilder?: unknown; // unknown: read off the plugin object, type hides it
+	}): KeyBuilder => candidate.keyBuilder as KeyBuilder;
 
 	// A fixture only implements get_api_key; a full AccountKeyManager carries
 	// get_dek, issue_new_dek and the rest, so the cast is required.

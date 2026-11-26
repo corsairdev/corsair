@@ -1,4 +1,4 @@
-import type { MailerLiteContext, MailerLiteEndpoints } from '..';
+import type { MailerLiteEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {

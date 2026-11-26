@@ -1,4 +1,4 @@
-import type { MailerLiteContext, MailerLiteEndpoints } from '..';
+import type { MailerLiteEndpoints } from '..';
 import { segment } from '../client';
 import { call } from './call';
 import {
@@ -86,7 +86,13 @@ export const schedule: MailerLiteEndpoints['campaignsSchedule'] = (
 			output: Outputs.campaignsSchedule,
 		},
 		input,
-		({ campaignId, delivery, schedule, resend, sending_time_test_schedule }) => ({
+		({
+			campaignId,
+			delivery,
+			schedule,
+			resend,
+			sending_time_test_schedule,
+		}) => ({
 			method: 'POST',
 			path: `/campaigns/${segment(campaignId)}/schedule`,
 			body: { delivery, schedule, resend, sending_time_test_schedule },
@@ -95,7 +101,12 @@ export const schedule: MailerLiteEndpoints['campaignsSchedule'] = (
 			// twice.
 			replayable: false,
 		}),
-		{ log: (_, result) => ({ campaignId: result.data.id, status: result.data.status }) },
+		{
+			log: (_, result) => ({
+				campaignId: result.data.id,
+				status: result.data.status,
+			}),
+		},
 	);
 
 export const cancel: MailerLiteEndpoints['campaignsCancel'] = (ctx, input) =>
@@ -112,7 +123,12 @@ export const cancel: MailerLiteEndpoints['campaignsCancel'] = (ctx, input) =>
 			path: `/campaigns/${segment(campaignId)}/cancel`,
 			replayable: false,
 		}),
-		{ log: (_, result) => ({ campaignId: result.data.id, status: result.data.status }) },
+		{
+			log: (_, result) => ({
+				campaignId: result.data.id,
+				status: result.data.status,
+			}),
+		},
 	);
 
 export const activity: MailerLiteEndpoints['campaignsActivity'] = (
