@@ -26,11 +26,69 @@ await corsair.moretrees.api.account.get({ accountCode: 'AC1C2C' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `accountCode` | `string` | Yes | The More Trees account code, from Settings &gt; Account Settings. |
+| `accountCode` | `string` | No | The More Trees account code, from Settings &gt; Account Settings. Defaults to the stored account_code. |
 
 
 
-**Output:** `Record<string, any>`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_code` | `string \| null` | No | — |
+| `account_name` | `string \| null` | No | — |
+| `credit_balance` | `number \| null` | No | — |
+| `forest_name` | `string \| null` | No | — |
+| `forest_slug` | `string \| null` | No | — |
+
+
+
+---
+
+### lookup
+
+`account.lookup`
+
+Look up accounts by account code or email address: code, name, email and status
+
+**Risk:** `read`
+
+```ts
+await corsair.moretrees.api.account.lookup({ accountCodes: ['AC1C2C'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountCodes` | `string[]` | No | Account codes to look up. |
+| `emails` | `string[]` | No | Email addresses to look up. |
+| `includeInactive` | `boolean` | No | True also returns accounts with no active member (closed accounts). Defaults to false. |
+
+`GET /external/accounts` on the user-management service, from More
+Trees' OpenAPI document (not in the API guide). Pass `accountCodes`,
+`emails` or both; each is sent as a repeated query parameter.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  userId?: string | null,
+  accountCode?: string | null,
+  accountName?: string | null,
+  emailAddress?: string | null,
+  accountId?: string | null,
+  quantity?: number | null,
+  index?: number | null,
+  accountStatus?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -53,16 +111,129 @@ await corsair.moretrees.api.forest.get({ forestSlugOrAccountCode: 'beachy' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `forestSlugOrAccountCode` | `string` | Yes | The forest slug or the account code, from Settings &gt; Account Settings. |
+| `forestSlugOrAccountCode` | `string` | No | The forest slug or the account code, from Settings &gt; Account Settings. Defaults to the stored account_code. |
 
 
 
-**Output:** `Record<string, any>`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `forest_name` | `string \| null` | No | — |
+| `logo_url` | `string \| null` | No | — |
+| `brand_color` | `string \| null` | No | — |
+| `totals` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="totals full type">
+
+```ts
+{
+  trees_planted?: number | null,
+  trees_gifted?: number | null,
+  trees_received?: number | null,
+  co2_captured?: number | null,
+  projects_supported?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
 
 ## Projects
+
+### calculateCo2
+
+`projects.calculateCo2`
+
+Calculate the CO2 captured and projects supported for a set of tree counts; plants nothing
+
+**Risk:** `read`
+
+```ts
+await corsair.moretrees.api.projects.calculateCo2({ totalTreesByProjectTree: { '28': { receivedAndPlantedTrees: 2, giftedAndPlantedTrees: 0 } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalTreesByProjectTree` | `object` | Yes | Tree counts keyed by project tree ID (projectTreeId from projects.getTree). |
+
+`POST /external/projects/total-co2` on the project-management service,
+from the OpenAPI document. Keys are project tree IDs (`projectTreeId`
+from `projects.getTree`); an unknown key answers 404 "Project Tree is not
+found". A calculation only: nothing is planted or stored.
+
+<AccordionGroup>
+<Accordion title="totalTreesByProjectTree full type">
+
+```ts
+Record<string, {
+  receivedAndPlantedTrees?: number,
+  giftedAndPlantedTrees?: number
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalCo2` | `number \| null` | No | — |
+| `supportedProjects` | `number \| null` | No | — |
+
+
+
+---
+
+### getTree
+
+`projects.getTree`
+
+Read one tree in a project: credits per tree, credit type and the project and tree names
+
+**Risk:** `read`
+
+```ts
+await corsair.moretrees.api.projects.getTree({ projectId: '24', treeId: '1212386588741402633' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string \| number` | Yes | The project ID, from projects.list. |
+| `treeId` | `string \| number` | Yes | The tree ID, from the project in projects.list. |
+
+`GET /external/projects/{projectId}/trees/{treeId}` on the
+project-management service, from the OpenAPI document. Returns the
+`projectTreeId` that `projects.calculateCo2` takes.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectTreeId` | `string \| null` | No | A More Trees ID, as a string (IDs can exceed 2^53). |
+| `projectId` | `string \| null` | No | A More Trees ID, as a string (IDs can exceed 2^53). |
+| `treeId` | `string \| null` | No | A More Trees ID, as a string (IDs can exceed 2^53). |
+| `creditTypeId` | `string \| null` | No | A More Trees ID, as a string (IDs can exceed 2^53). |
+| `numberOfCredits` | `number \| null` | No | — |
+| `creditTypeStripeCode` | `string \| null` | No | — |
+| `projectName` | `string \| null` | No | — |
+| `treeName` | `string \| null` | No | — |
+
+
+
+---
 
 ### list
 
@@ -78,12 +249,47 @@ await corsair.moretrees.api.projects.list({});
 
 **Input:** _empty object_
 
-`GET /projects` on the project-management service. The guide's projects
-section mentions a "public validation key" without naming a header; the
-plugin authenticates with the standard `X-API-KEY`.
+`GET /external/projects` on the project-management service. Returns
+`{ data, total }`; the API guide shows a bare array, but the API and its
+OpenAPI document wrap the list in `data`. The CO2 field is `tonnes_co2`
+(the guide spells it `tonnes_c02`).
 
 
-**Output:** `Record<string, any>[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `total` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  default?: boolean | null,
+  id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  country?: string | null,
+  project_type?: string | null,
+  supplier_name?: string | null,
+  project_image?: string | null,
+  trees?: {
+    default?: boolean | null,
+    id?: string | null,
+    name?: string | null,
+    description?: string | null,
+    tonnes_co2?: number | null,
+    credits_required?: number | null,
+    tree_image?: string | null,
+    total?: number | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -99,35 +305,34 @@ Plant trees from the payment account for yourself or as gifts; spends credits un
 **Risk:** `destructive`
 
 ```ts
-await corsair.moretrees.api.trees.plant({ payment_account_code: 'AC1C2C', test: true, plant_for_others: false, quantity: 2 });
+await corsair.moretrees.api.trees.plant({ test: true, plant_for_others: false, quantity: 2, project_id: '24', tree_id: '1212386588741402633' });
 ```
 
 **Input:** `object`
 
-`POST /plant` on the transaction-management service. With
+`POST /external/plant` on the transaction-management service. With
 `plant_for_others: true`, send `recipients` (each needs an
-`account_code` or an `email`, plus `name` and `quantity`) and omit
-`quantity`; with `plant_for_others: false`, send `quantity` and omit
-`recipients`. `project_id` and `tree_id` default to More Trees' default
-project and tree when omitted.
+`account_code` or an `email`, plus `name` and `quantity`); with
+`plant_for_others: false`, send `quantity`. `project_id` and `tree_id`
+default to More Trees' default project and tree when omitted.
 
 <AccordionGroup>
 <Accordion title="Input full type">
 
 ```ts
 {
-  payment_account_code: string,
+  payment_account_code?: string,
   test?: boolean,
+  project_id?: string | number,
+  tree_id?: string | number,
   plant_for_others: false,
-  quantity: number,
-  project_id?: number,
-  tree_id?: number
+  quantity: number
 } | {
-  payment_account_code: string,
+  payment_account_code?: string,
   test?: boolean,
+  project_id?: string | number,
+  tree_id?: string | number,
   plant_for_others: true,
-  project_id?: number,
-  tree_id?: number,
   recipients: {
     account_code?: string,
     email?: string,
@@ -148,8 +353,8 @@ project and tree when omitted.
 | `plant_for_others` | `boolean \| null` | No | — |
 | `credits_used` | `number \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | — |
-| `project_id` | `number \| null` | No | — |
-| `tree_id` | `number \| null` | No | — |
+| `project_id` | `string \| null` | No | A More Trees ID, as a string (IDs can exceed 2^53). |
+| `tree_id` | `string \| null` | No | A More Trees ID, as a string (IDs can exceed 2^53). |
 | `recipients` | `object[] \| null` | No | — |
 
 <AccordionGroup>

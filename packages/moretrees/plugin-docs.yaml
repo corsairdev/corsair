@@ -1,30 +1,30 @@
 displayName: More Trees
-description: Climate action with More Trees - read the account credit balance, forest stats and planting projects, and plant trees for yourself or as gifts.
+description: Climate action with More Trees - read the account credit balance, forest stats, planting projects and CO2 figures, look up accounts, and plant trees for yourself or as gifts.
 domain: moretrees.eco
 recommendedAuth: api_key
 overviewNote: |
   Create an API key in More Trees under Settings > Account Settings. The
-  account code lives on the same page; the plugin stores it as an account
-  field and needs it for `account.get` and `trees.plant`.
+  account code lives on the same page; save it as the account's
+  `account_code` field (or pass `accountCode` in the plugin options) and
+  `account.get`, `forest.get` and `trees.plant` use it when the input leaves
+  it out.
 
   - **Planting spends credits.** `trees.plant` defaults to `test: false`,
     which plants real trees and uses the payment account's credits. Pass
-    `test: true` for a dry run that only evaluates the request. A planting
-    that may have reached More Trees is never replayed after a failure.
-  - **One key, three services.** More Trees routes each operation to a
-    different service host (`user-management`, `project-management`,
-    `transaction-management`), all authenticated with the same `X-API-KEY`
-    header. The plugin picks the host per operation.
-  - **Projects auth is ambiguous.** The projects section of More Trees' API
-    guide mentions a separate "public validation key" (Integration > API)
-    without naming its header. The plugin sends the standard `X-API-KEY`
-    everywhere; if `projects.list` answers 401 or 406, check that section.
-  - **Forest lookup.** `forest.get` accepts either the forest slug or the
-    account code.
-  - **Rate limits.** More Trees documents 429 without a window. The plugin
-    retries a 429 up to three times with exponential backoff and honours a
-    `Retry-After` header when one is sent. Reads also retry a 5xx or a
-    transport failure; writes never do.
+    `test: true` for a dry run: More Trees evaluates the request and
+    persists nothing. A planting that may have reached More Trees is never
+    replayed after a failure.
+  - **IDs are strings.** More Trees issues 64-bit project and tree IDs
+    (such as `1212386588741402633`) that a JavaScript number cannot hold.
+    The plugin returns every ID as a string; pass it back unchanged and it
+    is sent as the exact number.
+  - **One key, three services.** Each operation goes to its own service
+    host (`user-management`, `project-management`,
+    `transaction-management`), all with the same `X-API-KEY` header.
+    `projects.list` and `projects.calculateCo2` also answer without a key.
+  - **Rate limits.** More Trees documents 429 without a window. Core retries
+    a 429 three times and honours `Retry-After`. Reads also retry a 5xx or a
+    transport failure; a planting never does.
 examples:
   read:
     path: projects.list
@@ -34,27 +34,45 @@ examples:
     path: trees.plant
     title: Dry-run a planting
     args:
-      payment_account_code: A1AB2B
       test: true
       plant_for_others: false
       quantity: 2
 apiExamples:
   account.get:
     call: "{ accountCode: 'AC1C2C' }"
+  account.lookup:
+    call: "{ accountCodes: ['AC1C2C'] }"
   forest.get:
     call: "{ forestSlugOrAccountCode: 'beachy' }"
   projects.list: {}
+  projects.getTree:
+    call: "{ projectId: '24', treeId: '1212386588741402633' }"
+  projects.calculateCo2:
+    call: "{ totalTreesByProjectTree: { '28': { receivedAndPlantedTrees: 2, giftedAndPlantedTrees: 0 } } }"
   trees.plant:
-    call: "{ payment_account_code: 'AC1C2C', test: true, plant_for_others: false, quantity: 2 }"
+    call: "{ test: true, plant_for_others: false, quantity: 2, project_id: '24', tree_id: '1212386588741402633' }"
 apiNotes:
+  account.lookup: |
+    `GET /external/accounts` on the user-management service, from More
+    Trees' OpenAPI document (not in the API guide). Pass `accountCodes`,
+    `emails` or both; each is sent as a repeated query parameter.
   projects.list: |
-    `GET /projects` on the project-management service. The guide's projects
-    section mentions a "public validation key" without naming a header; the
-    plugin authenticates with the standard `X-API-KEY`.
+    `GET /external/projects` on the project-management service. Returns
+    `{ data, total }`; the API guide shows a bare array, but the API and its
+    OpenAPI document wrap the list in `data`. The CO2 field is `tonnes_co2`
+    (the guide spells it `tonnes_c02`).
+  projects.getTree: |
+    `GET /external/projects/{projectId}/trees/{treeId}` on the
+    project-management service, from the OpenAPI document. Returns the
+    `projectTreeId` that `projects.calculateCo2` takes.
+  projects.calculateCo2: |
+    `POST /external/projects/total-co2` on the project-management service,
+    from the OpenAPI document. Keys are project tree IDs (`projectTreeId`
+    from `projects.getTree`); an unknown key answers 404 "Project Tree is not
+    found". A calculation only: nothing is planted or stored.
   trees.plant: |
-    `POST /plant` on the transaction-management service. With
+    `POST /external/plant` on the transaction-management service. With
     `plant_for_others: true`, send `recipients` (each needs an
-    `account_code` or an `email`, plus `name` and `quantity`) and omit
-    `quantity`; with `plant_for_others: false`, send `quantity` and omit
-    `recipients`. `project_id` and `tree_id` default to More Trees' default
-    project and tree when omitted.
+    `account_code` or an `email`, plus `name` and `quantity`); with
+    `plant_for_others: false`, send `quantity`. `project_id` and `tree_id`
+    default to More Trees' default project and tree when omitted.
