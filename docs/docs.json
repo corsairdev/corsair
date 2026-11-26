@@ -3583,7 +3583,8 @@
                 "pages": [
                   "plugins/loops/overview",
                   "plugins/loops/api",
-                  "plugins/loops/database"
+                  "plugins/loops/database",
+                  "plugins/loops/webhooks"
                 ]
               },
               {

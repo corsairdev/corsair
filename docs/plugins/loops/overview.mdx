@@ -1,10 +1,10 @@
 ---
 title: "Loops plugin"
 sidebarTitle: "Overview"
-description: "Email platform for software companies with Loops - create and update contacts, send events and transactional email, and read mailing lists, contact properties and suppression status."
+description: "Email platform for software companies with Loops - manage contacts, properties, lists and suppressions, send events and transactional email, build campaigns, workflows, email messages, themes, components and footers, read metrics, and receive signed webhooks."
 ---
 
-Use **Loops** through Corsair: one client, typed API calls.
+Use **Loops** through Corsair: one client, typed API calls, and incoming webhooks.
 
 Create a key in Loops under Settings, API (https://app.loops.so/settings?page=api) and paste it as the API key. One key per team; it has full account access, so keep it server-side.
 
@@ -12,15 +12,20 @@ Create a key in Loops under Settings, API (https://app.loops.so/settings?page=ap
 - **Upserts.** `contacts.update` creates the contact when no match exists, so it cannot fail with not-found. `contacts.create` answers 409 when the email or userId already exists.
 - **Deleting a contact is permanent.** `contacts.delete` removes the contact and its subscriptions; there is no restore call.
 - **Custom properties.** Pass them under `customProperties`; values can be strings (max 500 characters), numbers or booleans, and they land on the request body beside the fixed fields, so a key like `email` or `userId` there is rejected.
-- **Success envelope.** Every answer carries `success`. A 2xx body with `success: false` is still a failure and the client throws a `LoopsAPIError` with the API's message; validation failures also carry `path` and sometimes `transactionalId`.
-- **Feature gating.** Campaign, transactional-email, workflow and other content endpoints answer 401 with a "not enabled for this team" message when the team has not turned that feature on. The plugin surfaces that as a distinct error, because the key itself is valid. This plugin wraps only the ungated endpoints.
+- **Success envelope.** A 2xx body with `success: false` is still a failure: the plugin throws core's `ApiError` with Loops' message (status 200). Errors keep Loops' answer in `body` (validation failures name a `path` there) and leave out the request body, which holds contact data and template variables.
+- **Feature gating.** Campaigns, campaign/transactional/workflow groups, transactional-email management, email messages, workflows and workflow nodes, themes, components, footers, uploads, audience segments and event patterns use Loops' content API. A team without it gets a 401 whose message says the feature is not enabled; the plugin keeps that apart from a bad key and never retries it.
+- **Campaign sends.** `campaigns.create` and `campaigns.update` take `scheduling`; `{ method: 'now' }` sends the campaign to its whole audience, so both are `destructive`. Leave `scheduling` out to work on a draft.
+- **Workflow edits use revisions.** Workflow and node writes need the workflow's current `expectedRevisionId` (from `workflows.get`) and answer 409 on a stale one. `workflows.changeMailingList` and the node deletes take `dryRun: true`; with queued contacts they answer `status: 'queuedContactsFound'` until you pass `queuedContactPolicy`.
+- **Uploads.** `uploads.create` answers a presigned URL; PUT the file there yourself, then call `uploads.complete`.
+- **Pagination.** List calls take `perPage` (10 to 50) and `cursor`; the next cursor is `pagination.nextCursor`. `lists.list` and `contacts.listProperties` answer bare arrays.
 - **Rate limits.** 10 requests per second per team. Loops sends `x-ratelimit-limit` and `x-ratelimit-remaining` but no Retry-After; the plugin retries a 429 up to three times with exponential backoff.
-- **Idempotency.** `transactional.send` accepts an `idempotencyKey` (max 100 characters). Reusing one within 24 hours answers 409 instead of sending a duplicate. Passing a key also lets the plugin replay a 5xx safely; other writes are never replayed.
-- **Webhooks.** Loops sends webhook events to one endpoint configured in its dashboard, and this plugin does not receive them.
+- **Idempotency.** `transactional.send` and `events.send` accept an `idempotencyKey` (max 100 characters). Reusing one within 24 hours answers 409 instead of sending a duplicate. Passing a key also lets the plugin replay a 5xx safely; other writes are never replayed.
+- **Inbound webhooks.** Loops signs every delivery the Standard Webhooks way (`webhook-id`, `webhook-timestamp`, `webhook-signature: v1,<base64>`) with the signing secret from Settings → Webhooks (one endpoint per team). Set `webhookSecret`, or store it with `keys.set_webhook_signature`. Verification needs the untouched request body; deliveries more than five minutes off are refused. Events: `contact.created`, `contact.unsubscribed`, `contact.deleted`, `contact.mailingListSubscribed`, `contact.mailingListUnsubscribed`, `transactional.emailSent`, `campaign.emailSent`, `loop.emailSent`, `email.delivered`, `email.softBounced`, `email.hardBounced`, `email.opened`, `email.clicked`, `email.unsubscribed`, `email.resubscribed`, `email.spamReported` and `testing.testEvent`.
 
 **What you get:**
 
-- 10 typed API operations
+- 82 typed API operations
+- 17 incoming webhook event types
 
 ## Setup
 
@@ -129,11 +134,20 @@ await tenant.loops.api.contacts.create({
 
 See the full list on the [API](/plugins/loops/api) page.
 
+## Webhooks
+
+This plugin registers **17** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/loops/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/loops/api">
     Every `loops.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/loops/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.
