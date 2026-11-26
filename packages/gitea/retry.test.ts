@@ -2,11 +2,7 @@ import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import type { GiteaPluginOptions } from './index';
 import { gitea } from './index';
-import {
-	errorEnvelope,
-	repoFixture,
-	userFixture,
-} from './test-fixtures';
+import { errorEnvelope, repoFixture, userFixture } from './test-fixtures';
 
 const INSTANCE = 'https://git.example.com';
 const KEK = '0123456789abcdef0123456789abcdef';
@@ -229,7 +225,9 @@ describe('retry behaviour through createCorsair', () => {
 			await storeAccountCredentials(corsair);
 			respond(userFixture);
 
-			await withFakeTimers(corsair.gitea.api.user.me({}));
+			// No fake timers here: nothing retries in this path, and the helper
+			// requires jest.useFakeTimers() to have been called first.
+			await corsair.gitea.api.user.me({});
 
 			const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
 			expect(String(url)).toBe(`${INSTANCE}/api/v1/user`);

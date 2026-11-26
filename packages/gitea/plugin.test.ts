@@ -1,12 +1,13 @@
 import { AuthMissingError } from 'corsair/core';
+import type { GiteaKeyBuilderContext } from './index';
 import { GITEA_OPERATIONS, gitea, giteaEndpointSchemas } from './index';
 
 // The key builder reads authType, options.key and the two account accessors.
 function keyContext(fields: {
 	apiKey?: string | null;
 	instanceUrl?: string | null;
-}) {
-	return {
+}): GiteaKeyBuilderContext {
+	const fixture = {
 		authType: 'api_key' as const,
 		options: {},
 		tenantId: 'default',
@@ -15,20 +16,16 @@ function keyContext(fields: {
 			get_instance_url: jest.fn().mockResolvedValue(fields.instanceUrl ?? null),
 		},
 	};
+	// unknown: the fixture only implements the two accessors the key builder
+	// reads, not the full AccountKeyManager.
+	return fixture as unknown as GiteaKeyBuilderContext; // unknown: see note above
 }
 
 function buildKey(
 	plugin: ReturnType<typeof gitea>,
 	ctx: ReturnType<typeof keyContext>,
 ) {
-	// unknown: the fixture only implements the two accessors the key builder
-	// reads, not the full AccountKeyManager.
-	return plugin.keyBuilder?.(
-		// unknown: the fixture only implements the two accessors the key builder
-	// reads, not the full AccountKeyManager.
-	ctx as unknown as Parameters<NonNullable<typeof plugin.keyBuilder>>[0], // unknown: see note above
-		'endpoint',
-	);
+	return plugin.keyBuilder?.(ctx, 'endpoint');
 }
 
 const operations = [

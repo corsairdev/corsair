@@ -9,8 +9,11 @@ const INSTANCE = 'https://git.example.com';
 
 let fetchMock: jest.SpyInstance;
 
-// unknown: response bodies are arbitrary JSON.
-function respond(body: unknown, status = 200) { // unknown: response bodies are arbitrary JSON.
+// The alias keeps the open type off the signature line, where a trailing
+// annotation would sit between code and a brace.
+type JsonBody = unknown; // unknown: response bodies are arbitrary JSON until the endpoint's output schema parses them.
+
+function respond(body: JsonBody, status = 200) {
 	fetchMock.mockResolvedValueOnce(
 		new Response(JSON.stringify(body), {
 			status,
@@ -19,8 +22,6 @@ function respond(body: unknown, status = 200) { // unknown: response bodies are 
 	);
 }
 
-// unknown: only the members the endpoints read are implemented; see
-// requests.test.ts for the same fixture pattern.
 function makeContext(): GiteaContext {
 	const fixture = {
 		key: API_KEY,
@@ -28,8 +29,9 @@ function makeContext(): GiteaContext {
 		options: {},
 		keys: { get_instance_url: () => Promise.resolve(INSTANCE) },
 	};
-	// unknown: the cast narrows the fixture to the context type.
-	return fixture as unknown as GiteaContext; // unknown: only the members the endpoints read are implemented.
+	// unknown: only the members the endpoints read are implemented; see
+	// requests.test.ts for the same fixture pattern.
+	return fixture as unknown as GiteaContext; // unknown: see note above
 }
 
 beforeEach(() => {
@@ -87,6 +89,19 @@ describe('output parsing', () => {
 		expect(result.assignees).toBeNull();
 		expect(result.pull_request).toBeNull();
 		expect(result.labels).toEqual([]);
+	});
+
+	it('passes Go zero time through as the provider sent it', async () => {
+		respond(repoFixture);
+
+		const result = await endpoints.repos.get(ctx, {
+			owner: 'gitea',
+			repo: 'gitea',
+		});
+		// Unset mirror timestamps arrive as Go's zero time string; the schema
+		// types them as plain strings rather than rewriting the value.
+		expect(result.mirror_updated).toBe('0001-01-01T00:00:00Z');
+		expect(result.mirror_last_sync_at).toBe('0001-01-01T00:00:00Z');
 	});
 
 	it('maps a 204 delete onto the recorded result', async () => {

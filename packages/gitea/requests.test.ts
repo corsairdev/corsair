@@ -17,9 +17,11 @@ const INSTANCE = 'https://git.example.com';
 
 let fetchMock: jest.SpyInstance;
 
-// unknown: response bodies are arbitrary JSON.
-function respond(body: unknown, status = 200) { // unknown: response bodies are arbitrary JSON.
-	// unknown: same open body as the helper above; one queue per test.
+// The alias keeps the open type off the signature line, where a trailing
+// annotation would sit between code and a brace.
+type JsonBody = unknown; // unknown: response bodies are arbitrary JSON until the endpoint's output schema parses them.
+
+function respond(body: JsonBody, status = 200) {
 	fetchMock.mockResolvedValueOnce(
 		new Response(typeof body === 'string' ? body : JSON.stringify(body), {
 			status,
@@ -32,9 +34,6 @@ function respondEmpty(status: number) {
 	fetchMock.mockResolvedValueOnce(new Response(null, { status }));
 }
 
-// unknown: only `key` and `keys.get_instance_url` are read by the endpoints;
-// the full context type needs a database and log path the unit tests never
-// touch, so the fixture is cast rather than fully built.
 function makeContext(): GiteaContext {
 	const fixture = {
 		key: API_KEY,
@@ -45,10 +44,8 @@ function makeContext(): GiteaContext {
 			get_api_key: () => Promise.resolve(API_KEY),
 		},
 	};
-	// unknown: see note above on makeContext; the cast keeps the test focused
-	// on the members the endpoints actually read.
 	// unknown: only `key` and `keys.get_instance_url` are read by the
-	// endpoints; the cast keeps the test on the members that matter.
+	// endpoints, so the fixture is cast instead of fully built.
 	return fixture as unknown as GiteaContext; // unknown: see note above
 }
 
@@ -241,6 +238,8 @@ describe('issues endpoints', () => {
 		expect(parsed.searchParams.get('state')).toBe('all');
 		expect(parsed.searchParams.get('type')).toBe('issues');
 		expect(parsed.searchParams.get('labels')).toBe('bug,ui');
+		expect(parsed.searchParams.get('page')).toBe('1');
+		expect(parsed.searchParams.get('limit')).toBe('50');
 		expect(result.issues[0]?.number).toBe(1);
 	});
 
@@ -282,6 +281,8 @@ describe('issues endpoints', () => {
 	});
 
 	it('issues.update PATCHes the issue and can close it', async () => {
+		// The spec's only success code for PATCH issues is 201 (the 200 one is
+		// PATCH /repos/{owner}/{repo}, the repo edit), so the mock follows that.
 		respond({ ...issueFixture, state: 'closed' }, 201);
 
 		const result = await endpoints.issues.update(makeContext(), {
