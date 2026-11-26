@@ -1,5 +1,9 @@
 import { asRecord } from 'corsair/core';
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export const LUSHA_API_BASE = 'https://api.lusha.com';
@@ -80,6 +84,24 @@ export function isOutOfCredits(error: unknown): boolean {
 	);
 }
 
+/**
+ * Core's defaults (three 429 retries with backoff), reading Lusha's own
+ * headers. Lusha sends no Retry-After or reset time; `x-daily-requests-left`
+ * lands on the error as rateLimitRemaining, so a 429 from a used-up daily
+ * quota says so.
+ */
+const LUSHA_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 3,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'retry-after',
+		remaining: 'x-daily-requests-left',
+		limit: 'x-rate-limit-daily',
+	},
+};
+
 function configWith(apiKey: string): OpenAPIConfig {
 	return {
 		BASE: LUSHA_API_BASE,
@@ -116,7 +138,9 @@ function withoutRequestData(error: ApiError, method: string): ApiError {
 			statusText: error.statusText,
 			body: error.body,
 		},
-		describeLushaError(error.status, error.body, error.message),
+		error.status === 429 && error.rateLimitRemaining === 0
+			? `${describeLushaError(error.status, error.body, error.message)} (daily request quota used up)`
+			: describeLushaError(error.status, error.body, error.message),
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,
@@ -144,7 +168,9 @@ export async function makeLushaRequest(
 		mediaType: body === undefined ? undefined : 'application/json',
 	};
 	try {
-		return await request<unknown>(configWith(apiKey), requestOptions);
+		return await request<unknown>(configWith(apiKey), requestOptions, {
+			rateLimitConfig: LUSHA_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		const thrown =
 			error instanceof ApiError ? withoutRequestData(error, method) : error;

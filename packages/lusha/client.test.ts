@@ -179,6 +179,26 @@ describe('Lusha client', () => {
 		expect(isReplayable(error)).toBe(true);
 	});
 
+	it('says when a 429 comes from a used-up daily quota', async () => {
+		const quota = () =>
+			mockFetch(
+				jsonResponse(
+					{ statusCode: 429, message: 'Too many requests.' },
+					{ status: 429, headers: { 'x-daily-requests-left': '0' } },
+				),
+			);
+		// Core makes four attempts before it throws.
+		for (let attempt = 0; attempt < 4; attempt++) quota();
+		const error = await captureError(
+			makeLushaRequest('key-123', { method: 'GET', path: '/v3/account/usage' }),
+		);
+		expect((error as ApiError).status).toBe(429);
+		expect((error as ApiError).rateLimitRemaining).toBe(0);
+		expect((error as ApiError).message).toContain(
+			'daily request quota used up',
+		);
+	}, 20_000);
+
 	it('flags the out-of-credits status and message', async () => {
 		mockFetch(jsonResponse(outOfCreditsBody, { status: 402 }));
 		const byStatus = await captureError(
