@@ -3,13 +3,16 @@
  * so they skip). Only free, read-only calls are made: account usage, a job
  * poll for a nonexistent id, and the free discovery reads (filters, signal
  * types, recommendation filters, ICP profiles, the table column catalog,
- * webhook subscriptions and audit stats). Every search, enrich, prospecting,
- * signal and score call charges credits, so none belongs in a smoke suite.
+ * webhook subscriptions and audit stats), plus one free contact table round
+ * trip (create, get, update, delete) when LUSHA_LOGIN_EMAIL names the account
+ * user. Every search, enrich, prospecting, signal and score call charges
+ * credits, so none belongs in a smoke suite.
  */
 
 import { ApiError } from 'corsair/http';
 import { z } from 'zod';
 import { getAccountUsage } from './endpoints/account';
+import { LushaSpecOutputSchemas as SpecOutputs } from './endpoints/generated/spec-schemas';
 import { getContactsEnrichJob } from './endpoints/jobs';
 import { LushaEndpointOutputSchemas as Outputs } from './endpoints/types';
 import { lusha } from './index';
@@ -74,13 +77,73 @@ describeLive('lusha live API', () => {
 		['icp', 'listProfiles', {}],
 		['contactTables', 'getColumnCatalog', {}],
 		['companyTables', 'getColumnCatalog', {}],
-		['subscriptions', 'list', { limit: 10 }],
-		['auditLogs', 'getStats', {}],
 	];
 
 	it.each(FREE_READS)('%s.%s (free) parses', async (group, name, input) => {
 		const endpoint = tree[group]?.[name];
 		expect(endpoint).toBeDefined();
 		await expect(endpoint!(ctx, input)).resolves.toBeDefined();
+	});
+
+	// The webhook API (subscriptions, audit logs) is a plan feature. On a plan
+	// without it Lusha answers 403 "Webhooks are not enabled for this account";
+	// the route and the error message are still checked.
+	const WEBHOOK_READS: [string, string, Record<string, unknown>][] = [
+		['subscriptions', 'list', { limit: 10 }],
+		['auditLogs', 'getStats', {}],
+	];
+
+	it.each(WEBHOOK_READS)(
+		'%s.%s (free) parses, or names the missing plan feature',
+		async (group, name, input) => {
+			const endpoint = tree[group]?.[name];
+			expect(endpoint).toBeDefined();
+			try {
+				await expect(endpoint!(ctx, input)).resolves.toBeDefined();
+			} catch {
+				await expect(endpoint!(ctx, input)).rejects.toMatchObject({
+					status: 403,
+					message: expect.stringMatching(/webhooks are not enabled/i),
+				});
+			}
+		},
+	);
+
+	const OWNER = z.email().safeParse(process.env.LUSHA_LOGIN_EMAIL);
+	const itOwner = OWNER.success ? it : it.skip;
+
+	// Free (Lusha bills no table-route call except adding entities and
+	// running columns). Creates one empty table and deletes it again.
+	itOwner('contactTables create -> get -> update -> delete', async () => {
+		const email = OWNER.data ?? '';
+		const tables = tree.contactTables!;
+		const created = SpecOutputs.contactTablesCreate.parse(
+			await tables.create!(ctx, {
+				name: 'corsair-plugin-test',
+				visibility: 'private',
+				owner: { email },
+			}),
+		);
+		const tableId = String(created.data?.tableId ?? '');
+		expect(tableId).not.toBe('');
+		try {
+			const read = SpecOutputs.contactTablesGet.parse(
+				await tables.get!(ctx, { tableId, ownerEmail: email }),
+			);
+			expect(read.data?.name).toBe('corsair-plugin-test');
+			const updated = SpecOutputs.contactTablesUpdate.parse(
+				await tables.update!(ctx, {
+					tableId,
+					name: 'corsair-plugin-test-renamed',
+					owner: { email },
+				}),
+			);
+			expect(updated.data?.name).toBe('corsair-plugin-test-renamed');
+		} finally {
+			const deleted = SpecOutputs.contactTablesDelete.parse(
+				await tables.delete!(ctx, { tableId, ownerEmail: email }),
+			);
+			expect(String(deleted.data?.tableId ?? tableId)).toBe(tableId);
+		}
 	});
 });
