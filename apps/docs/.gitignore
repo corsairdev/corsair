@@ -1,0 +1,11 @@
+.next/
+.source/
+next-env.d.ts
+*.tsbuildinfo
+.vercel
+.env*
+# copied from docs/ by scripts/sync-assets.mjs
+public/icons/
+public/images/
+public/favicon.ico
+public/llms.txt

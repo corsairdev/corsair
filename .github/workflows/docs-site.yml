@@ -1,0 +1,56 @@
+name: Docs site
+
+# Builds apps/docs (the Fumadocs site for docs.corsair.dev) with every page
+# prerendered, so a page that fails to render (a stray `{id}` in generated
+# MDX, a broken snippet import) fails the PR instead of a visitor's request.
+# Not a required check while Mintlify still serves the domain.
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'apps/docs/**'
+      - 'explorer/data/plugins/**'
+      - '.github/workflows/docs-site.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Docs site build (all pages)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.20.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: 'pnpm'
+          cache-dependency-path: apps/docs/pnpm-lock.yaml
+
+      # apps/docs is its own pnpm project, outside the workspace, so its
+      # dependencies never touch the root lockfile.
+      - name: Install docs dependencies
+        working-directory: apps/docs
+        run: pnpm install --frozen-lockfile --ignore-workspace
+
+      - name: Typecheck
+        working-directory: apps/docs
+        run: pnpm typecheck
+
+      - name: Build with every page prerendered
+        working-directory: apps/docs
+        env:
+          DOCS_PRERENDER_ALL: '1'
+        run: pnpm build
