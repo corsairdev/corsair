@@ -18,8 +18,14 @@ export const MONEYBIRD_API_BASE = 'https://moneybird.com/api/v2';
 
 export const MONEYBIRD_DEFAULT_TIMEOUT_MS = 30_000;
 
-/** Moneybird's page size when `per_page` is left out (it allows 1 to 100). */
-export const MONEYBIRD_DEFAULT_PAGE_SIZE = 50;
+/**
+ * The page size the plugin asks for when a paged list's `per_page` is left
+ * out. Moneybird's own default differs per route (50 in the introduction, 30
+ * for task lists), so the plugin always sends one: `next_page` is only exact
+ * when it knows the size it asked for. 100 is Moneybird's maximum and what
+ * its docs recommend.
+ */
+export const MONEYBIRD_PAGE_SIZE = 100;
 
 /** Largest file the attachment and upload routes send. */
 export const MONEYBIRD_UPLOAD_MAX_BYTES = 25 * 1024 * 1024;

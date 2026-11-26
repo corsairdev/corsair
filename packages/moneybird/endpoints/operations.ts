@@ -4,7 +4,7 @@ import type { BinaryResponse, FileInput } from 'corsair/http';
 import { resolveFileInput, toFileOutput } from 'corsair/http';
 import type { MoneybirdRequest } from '../client';
 import {
-	MONEYBIRD_DEFAULT_PAGE_SIZE,
+	MONEYBIRD_PAGE_SIZE,
 	MONEYBIRD_UPLOAD_MAX_BYTES,
 	makeMoneybirdRequest,
 } from '../client';
@@ -176,9 +176,10 @@ export function fileNameFor(
 }
 
 /**
- * The page a full page leads to. Moneybird's page numbers are in headers core
- * doesn't return, so a page that came back with `per_page` entries (default
- * 50) is taken to have a next one; a shorter page is the last.
+ * The page a full page leads to. Moneybird's next page is in a Link header
+ * core doesn't return, so a page that came back with `per_page` entries (the
+ * plugin sends 100 when the caller leaves it out) is taken to have a next
+ * one; a shorter page is the last.
  */
 // `unknown` because the input was validated against an open schema.
 export function nextPageOf(
@@ -187,8 +188,7 @@ export function nextPageOf(
 ): number | null {
 	// Moneybird takes `page` and `per_page` as a number or a digit string.
 	const page = positiveInteger(input.page) ?? 1;
-	const perPage =
-		positiveInteger(input.per_page) ?? MONEYBIRD_DEFAULT_PAGE_SIZE;
+	const perPage = positiveInteger(input.per_page) ?? MONEYBIRD_PAGE_SIZE;
 	return count >= perPage ? page + 1 : null;
 }
 
@@ -336,6 +336,10 @@ export function createMoneybirdOperation<Id extends MoneybirdOperationId>(
 					Object.assign(query, queryEntries(field.name, value));
 					break;
 			}
+		}
+		if (operation.paginated && query.per_page === undefined) {
+			// Moneybird's default page size differs per route: ask for a known one.
+			query.per_page = MONEYBIRD_PAGE_SIZE;
 		}
 
 		const request: MoneybirdRequest = {

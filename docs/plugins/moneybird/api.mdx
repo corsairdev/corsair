@@ -412,7 +412,7 @@ await corsair.moneybird.api.assets.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -1748,7 +1748,7 @@ await corsair.moneybird.api.contacts.filter({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -2215,7 +2215,7 @@ await corsair.moneybird.api.contacts.list({ per_page: 100, query: 'Beachy' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -2356,7 +2356,7 @@ await corsair.moneybird.api.contacts.listDuplicates({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -3893,7 +3893,7 @@ await corsair.moneybird.api.documents.generalDocuments.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -4991,7 +4991,7 @@ await corsair.moneybird.api.documents.generalJournalDocuments.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -6439,7 +6439,7 @@ await corsair.moneybird.api.documents.purchaseInvoices.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -8326,7 +8326,7 @@ await corsair.moneybird.api.documents.receipts.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -9863,7 +9863,7 @@ await corsair.moneybird.api.documents.typelessDocuments.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -10170,7 +10170,7 @@ await corsair.moneybird.api.downloads.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -12345,7 +12345,7 @@ await corsair.moneybird.api.estimates.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -14559,7 +14559,7 @@ await corsair.moneybird.api.externalSalesInvoices.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -17951,7 +17951,7 @@ await corsair.moneybird.api.products.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -18197,7 +18197,7 @@ await corsair.moneybird.api.projects.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -18614,7 +18614,7 @@ await corsair.moneybird.api.purchaseTransactions.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -20563,7 +20563,7 @@ await corsair.moneybird.api.recurringSalesInvoices.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -22536,7 +22536,7 @@ await corsair.moneybird.api.reports.journalEntries({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -25419,7 +25419,7 @@ await corsair.moneybird.api.salesInvoices.list({ filter: 'state:open|late', per_
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -30219,7 +30219,7 @@ await corsair.moneybird.api.subscriptionTemplates.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -31271,7 +31271,7 @@ await corsair.moneybird.api.taskLists.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -33512,7 +33512,7 @@ await corsair.moneybird.api.taxRates.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -34417,7 +34417,7 @@ await corsair.moneybird.api.timeEntries.list({ filter: 'period:this_year' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short. |
 
 <AccordionGroup>
 <Accordion title="items full type">

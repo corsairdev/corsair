@@ -18,9 +18,10 @@ overviewNote: |
   `sales_invoice_sending: {...}`. Ids are digit strings (numbers are
   accepted too).
   - **Lists are paginated in a Link response header** the client cannot
-  return, so paginated lists take `page` and `per_page` (up to 100, default
-  50) and return `{ items, next_page }`, with `next_page` set while a page
-  comes back full. `listVersions` + `fetchByIds` is Moneybird's
+  return, so paginated lists take `page` and `per_page` (up to 100; the
+  plugin sends 100 when it is left out, since Moneybird's own default differs
+  per route) and return `{ items, next_page }`, with `next_page` set while a
+  page comes back full. `listVersions` + `fetchByIds` is Moneybird's
   synchronization API: ids and versions first, then up to 100 records by id.
   - **Filtering goes through one string.** List filters are `key:value`
   terms separated by commas (e.g. `state:open|late`, `period:this_year`),

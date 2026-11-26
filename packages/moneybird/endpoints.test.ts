@@ -315,12 +315,25 @@ describe('responses', () => {
 		expect(new URL(String(calls[0]?.url)).searchParams.get('page')).toBe('3');
 	});
 
-	it('ends paging on a short page (default page size 50)', async () => {
+	it('asks for 100 when per_page is left out, so a full page means more', async () => {
+		// Moneybird's own default differs per route (30 for task lists); a
+		// full default page must not read as the last one.
 		reply(200, [{ id: '1' }]);
-		const last = await endpointFor('contacts.list')(ctx(), {});
+		const last = await endpointFor('taskLists.list')(ctx(), {});
 		expect(last).toEqual({ items: [{ id: '1' }], next_page: null });
-		expect(nextPageOf({}, 50)).toBe(2);
-		expect(nextPageOf({}, 49)).toBeNull();
+		expect(new URL(String(calls[0]?.url)).searchParams.get('per_page')).toBe(
+			'100',
+		);
+		reply(
+			200,
+			Array.from({ length: 100 }, (_, i) => ({ id: String(i) })),
+		);
+		const full = (await endpointFor('products.list')(ctx(), {})) as {
+			next_page: number | null;
+		};
+		expect(full.next_page).toBe(2);
+		expect(nextPageOf({}, 100)).toBe(2);
+		expect(nextPageOf({}, 99)).toBeNull();
 		expect(nextPageOf({ page: '4', per_page: '10' }, 10)).toBe(5);
 	});
 

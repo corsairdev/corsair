@@ -393,7 +393,7 @@ function pageOf(item: z.ZodType): z.ZodType {
 				.int()
 				.nullable()
 				.describe(
-					'The page to ask for next: set while this page came back full (per_page, default 50), null once it came back short.',
+					'The page to ask for next: set while this page came back full (per_page; 100 when left out), null once it came back short.',
 				),
 		})
 		.strict();
