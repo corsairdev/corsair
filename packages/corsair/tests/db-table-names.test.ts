@@ -170,6 +170,26 @@ describe('dbTables name mapping', () => {
 			}),
 		).toThrow(/duplicate physical table name/i);
 
+		// Simulate a Kysely instance constructed from a separate module copy whose
+		// SqliteAdapter class is not instanceof the imported SqliteAdapter.
+		class ForeignSqliteAdapter {
+			readonly supportsTransactionalDdl = false;
+			readonly supportsReturning = true;
+		}
+		const foreignKyselySqlite = {
+			selectFrom: () => {},
+			withPlugin: () => foreignKyselySqlite,
+			getExecutor: () => ({ adapter: new ForeignSqliteAdapter() }),
+		};
+		expect(() =>
+			createCorsairDatabase(foreignKyselySqlite as never, {
+				dbTables: {
+					corsair_accounts: 'SharedTable',
+					corsair_entities: 'sharedtable',
+				},
+			}),
+		).toThrow(/duplicate physical table name/i);
+
 		sqlite.close();
 	});
 

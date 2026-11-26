@@ -220,6 +220,23 @@ function buildKyselyPlugins(
 	return plugins;
 }
 
+function isSqliteAdapter(adapter: unknown): boolean {
+	if (adapter instanceof SqliteAdapter) return true;
+	if (typeof adapter !== 'object' || adapter === null) return false;
+	const candidate = adapter as {
+		constructor?: { name?: unknown };
+		supportsTransactionalDdl?: unknown;
+		supportsReturning?: unknown;
+	};
+	if (candidate.constructor?.name === 'SqliteAdapter') return true;
+	// Fallback across separate kysely copies or minified builds: among built-in
+	// Kysely adapters only SQLite sets supportsTransactionalDdl=false and supportsReturning=true.
+	return (
+		candidate.supportsTransactionalDdl === false &&
+		candidate.supportsReturning === true
+	);
+}
+
 function isSqliteDatabaseInput(input: CorsairDatabaseInput): boolean {
 	if (isBetterSqlite3(input)) return true;
 	if (isKysely(input)) {
@@ -227,7 +244,7 @@ function isSqliteDatabaseInput(input: CorsairDatabaseInput): boolean {
 			input as unknown as { getExecutor?: () => { adapter?: unknown } }
 		).getExecutor;
 		if (typeof getExecutor === 'function') {
-			return getExecutor.call(input)?.adapter instanceof SqliteAdapter;
+			return isSqliteAdapter(getExecutor.call(input)?.adapter);
 		}
 	}
 	return false;
