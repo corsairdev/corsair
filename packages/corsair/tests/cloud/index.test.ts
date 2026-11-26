@@ -338,6 +338,19 @@ describe('corsairCloud', () => {
 		).resolves.toBeDefined();
 	});
 
+	it('refuses connectLinks: false on a cloud client instead of dropping it', () => {
+		const corsair = corsairCloud({
+			apiKey: 'ck_cloud_x',
+			url: 'https://vm/p/api/corsair',
+		});
+		expect(() =>
+			corsair.withInstance('users').withTenant('acme', { connectLinks: false }),
+		).toThrow(/connectLinks applies to local clients/);
+		expect(() =>
+			corsair.withInstance('users').withTenant('acme', { connectLinks: true }),
+		).not.toThrow();
+	});
+
 	it('resolves the api.corsair.cloud URL from a ck_cloud_<slug>.<secret> key', async () => {
 		jest.spyOn(globalThis, 'fetch').mockImplementation(async (url) => {
 			if (String(url) === 'https://api.corsair.cloud/envh/instances') {

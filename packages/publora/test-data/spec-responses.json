@@ -1,0 +1,3471 @@
+{
+  "accounts.getContext": {
+    "operationId": "getAccountContext",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "context": {
+            "plane": "personal",
+            "actorUserId": "actorUserId",
+            "snapshotAt": "2026-12-01T15:00:00.000Z",
+            "serverTime": "2026-12-01T15:00:00.000Z",
+            "effectiveQuotaTime": "2026-12-01T15:00:00.000Z",
+            "plan": {
+              "key": "starter",
+              "name": "Starter",
+              "source": "source"
+            },
+            "features": {
+              "publishing": true,
+              "apiAccess": true,
+              "mcpAccess": true,
+              "analytics": true,
+              "mentionables": true
+            },
+            "quotas": {
+              "monthlyPosts": {
+                "metric": "posts.platform_monthly",
+                "scope": "account",
+                "usageScope": "legacy_workspace",
+                "unit": "platform_post",
+                "limit": 1,
+                "used": 1,
+                "remaining": 1,
+                "resetAt": "2026-12-01T15:00:00.000Z",
+                "periodStart": "2026-12-01T15:00:00.000Z",
+                "periodEnd": "2026-12-01T15:00:00.000Z",
+                "periodTimeZone": "UTC",
+                "connections": [
+                  {
+                    "platformSelection": "linkedin-ABC123",
+                    "used": 1,
+                    "limit": 1,
+                    "remaining": 1
+                  }
+                ]
+              },
+              "scheduledPosts": {
+                "metric": "posts.platform_monthly",
+                "scope": "account",
+                "usageScope": "legacy_workspace",
+                "unit": "platform_post",
+                "limit": 1,
+                "used": 1,
+                "remaining": 1,
+                "resetAt": "2026-12-01T15:00:00.000Z"
+              },
+              "scheduleHorizon": {
+                "metric": "posts.schedule_horizon_days",
+                "unit": "day",
+                "limit": 1,
+                "maxScheduledDate": "2026-12-01T15:00:00.000Z",
+                "resetAt": "resetAt"
+              },
+              "connections": {
+                "metric": "posts.platform_monthly",
+                "scope": "account",
+                "usageScope": "legacy_workspace",
+                "unit": "platform_post",
+                "limit": 1,
+                "used": 1,
+                "remaining": 1,
+                "resetAt": "2026-12-01T15:00:00.000Z"
+              }
+            },
+            "allowedPlatforms": ["allowedPlatforms"],
+            "advisory": true
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "context": {
+            "plane": "personal",
+            "actorUserId": "actorUserId",
+            "snapshotAt": "2026-12-01T15:00:00.000Z",
+            "serverTime": "2026-12-01T15:00:00.000Z",
+            "effectiveQuotaTime": "2026-12-01T15:00:00.000Z",
+            "plan": {
+              "key": "starter",
+              "name": "Starter",
+              "source": "source"
+            },
+            "features": {
+              "publishing": true,
+              "apiAccess": true,
+              "mcpAccess": true,
+              "analytics": true,
+              "mentionables": true
+            },
+            "quotas": {
+              "monthlyPosts": {
+                "metric": "posts.platform_monthly",
+                "scope": "account",
+                "usageScope": "legacy_workspace",
+                "unit": "platform_post",
+                "limit": null,
+                "used": 1,
+                "remaining": null,
+                "resetAt": null,
+                "periodStart": "2026-12-01T15:00:00.000Z",
+                "periodEnd": "2026-12-01T15:00:00.000Z",
+                "periodTimeZone": "UTC",
+                "connections": [
+                  {
+                    "platformSelection": "linkedin-ABC123",
+                    "used": 1,
+                    "limit": null,
+                    "remaining": null
+                  }
+                ]
+              },
+              "scheduledPosts": {
+                "metric": "posts.platform_monthly",
+                "scope": "account",
+                "usageScope": "legacy_workspace",
+                "unit": "platform_post",
+                "limit": null,
+                "used": 1,
+                "remaining": null,
+                "resetAt": null
+              },
+              "scheduleHorizon": {
+                "metric": "posts.schedule_horizon_days",
+                "unit": "day",
+                "limit": null,
+                "maxScheduledDate": null,
+                "resetAt": null
+              },
+              "connections": {
+                "metric": "posts.platform_monthly",
+                "scope": "account",
+                "usageScope": "legacy_workspace",
+                "unit": "platform_post",
+                "limit": null,
+                "used": 1,
+                "remaining": null,
+                "resetAt": null
+              }
+            },
+            "allowedPlatforms": null,
+            "advisory": true
+          }
+        }
+      }
+    ]
+  },
+  "accounts.getPlatformLimits": {
+    "operationId": "getPlatformLimits",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "schemaVersion": 1,
+          "source": "@publora/platform-limits",
+          "packageVersion": "1.0.0",
+          "limitsLastUpdated": "2026-03-11",
+          "supportedPlatforms": ["supportedPlatforms"],
+          "platforms": {
+            "linkedin-ABC123": {}
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "schemaVersion": 1,
+          "source": "@publora/platform-limits",
+          "packageVersion": "1.0.0",
+          "limitsLastUpdated": "2026-03-11",
+          "supportedPlatforms": ["supportedPlatforms"],
+          "platforms": {
+            "linkedin-ABC123": {}
+          }
+        }
+      }
+    ]
+  },
+  "accounts.list": {
+    "operationId": "getPlatformConnections",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "connections": [
+            {
+              "platformId": "twitter-123456789",
+              "username": "@yourhandle",
+              "displayName": "Your Name",
+              "profileImageUrl": "https://pbs.twimg.com/profile_images/...",
+              "profileUrl": "https://twitter.com/yourhandle",
+              "accessTokenExpiresAt": "2026-05-15T10:30:00.000Z",
+              "tokenStatus": "valid",
+              "connectionStatus": "active",
+              "tokenExpiresIn": "29 days",
+              "lastSuccessfulPost": "2026-12-01T15:00:00.000Z",
+              "lastError": {
+                "message": "message",
+                "occurredAt": "2026-12-01T15:00:00.000Z"
+              },
+              "subscriptionType": "Premium"
+            }
+          ]
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "connections": [
+            {
+              "platformId": "twitter-123456789",
+              "username": null,
+              "displayName": null,
+              "profileImageUrl": null,
+              "profileUrl": null,
+              "accessTokenExpiresAt": null,
+              "tokenStatus": "valid",
+              "connectionStatus": "active",
+              "tokenExpiresIn": null,
+              "lastSuccessfulPost": null,
+              "lastError": null,
+              "subscriptionType": null
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "accounts.testConnection": {
+    "operationId": "testConnection",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "platform": "linkedin",
+          "platformId": "linkedin-Tz9W5i6ZYG",
+          "username": "John Doe",
+          "status": "ok",
+          "message": "Connection is valid",
+          "permissions": ["permissions"],
+          "permissionsKnown": true,
+          "tokenExpiresIn": "29 days",
+          "lastSuccessfulPost": "2026-12-01T15:00:00.000Z",
+          "lastError": {
+            "message": "message",
+            "occurredAt": "2026-12-01T15:00:00.000Z"
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "platform": "linkedin",
+          "platformId": "linkedin-Tz9W5i6ZYG",
+          "username": "John Doe",
+          "status": "ok",
+          "message": "Connection is valid",
+          "permissions": ["permissions"],
+          "permissionsKnown": true,
+          "tokenExpiresIn": "29 days",
+          "lastSuccessfulPost": "2026-12-01T15:00:00.000Z",
+          "lastError": {
+            "message": "message",
+            "occurredAt": "2026-12-01T15:00:00.000Z"
+          }
+        }
+      }
+    ]
+  },
+  "analytics.postStatistics": {
+    "operationId": "getPlatformPostStatistics",
+    "responses": [
+      {
+        "source": "example",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "stats": {
+            "at://did:plc:3xcxmi4aiok5zyghylsa4dzw/app.bsky.feed.post/3muxmedtwxd2k": {
+              "reactions": 42,
+              "comments": 3,
+              "reposts": 7,
+              "quotes": 1,
+              "saves": 2,
+              "impressions": null,
+              "reach": null,
+              "clicks": null
+            },
+            "117232239423110999": null
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "stats": {
+            "linkedin-ABC123": null
+          },
+          "rateLimited": true,
+          "issues": {
+            "linkedin-ABC123": "CONNECTION_NOT_FOUND"
+          }
+        }
+      },
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "stats": {
+            "linkedin-ABC123": {
+              "reactions": 42,
+              "comments": 3,
+              "reposts": 7,
+              "quotes": 1,
+              "saves": 2,
+              "impressions": 1,
+              "reach": 1,
+              "clicks": 1
+            }
+          },
+          "rateLimited": true,
+          "issues": {
+            "linkedin-ABC123": "CONNECTION_NOT_FOUND"
+          }
+        }
+      }
+    ]
+  },
+  "analytics.profileStatistics": {
+    "operationId": "getPlatformProfileStatistics",
+    "responses": [
+      {
+        "source": "example",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "profile": {
+            "followers": 1234,
+            "following": 321,
+            "posts": 987
+          },
+          "cached": true,
+          "fetchedAt": "2026-09-08T09:00:00.000Z"
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "profile": {
+            "followers": null,
+            "following": null,
+            "posts": null
+          },
+          "cached": true,
+          "fetchedAt": "2026-12-01T15:00:00.000Z",
+          "rateLimited": true,
+          "unavailable": "AUTH_REVOKED"
+        }
+      },
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "profile": {
+            "followers": 1234,
+            "following": 321,
+            "posts": 987
+          },
+          "cached": true,
+          "fetchedAt": "2026-12-01T15:00:00.000Z",
+          "rateLimited": true,
+          "unavailable": "AUTH_REVOKED"
+        }
+      }
+    ]
+  },
+  "company.getWorkspaceContext": {
+    "operationId": "getCompanyWorkspaceContext",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "schemaVersion": 2,
+            "defaultContext": {
+              "accountId": "507f1f77bcf86cd799439011",
+              "workspaceId": "507f1f77bcf86cd799439011"
+            },
+            "singleContext": true,
+            "accounts": [
+              {
+                "id": "507f1f77bcf86cd799439011",
+                "membershipId": "507f1f77bcf86cd799439011",
+                "name": "name",
+                "logoUrl": "logoUrl",
+                "kind": "personal",
+                "status": "active",
+                "billing": {
+                  "status": "granted_unlimited",
+                  "trialStartedAt": "2026-12-01T15:00:00.000Z",
+                  "trialEndsAt": "2026-12-01T15:00:00.000Z",
+                  "serverNow": "2026-12-01T15:00:00.000Z",
+                  "purchasedQuantity": 1,
+                  "paidPeriodStart": "2026-12-01T15:00:00.000Z",
+                  "paidPeriodEnd": "2026-12-01T15:00:00.000Z",
+                  "planKey": "planKey",
+                  "subscriptionStatus": "subscriptionStatus",
+                  "cancelAtPeriodEnd": true
+                },
+                "accountRole": "owner",
+                "presentationMode": "workspaces",
+                "runtimeMode": "legacy_personal",
+                "publishingPaused": true,
+                "commandVersion": 1,
+                "capabilities": {
+                  "canCreateWorkspace": true,
+                  "canArchiveWorkspace": true,
+                  "canInviteMembers": true,
+                  "canManageMembers": true,
+                  "canInviteAdmins": true,
+                  "canManagePeople": true,
+                  "canViewAudit": true
+                },
+                "workspaces": [
+                  {
+                    "id": "507f1f77bcf86cd799439011",
+                    "name": "name",
+                    "logoUrl": "logoUrl",
+                    "status": "active",
+                    "roleSlug": "manager",
+                    "isDefault": true,
+                    "purpose": "collaborative",
+                    "isSubjectWorkspace": true,
+                    "commandVersion": 1,
+                    "capabilities": {
+                      "canViewContent": true,
+                      "canWriteDrafts": true,
+                      "canScheduleOrPublish": true,
+                      "canManageConnections": true,
+                      "canManageAccess": true,
+                      "canRename": true,
+                      "canViewAnalytics": true,
+                      "canUploadMedia": true,
+                      "canViewAudit": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "schemaVersion": 2,
+            "defaultContext": null,
+            "singleContext": true,
+            "accounts": [
+              {
+                "id": "507f1f77bcf86cd799439011",
+                "membershipId": "507f1f77bcf86cd799439011",
+                "name": "name",
+                "logoUrl": null,
+                "kind": "personal",
+                "status": "active",
+                "accountRole": "owner",
+                "presentationMode": "workspaces",
+                "runtimeMode": "legacy_personal",
+                "publishingPaused": true,
+                "commandVersion": 1,
+                "capabilities": {
+                  "canCreateWorkspace": true,
+                  "canArchiveWorkspace": true,
+                  "canInviteMembers": true,
+                  "canManageMembers": true,
+                  "canInviteAdmins": true,
+                  "canManagePeople": true,
+                  "canViewAudit": true
+                },
+                "workspaces": [
+                  {
+                    "id": "507f1f77bcf86cd799439011",
+                    "name": "name",
+                    "logoUrl": null,
+                    "status": "active",
+                    "roleSlug": "manager",
+                    "isDefault": true,
+                    "purpose": "collaborative",
+                    "isSubjectWorkspace": true,
+                    "commandVersion": 1,
+                    "capabilities": {
+                      "canViewContent": true,
+                      "canWriteDrafts": true,
+                      "canScheduleOrPublish": true,
+                      "canManageConnections": true,
+                      "canManageAccess": true,
+                      "canRename": true,
+                      "canViewAnalytics": true,
+                      "canUploadMedia": true,
+                      "canViewAudit": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "company.listConnections": {
+    "operationId": "listCompanyConnections",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "items": [
+              {
+                "id": "507f1f77bcf86cd799439011",
+                "accountId": "507f1f77bcf86cd799439011",
+                "workspaceId": "507f1f77bcf86cd799439011",
+                "platform": "twitter",
+                "platformId": "platformId",
+                "username": "username",
+                "displayName": "displayName",
+                "profileImageUrl": "profileImageUrl",
+                "profileUrl": "profileUrl",
+                "connectionSubtype": "personal",
+                "subscriptionType": "None",
+                "status": "active",
+                "lastSuccessfulPost": "2026-12-01T15:00:00.000Z",
+                "lastErrorAt": "2026-12-01T15:00:00.000Z",
+                "addedAt": "2026-12-01T15:00:00.000Z",
+                "linkedinReconnectRecommended": true,
+                "activationStatus": "pending",
+                "externalOwners": [
+                  {
+                    "instanceId": "instanceId",
+                    "companyId": "companyId",
+                    "credentialId": "credentialId"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "items": [
+              {
+                "id": "507f1f77bcf86cd799439011",
+                "accountId": "507f1f77bcf86cd799439011",
+                "workspaceId": "507f1f77bcf86cd799439011",
+                "platform": "twitter",
+                "platformId": null,
+                "username": null,
+                "displayName": null,
+                "profileImageUrl": null,
+                "profileUrl": null,
+                "connectionSubtype": null,
+                "subscriptionType": null,
+                "status": "active",
+                "lastSuccessfulPost": null,
+                "lastErrorAt": null,
+                "addedAt": null
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "company.listContexts": {
+    "operationId": "getCompanyContexts",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "schemaVersion": 2,
+            "defaultContext": {
+              "accountId": "507f1f77bcf86cd799439011",
+              "workspaceId": "507f1f77bcf86cd799439011"
+            },
+            "singleContext": true,
+            "accounts": [
+              {
+                "id": "507f1f77bcf86cd799439011",
+                "membershipId": "507f1f77bcf86cd799439011",
+                "name": "name",
+                "logoUrl": "logoUrl",
+                "kind": "personal",
+                "status": "active",
+                "billing": {
+                  "status": "granted_unlimited",
+                  "trialStartedAt": "2026-12-01T15:00:00.000Z",
+                  "trialEndsAt": "2026-12-01T15:00:00.000Z",
+                  "serverNow": "2026-12-01T15:00:00.000Z",
+                  "purchasedQuantity": 1,
+                  "paidPeriodStart": "2026-12-01T15:00:00.000Z",
+                  "paidPeriodEnd": "2026-12-01T15:00:00.000Z",
+                  "planKey": "planKey",
+                  "subscriptionStatus": "subscriptionStatus",
+                  "cancelAtPeriodEnd": true
+                },
+                "accountRole": "owner",
+                "presentationMode": "workspaces",
+                "runtimeMode": "legacy_personal",
+                "publishingPaused": true,
+                "commandVersion": 1,
+                "capabilities": {
+                  "canCreateWorkspace": true,
+                  "canArchiveWorkspace": true,
+                  "canInviteMembers": true,
+                  "canManageMembers": true,
+                  "canInviteAdmins": true,
+                  "canManagePeople": true,
+                  "canViewAudit": true
+                },
+                "workspaces": [
+                  {
+                    "id": "507f1f77bcf86cd799439011",
+                    "name": "name",
+                    "logoUrl": "logoUrl",
+                    "status": "active",
+                    "roleSlug": "manager",
+                    "isDefault": true,
+                    "purpose": "collaborative",
+                    "isSubjectWorkspace": true,
+                    "commandVersion": 1,
+                    "capabilities": {
+                      "canViewContent": true,
+                      "canWriteDrafts": true,
+                      "canScheduleOrPublish": true,
+                      "canManageConnections": true,
+                      "canManageAccess": true,
+                      "canRename": true,
+                      "canViewAnalytics": true,
+                      "canUploadMedia": true,
+                      "canViewAudit": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "schemaVersion": 2,
+            "defaultContext": null,
+            "singleContext": true,
+            "accounts": [
+              {
+                "id": "507f1f77bcf86cd799439011",
+                "membershipId": "507f1f77bcf86cd799439011",
+                "name": "name",
+                "logoUrl": null,
+                "kind": "personal",
+                "status": "active",
+                "accountRole": "owner",
+                "presentationMode": "workspaces",
+                "runtimeMode": "legacy_personal",
+                "publishingPaused": true,
+                "commandVersion": 1,
+                "capabilities": {
+                  "canCreateWorkspace": true,
+                  "canArchiveWorkspace": true,
+                  "canInviteMembers": true,
+                  "canManageMembers": true,
+                  "canInviteAdmins": true,
+                  "canManagePeople": true,
+                  "canViewAudit": true
+                },
+                "workspaces": [
+                  {
+                    "id": "507f1f77bcf86cd799439011",
+                    "name": "name",
+                    "logoUrl": null,
+                    "status": "active",
+                    "roleSlug": "manager",
+                    "isDefault": true,
+                    "purpose": "collaborative",
+                    "isSubjectWorkspace": true,
+                    "commandVersion": 1,
+                    "capabilities": {
+                      "canViewContent": true,
+                      "canWriteDrafts": true,
+                      "canScheduleOrPublish": true,
+                      "canManageConnections": true,
+                      "canManageAccess": true,
+                      "canRename": true,
+                      "canViewAnalytics": true,
+                      "canUploadMedia": true,
+                      "canViewAudit": true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "company.listPlatforms": {
+    "operationId": "getCompanyPublishingFormats",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "publishablePlatforms": ["publishablePlatforms"],
+            "connectOnlyPlatforms": ["connectOnlyPlatforms"],
+            "basicVariants": {
+              "linkedin-ABC123": {
+                "variants": ["variants"],
+                "contentMaxChars": 1,
+                "media": {
+                  "requirement": "required",
+                  "maxItems": 1,
+                  "kinds": ["kinds"],
+                  "maxImages": 1,
+                  "maxVideos": 1,
+                  "maxDocuments": 1,
+                  "mixedMedia": true
+                },
+                "settings": {
+                  "linkedin-ABC123": {
+                    "type": "boolean",
+                    "required": true,
+                    "values": ["values"],
+                    "maxLength": 1,
+                    "maxItems": 1,
+                    "maxTotalLength": 1,
+                    "properties": {}
+                  }
+                }
+              }
+            },
+            "xPostCharacterLimits": {
+              "standard": 1,
+              "bySubscriptionType": {
+                "linkedin-ABC123": 1
+              }
+            }
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "publishablePlatforms": ["publishablePlatforms"],
+            "connectOnlyPlatforms": ["connectOnlyPlatforms"],
+            "basicVariants": {
+              "linkedin-ABC123": {
+                "variants": ["variants"],
+                "contentMaxChars": 1,
+                "media": {
+                  "requirement": "required",
+                  "maxItems": 1,
+                  "kinds": ["kinds"],
+                  "maxImages": 1,
+                  "maxVideos": 1,
+                  "maxDocuments": 1,
+                  "mixedMedia": true
+                },
+                "settings": {
+                  "linkedin-ABC123": {
+                    "type": "boolean",
+                    "required": true,
+                    "values": ["values"],
+                    "maxLength": 1,
+                    "maxItems": 1,
+                    "maxTotalLength": 1,
+                    "properties": {}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "company.posts.cancelApproval": {
+    "operationId": "cancelCompanyPostApproval",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "result": "applied",
+            "postGroupId": "507f1f77bcf86cd799439011",
+            "status": "none",
+            "requestedAt": "2026-12-01T15:00:00.000Z",
+            "decidedAt": "2026-12-01T15:00:00.000Z",
+            "expiresAt": "2026-12-01T15:00:00.000Z",
+            "publication": {
+              "scheduledTime": "2026-12-01T15:00:00.000Z",
+              "status": "draft"
+            },
+            "reviewId": "reviewId",
+            "managerComment": "managerComment",
+            "reviewUrl": "https://example.com/file",
+            "expired": true,
+            "decision": {
+              "decision": "approved",
+              "comment": "comment",
+              "decidedAt": "2026-12-01T15:00:00.000Z",
+              "attachments": [
+                {
+                  "id": "id",
+                  "fileName": "fileName",
+                  "mimeType": "mimeType",
+                  "sizeBytes": 1,
+                  "url": "https://example.com/file"
+                }
+              ]
+            },
+            "notificationStatus": "pending"
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "result": "applied",
+            "postGroupId": "507f1f77bcf86cd799439011",
+            "status": "none",
+            "requestedAt": null,
+            "decidedAt": null,
+            "expiresAt": null,
+            "reviewId": null,
+            "managerComment": "managerComment",
+            "reviewUrl": null,
+            "expired": true,
+            "decision": null,
+            "notificationStatus": null
+          }
+        }
+      }
+    ]
+  },
+  "company.posts.completeMedia": {
+    "operationId": "completeCompanyPostMedia",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "mediaFileId": "507f1f77bcf86cd799439011",
+            "postGroupId": "507f1f77bcf86cd799439011",
+            "status": "ready",
+            "contentType": "contentType",
+            "type": "image",
+            "sizeBytes": 1,
+            "purpose": "youtube_thumbnail",
+            "fileUrl": "https://example.com/file",
+            "metadata": {
+              "width": 1.5,
+              "height": 1.5,
+              "durationSeconds": 1.5
+            },
+            "bytesProbedAt": "2026-12-01T15:00:00.000Z"
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "mediaFileId": "507f1f77bcf86cd799439011",
+            "postGroupId": "507f1f77bcf86cd799439011",
+            "status": "ready",
+            "contentType": null,
+            "type": null,
+            "sizeBytes": 1,
+            "metadata": {
+              "width": null,
+              "height": null,
+              "durationSeconds": null
+            },
+            "bytesProbedAt": null
+          }
+        }
+      }
+    ]
+  },
+  "company.posts.createDraft": {
+    "operationId": "createCompanyDraft",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "201",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "result": "applied",
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "groupId": "507f1f77bcf86cd799439011",
+            "postIds": ["507f1f77bcf86cd799439011"]
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "201",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "result": "applied",
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "groupId": "507f1f77bcf86cd799439011",
+            "postIds": ["507f1f77bcf86cd799439011"]
+          }
+        }
+      }
+    ]
+  },
+  "company.posts.get": {
+    "operationId": "getCompanyPostGroup",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "group": {
+              "id": "507f1f77bcf86cd799439011",
+              "accountId": "507f1f77bcf86cd799439011",
+              "workspaceId": "507f1f77bcf86cd799439011",
+              "approval": {
+                "status": "none",
+                "requestedAt": "2026-12-01T15:00:00.000Z",
+                "decidedAt": "2026-12-01T15:00:00.000Z",
+                "expiresAt": "2026-12-01T15:00:00.000Z"
+              },
+              "scheduledTime": "2026-12-01T15:00:00.000Z",
+              "platforms": ["platforms"],
+              "platformContents": {
+                "linkedin-ABC123": {
+                  "content": "content",
+                  "isBase": true
+                }
+              },
+              "isPlatformSpecific": true,
+              "sameContent": true,
+              "topic": "topic",
+              "content": "content",
+              "notes": "notes",
+              "videoTimestamp": 1.5,
+              "mediaFileIds": ["507f1f77bcf86cd799439011"],
+              "postIds": ["507f1f77bcf86cd799439011"],
+              "status": "draft",
+              "processingStatus": "pending",
+              "platformSettings": {
+                "threads": {
+                  "replyControl": ""
+                },
+                "tiktok": {
+                  "viewerSetting": "PUBLIC_TO_EVERYONE",
+                  "allowComments": true,
+                  "allowDuet": true,
+                  "allowStitch": true,
+                  "autoAddMusic": true,
+                  "commercialContent": true,
+                  "brandOrganic": true,
+                  "brandedContent": true,
+                  "aiGenerated": true
+                },
+                "instagram": {
+                  "videoType": "REELS",
+                  "coverUrl": "coverUrl",
+                  "shareToFeed": true,
+                  "aiGenerated": true
+                },
+                "youtube": {
+                  "privacy": "private",
+                  "title": "title",
+                  "madeForKids": true,
+                  "aiGenerated": true,
+                  "tags": ["tags"],
+                  "playlist": {
+                    "id": "id",
+                    "platformId": "platformId"
+                  },
+                  "thumbnail": {
+                    "mediaId": "mediaId"
+                  }
+                },
+                "linkedin": {
+                  "repostEnabled": true,
+                  "repostParentUrn": "repostParentUrn",
+                  "repostVisibility": ""
+                },
+                "telegram": {
+                  "disableNotification": true,
+                  "disableWebPagePreview": true,
+                  "protectContent": true
+                },
+                "twitter": {
+                  "aiGenerated": true
+                }
+              },
+              "firstComment": {
+                "text": "text",
+                "platforms": ["platforms"]
+              },
+              "repostSourceSnapshot": {
+                "postedId": "postedId",
+                "commentary": "commentary",
+                "authorName": "authorName",
+                "publishedAt": "2026-12-01T15:00:00.000Z",
+                "capturedAt": "2026-12-01T15:00:00.000Z"
+              },
+              "threadingSettings": {},
+              "errorMessage": "errorMessage",
+              "createdAt": "2026-12-01T15:00:00.000Z",
+              "updatedAt": "2026-12-01T15:00:00.000Z"
+            },
+            "posts": [
+              {
+                "id": "507f1f77bcf86cd799439011",
+                "accountId": "507f1f77bcf86cd799439011",
+                "workspaceId": "507f1f77bcf86cd799439011",
+                "postGroupId": "507f1f77bcf86cd799439011",
+                "content": "content",
+                "platform": "platform",
+                "platformId": "platformId",
+                "status": "draft",
+                "error": {
+                  "code": "code",
+                  "message": "message",
+                  "platformStatusCode": 1,
+                  "platformError": "platformError",
+                  "failedAt": "2026-12-01T15:00:00.000Z",
+                  "retryable": true,
+                  "publishOutcomeUnknown": true
+                },
+                "publishDeferral": {
+                  "reason": "global_stop",
+                  "deferredAt": "2026-12-01T15:00:00.000Z"
+                },
+                "postedId": "postedId",
+                "permalink": "https://example.com/file",
+                "firstCommentResult": {
+                  "status": "posted",
+                  "dueAt": "2026-12-01T15:00:00.000Z",
+                  "commentId": "urn:li:comment:(urn:li:activity:7654321,1234)",
+                  "skipReason": "skipReason",
+                  "attemptedAt": "2026-12-01T15:00:00.000Z",
+                  "postedAt": "2026-12-01T15:00:00.000Z",
+                  "error": {
+                    "code": "FIRST_COMMENT_PERMISSION_REQUIRED",
+                    "message": "message",
+                    "platformStatusCode": 1,
+                    "outcomeUnknown": true
+                  }
+                },
+                "publishedAt": "2026-12-01T15:00:00.000Z",
+                "createdAt": "2026-12-01T15:00:00.000Z",
+                "updatedAt": "2026-12-01T15:00:00.000Z"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "group": {
+              "id": "507f1f77bcf86cd799439011",
+              "accountId": "507f1f77bcf86cd799439011",
+              "workspaceId": "507f1f77bcf86cd799439011",
+              "scheduledTime": null,
+              "platforms": ["platforms"],
+              "platformContents": {
+                "linkedin-ABC123": {
+                  "content": "content",
+                  "isBase": true
+                }
+              },
+              "isPlatformSpecific": true,
+              "sameContent": true,
+              "topic": "topic",
+              "content": "content",
+              "notes": "notes",
+              "videoTimestamp": 1.5,
+              "mediaFileIds": ["507f1f77bcf86cd799439011"],
+              "postIds": ["507f1f77bcf86cd799439011"],
+              "status": "draft",
+              "processingStatus": null,
+              "platformSettings": {
+                "threads": {
+                  "replyControl": ""
+                },
+                "tiktok": {
+                  "viewerSetting": "PUBLIC_TO_EVERYONE",
+                  "allowComments": true,
+                  "allowDuet": true,
+                  "allowStitch": true,
+                  "autoAddMusic": true,
+                  "commercialContent": true,
+                  "brandOrganic": true,
+                  "brandedContent": true,
+                  "aiGenerated": true
+                },
+                "instagram": {
+                  "videoType": "REELS",
+                  "coverUrl": "coverUrl",
+                  "shareToFeed": true,
+                  "aiGenerated": true
+                },
+                "youtube": {
+                  "privacy": "private",
+                  "title": "title",
+                  "madeForKids": true,
+                  "aiGenerated": true,
+                  "tags": ["tags"],
+                  "playlist": {
+                    "id": "id",
+                    "platformId": "platformId"
+                  },
+                  "thumbnail": {
+                    "mediaId": "mediaId"
+                  }
+                },
+                "linkedin": {
+                  "repostEnabled": true,
+                  "repostParentUrn": "repostParentUrn",
+                  "repostVisibility": ""
+                },
+                "telegram": {
+                  "disableNotification": true,
+                  "disableWebPagePreview": true,
+                  "protectContent": true
+                },
+                "twitter": {
+                  "aiGenerated": true
+                }
+              },
+              "threadingSettings": {},
+              "errorMessage": null,
+              "createdAt": "2026-12-01T15:00:00.000Z",
+              "updatedAt": "2026-12-01T15:00:00.000Z"
+            },
+            "posts": [
+              {
+                "id": "507f1f77bcf86cd799439011",
+                "accountId": "507f1f77bcf86cd799439011",
+                "workspaceId": "507f1f77bcf86cd799439011",
+                "postGroupId": "507f1f77bcf86cd799439011",
+                "content": "content",
+                "platform": "platform",
+                "platformId": "platformId",
+                "status": "draft",
+                "error": null,
+                "postedId": null,
+                "permalink": null,
+                "publishedAt": null,
+                "createdAt": "2026-12-01T15:00:00.000Z",
+                "updatedAt": "2026-12-01T15:00:00.000Z"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/vnd.publora.company-approval.v2+json",
+        "body": {
+          "success": true,
+          "data": {
+            "group": {
+              "id": "507f1f77bcf86cd799439011",
+              "accountId": "507f1f77bcf86cd799439011",
+              "workspaceId": "507f1f77bcf86cd799439011",
+              "approval": {
+                "status": "none",
+                "requestedAt": "2026-12-01T15:00:00.000Z",
+                "decidedAt": "2026-12-01T15:00:00.000Z",
+                "expiresAt": "2026-12-01T15:00:00.000Z"
+              },
+              "scheduledTime": "2026-12-01T15:00:00.000Z",
+              "platforms": ["platforms"],
+              "platformContents": {
+                "linkedin-ABC123": {
+                  "content": "content",
+                  "isBase": true
+                }
+              },
+              "isPlatformSpecific": true,
+              "sameContent": true,
+              "topic": "topic",
+              "content": "content",
+              "notes": "notes",
+              "videoTimestamp": 1.5,
+              "mediaFileIds": ["507f1f77bcf86cd799439011"],
+              "postIds": ["507f1f77bcf86cd799439011"],
+              "status": "draft",
+              "processingStatus": "pending",
+              "platformSettings": {
+                "threads": {
+                  "replyControl": ""
+                },
+                "tiktok": {
+                  "viewerSetting": "PUBLIC_TO_EVERYONE",
+                  "allowComments": true,
+                  "allowDuet": true,
+                  "allowStitch": true,
+                  "autoAddMusic": true,
+                  "commercialContent": true,
+                  "brandOrganic": true,
+                  "brandedContent": true,
+                  "aiGenerated": true
+                },
+                "instagram": {
+                  "videoType": "REELS",
+                  "coverUrl": "coverUrl",
+                  "shareToFeed": true,
+                  "aiGenerated": true
+                },
+                "youtube": {
+                  "privacy": "private",
+                  "title": "title",
+                  "madeForKids": true,
+                  "aiGenerated": true,
+                  "tags": ["tags"],
+                  "playlist": {
+                    "id": "id",
+                    "platformId": "platformId"
+                  },
+                  "thumbnail": {
+                    "mediaId": "mediaId"
+                  }
+                },
+                "linkedin": {
+                  "repostEnabled": true,
+                  "repostParentUrn": "repostParentUrn",
+                  "repostVisibility": ""
+                },
+                "telegram": {
+                  "disableNotification": true,
+                  "disableWebPagePreview": true,
+                  "protectContent": true
+                },
+                "twitter": {
+                  "aiGenerated": true
+                }
+              },
+              "firstComment": {
+                "text": "text",
+                "platforms": ["platforms"]
+              },
+              "repostSourceSnapshot": {
+                "postedId": "postedId",
+                "commentary": "commentary",
+                "authorName": "authorName",
+                "publishedAt": "2026-12-01T15:00:00.000Z",
+                "capturedAt": "2026-12-01T15:00:00.000Z"
+              },
+              "threadingSettings": {},
+              "errorMessage": "errorMessage",
+              "createdAt": "2026-12-01T15:00:00.000Z",
+              "updatedAt": "2026-12-01T15:00:00.000Z"
+            },
+            "posts": [
+              {
+                "id": "507f1f77bcf86cd799439011",
+                "accountId": "507f1f77bcf86cd799439011",
+                "workspaceId": "507f1f77bcf86cd799439011",
+                "postGroupId": "507f1f77bcf86cd799439011",
+                "content": "content",
+                "platform": "platform",
+                "platformId": "platformId",
+                "status": "draft",
+                "error": {
+                  "code": "code",
+                  "message": "message",
+                  "platformStatusCode": 1,
+                  "platformError": "platformError",
+                  "failedAt": "2026-12-01T15:00:00.000Z",
+                  "retryable": true,
+                  "publishOutcomeUnknown": true
+                },
+                "publishDeferral": {
+                  "reason": "global_stop",
+                  "deferredAt": "2026-12-01T15:00:00.000Z"
+                },
+                "postedId": "postedId",
+                "permalink": "https://example.com/file",
+                "firstCommentResult": {
+                  "status": "posted",
+                  "dueAt": "2026-12-01T15:00:00.000Z",
+                  "commentId": "urn:li:comment:(urn:li:activity:7654321,1234)",
+                  "skipReason": "skipReason",
+                  "attemptedAt": "2026-12-01T15:00:00.000Z",
+                  "postedAt": "2026-12-01T15:00:00.000Z",
+                  "error": {
+                    "code": "FIRST_COMMENT_PERMISSION_REQUIRED",
+                    "message": "message",
+                    "platformStatusCode": 1,
+                    "outcomeUnknown": true
+                  }
+                },
+                "publishedAt": "2026-12-01T15:00:00.000Z",
+                "createdAt": "2026-12-01T15:00:00.000Z",
+                "updatedAt": "2026-12-01T15:00:00.000Z"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/vnd.publora.company-approval.v2+json",
+        "body": {
+          "success": true,
+          "data": {
+            "group": {
+              "id": "507f1f77bcf86cd799439011",
+              "accountId": "507f1f77bcf86cd799439011",
+              "workspaceId": "507f1f77bcf86cd799439011",
+              "scheduledTime": null,
+              "platforms": ["platforms"],
+              "platformContents": {
+                "linkedin-ABC123": {
+                  "content": "content",
+                  "isBase": true
+                }
+              },
+              "isPlatformSpecific": true,
+              "sameContent": true,
+              "topic": "topic",
+              "content": "content",
+              "notes": "notes",
+              "videoTimestamp": 1.5,
+              "mediaFileIds": ["507f1f77bcf86cd799439011"],
+              "postIds": ["507f1f77bcf86cd799439011"],
+              "status": "draft",
+              "processingStatus": null,
+              "platformSettings": {
+                "threads": {
+                  "replyControl": ""
+                },
+                "tiktok": {
+                  "viewerSetting": "PUBLIC_TO_EVERYONE",
+                  "allowComments": true,
+                  "allowDuet": true,
+                  "allowStitch": true,
+                  "autoAddMusic": true,
+                  "commercialContent": true,
+                  "brandOrganic": true,
+                  "brandedContent": true,
+                  "aiGenerated": true
+                },
+                "instagram": {
+                  "videoType": "REELS",
+                  "coverUrl": "coverUrl",
+                  "shareToFeed": true,
+                  "aiGenerated": true
+                },
+                "youtube": {
+                  "privacy": "private",
+                  "title": "title",
+                  "madeForKids": true,
+                  "aiGenerated": true,
+                  "tags": ["tags"],
+                  "playlist": {
+                    "id": "id",
+                    "platformId": "platformId"
+                  },
+                  "thumbnail": {
+                    "mediaId": "mediaId"
+                  }
+                },
+                "linkedin": {
+                  "repostEnabled": true,
+                  "repostParentUrn": "repostParentUrn",
+                  "repostVisibility": ""
+                },
+                "telegram": {
+                  "disableNotification": true,
+                  "disableWebPagePreview": true,
+                  "protectContent": true
+                },
+                "twitter": {
+                  "aiGenerated": true
+                }
+              },
+              "threadingSettings": {},
+              "errorMessage": null,
+              "createdAt": "2026-12-01T15:00:00.000Z",
+              "updatedAt": "2026-12-01T15:00:00.000Z"
+            },
+            "posts": [
+              {
+                "id": "507f1f77bcf86cd799439011",
+                "accountId": "507f1f77bcf86cd799439011",
+                "workspaceId": "507f1f77bcf86cd799439011",
+                "postGroupId": "507f1f77bcf86cd799439011",
+                "content": "content",
+                "platform": "platform",
+                "platformId": "platformId",
+                "status": "draft",
+                "error": null,
+                "postedId": null,
+                "permalink": null,
+                "publishedAt": null,
+                "createdAt": "2026-12-01T15:00:00.000Z",
+                "updatedAt": "2026-12-01T15:00:00.000Z"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "company.posts.getApproval": {
+    "operationId": "getCompanyPostApproval",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "postGroupId": "507f1f77bcf86cd799439011",
+            "status": "none",
+            "requestedAt": "2026-12-01T15:00:00.000Z",
+            "decidedAt": "2026-12-01T15:00:00.000Z",
+            "expiresAt": "2026-12-01T15:00:00.000Z",
+            "publication": {
+              "scheduledTime": "2026-12-01T15:00:00.000Z",
+              "status": "draft"
+            },
+            "reviewId": "reviewId",
+            "managerComment": "managerComment",
+            "reviewUrl": "https://example.com/file",
+            "expired": true,
+            "decision": {
+              "decision": "approved",
+              "comment": "comment",
+              "decidedAt": "2026-12-01T15:00:00.000Z",
+              "attachments": [
+                {
+                  "id": "id",
+                  "fileName": "fileName",
+                  "mimeType": "mimeType",
+                  "sizeBytes": 1,
+                  "url": "https://example.com/file"
+                }
+              ]
+            },
+            "notificationStatus": "pending",
+            "canRequestApproval": true
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "postGroupId": "507f1f77bcf86cd799439011",
+            "status": "none",
+            "requestedAt": null,
+            "decidedAt": null,
+            "expiresAt": null,
+            "reviewId": null,
+            "managerComment": "managerComment",
+            "reviewUrl": null,
+            "expired": true,
+            "decision": null,
+            "notificationStatus": null,
+            "canRequestApproval": true
+          }
+        }
+      },
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/vnd.publora.company-approval.v2+json",
+        "body": {
+          "success": true,
+          "data": {
+            "postGroupId": "507f1f77bcf86cd799439011",
+            "status": "none",
+            "requestedAt": "2026-12-01T15:00:00.000Z",
+            "decidedAt": "2026-12-01T15:00:00.000Z",
+            "expiresAt": "2026-12-01T15:00:00.000Z",
+            "publication": {
+              "scheduledTime": "2026-12-01T15:00:00.000Z",
+              "status": "draft"
+            },
+            "reviewId": "reviewId",
+            "managerComment": "managerComment",
+            "reviewUrl": "https://example.com/file",
+            "expired": true,
+            "decision": {
+              "decision": "approved",
+              "comment": "comment",
+              "decidedAt": "2026-12-01T15:00:00.000Z",
+              "attachments": [
+                {
+                  "id": "id",
+                  "fileName": "fileName",
+                  "mimeType": "mimeType",
+                  "sizeBytes": 1,
+                  "url": "https://example.com/file"
+                }
+              ]
+            },
+            "notificationStatus": "pending",
+            "canRequestApproval": true
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/vnd.publora.company-approval.v2+json",
+        "body": {
+          "success": true,
+          "data": {
+            "postGroupId": "507f1f77bcf86cd799439011",
+            "status": "none",
+            "requestedAt": null,
+            "decidedAt": null,
+            "expiresAt": null,
+            "reviewId": null,
+            "managerComment": "managerComment",
+            "reviewUrl": null,
+            "expired": true,
+            "decision": null,
+            "notificationStatus": null,
+            "canRequestApproval": true
+          }
+        }
+      }
+    ]
+  },
+  "company.posts.listMedia": {
+    "operationId": "getCompanyPostMedia",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "postGroupId": "507f1f77bcf86cd799439011",
+            "mediaFileIds": ["507f1f77bcf86cd799439011"],
+            "items": [
+              {
+                "id": "507f1f77bcf86cd799439011",
+                "url": "https://example.com/file",
+                "type": "image",
+                "mimeType": "mimeType",
+                "status": "uploading",
+                "purpose": "youtube_thumbnail"
+              }
+            ],
+            "youtubeThumbnail": {
+              "id": "507f1f77bcf86cd799439011",
+              "url": "https://example.com/file",
+              "type": "image",
+              "mimeType": "mimeType",
+              "status": "uploading",
+              "purpose": "youtube_thumbnail"
+            }
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "postGroupId": "507f1f77bcf86cd799439011",
+            "mediaFileIds": ["507f1f77bcf86cd799439011"],
+            "items": [
+              {
+                "id": "507f1f77bcf86cd799439011",
+                "url": null,
+                "type": null,
+                "mimeType": null,
+                "status": "uploading"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "company.posts.recover": {
+    "operationId": "recoverCompanyPostGroup",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "201",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "result": "applied",
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "sourceGroupId": "507f1f77bcf86cd799439011",
+            "groupId": "507f1f77bcf86cd799439011",
+            "status": "draft",
+            "postIds": ["507f1f77bcf86cd799439011"],
+            "recoveredPlatforms": ["recoveredPlatforms"],
+            "excludedPlatforms": [
+              {
+                "key": "key",
+                "reason": "published"
+              }
+            ],
+            "mediaCount": 1
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "201",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "result": "applied",
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "sourceGroupId": "507f1f77bcf86cd799439011",
+            "groupId": "507f1f77bcf86cd799439011",
+            "status": "draft",
+            "postIds": ["507f1f77bcf86cd799439011"],
+            "recoveredPlatforms": ["recoveredPlatforms"],
+            "excludedPlatforms": [
+              {
+                "key": "key",
+                "reason": "published"
+              }
+            ],
+            "mediaCount": 1
+          }
+        }
+      }
+    ]
+  },
+  "company.posts.removeMedia": {
+    "operationId": "removeCompanyPostMedia",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "202",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "mediaFileId": "507f1f77bcf86cd799439011",
+            "postGroupId": "507f1f77bcf86cd799439011",
+            "status": "deleting",
+            "deletionAfter": "2026-12-01T15:00:00.000Z"
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "202",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "mediaFileId": "507f1f77bcf86cd799439011",
+            "postGroupId": "507f1f77bcf86cd799439011",
+            "status": "deleting",
+            "deletionAfter": "2026-12-01T15:00:00.000Z"
+          }
+        }
+      }
+    ]
+  },
+  "company.posts.requestApproval": {
+    "operationId": "requestCompanyPostApproval",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "result": "applied",
+            "postGroupId": "507f1f77bcf86cd799439011",
+            "status": "none",
+            "requestedAt": "2026-12-01T15:00:00.000Z",
+            "decidedAt": "2026-12-01T15:00:00.000Z",
+            "expiresAt": "2026-12-01T15:00:00.000Z",
+            "publication": {
+              "scheduledTime": "2026-12-01T15:00:00.000Z",
+              "status": "draft"
+            },
+            "reviewId": "reviewId",
+            "managerComment": "managerComment",
+            "reviewUrl": "https://example.com/file",
+            "expired": true,
+            "decision": {
+              "decision": "approved",
+              "comment": "comment",
+              "decidedAt": "2026-12-01T15:00:00.000Z",
+              "attachments": [
+                {
+                  "id": "id",
+                  "fileName": "fileName",
+                  "mimeType": "mimeType",
+                  "sizeBytes": 1,
+                  "url": "https://example.com/file"
+                }
+              ]
+            },
+            "notificationStatus": "pending"
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "result": "applied",
+            "postGroupId": "507f1f77bcf86cd799439011",
+            "status": "none",
+            "requestedAt": null,
+            "decidedAt": null,
+            "expiresAt": null,
+            "reviewId": null,
+            "managerComment": "managerComment",
+            "reviewUrl": null,
+            "expired": true,
+            "decision": null,
+            "notificationStatus": null
+          }
+        }
+      }
+    ]
+  },
+  "company.posts.reschedule": {
+    "operationId": "rescheduleCompanyPostGroup",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "result": "applied",
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "groupId": "507f1f77bcf86cd799439011",
+            "scheduledTime": "2026-12-01T15:00:00.000Z",
+            "postCount": 1
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "result": "applied",
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "groupId": "507f1f77bcf86cd799439011",
+            "scheduledTime": "2026-12-01T15:00:00.000Z",
+            "postCount": 1
+          }
+        }
+      }
+    ]
+  },
+  "company.posts.reserveMedia": {
+    "operationId": "reserveCompanyPostMedia",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "201",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "mediaFileId": "507f1f77bcf86cd799439011",
+            "postGroupId": "507f1f77bcf86cd799439011",
+            "uploadUrl": "https://example.com/file",
+            "uploadHeaders": {
+              "Content-Type": "Content-Type",
+              "If-None-Match": "*"
+            },
+            "fileUrl": "https://example.com/file",
+            "contentType": "contentType",
+            "type": "image",
+            "sizeBytes": 1,
+            "purpose": "youtube_thumbnail",
+            "expiresAt": "2026-12-01T15:00:00.000Z",
+            "status": "uploading"
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "201",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "mediaFileId": "507f1f77bcf86cd799439011",
+            "postGroupId": "507f1f77bcf86cd799439011",
+            "uploadUrl": "https://example.com/file",
+            "uploadHeaders": {
+              "Content-Type": "Content-Type",
+              "If-None-Match": "*"
+            },
+            "fileUrl": "https://example.com/file",
+            "contentType": "contentType",
+            "type": "image",
+            "sizeBytes": 1,
+            "expiresAt": "2026-12-01T15:00:00.000Z",
+            "status": "uploading"
+          }
+        }
+      }
+    ]
+  },
+  "company.posts.retryApprovalNotification": {
+    "operationId": "retryCompanyApprovalNotification",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "notificationStatus": "pending"
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "notificationStatus": null
+          }
+        }
+      }
+    ]
+  },
+  "company.posts.schedule": {
+    "operationId": "scheduleCompanyPostGroup",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "result": "applied",
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "groupId": "507f1f77bcf86cd799439011",
+            "scheduledTime": "2026-12-01T15:00:00.000Z",
+            "postCount": 1
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "result": "applied",
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "groupId": "507f1f77bcf86cd799439011",
+            "scheduledTime": "2026-12-01T15:00:00.000Z",
+            "postCount": 1
+          }
+        }
+      }
+    ]
+  },
+  "company.posts.unschedule": {
+    "operationId": "unscheduleCompanyPostGroup",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "result": "applied",
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "groupId": "507f1f77bcf86cd799439011",
+            "status": "draft",
+            "postCount": 1
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "result": "applied",
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "groupId": "507f1f77bcf86cd799439011",
+            "status": "draft",
+            "postCount": 1
+          }
+        }
+      }
+    ]
+  },
+  "company.posts.updateDraft": {
+    "operationId": "updateCompanyDraft",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "result": "applied",
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "groupId": "507f1f77bcf86cd799439011",
+            "postIds": ["507f1f77bcf86cd799439011"]
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "result": "applied",
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "groupId": "507f1f77bcf86cd799439011",
+            "postIds": ["507f1f77bcf86cd799439011"]
+          }
+        }
+      }
+    ]
+  },
+  "company.webhooks.create": {
+    "operationId": "createCompanyWebhook",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "201",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "webhook": {
+              "id": "507f1f77bcf86cd799439011",
+              "name": "name",
+              "url": "https://example.com/file",
+              "events": ["post.published"],
+              "isActive": true,
+              "failureCount": 1,
+              "lastTriggeredAt": "2026-12-01T15:00:00.000Z",
+              "createdAt": "2026-12-01T15:00:00.000Z",
+              "updatedAt": "2026-12-01T15:00:00.000Z"
+            },
+            "secret": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "201",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "webhook": {
+              "id": "507f1f77bcf86cd799439011",
+              "name": "name",
+              "url": "https://example.com/file",
+              "events": ["post.published"],
+              "isActive": true,
+              "failureCount": 1,
+              "lastTriggeredAt": null,
+              "createdAt": "2026-12-01T15:00:00.000Z",
+              "updatedAt": "2026-12-01T15:00:00.000Z"
+            },
+            "secret": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      }
+    ]
+  },
+  "company.webhooks.delete": {
+    "operationId": "deleteCompanyWebhook",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "webhookId": "507f1f77bcf86cd799439011",
+            "deleted": true
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "webhookId": "507f1f77bcf86cd799439011",
+            "deleted": true
+          }
+        }
+      }
+    ]
+  },
+  "company.webhooks.list": {
+    "operationId": "listCompanyWebhooks",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "items": [
+              {
+                "id": "507f1f77bcf86cd799439011",
+                "name": "name",
+                "url": "https://example.com/file",
+                "events": ["post.published"],
+                "isActive": true,
+                "failureCount": 1,
+                "lastTriggeredAt": "2026-12-01T15:00:00.000Z",
+                "createdAt": "2026-12-01T15:00:00.000Z",
+                "updatedAt": "2026-12-01T15:00:00.000Z"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "items": [
+              {
+                "id": "507f1f77bcf86cd799439011",
+                "name": "name",
+                "url": "https://example.com/file",
+                "events": ["post.published"],
+                "isActive": true,
+                "failureCount": 1,
+                "lastTriggeredAt": null,
+                "createdAt": "2026-12-01T15:00:00.000Z",
+                "updatedAt": "2026-12-01T15:00:00.000Z"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "company.webhooks.regenerateSecret": {
+    "operationId": "regenerateCompanyWebhookSecret",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "webhook": {
+              "id": "507f1f77bcf86cd799439011",
+              "name": "name",
+              "url": "https://example.com/file",
+              "events": ["post.published"],
+              "isActive": true,
+              "failureCount": 1,
+              "lastTriggeredAt": "2026-12-01T15:00:00.000Z",
+              "createdAt": "2026-12-01T15:00:00.000Z",
+              "updatedAt": "2026-12-01T15:00:00.000Z"
+            },
+            "secret": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "webhook": {
+              "id": "507f1f77bcf86cd799439011",
+              "name": "name",
+              "url": "https://example.com/file",
+              "events": ["post.published"],
+              "isActive": true,
+              "failureCount": 1,
+              "lastTriggeredAt": null,
+              "createdAt": "2026-12-01T15:00:00.000Z",
+              "updatedAt": "2026-12-01T15:00:00.000Z"
+            },
+            "secret": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        }
+      }
+    ]
+  },
+  "company.webhooks.update": {
+    "operationId": "updateCompanyWebhook",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "webhook": {
+              "id": "507f1f77bcf86cd799439011",
+              "name": "name",
+              "url": "https://example.com/file",
+              "events": ["post.published"],
+              "isActive": true,
+              "failureCount": 1,
+              "lastTriggeredAt": "2026-12-01T15:00:00.000Z",
+              "createdAt": "2026-12-01T15:00:00.000Z",
+              "updatedAt": "2026-12-01T15:00:00.000Z"
+            }
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "data": {
+            "accountId": "507f1f77bcf86cd799439011",
+            "workspaceId": "507f1f77bcf86cd799439011",
+            "webhook": {
+              "id": "507f1f77bcf86cd799439011",
+              "name": "name",
+              "url": "https://example.com/file",
+              "events": ["post.published"],
+              "isActive": true,
+              "failureCount": 1,
+              "lastTriggeredAt": null,
+              "createdAt": "2026-12-01T15:00:00.000Z",
+              "updatedAt": "2026-12-01T15:00:00.000Z"
+            }
+          }
+        }
+      }
+    ]
+  },
+  "linkedin.accountStatistics": {
+    "operationId": "getLinkedInAccountStatistics",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "metrics": {
+            "linkedin-ABC123": 1
+          },
+          "aggregation": "TOTAL",
+          "cached": true
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "metrics": {
+            "linkedin-ABC123": 1
+          },
+          "aggregation": "TOTAL",
+          "cached": true
+        }
+      }
+    ]
+  },
+  "linkedin.addReaction": {
+    "operationId": "addLinkedInReaction",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "201",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "reaction": {
+            "reactionType": "LIKE",
+            "actor": "actor",
+            "object": "object"
+          },
+          "urnTranslated": {
+            "from": "from",
+            "to": "to"
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "201",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "reaction": {
+            "reactionType": "LIKE",
+            "actor": "actor",
+            "object": "object"
+          },
+          "urnTranslated": {
+            "from": "from",
+            "to": "to"
+          }
+        }
+      }
+    ]
+  },
+  "linkedin.createComment": {
+    "operationId": "createLinkedInComment",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "201",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "comment": {
+            "id": "id",
+            "message": "message",
+            "imageUrn": "imageUrn",
+            "actor": "actor",
+            "object": "object"
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "201",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "comment": {
+            "id": "id",
+            "message": "message",
+            "imageUrn": "imageUrn",
+            "actor": "actor",
+            "object": "object"
+          }
+        }
+      }
+    ]
+  },
+  "linkedin.deleteComment": {
+    "operationId": "deleteLinkedInComment",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "deleted": "deleted"
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "deleted": "deleted"
+        }
+      }
+    ]
+  },
+  "linkedin.followers": {
+    "operationId": "getLinkedInFollowers",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "followersCount": 1234,
+          "cached": true
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "followersCount": 1234,
+          "cached": true
+        }
+      }
+    ]
+  },
+  "linkedin.mentionables": {
+    "operationId": "listLinkedInMentionables",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "people": [
+            {
+              "personId": "Dk968RHxiO",
+              "name": "Daria Bulaeva",
+              "profileUrl": "",
+              "profilePicture": "",
+              "source": "comment",
+              "lastSeenAt": "2026-07-16T10:00:00.000Z",
+              "mention": "@{urn:li:person:Dk968RHxiO|Daria Bulaeva}"
+            }
+          ]
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "people": [
+            {
+              "personId": "Dk968RHxiO",
+              "name": "Daria Bulaeva",
+              "profileUrl": "",
+              "profilePicture": "",
+              "source": "comment",
+              "lastSeenAt": "2026-07-16T10:00:00.000Z",
+              "mention": null
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "linkedin.postStatistics": {
+    "operationId": "getLinkedInPostStatistics",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "count": 1542,
+          "cached": true
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "count": 1542,
+          "cached": true
+        }
+      }
+    ]
+  },
+  "linkedin.profileSummary": {
+    "operationId": "getLinkedInProfileSummary",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "partialData": true,
+          "profile": {
+            "followers": {
+              "total": 5000,
+              "periodGrowth": 150
+            },
+            "posts": {
+              "totalImpressions": 25000,
+              "totalReactions": 500,
+              "totalComments": 75,
+              "totalReshares": 30,
+              "totalMembersReached": 12000
+            }
+          },
+          "errors": [
+            {
+              "metric": "metric",
+              "error": "error"
+            }
+          ]
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "partialData": true,
+          "profile": {
+            "followers": {
+              "total": 5000,
+              "periodGrowth": 150
+            },
+            "posts": {
+              "totalImpressions": 25000,
+              "totalReactions": 500,
+              "totalComments": 75,
+              "totalReshares": 30,
+              "totalMembersReached": 12000
+            }
+          },
+          "errors": [
+            {
+              "metric": "metric",
+              "error": "error"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "linkedin.removeReaction": {
+    "operationId": "removeLinkedInReaction",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "reaction": {
+            "reactionType": "reactionType",
+            "actor": "actor",
+            "object": "object"
+          },
+          "urnTranslated": {
+            "from": "from",
+            "to": "to"
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "reaction": {
+            "reactionType": "reactionType",
+            "actor": "actor",
+            "object": "object"
+          },
+          "urnTranslated": {
+            "from": "from",
+            "to": "to"
+          }
+        }
+      }
+    ]
+  },
+  "linkedin.reshare": {
+    "operationId": "createLinkedInReshare",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "201",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "reshare": {
+            "id": "urn:li:share:7123456789012345678"
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "201",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "reshare": {
+            "id": "urn:li:share:7123456789012345678"
+          }
+        }
+      }
+    ]
+  },
+  "media.attach": {
+    "operationId": "attachMedia",
+    "responses": [
+      {
+        "source": "example",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "message": "Post updated successfully",
+          "scheduledTime": null,
+          "postGroup": {
+            "_id": "507f1f77bcf86cd799439011",
+            "status": "draft",
+            "content": "Our spring collection is here.",
+            "platforms": ["linkedin-ABC123"]
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "message": "Post updated successfully",
+          "scheduledTime": "2026-12-01T15:00:00.000Z",
+          "postGroup": {
+            "_id": "_id",
+            "status": "draft",
+            "content": "content",
+            "platforms": ["platforms"],
+            "scheduledTime": "2026-12-01T15:00:00.000Z"
+          }
+        }
+      },
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "message": "Post updated successfully",
+          "scheduledTime": "2026-12-01T15:00:00.000Z",
+          "postGroup": {
+            "_id": "_id",
+            "status": "draft",
+            "content": "content",
+            "platforms": ["platforms"],
+            "scheduledTime": "2026-12-01T15:00:00.000Z"
+          }
+        }
+      }
+    ]
+  },
+  "media.complete": {
+    "operationId": "completeMedia",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "mediaFile": {
+            "_id": "_id",
+            "type": "type",
+            "mimeType": "mimeType",
+            "fileName": "fileName",
+            "url": "https://example.com/file",
+            "status": "status",
+            "metadata": {}
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "mediaFile": {
+            "_id": "_id"
+          }
+        }
+      }
+    ]
+  },
+  "media.createUpload": {
+    "operationId": "getUploadUrl",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "uploadUrl": "https://example.com/file",
+          "fileUrl": "https://example.com/file",
+          "mediaId": "mediaId"
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "uploadUrl": "https://example.com/file",
+          "fileUrl": "https://example.com/file",
+          "mediaId": "mediaId"
+        }
+      }
+    ]
+  },
+  "media.delete": {
+    "operationId": "deleteMedia",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "postGroupDemoted": true,
+          "message": "message",
+          "groupAlreadyMissing": true,
+          "mediaWasOrphan": true,
+          "thumbnailCleared": true,
+          "coverCleared": true
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "postGroupDemoted": true,
+          "message": "message",
+          "groupAlreadyMissing": true,
+          "mediaWasOrphan": true,
+          "thumbnailCleared": true,
+          "coverCleared": true
+        }
+      }
+    ]
+  },
+  "media.uploadInstagramCover": {
+    "operationId": "uploadInstagramCover",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "cover": {
+            "mediaId": "665f8a1b2c3d4e5f6a7b8c9d",
+            "url": "https://media.publora.com/images/665f...-reel-cover.jpg"
+          },
+          "message": "message"
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "cover": {
+            "mediaId": "665f8a1b2c3d4e5f6a7b8c9d",
+            "url": "https://media.publora.com/images/665f...-reel-cover.jpg"
+          },
+          "message": "message"
+        }
+      }
+    ]
+  },
+  "media.uploadYoutubeThumbnail": {
+    "operationId": "uploadYouTubeThumbnail",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "thumbnail": {
+            "mediaId": "665f8a1b2c3d4e5f6a7b8c9d",
+            "url": "https://media.publora.com/images/665f...-thumb.jpg"
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "thumbnail": {
+            "mediaId": "665f8a1b2c3d4e5f6a7b8c9d",
+            "url": "https://media.publora.com/images/665f...-thumb.jpg"
+          }
+        }
+      }
+    ]
+  },
+  "posts.create": {
+    "operationId": "createPost",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "postGroupId": "507f1f77bcf86cd799439011",
+          "scheduledTime": "2026-03-01T14:00:00.000Z",
+          "warnings": [
+            {
+              "code": "SCHEDULED_TIME_COERCED",
+              "message": "Requested scheduled time 2026-03-01T14:00:00.000Z was in the past and was changed to server time 2026-03-01T14:02:11.412Z.",
+              "requested": "2026-03-01T14:00:00.000Z",
+              "effective": "2026-03-01T14:02:11.412Z",
+              "platforms": ["platforms"]
+            }
+          ]
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "postGroupId": "507f1f77bcf86cd799439011",
+          "scheduledTime": "2026-03-01T14:00:00.000Z",
+          "warnings": [
+            {
+              "code": "SCHEDULED_TIME_COERCED",
+              "message": "Requested scheduled time 2026-03-01T14:00:00.000Z was in the past and was changed to server time 2026-03-01T14:02:11.412Z.",
+              "requested": "2026-03-01T14:00:00.000Z",
+              "effective": "2026-03-01T14:02:11.412Z",
+              "platforms": ["platforms"]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "posts.delete": {
+    "operationId": "deletePost",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true
+        }
+      }
+    ]
+  },
+  "posts.get": {
+    "operationId": "getPost",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "postGroupId": "postGroupId",
+          "status": "draft",
+          "scheduledTime": "2026-03-01T14:00:00.000Z",
+          "platformSettings": {},
+          "firstComment": {
+            "text": "Full write-up with the numbers: https://example.com/launch-week",
+            "platforms": ["linkedin"]
+          },
+          "firstComments": [
+            {
+              "text": "text",
+              "platforms": ["linkedin"],
+              "delaySeconds": 1
+            }
+          ],
+          "platforms": ["platforms"],
+          "posts": [
+            {
+              "platform": "twitter",
+              "platformId": "123456789",
+              "content": "Hello from Publora API!",
+              "status": "published",
+              "postedId": "1234567890123456789",
+              "permalink": "https://x.com/publora/status/1234567890123456789",
+              "isThread": false,
+              "threadParts": [
+                {
+                  "index": 0,
+                  "content": "First message.",
+                  "status": "published",
+                  "publishedId": "17900000000000001"
+                }
+              ],
+              "firstCommentResult": {
+                "status": "posted",
+                "dueAt": "2026-12-01T15:00:00.000Z",
+                "commentId": "urn:li:comment:(urn:li:activity:7654321,1234)",
+                "skipReason": "skipReason",
+                "attemptedAt": "2026-12-01T15:00:00.000Z",
+                "postedAt": "2026-12-01T15:00:00.000Z",
+                "error": {
+                  "code": "FIRST_COMMENT_PERMISSION_REQUIRED",
+                  "message": "message",
+                  "platformStatusCode": 1,
+                  "outcomeUnknown": true
+                }
+              },
+              "firstCommentResults": [
+                {
+                  "status": "posted",
+                  "dueAt": "2026-12-01T15:00:00.000Z",
+                  "commentId": "urn:li:comment:(urn:li:activity:7654321,1234)",
+                  "skipReason": "skipReason",
+                  "attemptedAt": "2026-12-01T15:00:00.000Z",
+                  "postedAt": "2026-12-01T15:00:00.000Z",
+                  "error": {
+                    "code": "FIRST_COMMENT_PERMISSION_REQUIRED",
+                    "message": "message",
+                    "platformStatusCode": 1,
+                    "outcomeUnknown": true
+                  }
+                }
+              ]
+            }
+          ],
+          "media": [
+            {
+              "mediaId": "mediaId",
+              "sourceFileName": "sourceFileName",
+              "fileName": "fileName",
+              "type": "type",
+              "mimeType": "mimeType",
+              "status": "status",
+              "failureReason": "failureReason",
+              "url": "url"
+            }
+          ]
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "postGroupId": "postGroupId",
+          "status": "draft",
+          "scheduledTime": "2026-03-01T14:00:00.000Z",
+          "platformSettings": {},
+          "firstComment": {
+            "text": "Full write-up with the numbers: https://example.com/launch-week"
+          },
+          "firstComments": [
+            {
+              "text": "text"
+            }
+          ],
+          "platforms": ["platforms"],
+          "posts": [
+            {
+              "platform": "twitter",
+              "platformId": null,
+              "content": "Hello from Publora API!",
+              "status": "published",
+              "postedId": null,
+              "permalink": null,
+              "isThread": false,
+              "threadParts": [
+                {
+                  "index": 0,
+                  "content": "First message.",
+                  "status": "published",
+                  "publishedId": null
+                }
+              ],
+              "firstCommentResult": null,
+              "firstCommentResults": [
+                {
+                  "status": "posted",
+                  "dueAt": null,
+                  "commentId": null,
+                  "skipReason": null,
+                  "attemptedAt": null,
+                  "postedAt": null,
+                  "error": null
+                }
+              ]
+            }
+          ],
+          "media": [
+            {
+              "mediaId": "mediaId",
+              "sourceFileName": null,
+              "fileName": null,
+              "type": null,
+              "mimeType": null,
+              "status": "status",
+              "failureReason": null,
+              "url": null
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "posts.getLogs": {
+    "operationId": "getPostLogs",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "logs": [
+            {
+              "_id": "_id",
+              "postGroupId": "postGroupId",
+              "platform": "platform",
+              "postId": "postId",
+              "event": "scheduled",
+              "error": "error",
+              "httpStatus": 1,
+              "retryCount": 1,
+              "metadata": {},
+              "createdAt": "2026-12-01T15:00:00.000Z",
+              "updatedAt": "2026-12-01T15:00:00.000Z"
+            }
+          ]
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "logs": [
+            {
+              "_id": "_id",
+              "postGroupId": "postGroupId",
+              "platform": "platform",
+              "postId": "postId",
+              "event": "scheduled",
+              "error": "error",
+              "httpStatus": null,
+              "retryCount": 1,
+              "metadata": {},
+              "createdAt": "2026-12-01T15:00:00.000Z",
+              "updatedAt": "2026-12-01T15:00:00.000Z"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "posts.list": {
+    "operationId": "listPosts",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "posts": [
+            {
+              "postGroupId": "507f1f77bcf86cd799439011",
+              "content": "Excited to share our new product launch!",
+              "status": "draft",
+              "scheduledTime": "2026-12-01T15:00:00.000Z",
+              "createdAt": "2026-12-01T15:00:00.000Z",
+              "updatedAt": "2026-12-01T15:00:00.000Z",
+              "platforms": [
+                {
+                  "platformId": "platformId",
+                  "platform": "platform",
+                  "status": "status"
+                }
+              ],
+              "mediaUrls": ["https://example.com/file"]
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "limit": 20,
+            "totalItems": 47,
+            "totalPages": 3,
+            "hasNextPage": true,
+            "hasPrevPage": false
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "posts": [
+            {
+              "postGroupId": "507f1f77bcf86cd799439011",
+              "content": "Excited to share our new product launch!",
+              "status": "draft",
+              "scheduledTime": "2026-12-01T15:00:00.000Z",
+              "createdAt": "2026-12-01T15:00:00.000Z",
+              "updatedAt": "2026-12-01T15:00:00.000Z",
+              "platforms": [
+                {
+                  "platformId": "platformId",
+                  "platform": "platform",
+                  "status": "status"
+                }
+              ],
+              "mediaUrls": ["https://example.com/file"]
+            }
+          ],
+          "pagination": {
+            "page": 1,
+            "limit": 20,
+            "totalItems": 47,
+            "totalPages": 3,
+            "hasNextPage": true,
+            "hasPrevPage": false
+          }
+        }
+      }
+    ]
+  },
+  "posts.update": {
+    "operationId": "updatePost",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "message": "Post updated successfully",
+          "scheduledTime": "2026-03-01T14:00:00.000Z",
+          "warnings": [
+            {
+              "code": "SCHEDULED_TIME_COERCED",
+              "message": "Requested scheduled time 2026-03-01T14:00:00.000Z was in the past and was changed to server time 2026-03-01T14:02:11.412Z.",
+              "requested": "2026-03-01T14:00:00.000Z",
+              "effective": "2026-03-01T14:02:11.412Z",
+              "platforms": ["platforms"]
+            }
+          ],
+          "postGroup": {
+            "_id": "_id",
+            "status": "status",
+            "content": "Corrected launch announcement.",
+            "platforms": ["platforms"],
+            "scheduledTime": "2026-12-01T15:00:00.000Z"
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "message": "Post updated successfully",
+          "scheduledTime": "2026-03-01T14:00:00.000Z",
+          "warnings": [
+            {
+              "code": "SCHEDULED_TIME_COERCED",
+              "message": "Requested scheduled time 2026-03-01T14:00:00.000Z was in the past and was changed to server time 2026-03-01T14:02:11.412Z.",
+              "requested": "2026-03-01T14:00:00.000Z",
+              "effective": "2026-03-01T14:02:11.412Z",
+              "platforms": ["platforms"]
+            }
+          ],
+          "postGroup": {
+            "_id": "_id",
+            "status": "status",
+            "content": "Corrected launch announcement.",
+            "platforms": ["platforms"],
+            "scheduledTime": "2026-12-01T15:00:00.000Z"
+          }
+        }
+      }
+    ]
+  },
+  "webhooks.create": {
+    "operationId": "createWebhook",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "201",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "webhook": {
+            "_id": "_id",
+            "name": "name",
+            "url": "url",
+            "events": ["events"],
+            "secret": "secret",
+            "isActive": true,
+            "createdAt": "2026-12-01T15:00:00.000Z"
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "201",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "webhook": {
+            "_id": "_id",
+            "name": "name",
+            "url": "url",
+            "events": ["events"],
+            "secret": "secret",
+            "isActive": true,
+            "createdAt": "2026-12-01T15:00:00.000Z"
+          }
+        }
+      }
+    ]
+  },
+  "webhooks.delete": {
+    "operationId": "deleteWebhook",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true
+        }
+      }
+    ]
+  },
+  "webhooks.list": {
+    "operationId": "listWebhooks",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "webhooks": [
+            {
+              "_id": "507f1f77bcf86cd799439011",
+              "name": "My Webhook",
+              "url": "https://example.com/webhook",
+              "events": ["post.scheduled"],
+              "isActive": true,
+              "createdAt": "2026-12-01T15:00:00.000Z",
+              "updatedAt": "2026-12-01T15:00:00.000Z"
+            }
+          ]
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "webhooks": [
+            {
+              "_id": "507f1f77bcf86cd799439011",
+              "name": "My Webhook",
+              "url": "https://example.com/webhook",
+              "events": ["post.scheduled"],
+              "isActive": true,
+              "createdAt": "2026-12-01T15:00:00.000Z",
+              "updatedAt": "2026-12-01T15:00:00.000Z"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "webhooks.regenerateSecret": {
+    "operationId": "regenerateWebhookSecret",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "secret": "secret"
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "secret": "secret"
+        }
+      }
+    ]
+  },
+  "webhooks.update": {
+    "operationId": "updateWebhook",
+    "responses": [
+      {
+        "source": "schema",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "webhook": {
+            "_id": "507f1f77bcf86cd799439011",
+            "name": "My Webhook",
+            "url": "https://example.com/webhook",
+            "events": ["post.scheduled"],
+            "isActive": true,
+            "createdAt": "2026-12-01T15:00:00.000Z",
+            "updatedAt": "2026-12-01T15:00:00.000Z"
+          }
+        }
+      },
+      {
+        "source": "minimal",
+        "status": "200",
+        "contentType": "application/json",
+        "body": {
+          "success": true,
+          "webhook": {
+            "_id": "507f1f77bcf86cd799439011",
+            "name": "My Webhook",
+            "url": "https://example.com/webhook",
+            "events": ["post.scheduled"],
+            "isActive": true,
+            "createdAt": "2026-12-01T15:00:00.000Z",
+            "updatedAt": "2026-12-01T15:00:00.000Z"
+          }
+        }
+      }
+    ]
+  }
+}

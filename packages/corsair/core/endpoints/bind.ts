@@ -132,6 +132,7 @@ export function bindEndpointsRecursively({
 	allPlugins,
 	multiTenancy,
 	encryptDataAtRest,
+	connectLinks,
 }: {
 	endpoints: Record<string, unknown>;
 	hooks: Record<string, unknown> | undefined;
@@ -163,6 +164,8 @@ export function bindEndpointsRecursively({
 	allPlugins?: readonly CorsairPlugin[];
 	multiTenancy?: boolean;
 	encryptDataAtRest?: boolean;
+	/** false: an auth failure throws without minting a connect link (see WithTenantOptions). */
+	connectLinks?: boolean;
 }): void {
 	for (const [key, value] of Object.entries(endpoints)) {
 		// we have to retype this now because it's nested webhooks
@@ -526,6 +529,20 @@ export function bindEndpointsRecursively({
 								verified: false,
 							});
 						}
+						// A caller that can't show a link gets none: minting one would only
+						// use up the environment's hourly links on Hub.
+						if (connectLinks === false) {
+							throw new AuthMissingError(
+								err.pluginId,
+								err.authType,
+								err.message,
+								{
+									connectUrl: null,
+									tenantId: err.tenantId ?? tenantId ?? 'default',
+									reason: err.reason,
+								},
+							);
+						}
 						// throwAuthMissingEndpointError mints the scoped link and rethrows
 						// the enriched error; capture that link for the connect dialog.
 						try {
@@ -766,6 +783,7 @@ export function bindEndpointsRecursively({
 				allPlugins,
 				multiTenancy,
 				encryptDataAtRest,
+				connectLinks,
 			});
 
 			tree[key] = nestedTree;

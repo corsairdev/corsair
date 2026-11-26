@@ -1,0 +1,3220 @@
+---
+title: "Publora API reference"
+sidebarTitle: "API"
+description: "API reference for the Publora plugin in Corsair: every `publora.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### getContext
+
+`accounts.getContext`
+
+The plan, features, monthly and scheduled post quotas, latest allowed schedule date and allowed networks of the key's account. Check it before a batch of posts.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.accounts.getContext({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scheduledTime` | `string` | No | ISO 8601 date-time of a planned batch; selects its monthly quota period. Omit for the current period. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `context` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+  plan?: {
+    key?: string | null,
+    name?: string | null
+  } | null,
+  features?: Record<string, boolean> | null,
+  quotas?: {
+    monthlyPosts?: {
+      metric?: string | null,
+      scope?: string | null,
+      unit?: string | null,
+      limit?: number | null,
+      used?: number | null,
+      remaining?: number | null,
+      resetAt?: string | null
+    } | null,
+    scheduledPosts?: {
+      metric?: string | null,
+      scope?: string | null,
+      unit?: string | null,
+      limit?: number | null,
+      used?: number | null,
+      remaining?: number | null,
+      resetAt?: string | null
+    } | null,
+    scheduleHorizon?: {
+      limit?: number | null,
+      maxScheduledDate?: string | null
+    } | null,
+    connections?: {
+      metric?: string | null,
+      scope?: string | null,
+      unit?: string | null,
+      limit?: number | null,
+      used?: number | null,
+      remaining?: number | null,
+      resetAt?: string | null
+    } | null
+  } | null,
+  allowedPlatforms?: string[] | null,
+  serverTime?: string | null,
+  advisory?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPlatformLimits
+
+`accounts.getPlatformLimits`
+
+Live per-network limits Publora checks before scheduling (characters, images, videos, documents, GIFs, thumbnails). Use them to validate a post before sending it.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.accounts.getPlatformLimits({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `schemaVersion` | `number \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `packageVersion` | `string \| null` | No | — |
+| `limitsLastUpdated` | `string \| null` | No | — |
+| `supportedPlatforms` | `string[] \| null` | No | — |
+| `platforms` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+### list
+
+`accounts.list`
+
+List connected social accounts (LinkedIn, X, Instagram, Threads, TikTok, YouTube, Facebook Pages, Bluesky, Mastodon, Telegram) with connection and token status. Their platformId values are the targets for posts.create.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.accounts.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `connections` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="connections full type">
+
+```ts
+{
+  platformId: string,
+  username?: string | null,
+  displayName?: string | null,
+  profileImageUrl?: string | null,
+  profileUrl?: string | null,
+  connectionStatus?: string | null,
+  tokenStatus?: string | null,
+  accessTokenExpiresAt?: string | null,
+  tokenExpiresIn?: string | null,
+  lastSuccessfulPost?: string | null,
+  lastError?: {
+    message?: string | null,
+    occurredAt?: string | null
+  } | null,
+  subscriptionType?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### testConnection
+
+`accounts.testConnection`
+
+Check that one connected account still works: token status, granted permissions and the last error, if any.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.accounts.testConnection({ platformId: 'linkedin-ABC123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `platformId` | `string` | Yes | Connection id from accounts.list (platformId) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `platform` | `string \| null` | No | — |
+| `platformId` | `string \| null` | No | — |
+| `username` | `string \| null` | No | — |
+| `status` | `string \| null` | No | ok or error |
+| `message` | `string \| null` | No | — |
+| `permissions` | `string[] \| null` | No | — |
+| `permissionsKnown` | `boolean \| null` | No | — |
+| `tokenExpiresIn` | `string \| null` | No | — |
+| `lastSuccessfulPost` | `string \| null` | No | — |
+| `lastError` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="lastError full type">
+
+```ts
+{
+  message?: string | null,
+  occurredAt?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Analytics
+
+### postStatistics
+
+`analytics.postStatistics`
+
+Engagement counters (reactions, comments, reposts, quotes, saves and more) for up to 50 published Mastodon or Bluesky posts. Cached for about 2 hours; needs a plan with analytics.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.analytics.postStatistics({ posts: [{ platform: 'bluesky', platformId: 'bluesky-ABC123', postedId: 'POSTED_ID' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `posts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  platform: mastodon | bluesky,
+  platformId: string,
+  postedId: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `stats` | `object \| null` | No | — |
+| `rateLimited` | `boolean \| null` | No | — |
+| `issues` | `Record<string, string> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="stats full type">
+
+```ts
+Record<string, {
+  reactions?: number | null,
+  comments?: number | null,
+  reposts?: number | null,
+  quotes?: number | null,
+  saves?: number | null,
+  impressions?: number | null,
+  reach?: number | null,
+  clicks?: number | null
+} | null> | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### profileStatistics
+
+`analytics.profileStatistics`
+
+Followers, following and post count of one connected Mastodon or Bluesky account. Cached for about 2 hours; needs a plan with analytics.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.analytics.profileStatistics({ platform: 'mastodon', platformId: 'mastodon-ABC123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `platform` | `mastodon \| bluesky` | Yes | — |
+| `platformId` | `string` | Yes | Connection id from accounts.list (platformId) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `profile` | `object \| null` | No | — |
+| `cached` | `boolean \| null` | No | — |
+| `fetchedAt` | `string \| null` | No | — |
+| `rateLimited` | `boolean \| null` | No | — |
+| `unavailable` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  followers?: number | null,
+  following?: number | null,
+  posts?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Company
+
+### getWorkspaceContext
+
+`company.getWorkspaceContext`
+
+Context of one Agency Account and Workspace, to refresh its capabilities before a command.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.company.getWorkspaceContext({ accountId: 'ACCOUNT_ID', workspaceId: 'WORKSPACE_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | Account id from company.listContexts |
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  schemaVersion?: number | null,
+  defaultContext?: {
+    accountId?: string | null,
+    workspaceId?: string | null
+  } | null,
+  singleContext?: boolean | null,
+  accounts?: {
+    id?: string | null,
+    membershipId?: string | null,
+    name?: string | null,
+    logoUrl?: string | null,
+    kind?: string | null,
+    status?: string | null,
+    billing?: Record<string, any> | null,
+    accountRole?: string | null,
+    presentationMode?: string | null,
+    runtimeMode?: string | null,
+    publishingPaused?: boolean | null,
+    commandVersion?: number | null,
+    capabilities?: Record<string, any> | null,
+    workspaces?: {
+      id?: string | null,
+      name?: string | null,
+      capabilities?: Record<string, any> | null
+    }[] | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listConnections
+
+`company.listConnections`
+
+Publishing channels of a Workspace. Their channel keys (&lt;platform&gt;-&lt;platformId&gt;) are the platforms of company drafts. A channel with status reconnect_required must be reconnected before scheduling.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.company.listConnections({ workspaceId: 'WORKSPACE_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `includeLinkedinReconnectRecommended` | `boolean` | No | Add linkedinReconnectRecommended to LinkedIn channels |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  accountId?: string | null,
+  workspaceId?: string | null,
+  items?: {
+    id?: string | null,
+    accountId?: string | null,
+    workspaceId?: string | null,
+    platform?: string | null,
+    platformId?: string | null,
+    username?: string | null,
+    displayName?: string | null,
+    profileImageUrl?: string | null,
+    profileUrl?: string | null,
+    connectionSubtype?: string | null,
+    subscriptionType?: string | null,
+    status?: string | null,
+    lastSuccessfulPost?: string | null,
+    lastErrorAt?: string | null,
+    addedAt?: string | null,
+    linkedinReconnectRecommended?: boolean | null,
+    activationStatus?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listContexts
+
+`company.listContexts`
+
+Agency API start point: the Accounts and Workspaces the key's owner can act in, with each Workspace's capabilities. Pass a workspace id to the other company operations.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.company.listContexts({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  schemaVersion?: number | null,
+  defaultContext?: {
+    accountId?: string | null,
+    workspaceId?: string | null
+  } | null,
+  singleContext?: boolean | null,
+  accounts?: {
+    id?: string | null,
+    membershipId?: string | null,
+    name?: string | null,
+    logoUrl?: string | null,
+    kind?: string | null,
+    status?: string | null,
+    billing?: Record<string, any> | null,
+    accountRole?: string | null,
+    presentationMode?: string | null,
+    runtimeMode?: string | null,
+    publishingPaused?: boolean | null,
+    commandVersion?: number | null,
+    capabilities?: Record<string, any> | null,
+    workspaces?: {
+      id?: string | null,
+      name?: string | null,
+      capabilities?: Record<string, any> | null
+    }[] | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPlatforms
+
+`company.listPlatforms`
+
+Publishable networks with the text, media and platformSettings limits of Agency drafts.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.company.listPlatforms({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `includeXPremiumLimits` | `boolean` | No | Add X character limits per subscription type |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  publishablePlatforms?: string[] | null,
+  connectOnlyPlatforms?: string[] | null,
+  basicVariants?: Record<string, any> | null,
+  xPostCharacterLimits?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### posts.cancelApproval
+
+`company.posts.cancelApproval`
+
+Remove the client review from a draft so it can be scheduled without the client's approval. Use only when the user asks.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.company.posts.cancelApproval({ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `postGroupId` | `string` | Yes | Post group id |
+| `idempotencyKey` | `string` | No | Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  result?: string | null,
+  postGroupId?: string | null,
+  status?: string | null,
+  requestedAt?: string | null,
+  decidedAt?: string | null,
+  expiresAt?: string | null,
+  reviewId?: string | null,
+  managerComment?: string | null,
+  reviewUrl?: string | null,
+  expired?: boolean | null,
+  decision?: any,
+  notificationStatus?: string | null,
+  publication?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### posts.completeMedia
+
+`company.posts.completeMedia`
+
+Verify an uploaded Agency media file after the PUT. On 409 AGENCY_CORE_MEDIA_UPLOAD_PENDING retry after Retry-After.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.company.posts.completeMedia({ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID', mediaFileId: 'MEDIA_FILE_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `postGroupId` | `string` | Yes | Post group id |
+| `mediaFileId` | `string` | Yes | mediaFileId from company.posts.reserveMedia |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  accountId?: string | null,
+  workspaceId?: string | null,
+  mediaFileId?: string | null,
+  postGroupId?: string | null,
+  status?: string | null,
+  contentType?: string | null,
+  type?: string | null,
+  sizeBytes?: number | null,
+  purpose?: string | null,
+  fileUrl?: string | null,
+  metadata?: Record<string, any> | null,
+  bytesProbedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### posts.createDraft
+
+`company.posts.createDraft`
+
+Create an Agency draft in a Workspace (text, channels, per-channel text, settings, first comment). It never schedules; use company.posts.schedule.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.company.posts.createDraft({ workspaceId: 'WORKSPACE_ID', content: 'Launching today', platforms: ['linkedin-ABC123'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `idempotencyKey` | `string` | No | Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response. |
+| `content` | `string` | No | Base post text |
+| `notes` | `string` | No | Internal notes |
+| `topic` | `string` | No | — |
+| `platforms` | `string[]` | No | Channel keys from company.listConnections (&lt;platform&gt;-&lt;platformId&gt;) |
+| `platformContents` | `object` | No | Per-channel text keyed by channel key |
+| `isPlatformSpecific` | `boolean` | No | — |
+| `sameContent` | `boolean` | No | — |
+| `platformSettings` | `Record<string, Record<string, any>>` | No | Per-network settings (threads, tiktok, instagram, youtube, linkedin, telegram, twitter); discover them with company.listPlatforms |
+| `videoTimestamp` | `number` | No | — |
+| `firstComment` | `object \| null` | No | One first comment under the published post; null clears it |
+| `repostSourceSnapshot` | `object \| null` | No | LinkedIn post shown as the review preview of a reshare |
+
+<AccordionGroup>
+<Accordion title="platformContents full type">
+
+```ts
+Record<string, {
+  content: string,
+  isBase: boolean
+}>
+```
+</Accordion>
+
+<Accordion title="firstComment full type">
+
+```ts
+{
+  text: string,
+  platforms?: (twitter | threads | bluesky | tiktok | instagram | mastodon | youtube | linkedin | telegram | facebook)[]
+} | null
+```
+</Accordion>
+
+<Accordion title="repostSourceSnapshot full type">
+
+```ts
+{
+  postedId: string,
+  commentary: string,
+  authorName?: string | null,
+  publishedAt?: string | null,
+  capturedAt: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  result?: string | null,
+  accountId?: string | null,
+  workspaceId?: string | null,
+  groupId?: string | null,
+  postIds?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### posts.get
+
+`company.posts.get`
+
+An Agency post group and its channel posts: status, errors, and postedId and permalink once published. includeApproval adds the client review.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.company.posts.get({ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID', includeApproval: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `postGroupId` | `string` | Yes | Post group id |
+| `includeApproval` | `boolean` | No | Add the client review (declined reviews included) |
+| `includePublishDeferral` | `boolean` | No | — |
+| `includeRepostSource` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  group: {
+    id?: string | null,
+    accountId?: string | null,
+    workspaceId?: string | null,
+    approval?: Record<string, any> | null,
+    scheduledTime?: string | null,
+    platforms?: string[] | null,
+    platformContents?: Record<string, any> | null,
+    isPlatformSpecific?: boolean | null,
+    sameContent?: boolean | null,
+    topic?: string | null,
+    content?: string | null,
+    notes?: string | null,
+    videoTimestamp?: number | null,
+    mediaFileIds?: string[] | null,
+    postIds?: string[] | null,
+    status?: string | null,
+    processingStatus?: string | null,
+    platformSettings?: Record<string, any> | null,
+    errorMessage?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  },
+  posts?: {
+    id?: string | null,
+    postGroupId?: string | null,
+    content?: string | null,
+    platform?: string | null,
+    platformId?: string | null,
+    status?: string | null,
+    error?: {
+      code?: string | null,
+      message?: string | null,
+      platformStatusCode?: number | null
+    } | null,
+    postedId?: string | null,
+    permalink?: string | null,
+    publishedAt?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### posts.getApproval
+
+`company.posts.getApproval`
+
+The client review of an Agency post group: status, comment, private review URL, expiry and decision.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.company.posts.getApproval({ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `postGroupId` | `string` | Yes | Post group id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  result?: string | null,
+  postGroupId?: string | null,
+  status?: string | null,
+  requestedAt?: string | null,
+  decidedAt?: string | null,
+  expiresAt?: string | null,
+  reviewId?: string | null,
+  managerComment?: string | null,
+  reviewUrl?: string | null,
+  expired?: boolean | null,
+  decision?: any,
+  notificationStatus?: string | null,
+  publication?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### posts.listMedia
+
+`company.posts.listMedia`
+
+Media and the selected YouTube thumbnail of an Agency post group; url is set only for ready files.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.company.posts.listMedia({ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `postGroupId` | `string` | Yes | Post group id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  accountId?: string | null,
+  workspaceId?: string | null,
+  postGroupId?: string | null,
+  mediaFileIds?: string[] | null,
+  items?: {
+    id?: string | null,
+    url?: string | null,
+    type?: string | null,
+    mimeType?: string | null,
+    status?: string | null,
+    purpose?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### posts.recover
+
+`company.posts.recover`
+
+Copy the failed channels of a failed or partly published post group into a new draft, with its media. The source is not changed.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.company.posts.recover({ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `postGroupId` | `string` | Yes | Post group id |
+| `idempotencyKey` | `string` | No | Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  result?: string | null,
+  accountId?: string | null,
+  workspaceId?: string | null,
+  sourceGroupId?: string | null,
+  groupId?: string | null,
+  status?: string | null,
+  postIds?: string[] | null,
+  recoveredPlatforms?: string[] | null,
+  excludedPlatforms?: any[] | null,
+  mediaCount?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### posts.removeMedia
+
+`company.posts.removeMedia`
+
+Detach a file from an Agency draft; storage deletes it after deletionAfter. A requested client review becomes outdated.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.publora.api.company.posts.removeMedia({ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID', mediaFileId: 'MEDIA_FILE_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `postGroupId` | `string` | Yes | Post group id |
+| `mediaFileId` | `string` | Yes | mediaFileId from company.posts.reserveMedia |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  accountId?: string | null,
+  workspaceId?: string | null,
+  mediaFileId?: string | null,
+  postGroupId?: string | null,
+  status?: string | null,
+  deletionAfter?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### posts.requestApproval
+
+`company.posts.requestApproval`
+
+Start a client review round for a draft and get a private review URL. Publora does not send the URL; deliver it yourself. Editing the draft afterwards makes the round outdated.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.company.posts.requestApproval({ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID', managerComment: 'Ready for review' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `postGroupId` | `string` | Yes | Post group id |
+| `managerComment` | `string` | No | — |
+| `scheduledTime` | `string \| null` | No | Publication time shown to the client |
+| `idempotencyKey` | `string` | No | Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  result?: string | null,
+  postGroupId?: string | null,
+  status?: string | null,
+  requestedAt?: string | null,
+  decidedAt?: string | null,
+  expiresAt?: string | null,
+  reviewId?: string | null,
+  managerComment?: string | null,
+  reviewUrl?: string | null,
+  expired?: boolean | null,
+  decision?: any,
+  notificationStatus?: string | null,
+  publication?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### posts.reschedule
+
+`company.posts.reschedule`
+
+Move a scheduled Agency post to another time, before publishing starts.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.publora.api.company.posts.reschedule({ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID', scheduledTime: '2026-12-02T15:00:00.000Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `postGroupId` | `string` | Yes | Post group id |
+| `scheduledTime` | `string` | Yes | UTC time with milliseconds. To publish now send the current time, and the same value on retries. |
+| `includeValidationDetails` | `boolean` | No | Add validationErrors to a failed publishing check |
+| `idempotencyKey` | `string` | No | Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  result?: string | null,
+  accountId?: string | null,
+  workspaceId?: string | null,
+  groupId?: string | null,
+  scheduledTime?: string | null,
+  postCount?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### posts.reserveMedia
+
+`company.posts.reserveMedia`
+
+Reserve an upload for an Agency draft (or a YouTube thumbnail). PUT the exact bytes to uploadUrl with every uploadHeaders entry, then call company.posts.completeMedia.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.company.posts.reserveMedia({ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID', fileName: 'launch.png', contentType: 'image/png', sizeBytes: 204800 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `postGroupId` | `string` | Yes | Post group id |
+| `fileName` | `string` | Yes | — |
+| `contentType` | `image/jpeg \| image/png \| image/gif \| image/webp \| image/tiff \| image/avif \| video/mp4 \| video/quicktime \| video/webm \| application/pdf` | Yes | — |
+| `sizeBytes` | `number` | Yes | Exact byte size of the file |
+| `type` | `image \| video \| document` | No | — |
+| `purpose` | `youtube_thumbnail` | No | Reserve a YouTube thumbnail instead of post media |
+| `idempotencyKey` | `string` | No | Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  accountId?: string | null,
+  workspaceId?: string | null,
+  mediaFileId?: string | null,
+  postGroupId?: string | null,
+  uploadUrl?: string | null,
+  uploadHeaders?: Record<string, string> | null,
+  fileUrl?: string | null,
+  contentType?: string | null,
+  type?: string | null,
+  sizeBytes?: number | null,
+  expiresAt?: string | null,
+  status?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### posts.retryApprovalNotification
+
+`company.posts.retryApprovalNotification`
+
+Send the review decision email to the user who requested the review again, when notificationStatus is failed.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.publora.api.company.posts.retryApprovalNotification({ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `postGroupId` | `string` | Yes | Post group id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  notificationStatus?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### posts.schedule
+
+`company.posts.schedule`
+
+Schedule an Agency draft for a UTC time; the current time publishes it now. Channels must be usable, media ready and, while a client review is requested, approved.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.publora.api.company.posts.schedule({ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID', scheduledTime: '2026-12-01T15:00:00.000Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `postGroupId` | `string` | Yes | Post group id |
+| `scheduledTime` | `string` | Yes | UTC time with milliseconds. To publish now send the current time, and the same value on retries. |
+| `includeValidationDetails` | `boolean` | No | Add validationErrors to a failed publishing check |
+| `idempotencyKey` | `string` | No | Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  result?: string | null,
+  accountId?: string | null,
+  workspaceId?: string | null,
+  groupId?: string | null,
+  scheduledTime?: string | null,
+  postCount?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### posts.unschedule
+
+`company.posts.unschedule`
+
+Return a scheduled Agency post to draft, before publishing starts. Allowed while billing is required.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.company.posts.unschedule({ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `postGroupId` | `string` | Yes | Post group id |
+| `idempotencyKey` | `string` | No | Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  result?: string | null,
+  accountId?: string | null,
+  workspaceId?: string | null,
+  groupId?: string | null,
+  status?: string | null,
+  postCount?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### posts.updateDraft
+
+`company.posts.updateDraft`
+
+Change an Agency draft. Omitted fields keep their value. Editing makes a requested client review outdated.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.company.posts.updateDraft({ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID', content: 'Launching tomorrow' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `postGroupId` | `string` | Yes | Post group id |
+| `idempotencyKey` | `string` | No | Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response. |
+| `content` | `string` | No | Base post text |
+| `notes` | `string` | No | Internal notes |
+| `topic` | `string` | No | — |
+| `platforms` | `string[]` | No | Channel keys from company.listConnections (&lt;platform&gt;-&lt;platformId&gt;) |
+| `platformContents` | `object` | No | Per-channel text keyed by channel key |
+| `isPlatformSpecific` | `boolean` | No | — |
+| `sameContent` | `boolean` | No | — |
+| `platformSettings` | `Record<string, Record<string, any>>` | No | Per-network settings (threads, tiktok, instagram, youtube, linkedin, telegram, twitter); discover them with company.listPlatforms |
+| `videoTimestamp` | `number` | No | — |
+| `firstComment` | `object \| null` | No | One first comment under the published post; null clears it |
+| `repostSourceSnapshot` | `object \| null` | No | LinkedIn post shown as the review preview of a reshare |
+
+<AccordionGroup>
+<Accordion title="platformContents full type">
+
+```ts
+Record<string, {
+  content: string,
+  isBase: boolean
+}>
+```
+</Accordion>
+
+<Accordion title="firstComment full type">
+
+```ts
+{
+  text: string,
+  platforms?: (twitter | threads | bluesky | tiktok | instagram | mastodon | youtube | linkedin | telegram | facebook)[]
+} | null
+```
+</Accordion>
+
+<Accordion title="repostSourceSnapshot full type">
+
+```ts
+{
+  postedId: string,
+  commentary: string,
+  authorName?: string | null,
+  publishedAt?: string | null,
+  capturedAt: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  result?: string | null,
+  accountId?: string | null,
+  workspaceId?: string | null,
+  groupId?: string | null,
+  postIds?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### webhooks.create
+
+`company.webhooks.create`
+
+Subscribe a URL to a Workspace's post.published and post.failed events (up to 10). The reply is the only time the signing secret is shown.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.company.webhooks.create({ workspaceId: 'WORKSPACE_ID', name: 'Production', url: 'https://example.com/publora-events', events: ['post.published', 'post.failed'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `name` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `events` | `(post.published \| post.failed)[]` | Yes | — |
+| `isActive` | `boolean` | No | — |
+| `idempotencyKey` | `string` | No | Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  accountId?: string | null,
+  workspaceId?: string | null,
+  webhook: {
+    id?: string | null,
+    name?: string | null,
+    url?: string | null,
+    events?: string[] | null,
+    isActive?: boolean | null,
+    failureCount?: number | null,
+    lastTriggeredAt?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  },
+  secret: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### webhooks.delete
+
+`company.webhooks.delete`
+
+Delete a Workspace webhook subscription.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.publora.api.company.webhooks.delete({ workspaceId: 'WORKSPACE_ID', webhookId: 'WEBHOOK_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `webhookId` | `string` | Yes | Subscription id from company.webhooks.list |
+| `idempotencyKey` | `string` | No | Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  accountId?: string | null,
+  workspaceId?: string | null,
+  webhookId?: string | null,
+  deleted?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### webhooks.list
+
+`company.webhooks.list`
+
+Webhook subscriptions of a Workspace (post.published, post.failed). Workspace settings managers only.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.company.webhooks.list({ workspaceId: 'WORKSPACE_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  accountId?: string | null,
+  workspaceId?: string | null,
+  items?: {
+    id?: string | null,
+    name?: string | null,
+    url?: string | null,
+    events?: string[] | null,
+    isActive?: boolean | null,
+    failureCount?: number | null,
+    lastTriggeredAt?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### webhooks.regenerateSecret
+
+`company.webhooks.regenerateSecret`
+
+Issue a new signing secret for a Workspace subscription; the old one stops working at once.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.publora.api.company.webhooks.regenerateSecret({ workspaceId: 'WORKSPACE_ID', webhookId: 'WEBHOOK_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `webhookId` | `string` | Yes | Subscription id from company.webhooks.list |
+| `idempotencyKey` | `string` | No | Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  accountId?: string | null,
+  workspaceId?: string | null,
+  webhook: {
+    id?: string | null,
+    name?: string | null,
+    url?: string | null,
+    events?: string[] | null,
+    isActive?: boolean | null,
+    failureCount?: number | null,
+    lastTriggeredAt?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  },
+  secret: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### webhooks.update
+
+`company.webhooks.update`
+
+Change a Workspace subscription's name, URL or events, or turn it on or off.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.company.webhooks.update({ workspaceId: 'WORKSPACE_ID', webhookId: 'WEBHOOK_ID', isActive: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspaceId` | `string` | Yes | Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id |
+| `webhookId` | `string` | Yes | Subscription id from company.webhooks.list |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `events` | `(post.published \| post.failed)[]` | No | — |
+| `isActive` | `boolean` | No | — |
+| `idempotencyKey` | `string` | No | Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  accountId?: string | null,
+  workspaceId?: string | null,
+  webhook: {
+    id?: string | null,
+    name?: string | null,
+    url?: string | null,
+    events?: string[] | null,
+    isActive?: boolean | null,
+    failureCount?: number | null,
+    lastTriggeredAt?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Linkedin
+
+### accountStatistics
+
+`linkedin.accountStatistics`
+
+Totals or daily figures across all published LinkedIn posts of one account, optionally for a date range.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.linkedin.accountStatistics({ platformId: 'linkedin-ABC123', aggregation: 'TOTAL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `platformId` | `string` | Yes | Connection id from accounts.list (platformId) |
+| `queryType` | `IMPRESSION \| MEMBERS_REACHED \| RESHARE \| REACTION \| COMMENT` | No | — |
+| `queryTypes` | `(IMPRESSION \| MEMBERS_REACHED \| RESHARE \| REACTION \| COMMENT)[] \| ALL` | No | Several metrics at once, or "ALL" for all five |
+| `aggregation` | `TOTAL \| DAILY` | No | — |
+| `dateRange` | `object` | No | Date range as &#123; start: &#123;year, month, day&#125;, end: &#123;...&#125; &#125; |
+
+<AccordionGroup>
+<Accordion title="dateRange full type">
+
+```ts
+{
+  start?: {
+    year: number,
+    month: number,
+    day: number
+  },
+  end?: {
+    year: number,
+    month: number,
+    day: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `metrics` | `Record<string, any> \| null` | No | — |
+| `aggregation` | `string \| null` | No | — |
+| `cached` | `boolean \| null` | No | — |
+
+
+
+---
+
+### addReaction
+
+`linkedin.addReaction`
+
+React to a LinkedIn post as the connected account (LIKE, PRAISE, EMPATHY, INTEREST, APPRECIATION or ENTERTAINMENT). The reaction is public.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.linkedin.addReaction({ postedId: 'urn:li:share:7000000000000000000', reactionType: 'LIKE', platformId: 'linkedin-ABC123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postedId` | `string` | Yes | LinkedIn post URN (postedId from posts.get) |
+| `reactionType` | `LIKE \| PRAISE \| EMPATHY \| INTEREST \| APPRECIATION \| ENTERTAINMENT` | Yes | — |
+| `platformId` | `string` | Yes | Connection id from accounts.list (platformId) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `reaction` | `object \| null` | No | — |
+| `urnTranslated` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="reaction full type">
+
+```ts
+{
+  reactionType?: string | null,
+  actor?: string | null,
+  object?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="urnTranslated full type">
+
+```ts
+{
+  from?: string | null,
+  to?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createComment
+
+`linkedin.createComment`
+
+Publish a comment, or a reply to a comment, on a LinkedIn post as the connected account. Supports @mentions and an image.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.publora.api.linkedin.createComment({ postedId: 'urn:li:share:7000000000000000000', message: 'Thanks for sharing', platformId: 'linkedin-ABC123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postedId` | `string` | Yes | LinkedIn post URN (postedId from posts.get) |
+| `message` | `string` | Yes | Comment text; may be empty only with imageUrl. Mentions: @&#123;urn:li:person:ID\|Name&#125; |
+| `platformId` | `string` | Yes | Connection id from accounts.list (platformId) |
+| `parentComment` | `string` | No | Comment URN to reply to |
+| `imageUrl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `comment` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="comment full type">
+
+```ts
+{
+  id?: string | null,
+  message?: string | null,
+  imageUrn?: string | null,
+  actor?: string | null,
+  object?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteComment
+
+`linkedin.deleteComment`
+
+Delete a comment from a LinkedIn post.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.publora.api.linkedin.deleteComment({ postedId: 'urn:li:share:7000000000000000000', commentId: 'COMMENT_ID', platformId: 'linkedin-ABC123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postedId` | `string` | Yes | LinkedIn post URN (postedId from posts.get) |
+| `commentId` | `string` | Yes | Comment id or URN |
+| `platformId` | `string` | Yes | Connection id from accounts.list (platformId) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `deleted` | `string \| null` | No | — |
+
+
+
+---
+
+### followers
+
+`linkedin.followers`
+
+LinkedIn follower count (lifetime) or daily follower growth for a date range.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.linkedin.followers({ platformId: 'linkedin-ABC123', period: 'lifetime' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `platformId` | `string` | Yes | Connection id from accounts.list (platformId) |
+| `period` | `lifetime \| daily` | No | — |
+| `dateRange` | `object` | No | Date range as &#123; start: &#123;year, month, day&#125;, end: &#123;...&#125; &#125; |
+
+<AccordionGroup>
+<Accordion title="dateRange full type">
+
+```ts
+{
+  start?: {
+    year: number,
+    month: number,
+    day: number
+  },
+  end?: {
+    year: number,
+    month: number,
+    day: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `followersCount` | `number \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+| `totalGrowth` | `number \| null` | No | — |
+| `cached` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  date?: string | null,
+  count?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### mentionables
+
+`linkedin.mentionables`
+
+LinkedIn members you can @mention, collected from comments and reactions on connected company pages, each with a ready mention token. Paid plans only.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.linkedin.mentionables({ q: 'Jane', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Name to search for |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `people` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="people full type">
+
+```ts
+{
+  personId?: string | null,
+  name?: string | null,
+  profileUrl?: string | null,
+  profilePicture?: string | null,
+  source?: string | null,
+  lastSeenAt?: string | null,
+  mention?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### postStatistics
+
+`linkedin.postStatistics`
+
+Analytics for one LinkedIn post: impressions, members reached, reactions, comments and reshares. queryTypes "ALL" returns all five. Cached for 2 hours.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.linkedin.postStatistics({ postedId: 'urn:li:share:7000000000000000000', platformId: 'linkedin-ABC123', queryTypes: 'ALL' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postedId` | `string` | Yes | LinkedIn post URN (postedId from posts.get) |
+| `platformId` | `string` | Yes | Connection id from accounts.list (platformId) |
+| `queryType` | `IMPRESSION \| MEMBERS_REACHED \| RESHARE \| REACTION \| COMMENT` | No | — |
+| `queryTypes` | `(IMPRESSION \| MEMBERS_REACHED \| RESHARE \| REACTION \| COMMENT)[] \| ALL` | No | Several metrics at once, or "ALL" for all five |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `count` | `number \| null` | No | — |
+| `metrics` | `Record<string, number> \| null` | No | — |
+| `cached` | `boolean \| null` | No | — |
+
+
+
+---
+
+### profileSummary
+
+`linkedin.profileSummary`
+
+LinkedIn profile summary: follower total and growth, plus aggregated post impressions, reactions, comments, reshares and reach.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.linkedin.profileSummary({ platformId: 'linkedin-ABC123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `platformId` | `string` | Yes | Connection id from accounts.list (platformId) |
+| `dateRange` | `object` | No | Date range as &#123; start: &#123;year, month, day&#125;, end: &#123;...&#125; &#125; |
+
+<AccordionGroup>
+<Accordion title="dateRange full type">
+
+```ts
+{
+  start?: {
+    year: number,
+    month: number,
+    day: number
+  },
+  end?: {
+    year: number,
+    month: number,
+    day: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `partialData` | `boolean \| null` | No | — |
+| `profile` | `object \| null` | No | — |
+| `errors` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  followers?: {
+    total?: number | null,
+    periodGrowth?: number | null
+  } | null,
+  posts?: {
+    totalImpressions?: number | null,
+    totalReactions?: number | null,
+    totalComments?: number | null,
+    totalReshares?: number | null,
+    totalMembersReached?: number | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+  metric?: string | null,
+  error?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeReaction
+
+`linkedin.removeReaction`
+
+Remove the connected account's reaction from a LinkedIn post.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.linkedin.removeReaction({ postedId: 'urn:li:share:7000000000000000000', platformId: 'linkedin-ABC123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postedId` | `string` | Yes | LinkedIn post URN (postedId from posts.get) |
+| `platformId` | `string` | Yes | Connection id from accounts.list (platformId) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `reaction` | `object \| null` | No | — |
+| `urnTranslated` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="reaction full type">
+
+```ts
+{
+  reactionType?: string | null,
+  actor?: string | null,
+  object?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="urnTranslated full type">
+
+```ts
+{
+  from?: string | null,
+  to?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reshare
+
+`linkedin.reshare`
+
+Reshare a LinkedIn post to the connected account's feed (member or company page), with optional commentary. It is published right away.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.publora.api.linkedin.reshare({ platformId: 'linkedin-ABC123', parent: 'urn:li:share:7000000000000000000', commentary: 'Worth a read' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `platformId` | `string` | Yes | Connection id from accounts.list (platformId) |
+| `parent` | `string` | Yes | URN of the LinkedIn post to reshare |
+| `commentary` | `string` | No | — |
+| `visibility` | `PUBLIC \| CONNECTIONS` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `reshare` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="reshare full type">
+
+```ts
+{
+  id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Media
+
+### attach
+
+`media.attach`
+
+Attach one image or video to a draft or scheduled post by reference (an HTTPS download URL and a stable file id). Publora downloads it right away. A scheduled post goes back to draft and keeps its time.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.media.attach({ postGroupId: 'POST_GROUP_ID', file: { download_url: 'https://example.com/launch.png', file_id: 'file_123' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postGroupId` | `string` | Yes | Draft or scheduled post group id |
+| `file` | `object` | Yes | — |
+| `fileName` | `string` | No | — |
+| `idempotencyKey` | `string` | No | Sent as the Idempotency-Key header. A repeat with the same key and body returns the first result instead of acting twice. |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+{
+  download_url: string,
+  file_id: string,
+  mime_type?: string,
+  file_name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `scheduledTime` | `string \| null` | No | — |
+| `postGroup` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="postGroup full type">
+
+```ts
+{
+  _id?: string | null,
+  status?: string | null,
+  content?: string | null,
+  platforms?: string[] | null,
+  scheduledTime?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### complete
+
+`media.complete`
+
+Check an uploaded file right away instead of when the post is scheduled. Optional.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.media.complete({ mediaId: 'MEDIA_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mediaId` | `string` | Yes | mediaId from media.createUpload |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `mediaFile` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="mediaFile full type">
+
+```ts
+{
+  _id: string,
+  type?: string | null,
+  mimeType?: string | null,
+  fileName?: string | null,
+  url?: string | null,
+  status?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createUpload
+
+`media.createUpload`
+
+Get a pre-signed URL (valid for an hour) to PUT an image, video or PDF to, attached to a draft or scheduled post group. Use this for files that are not at a public URL.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.media.createUpload({ postGroupId: 'POST_GROUP_ID', fileName: 'launch.png', contentType: 'image/png' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postGroupId` | `string` | Yes | Post group to attach the file to (create a draft first) |
+| `fileName` | `string` | Yes | File name, e.g. "photo.jpg" |
+| `contentType` | `string` | Yes | MIME type: image/*, video/* or application/pdf |
+| `type` | `image \| video \| document` | No | Media type; inferred from contentType when omitted |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `uploadUrl` | `string` | Yes | — |
+| `fileUrl` | `string \| null` | No | — |
+| `mediaId` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`media.delete`
+
+Remove an uploaded file from its post group. A scheduled post goes back to draft.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.publora.api.media.delete({ mediaId: 'MEDIA_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mediaId` | `string` | Yes | mediaId of the attached file |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### uploadInstagramCover
+
+`media.uploadInstagramCover`
+
+Upload a cover image for an Instagram Reel (stored as JPEG). Set the returned URL as platformSettings.instagram.coverUrl with posts.update.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.media.uploadInstagramCover({ postGroupId: 'POST_GROUP_ID', cover: 'https://example.com/cover.jpg' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postGroupId` | `string` | Yes | Draft or scheduled post group id |
+| `cover` | `string \| object` | Yes | The cover image (JPEG, PNG or WebP): a public URL, &#123;url&#125;, or &#123;base64&#125; |
+
+<AccordionGroup>
+<Accordion title="cover full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `cover` | `object \| null` | No | — |
+| `message` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="cover full type">
+
+```ts
+{
+  mediaId?: string | null,
+  url?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadYoutubeThumbnail
+
+`media.uploadYoutubeThumbnail`
+
+Upload a custom YouTube thumbnail (JPEG or PNG, 2 MB max, at least 640x360) for a draft or scheduled post. Attach the returned mediaId as platformSettings.youtube.thumbnail with posts.update.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.media.uploadYoutubeThumbnail({ postGroupId: 'POST_GROUP_ID', thumbnail: 'https://example.com/thumbnail.jpg' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postGroupId` | `string` | Yes | Draft or scheduled post group id |
+| `thumbnail` | `string \| object` | Yes | JPEG or PNG, at most 2 MB, at least 640x360: a public URL, &#123;url&#125;, or &#123;base64&#125; |
+
+<AccordionGroup>
+<Accordion title="thumbnail full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `thumbnail` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="thumbnail full type">
+
+```ts
+{
+  mediaId?: string | null,
+  url?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Posts
+
+### create
+
+`posts.create`
+
+Create one post for one or more connected accounts, with text, media URLs, per-network settings and first comments. Without scheduledTime or publishNow it is saved as a draft; with scheduledTime it is scheduled; publishNow publishes it right away and it cannot be recalled once live. An idempotencyKey makes a retry return the original post.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.publora.api.posts.create({ content: 'Launching today', platforms: ['linkedin-ABC123'], mediaUrls: ['https://example.com/launch.png'], scheduledTime: '2026-12-01T15:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | No | Post text. Required unless the only target is a LinkedIn repost. |
+| `platforms` | `string[]` | Yes | Connection ids from accounts.list (platformId, e.g. "linkedin-ABC123"), each at most once |
+| `scheduledTime` | `string` | No | ISO 8601 UTC date-time to publish at. Omit (and leave publishNow off) to save a draft. |
+| `publishNow` | `boolean` | No | Publish immediately. Cannot be combined with a future scheduledTime. |
+| `platformSettings` | `Record<string, Record<string, any>>` | No | Per-network settings keyed by platform, e.g. &#123; youtube: &#123; title, privacy &#125;, tiktok: &#123; viewerSetting &#125;, instagram: &#123; videoType: "REELS" &#125; &#125;. See https://docs.publora.com/endpoints/create-post |
+| `firstComments` | `object[]` | No | Up to three comments Publora posts under the published post (LinkedIn, X, Threads, Bluesky, Mastodon) |
+| `mediaUrls` | `string[]` | No | Public https image or video URLs that Publora downloads (images 25 MB, videos 150 MB, 300 MB in total). Instagram, TikTok and YouTube need media. |
+| `idempotencyKey` | `string` | No | Sent as the Idempotency-Key header. A repeat with the same key and body within 24 hours returns the first result instead of acting twice; the same key with another body is rejected with 422. |
+
+<AccordionGroup>
+<Accordion title="firstComments full type">
+
+```ts
+{
+  text: string,
+  platforms?: (linkedin | twitter | threads | bluesky | mastodon | instagram | facebook | youtube | tiktok | telegram)[],
+  delaySeconds?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `postGroupId` | `string` | Yes | — |
+| `scheduledTime` | `string \| null` | No | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="warnings full type">
+
+```ts
+{
+  code: string,
+  message?: string | null,
+  requested?: string | null,
+  effective?: string | null,
+  platforms?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`posts.delete`
+
+Delete a post group with all its network copies and media. Content already published on a network stays live.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.publora.api.posts.delete({ postGroupId: 'POST_GROUP_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postGroupId` | `string` | Yes | Post group id (postGroupId) from posts.create or posts.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`posts.get`
+
+Get one post group with its status, publish time, settings, attached media and each network's delivery state, including the live post id and link once published.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.posts.get({ postGroupId: 'POST_GROUP_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postGroupId` | `string` | Yes | Post group id (postGroupId) from posts.create or posts.list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postGroupId` | `string` | Yes | — |
+| `content` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `scheduledTime` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `platforms` | `object[] \| null` | No | — |
+| `posts` | `object[] \| null` | No | — |
+| `mediaUrls` | `string[] \| null` | No | — |
+| `success` | `boolean` | No | — |
+| `platformSettings` | `Record<string, any> \| null` | No | — |
+| `media` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="platforms full type">
+
+```ts
+(string | {
+  platformId?: string | null,
+  platform?: string | null,
+  status?: string | null
+})[] | null
+```
+</Accordion>
+
+<Accordion title="posts full type">
+
+```ts
+{
+  platform?: string | null,
+  platformId?: string | null,
+  content?: string | null,
+  status?: string | null,
+  postedId?: string | null,
+  permalink?: string | null,
+  isThread?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="media full type">
+
+```ts
+{
+  mediaId?: string | null,
+  fileName?: string | null,
+  type?: string | null,
+  mimeType?: string | null,
+  status?: string | null,
+  url?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getLogs
+
+`posts.getLogs`
+
+Publishing log of a post group from the last 90 days, oldest first (up to 100 events): scheduled, processing, attempts, successes, failures and retries per network.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.posts.getLogs({ postGroupId: 'POST_GROUP_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postGroupId` | `string` | Yes | Post group id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `logs` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+  _id?: string | null,
+  postGroupId?: string | null,
+  platform?: string | null,
+  postId?: string | null,
+  event?: string | null,
+  error?: string | null,
+  httpStatus?: number | null,
+  retryCount?: number | null,
+  metadata?: Record<string, any> | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`posts.list`
+
+List posts, newest first, filtered by status, network and scheduled date. Page with page and limit; pagination.hasNextPage says whether another page exists.
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.posts.list({ status: 'scheduled', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, starting at 1 |
+| `limit` | `number` | No | Posts per page (1-100, default 20) |
+| `status` | `draft \| scheduled \| published \| failed \| partially_published` | No | — |
+| `platform` | `twitter \| linkedin \| instagram \| threads \| tiktok \| youtube \| facebook \| bluesky \| mastodon \| telegram \| pinterest` | No | — |
+| `sortBy` | `createdAt \| updatedAt \| scheduledTime` | No | — |
+| `sortOrder` | `asc \| desc` | No | — |
+| `fromDate` | `string` | No | Only posts scheduled after this ISO 8601 date |
+| `toDate` | `string` | No | Only posts scheduled before this ISO 8601 date |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `posts` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="posts full type">
+
+```ts
+{
+  postGroupId: string,
+  content?: string | null,
+  status?: string | null,
+  scheduledTime?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  platforms?: (string | {
+    platformId?: string | null,
+    platform?: string | null,
+    status?: string | null
+  })[] | null,
+  posts?: {
+    platform?: string | null,
+    platformId?: string | null,
+    content?: string | null,
+    status?: string | null,
+    postedId?: string | null,
+    permalink?: string | null,
+    isThread?: boolean | null
+  }[] | null,
+  mediaUrls?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  limit?: number,
+  totalItems?: number,
+  totalPages?: number,
+  hasNextPage?: boolean,
+  hasPrevPage?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`posts.update`
+
+Change a draft or scheduled post: text, targets (the list is replaced), publish time, status, settings, first comments or extra media. publishNow publishes it immediately.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.publora.api.posts.update({ postGroupId: 'POST_GROUP_ID', scheduledTime: '2026-12-02T15:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postGroupId` | `string` | Yes | Post group id (postGroupId) from posts.create or posts.list |
+| `content` | `string` | No | Replacement post text |
+| `platforms` | `string[]` | No | Replacement target list (not merged). Send the complete final list of connection ids. |
+| `status` | `draft \| scheduled` | No | Move the post back to draft or schedule it |
+| `scheduledTime` | `string` | No | New ISO 8601 UTC publish time |
+| `publishNow` | `boolean` | No | Publish this draft or scheduled post immediately |
+| `platformSettings` | `Record<string, Record<string, any>>` | No | Per-network settings keyed by platform, e.g. &#123; youtube: &#123; title, privacy &#125;, tiktok: &#123; viewerSetting &#125;, instagram: &#123; videoType: "REELS" &#125; &#125;. See https://docs.publora.com/endpoints/create-post |
+| `firstComments` | `object[] \| null` | No | Replace the comments; null or [] removes them |
+| `mediaUrls` | `string[]` | No | Public https media URLs appended to the existing media |
+| `idempotencyKey` | `string` | No | Sent as the Idempotency-Key header. A repeat with the same key and body within 24 hours returns the first result instead of acting twice; the same key with another body is rejected with 422. |
+
+<AccordionGroup>
+<Accordion title="firstComments full type">
+
+```ts
+{
+  text: string,
+  platforms?: (linkedin | twitter | threads | bluesky | mastodon | instagram | facebook | youtube | tiktok | telegram)[],
+  delaySeconds?: number
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `message` | `string \| null` | No | — |
+| `scheduledTime` | `string \| null` | No | — |
+| `warnings` | `object[]` | No | — |
+| `postGroup` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="warnings full type">
+
+```ts
+{
+  code: string,
+  message?: string | null,
+  requested?: string | null,
+  effective?: string | null,
+  platforms?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="postGroup full type">
+
+```ts
+{
+  _id: string,
+  status?: string | null,
+  content?: string | null,
+  platforms?: string[] | null,
+  scheduledTime?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Subscribe an HTTPS URL to post.scheduled, post.published, post.failed and post.demoted events (up to 10 per account; needs a paid plan). The reply is the only time the signing secret is shown.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.webhooks.create({ name: 'Production', url: 'https://example.com/publora-events', events: ['post.published', 'post.failed'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | A name to recognise the subscription by |
+| `url` | `string` | Yes | Public HTTPS URL that receives the events |
+| `events` | `(post.scheduled \| post.published \| post.failed \| post.demoted \| token.expiring)[]` | Yes | post.scheduled, post.published, post.failed, post.demoted (token.expiring is accepted but not sent yet) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `webhook` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  _id: string,
+  name?: string | null,
+  url?: string | null,
+  events?: string[] | null,
+  isActive?: boolean | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  secret?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook subscription.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.publora.api.webhooks.delete({ id: 'WEBHOOK_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook id (_id) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhook subscriptions (signing secrets are not returned).
+
+**Risk:** `read`
+
+```ts
+await corsair.publora.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `webhooks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  _id: string,
+  name?: string | null,
+  url?: string | null,
+  events?: string[] | null,
+  isActive?: boolean | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### regenerateSecret
+
+`webhooks.regenerateSecret`
+
+Issue a new signing secret for a webhook subscription. The old secret stops working at once, so deliveries fail verification until the receiver has the new one.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.publora.api.webhooks.regenerateSecret({ id: 'WEBHOOK_ID' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook id (_id) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `secret` | `string` | Yes | — |
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Change a subscription's name, URL or events, or pause and resume it.
+
+**Risk:** `write`
+
+```ts
+await corsair.publora.api.webhooks.update({ id: 'WEBHOOK_ID', isActive: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook id (_id) |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `events` | `(post.scheduled \| post.published \| post.failed \| post.demoted \| token.expiring)[]` | No | — |
+| `isActive` | `boolean` | No | Pause or resume deliveries |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `webhook` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  _id: string,
+  name?: string | null,
+  url?: string | null,
+  events?: string[] | null,
+  isActive?: boolean | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

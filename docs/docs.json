@@ -3539,11 +3539,35 @@
                 ]
               },
               {
+                "group": "Linkhut",
+                "pages": [
+                  "plugins/linkhut/overview",
+                  "plugins/linkhut/api",
+                  "plugins/linkhut/database"
+                ]
+              },
+              {
+                "group": "Linkly",
+                "pages": [
+                  "plugins/linkly/overview",
+                  "plugins/linkly/api",
+                  "plugins/linkly/database"
+                ]
+              },
+              {
                 "group": "Linkup",
                 "pages": [
                   "plugins/linkup/overview",
                   "plugins/linkup/api",
                   "plugins/linkup/database"
+                ]
+              },
+              {
+                "group": "Listclean",
+                "pages": [
+                  "plugins/listclean/overview",
+                  "plugins/listclean/api",
+                  "plugins/listclean/database"
                 ]
               },
               {
@@ -3571,11 +3595,27 @@
                 ]
               },
               {
+                "group": "Lob",
+                "pages": [
+                  "plugins/lob/overview",
+                  "plugins/lob/api",
+                  "plugins/lob/database"
+                ]
+              },
+              {
                 "group": "Logo.dev",
                 "pages": [
                   "plugins/logodev/overview",
                   "plugins/logodev/api",
                   "plugins/logodev/database"
+                ]
+              },
+              {
+                "group": "Loomio",
+                "pages": [
+                  "plugins/loomio/overview",
+                  "plugins/loomio/api",
+                  "plugins/loomio/database"
                 ]
               },
               {
@@ -3593,6 +3633,15 @@
                   "plugins/loyverse/overview",
                   "plugins/loyverse/api",
                   "plugins/loyverse/database"
+                ]
+              },
+              {
+                "group": "Lusha",
+                "pages": [
+                  "plugins/lusha/overview",
+                  "plugins/lusha/api",
+                  "plugins/lusha/database",
+                  "plugins/lusha/webhooks"
                 ]
               },
               {
@@ -3869,6 +3918,14 @@
                   "plugins/mopinion/overview",
                   "plugins/mopinion/api",
                   "plugins/mopinion/database"
+                ]
+              },
+              {
+                "group": "More Trees",
+                "pages": [
+                  "plugins/moretrees/overview",
+                  "plugins/moretrees/api",
+                  "plugins/moretrees/database"
                 ]
               },
               {
@@ -4630,6 +4687,15 @@
                   "plugins/proofly/overview",
                   "plugins/proofly/api",
                   "plugins/proofly/database"
+                ]
+              },
+              {
+                "group": "Publora",
+                "pages": [
+                  "plugins/publora/overview",
+                  "plugins/publora/api",
+                  "plugins/publora/database",
+                  "plugins/publora/webhooks"
                 ]
               },
               {

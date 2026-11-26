@@ -1,0 +1,147 @@
+---
+title: "Lob plugin"
+sidebarTitle: "Overview"
+description: "Address verification and print mail with Lob - verify US and international addresses, send and track postcards, letters, checks, self mailers, snap packs and booklets, run bulk-mail campaigns, and manage templates, bank accounts, billing groups and short links."
+---
+
+Use **Lob** through Corsair: one client, typed API calls.
+
+Create an API key in the Lob dashboard under Settings, API keys (dashboard.lob.com/settings/api-keys). The plugin sends it as HTTP Basic auth with an empty password. Before you call anything:
+
+- **Test vs live keys.** Keys prefixed `test_` never print, mail, or verify real addresses: verifications return simulated outcomes and mailpieces stay virtual. Keys prefixed `live_` spend real money per mailpiece and per verification.
+- **Sends are physical.** `postcards.send` and `letters.send` dispatch print jobs that cannot be recalled once in production, and each piece is billed. Pass an `idempotency_key` (at most 256 characters): Lob returns the original piece for 24 hours instead of mailing a duplicate.
+- **Bulk US verification needs a live key.** `usVerifications.bulk` answers a dummy response on a `test_` key; the single verification works in both modes.
+- **Rate limits.** Lob allows 150 requests per 5 seconds per key and endpoint (300 for the two US verification endpoints), and answers 429 with no `Retry-After` header. Corsair retries a 429 three times (after 1, 2 and 4 seconds). A 429 means Lob did nothing, so the retry is safe for sends too.
+- **Mailpieces land as addresses.** When you send with inline addresses, the response expands `to` and `from` into full address objects.
+- **Letter paper size.** `letters.send` accepts `size` only when the account pins `Lob-Version` 2024-01-01 or newer; older versions reject it.
+- **Every mail product sends for real on a live key.** `checks.send`, `selfMailers.send`, `snapPacks.send`, `booklets.send` and `campaigns.send` print, mail and bill like postcards and letters; `checks.send` also moves money from a verified bank account. Print orders (`cards.createOrder`, `buckslips.createOrder`) bill thousands of pieces at once. All of these are `destructive`.
+- **Cancels.** `postcards.cancel`, `letters.cancel`, `checks.cancel`, `selfMailers.cancel`, `snapPacks.cancel` and `booklets.cancel` work only before the piece goes to production (within the account's cancellation window).
+- **Campaigns.** Create a campaign, add a creative (the artwork) and an upload (the audience), attach the CSV with `uploads.uploadFile`, check `uploads.getReport`, then `campaigns.send`. Campaigns, uploads and Informed Delivery need those features enabled on the Lob account.
+- **Features Lob turns on per account.** On a new self-serve account, billing groups, snap packs, booklets, Informed Delivery and campaign creates answer 403, self mailers answer 404 `unrecognized_endpoint`, and buckslips and cards answer 422 `<feature>_not_allowed`. Lob enables them on request. `account.getBalance` needs a live key; a test key gets 401 there.
+- **Multipart.** `uploads.uploadFile` and the two Informed Delivery writes send files: pass a public URL, `{ url }`, or `{ base64, filename }`.
+- **Webhooks.** The plugin does not receive Lob webhooks; track deliveries by reading a mailpiece (`postcards.get`, `letters.get`, `checks.get`, ...).
+
+**What you get:**
+
+- 105 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/lob better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/lob better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/lob better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/lob better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { lob } from '@corsair-dev/lob';
+
+export const corsair = createCorsair({
+	plugins: [
+		lob(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Lob API key before the first call: `pnpm corsair setup --plugin=lob --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+lob()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'lob',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Look up the cities behind a ZIP code**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.lob.api.zip.usZipLookup({ zip_code: '94107' });
+```
+
+
+**Mail a postcard to a saved address**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.lob.api.postcards.send({
+	to: 'adr_210a8d4b0b76d77b',
+	front: '<html style="font-size:36px">Sale ends Friday</html>',
+	back: '<html style="font-size:24px">Acme Logistics</html>',
+	use_type: 'marketing',
+});
+```
+
+
+See the full list on the [API](/plugins/lob/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/lob/api">
+    Every `lob.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -112,6 +112,7 @@ describe('connect-link generation in endpoint binding', () => {
 		manualConfig?: any;
 		hubConfig?: HubConfig;
 		plugin?: CorsairPlugin;
+		connectLinks?: boolean;
 	}) {
 		const endpoints = {
 			sendEmail: async (_ctx: any, _args: any) => 'sent',
@@ -133,6 +134,8 @@ describe('connect-link generation in endpoint binding', () => {
 			kek,
 			allPlugins: opts.plugin ? [opts.plugin] : undefined,
 			database: {} as never,
+			tenantId: 'tenant-1',
+			connectLinks: opts.connectLinks,
 		});
 
 		return tree.sendEmail as (args?: unknown) => Promise<unknown>;
@@ -341,6 +344,55 @@ describe('connect-link generation in endpoint binding', () => {
 		await expect(boundFn()).rejects.toThrow(
 			'https://hub.example/connect/sess-1',
 		);
+	});
+
+	it('mints no hub link when the caller turned connect links off', async () => {
+		const { createHubConnectSessionForPlugin } = jest.requireMock(
+			'../hub/connect',
+		) as { createHubConnectSessionForPlugin: jest.Mock };
+		createHubConnectSessionForPlugin.mockClear();
+		const boundFn = createBoundEndpoint({
+			keyBuilder: async () => {
+				throw new AuthMissingError('github', 'managed');
+			},
+			hubConfig,
+			plugin: githubPlugin,
+			connectLinks: false,
+		});
+
+		const err = await boundFn().catch((e: unknown) => e);
+		expect(err).toBeInstanceOf(AuthMissingError);
+		expect(err).toMatchObject({
+			pluginId: 'github',
+			authType: 'managed',
+			connectUrl: null,
+			tenantId: 'tenant-1',
+		});
+		expect((err as Error).message).not.toContain('hub.example/connect');
+		expect(createHubConnectSessionForPlugin).not.toHaveBeenCalled();
+	});
+
+	it('builds no manual link either when connect links are off', async () => {
+		const boundFn = createBoundEndpoint({
+			keyBuilder: async () => {
+				throw new AuthMissingError('gmail', 'oauth_2');
+			},
+			manualConfig: {
+				baseUrl: 'https://myapp.com/connect',
+				redirectUri: 'https://myapp.com/api/callback',
+				oauthConfig: {
+					providerName: 'Google',
+					authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+				},
+				kek,
+				tenantId: 'tenant-1',
+			},
+			connectLinks: false,
+		});
+
+		const err = await boundFn().catch((e: unknown) => e);
+		expect(err).toMatchObject({ name: 'AuthMissingError', connectUrl: null });
+		expect((err as Error).message).not.toContain('myapp.com/connect');
 	});
 
 	it('throws plain auth-missing tag when hub config is missing', async () => {
