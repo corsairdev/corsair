@@ -40,6 +40,16 @@ export type PubloraRequestOptions = {
 	query?: PubloraQuery;
 	/** Sent as `Idempotency-Key`; a repeat with the same body returns the first result. */
 	idempotencyKey?: string;
+	/** Agency (Company) routes: sent as `X-Publora-Workspace-Id`. */
+	workspaceId?: string;
+	/** Overrides `Accept`, e.g. the Company approval v2 media type. */
+	accept?: string;
+	/**
+	 * Multipart fields (file uploads). Values are strings or Blobs/Files
+	 * built from a resolved file input; `unknown` because core's FormData
+	 * builder takes both.
+	 */
+	formData?: Record<string, unknown>;
 };
 
 /** Drop undefined values so we don't send `?foo=undefined`. */
@@ -89,11 +99,26 @@ export async function makePubloraRequest<T>(
 		throw new AuthMissingError('publora', 'api_key');
 	}
 
-	const { method = 'GET', body, query, idempotencyKey } = options;
-	const hasBody = method !== 'GET' && method !== 'DELETE' && body !== undefined;
+	const {
+		method = 'GET',
+		body,
+		query,
+		idempotencyKey,
+		workspaceId,
+		accept,
+		formData,
+	} = options;
+	// Personal DELETE routes take no body. Company (Workspace) DELETE routes
+	// document a JSON body (`{}`), so a DELETE sends one only with a workspace.
+	const hasForm = method !== 'GET' && formData !== undefined;
+	const hasBody =
+		method !== 'GET' &&
+		!hasForm &&
+		body !== undefined &&
+		(method !== 'DELETE' || workspaceId !== undefined);
 
 	const headers: Record<string, string> = {
-		Accept: 'application/json',
+		Accept: accept ?? 'application/json',
 		'x-publora-key': apiKey,
 		// Lets Publora tell traffic from this plugin apart from other clients.
 		'x-publora-client': 'corsair',
@@ -103,6 +128,9 @@ export async function makePubloraRequest<T>(
 	}
 	if (idempotencyKey) {
 		headers['Idempotency-Key'] = idempotencyKey;
+	}
+	if (workspaceId) {
+		headers['X-Publora-Workspace-Id'] = workspaceId;
 	}
 
 	const config: OpenAPIConfig = {
@@ -120,6 +148,7 @@ export async function makePubloraRequest<T>(
 		method,
 		url: endpoint,
 		body: hasBody ? body : undefined,
+		formData: hasForm ? formData : undefined,
 		mediaType: hasBody ? 'application/json; charset=utf-8' : undefined,
 		query: compact && Object.keys(compact).length > 0 ? compact : undefined,
 	};

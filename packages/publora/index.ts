@@ -32,6 +32,51 @@ import {
 	updatePost,
 	updateWebhook,
 } from './endpoints/handlers';
+import {
+	analyticsPostStatistics,
+	analyticsProfileStatistics,
+	attachMedia,
+	companyCancelApproval,
+	companyCompleteMedia,
+	companyCreateDraft,
+	companyCreateWebhook,
+	companyDeleteWebhook,
+	companyGetApproval,
+	companyGetPostGroup,
+	companyGetWorkspaceContext,
+	companyListConnections,
+	companyListContexts,
+	companyListMedia,
+	companyListPlatforms,
+	companyListWebhooks,
+	companyRecover,
+	companyRegenerateWebhookSecret,
+	companyRemoveMedia,
+	companyRequestApproval,
+	companyReschedule,
+	companyReserveMedia,
+	companyRetryApprovalNotification,
+	companySchedule,
+	companyUnschedule,
+	companyUpdateDraft,
+	companyUpdateWebhook,
+	getPlatformLimits,
+	getPostLogs,
+	linkedinAccountStatistics,
+	linkedinAddReaction,
+	linkedinCreateComment,
+	linkedinDeleteComment,
+	linkedinFollowers,
+	linkedinMentionables,
+	linkedinPostStatistics,
+	linkedinProfileSummary,
+	linkedinRemoveReaction,
+	linkedinReshare,
+	regenerateWebhookSecret,
+	testConnection,
+	uploadInstagramCover,
+	uploadYoutubeThumbnail,
+} from './endpoints/handlers-extra';
 import type {
 	PubloraEndpointInputs,
 	PubloraEndpointOutputs,
@@ -102,6 +147,49 @@ export type PubloraEndpoints = {
 	createWebhook: PubloraEndpoint<'createWebhook'>;
 	updateWebhook: PubloraEndpoint<'updateWebhook'>;
 	deleteWebhook: PubloraEndpoint<'deleteWebhook'>;
+	testConnection: PubloraEndpoint<'testConnection'>;
+	getPlatformLimits: PubloraEndpoint<'getPlatformLimits'>;
+	getPostLogs: PubloraEndpoint<'getPostLogs'>;
+	attachMedia: PubloraEndpoint<'attachMedia'>;
+	uploadInstagramCover: PubloraEndpoint<'uploadInstagramCover'>;
+	uploadYoutubeThumbnail: PubloraEndpoint<'uploadYoutubeThumbnail'>;
+	regenerateWebhookSecret: PubloraEndpoint<'regenerateWebhookSecret'>;
+	analyticsPostStatistics: PubloraEndpoint<'analyticsPostStatistics'>;
+	analyticsProfileStatistics: PubloraEndpoint<'analyticsProfileStatistics'>;
+	linkedinPostStatistics: PubloraEndpoint<'linkedinPostStatistics'>;
+	linkedinAccountStatistics: PubloraEndpoint<'linkedinAccountStatistics'>;
+	linkedinProfileSummary: PubloraEndpoint<'linkedinProfileSummary'>;
+	linkedinFollowers: PubloraEndpoint<'linkedinFollowers'>;
+	linkedinMentionables: PubloraEndpoint<'linkedinMentionables'>;
+	linkedinAddReaction: PubloraEndpoint<'linkedinAddReaction'>;
+	linkedinRemoveReaction: PubloraEndpoint<'linkedinRemoveReaction'>;
+	linkedinReshare: PubloraEndpoint<'linkedinReshare'>;
+	linkedinCreateComment: PubloraEndpoint<'linkedinCreateComment'>;
+	linkedinDeleteComment: PubloraEndpoint<'linkedinDeleteComment'>;
+	companyListContexts: PubloraEndpoint<'companyListContexts'>;
+	companyGetWorkspaceContext: PubloraEndpoint<'companyGetWorkspaceContext'>;
+	companyListConnections: PubloraEndpoint<'companyListConnections'>;
+	companyListPlatforms: PubloraEndpoint<'companyListPlatforms'>;
+	companyCreateDraft: PubloraEndpoint<'companyCreateDraft'>;
+	companyUpdateDraft: PubloraEndpoint<'companyUpdateDraft'>;
+	companyGetPostGroup: PubloraEndpoint<'companyGetPostGroup'>;
+	companySchedule: PubloraEndpoint<'companySchedule'>;
+	companyReschedule: PubloraEndpoint<'companyReschedule'>;
+	companyUnschedule: PubloraEndpoint<'companyUnschedule'>;
+	companyRecover: PubloraEndpoint<'companyRecover'>;
+	companyGetApproval: PubloraEndpoint<'companyGetApproval'>;
+	companyRequestApproval: PubloraEndpoint<'companyRequestApproval'>;
+	companyCancelApproval: PubloraEndpoint<'companyCancelApproval'>;
+	companyRetryApprovalNotification: PubloraEndpoint<'companyRetryApprovalNotification'>;
+	companyListMedia: PubloraEndpoint<'companyListMedia'>;
+	companyReserveMedia: PubloraEndpoint<'companyReserveMedia'>;
+	companyCompleteMedia: PubloraEndpoint<'companyCompleteMedia'>;
+	companyRemoveMedia: PubloraEndpoint<'companyRemoveMedia'>;
+	companyListWebhooks: PubloraEndpoint<'companyListWebhooks'>;
+	companyCreateWebhook: PubloraEndpoint<'companyCreateWebhook'>;
+	companyUpdateWebhook: PubloraEndpoint<'companyUpdateWebhook'>;
+	companyDeleteWebhook: PubloraEndpoint<'companyDeleteWebhook'>;
+	companyRegenerateWebhookSecret: PubloraEndpoint<'companyRegenerateWebhookSecret'>;
 };
 
 type PubloraWebhook<
@@ -122,6 +210,8 @@ const publoraEndpointsNested = {
 	accounts: {
 		list: listAccounts,
 		getContext,
+		testConnection,
+		getPlatformLimits,
 	},
 	posts: {
 		create: createPost,
@@ -129,17 +219,68 @@ const publoraEndpointsNested = {
 		list: listPosts,
 		update: updatePost,
 		delete: deletePost,
+		getLogs: getPostLogs,
 	},
 	media: {
 		createUpload: createMediaUpload,
 		complete: completeMedia,
 		delete: deleteMedia,
+		attach: attachMedia,
+		uploadInstagramCover,
+		uploadYoutubeThumbnail,
 	},
 	webhooks: {
 		list: listWebhooks,
 		create: createWebhook,
 		update: updateWebhook,
 		delete: deleteWebhook,
+		regenerateSecret: regenerateWebhookSecret,
+	},
+	analytics: {
+		postStatistics: analyticsPostStatistics,
+		profileStatistics: analyticsProfileStatistics,
+	},
+	linkedin: {
+		postStatistics: linkedinPostStatistics,
+		accountStatistics: linkedinAccountStatistics,
+		profileSummary: linkedinProfileSummary,
+		followers: linkedinFollowers,
+		mentionables: linkedinMentionables,
+		addReaction: linkedinAddReaction,
+		removeReaction: linkedinRemoveReaction,
+		reshare: linkedinReshare,
+		createComment: linkedinCreateComment,
+		deleteComment: linkedinDeleteComment,
+	},
+	company: {
+		listContexts: companyListContexts,
+		getWorkspaceContext: companyGetWorkspaceContext,
+		listConnections: companyListConnections,
+		listPlatforms: companyListPlatforms,
+		posts: {
+			createDraft: companyCreateDraft,
+			updateDraft: companyUpdateDraft,
+			get: companyGetPostGroup,
+			schedule: companySchedule,
+			reschedule: companyReschedule,
+			unschedule: companyUnschedule,
+			recover: companyRecover,
+			getApproval: companyGetApproval,
+			requestApproval: companyRequestApproval,
+			cancelApproval: companyCancelApproval,
+			retryApprovalNotification: companyRetryApprovalNotification,
+			listMedia: companyListMedia,
+			reserveMedia: companyReserveMedia,
+			completeMedia: companyCompleteMedia,
+			removeMedia: companyRemoveMedia,
+		},
+		webhooks: {
+			list: companyListWebhooks,
+			create: companyCreateWebhook,
+			update: companyUpdateWebhook,
+			delete: companyDeleteWebhook,
+			regenerateSecret: companyRegenerateWebhookSecret,
+		},
 	},
 } as const;
 
@@ -208,6 +349,178 @@ export const publoraEndpointSchemas = {
 	'webhooks.delete': {
 		input: PubloraEndpointInputSchemas.deleteWebhook,
 		output: PubloraEndpointOutputSchemas.deleteWebhook,
+	},
+	'accounts.testConnection': {
+		input: PubloraEndpointInputSchemas.testConnection,
+		output: PubloraEndpointOutputSchemas.testConnection,
+	},
+	'accounts.getPlatformLimits': {
+		input: PubloraEndpointInputSchemas.getPlatformLimits,
+		output: PubloraEndpointOutputSchemas.getPlatformLimits,
+	},
+	'posts.getLogs': {
+		input: PubloraEndpointInputSchemas.getPostLogs,
+		output: PubloraEndpointOutputSchemas.getPostLogs,
+	},
+	'media.attach': {
+		input: PubloraEndpointInputSchemas.attachMedia,
+		output: PubloraEndpointOutputSchemas.attachMedia,
+	},
+	'media.uploadInstagramCover': {
+		input: PubloraEndpointInputSchemas.uploadInstagramCover,
+		output: PubloraEndpointOutputSchemas.uploadInstagramCover,
+	},
+	'media.uploadYoutubeThumbnail': {
+		input: PubloraEndpointInputSchemas.uploadYoutubeThumbnail,
+		output: PubloraEndpointOutputSchemas.uploadYoutubeThumbnail,
+	},
+	'webhooks.regenerateSecret': {
+		input: PubloraEndpointInputSchemas.regenerateWebhookSecret,
+		output: PubloraEndpointOutputSchemas.regenerateWebhookSecret,
+	},
+	'analytics.postStatistics': {
+		input: PubloraEndpointInputSchemas.analyticsPostStatistics,
+		output: PubloraEndpointOutputSchemas.analyticsPostStatistics,
+	},
+	'analytics.profileStatistics': {
+		input: PubloraEndpointInputSchemas.analyticsProfileStatistics,
+		output: PubloraEndpointOutputSchemas.analyticsProfileStatistics,
+	},
+	'linkedin.postStatistics': {
+		input: PubloraEndpointInputSchemas.linkedinPostStatistics,
+		output: PubloraEndpointOutputSchemas.linkedinPostStatistics,
+	},
+	'linkedin.accountStatistics': {
+		input: PubloraEndpointInputSchemas.linkedinAccountStatistics,
+		output: PubloraEndpointOutputSchemas.linkedinAccountStatistics,
+	},
+	'linkedin.profileSummary': {
+		input: PubloraEndpointInputSchemas.linkedinProfileSummary,
+		output: PubloraEndpointOutputSchemas.linkedinProfileSummary,
+	},
+	'linkedin.followers': {
+		input: PubloraEndpointInputSchemas.linkedinFollowers,
+		output: PubloraEndpointOutputSchemas.linkedinFollowers,
+	},
+	'linkedin.mentionables': {
+		input: PubloraEndpointInputSchemas.linkedinMentionables,
+		output: PubloraEndpointOutputSchemas.linkedinMentionables,
+	},
+	'linkedin.addReaction': {
+		input: PubloraEndpointInputSchemas.linkedinAddReaction,
+		output: PubloraEndpointOutputSchemas.linkedinAddReaction,
+	},
+	'linkedin.removeReaction': {
+		input: PubloraEndpointInputSchemas.linkedinRemoveReaction,
+		output: PubloraEndpointOutputSchemas.linkedinRemoveReaction,
+	},
+	'linkedin.reshare': {
+		input: PubloraEndpointInputSchemas.linkedinReshare,
+		output: PubloraEndpointOutputSchemas.linkedinReshare,
+	},
+	'linkedin.createComment': {
+		input: PubloraEndpointInputSchemas.linkedinCreateComment,
+		output: PubloraEndpointOutputSchemas.linkedinCreateComment,
+	},
+	'linkedin.deleteComment': {
+		input: PubloraEndpointInputSchemas.linkedinDeleteComment,
+		output: PubloraEndpointOutputSchemas.linkedinDeleteComment,
+	},
+	'company.listContexts': {
+		input: PubloraEndpointInputSchemas.companyListContexts,
+		output: PubloraEndpointOutputSchemas.companyListContexts,
+	},
+	'company.getWorkspaceContext': {
+		input: PubloraEndpointInputSchemas.companyGetWorkspaceContext,
+		output: PubloraEndpointOutputSchemas.companyGetWorkspaceContext,
+	},
+	'company.listConnections': {
+		input: PubloraEndpointInputSchemas.companyListConnections,
+		output: PubloraEndpointOutputSchemas.companyListConnections,
+	},
+	'company.listPlatforms': {
+		input: PubloraEndpointInputSchemas.companyListPlatforms,
+		output: PubloraEndpointOutputSchemas.companyListPlatforms,
+	},
+	'company.posts.createDraft': {
+		input: PubloraEndpointInputSchemas.companyCreateDraft,
+		output: PubloraEndpointOutputSchemas.companyCreateDraft,
+	},
+	'company.posts.updateDraft': {
+		input: PubloraEndpointInputSchemas.companyUpdateDraft,
+		output: PubloraEndpointOutputSchemas.companyUpdateDraft,
+	},
+	'company.posts.get': {
+		input: PubloraEndpointInputSchemas.companyGetPostGroup,
+		output: PubloraEndpointOutputSchemas.companyGetPostGroup,
+	},
+	'company.posts.schedule': {
+		input: PubloraEndpointInputSchemas.companySchedule,
+		output: PubloraEndpointOutputSchemas.companySchedule,
+	},
+	'company.posts.reschedule': {
+		input: PubloraEndpointInputSchemas.companyReschedule,
+		output: PubloraEndpointOutputSchemas.companyReschedule,
+	},
+	'company.posts.unschedule': {
+		input: PubloraEndpointInputSchemas.companyUnschedule,
+		output: PubloraEndpointOutputSchemas.companyUnschedule,
+	},
+	'company.posts.recover': {
+		input: PubloraEndpointInputSchemas.companyRecover,
+		output: PubloraEndpointOutputSchemas.companyRecover,
+	},
+	'company.posts.getApproval': {
+		input: PubloraEndpointInputSchemas.companyGetApproval,
+		output: PubloraEndpointOutputSchemas.companyGetApproval,
+	},
+	'company.posts.requestApproval': {
+		input: PubloraEndpointInputSchemas.companyRequestApproval,
+		output: PubloraEndpointOutputSchemas.companyRequestApproval,
+	},
+	'company.posts.cancelApproval': {
+		input: PubloraEndpointInputSchemas.companyCancelApproval,
+		output: PubloraEndpointOutputSchemas.companyCancelApproval,
+	},
+	'company.posts.retryApprovalNotification': {
+		input: PubloraEndpointInputSchemas.companyRetryApprovalNotification,
+		output: PubloraEndpointOutputSchemas.companyRetryApprovalNotification,
+	},
+	'company.posts.listMedia': {
+		input: PubloraEndpointInputSchemas.companyListMedia,
+		output: PubloraEndpointOutputSchemas.companyListMedia,
+	},
+	'company.posts.reserveMedia': {
+		input: PubloraEndpointInputSchemas.companyReserveMedia,
+		output: PubloraEndpointOutputSchemas.companyReserveMedia,
+	},
+	'company.posts.completeMedia': {
+		input: PubloraEndpointInputSchemas.companyCompleteMedia,
+		output: PubloraEndpointOutputSchemas.companyCompleteMedia,
+	},
+	'company.posts.removeMedia': {
+		input: PubloraEndpointInputSchemas.companyRemoveMedia,
+		output: PubloraEndpointOutputSchemas.companyRemoveMedia,
+	},
+	'company.webhooks.list': {
+		input: PubloraEndpointInputSchemas.companyListWebhooks,
+		output: PubloraEndpointOutputSchemas.companyListWebhooks,
+	},
+	'company.webhooks.create': {
+		input: PubloraEndpointInputSchemas.companyCreateWebhook,
+		output: PubloraEndpointOutputSchemas.companyCreateWebhook,
+	},
+	'company.webhooks.update': {
+		input: PubloraEndpointInputSchemas.companyUpdateWebhook,
+		output: PubloraEndpointOutputSchemas.companyUpdateWebhook,
+	},
+	'company.webhooks.delete': {
+		input: PubloraEndpointInputSchemas.companyDeleteWebhook,
+		output: PubloraEndpointOutputSchemas.companyDeleteWebhook,
+	},
+	'company.webhooks.regenerateSecret': {
+		input: PubloraEndpointInputSchemas.companyRegenerateWebhookSecret,
+		output: PubloraEndpointOutputSchemas.companyRegenerateWebhookSecret,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof publoraEndpointsNested
@@ -308,6 +621,224 @@ export const publoraEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description: 'Delete a webhook subscription.',
+	},
+	'accounts.testConnection': {
+		riskLevel: 'read',
+		description:
+			'Check that one connected account still works: token status, granted permissions and the last error, if any.',
+	},
+	'accounts.getPlatformLimits': {
+		riskLevel: 'read',
+		description:
+			'Live per-network limits Publora checks before scheduling (characters, images, videos, documents, GIFs, thumbnails). Use them to validate a post before sending it.',
+	},
+	'posts.getLogs': {
+		riskLevel: 'read',
+		description:
+			'Publishing log of a post group from the last 90 days, oldest first (up to 100 events): scheduled, processing, attempts, successes, failures and retries per network.',
+	},
+	'media.attach': {
+		riskLevel: 'write',
+		description:
+			'Attach one image or video to a draft or scheduled post by reference (an HTTPS download URL and a stable file id). Publora downloads it right away. A scheduled post goes back to draft and keeps its time.',
+	},
+	'media.uploadInstagramCover': {
+		riskLevel: 'write',
+		description:
+			'Upload a cover image for an Instagram Reel (stored as JPEG). Set the returned URL as platformSettings.instagram.coverUrl with posts.update.',
+	},
+	'media.uploadYoutubeThumbnail': {
+		riskLevel: 'write',
+		description:
+			'Upload a custom YouTube thumbnail (JPEG or PNG, 2 MB max, at least 640x360) for a draft or scheduled post. Attach the returned mediaId as platformSettings.youtube.thumbnail with posts.update.',
+	},
+	'webhooks.regenerateSecret': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Issue a new signing secret for a webhook subscription. The old secret stops working at once, so deliveries fail verification until the receiver has the new one.',
+	},
+	'analytics.postStatistics': {
+		riskLevel: 'read',
+		description:
+			'Engagement counters (reactions, comments, reposts, quotes, saves and more) for up to 50 published Mastodon or Bluesky posts. Cached for about 2 hours; needs a plan with analytics.',
+	},
+	'analytics.profileStatistics': {
+		riskLevel: 'read',
+		description:
+			'Followers, following and post count of one connected Mastodon or Bluesky account. Cached for about 2 hours; needs a plan with analytics.',
+	},
+	'linkedin.postStatistics': {
+		riskLevel: 'read',
+		description:
+			'Analytics for one LinkedIn post: impressions, members reached, reactions, comments and reshares. queryTypes "ALL" returns all five. Cached for 2 hours.',
+	},
+	'linkedin.accountStatistics': {
+		riskLevel: 'read',
+		description:
+			'Totals or daily figures across all published LinkedIn posts of one account, optionally for a date range.',
+	},
+	'linkedin.profileSummary': {
+		riskLevel: 'read',
+		description:
+			'LinkedIn profile summary: follower total and growth, plus aggregated post impressions, reactions, comments, reshares and reach.',
+	},
+	'linkedin.followers': {
+		riskLevel: 'read',
+		description:
+			'LinkedIn follower count (lifetime) or daily follower growth for a date range.',
+	},
+	'linkedin.mentionables': {
+		riskLevel: 'read',
+		description:
+			'LinkedIn members you can @mention, collected from comments and reactions on connected company pages, each with a ready mention token. Paid plans only.',
+	},
+	'linkedin.addReaction': {
+		riskLevel: 'write',
+		description:
+			'React to a LinkedIn post as the connected account (LIKE, PRAISE, EMPATHY, INTEREST, APPRECIATION or ENTERTAINMENT). The reaction is public.',
+	},
+	'linkedin.removeReaction': {
+		riskLevel: 'write',
+		description:
+			"Remove the connected account's reaction from a LinkedIn post.",
+	},
+	'linkedin.reshare': {
+		riskLevel: 'destructive',
+		description:
+			"Reshare a LinkedIn post to the connected account's feed (member or company page), with optional commentary. It is published right away.",
+	},
+	'linkedin.createComment': {
+		riskLevel: 'destructive',
+		description:
+			'Publish a comment, or a reply to a comment, on a LinkedIn post as the connected account. Supports @mentions and an image.',
+	},
+	'linkedin.deleteComment': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete a comment from a LinkedIn post.',
+	},
+	'company.listContexts': {
+		riskLevel: 'read',
+		description:
+			"Agency API start point: the Accounts and Workspaces the key's owner can act in, with each Workspace's capabilities. Pass a workspace id to the other company operations.",
+	},
+	'company.getWorkspaceContext': {
+		riskLevel: 'read',
+		description:
+			'Context of one Agency Account and Workspace, to refresh its capabilities before a command.',
+	},
+	'company.listConnections': {
+		riskLevel: 'read',
+		description:
+			'Publishing channels of a Workspace. Their channel keys (<platform>-<platformId>) are the platforms of company drafts. A channel with status reconnect_required must be reconnected before scheduling.',
+	},
+	'company.listPlatforms': {
+		riskLevel: 'read',
+		description:
+			'Publishable networks with the text, media and platformSettings limits of Agency drafts.',
+	},
+	'company.posts.createDraft': {
+		riskLevel: 'write',
+		description:
+			'Create an Agency draft in a Workspace (text, channels, per-channel text, settings, first comment). It never schedules; use company.posts.schedule.',
+	},
+	'company.posts.updateDraft': {
+		riskLevel: 'write',
+		description:
+			'Change an Agency draft. Omitted fields keep their value. Editing makes a requested client review outdated.',
+	},
+	'company.posts.get': {
+		riskLevel: 'read',
+		description:
+			'An Agency post group and its channel posts: status, errors, and postedId and permalink once published. includeApproval adds the client review.',
+	},
+	'company.posts.schedule': {
+		riskLevel: 'destructive',
+		description:
+			'Schedule an Agency draft for a UTC time; the current time publishes it now. Channels must be usable, media ready and, while a client review is requested, approved.',
+	},
+	'company.posts.reschedule': {
+		riskLevel: 'destructive',
+		description:
+			'Move a scheduled Agency post to another time, before publishing starts.',
+	},
+	'company.posts.unschedule': {
+		riskLevel: 'write',
+		description:
+			'Return a scheduled Agency post to draft, before publishing starts. Allowed while billing is required.',
+	},
+	'company.posts.recover': {
+		riskLevel: 'write',
+		description:
+			'Copy the failed channels of a failed or partly published post group into a new draft, with its media. The source is not changed.',
+	},
+	'company.posts.getApproval': {
+		riskLevel: 'read',
+		description:
+			'The client review of an Agency post group: status, comment, private review URL, expiry and decision.',
+	},
+	'company.posts.requestApproval': {
+		riskLevel: 'write',
+		description:
+			'Start a client review round for a draft and get a private review URL. Publora does not send the URL; deliver it yourself. Editing the draft afterwards makes the round outdated.',
+	},
+	'company.posts.cancelApproval': {
+		riskLevel: 'write',
+		description:
+			"Remove the client review from a draft so it can be scheduled without the client's approval. Use only when the user asks.",
+	},
+	'company.posts.retryApprovalNotification': {
+		riskLevel: 'destructive',
+		description:
+			'Send the review decision email to the user who requested the review again, when notificationStatus is failed.',
+	},
+	'company.posts.listMedia': {
+		riskLevel: 'read',
+		description:
+			'Media and the selected YouTube thumbnail of an Agency post group; url is set only for ready files.',
+	},
+	'company.posts.reserveMedia': {
+		riskLevel: 'write',
+		description:
+			'Reserve an upload for an Agency draft (or a YouTube thumbnail). PUT the exact bytes to uploadUrl with every uploadHeaders entry, then call company.posts.completeMedia.',
+	},
+	'company.posts.completeMedia': {
+		riskLevel: 'write',
+		description:
+			'Verify an uploaded Agency media file after the PUT. On 409 AGENCY_CORE_MEDIA_UPLOAD_PENDING retry after Retry-After.',
+	},
+	'company.posts.removeMedia': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Detach a file from an Agency draft; storage deletes it after deletionAfter. A requested client review becomes outdated.',
+	},
+	'company.webhooks.list': {
+		riskLevel: 'read',
+		description:
+			'Webhook subscriptions of a Workspace (post.published, post.failed). Workspace settings managers only.',
+	},
+	'company.webhooks.create': {
+		riskLevel: 'write',
+		description:
+			"Subscribe a URL to a Workspace's post.published and post.failed events (up to 10). The reply is the only time the signing secret is shown.",
+	},
+	'company.webhooks.update': {
+		riskLevel: 'write',
+		description:
+			"Change a Workspace subscription's name, URL or events, or turn it on or off.",
+	},
+	'company.webhooks.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete a Workspace webhook subscription.',
+	},
+	'company.webhooks.regenerateSecret': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Issue a new signing secret for a Workspace subscription; the old one stops working at once.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof publoraEndpointsNested>;
 

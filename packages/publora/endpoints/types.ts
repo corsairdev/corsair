@@ -4,6 +4,11 @@ import {
 	PubloraPlatformPost,
 	PubloraPost,
 } from '../schema/database';
+import type { PubloraExtraInputs, PubloraExtraOutputs } from './types-extra';
+import {
+	PubloraExtraInputSchemas,
+	PubloraExtraOutputSchemas,
+} from './types-extra';
 
 /**
  * Every Publora route answers a JSON object with `success: true` plus the
@@ -555,7 +560,7 @@ export type PubloraEndpointInputs = {
 	createWebhook: z.infer<typeof CreateWebhookInputSchema>;
 	updateWebhook: z.infer<typeof UpdateWebhookInputSchema>;
 	deleteWebhook: z.infer<typeof DeleteWebhookInputSchema>;
-};
+} & PubloraExtraInputs;
 
 export type PubloraEndpointOutputs = {
 	listAccounts: ListAccountsResponse;
@@ -572,7 +577,7 @@ export type PubloraEndpointOutputs = {
 	createWebhook: z.infer<typeof CreateWebhookResponseSchema>;
 	updateWebhook: z.infer<typeof WebhookEnvelopeSchema>;
 	deleteWebhook: z.infer<typeof SuccessResponseSchema>;
-};
+} & PubloraExtraOutputs;
 
 export const PubloraEndpointInputSchemas = {
 	listAccounts: z.object({}),
@@ -589,6 +594,7 @@ export const PubloraEndpointInputSchemas = {
 	createWebhook: CreateWebhookInputSchema,
 	updateWebhook: UpdateWebhookInputSchema,
 	deleteWebhook: DeleteWebhookInputSchema,
+	...PubloraExtraInputSchemas,
 } as const;
 
 export const PubloraEndpointOutputSchemas = {
@@ -606,4 +612,5 @@ export const PubloraEndpointOutputSchemas = {
 	createWebhook: CreateWebhookResponseSchema,
 	updateWebhook: WebhookEnvelopeSchema,
 	deleteWebhook: SuccessResponseSchema,
+	...PubloraExtraOutputSchemas,
 } as const;
