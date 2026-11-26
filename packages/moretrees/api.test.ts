@@ -115,7 +115,7 @@ describeIfKey('moretrees live: account reads', () => {
 		const result = await api().account.get({});
 		expect(typeof result.credit_balance).toBe('number');
 		console.log(
-			`account.get: credit_balance ${result.credit_balance}, forest_slug set ${Boolean(result.forest_slug)}`,
+			`account.get: credit_balance is a number, forest_slug set ${Boolean(result.forest_slug)}`,
 		);
 	});
 
@@ -152,7 +152,7 @@ describeIfDryRun('moretrees live: dry-run planting', () => {
 		}
 		expect(after.credit_balance).toBe(before.credit_balance);
 		console.log(
-			`trees.plant test:true -> ${error ? String((error as Error).message) : `test ${result?.test}`}; credit_balance ${before.credit_balance} -> ${after.credit_balance}`,
+			`trees.plant test:true -> ${error ? `status ${(error as { status?: number }).status}` : `test ${result?.test}`}; credit balance unchanged`,
 		);
 	});
 });
