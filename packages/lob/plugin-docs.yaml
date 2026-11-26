@@ -63,7 +63,11 @@ apiExamples:
   checks.send:
     call: "{ to: 'adr_210a8d4b0b76d77b', from: 'adr_fa64eaa6b3f335', bank_account: 'bank_8cad8df5354d33f', amount: 22.5, memo: 'rent', message: 'Thank you', use_type: 'operational', idempotency_key: 'rent-2026-12' }"
   selfMailers.send:
-    call: "{ to: 'adr_210a8d4b0b76d77b', inside: 'tmpl_inside', outside: 'tmpl_outside', size: '6x18_bifold', use_type: 'marketing' }"
+    call: "{ to: 'adr_210a8d4b0b76d77b', inside: 'tmpl_inside', outside: 'tmpl_outside', size: '6x18_bifold', use_type: 'marketing', idempotency_key: 'spring-promo-adr_210a8d4b0b76d77b' }"
+  snapPacks.send:
+    call: "{ to: 'adr_210a8d4b0b76d77b', inside: 'tmpl_inside', outside: 'tmpl_outside', use_type: 'operational', idempotency_key: 'statement-2026-12-adr_210a8d4b0b76d77b' }"
+  booklets.send:
+    call: "{ to: 'adr_210a8d4b0b76d77b', from: 'adr_fa64eaa6b3f335', file: 'tmpl_booklet', pages: 8, size: '8.375x5.375', use_type: 'marketing', idempotency_key: 'catalog-2026-adr_210a8d4b0b76d77b' }"
   postcards.list:
     call: "{ limit: 10, status: 'rendered', include: ['total_count'], sort_by: { date_created: 'desc' } }"
   postcards.cancel:

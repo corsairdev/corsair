@@ -1024,7 +1024,7 @@ Print and mail a real booklet. Billed per piece and not recallable once in produ
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.lob.api.booklets.send({});
+await corsair.lob.api.booklets.send({ to: 'adr_210a8d4b0b76d77b', from: 'adr_fa64eaa6b3f335', file: 'tmpl_booklet', pages: 8, size: '8.375x5.375', use_type: 'marketing', idempotency_key: 'catalog-2026-adr_210a8d4b0b76d77b' });
 ```
 
 **Input**
@@ -1474,7 +1474,7 @@ await corsair.lob.api.buckslips.listOrders({});
 
 Change a buckslip's description or auto-reorder settings. Auto-reorder places billed print orders when stock runs low
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.lob.api.buckslips.update({});
@@ -2155,7 +2155,7 @@ await corsair.lob.api.cards.listOrders({});
 
 Change a card's description or auto-reorder settings. Auto-reorder places billed print orders when stock runs low
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.lob.api.cards.update({});
@@ -2454,7 +2454,7 @@ await corsair.lob.api.checks.send({ to: 'adr_210a8d4b0b76d77b', from: 'adr_fa64e
 | `logo` | `string` | No | https URL of a square PNG or JPG logo. |
 | `check_bottom` | `string \| string \| string` | No | Artwork for the check bottom. Use this or message. |
 | `attachment` | `string \| string \| string` | No | Artwork for a page attached after the check. |
-| `service_request_number` | `string` | No | — |
+| `service_request_number` | `string \| null` | No | SR# of an approved USPS promotion to apply. Top-level only: Lob ignores it inside merge_variables. |
 
 Draws on a verified bank account (bankAccounts.create, then bankAccounts.verify). Provide `message` or `check_bottom`, not both. Test keys never move money.
 
@@ -2935,7 +2935,7 @@ await corsair.lob.api.identityValidation.validate({});
 
 `informedDelivery.create`
 
-Create a USPS Informed Delivery campaign (an email preview with a ride-along image and link) pending approval
+Create a USPS Informed Delivery campaign (an email preview with a ride-along image and link). Lob approves it on create unless status is 'pending_approval'
 
 **Risk:** `write`
 
@@ -2955,7 +2955,7 @@ await corsair.lob.api.informedDelivery.create({});
 | `lob_campaign_id` | `string` | No | — |
 | `ride_along_image` | `string \| object` | No | An image: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;. |
 | `representative_image` | `string \| object` | No | An image: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;. |
-| `status` | `pending_approval` | No | — |
+| `status` | `pending_approval` | No | Pass 'pending_approval' to keep the campaign editable and inactive. When omitted, Lob creates it approved: active and no longer editable. |
 
 <AccordionGroup>
 <Accordion title="ride_along_image full type">
@@ -3629,6 +3629,7 @@ await corsair.lob.api.letters.send({ to: 'adr_210a8d4b0b76d77b', from: 'adr_fa64
 | `qr_code` | `object` | No | Print a tracked QR code on the piece. |
 | `fsc` | `boolean` | No | Print on FSC-certified paper. |
 | `print_speed` | `core` | No | Production speed. Only 'core' is offered. |
+| `service_request_number` | `string \| null` | No | SR# of an approved USPS promotion to apply. Top-level only: Lob ignores it inside merge_variables. |
 | `lob_version` | `string` | No | Sent as the Lob-Version header, such as '2024-01-01'; letter size needs 2024-01-01 or newer. |
 | `idempotency_key` | `string` | No | Deduplication key, at most 256 characters. Lob replays within 24 hours return the original mailpiece instead of creating a duplicate. |
 
@@ -4189,6 +4190,7 @@ await corsair.lob.api.postcards.send({ to: 'adr_210a8d4b0b76d77b', front: '<html
 | `qr_code` | `object` | No | Print a tracked QR code on the piece. |
 | `fsc` | `boolean` | No | Print on FSC-certified paper. |
 | `print_speed` | `core` | No | Production speed. Only 'core' is offered. |
+| `service_request_number` | `string \| null` | No | SR# of an approved USPS promotion to apply. Top-level only: Lob ignores it inside merge_variables. |
 | `idempotency_key` | `string` | No | Deduplication key, at most 256 characters. Lob replays within 24 hours return the original mailpiece instead of creating a duplicate. |
 
 Bills a physical mailpiece. `use_type` is required by Lob and accepts `marketing` or `operational` (`null` only when the account has a default use type set in Lob's settings); `size` defaults to 4x6. With an `idempotency_key`, replays within 24 hours return the original piece.
@@ -4740,7 +4742,7 @@ Print and mail a real self mailer (a folded piece, no envelope). Billed per piec
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.lob.api.selfMailers.send({ to: 'adr_210a8d4b0b76d77b', inside: 'tmpl_inside', outside: 'tmpl_outside', size: '6x18_bifold', use_type: 'marketing' });
+await corsair.lob.api.selfMailers.send({ to: 'adr_210a8d4b0b76d77b', inside: 'tmpl_inside', outside: 'tmpl_outside', size: '6x18_bifold', use_type: 'marketing', idempotency_key: 'spring-promo-adr_210a8d4b0b76d77b' });
 ```
 
 **Input**
@@ -4763,7 +4765,7 @@ await corsair.lob.api.selfMailers.send({ to: 'adr_210a8d4b0b76d77b', inside: 'tm
 | `size` | `6x18_bifold \| 11x9_bifold \| 12x9_bifold \| 17.75x9_trifold` | No | Self mailer size. Defaults to '6x18_bifold'. |
 | `qr_code` | `object` | No | Print a tracked QR code on the piece. |
 | `fsc` | `boolean` | No | Print on FSC-certified paper. |
-| `service_request_number` | `string` | No | — |
+| `service_request_number` | `string \| null` | No | SR# of an approved USPS promotion to apply. Top-level only: Lob ignores it inside merge_variables. |
 
 <AccordionGroup>
 <Accordion title="to full type">
@@ -5077,7 +5079,7 @@ Print and mail a real snap pack (a sealed pressure-seal mailer). Billed per piec
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.lob.api.snapPacks.send({});
+await corsair.lob.api.snapPacks.send({ to: 'adr_210a8d4b0b76d77b', inside: 'tmpl_inside', outside: 'tmpl_outside', use_type: 'operational', idempotency_key: 'statement-2026-12-adr_210a8d4b0b76d77b' });
 ```
 
 **Input**
@@ -6009,7 +6011,7 @@ await corsair.lob.api.uploads.update({});
 
 `uploads.uploadFile`
 
-Attach the audience CSV file to an upload; Lob validates its rows asynchronously
+Attach the audience CSV file (at most 50 MiB here) to an upload; Lob validates its rows asynchronously
 
 **Risk:** `write`
 
@@ -6022,7 +6024,7 @@ await corsair.lob.api.uploads.uploadFile({ id: 'upl_71be866e430b11e9', file: 'ht
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | The upload's ID, prefixed with upl_. |
-| `file` | `string \| object` | Yes | The audience CSV: a public URL, &#123;url, filename?&#125;, or &#123;base64, filename?&#125;. |
+| `file` | `string \| object` | Yes | The audience CSV, at most 50 MiB (the plugin reads it into memory; Lob accepts up to 500 MB): a public URL, &#123;url, filename?&#125;, or &#123;base64, filename?&#125;. |
 
 <AccordionGroup>
 <Accordion title="file full type">

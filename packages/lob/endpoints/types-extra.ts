@@ -1176,7 +1176,7 @@ const UploadFileInputSchema = z.object({
 			}),
 		])
 		.describe(
-			'The audience CSV: a public URL, {url, filename?}, or {base64, filename?}.',
+			'The audience CSV, at most 50 MiB (the plugin reads it into memory; Lob accepts up to 500 MB): a public URL, {url, filename?}, or {base64, filename?}.',
 		),
 });
 

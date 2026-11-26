@@ -845,7 +845,7 @@ export const lobEndpointMeta = {
 	'uploads.uploadFile': {
 		riskLevel: 'write',
 		description:
-			'Attach the audience CSV file to an upload; Lob validates its rows asynchronously',
+			'Attach the audience CSV file (at most 50 MiB here) to an upload; Lob validates its rows asynchronously',
 	},
 	'uploads.createExport': {
 		riskLevel: 'write',

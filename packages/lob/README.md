@@ -37,7 +37,7 @@ pnpm add @corsair-dev/lob
 | `buckslips.get` | `lob.api.buckslips.get` | `read` | Read one buckslip by its bck_ ID, including stock quantities and status |
 | `buckslips.list` | `lob.api.buckslips.list` | `read` | Page through buckslips with cursors |
 | `buckslips.listOrders` | `lob.api.buckslips.listOrders` | `read` | List the print orders placed for a buckslip |
-| `buckslips.update` | `lob.api.buckslips.update` | `write` | Change a buckslip's description or auto-reorder settings. Auto-reorder places billed print orders when stock runs low |
+| `buckslips.update` | `lob.api.buckslips.update` | `destructive` | Change a buckslip's description or auto-reorder settings. Auto-reorder places billed print orders when stock runs low |
 | `campaigns.create` | `lob.api.campaigns.create` | `write` | Create a draft campaign for bulk mail. Nothing mails until campaigns.send |
 | `campaigns.delete` | `lob.api.campaigns.delete` | `destructive` | Permanently delete a campaign |
 | `campaigns.get` | `lob.api.campaigns.get` | `read` | Read one campaign by its cmp_ ID, with its creatives and uploads |
@@ -50,7 +50,7 @@ pnpm add @corsair-dev/lob
 | `cards.get` | `lob.api.cards.get` | `read` | Read one card by its card_ ID, including stock quantities and status |
 | `cards.list` | `lob.api.cards.list` | `read` | Page through cards with cursors |
 | `cards.listOrders` | `lob.api.cards.listOrders` | `read` | List the print orders placed for a card |
-| `cards.update` | `lob.api.cards.update` | `write` | Change a card's description or auto-reorder settings. Auto-reorder places billed print orders when stock runs low |
+| `cards.update` | `lob.api.cards.update` | `destructive` | Change a card's description or auto-reorder settings. Auto-reorder places billed print orders when stock runs low |
 | `checks.cancel` | `lob.api.checks.cancel` | `destructive` | Cancel a check before it goes to production. A cancelled check cannot be restored |
 | `checks.get` | `lob.api.checks.get` | `read` | Read one check by its chk_ ID, including status, tracking events and the PDF preview URL |
 | `checks.list` | `lob.api.checks.list` | `read` | Page through checks with cursors and filters (status, send date, metadata) |
@@ -63,7 +63,7 @@ pnpm add @corsair-dev/lob
 | `domains.get` | `lob.api.domains.get` | `read` | Read one short-link domain, including whether its DNS is configured |
 | `domains.list` | `lob.api.domains.list` | `read` | Page through short-link domains |
 | `identityValidation.validate` | `lob.api.identityValidation.validate` | `read` | Score how likely a person or company is associated with a US address (0-100, with a high/medium/low confidence) |
-| `informedDelivery.create` | `lob.api.informedDelivery.create` | `write` | Create a USPS Informed Delivery campaign (an email preview with a ride-along image and link) pending approval |
+| `informedDelivery.create` | `lob.api.informedDelivery.create` | `write` | Create a USPS Informed Delivery campaign (an email preview with a ride-along image and link). Lob approves it on create unless status is 'pending_approval' |
 | `informedDelivery.get` | `lob.api.informedDelivery.get` | `read` | Read one Informed Delivery campaign by its USPS campaign ID |
 | `informedDelivery.list` | `lob.api.informedDelivery.list` | `read` | List USPS Informed Delivery campaigns |
 | `informedDelivery.update` | `lob.api.informedDelivery.update` | `write` | Change an Informed Delivery campaign's details or approve it |
@@ -113,7 +113,7 @@ pnpm add @corsair-dev/lob
 | `uploads.getReport` | `lob.api.uploads.getReport` | `read` | Page through an upload's per-row validation report |
 | `uploads.list` | `lob.api.uploads.list` | `read` | List audience uploads, optionally for one campaign |
 | `uploads.update` | `lob.api.uploads.update` | `write` | Change an upload's column mappings or metadata |
-| `uploads.uploadFile` | `lob.api.uploads.uploadFile` | `write` | Attach the audience CSV file to an upload; Lob validates its rows asynchronously |
+| `uploads.uploadFile` | `lob.api.uploads.uploadFile` | `write` | Attach the audience CSV file (at most 50 MiB here) to an upload; Lob validates its rows asynchronously |
 | `usVerifications.bulk` | `lob.api.usVerifications.bulk` | `read` | Verify up to 20 US addresses in one synchronous call; each row comes back as a verification or a per-row error |
 | `usVerifications.verify` | `lob.api.usVerifications.verify` | `read` | Verify one US address with USPS data and get its deliverability, standardized components and confidence score |
 | `zip.usZipLookup` | `lob.api.zip.usZipLookup` | `read` | Look up a 5-digit US ZIP code and get its cities, county, FIPS code and default city |
