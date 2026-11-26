@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import type {
 	GoogleDriveEndpointInputs,
 	GoogleDriveEndpointOutputs,
@@ -247,7 +248,7 @@ const googleDriveWebhooksNested = {
 } as const;
 
 export type GoogleDrivePluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalGoogleDrivePlugin['hooks'];
 	webhookHooks?: InternalGoogleDrivePlugin['webhookHooks'];
@@ -387,6 +388,9 @@ export const googledriveAuthConfig = {
 	oauth_2: {
 		account: ['channel_id', 'changes_page_token'] as const,
 	},
+	managed: {
+		account: ['channel_id', 'changes_page_token'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseGoogleDrivePlugin<T extends GoogleDrivePluginOptions> =
@@ -448,6 +452,25 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 					plugin: 'googledrive',
 					tokenUrl: 'https://oauth2.googleapis.com/token',
 				});
+			}
+
+			// Corsair's own Google app: Hub holds the client secret, so the token
+			// comes from (and refreshes through) Hub rather than Google directly.
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:googledrive:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'googledrive',
+					tenantId: ctx.tenantId,
+				};
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('googledrive', 'oauth_2');
