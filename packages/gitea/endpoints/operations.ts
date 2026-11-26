@@ -198,19 +198,21 @@ function positiveInteger(value: unknown): number | undefined {
  * The page a full page leads to. Gitea's next page is in a Link header core
  * doesn't return, so a page that came back full is taken to have a next one
  * and a shorter page is the last. Full means `limit` entries, or the
- * instance's page cap when that is lower (Gitea clamps `limit` to it). A list
- * without `limit` is sized by Gitea, so any page with entries may have a
- * next one.
+ * instance's page cap when that is lower (Gitea clamps `limit` to it). When
+ * the cap is unknown (the settings route failed), or the list takes no
+ * `limit`, any page with entries may have a next one.
  */
 // `unknown` because the input was validated against an open schema.
 export function nextPageOf(
 	operation: GiteaOperationDefinition,
 	input: Record<string, unknown>,
 	count: number,
-	cap: number = GITEA_PAGE_SIZE,
+	cap: number | undefined,
 ): number | null {
 	const page = positiveInteger(input.page) ?? 1;
-	if (operation.unsizedPages) return count > 0 ? page + 1 : null;
+	if (operation.unsizedPages || cap === undefined) {
+		return count > 0 ? page + 1 : null;
+	}
 	const limit = Math.min(positiveInteger(input.limit) ?? cap, cap);
 	return count >= limit ? page + 1 : null;
 }
@@ -323,14 +325,15 @@ export function createGiteaOperation<Id extends GiteaOperationId>(
 		const cap =
 			operation.paginated && !operation.unsizedPages
 				? await giteaPageCap(ctx)
-				: GITEA_PAGE_SIZE;
+				: undefined;
 		if (
 			operation.paginated &&
 			!operation.unsizedPages &&
 			query.limit === undefined
 		) {
-			// Gitea's default page size (30) is below its cap: ask for the cap.
-			query.limit = cap;
+			// Gitea's default page size (30) is below its cap: ask for the cap
+			// (50, Gitea's default cap, when it couldn't be read).
+			query.limit = cap ?? GITEA_PAGE_SIZE;
 		}
 
 		const request: GiteaRequest = {

@@ -27,11 +27,14 @@ export const GITEA_PAGE_SIZE = 50;
  * The instance's page cap (MAX_RESPONSE_ITEMS), read once per instance from
  * GET /settings/api. An admin can set it below 50: a page of `limit` 50 then
  * comes back with, say, 20 items, and only the real cap tells a full page
- * from the last one. When the settings can't be read the plugin assumes 50.
+ * from the last one. `undefined` when the settings can't be read: then a
+ * short page proves nothing, and paging goes on until an empty page.
  */
-const pageCaps = new Map<string, Promise<number>>();
+const pageCaps = new Map<string, Promise<number | undefined>>();
 
-export async function giteaPageCap(ctx: GiteaCallContext): Promise<number> {
+export async function giteaPageCap(
+	ctx: GiteaCallContext,
+): Promise<number | undefined> {
 	const base = await resolveGiteaInstance(ctx);
 	let cap = pageCaps.get(base);
 	if (!cap) {
@@ -43,12 +46,12 @@ export async function giteaPageCap(ctx: GiteaCallContext): Promise<number> {
 						: undefined;
 				return typeof value === 'number' && Number.isInteger(value) && value > 0
 					? value
-					: GITEA_PAGE_SIZE;
+					: undefined;
 			})
 			.catch(() => {
 				// Not cached: a later call tries again.
 				pageCaps.delete(base);
-				return GITEA_PAGE_SIZE;
+				return undefined;
 			});
 		pageCaps.set(base, cap);
 	}

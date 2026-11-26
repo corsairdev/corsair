@@ -10,8 +10,10 @@ Gitea is self-hosted, so each account stores two things: an access token
 and the `instance_url` of the site it belongs to (`https://gitea.com`,
 `https://codeberg.org` or your own `https://git.example.com`, with or
 without `/api/v1`). Forgejo and Codeberg serve the same API v1, so the
-plugin works there too; a route an older or forked server lacks answers
-404 `page not found`. Create the token at
+plugin works there too. A route an older or forked server lacks answers
+404 `page not found`, and a body field it doesn't know is ignored rather
+than refused: the stale-edit check `content_version` on `issues.update`
+and `pulls.update` only works on servers that include go-gitea/gitea#37035. Create the token at
 `<instance>/user/settings/applications` with the scopes you need
 (read:/write: repository, issue, organization, user, notification,
 package, misc, and admin for the site-admin routes); it is sent as
@@ -24,7 +26,8 @@ file paths keep their slashes (`feature/login`, `docs/README.md`).
 the instance's MAX_RESPONSE_ITEMS (50 unless an admin changed it); the
 plugin reads that cap once from `settings.api` and sends it when `limit`
 is left out. Paged lists return `{ items, next_page }`, with `next_page`
-set while a page comes back full, so step `page` until it is null.
+set while a page comes back full (or, when the cap can't be read, while a
+page has any entries), so step `page` until it is null.
 - **Files.** `contents.get` returns a file's metadata and base64 content;
 `contents.raw`, `contents.media`, `repos.downloadArchive` and the Actions
 log and artifact downloads return the bytes as a file. Diffs, patches,

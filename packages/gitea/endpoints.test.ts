@@ -34,7 +34,7 @@ function reply(
 		// The instance's page cap, read once per instance before a paged list.
 		if (String(input).endsWith('/settings/api')) {
 			return new Response(JSON.stringify({ max_response_items: pageCap }), {
-				status: 200,
+				status: pageCap === 0 ? 404 : 200,
 				headers: { 'content-type': 'application/json' },
 			});
 		}
@@ -376,6 +376,25 @@ describe('responses', () => {
 		expect(out.next_page).toBe(2);
 		await endpointFor('repos.list')(ctx(), {});
 		expect(query(1).get('limit')).toBe('20');
+	});
+
+	it('pages until an empty page when the instance cap cannot be read', async () => {
+		// A server whose settings route fails (pageCap 0 answers 404) and caps at 20.
+		pageCap = 0;
+		reply(
+			200,
+			Array.from({ length: 20 }, (_, i) => ({ id: i })),
+		);
+		const short = (await endpointFor('repos.list')(ctx(), {})) as {
+			next_page: number | null;
+		};
+		expect(query().get('limit')).toBe('50');
+		expect(short.next_page).toBe(2);
+		reply(200, []);
+		const empty = (await endpointFor('repos.list')(ctx(), { page: 2 })) as {
+			next_page: number | null;
+		};
+		expect(empty.next_page).toBeNull();
 	});
 
 	it('reads Go’s null for an empty list as an empty list', async () => {

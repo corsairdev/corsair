@@ -237,6 +237,18 @@ describe('catalog', () => {
 		).toBe(false);
 	});
 
+	it('refuses values outside a documented enum', () => {
+		const repo = { owner: 'gitea', repo: 'tea' };
+		const list = getGiteaInputSchema('issues.list');
+		expect(
+			list.safeParse({ ...repo, state: 'open', type: 'issues' }).success,
+		).toBe(true);
+		expect(list.safeParse({ ...repo, state: 'merged' }).success).toBe(false);
+		expect(list.safeParse({ ...repo, type: 'discussions' }).success).toBe(
+			false,
+		);
+	});
+
 	it('parses responses leniently: unknown fields kept, missing ones fine', () => {
 		const out = getGiteaOutputSchema('repos.get').parse({
 			id: 1,
