@@ -1,4 +1,5 @@
 import { AuthMissingError } from 'corsair/core';
+import { LUSHA_SPEC_ROUTES } from './endpoints/generated/spec-ops';
 import type { LushaKeyBuilderContext } from './index';
 import { lusha, lushaEndpointSchemas } from './index';
 
@@ -6,29 +7,29 @@ const RISK_LEVELS = {
 	'account.getAccountUsage': 'read',
 	'auditLogs.getStats': 'read',
 	'auditLogs.list': 'read',
-	'company.enrichCompanies': 'destructive',
+	'company.enrichCompanies': 'read',
 	'company.getCompanyFilterTypes': 'read',
 	'company.getCompanyFilterValues': 'read',
-	'company.getCompanyIcpFitScores': 'destructive',
-	'company.getCompanyLookalikes': 'destructive',
+	'company.getCompanyIcpFitScores': 'read',
+	'company.getCompanyLookalikes': 'read',
 	'company.getCompanyRecommendationFilters': 'read',
-	'company.getCompanyRecommendations': 'destructive',
+	'company.getCompanyRecommendations': 'read',
 	'company.getCompanySignalFilterValues': 'read',
 	'company.getCompanySignalFilters': 'read',
-	'company.getCompanySignalScores': 'destructive',
+	'company.getCompanySignalScores': 'read',
 	'company.getCompanySignalTypes': 'read',
-	'company.getCompanySignals': 'destructive',
-	'company.getWebsiteVisits': 'destructive',
-	'company.prospectCompanies': 'destructive',
-	'company.searchAndEnrichCompanies': 'destructive',
-	'company.searchCompanies': 'destructive',
+	'company.getCompanySignals': 'read',
+	'company.getWebsiteVisits': 'read',
+	'company.prospectCompanies': 'read',
+	'company.searchAndEnrichCompanies': 'read',
+	'company.searchCompanies': 'read',
 	'companyTables.addEntities': 'destructive',
 	'companyTables.create': 'write',
 	'companyTables.delete': 'destructive',
 	'companyTables.get': 'read',
 	'companyTables.getColumnCatalog': 'read',
 	'companyTables.list': 'read',
-	'companyTables.listEntities': 'destructive',
+	'companyTables.listEntities': 'read',
 	'companyTables.removeColumn': 'destructive',
 	'companyTables.removeEntities': 'destructive',
 	'companyTables.runColumn': 'destructive',
@@ -41,29 +42,29 @@ const RISK_LEVELS = {
 	'contactTables.getColumnCatalog': 'read',
 	'contactTables.list': 'read',
 	'contactTables.listColumns': 'read',
-	'contactTables.listEntities': 'destructive',
+	'contactTables.listEntities': 'read',
 	'contactTables.removeColumn': 'destructive',
 	'contactTables.removeEntities': 'destructive',
 	'contactTables.runColumn': 'destructive',
 	'contactTables.update': 'write',
-	'conversations.getTranscript': 'destructive',
-	'conversations.search': 'destructive',
+	'conversations.getTranscript': 'read',
+	'conversations.search': 'read',
 	'icp.listProfiles': 'read',
 	'jobs.getContactsEnrichJob': 'read',
-	'person.enrichContacts': 'destructive',
-	'person.getBuyingGroup': 'destructive',
+	'person.enrichContacts': 'read',
+	'person.getBuyingGroup': 'read',
 	'person.getContactFilterTypes': 'read',
 	'person.getContactFilterValues': 'read',
-	'person.getContactIcpFitScores': 'destructive',
-	'person.getContactLookalikes': 'destructive',
+	'person.getContactIcpFitScores': 'read',
+	'person.getContactLookalikes': 'read',
 	'person.getContactRecommendationFilters': 'read',
-	'person.getContactRecommendations': 'destructive',
-	'person.getContactSignalScores': 'destructive',
+	'person.getContactRecommendations': 'read',
+	'person.getContactSignalScores': 'read',
 	'person.getContactSignalTypes': 'read',
-	'person.getContactSignals': 'destructive',
-	'person.prospectContacts': 'destructive',
-	'person.searchAndEnrichContacts': 'destructive',
-	'person.searchContacts': 'destructive',
+	'person.getContactSignals': 'read',
+	'person.prospectContacts': 'read',
+	'person.searchAndEnrichContacts': 'read',
+	'person.searchContacts': 'read',
 	'subscriptions.create': 'destructive',
 	'subscriptions.createOptOut': 'write',
 	'subscriptions.delete': 'destructive',
@@ -75,10 +76,38 @@ const RISK_LEVELS = {
 
 const OPERATIONS = Object.keys(RISK_LEVELS) as (keyof typeof RISK_LEVELS)[];
 
-/** Every operation that charges credits or changes Lusha data. */
+/** Sends, buys, starts a paid job, or can't be undone (R8). */
 const DESTRUCTIVE = OPERATIONS.filter(
 	(name) => RISK_LEVELS[name] === 'destructive',
 );
+
+/** Metered reads: they only spend credits, so they stay 'read' (R8/R9). */
+const METERED_READS = [
+	'company.enrichCompanies',
+	'company.getCompanyIcpFitScores',
+	'company.getCompanyLookalikes',
+	'company.getCompanyRecommendations',
+	'company.getCompanySignalScores',
+	'company.getCompanySignals',
+	'company.getWebsiteVisits',
+	'company.prospectCompanies',
+	'company.searchAndEnrichCompanies',
+	'company.searchCompanies',
+	'companyTables.listEntities',
+	'contactTables.listEntities',
+	'conversations.getTranscript',
+	'conversations.search',
+	'person.enrichContacts',
+	'person.getBuyingGroup',
+	'person.getContactIcpFitScores',
+	'person.getContactLookalikes',
+	'person.getContactRecommendations',
+	'person.getContactSignalScores',
+	'person.getContactSignals',
+	'person.prospectContacts',
+	'person.searchAndEnrichContacts',
+	'person.searchContacts',
+] as const;
 
 // unknown: only the keys are walked, so the endpoint function type is never used.
 type NestedMap = Record<string, Record<string, unknown>>;
@@ -157,10 +186,22 @@ describe('lusha plugin', () => {
 		}
 	});
 
+	it('keeps metered reads read and never replays them', () => {
+		for (const operation of METERED_READS) {
+			expect([operation, RISK_LEVELS[operation]]).toEqual([operation, 'read']);
+		}
+		for (const route of Object.values(LUSHA_SPEC_ROUTES)) {
+			const metered = (METERED_READS as readonly string[]).includes(route.op);
+			const replayable = 'replayable' in route && route.replayable === true;
+			expect([route.op, metered && replayable]).toEqual([route.op, false]);
+		}
+	});
+
 	it('names the cost on every credit-charging operation', () => {
-		const charging = DESTRUCTIVE.filter(
-			(name) => !/\.(delete|remove\w*)$/.test(name),
-		);
+		const charging = [
+			...METERED_READS,
+			...DESTRUCTIVE.filter((name) => !/\.(delete|remove\w*)$/.test(name)),
+		];
 		for (const operation of charging) {
 			expect([operation, required(operation).description]).toEqual([
 				operation,

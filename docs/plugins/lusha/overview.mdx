@@ -12,7 +12,7 @@ The plugin covers Lusha's whole public V3 API (68 operations): search, enrich an
 
 Things to know before you call:
 
-- **Most calls cost credits, so they ask for approval.** Searches, enrichment, prospecting, lookalikes, recommendations, buying groups, signals, scores, table exports and runs, and conversation exports charge credits from your account pool per result, per revealed field or per row; each operation's description says how. They are marked `destructive`, so Corsair asks before running them, like deletes. Filter lists, signal types, table setup, subscriptions, audit logs, `account.getAccountUsage` and the job poll are free. When the account runs out, Lusha answers HTTP 402 `Insufficient credits for this operation`; the plugin does not retry it. Lusha's free plan includes a small monthly credit allowance; useful volume needs a paid plan.
+- **Most reads cost credits.** Searches, enrichment, prospecting, lookalikes, recommendations, buying groups, signals, scores, website visits, table exports and conversation exports charge credits from your account pool per result, per revealed field or per row; each operation's description says how. They only spend credits, so they are marked `read`, like the free reads. Operations that start a paid job or charge as they add data (`contactTables.runColumn`, `companyTables.runColumn`, `companyTables.addEntities`, `subscriptions.create`) and operations that can't be undone (deletes and removes) are marked `destructive`, so Corsair asks before running them. Filter lists, signal types, table setup, subscription reads, audit logs, `account.getAccountUsage` and the job poll are free. When the account runs out, Lusha answers HTTP 402 `Insufficient credits for this operation`; the plugin does not retry it. Lusha's free plan includes a small monthly credit allowance; useful volume needs a paid plan.
 - **Search first, enrich second.** `person.searchContacts` and `company.searchCompanies` match records by email, LinkedIn URL, name plus company, or domain, and return previews that say which data points exist (`has`) and what revealing them costs (`canReveal`). `person.enrichContacts` and `company.enrichCompanies` take ids from those previews and return the full records with emails or phones (contacts) and premium firmographics (companies).
 - **Enrichment can continue in the background.** A contact enrich call may answer with `status: 'partial'` and a `job`; poll `jobs.getContactsEnrichJob` with that job id until it reports `complete` (its `contacts` merge into the ones you already have, by `id`), `expired` or `failed`. The poll is free.
 - **Rate limits are per account.** The default window is 25 requests per second, `account.getAccountUsage` is capped at 5 requests per minute and the webhook API at 100 per minute. A 429 is retried three times with backoff; Lusha sends no `Retry-After` header. A 5xx or dropped connection is retried only on free reads, because a charged call may already have run.
@@ -116,11 +116,11 @@ await tenant.lusha.api.account.getAccountUsage({});
 ```
 
 
-**`company.enrichCompanies`**
+**`companyTables.addEntities`**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.lusha.api.company.enrichCompanies({});
+await tenant.lusha.api.companyTables.addEntities({});
 ```
 
 

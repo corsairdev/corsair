@@ -424,32 +424,32 @@ export const LUSHA_SPEC_ROUTES = {
 
 export const LUSHA_SPEC_META = {
 	'person.prospectContacts': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			"Prospecting Contacts. Search for contacts that match your Ideal Customer Profile using rich filter criteria. Billing: Charged per result via 'api_search'. If signals are requested, an additional charge applies per matched signal per result.",
 	},
 	'company.prospectCompanies': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			"Prospecting Companies. Search for companies that match your target market using rich filter criteria. Billing: Charged per result via 'api_search'. If signals are requested, an additional charge applies per matched signal per result.",
 	},
 	'person.getContactLookalikes': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			"Contact Lookalikes. Find contacts similar to a set of seed contacts using AI-powered recommendations. Billing: Charged per result via the 'lookalikeContact' action.",
 	},
 	'company.getCompanyLookalikes': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			"Company Lookalikes. Find companies similar to a set of seed companies using AI-powered recommendations. Billing: Charged per result via the 'lookalikeCompany' action.",
 	},
 	'person.getContactRecommendations': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			"Contact Recommendations. Returns the recommended contacts for the calling user, ranked by Lusha against your Target Profiles and recent signals. Billing: Charged per result without an 'error', via the 'contactRecommendationsReveal' action. Results with an 'error' (e.g. 'COMPLIANCE_RESTRICTED') keep their scores but carry no personal data and are not charged.",
 	},
 	'company.getCompanyRecommendations': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			"Company Recommendations. Returns the recommended companies for the calling user, ranked by Lusha against your Target Profiles and recent signals. Billing: Charged per result without an 'error', via the 'companyRecommendationsReveal' action.",
 	},
@@ -464,7 +464,7 @@ export const LUSHA_SPEC_META = {
 			'Company Recommendation Filters. Lists the Target Profiles and signal types that currently appear in your company recommendations. Billing: Free.',
 	},
 	'person.getBuyingGroup': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			"Get Buying Group Contacts. Identify the buying group within a set of target companies. Billing: 1 credit per contact record returned, via the 'buyingGroupContact' action. Credits are charged per record, not per person - if the same person appears at more than one company in the request, each record is charged.",
 	},
@@ -499,7 +499,7 @@ export const LUSHA_SPEC_META = {
 			'Delete Contacts Table. Permanently delete a table and all its data. Billing: Free.',
 	},
 	'contactTables.listEntities': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			"Get Contacts Table Entities. Read a page of rows in the table, with all column values and per-cell status. Billing: Charged per row returned via 'export_api'.",
 	},
@@ -564,7 +564,7 @@ export const LUSHA_SPEC_META = {
 			'Delete Companies Table. Permanently delete a table and all its data. Billing: Free.',
 	},
 	'companyTables.listEntities': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			"Get Companies Table Entities. Read a page of rows in the table, with all column values and per-cell status. Billing: Charged per row returned via 'export_api'.",
 	},
@@ -589,12 +589,12 @@ export const LUSHA_SPEC_META = {
 			"Run Column on Companies Table. Populate or refresh a column's data for some or all rows in the table. Billing: Charged per row processed, per the column's credit tier. Company enrichment charges once per company per table - re-runs on an already-paid company in the same table are free.",
 	},
 	'person.getContactSignals': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			"Contact Signals. Retrieve signal events for a list of contacts - job changes and promotions. Billing: Charged per matched signal per result via the 'showSignalsContact' action.",
 	},
 	'company.getCompanySignals': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			"Company Signals. Retrieve signal events for a list of companies - hiring activity, headcount changes, web traffic, IT spend, news, and intent. Billing: Charged per matched signal per result via the 'showSignalsCompany' action. Intent signals are charged the same way as every other company signal - no matches, no charge.",
 	},
@@ -619,12 +619,12 @@ export const LUSHA_SPEC_META = {
 			'Get Company Signal Filter Values. Returns valid values for a single company signal filter type. Billing: Free.',
 	},
 	'company.getCompanySignalScores': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			"Score Companies by Signal Activity. Score companies by their active buying signals. Billing: 1 credit is charged per scored row via 'signal_score_company_reveal'. This action is currently limited-availability - while it isn't yet seeded on an account's pricebook, the endpoint stays free ('billing.creditsCharged' is '0').",
 	},
 	'person.getContactSignalScores': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			"Score Contacts by Signal Activity. Score contacts by their active buying signals. Billing: 1 credit is charged per scored row via 'signal_score_contact_reveal'. This action is currently limited-availability - while it isn't yet seeded on an account's pricebook, the endpoint stays free ('billing.creditsCharged' is '0').",
 	},
@@ -634,17 +634,17 @@ export const LUSHA_SPEC_META = {
 			'List Target Profiles. Returns the Target Profiles (ICPs) you can see: your own, plus any an admin has shared with the account. Billing: Free (0 credits).',
 	},
 	'company.getCompanyIcpFitScores': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			"Score Companies by ICP Fit. Score how well each company fits 1-3 of your Target Profiles, from '0' to '1'. Billing: 1 credit per scored company, regardless of how many profiles it's scored against. A score of '0' is charged. Error rows ('NOT_FOUND' / 'NO_SCORE') are never charged.",
 	},
 	'person.getContactIcpFitScores': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			"Score Contacts by ICP Fit. Score how well each contact fits 1-3 of your Target Profiles, from '0' to '1'. Billing: 1 credit per scored contact, regardless of how many profiles it's scored against. A score of '0' is charged. Error rows ('NOT_FOUND' / 'NO_SCORE') are never charged.",
 	},
 	'company.getWebsiteVisits': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Get Website Visitors. Returns companies ranked by website-visit signals for your tracked domains and date range. Billing: not documented; the response reports any credits charged in billing.',
 	},
@@ -714,12 +714,12 @@ export const LUSHA_SPEC_META = {
 			'Create Opt-Out Subscription. Subscribe to real-time notifications when a contact opts out of data processing. Needs an account webhook secret, set in the Lusha dashboard.',
 	},
 	'conversations.search': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			"Search Conversations. Search the sales conversations recorded by Lusha Conversations for your account. Billing: 1 credit per block of up to 25 conversations returned (1\u201325 = 1, 26\u201350 = 2, 51\u201375 = 3, 76\u2013100 = 4), via 'ci_meeting_data_export'. Charged on results returned, not the page size requested. A request that returns nothing is free.",
 	},
 	'conversations.getTranscript': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			"Get Conversation Transcript. Returns the speaker-attributed, timestamped transcript of a single conversation. Billing: 1 credit per successful request via 'ci_transcript_analysis', including repeat requests for the same conversation. A '404' is never charged. While 'ci_transcript_analysis' isn't seeded on your account's pricebook, the endpoint stays free.",
 	},

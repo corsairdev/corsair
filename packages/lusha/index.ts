@@ -176,33 +176,33 @@ const CONTACTS_ENRICH_JOB = {
 
 const lushaEndpointMeta = {
 	'person.searchContacts': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Look up up to 100 contacts by id, LinkedIn URL, email, or name plus company, and get previews that say which data points exist and what revealing them costs. Charges credits per matched result.',
 	},
 	'person.enrichContacts': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Reveal emails and phone numbers for up to 100 contact ids from search results. Charges credits per revealed data point; a data point already revealed for the account is free to re-enrich (canReveal.credits is 0 in search). May answer status partial with a job; follow it with jobs.getContactsEnrichJob until it reports complete, expired or failed.',
 		job: CONTACTS_ENRICH_JOB,
 	},
 	'person.searchAndEnrichContacts': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Search up to 100 contacts by email, LinkedIn URL or name plus company and return their full enriched records in one call. Charges credits per result and per revealed field.',
 	},
 	'company.searchCompanies': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Look up up to 100 companies by id, name or domain and get firmographic previews. Charges credits per matched result.',
 	},
 	'company.enrichCompanies': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Reveal full firmographics for up to 100 company ids, including premium fields named in reveal (each charged separately per result). Omitting reveal returns base firmographics only. Charges credits per result via reveal_company.',
 	},
 	'company.searchAndEnrichCompanies': {
-		riskLevel: 'destructive',
+		riskLevel: 'read',
 		description:
 			'Search up to 100 companies by id, name or domain and return their full firmographics in one call. Charges credits per result and per reveal field.',
 	},
