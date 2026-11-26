@@ -53,6 +53,11 @@ const LimitSchema = z
 		'Page size of results, at most 50 (the server-side cap). Defaults to 50.',
 	);
 
+const JsonValueMapSchema = z.record(
+	z.string(),
+	z.union([z.string(), z.number(), z.boolean(), z.null()]),
+);
+
 const TimestampSchema = z
 	.string()
 	.describe('An RFC3339 timestamp; offsets as well as `Z` are accepted.');
@@ -138,7 +143,7 @@ const RepositorySchema = z
 		has_issues: z.boolean().nullish(),
 		// unknown: the internal tracker settings are a small fixed map Gitea can
 		// extend, passed through as sent.
-		internal_tracker: z.record(z.string(), z.unknown()).nullish(), // unknown: a small fixed map Gitea can extend, passed through as sent.
+		internal_tracker: JsonValueMapSchema.nullish(),
 		has_wiki: z.boolean().nullish(),
 		has_pull_requests: z.boolean().nullish(),
 		has_projects: z.boolean().nullish(),
@@ -289,7 +294,7 @@ const PayloadCommitSchema = z
 		committer: PayloadUserSchema.nullish(),
 		// unknown: verification flags are a small map Gitea extends between
 		// versions, passed through as sent.
-		verification: z.record(z.string(), z.unknown()).nullish(), // unknown: verification flags are a map Gitea extends between versions.
+		verification: JsonValueMapSchema.nullish(),
 		timestamp: z.string().nullish(),
 		added: z.array(z.string()).nullish(),
 		removed: z.array(z.string()).nullish(),
@@ -338,8 +343,7 @@ const RepoCommitSchema = z
 		author: CommitUserSchema.nullish(),
 		committer: CommitUserSchema.nullish(),
 		tree: CommitMetaSchema.nullish(),
-		verification: z.record(z.string(), z.unknown()).nullish(), // unknown: same verification map as the payload commit.
-
+		verification: JsonValueMapSchema.nullish(),
 	})
 	.loose();
 
@@ -441,7 +445,7 @@ export type GiteaHook = z.infer<typeof HookSchema>;
 
 const UserMeInputSchema = z.object({});
 
-export type UserMeInput = z.infer<typeof UserMeInputSchema>;
+export type UserMeInput = z.input<typeof UserMeInputSchema>;
 
 const UserMeResponseSchema = UserSchema;
 
@@ -454,7 +458,7 @@ const ReposListInputSchema = z.object({
 	limit: LimitSchema,
 });
 
-export type ReposListInput = z.infer<typeof ReposListInputSchema>;
+export type ReposListInput = z.input<typeof ReposListInputSchema>;
 
 const ReposListResponseSchema = z.object({
 	repositories: z.array(RepositorySchema),
@@ -469,7 +473,7 @@ const ReposGetInputSchema = z.object({
 	repo: RepoSchema,
 });
 
-export type ReposGetInput = z.infer<typeof ReposGetInputSchema>;
+export type ReposGetInput = z.input<typeof ReposGetInputSchema>;
 
 const ReposGetResponseSchema = RepositorySchema;
 
@@ -535,7 +539,7 @@ const ReposCreateInputSchema = z.object({
 		.describe('Which signatures to trust when verifying commits.'),
 });
 
-export type ReposCreateInput = z.infer<typeof ReposCreateInputSchema>;
+export type ReposCreateInput = z.input<typeof ReposCreateInputSchema>;
 
 const ReposCreateResponseSchema = RepositorySchema;
 
@@ -546,7 +550,7 @@ const ReposDeleteInputSchema = z.object({
 	repo: RepoSchema,
 });
 
-export type ReposDeleteInput = z.infer<typeof ReposDeleteInputSchema>;
+export type ReposDeleteInput = z.input<typeof ReposDeleteInputSchema>;
 
 // The delete answers 204 with an empty body; the result records what was
 // removed because there is nothing left to read back.
@@ -571,7 +575,7 @@ const BranchesListInputSchema = z.object({
 	limit: LimitSchema,
 });
 
-export type BranchesListInput = z.infer<typeof BranchesListInputSchema>;
+export type BranchesListInput = z.input<typeof BranchesListInputSchema>;
 
 const BranchesListResponseSchema = z.object({
 	branches: z.array(BranchSchema),
@@ -620,7 +624,7 @@ const CommitsListInputSchema = z.object({
 		),
 });
 
-export type CommitsListInput = z.infer<typeof CommitsListInputSchema>;
+export type CommitsListInput = z.input<typeof CommitsListInputSchema>;
 
 const CommitsListResponseSchema = z.object({
 	commits: z.array(CommitSchema),
@@ -685,7 +689,7 @@ const IssuesListInputSchema = z.object({
 	limit: LimitSchema,
 });
 
-export type IssuesListInput = z.infer<typeof IssuesListInputSchema>;
+export type IssuesListInput = z.input<typeof IssuesListInputSchema>;
 
 const IssuesListResponseSchema = z.object({
 	issues: z.array(IssueSchema),
@@ -701,7 +705,7 @@ const IssuesGetInputSchema = z.object({
 	index: IssueIndexSchema,
 });
 
-export type IssuesGetInput = z.infer<typeof IssuesGetInputSchema>;
+export type IssuesGetInput = z.input<typeof IssuesGetInputSchema>;
 
 const IssuesGetResponseSchema = IssueSchema;
 
@@ -732,7 +736,7 @@ const IssuesCreateInputSchema = z.object({
 	ref: z.string().optional().describe('Git reference the issue relates to.'),
 });
 
-export type IssuesCreateInput = z.infer<typeof IssuesCreateInputSchema>;
+export type IssuesCreateInput = z.input<typeof IssuesCreateInputSchema>;
 
 const IssuesCreateResponseSchema = IssueSchema;
 
@@ -784,7 +788,7 @@ const IssuesUpdateInputSchema = z.object({
 		),
 });
 
-export type IssuesUpdateInput = z.infer<typeof IssuesUpdateInputSchema>;
+export type IssuesUpdateInput = z.input<typeof IssuesUpdateInputSchema>;
 
 const IssuesUpdateResponseSchema = IssueSchema;
 
@@ -805,7 +809,7 @@ const CommentsListInputSchema = z.object({
 	// This route takes no page or limit: it returns every matching comment.
 });
 
-export type CommentsListInput = z.infer<typeof CommentsListInputSchema>;
+export type CommentsListInput = z.input<typeof CommentsListInputSchema>;
 
 const CommentsListResponseSchema = z.object({
 	comments: z.array(CommentSchema),
@@ -820,7 +824,7 @@ const CommentsCreateInputSchema = z.object({
 	body: z.string().min(1).describe('Comment text, markdown.'),
 });
 
-export type CommentsCreateInput = z.infer<typeof CommentsCreateInputSchema>;
+export type CommentsCreateInput = z.input<typeof CommentsCreateInputSchema>;
 
 const CommentsCreateResponseSchema = CommentSchema;
 
@@ -851,7 +855,7 @@ const ReleasesListInputSchema = z.object({
 	limit: LimitSchema,
 });
 
-export type ReleasesListInput = z.infer<typeof ReleasesListInputSchema>;
+export type ReleasesListInput = z.input<typeof ReleasesListInputSchema>;
 
 const ReleasesListResponseSchema = z.object({
 	releases: z.array(ReleaseSchema),
@@ -892,7 +896,7 @@ const ReleasesCreateInputSchema = z.object({
 		.describe('Annotation for the tag created along with the release.'),
 });
 
-export type ReleasesCreateInput = z.infer<typeof ReleasesCreateInputSchema>;
+export type ReleasesCreateInput = z.input<typeof ReleasesCreateInputSchema>;
 
 const ReleasesCreateResponseSchema = ReleaseSchema;
 
@@ -922,7 +926,7 @@ const WebhooksListInputSchema = z.object({
 	limit: LimitSchema,
 });
 
-export type WebhooksListInput = z.infer<typeof WebhooksListInputSchema>;
+export type WebhooksListInput = z.input<typeof WebhooksListInputSchema>;
 
 const WebhooksListResponseSchema = z.object({
 	hooks: z.array(HookSchema),
@@ -986,7 +990,7 @@ const WebhooksCreateInputSchema = z
 		}
 	});
 
-export type WebhooksCreateInput = z.infer<typeof WebhooksCreateInputSchema>;
+export type WebhooksCreateInput = z.input<typeof WebhooksCreateInputSchema>;
 
 const WebhooksCreateResponseSchema = HookSchema;
 
@@ -1000,7 +1004,7 @@ const WebhooksDeleteInputSchema = z.object({
 	id: NumericIdSchema,
 });
 
-export type WebhooksDeleteInput = z.infer<typeof WebhooksDeleteInputSchema>;
+export type WebhooksDeleteInput = z.input<typeof WebhooksDeleteInputSchema>;
 
 const WebhooksDeleteResponseSchema = z.object({
 	deleted: z.literal(true),

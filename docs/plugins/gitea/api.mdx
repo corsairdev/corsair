@@ -62,7 +62,7 @@ await corsair.gitea.api.branches.list({ owner: 'gitea', repo: 'tea' });
       email?: string | null,
       username?: string | null
     } | null,
-    verification?: Record<string, any> | null,
+    verification?: Record<string, string | number | boolean | null> | null,
     timestamp?: string | null,
     added?: string[] | null,
     removed?: string[] | null,
@@ -388,7 +388,7 @@ Answers 409 with the provider message when the repository has no commits; the pl
       sha?: string | null,
       created?: string | null
     } | null,
-    verification?: Record<string, any> | null
+    verification?: Record<string, string | number | boolean | null> | null
   } | null,
   parents?: {
     url?: string | null,
@@ -1594,7 +1594,7 @@ await corsair.gitea.api.repos.create({ name: 'demo', auto_init: true, descriptio
 | `permissions` | `object \| null` | No | — |
 | `has_code` | `boolean \| null` | No | — |
 | `has_issues` | `boolean \| null` | No | — |
-| `internal_tracker` | `Record<string, any> \| null` | No | — |
+| `internal_tracker` | `Record<string, string \| number \| boolean \| null> \| null` | No | — |
 | `has_wiki` | `boolean \| null` | No | — |
 | `has_pull_requests` | `boolean \| null` | No | — |
 | `has_projects` | `boolean \| null` | No | — |
@@ -1767,7 +1767,7 @@ await corsair.gitea.api.repos.get({ owner: 'gitea', repo: 'tea' });
 | `permissions` | `object \| null` | No | — |
 | `has_code` | `boolean \| null` | No | — |
 | `has_issues` | `boolean \| null` | No | — |
-| `internal_tracker` | `Record<string, any> \| null` | No | — |
+| `internal_tracker` | `Record<string, string \| number \| boolean \| null> \| null` | No | — |
 | `has_wiki` | `boolean \| null` | No | — |
 | `has_pull_requests` | `boolean \| null` | No | — |
 | `has_projects` | `boolean \| null` | No | — |
@@ -1945,7 +1945,7 @@ await corsair.gitea.api.repos.list({ limit: 50 });
   } | null,
   has_code?: boolean | null,
   has_issues?: boolean | null,
-  internal_tracker?: Record<string, any> | null,
+  internal_tracker?: Record<string, string | number | boolean | null> | null,
   has_wiki?: boolean | null,
   has_pull_requests?: boolean | null,
   has_projects?: boolean | null,
