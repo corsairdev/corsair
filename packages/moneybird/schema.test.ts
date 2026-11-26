@@ -251,6 +251,8 @@ describe('risk levels (R8)', () => {
 			'subscriptions.createAndScheduleOneOffSalesInvoice',
 			'recurringSalesInvoices.create',
 			'purchaseTransactionBatches.createFromSepaFile',
+			'contacts.additionalCharges.create',
+			'subscriptions.additionalCharges.create',
 		]) {
 			expect([
 				id,

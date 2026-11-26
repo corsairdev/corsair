@@ -1163,7 +1163,8 @@ export const moneybirdEndpointMeta = {
 		description: 'Create linear value changes retroactively (scope: documents)',
 	},
 	'contacts.additionalCharges.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Create an additional charge to be invoiced at start of next period: at the end of the current period, the additional charges for a contact are merged where possible and an invoice will be created for them (scope: sales_invoices)',
 	},
@@ -2255,7 +2256,8 @@ export const moneybirdEndpointMeta = {
 			'List all subscription templates: this call retrieves a paginated list of all subscription templates available in the administration, one page at a time (scope: settings)',
 	},
 	'subscriptions.additionalCharges.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Create an additional charge to be invoiced together with the subscription: at the end of the current subscription period, the additional charges are merged where possible and an invoice will be created for them (scope: sales_invoices)',
 	},
