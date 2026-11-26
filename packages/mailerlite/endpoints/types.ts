@@ -747,6 +747,10 @@ const CampaignsCreateInputSchema = z
 			.describe('Language for the unsubscribe template. Defaults to English'),
 		emails: z
 			.array(CampaignEmailInputSchema)
+			// The docs contradict themselves: the field table says emails is
+			// required unless type is multivariate, but the same row's text reads
+			// as always present. Every create needs at least one, multivariate
+			// included, so the constraint is pinned here.
 			.min(1)
 			.describe(
 				'Exactly one email object, unless this is a multivariate campaign testing content',

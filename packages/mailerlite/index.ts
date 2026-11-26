@@ -192,7 +192,7 @@ const mailerLiteEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Permanently delete a subscriber and their history. There is no undo',
+			'Permanently delete a subscriber and their history. No API route restores a deleted subscriber',
 	},
 	'subscribers.addToGroup': {
 		riskLevel: 'write',

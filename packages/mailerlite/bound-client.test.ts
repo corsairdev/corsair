@@ -1,4 +1,4 @@
-import { createCorsair } from 'corsair/core';
+import { AuthMissingError, createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { mailerlite } from './index';
 import { groupsListResponse } from './test-fixtures';
@@ -63,7 +63,7 @@ describe('mailerlite bound client without an explicit key', () => {
 			await corsair.mailerlite.keys.issue_new_dek();
 
 			await expect(corsair.mailerlite.api.groups.list({})).rejects.toThrow(
-				/mailerlite/i,
+				AuthMissingError,
 			);
 			expect(jest.mocked(globalThis.fetch)).not.toHaveBeenCalled();
 		} finally {

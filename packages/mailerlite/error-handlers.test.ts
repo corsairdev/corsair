@@ -99,7 +99,7 @@ describe('replay safety', () => {
 		});
 
 		expect(errorHandlers.SERVER_ERROR.match(error)).toBe(true);
-		const result = await errorHandlers.SERVER_ERROR.handler();
+		const result = await errorHandlers.SERVER_ERROR.handler(error);
 		expect(result).toEqual({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff',

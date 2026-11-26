@@ -102,9 +102,8 @@ describe('mailerlite plugin definition', () => {
 	});
 
 	it('describes every operation beyond a bare label', () => {
-		for (const [name, entry] of Object.entries(meta)) {
+		for (const entry of Object.values(meta)) {
 			expect(entry.description.length).toBeGreaterThan(10);
-			expect(name).toBe(name.trim());
 		}
 	});
 

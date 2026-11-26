@@ -29,7 +29,9 @@ export const subscriber = {
 		name: 'Dummy',
 		phone: null,
 		state: null,
-		z_i_p: null,
+		// The docs spell this field zip in the activity example and z_i_p in
+		// every subscriber example; the fields record accepts either spelling.
+		zip: null,
 	},
 	opted_in_at: null,
 	optin_ip: null,

@@ -75,7 +75,7 @@ export const errorHandlers = {
 				(mailerLiteError.status ?? 0) >= 500
 			);
 		},
-		handler: async () => ({
+		handler: async (error: Error) => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
