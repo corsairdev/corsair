@@ -245,7 +245,10 @@ export type CorsairClient<Plugins extends readonly CorsairPlugin[]> =
 export type CorsairTenantWrapper<Plugins extends readonly CorsairPlugin[]> = {
 	withTenant: (
 		tenantId: string,
-		options?: { accounts?: { [P in Plugins[number]['id']]?: string } },
+		options?: {
+			accounts?: { [P in Plugins[number]['id']]?: string };
+			connectLinks?: WithTenantOptions['connectLinks'];
+		},
 	) => CorsairClient<Plugins>;
 	/**
 	 * Integration-level key managers for each plugin.
@@ -466,11 +469,23 @@ export type BuildCorsairClientOptions = {
 	internalConfig?: CorsairInternalConfig;
 	/** Per-plugin account refs from withTenant. Present (even empty) = strict account selection. */
 	accounts?: WithTenantOptions['accounts'];
+	/** From withTenant; false stops auth failures minting connect links. */
+	connectLinks?: WithTenantOptions['connectLinks'];
 };
 
-/** Options of `withTenant`: per-plugin account refs. */
+/** Options of `withTenant`. */
 export type WithTenantOptions = {
+	/** Per-plugin account refs. */
 	accounts?: Record<string, string | undefined>;
+	/**
+	 * Whether a call that finds its app unconnected mints a connect link for the
+	 * person (default true). Pass false for callers that can't show one, such as
+	 * background jobs: the call still fails with AuthMissingError, without a
+	 * link, and Hub's hourly link allowance isn't spent. Local clients only: a
+	 * cloud client refuses false, since the cloud instance decides from the
+	 * caller's role.
+	 */
+	connectLinks?: boolean;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -499,6 +514,7 @@ export function buildCorsairClient<
 		hubConfig,
 		internalConfig,
 		accounts,
+		connectLinks,
 	} = options;
 
 	// Canonical tenant scope for this client. Single-tenant clients pass no
@@ -727,6 +743,7 @@ export function buildCorsairClient<
 			allPlugins: plugins,
 			multiTenancy: internalConfig?.multiTenancy,
 			encryptDataAtRest: internalConfig?.encryptDataAtRest === true,
+			connectLinks,
 		});
 
 		if (Object.keys(boundTree).length > 0) {
