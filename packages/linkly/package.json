@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/linkly",
   "version": "0.1.0",
-  "description": "Link tracking and URL shortening with Linkly - create and update tracked short links, move them to trash and restore them, export workspaces, read click analytics, and manage click webhook subscriptions.",
+  "description": "Link tracking and URL shortening with Linkly - create, bulk-update, trash and restore tracked short links, read click analytics and raw click exports, manage custom domains and webhooks, and report conversions.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
