@@ -3563,6 +3563,14 @@
                 ]
               },
               {
+                "group": "Listclean",
+                "pages": [
+                  "plugins/listclean/overview",
+                  "plugins/listclean/api",
+                  "plugins/listclean/database"
+                ]
+              },
+              {
                 "group": "Listen Notes",
                 "pages": [
                   "plugins/listennotes/overview",

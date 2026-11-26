@@ -1,0 +1,141 @@
+---
+title: "Listclean plugin"
+sidebarTitle: "Overview"
+description: "Email verification with Listclean - verify single addresses or batches of up to 3000, upload CSV files in chunks, poll bulk jobs, download cleaned results as JSON or CSV, read verification logs and analytics, delete lists, and read the credit balance and account profile."
+---
+
+Use **Listclean** through Corsair: one client, typed API calls.
+
+Create an API token at app.listclean.xyz under Integration/API &gt; API tokens, then Add. The token is sent in the `X-Auth-Token` header as a plain value, with no Bearer prefix.
+
+Things to know before you call:
+
+- **Every answer is one envelope.** `{ success, error_code, message, data }` where `success` is an integer: `1` on success, `0` on failure, even over a 2xx status. The plugin throws core's `ApiError` on `success: 0` and on non-JSON bodies, so a 404 HTML page never comes back as an empty result. Errors carry no email addresses or profile data: the request body is dropped and addresses are masked.
+- **Billed calls.** `verify.verifyEmail` spends one credit per call; `verify.startBatchVerification` and a finished chunked upload spend one credit per address when the job runs. These are not retried after a 5xx or a dropped connection, since the credit may already be spent. A 429 is retried (core, three times), because Listclean refused it before running. Check `account.getCredits` first; signup comes with 25 free credits.
+- **Bulk verification is a job.** `verify.startBatchVerification` answers `list_id`. Poll `lists.getList`, whose `list.status` moves `SUBMITTED`, `INPROCESS`, `COMPLETED`. Listclean documents no failed status for this flow. Once `COMPLETED`, download rows with `lists.getListResults`, choosing `clean`, `dirty` or `unknown`. The rows can lag the `COMPLETED` status by a few seconds, so an empty download right after it is worth one more try.
+- **Chunked CSV upload.** For a file rather than a list of addresses: `uploads.startUpload` with the file name, chunk count, chunk size and the zero-based `email_column_index` answers `upload_id` (the live API refuses a start without the column, which the spec omits); send each base64 chunk with `uploads.uploadChunk`, numbered from 1; poll `uploads.getUpload` (status `inprocess`, `success` or `error`, lowercase). Its `request_id` is the list to read with `lists.getList`, and the list is verified and billed like a batch. Keep the `upload_id`: on 2026-11-26 `uploads.listUploads` did not show the account's own new uploads.
+- **Analytics shapes come from the live API.** Listclean's spec leaves `total_summary`, `datewise_summary` and `graph_summary` without inner fields; the plugin types them from the real answers and lets unknown fields through.
+- **Deletes are permanent.** `lists.delete` cannot be undone and the results cannot be fetched afterwards.
+- **Webhooks.** Listclean sends none, and the plugin does not receive any.
+
+**What you get:**
+
+- 16 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/listclean better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/listclean better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/listclean better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/listclean better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { listclean } from '@corsair-dev/listclean';
+
+export const corsair = createCorsair({
+	plugins: [
+		listclean(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Listclean API key before the first call: `pnpm corsair setup --plugin=listclean --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+listclean()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'listclean',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Verify one address**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.listclean.api.verify.verifyEmail({ email: 'test@example.com' });
+```
+
+
+**Start a batch verification**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.listclean.api.verify.startBatchVerification({
+	emails: ['user1@example.com', 'user2@example.com'],
+});
+```
+
+
+See the full list on the [API](/plugins/listclean/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/listclean/api">
+    Every `listclean.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

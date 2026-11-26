@@ -429,6 +429,7 @@ export const BaseProviders = [
 	'linkhut',
 	'linkly',
 	'linkup',
+	'listclean',
 	'listennotes',
 	'litescrape',
 	'livesession',
@@ -1219,6 +1220,7 @@ export const ProviderDisplayNames = {
 	linkhut: 'Linkhut',
 	linkly: 'Linkly',
 	linkup: 'Linkup',
+	listclean: 'Listclean',
 	listennotes: 'Listen Notes',
 	litescrape: 'LiteScrape',
 	livesession: 'LiveSession',
@@ -2016,6 +2018,7 @@ export type AllProviders =
 	| 'linkhut'
 	| 'linkly'
 	| 'linkup'
+	| 'listclean'
 	| 'listennotes'
 	| 'litescrape'
 	| 'livesession'
