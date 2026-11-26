@@ -1,0 +1,271 @@
+{
+  "_note": "Real Publora replies, free Starter plan with no connected account (box live run, 2026-11-26). Trimmed to one platform; ids replaced.",
+  "ok": {
+    "listAccounts": {
+      "success": true,
+      "connections": []
+    },
+    "getContext": {
+      "success": true,
+      "context": {
+        "plane": "personal",
+        "actorUserId": "000000000000000000000002",
+        "snapshotAt": "2026-11-26T12:18:42.830Z",
+        "serverTime": "2026-11-26T12:18:42.830Z",
+        "effectiveQuotaTime": "2026-11-26T12:18:42.830Z",
+        "plan": {
+          "key": "starter",
+          "name": "Starter",
+          "source": "starter"
+        },
+        "features": {
+          "publishing": true,
+          "apiAccess": true,
+          "mcpAccess": true,
+          "analytics": false,
+          "mentionables": false
+        },
+        "quotas": {
+          "monthlyPosts": {
+            "metric": "posts.platform_monthly",
+            "scope": "account",
+            "usageScope": "legacy_workspace",
+            "unit": "platform_post",
+            "limit": 15,
+            "used": 0,
+            "remaining": 15,
+            "periodStart": "2026-11-01T00:00:00.000Z",
+            "periodEnd": "2026-12-01T00:00:00.000Z",
+            "resetAt": "2026-12-01T00:00:00.000Z",
+            "periodTimeZone": "UTC",
+            "connections": []
+          },
+          "scheduledPosts": {
+            "metric": "posts.scheduled_active",
+            "scope": "account",
+            "usageScope": "legacy_workspace",
+            "unit": "platform_post",
+            "limit": 3,
+            "used": 0,
+            "remaining": 3,
+            "resetAt": null
+          }
+        },
+        "allowedPlatforms": [
+          "threads",
+          "bluesky",
+          "mastodon",
+          "tiktok",
+          "instagram",
+          "youtube",
+          "linkedin",
+          "facebook",
+          "pinterest",
+          "telegram"
+        ],
+        "advisory": true
+      }
+    },
+    "getPlatformLimits": {
+      "success": true,
+      "schemaVersion": 1,
+      "source": "@publora/platform-limits",
+      "packageVersion": "1.0.0",
+      "limitsLastUpdated": "2026-03-11",
+      "supportedPlatforms": [
+        "twitter",
+        "instagram",
+        "threads",
+        "tiktok",
+        "linkedin",
+        "youtube",
+        "facebook",
+        "mastodon",
+        "bluesky",
+        "telegram",
+        "pinterest"
+      ],
+      "platforms": {
+        "linkedin": {
+          "platform": "linkedin",
+          "displayName": "LinkedIn",
+          "characters": {
+            "standard": 3000
+          },
+          "images": {
+            "supported": true,
+            "maxSizeBytes": 52428800,
+            "maxPixels": 36152320,
+            "maxCount": 10,
+            "formats": ["image/jpeg", "image/png", "image/gif", "image/webp"]
+          },
+          "videos": {
+            "supported": true,
+            "maxDurationSeconds": 1800,
+            "minDurationSeconds": 3,
+            "maxSizeBytes": 524288000,
+            "formats": ["video/mp4"],
+            "maxCount": 1
+          },
+          "requirements": {
+            "requiresMedia": false,
+            "requiresVideo": false,
+            "supportsTextOnly": true,
+            "supportsThreading": false
+          },
+          "documents": {
+            "supported": true,
+            "maxSizeBytes": 104857600,
+            "maxPageCount": 300,
+            "maxCount": 1,
+            "formats": ["application/pdf"],
+            "titleRequired": true
+          },
+          "gifs": null,
+          "thumbnails": null
+        }
+      }
+    },
+    "listPosts": {
+      "success": true,
+      "posts": [],
+      "pagination": {
+        "page": 1,
+        "limit": 20,
+        "totalItems": 0,
+        "totalPages": 0,
+        "hasNextPage": false,
+        "hasPrevPage": false
+      }
+    },
+    "listWebhooks": {
+      "success": true,
+      "webhooks": []
+    },
+    "companyListContexts": {
+      "success": true,
+      "data": {
+        "schemaVersion": 2,
+        "defaultContext": null,
+        "singleContext": false,
+        "accounts": []
+      }
+    },
+    "companyListPlatforms": {
+      "success": true,
+      "data": {
+        "publishablePlatforms": [
+          "twitter",
+          "threads",
+          "bluesky",
+          "tiktok",
+          "instagram",
+          "mastodon",
+          "youtube",
+          "linkedin",
+          "telegram",
+          "facebook"
+        ],
+        "connectOnlyPlatforms": ["pinterest"],
+        "basicVariants": {
+          "linkedin": {
+            "variants": [
+              "text",
+              "single image",
+              "image album",
+              "single video",
+              "single PDF document",
+              "repost / reshare"
+            ],
+            "contentMaxChars": 3000,
+            "media": {
+              "requirement": "optional",
+              "maxItems": 10,
+              "kinds": ["image", "video", "document"],
+              "maxImages": 10,
+              "maxVideos": 1,
+              "maxDocuments": 1,
+              "mixedMedia": false
+            },
+            "settings": {
+              "repostEnabled": {
+                "type": "boolean",
+                "required": false
+              },
+              "repostParentUrn": {
+                "type": "string",
+                "required": false,
+                "maxLength": 300
+              },
+              "repostVisibility": {
+                "type": "string",
+                "required": false,
+                "values": ["", "PUBLIC", "CONNECTIONS"]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "errors": [
+    {
+      "op": "linkedin.mentionables",
+      "status": 403,
+      "handler": "PERMISSION_ERROR",
+      "body": {
+        "error": "The mentionable-people directory is available on paid plans — upgrade to access it",
+        "code": "UPGRADE_REQUIRED",
+        "retryable": false,
+        "nextAction": "CHOOSE_AVAILABLE_FEATURE_OR_UPGRADE",
+        "feature": "mentionablesDirectory"
+      }
+    },
+    {
+      "op": "linkedin.followers",
+      "status": 403,
+      "handler": "PERMISSION_ERROR",
+      "body": {
+        "error": "Analytics requires a Pro plan",
+        "code": "ANALYTICS_PLAN_REQUIRED",
+        "retryable": false,
+        "nextAction": "CHOOSE_AVAILABLE_FEATURE_OR_UPGRADE",
+        "feature": "analyticsAccess"
+      }
+    },
+    {
+      "op": "company.listConnections",
+      "status": 403,
+      "handler": "PERMISSION_ERROR",
+      "body": {
+        "success": false,
+        "code": "AGENCY_CORE_ACCESS_DENIED",
+        "message": "Agency Core access denied."
+      }
+    },
+    {
+      "op": "posts.create",
+      "status": 400,
+      "handler": "VALIDATION_ERROR",
+      "body": {
+        "error": "Invalid platform connection(s): linkedin-0000000000. Check connected accounts or call GET /platform-connections."
+      }
+    },
+    {
+      "op": "posts.getLogs",
+      "status": 404,
+      "handler": "NOT_FOUND_ERROR",
+      "body": {
+        "error": "Post group not found"
+      }
+    },
+    {
+      "op": "accounts.testConnection",
+      "status": 404,
+      "handler": "NOT_FOUND_ERROR",
+      "body": {
+        "error": "Connection not found"
+      }
+    }
+  ]
+}
