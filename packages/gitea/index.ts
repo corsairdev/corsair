@@ -13,7 +13,11 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { resolveGiteaInstance, tryGetStoredKey } from './client';
+import {
+	normalizeInstanceUrl,
+	resolveGiteaInstance,
+	tryGetStoredKey,
+} from './client';
 import {
 	giteaEndpointMeta as generatedEndpointMeta,
 	giteaEndpointSchemas,
@@ -158,10 +162,32 @@ export function gitea<const T extends GiteaPluginOptions>(
 			}
 			if (source !== 'endpoint') return '';
 
-			const key =
-				options.key ?? (await tryGetStoredKey(() => ctx.keys?.get_api_key()));
+			if (options.key) {
+				await resolveGiteaInstance({ options, keys: ctx.keys });
+				return options.key;
+			}
+			const key = await tryGetStoredKey(() => ctx.keys?.get_api_key());
 			// No key configured: AuthMissingError makes core ask the tenant to connect.
 			if (!key) throw new AuthMissingError('gitea', 'api_key');
+			if (options.instanceUrl) {
+				// The stored token belongs to the stored instance. An instanceUrl
+				// option pointing elsewhere would hand it to another host's
+				// operator, so that pairing needs its own key.
+				const stored = await tryGetStoredKey(
+					() => ctx.keys?.get_instance_url?.() ?? Promise.resolve(null),
+				);
+				if (
+					!stored?.trim() ||
+					normalizeInstanceUrl(stored) !==
+						normalizeInstanceUrl(options.instanceUrl)
+				) {
+					throw new AuthMissingError(
+						'gitea',
+						'api_key',
+						'[gitea] the stored token belongs to another instance than the instanceUrl option: pass key with instanceUrl, or connect an account for that instance',
+					);
+				}
+			}
 			// A key without its instance has nowhere to go: this throws
 			// AuthMissingError too when neither the option nor the account's
 			// instance_url is set.

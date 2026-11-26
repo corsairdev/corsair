@@ -1,6 +1,5 @@
 import { ApiError } from 'corsair/http';
 import {
-	clearGiteaPageCaps,
 	encodeGiteaPathValue,
 	giteaErrorMessage,
 	normalizeInstanceUrl,
@@ -22,7 +21,6 @@ type Captured = {
 };
 
 let calls: Captured[] = [];
-let pageCap = 50;
 
 function reply(
 	status: number,
@@ -31,13 +29,6 @@ function reply(
 	contentType = 'application/json',
 ) {
 	jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
-		// The instance's page cap, read once per instance before a paged list.
-		if (String(input).endsWith('/settings/api')) {
-			return new Response(JSON.stringify({ max_response_items: pageCap }), {
-				status: pageCap === 0 ? 404 : 200,
-				headers: { 'content-type': 'application/json' },
-			});
-		}
 		const headers: Record<string, string> = {};
 		new Headers(init?.headers).forEach((value, key) => {
 			headers[key] = value;
@@ -103,8 +94,6 @@ const query = (n = 0) => new URL(calls[n]?.url ?? '').searchParams;
 
 beforeEach(() => {
 	calls = [];
-	pageCap = 50;
-	clearGiteaPageCaps();
 });
 
 afterEach(() => {
@@ -356,42 +345,22 @@ describe('responses', () => {
 		expect(query().get('limit')).toBe('50');
 		expect(out.items).toHaveLength(50);
 		expect(out.next_page).toBe(2);
-		reply(200, [{ id: 1 }]);
-		const last = (await endpointFor('repos.list')(ctx(), {
+	});
+
+	it('keeps paging past a short page, and stops at an empty one', async () => {
+		// An instance whose admin set MAX_RESPONSE_ITEMS to 20: a page of 50 asked
+		// comes back with 20, and the list goes on.
+		reply(
+			200,
+			Array.from({ length: 20 }, (_, i) => ({ id: i })),
+		);
+		const short = (await endpointFor('repos.list')(ctx(), {
 			page: 3,
-			limit: 10,
+			limit: 50,
 		})) as { next_page: number | null };
-		expect(last.next_page).toBeNull();
-	});
-
-	it('pages by the instance cap when an admin set it below 50', async () => {
-		pageCap = 20;
-		reply(
-			200,
-			Array.from({ length: 20 }, (_, i) => ({ id: i })),
-		);
-		const out = (await endpointFor('repos.list')(ctx(), { limit: 50 })) as {
-			next_page: number | null;
-		};
-		expect(out.next_page).toBe(2);
-		await endpointFor('repos.list')(ctx(), {});
-		expect(query(1).get('limit')).toBe('20');
-	});
-
-	it('pages until an empty page when the instance cap cannot be read', async () => {
-		// A server whose settings route fails (pageCap 0 answers 404) and caps at 20.
-		pageCap = 0;
-		reply(
-			200,
-			Array.from({ length: 20 }, (_, i) => ({ id: i })),
-		);
-		const short = (await endpointFor('repos.list')(ctx(), {})) as {
-			next_page: number | null;
-		};
-		expect(query().get('limit')).toBe('50');
-		expect(short.next_page).toBe(2);
+		expect(short.next_page).toBe(4);
 		reply(200, []);
-		const empty = (await endpointFor('repos.list')(ctx(), { page: 2 })) as {
+		const empty = (await endpointFor('repos.list')(ctx(), { page: 4 })) as {
 			next_page: number | null;
 		};
 		expect(empty.next_page).toBeNull();

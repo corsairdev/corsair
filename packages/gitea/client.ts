@@ -17,51 +17,11 @@ export const GITEA_DEFAULT_TIMEOUT_MS = 30_000;
 
 /**
  * The page size the plugin asks for when a paged list's `limit` is left out.
- * Gitea caps every page at MAX_RESPONSE_ITEMS (50 by default) and its own
- * default is DEFAULT_PAGING_NUM (30), so the plugin sends 50: `next_page` is
- * only exact when it knows the size it asked for.
+ * Gitea's own default is DEFAULT_PAGING_NUM (30) and it clamps any `limit`
+ * to MAX_RESPONSE_ITEMS (50 by default, lower if an admin set it), so 50 gets
+ * the largest page a default instance gives.
  */
 export const GITEA_PAGE_SIZE = 50;
-
-/**
- * The instance's page cap (MAX_RESPONSE_ITEMS), read once per instance from
- * GET /settings/api. An admin can set it below 50: a page of `limit` 50 then
- * comes back with, say, 20 items, and only the real cap tells a full page
- * from the last one. `undefined` when the settings can't be read: then a
- * short page proves nothing, and paging goes on until an empty page.
- */
-const pageCaps = new Map<string, Promise<number | undefined>>();
-
-export async function giteaPageCap(
-	ctx: GiteaCallContext,
-): Promise<number | undefined> {
-	const base = await resolveGiteaInstance(ctx);
-	let cap = pageCaps.get(base);
-	if (!cap) {
-		cap = makeGiteaRequest(ctx, { method: 'GET', path: '/settings/api' })
-			.then((settings) => {
-				const value =
-					typeof settings === 'object' && settings !== null
-						? (settings as { max_response_items?: unknown }).max_response_items
-						: undefined;
-				return typeof value === 'number' && Number.isInteger(value) && value > 0
-					? value
-					: undefined;
-			})
-			.catch(() => {
-				// Not cached: a later call tries again.
-				pageCaps.delete(base);
-				return undefined;
-			});
-		pageCaps.set(base, cap);
-	}
-	return cap;
-}
-
-/** Forgets the cached page caps (tests). */
-export function clearGiteaPageCaps(): void {
-	pageCaps.clear();
-}
 
 /** Largest file the attachment upload routes send (Gitea's default is 2 MB for issues, configurable). */
 export const GITEA_UPLOAD_MAX_BYTES = 100 * 1024 * 1024;

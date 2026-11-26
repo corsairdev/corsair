@@ -437,7 +437,7 @@ function pageOf(item: z.ZodType): z.ZodType {
 				.int()
 				.nullable()
 				.describe(
-					'The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty.',
+					'The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty.',
 				),
 		})
 		.strict();

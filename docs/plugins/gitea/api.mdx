@@ -9867,7 +9867,7 @@ await corsair.gitea.api.actions.secrets.list({ owner: 'ada', repo: 'website' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -10129,7 +10129,7 @@ await corsair.gitea.api.actions.variables.list({ owner: 'ada', repo: 'website' }
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -12477,7 +12477,7 @@ await corsair.gitea.api.admin.cron.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -12554,7 +12554,7 @@ await corsair.gitea.api.admin.emails.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -12602,7 +12602,7 @@ await corsair.gitea.api.admin.emails.search({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -12767,7 +12767,7 @@ await corsair.gitea.api.admin.hooks.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -12864,7 +12864,7 @@ await corsair.gitea.api.admin.orgs.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -12919,7 +12919,7 @@ await corsair.gitea.api.admin.packages.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -13451,7 +13451,7 @@ await corsair.gitea.api.admin.unadopted.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `string[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 
 
@@ -13799,7 +13799,7 @@ await corsair.gitea.api.admin.users.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -14675,7 +14675,7 @@ await corsair.gitea.api.branches.list({ owner: 'ada', repo: 'website' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -15780,7 +15780,7 @@ await corsair.gitea.api.comments.listForRepo({ owner: 'ada', repo: 'website' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -16493,7 +16493,7 @@ await corsair.gitea.api.commits.list({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -18230,7 +18230,7 @@ await corsair.gitea.api.commits.statuses.list({ owner: 'ada', repo: 'website', s
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -18310,7 +18310,7 @@ await corsair.gitea.api.commits.statuses.listByRef({ owner: 'ada', repo: 'websit
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -21163,7 +21163,7 @@ await corsair.gitea.api.issues.blocks.list({ owner: 'ada', repo: 'website', inde
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -22349,7 +22349,7 @@ await corsair.gitea.api.issues.dependencies.list({ owner: 'ada', repo: 'website'
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -23351,7 +23351,7 @@ await corsair.gitea.api.issues.list({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -23965,7 +23965,7 @@ await corsair.gitea.api.issues.reactions.list({ owner: 'ada', repo: 'website', i
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -24082,7 +24082,7 @@ await corsair.gitea.api.issues.search({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -24517,7 +24517,7 @@ await corsair.gitea.api.issues.subscriptions.list({ owner: 'ada', repo: 'website
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -24676,7 +24676,7 @@ await corsair.gitea.api.issues.timeline({ owner: 'ada', repo: 'website', index: 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -25751,7 +25751,7 @@ await corsair.gitea.api.issues.times.list({ owner: 'ada', repo: 'website', index
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -26492,7 +26492,7 @@ await corsair.gitea.api.labels.list({ owner: 'ada', repo: 'website' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -26707,7 +26707,7 @@ await corsair.gitea.api.milestones.list({ owner: 'ada', repo: 'website' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -27236,7 +27236,7 @@ await corsair.gitea.api.notifications.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -27670,7 +27670,7 @@ await corsair.gitea.api.notifications.listForRepo({ owner: 'ada', repo: 'website
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -31006,7 +31006,7 @@ await corsair.gitea.api.orgs.actions.secrets.list({ org: 'acme' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -31196,7 +31196,7 @@ await corsair.gitea.api.orgs.actions.variables.list({ org: 'acme' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -31279,7 +31279,7 @@ await corsair.gitea.api.orgs.activityFeeds.list({ org: 'acme' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -31892,7 +31892,7 @@ await corsair.gitea.api.orgs.blocks.list({ org: 'acme' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -32227,7 +32227,7 @@ await corsair.gitea.api.orgs.hooks.list({ org: 'acme' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -32435,7 +32435,7 @@ await corsair.gitea.api.orgs.labels.list({ org: 'acme' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -32526,7 +32526,7 @@ await corsair.gitea.api.orgs.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -32606,7 +32606,7 @@ await corsair.gitea.api.orgs.members.list({ org: 'acme' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -32922,7 +32922,7 @@ await corsair.gitea.api.orgs.projects.columns.issues.list({ org: 'acme', id: 12,
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -33185,7 +33185,7 @@ await corsair.gitea.api.orgs.projects.columns.list({ org: 'acme', id: 12 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -33643,7 +33643,7 @@ await corsair.gitea.api.orgs.projects.list({ org: 'acme' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -33872,7 +33872,7 @@ await corsair.gitea.api.orgs.publicMembers.list({ org: 'acme' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -34491,7 +34491,7 @@ await corsair.gitea.api.orgs.repos.list({ org: 'acme' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -34971,7 +34971,7 @@ await corsair.gitea.api.orgs.teams.list({ org: 'acme' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -35224,7 +35224,7 @@ await corsair.gitea.api.packages.list({ owner: 'ada' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -36784,7 +36784,7 @@ await corsair.gitea.api.packages.versions.list({ owner: 'ada', type: 'npm', name
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -37501,7 +37501,7 @@ await corsair.gitea.api.projects.columns.issues.list({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -37767,7 +37767,7 @@ await corsair.gitea.api.projects.columns.list({ owner: 'ada', repo: 'website', i
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -38245,7 +38245,7 @@ await corsair.gitea.api.projects.list({ owner: 'ada', repo: 'website' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -38456,7 +38456,7 @@ await corsair.gitea.api.pulls.commits({ owner: 'ada', repo: 'website', index: 4 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -39712,7 +39712,7 @@ await corsair.gitea.api.pulls.files({ owner: 'ada', repo: 'website', index: 4 })
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -41914,7 +41914,7 @@ await corsair.gitea.api.pulls.list({ owner: 'ada', repo: 'website' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -44766,7 +44766,7 @@ await corsair.gitea.api.pulls.reviews.list({ owner: 'ada', repo: 'website', inde
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -46895,7 +46895,7 @@ await corsair.gitea.api.releases.list({ owner: 'ada', repo: 'website' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -47541,7 +47541,7 @@ await corsair.gitea.api.repos.activityFeeds.list({ owner: 'ada', repo: 'website'
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -48245,7 +48245,7 @@ await corsair.gitea.api.repos.collaborators.list({ owner: 'ada', repo: 'website'
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -50212,7 +50212,7 @@ await corsair.gitea.api.repos.deployKeys.list({ owner: 'ada', repo: 'website' })
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -51128,7 +51128,7 @@ await corsair.gitea.api.repos.forks.list({ owner: 'ada', repo: 'website' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -53097,7 +53097,7 @@ await corsair.gitea.api.repos.list({ limit: 50 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -54190,7 +54190,7 @@ await corsair.gitea.api.repos.pushMirrors.list({ owner: 'ada', repo: 'website' }
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -55270,7 +55270,7 @@ await corsair.gitea.api.repos.stargazers({ owner: 'ada', repo: 'website' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -55337,7 +55337,7 @@ await corsair.gitea.api.repos.subscribers({ owner: 'ada', repo: 'website' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -55823,7 +55823,7 @@ await corsair.gitea.api.repos.trackedTimes({ owner: 'ada', repo: 'website' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -57474,7 +57474,7 @@ await corsair.gitea.api.tags.list({ owner: 'ada', repo: 'website' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -57530,7 +57530,7 @@ await corsair.gitea.api.teams.activityFeeds.list({ id: 12 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -58198,7 +58198,7 @@ await corsair.gitea.api.teams.members.list({ id: 12 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -58778,7 +58778,7 @@ await corsair.gitea.api.teams.repos.list({ id: 12 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -60610,7 +60610,7 @@ await corsair.gitea.api.user.actions.variables.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -60801,7 +60801,7 @@ await corsair.gitea.api.user.blocks.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -61001,7 +61001,7 @@ await corsair.gitea.api.user.followers.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -61121,7 +61121,7 @@ await corsair.gitea.api.user.following.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -61405,7 +61405,7 @@ await corsair.gitea.api.user.gpgKeys.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -61701,7 +61701,7 @@ await corsair.gitea.api.user.hooks.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -61975,7 +61975,7 @@ await corsair.gitea.api.user.keys.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -62205,7 +62205,7 @@ await corsair.gitea.api.user.oauth2Apps.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -62296,7 +62296,7 @@ await corsair.gitea.api.user.orgs.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -62559,7 +62559,7 @@ await corsair.gitea.api.user.projects.columns.issues.list({ id: 12, column_id: 2
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -62815,7 +62815,7 @@ await corsair.gitea.api.user.projects.columns.list({ id: 12 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -63259,7 +63259,7 @@ await corsair.gitea.api.user.projects.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -63534,7 +63534,7 @@ await corsair.gitea.api.user.starred.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -64007,7 +64007,7 @@ await corsair.gitea.api.user.stopwatches.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -64056,7 +64056,7 @@ await corsair.gitea.api.user.subscriptions.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -64467,7 +64467,7 @@ await corsair.gitea.api.user.teams.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -64600,7 +64600,7 @@ await corsair.gitea.api.user.trackedTimes.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -64836,7 +64836,7 @@ await corsair.gitea.api.users.activityFeeds.list({ username: 'ada' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -65330,7 +65330,7 @@ await corsair.gitea.api.users.followers.list({ username: 'ada' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -65422,7 +65422,7 @@ await corsair.gitea.api.users.following.list({ username: 'ada' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -65540,7 +65540,7 @@ await corsair.gitea.api.users.gpgKeys.list({ username: 'ada' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -65654,7 +65654,7 @@ await corsair.gitea.api.users.keys.list({ username: 'ada' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -65731,7 +65731,7 @@ await corsair.gitea.api.users.orgs.list({ username: 'ada' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -65821,7 +65821,7 @@ await corsair.gitea.api.users.projects.list({ username: 'ada' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -65907,7 +65907,7 @@ await corsair.gitea.api.users.repos.list({ username: 'ada' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -66386,7 +66386,7 @@ await corsair.gitea.api.users.starred.list({ username: 'ada' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -66798,7 +66798,7 @@ await corsair.gitea.api.users.subscriptions.list({ username: 'ada' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -67340,7 +67340,7 @@ await corsair.gitea.api.webhooks.list({ owner: 'ada', repo: 'website' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -67632,7 +67632,7 @@ await corsair.gitea.api.wiki.list({ owner: 'ada', repo: 'website' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `items` | `object[]` | Yes | One page of results. |
-| `next_page` | `number \| null` | Yes | The page to ask for next: set while this page came back full (limit, or the instance page cap when lower; any non-empty page when the cap could not be read), null once a page came back short or empty. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set while a page has entries (a short page does not prove the end, since Gitea may cap pages below the limit asked), null once a page comes back empty. |
 
 <AccordionGroup>
 <Accordion title="items full type">

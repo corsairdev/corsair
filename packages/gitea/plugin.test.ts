@@ -95,6 +95,47 @@ describe('gitea plugin', () => {
 		).resolves.toBe('opt');
 	});
 
+	it('never sends a stored token to another host than its stored instance', async () => {
+		const keys = {
+			get_api_key: async () => 'stored-token',
+			get_instance_url: async () => 'https://git.example.com',
+			get_webhook_signature: async () => null,
+		};
+		const ctx = { keys, authType: 'api_key', options: {} } as never;
+		// The stored pair, with or without the same instance as an option.
+		await expect(gitea().keyBuilder?.(ctx, 'endpoint')).resolves.toBe(
+			'stored-token',
+		);
+		await expect(
+			gitea({ instanceUrl: 'https://git.example.com/api/v1/' }).keyBuilder?.(
+				ctx,
+				'endpoint',
+			),
+		).resolves.toBe('stored-token');
+		// Another host: refused unless the caller brings its own key for it.
+		await expect(
+			gitea({ instanceUrl: 'https://evil.example' }).keyBuilder?.(
+				ctx,
+				'endpoint',
+			),
+		).rejects.toMatchObject({ name: 'AuthMissingError' });
+		await expect(
+			gitea({ instanceUrl: 'https://evil.example', key: 'own' }).keyBuilder?.(
+				ctx,
+				'endpoint',
+			),
+		).resolves.toBe('own');
+		const noStoredInstance = {
+			keys: { ...keys, get_instance_url: async () => null },
+		} as never;
+		await expect(
+			gitea({ instanceUrl: 'https://git.example.com' }).keyBuilder?.(
+				noStoredInstance,
+				'endpoint',
+			),
+		).rejects.toMatchObject({ name: 'AuthMissingError' });
+	});
+
 	it('builds schemas only when they are read', () => {
 		const plugin = gitea();
 		const entry = Object.getOwnPropertyDescriptor(

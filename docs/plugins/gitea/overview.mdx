@@ -18,16 +18,17 @@ and `pulls.update` only works on servers that include go-gitea/gitea#37035. Crea
 (read:/write: repository, issue, organization, user, notification,
 package, misc, and admin for the site-admin routes); it is sent as
 `Authorization: token <token>`. SDK users can pass `instanceUrl` in the
-plugin options instead of storing it.
+plugin options instead of storing it; with a stored token it must match the
+stored instance (the token is never sent to another host), else pass `key`
+too.
 
 - **Repository routes** take `owner` and `repo`. Branches, refs, tags and
 file paths keep their slashes (`feature/login`, `docs/README.md`).
-- **Lists** page with `page` (1-based) and `limit`. Gitea caps a page at
-the instance's MAX_RESPONSE_ITEMS (50 unless an admin changed it); the
-plugin reads that cap once from `settings.api` and sends it when `limit`
-is left out. Paged lists return `{ items, next_page }`, with `next_page`
-set while a page comes back full (or, when the cap can't be read, while a
-page has any entries), so step `page` until it is null.
+- **Lists** page with `page` (1-based) and `limit`; the plugin sends 50
+when `limit` is left out. Gitea clamps `limit` to the instance's
+MAX_RESPONSE_ITEMS (50 unless an admin lowered it), so a short page doesn't
+mean the list ended. Paged lists return `{ items, next_page }`, with
+`next_page` set while a page has entries: step `page` until it is null.
 - **Files.** `contents.get` returns a file's metadata and base64 content;
 `contents.raw`, `contents.media`, `repos.downloadArchive` and the Actions
 log and artifact downloads return the bytes as a file. Diffs, patches,
