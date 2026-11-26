@@ -289,9 +289,13 @@ describe('makeLobRequest', () => {
 				query: { limit: 10 },
 			}),
 		);
-		expect(error.message).not.toContain(API_KEY);
-		expect(JSON.stringify(error)).not.toContain(API_KEY);
-		expect(inspect(error)).not.toContain(API_KEY);
+		// The header carries base64("<key>:"), so check that form too.
+		const encoded = Buffer.from(`${API_KEY}:`).toString('base64');
+		for (const secret of [API_KEY, encoded]) {
+			expect(error.message).not.toContain(secret);
+			expect(JSON.stringify(error)).not.toContain(secret);
+			expect(inspect(error, { depth: 10 })).not.toContain(secret);
+		}
 	});
 });
 

@@ -1033,7 +1033,7 @@ await corsair.lob.api.booklets.send({});
 |------|------|----------|-------------|
 | `to` | `string \| object` | Yes | Recipient: an address ID (adr_...) or an inline address. |
 | `from` | `string \| object` | Yes | Return address: an address ID (adr_...) or an inline address. |
-| `use_type` | `marketing \| operational \| null` | Yes | The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. Pass null for personal correspondence. |
+| `use_type` | `marketing \| operational \| null` | Yes | The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. null is accepted only when the Lob account has a default use_type set in its settings. |
 | `mail_type` | `usps_first_class \| usps_standard` | No | Postage class. Defaults to 'usps_first_class'. |
 | `merge_variables` | `Record<string, any> \| null` | No | Per-mailpiece template variables, keyed by merge variable name. |
 | `send_date` | `string` | No | ISO 8601 date (2026-01-01) or datetime; Lob schedules production after it, up to 180 days out. |
@@ -1553,7 +1553,7 @@ await corsair.lob.api.campaigns.create({ name: 'Spring offer', schedule_type: 'i
 | `send_date` | `string` | No | — |
 | `cancel_window_campaign_minutes` | `number` | No | — |
 | `metadata` | `Record<string, string>` | No | — |
-| `use_type` | `marketing \| operational \| null` | Yes | The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. Pass null for personal correspondence. |
+| `use_type` | `marketing \| operational \| null` | Yes | The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. null is accepted only when the Lob account has a default use_type set in its settings. |
 | `auto_cancel_if_ncoa` | `boolean` | No | Cancel pieces whose recipient filed a change of address. |
 
 
@@ -1806,7 +1806,7 @@ await corsair.lob.api.campaigns.update({});
 | `send_date` | `string` | No | — |
 | `cancel_window_campaign_minutes` | `number` | No | — |
 | `metadata` | `Record<string, string>` | No | — |
-| `use_type` | `marketing \| operational \| null` | No | The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. Pass null for personal correspondence. |
+| `use_type` | `marketing \| operational \| null` | No | The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. null is accepted only when the Lob account has a default use_type set in its settings. |
 | `auto_cancel_if_ncoa` | `boolean` | No | Cancel pieces whose recipient filed a change of address. |
 | `is_draft` | `boolean` | No | — |
 
@@ -2437,7 +2437,7 @@ await corsair.lob.api.checks.send({ to: 'adr_210a8d4b0b76d77b', from: 'adr_fa64e
 |------|------|----------|-------------|
 | `to` | `string \| object` | Yes | Recipient: an address ID (adr_...) or an inline address. |
 | `from` | `string \| object` | Yes | Return address: an address ID (adr_...) or an inline address. |
-| `use_type` | `marketing \| operational \| null` | Yes | The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. Pass null for personal correspondence. |
+| `use_type` | `marketing \| operational \| null` | Yes | The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. null is accepted only when the Lob account has a default use_type set in its settings. |
 | `mail_type` | `usps_first_class` | No | Checks mail only 'usps_first_class'. |
 | `merge_variables` | `Record<string, any> \| null` | No | Per-mailpiece template variables, keyed by merge variable name. |
 | `send_date` | `string` | No | ISO 8601 date (2026-01-01) or datetime; Lob schedules production after it, up to 180 days out. |
@@ -3615,7 +3615,7 @@ await corsair.lob.api.letters.send({ to: 'adr_210a8d4b0b76d77b', from: 'adr_fa64
 | `double_sided` | `boolean` | No | Print on both sides of the paper. Defaults to true. |
 | `address_placement` | `top_first_page \| insert_blank_page \| bottom_first_page_center \| bottom_first_page` | No | Where the address window sits. Defaults to 'top_first_page'. |
 | `size` | `us_letter \| us_legal` | No | Paper size. Defaults to 'us_letter'; only accepted with Lob-Version 2024-01-01 or newer. |
-| `use_type` | `marketing \| operational \| null` | Yes | The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. Pass null for personal correspondence. |
+| `use_type` | `marketing \| operational \| null` | Yes | The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. null is accepted only when the Lob account has a default use_type set in its settings. |
 | `mail_type` | `usps_first_class \| usps_standard` | No | Postage class. Defaults to 'usps_first_class'. |
 | `merge_variables` | `Record<string, any> \| null` | No | Per-mailpiece template variables, keyed by merge variable name. |
 | `send_date` | `string` | No | ISO 8601 date (2026-01-01) or datetime; Lob schedules production after it, up to 180 days out. |
@@ -4179,7 +4179,7 @@ await corsair.lob.api.postcards.send({ to: 'adr_210a8d4b0b76d77b', front: '<html
 | `front` | `string \| string \| string` | Yes | HTML string (up to 10000 characters), tmpl_... template ID, or an https URL to an html, pdf, png or jpg file. |
 | `back` | `string \| string \| string` | Yes | HTML string (up to 10000 characters), tmpl_... template ID, or an https URL to an html, pdf, png or jpg file. |
 | `size` | `4x6 \| 6x9 \| 6x11` | No | Postcard size. Defaults to '4x6'. |
-| `use_type` | `marketing \| operational \| null` | Yes | The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. Pass null for personal correspondence. |
+| `use_type` | `marketing \| operational \| null` | Yes | The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. null is accepted only when the Lob account has a default use_type set in its settings. |
 | `mail_type` | `usps_first_class \| usps_standard` | No | Postage class. Defaults to 'usps_first_class'. |
 | `merge_variables` | `Record<string, any> \| null` | No | Per-mailpiece template variables, keyed by merge variable name. |
 | `send_date` | `string` | No | ISO 8601 date (2026-01-01) or datetime; Lob schedules production after it, up to 180 days out. |
@@ -4191,7 +4191,7 @@ await corsair.lob.api.postcards.send({ to: 'adr_210a8d4b0b76d77b', front: '<html
 | `print_speed` | `core` | No | Production speed. Only 'core' is offered. |
 | `idempotency_key` | `string` | No | Deduplication key, at most 256 characters. Lob replays within 24 hours return the original mailpiece instead of creating a duplicate. |
 
-Bills a physical mailpiece. `use_type` is required by Lob and accepts `marketing`, `operational`, or `null`; `size` defaults to 4x6. With an `idempotency_key`, replays within 24 hours return the original piece.
+Bills a physical mailpiece. `use_type` is required by Lob and accepts `marketing` or `operational` (`null` only when the account has a default use type set in Lob's settings); `size` defaults to 4x6. With an `idempotency_key`, replays within 24 hours return the original piece.
 
 <AccordionGroup>
 <Accordion title="to full type">
@@ -4749,7 +4749,7 @@ await corsair.lob.api.selfMailers.send({ to: 'adr_210a8d4b0b76d77b', inside: 'tm
 |------|------|----------|-------------|
 | `to` | `string \| object` | Yes | Recipient: an address ID (adr_...) or an inline address. |
 | `from` | `string \| object` | No | Return address: an address ID (adr_...) or an inline address. |
-| `use_type` | `marketing \| operational \| null` | Yes | The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. Pass null for personal correspondence. |
+| `use_type` | `marketing \| operational \| null` | Yes | The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. null is accepted only when the Lob account has a default use_type set in its settings. |
 | `mail_type` | `usps_first_class \| usps_standard` | No | Postage class. Defaults to 'usps_first_class'. |
 | `merge_variables` | `Record<string, any> \| null` | No | Per-mailpiece template variables, keyed by merge variable name. |
 | `send_date` | `string` | No | ISO 8601 date (2026-01-01) or datetime; Lob schedules production after it, up to 180 days out. |
@@ -5086,7 +5086,7 @@ await corsair.lob.api.snapPacks.send({});
 |------|------|----------|-------------|
 | `to` | `string \| object` | Yes | Recipient: an address ID (adr_...) or an inline address. |
 | `from` | `string \| object` | No | Return address: an address ID (adr_...) or an inline address. |
-| `use_type` | `marketing \| operational \| null` | Yes | The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. Pass null for personal correspondence. |
+| `use_type` | `marketing \| operational \| null` | Yes | The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. null is accepted only when the Lob account has a default use_type set in its settings. |
 | `mail_type` | `usps_first_class \| usps_standard` | No | Postage class. Defaults to 'usps_first_class'. |
 | `merge_variables` | `Record<string, any> \| null` | No | Per-mailpiece template variables, keyed by merge variable name. |
 | `send_date` | `string` | No | ISO 8601 date (2026-01-01) or datetime; Lob schedules production after it, up to 180 days out. |

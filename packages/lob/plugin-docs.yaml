@@ -93,7 +93,7 @@ apiNotes:
   addresses.list:
     'Page with `before` or `after` (never both), up to 100 rows. `total_count` arrives only when you pass `include: [''total_count'']`.'
   postcards.send:
-    'Bills a physical mailpiece. `use_type` is required by Lob and accepts `marketing`, `operational`, or `null`; `size` defaults to 4x6. With an `idempotency_key`, replays within 24 hours return the original piece.'
+    'Bills a physical mailpiece. `use_type` is required by Lob and accepts `marketing` or `operational` (`null` only when the account has a default use type set in Lob''s settings); `size` defaults to 4x6. With an `idempotency_key`, replays within 24 hours return the original piece.'
   postcards.get:
     'The signed `url` expires after 30 days. `status` moves through `rendered` and `processed` (or `failed` with a `failure_reason`).'
   letters.send:

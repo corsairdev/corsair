@@ -469,7 +469,7 @@ export const UseTypeSchema = z
 	.enum(['marketing', 'operational'])
 	.nullable()
 	.describe(
-		"The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. Pass null for personal correspondence.",
+		"The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. null is accepted only when the Lob account has a default use_type set in its settings.",
 	);
 
 export const IdempotencyKeySchema = z
@@ -873,7 +873,7 @@ export type ZipLookupResponse = z.infer<typeof ZipLookupResponseSchema>;
 
 // ── addresses.create ──────────────────────────────────────────────────────
 
-const AddressCreateInputSchema = InlineAddressInputSchema.extend({
+const AddressCreateInputSchema = InlineAddressInputSchema.safeExtend({
 	description: z
 		.string()
 		.max(255)

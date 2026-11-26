@@ -241,6 +241,18 @@ describe('input rejection before a request is sent', () => {
 		).rejects.toThrow(/name or company/);
 	});
 
+	it('keeps the US address check on addresses.create (safeExtend)', async () => {
+		await expect(
+			endpoints.addresses.create(makeCtx(), {
+				name: 'Jordan Lee',
+				address_line1: '210 King St',
+				address_city: 'San Francisco',
+				address_state: 'California',
+				address_zip: '94107',
+			}),
+		).rejects.toThrow(/two-letter address_state/);
+	});
+
 	it('rejects an invalid use_type on a postcard send', async () => {
 		// unknown: deliberately invalid, so the schema rejection can be tested
 		// at runtime rather than at compile time.
