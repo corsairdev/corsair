@@ -1,5 +1,6 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
+import { moneybirdOperations } from './endpoints/manifest';
 import { moneybird } from './index';
 
 /**
@@ -10,8 +11,9 @@ import { moneybird } from './index';
  *
  *   MONEYBIRD_API_TOKEN=... MONEYBIRD_ADMINISTRATION_ID=... npx jest api.test.ts
  *
- * Reads every settings list and a page of each record list, then round trips
- * on made-up records: an example.com contact (update, note, contact person),
+ * Reads every settings list, a page of each record list and every other GET
+ * that takes no arguments (reports, sync lists, defaults), then round trips on
+ * made-up records: a contact at the test inbox (update, note, contact person),
  * a product, a project, and a draft sales invoice with its PDF. Everything
  * created is deleted at the end, even when a step fails. Calls are spaced
  * 2.1 s apart: Moneybird allows 150 requests per 5 minutes per IP.
@@ -37,6 +39,32 @@ if (!token || !administrationId) {
 
 const TODAY = new Date().toISOString().slice(0, 10);
 const NAME = `corsair-plugin-test-${Date.now()}`;
+
+// `unknown` because the value is any parsed response. Paged lists come back
+// as `{ items, next_page }`, the others as a bare array.
+function itemsOf(value: unknown): unknown[] {
+	if (Array.isArray(value)) return value;
+	const items =
+		typeof value === 'object' && value !== null && 'items' in value
+			? (value as { items?: unknown }).items
+			: undefined;
+	if (!Array.isArray(items)) throw new Error('response is not a list');
+	return items;
+}
+
+// Every GET that needs nothing but the administration: safe to call with {}.
+const NO_ARGUMENT_READS = moneybirdOperations
+	.filter(
+		(op) =>
+			op.method === 'GET' &&
+			op.response === 'json' &&
+			// events.list and reports.journalEntries need one filter (anyOf).
+			op.input.anyOf === undefined &&
+			((op.input.required as string[] | undefined) ?? []).every(
+				(name) => name === 'administration_id',
+			),
+	)
+	.map((op) => op.id);
 
 // `unknown` because the value is any parsed response.
 function idOf(value: unknown): string {
@@ -133,7 +161,7 @@ describeIfKey('moneybird live', () => {
 		'downloads',
 	] as const)('lists %s', async (group) => {
 		const list = api()[group].list as (input: object) => Promise<unknown>;
-		expect(Array.isArray(await list({}))).toBe(true);
+		expect(Array.isArray(itemsOf(await list({})))).toBe(true);
 	});
 
 	it.each([
@@ -153,13 +181,40 @@ describeIfKey('moneybird live', () => {
 		await expect(api().reports.profitLoss({})).resolves.toBeDefined();
 	});
 
+	it.each(NO_ARGUMENT_READS)('reads %s with no arguments', async (id) => {
+		// `unknown` because the path walks the generated API object by name.
+		let fn: unknown = api();
+		for (const part of id.split('.')) {
+			fn = (fn as Record<string, unknown>)[part];
+		}
+		await expect(
+			(fn as (input: object) => Promise<unknown>)({}),
+		).resolves.toBeDefined();
+	});
+
+	it('reads events of one record type', async () => {
+		const out = await api().events.list({ entity_type: 'SalesInvoice' });
+		expect(Array.isArray(out)).toBe(true);
+	});
+
+	it('reads the journal entries report for one ledger account', async () => {
+		const accounts = (await api().ledgerAccounts.list({})) as Array<{
+			id: string;
+		}>;
+		const out = await api().reports.journalEntries({
+			ledger_account_id: idOf(accounts[0]),
+			period: 'this_year',
+		});
+		expect(Array.isArray(itemsOf(out))).toBe(true);
+	});
+
 	it('creates, updates and notes an example.com contact', async () => {
 		const contact = await api().contacts.create({
 			contact: {
 				company_name: NAME,
 				firstname: 'Jana',
 				lastname: 'Test',
-				send_invoices_to_email: 'corsair-tests@example.com',
+				send_invoices_to_email: 'corsair-tests@inkboxmail.com',
 				country: 'NL',
 			},
 		});
@@ -196,22 +251,36 @@ describeIfKey('moneybird live', () => {
 		}>;
 		const revenue = accounts.find((a) => a.account_type === 'revenue');
 		if (!revenue) throw new Error('no revenue ledger account');
+		// Moneybird refuses a product without a VAT rate or product type.
+		const rates = itemsOf(
+			await api().taxRates.list({ filter: 'tax_rate_type:sales_invoice' }),
+		);
+		if (rates.length === 0) throw new Error('no sales tax rate');
 		const product = await api().products.create({
 			product: {
 				description: NAME,
 				price: '10.00',
 				ledger_account_id: String(revenue.id),
+				tax_rate_id: idOf(rates[0]),
 			},
 		});
 		ids.product = idOf(product);
 		cleanup('product', (c) =>
 			c.moneybird.api.products.delete({ id: need('product') }),
 		);
+		const readProduct = (await api().products.get({
+			id: need('product'),
+		})) as { description?: string };
+		expect(readProduct.description).toBe(NAME);
 		const project = await api().projects.create({ project: { name: NAME } });
 		ids.project = idOf(project);
 		cleanup('project', (c) =>
 			c.moneybird.api.projects.delete({ id: need('project') }),
 		);
+		const readProject = (await api().projects.get({
+			id: need('project'),
+		})) as { name?: string };
+		expect(readProject.name).toBe(NAME);
 	});
 
 	it('creates a draft invoice and downloads its PDF (never sends it)', async () => {
@@ -228,6 +297,10 @@ describeIfKey('moneybird live', () => {
 		cleanup('invoice', (c) =>
 			c.moneybird.api.salesInvoices.delete({ id: need('invoice') }),
 		);
+		const read = (await api().salesInvoices.get({ id: need('invoice') })) as {
+			state?: string;
+		};
+		expect(read.state).toBe('draft');
 		const pdf = (await api().salesInvoices.downloadPdf({
 			id: need('invoice'),
 		})) as { contentType?: string; byteLength?: number };
