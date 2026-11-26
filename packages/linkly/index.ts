@@ -287,7 +287,7 @@ const linklyEndpointMeta = {
 	'links.export': {
 		riskLevel: 'read',
 		description:
-			"Export every link in a workspace with their click counts, unpaginated. Counts against the workspace's analytics allowance",
+			"Export every link in a workspace with their click counts, unpaginated. Counts against the workspace's analytics allowance (free plans: 100 a month; when a paid plan runs out, Linkly adds a billed API pack).",
 	},
 	'clicks.getTimeSeries': {
 		riskLevel: 'read',
