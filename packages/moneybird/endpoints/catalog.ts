@@ -1690,7 +1690,7 @@ export const moneybirdEndpointMeta = {
 	},
 	'events.list': {
 		riskLevel: 'read',
-		description: 'List events',
+		description: 'List events; needs entity_type or entity_id',
 	},
 	'externalSalesInvoices.attachments.create': {
 		riskLevel: 'write',
@@ -2078,7 +2078,7 @@ export const moneybirdEndpointMeta = {
 	'reports.journalEntries': {
 		riskLevel: 'read',
 		description:
-			'Journal entries report: get the journal entries report showing all bookings within the specified period, one page at a time (scopes: documents and sales_invoices)',
+			'Journal entries report: get the journal entries report showing all bookings within the specified period, one page at a time; needs contact_id, project_id or ledger_account_id (scopes: documents and sales_invoices)',
 	},
 	'reports.profitLoss': {
 		riskLevel: 'read',

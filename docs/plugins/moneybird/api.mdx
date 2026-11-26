@@ -13424,12 +13424,12 @@ await corsair.moneybird.api.estimates.update({
 
 `events.list`
 
-List events
+List events; needs entity_type or entity_id
 
 **Risk:** `read`
 
 ```ts
-await corsair.moneybird.api.events.list({});
+await corsair.moneybird.api.events.list({ entity_type: 'SalesInvoice' });
 ```
 
 **Input**
@@ -22508,12 +22508,12 @@ await corsair.moneybird.api.reports.generalLedger({});
 
 `reports.journalEntries`
 
-Journal entries report: get the journal entries report showing all bookings within the specified period, one page at a time (scopes: documents and sales_invoices)
+Journal entries report: get the journal entries report showing all bookings within the specified period, one page at a time; needs contact_id, project_id or ledger_account_id (scopes: documents and sales_invoices)
 
 **Risk:** `read`
 
 ```ts
-await corsair.moneybird.api.reports.journalEntries({});
+await corsair.moneybird.api.reports.journalEntries({ ledger_account_id: '458026356994737217', period: 'this_year' });
 ```
 
 **Input**

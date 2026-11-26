@@ -312,7 +312,7 @@ apiExamples:
   estimates.update:
     args: {"id": "458026356994737217", "estimate": {"update_contact": true}}
   events.list:
-    args: {}
+    args: {"entity_type": "SalesInvoice"}
   externalSalesInvoices.attachments.create:
     args: {"id": "458026356994737217", "file": {"base64": "JVBERi0xLjQKJSVFT0YK", "filename": "invoice.pdf", "contentType": "application/pdf"}}
   externalSalesInvoices.attachments.delete:
@@ -478,7 +478,7 @@ apiExamples:
   reports.generalLedger:
     args: {}
   reports.journalEntries:
-    args: {}
+    args: {"ledger_account_id": "458026356994737217", "period": "this_year"}
   reports.profitLoss:
     args: {}
   reports.revenueByContact:

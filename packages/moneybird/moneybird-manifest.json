@@ -5287,7 +5287,15 @@
             "description": "Only return the events of this record. Events of a record type the user has no permission for are left out.",
             "x-corsair-in": "query"
           }
-        }
+        },
+        "anyOf": [
+          {
+            "required": ["entity_type"]
+          },
+          {
+            "required": ["entity_id"]
+          }
+        ]
       },
       "output": {
         "type": "array",
@@ -9267,7 +9275,18 @@
             "description": "Filter by ledger account type",
             "x-corsair-in": "query"
           }
-        }
+        },
+        "anyOf": [
+          {
+            "required": ["contact_id"]
+          },
+          {
+            "required": ["project_id"]
+          },
+          {
+            "required": ["ledger_account_id"]
+          }
+        ]
       },
       "output": {
         "type": "array",

@@ -114,6 +114,19 @@ function isConstraintOnly(value: unknown): boolean {
 	);
 }
 
+/** The field sets of an `anyOf` made only of `{ required: [...] }` members. */
+// `unknown` because the anyOf list is raw provider JSON Schema.
+function requiredAlternatives(list: unknown): string[][] {
+	if (!Array.isArray(list) || list.length === 0) return [];
+	if (!list.every(isConstraintOnly)) return [];
+	return list.map((member) =>
+		(Array.isArray(member.required) ? member.required : []).filter(
+			// `unknown` because required entries are parsed from provider JSON.
+			(name: unknown): name is string => typeof name === 'string',
+		),
+	);
+}
+
 // `unknown` is necessary because a reference resolves to a provider schema document.
 function resolve(value: unknown): unknown {
 	let current = value;
@@ -358,10 +371,30 @@ function schemaFromOpenApi(
 			// Unknown keys are kept (see SchemaMode), except in a request object the
 			// spec closes with `additionalProperties: false` (`{ mode: "none" }` for
 			// an empty quote request takes nothing at all).
-			schema =
+			let objectSchema =
 				strict && value.additionalProperties === false
 					? z.object(shape).strict()
 					: z.object(shape).passthrough();
+			// `anyOf: [{required: [a]}, {required: [b]}]` on a request: at least one
+			// of those filters must be set (events.list, reports.journalEntries).
+			const alternatives = strict ? requiredAlternatives(value.anyOf) : [];
+			if (alternatives.length > 0) {
+				objectSchema = objectSchema.superRefine((input, ctx) => {
+					const given = input as Record<string, unknown>;
+					const met = alternatives.some((names) =>
+						names.every((name) => given[name] !== undefined),
+					);
+					if (!met) {
+						ctx.addIssue({
+							code: 'custom',
+							message: `Moneybird needs at least one of: ${alternatives
+								.map((names) => names.join(' + '))
+								.join(', ')}`,
+						});
+					}
+				});
+			}
+			schema = objectSchema;
 		}
 	} else {
 		// `unknown` is necessary because the spec leaves this JSON value untyped.

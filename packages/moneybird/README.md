@@ -139,7 +139,7 @@ pnpm add @corsair-dev/moneybird
 | `estimates.notes.delete` | `moneybird.api.estimates.notes.delete` | `destructive` | Destroys note from entity (scope: estimates) |
 | `estimates.send` | `moneybird.api.estimates.send` | `destructive` | Send an estimate to the contact (sends real email) or schedule it (scope: estimates) |
 | `estimates.update` | `moneybird.api.estimates.update` | `write` | Updates an estimate: when updating an estimate, provide only the attributes you want to update (scope: estimates) |
-| `events.list` | `moneybird.api.events.list` | `read` | List events |
+| `events.list` | `moneybird.api.events.list` | `read` | List events; needs entity_type or entity_id |
 | `externalSalesInvoices.attachments.create` | `moneybird.api.externalSalesInvoices.attachments.create` | `write` | Add attachment to external sales invoice: add an attachment to an external sales invoice (scope: sales_invoices) |
 | `externalSalesInvoices.attachments.delete` | `moneybird.api.externalSalesInvoices.attachments.delete` | `destructive` | Delete an attachment (scope: sales_invoices) |
 | `externalSalesInvoices.attachments.download` | `moneybird.api.externalSalesInvoices.attachments.download` | `read` | Download attachment: download the attachment (returned as a file) (scope: sales_invoices) |
@@ -222,7 +222,7 @@ pnpm add @corsair-dev/moneybird
 | `reports.exportBrugstaat` | `moneybird.api.reports.exportBrugstaat` | `write` | Export brugstaat: queue the export of a brugstaat XML file for the specified year (scopes: bank, documents and sales_invoices) |
 | `reports.exportLedgerAccounts` | `moneybird.api.reports.exportLedgerAccounts` | `write` | Export ledger accounts: queue the export of ledger accounts (grootboekkaarten) to an Excel file for the specified year (scopes: documents and sales_invoices) |
 | `reports.generalLedger` | `moneybird.api.reports.generalLedger` | `read` | General ledger report: get the general ledger report for the administration showing all ledger accounts with their balances and movements during the specified period (scope: bank) |
-| `reports.journalEntries` | `moneybird.api.reports.journalEntries` | `read` | Journal entries report: get the journal entries report showing all bookings within the specified period, one page at a time (scopes: documents and sales_invoices) |
+| `reports.journalEntries` | `moneybird.api.reports.journalEntries` | `read` | Journal entries report: get the journal entries report showing all bookings within the specified period, one page at a time; needs contact_id, project_id or ledger_account_id (scopes: documents and sales_invoices) |
 | `reports.profitLoss` | `moneybird.api.reports.profitLoss` | `read` | Profit loss report: get the profit loss report for the administration (scopes: documents and sales_invoices) |
 | `reports.revenueByContact` | `moneybird.api.reports.revenueByContact` | `read` | Revenue by contact report (scope: sales_invoices) |
 | `reports.revenueByProject` | `moneybird.api.reports.revenueByProject` | `read` | Revenue by project report (scope: sales_invoices) |

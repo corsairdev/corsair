@@ -153,6 +153,29 @@ describe('schemas', () => {
 		);
 	});
 
+	it('asks for one of the filters Moneybird needs (400 without, found live)', () => {
+		// Live: "entity_type, entity_id are missing, at least one parameter must
+		// be provided" and "at least a contact_id, project_id or
+		// ledger_account_id is required"; the spec marks none of them required.
+		const events = getMoneybirdInputSchema('events.list');
+		expect(events.safeParse({}).success).toBe(false);
+		expect(events.safeParse({ per_page: 10 }).success).toBe(false);
+		expect(events.safeParse({ entity_type: 'Contact' }).success).toBe(true);
+		expect(events.safeParse({ entity_id: '458026356994737217' }).success).toBe(
+			true,
+		);
+		const journal = getMoneybirdInputSchema('reports.journalEntries');
+		expect(journal.safeParse({ period: 'this_year' }).success).toBe(false);
+		for (const field of ['contact_id', 'project_id', 'ledger_account_id']) {
+			expect(journal.safeParse({ [field]: '458026356994737217' }).success).toBe(
+				true,
+			);
+		}
+		const refused = journal.safeParse({});
+		expect(refused.success).toBe(false);
+		expect(refused.error?.issues[0]?.message).toContain('ledger_account_id');
+	});
+
 	it('builds referenced objects in place so Studio can render them', () => {
 		// `unknown` because zod's internals are walked to find the field schemas.
 		type Def = {
