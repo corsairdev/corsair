@@ -370,7 +370,8 @@ Generated from docs/ by \`pnpm generate:llms-full\`; don't edit by hand.
 
 const output = await generate();
 if (process.argv.includes('--check')) {
-	const current = existsSync(OUT) ? await readFile(OUT, 'utf8') : '';
+	// readText: a CRLF checkout of the file (core.autocrlf) isn't stale.
+	const current = existsSync(OUT) ? await readText(OUT) : '';
 	if (current !== output) {
 		console.error(
 			'docs/llms-full.txt is out of date with docs/. Run `pnpm generate:llms-full` and commit the result.',
