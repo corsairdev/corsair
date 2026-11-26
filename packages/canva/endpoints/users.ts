@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCanvaRequest } from '../client';
 import type { CanvaEndpoints } from '../index';
+import { loggable } from './mappers';
 import type { CanvaEndpointOutputs } from './types';
 
 export const getMe: CanvaEndpoints['usersGetMe'] = async (ctx, input) => {
@@ -13,7 +14,7 @@ export const getMe: CanvaEndpoints['usersGetMe'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canva.users.getMe',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -30,7 +31,7 @@ export const getProfile: CanvaEndpoints['usersGetProfile'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.users.getProfile',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -47,7 +48,7 @@ export const getCapabilities: CanvaEndpoints['usersGetCapabilities'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.users.getCapabilities',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;

@@ -1,0 +1,947 @@
+{
+  "id": "fathomai",
+  "displayName": "Fathom AI Notetaker",
+  "description": "AI meeting recorder that records, transcribes and summarizes calls, with endpoints for meetings, summaries, transcripts, recording downloads, teams, users and webhooks.",
+  "npmPackageName": "@corsair-dev/fathomai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 13,
+    "webhooks": 1,
+    "db": 5
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "fathomai.api.meetings.list",
+      "shortPath": "meetings.list",
+      "description": "List recorded meetings with filters, optionally including transcript, summary, action items, highlights and CRM matches",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created_before",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "calendar_invitees_domains",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "calendar_invitees_domains_type",
+            "optional": true,
+            "type": "all | only_internal | one_or_more_external"
+          },
+          {
+            "key": "meeting_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recorded_by",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "teams",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "include_action_items",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_crm_matches",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_highlights",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_summary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_transcript",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "next_cursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ title: string, meeting_title: string | null, meeting_type: string | null, recording_id: number, url: string, meeting_url?: string | null, share_url: string, created_at: string, scheduled_start_time: string, scheduled_end_time: string, recording_start_time: string, recording_end_time: string, calendar_invitees_domains_type: only_internal | one_or_more_external | string, shared_with: no_teams | single_team | multiple_teams | all_teams | string, transcript_language: string, transcript?: { speaker: { display_name: string, matched_calendar_invitee_email?: string | null }, text: string, timestamp: string }[] | null, default_summary?: { template_name: string | null, markdown_formatted: string | null } | null, action_items?: { description: string, user_generated: boolean, completed: boolean, recording_timestamp: string, recording_playback_url: string, assignee: { name: string | null, email: string | null, team: string | null } }[] | null, highlights?: { type: string, summary: string | null, text?: string, start_time: number, end_time: number }[] | null, calendar_invitees: { name: string | null, matched_speaker_display_name?: string | null, email: string | null, email_domain: string | null, is_external: boolean }[], recorded_by: { name: string, email: string, email_domain: string, team: string | null }, crm_matches?: { contacts?: { name: string, email: string, record_url: string }[], companies?: { name: string, record_url: string }[], deals?: { name: string, amount: number, record_url: string }[], error?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathomai.api.meetingTypes.list",
+      "shortPath": "meetingTypes.list",
+      "description": "List the org meeting types; their names filter meetings.list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "next_cursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ name: string, status: active | inactive | string, created_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathomai.api.recordings.getDownload",
+      "shortPath": "recordings.getDownload",
+      "description": "Poll a recording download; a completed one carries a signed file URL valid for about 24 hours",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recording_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "download_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "download_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "processing | completed | failed | expired | string"
+          },
+          {
+            "key": "video",
+            "optional": true,
+            "type": "{ url: string, content_type: string, file_size_bytes: number, expires_at: string }"
+          },
+          {
+            "key": "audio",
+            "optional": true,
+            "type": "{ url: string, content_type: string, file_size_bytes: number, expires_at: string }"
+          },
+          {
+            "key": "failure_reason",
+            "optional": true,
+            "type": "generation_failed | generation_timeout | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathomai.api.recordings.getSummary",
+      "shortPath": "recordings.getSummary",
+      "description": "Get the AI summary of a recording",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recording_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "summary",
+            "optional": false,
+            "type": "{ template_name: string | null, markdown_formatted: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathomai.api.recordings.getTranscript",
+      "shortPath": "recordings.getTranscript",
+      "description": "Get the speaker-labelled transcript of a recording",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recording_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transcript",
+            "optional": false,
+            "type": "{ speaker: { display_name: string, matched_calendar_invitee_email?: string | null }, text: string, timestamp: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathomai.api.recordings.requestDownload",
+      "shortPath": "recordings.requestDownload",
+      "description": "Start generating a downloadable video or audio file for a recording",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recording_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "destination_url",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "download_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "processing | completed | failed | expired | string"
+          },
+          {
+            "key": "video",
+            "optional": true,
+            "type": "{ url: string, content_type: string, file_size_bytes: number, expires_at: string }"
+          },
+          {
+            "key": "audio",
+            "optional": true,
+            "type": "{ url: string, content_type: string, file_size_bytes: number, expires_at: string }"
+          },
+          {
+            "key": "failure_reason",
+            "optional": true,
+            "type": "generation_failed | generation_timeout | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathomai.api.recordings.sendSummary",
+      "shortPath": "recordings.sendSummary",
+      "description": "Have Fathom POST the AI summary of a recording to a destination_url",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recording_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "destination_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "destination_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathomai.api.recordings.sendTranscript",
+      "shortPath": "recordings.sendTranscript",
+      "description": "Have Fathom POST the speaker-labelled transcript of a recording to a destination_url",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recording_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "destination_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "destination_url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathomai.api.teamMembers.list",
+      "shortPath": "teamMembers.list",
+      "description": "List team members, optionally filtered by team name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "next_cursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ name: string, email: string, created_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathomai.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List the teams in the Fathom account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "next_cursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ name: string, created_at: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathomai.api.users.list",
+      "shortPath": "users.list",
+      "description": "List account users with their status and permissions. Needs an account admin key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "team",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | deactivated | invited"
+          },
+          {
+            "key": "settings_access",
+            "optional": true,
+            "type": "none | team_admin | account_admin"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "number | null"
+          },
+          {
+            "key": "next_cursor",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ name: string | null, email: string, created_at: string, status: active | deactivated | invited | string, permissions?: { settings_access: { level: none | team_admin | account_admin | string, teams: string[] }, view_access: { level: own_meetings | team | multiple_teams | all_teams | string, teams: string[] } } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathomai.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Register a webhook that fires when new meeting content is ready; returns its signing secret once",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "destination_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "triggered_for",
+            "optional": false,
+            "type": "(my_recordings | shared_external_recordings | my_shared_with_team_recordings | shared_team_recordings)[]"
+          },
+          {
+            "key": "include_action_items",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_crm_matches",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_summary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "include_transcript",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secret",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_transcript",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "include_crm_matches",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "include_summary",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "include_action_items",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "triggered_for",
+            "optional": false,
+            "type": "(my_recordings | shared_external_recordings | my_shared_with_team_recordings | shared_team_recordings | string)[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fathomai.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook so it stops receiving meeting content",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "fathomai.webhooks.meetings.contentReady",
+      "shortPath": "meetings.contentReady",
+      "description": "A recorded meeting finished processing; carries the meeting with the transcript, summary, action items and CRM matches the webhook was set to include",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_title",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "meeting_type",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "recording_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "meeting_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "share_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scheduled_start_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scheduled_end_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording_start_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recording_end_time",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "calendar_invitees_domains_type",
+            "optional": false,
+            "type": "only_internal | one_or_more_external | string"
+          },
+          {
+            "key": "shared_with",
+            "optional": false,
+            "type": "no_teams | single_team | multiple_teams | all_teams | string"
+          },
+          {
+            "key": "transcript_language",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "transcript",
+            "optional": true,
+            "type": "{ speaker: { display_name: string, matched_calendar_invitee_email?: string | null }, text: string, timestamp: string }[] | null"
+          },
+          {
+            "key": "default_summary",
+            "optional": true,
+            "type": "{ template_name: string | null, markdown_formatted: string | null } | null"
+          },
+          {
+            "key": "action_items",
+            "optional": true,
+            "type": "{ description: string, user_generated: boolean, completed: boolean, recording_timestamp: string, recording_playback_url: string, assignee: { name: string | null, email: string | null, team: string | null } }[] | null"
+          },
+          {
+            "key": "highlights",
+            "optional": true,
+            "type": "{ type: string, summary: string | null, text?: string, start_time: number, end_time: number }[] | null"
+          },
+          {
+            "key": "calendar_invitees",
+            "optional": false,
+            "type": "{ name: string | null, matched_speaker_display_name?: string | null, email: string | null, email_domain: string | null, is_external: boolean }[]"
+          },
+          {
+            "key": "recorded_by",
+            "optional": false,
+            "type": "{ name: string, email: string, email_domain: string, team: string | null }"
+          },
+          {
+            "key": "crm_matches",
+            "optional": true,
+            "type": "{ contacts?: { name: string, email: string, record_url: string }[], companies?: { name: string, record_url: string }[], deals?: { name: string, amount: number, record_url: string }[], error?: string | null } | null"
+          }
+        ]
+      },
+      "responseType": "{ title: string, meeting_title: string | null, meeting_type: string | null, recording_id: number, url: string, meeting_url?: string | null, share_url: string, created_at: string, scheduled_start_time: string, scheduled_end_time: string, recording_start_time: string, recording_end_time: string, calendar_invitees_domains_type: only_internal | one_or_more_external | string, shared_with: no_teams | single_team | multiple_teams | all_teams | string, transcript_language: string, transcript?: { speaker: { display_name: string, matched_calendar_invitee_email?: string | null }, text: string, timestamp: string }[] | null, default_summary?: { template_name: string | null, markdown_formatted: string | null } | null, action_items?: { description: string, user_generated: boolean, completed: boolean, recording_timestamp: string, recording_playback_url: string, assignee: { name: string | null, email: string | null, team: string | null } }[] | null, highlights?: { type: string, summary: string | null, text?: string, start_time: number, end_time: number }[] | null, calendar_invitees: { name: string | null, matched_speaker_display_name?: string | null, email: string | null, email_domain: string | null, is_external: boolean }[], recorded_by: { name: string, email: string, email_domain: string, team: string | null }, crm_matches?: { contacts?: { name: string, email: string, record_url: string }[], companies?: { name: string, record_url: string }[], deals?: { name: string, amount: number, record_url: string }[], error?: string | null } | null }",
+      "usageExample": "fathomai({\n    webhookHooks: {\n        meetings: {\n            contentReady: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "fathomai.db.meetings.search",
+      "entityName": "meetings",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "meeting_title",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "meeting_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "recording_id",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "meeting_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "share_url",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "scheduled_start_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "scheduled_end_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "recording_start_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "recording_end_time",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "calendar_invitees_domains_type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "shared_with",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "transcript_language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "fathomai.db.meetingTypes.search",
+      "entityName": "meetingTypes",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "fathomai.db.teamMembers.search",
+      "entityName": "teamMembers",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "fathomai.db.teams.search",
+      "entityName": "teams",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "fathomai.db.users.search",
+      "entityName": "users",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "email",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "created_at",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

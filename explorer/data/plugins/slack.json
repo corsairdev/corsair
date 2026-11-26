@@ -6,7 +6,7 @@
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",
   "counts": {
-    "api": 46,
+    "api": 47,
     "webhooks": 9,
     "db": 5
   },
@@ -537,7 +537,7 @@
     {
       "path": "slack.api.channels.getHistory",
       "shortPath": "channels.getHistory",
-      "description": "Fetch message history for a channel",
+      "description": "Top-level messages of one conversation. Thread replies are not included; use channels.getReplies.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -545,22 +545,26 @@
           {
             "key": "channel",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "Conversation id such as C0123ABCD, not the name. channels.list and channels.listMine return ids."
           },
           {
             "key": "latest",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Unix timestamp such as \"1700000000.000000\", not an ISO date. Only messages before it."
           },
           {
             "key": "oldest",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Unix timestamp such as \"1700000000.000000\", not an ISO date. Only messages after it."
           },
           {
             "key": "inclusive",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Also return messages at exactly oldest or latest. Ignored unless one is set."
           },
           {
             "key": "include_all_metadata",
@@ -575,7 +579,8 @@
           {
             "key": "limit",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Default 100, at most 999. A page can be shorter; follow the cursor."
           }
         ]
       },
@@ -699,7 +704,7 @@
     {
       "path": "slack.api.channels.getReplies",
       "shortPath": "channels.getReplies",
-      "description": "Fetch replies for a thread",
+      "description": "Messages of one thread. ts is the parent message's ts, from channels.getHistory or messages.search.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -707,27 +712,32 @@
           {
             "key": "channel",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "Conversation id such as C0123ABCD, not the name."
           },
           {
             "key": "ts",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "ts of the thread parent, or of a message in the thread, e.g. \"1700000000.000100\". With no replies only that message comes back."
           },
           {
             "key": "latest",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Unix timestamp such as \"1700000000.000000\". Only messages before it."
           },
           {
             "key": "oldest",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Unix timestamp such as \"1700000000.000000\". Only messages after it."
           },
           {
             "key": "inclusive",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Also return messages at exactly oldest or latest. Ignored unless one is set."
           },
           {
             "key": "include_all_metadata",
@@ -742,7 +752,8 @@
           {
             "key": "limit",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Default 1000."
           }
         ]
       },
@@ -1009,7 +1020,7 @@
     {
       "path": "slack.api.channels.list",
       "shortPath": "channels.list",
-      "description": "List all channels in the workspace",
+      "description": "List channels the app can see. Public only unless types includes private_channel, which adds private ones the app was added to. channels.listMine lists a user's own conversations",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1022,7 +1033,8 @@
           {
             "key": "types",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Comma-separated: public_channel, private_channel, mpim, im. Slack returns only public_channel when omitted, so pass \"public_channel,private_channel\" to include private ones."
           },
           {
             "key": "team_id",
@@ -1080,7 +1092,7 @@
     {
       "path": "slack.api.channels.listMine",
       "shortPath": "channels.listMine",
-      "description": "List the connected user's own conversations (needs a user token)",
+      "description": "List the conversations the connected user is in. Public only unless types includes private_channel, mpim or im. Needs a user token; with only a bot token it lists the bot's conversations",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1093,7 +1105,8 @@
           {
             "key": "types",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Comma-separated: public_channel, private_channel, mpim, im. Slack returns only public_channel when omitted, so pass \"public_channel,private_channel\" to include private ones."
           },
           {
             "key": "exclude_archived",
@@ -1454,9 +1467,9 @@
       }
     },
     {
-      "path": "slack.api.files.get",
-      "shortPath": "files.get",
-      "description": "Get info about a file",
+      "path": "slack.api.files.download",
+      "shortPath": "files.download",
+      "description": "Download one file's content by id (an image, PDF or any upload). Needs a token that can see the file; private channels and DMs need the user token.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1464,7 +1477,72 @@
           {
             "key": "file",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "Slack file id such as F0CL9G3CAR2, from files[] in channels.getHistory or files.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file, base64-encoded. Missing when the file came back as text or contentOmitted is set."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string",
+            "description": "Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
+          }
+        ]
+      }
+    },
+    {
+      "path": "slack.api.files.get",
+      "shortPath": "files.get",
+      "description": "Get metadata of one file by id, not its content.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string",
+            "description": "File id such as F2147483862."
           },
           {
             "key": "cursor",
@@ -1537,7 +1615,7 @@
     {
       "path": "slack.api.files.list",
       "shortPath": "files.list",
-      "description": "List files in the workspace",
+      "description": "List file metadata, not file content. Filter by channel, user, types or ts_from/ts_to.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1555,17 +1633,20 @@
           {
             "key": "types",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Comma-separated: all, spaces, snippets, images, gdocs, zips, pdfs. Default all."
           },
           {
             "key": "ts_from",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Unix timestamp. Files created at or after it."
           },
           {
             "key": "ts_to",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Unix timestamp. Files created at or before it."
           },
           {
             "key": "show_files_hidden_by_limit",
@@ -1580,12 +1661,14 @@
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Default 1."
           },
           {
             "key": "count",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Files per page, default 100."
           }
         ]
       },
@@ -1982,25 +2065,124 @@
     {
       "path": "slack.api.messages.search",
       "shortPath": "messages.search",
-      "description": "Search messages in the workspace",
+      "description": "Search messages with structured fields (keywords, in, from, with, after, before, on, during, hasPin, hasReaction, isThread, ...) or a raw query in Slack search syntax; no modifier syntax needed. Needs a user token.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
         "fields": [
           {
             "key": "query",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "Slack search string; modifiers such as in:#channel, from:@user and has: narrow it. Optional: prefer the structured fields below; when both are given, a message must match both."
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "string[]",
+            "description": "Words that must all appear in the message"
+          },
+          {
+            "key": "exactPhrase",
+            "optional": true,
+            "type": "string",
+            "description": "Exact phrase that must appear in the message"
+          },
+          {
+            "key": "exclude",
+            "optional": true,
+            "type": "string[]",
+            "description": "Words that must not appear in the message"
+          },
+          {
+            "key": "in",
+            "optional": true,
+            "type": "string",
+            "description": "Channel name, e.g. \"team-marketing\" (the # is added for you)"
+          },
+          {
+            "key": "notIn",
+            "optional": true,
+            "type": "string[]",
+            "description": "Channel names to leave out of the results"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Sender display name, e.g. \"Sara\" (the @ is added for you)"
+          },
+          {
+            "key": "notFrom",
+            "optional": true,
+            "type": "string[]",
+            "description": "Sender display names to leave out of the results"
+          },
+          {
+            "key": "with",
+            "optional": true,
+            "type": "string",
+            "description": "Display name of a person: threads and DMs with them"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Only messages after this date (YYYY-MM-DD)"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Only messages before this date (YYYY-MM-DD)"
+          },
+          {
+            "key": "on",
+            "optional": true,
+            "type": "string",
+            "description": "Only messages on this date (YYYY-MM-DD)"
+          },
+          {
+            "key": "during",
+            "optional": true,
+            "type": "string",
+            "description": "A month or year, e.g. \"august\" or \"2025\""
+          },
+          {
+            "key": "hasPin",
+            "optional": true,
+            "type": "boolean",
+            "description": "true: only pinned messages"
+          },
+          {
+            "key": "hasReaction",
+            "optional": true,
+            "type": "string",
+            "description": "Emoji name of a reaction on the message, e.g. \"eyes\""
+          },
+          {
+            "key": "isSaved",
+            "optional": true,
+            "type": "boolean",
+            "description": "true: only messages you saved for later"
+          },
+          {
+            "key": "isThread",
+            "optional": true,
+            "type": "boolean",
+            "description": "true: only messages that are part of a thread"
           },
           {
             "key": "sort",
             "optional": true,
-            "type": "score | timestamp"
+            "type": "score | timestamp",
+            "description": "Default score (relevance). Use timestamp to sort by time."
           },
           {
             "key": "sort_dir",
             "optional": true,
-            "type": "asc | desc"
+            "type": "asc | desc",
+            "description": "Default desc."
           },
           {
             "key": "highlight",
@@ -2025,12 +2207,14 @@
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Default 1."
           },
           {
             "key": "count",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Results per page, default 20, at most 100."
           }
         ]
       },
@@ -3138,7 +3322,7 @@
     {
       "path": "slack.api.users.list",
       "shortPath": "users.list",
-      "description": "List all users in the workspace",
+      "description": "List workspace members, including invited, deactivated and deleted users. profile.email needs the users:read.email scope. Use users.get for a known id.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -3161,7 +3345,8 @@
           {
             "key": "limit",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Set it. With no limit Slack tries to return every user, which can fail with limit_required or HTTP 500 on a large workspace. Follow the cursor."
           }
         ]
       },

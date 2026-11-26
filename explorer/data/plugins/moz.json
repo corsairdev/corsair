@@ -1,0 +1,2840 @@
+{
+  "id": "moz",
+  "displayName": "Moz",
+  "description": "SEO data with Moz - site metrics (Domain Authority, Page Authority, Spam Score, Brand Authority, histories), backlinks, linking domains, anchor texts, top pages, ranking keywords, keyword metrics, SERPs and suggestions, competitors, global top lists, and Moz Local accounts, groups, locations, listings and insights.",
+  "npmPackageName": "@corsair-dev/moz",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 74,
+    "webhooks": 4,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "moz.api.anchorText.list",
+      "shortPath": "anchorText.list",
+      "description": "Use this endpoint to get data about anchor text used to link to a specified site. Costs rows per result returned.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": false,
+            "type": "{ query: string, scope: domain | subdomain | subfolder | url }",
+            "description": "A SiteQuery provides a target URL along with a scope to define how the query is parsed."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "{ token?: string | null, limit?: number }",
+            "description": "Defines the input parameters used to retrieve anchor text data for a given target. It allows controlling the pagination, and number of results returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": true,
+            "type": "{ query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "{ provided_token?: string | null, token?: string | null, limit?: number | null } | null"
+          },
+          {
+            "key": "anchor_texts",
+            "optional": true,
+            "type": "({ text?: string | null, external_root_domains?: number | null, external_pages?: number | null } | null)[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.competitors.fetch",
+      "shortPath": "competitors.fetch",
+      "description": "Get the top ranking competitors for a given target site, sorted by rivalry descending. Asynchronous: answers with an async_call to poll with jobs.lookup. Draws on the mozscape rows quota.",
+      "riskLevel": "read",
+      "job": {
+        "idPath": "async_call.id",
+        "status": {
+          "op": "jobs.lookup",
+          "idArg": "id",
+          "statusPath": "async_call.status",
+          "done": ["complete"],
+          "failed": []
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target_query",
+            "optional": false,
+            "type": "{ query: string, scope: domain | subdomain | subfolder, locale: en-US | en-GB | en-CA | en-AU }",
+            "description": "The target site to fetch competitors for."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "async_call",
+            "optional": true,
+            "type": "{ id?: string | null, action?: string | null, status?: string | null, ttl?: number | null, result?: { target_query?: { query?: string | null, scope?: string | null, locale?: string | null, original_target_query?: { query?: string | null, scope?: string | null, locale?: string | null } | null, suggestion?: { query?: string | null, scope?: string | null, locale?: string | null, explanation?: string | null, issue?: string | null } | null } | null, competitors?: ({ domain?: string | null, domain_authority?: number | null, proximity?: number | null, overlap?: number | null, relevance?: number | null, rivalry?: number | null, keywords?: (string | null)[] | null } | null)[] | null } | null, error?: { message?: string | null, code?: number | null, status?: number | null, data?: { explanation?: string | null, issue?: string | null, key?: string | null, value?: Record<string, any> | null } | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.global.topDomains",
+      "shortPath": "global.topDomains",
+      "description": "Get the top ranking domains globally. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ n?: number, limit?: number }",
+            "description": "Control how much data is returned by providing a specific page number (n) and limit to the number of results in a given page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ n?: number | null, limit?: number | null } | null"
+          },
+          {
+            "key": "top_domains",
+            "optional": true,
+            "type": "({ page?: string | null, subdomain?: string | null, root_domain?: string | null, title?: string | null, last_crawled?: string | null, http_code?: number | null, pages_to_page?: number | null, nofollow_pages_to_page?: number | null, redirect_pages_to_page?: number | null, external_pages_to_page?: number | null, external_nofollow_pages_to_page?: number | null, external_redirect_pages_to_page?: number | null, deleted_pages_to_page?: number | null, root_domains_to_page?: number | null, indirect_root_domains_to_page?: number | null, deleted_root_domains_to_page?: number | null, nofollow_root_domains_to_page?: number | null, pages_to_subdomain?: number | null, nofollow_pages_to_subdomain?: number | null, redirect_pages_to_subdomain?: number | null, external_pages_to_subdomain?: number | null, external_nofollow_pages_to_subdomain?: number | null, external_redirect_pages_to_subdomain?: number | null, deleted_pages_to_subdomain?: number | null, root_domains_to_subdomain?: number | null, deleted_root_domains_to_subdomain?: number | null, nofollow_root_domains_to_subdomain?: number | null, pages_to_root_domain?: number | null, nofollow_pages_to_root_domain?: number | null, redirect_pages_to_root_domain?: number | null, external_pages_to_root_domain?: number | null, external_indirect_pages_to_root_domain?: number | null, external_nofollow_pages_to_root_domain?: number | null, external_redirect_pages_to_root_domain?: number | null, deleted_pages_to_root_domain?: number | null, root_domains_to_root_domain?: number | null, indirect_root_domains_to_root_domain?: number | null, deleted_root_domains_to_root_domain?: number | null, nofollow_root_domains_to_root_domain?: number | null, page_authority?: number | null, domain_authority?: number | null, link_propensity?: number | null, spam_score?: number | null, root_domains_from_page?: number | null, nofollow_root_domains_from_page?: number | null, pages_from_page?: number | null, nofollow_pages_from_page?: number | null, root_domains_from_root_domain?: number | null, nofollow_root_domains_from_root_domain?: number | null, pages_from_root_domain?: number | null, nofollow_pages_from_root_domain?: number | null, pages_crawled_from_root_domain?: number | null } | null)[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.global.topPages",
+      "shortPath": "global.topPages",
+      "description": "Get the top ranking pages globally. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ n?: number, limit?: number }",
+            "description": "Control how much data is returned by providing a specific page number (n) and limit to the number of results in a given page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ n?: number | null, limit?: number | null } | null"
+          },
+          {
+            "key": "top_pages",
+            "optional": true,
+            "type": "({ page?: string | null, subdomain?: string | null, root_domain?: string | null, title?: string | null, last_crawled?: string | null, http_code?: number | null, pages_to_page?: number | null, nofollow_pages_to_page?: number | null, redirect_pages_to_page?: number | null, external_pages_to_page?: number | null, external_nofollow_pages_to_page?: number | null, external_redirect_pages_to_page?: number | null, deleted_pages_to_page?: number | null, root_domains_to_page?: number | null, indirect_root_domains_to_page?: number | null, deleted_root_domains_to_page?: number | null, nofollow_root_domains_to_page?: number | null, pages_to_subdomain?: number | null, nofollow_pages_to_subdomain?: number | null, redirect_pages_to_subdomain?: number | null, external_pages_to_subdomain?: number | null, external_nofollow_pages_to_subdomain?: number | null, external_redirect_pages_to_subdomain?: number | null, deleted_pages_to_subdomain?: number | null, root_domains_to_subdomain?: number | null, deleted_root_domains_to_subdomain?: number | null, nofollow_root_domains_to_subdomain?: number | null, pages_to_root_domain?: number | null, nofollow_pages_to_root_domain?: number | null, redirect_pages_to_root_domain?: number | null, external_pages_to_root_domain?: number | null, external_indirect_pages_to_root_domain?: number | null, external_nofollow_pages_to_root_domain?: number | null, external_redirect_pages_to_root_domain?: number | null, deleted_pages_to_root_domain?: number | null, root_domains_to_root_domain?: number | null, indirect_root_domains_to_root_domain?: number | null, deleted_root_domains_to_root_domain?: number | null, nofollow_root_domains_to_root_domain?: number | null, page_authority?: number | null, domain_authority?: number | null, link_propensity?: number | null, spam_score?: number | null, root_domains_from_page?: number | null, nofollow_root_domains_from_page?: number | null, pages_from_page?: number | null, nofollow_pages_from_page?: number | null, root_domains_from_root_domain?: number | null, nofollow_root_domains_from_root_domain?: number | null, pages_from_root_domain?: number | null, nofollow_pages_from_root_domain?: number | null, pages_crawled_from_root_domain?: number | null } | null)[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.index.fetch",
+      "shortPath": "index.fetch",
+      "description": "Use this endpoint to track when the index is updated with new data. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "index_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.jobs.lookup",
+      "shortPath": "jobs.lookup",
+      "description": "Fetch an `async_call` by ID to retrieve the result or error. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the `async_call` to lookup. This is the `async_call.id` returned by the asynchronous action that started the request."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "async_call",
+            "optional": true,
+            "type": "{ id?: string | null, action?: string | null, status?: string | null, ttl?: number | null, result?: Record<string, any> | null, error?: { message?: string | null, code?: number | null, status?: number | null, data?: { explanation?: string | null, issue?: string | null, key?: string | null, value?: Record<string, any> | null } | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.keywords.difficulty",
+      "shortPath": "keywords.difficulty",
+      "description": "Retrieve the most recent difficulty metric for any keyword that exists in our database. Costs 1 row per call.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "serp_query",
+            "optional": false,
+            "type": "{ keyword: string, locale: string, device: desktop | mobile_android | mobile_ios, engine: google | bing | yahoo, vicinity?: string }",
+            "description": "The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary)."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ include_intent?: boolean, max_age?: number }",
+            "description": "Options to further refine the keyword metrics that are returned. `include_intent` defaults to `false` if not provided."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword_metrics",
+            "optional": true,
+            "type": "{ metadata?: { collected_at?: string | null } | null, volume?: any, difficulty?: number | null, organic_ctr?: any, priority?: any, intent?: any } | null"
+          },
+          {
+            "key": "serp_query",
+            "optional": true,
+            "type": "{ keyword?: string | null, locale?: string | null, device?: string | null, engine?: string | null, vicinity?: string | null } | null"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ include_intent?: boolean | number | null, max_age?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.keywords.generateMetrics",
+      "shortPath": "keywords.generateMetrics",
+      "description": "Trigger on-demand collection of a SERP and return the refreshed metrics once collection is complete. Asynchronous: answers with an async_call to poll with jobs.lookup. Quota cost varies by request. Runs a fresh on-demand SERP collection, billed per call.",
+      "riskLevel": "destructive",
+      "job": {
+        "idPath": "async_call.id",
+        "status": {
+          "op": "jobs.lookup",
+          "idArg": "id",
+          "statusPath": "async_call.status",
+          "done": ["complete"],
+          "failed": []
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "serp_query",
+            "optional": false,
+            "type": "{ keyword: string, locale: string, device: desktop | mobile_android | mobile_ios, engine: google | bing | yahoo, vicinity?: string }",
+            "description": "The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "async_call",
+            "optional": true,
+            "type": "{ id?: string | null, action?: string | null, status?: string | null, ttl?: number | null, result?: { keyword_metrics?: { volume?: number | null, difficulty?: number | null, organic_ctr?: number | null, priority?: number | null, intent?: { primary_intents?: (string | null)[] | null, all_intents?: ({ label?: string | null, score?: number | null } | null)[] | null } | null } | null, serp_query?: { keyword?: string | null, locale?: string | null, device?: string | null, engine?: string | null, vicinity?: string | null } | null } | null, error?: { message?: string | null, code?: number | null, status?: number | null, data?: { explanation?: string | null, issue?: string | null, key?: string | null, value?: Record<string, any> | null } | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.keywords.generateSerp",
+      "shortPath": "keywords.generateSerp",
+      "description": "Trigger on-demand collection of a SERP, returning it upon completion. Asynchronous: answers with an async_call to poll with jobs.lookup. Quota cost varies by request. Runs a fresh on-demand SERP collection, billed per call.",
+      "riskLevel": "destructive",
+      "job": {
+        "idPath": "async_call.id",
+        "status": {
+          "op": "jobs.lookup",
+          "idArg": "id",
+          "statusPath": "async_call.status",
+          "done": ["complete"],
+          "failed": []
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "serp_query",
+            "optional": false,
+            "type": "{ keyword: string, locale: string, device: desktop | mobile_android | mobile_ios, engine: google | bing | yahoo, vicinity?: string }",
+            "description": "The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "async_call",
+            "optional": true,
+            "type": "{ id?: string | null, action?: string | null, status?: string | null, ttl?: number | null, result?: { serp_query?: { keyword?: string | null, locale?: string | null, device?: string | null, engine?: string | null, vicinity?: string | null } | null, serp?: { metadata?: { collected_at?: string | null } | null, metrics?: { volume?: number | null, difficulty?: number | null, organic_ctr?: number | null, priority?: number | null, intent?: { primary_intents?: (string | null)[] | null, all_intents?: ({ label?: string | null, score?: number | null } | null)[] | null } | null } | null, results?: ({ type?: string | null, description?: string | null, position?: string | null, title?: string | null, traits?: (string | null)[] | null, url?: string | null, price?: string | null, rating?: string | null, reviews?: string | null, question?: string | null, displayed_path?: string | null, job_title?: string | null, job_employer?: string | null, job_location?: string | null, job_source?: string | null, job_posted_on?: string | null, job_travel_time?: string | null, job_details?: string | null, business_name?: string | null, related_searches?: (string | null)[] | null, results?: (Record<string, any> | null)[] | null, sitelinks?: (Record<string, any> | null)[] | null, one_line_sitelinks?: (Record<string, any> | null)[] | null, position_index?: number | null, rank?: number | null, brand_authority?: number | null, url_metrics?: { page?: string | null, subdomain?: string | null, root_domain?: string | null, title?: string | null, last_crawled?: string | null, http_code?: number | null, pages_to_page?: number | null, nofollow_pages_to_page?: number | null, redirect_pages_to_page?: number | null, external_pages_to_page?: number | null, external_nofollow_pages_to_page?: number | null, external_redirect_pages_to_page?: number | null, deleted_pages_to_page?: number | null, root_domains_to_page?: number | null, indirect_root_domains_to_page?: number | null, deleted_root_domains_to_page?: number | null, nofollow_root_domains_to_page?: number | null, pages_to_subdomain?: number | null, nofollow_pages_to_subdomain?: number | null, redirect_pages_to_subdomain?: number | null, external_pages_to_subdomain?: number | null, external_nofollow_pages_to_subdomain?: number | null, external_redirect_pages_to_subdomain?: number | null, deleted_pages_to_subdomain?: number | null, root_domains_to_subdomain?: number | null, deleted_root_domains_to_subdomain?: number | null, nofollow_root_domains_to_subdomain?: number | null, pages_to_root_domain?: number | null, nofollow_pages_to_root_domain?: number | null, redirect_pages_to_root_domain?: number | null, external_pages_to_root_domain?: number | null, external_indirect_pages_to_root_domain?: number | null, external_nofollow_pages_to_root_domain?: number | null, external_redirect_pages_to_root_domain?: number | null, deleted_pages_to_root_domain?: number | null, root_domains_to_root_domain?: number | null, indirect_root_domains_to_root_domain?: number | null, deleted_root_domains_to_root_domain?: number | null, nofollow_root_domains_to_root_domain?: number | null, page_authority?: number | null, domain_authority?: number | null, link_propensity?: number | null, spam_score?: number | null, root_domains_from_page?: number | null, nofollow_root_domains_from_page?: number | null, pages_from_page?: number | null, nofollow_pages_from_page?: number | null, root_domains_from_root_domain?: number | null, nofollow_root_domains_from_root_domain?: number | null, pages_from_root_domain?: number | null, nofollow_pages_from_root_domain?: number | null, pages_crawled_from_root_domain?: number | null } | null } | null)[] | null } | null } | null, error?: { message?: string | null, code?: number | null, status?: number | null, data?: { explanation?: string | null, issue?: string | null, key?: string | null, value?: Record<string, any> | null } | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.keywords.intent",
+      "shortPath": "keywords.intent",
+      "description": "Retrieve the most recent search intent scores (navigational, informational, commercial, and transactional) for any keyword that exists in our database. Costs 1 row per call.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "serp_query",
+            "optional": false,
+            "type": "{ keyword: string, locale: string, device: desktop | mobile_android | mobile_ios, engine: google | bing | yahoo, vicinity?: string }",
+            "description": "The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary)."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ include_intent?: boolean, max_age?: number }",
+            "description": "Options to further refine the keyword metrics that are returned. `include_intent` defaults to `false` if not provided."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword_metrics",
+            "optional": true,
+            "type": "{ metadata?: { collected_at?: string | null } | null, volume?: any, difficulty?: any, organic_ctr?: any, priority?: any, intent?: { primary_intents?: (string | null)[] | null, all_intents?: ({ label?: string | null, score?: number | null } | null)[] | null } | null } | null"
+          },
+          {
+            "key": "serp_query",
+            "optional": true,
+            "type": "{ keyword?: string | null, locale?: string | null, device?: string | null, engine?: string | null, vicinity?: string | null } | null"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ include_intent?: boolean | number | null, max_age?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.keywords.metrics",
+      "shortPath": "keywords.metrics",
+      "description": "Retrieve the most recent difficulty, volume, organic CTR, priority, and/or search intent metrics for any keyword that exists in our database. Costs one row per returned metric value: 4, plus 1 for search intent, which is opt-in with options.include_intent until 2026-12-01 and returned by default from then.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "serp_query",
+            "optional": false,
+            "type": "{ keyword: string, locale: string, device: desktop | mobile_android | mobile_ios, engine: google | bing | yahoo, vicinity?: string }",
+            "description": "The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary)."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ include_intent?: boolean, max_age?: number }",
+            "description": "Options to further refine the keyword metrics that are returned. `include_intent` defaults to `false` if not provided, until December 1, 2026; from that date intent is returned by default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword_metrics",
+            "optional": true,
+            "type": "{ volume?: number | null, difficulty?: number | null, organic_ctr?: number | null, priority?: number | null, intent?: { primary_intents?: (string | null)[] | null, all_intents?: ({ label?: string | null, score?: number | null } | null)[] | null } | null, metadata?: { collected_at?: string | null } | null } | null"
+          },
+          {
+            "key": "serp_query",
+            "optional": true,
+            "type": "{ keyword?: string | null, locale?: string | null, device?: string | null, engine?: string | null, vicinity?: string | null } | null"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ include_intent?: boolean | number | null, max_age?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.keywords.metricsMultiple",
+      "shortPath": "keywords.metricsMultiple",
+      "description": "Retrieve difficulty, volume, organic CTR, priority, and search intent metrics for up to 50 keywords in a single request. Costs one row per returned metric value, up to 5 per keyword; null metrics and keywords in errors_by_serp_query cost nothing.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "serp_queries",
+            "optional": false,
+            "type": "{ keyword: string, locale: string, device: desktop | mobile_android | mobile_ios, engine: google | bing | yahoo, vicinity?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results_by_serp_query",
+            "optional": true,
+            "type": "({ serp_query?: { keyword?: string | null, locale?: string | null, device?: string | null, engine?: string | null, vicinity?: string | null } | null, keyword_metrics?: { volume?: number | null, difficulty?: number | null, organic_ctr?: number | null, priority?: number | null, intent?: { primary_intents?: (string | null)[] | null, all_intents?: ({ label?: string | null, score?: number | null } | null)[] | null } | null } | null } | null)[] | null"
+          },
+          {
+            "key": "errors_by_serp_query",
+            "optional": true,
+            "type": "({ serp_query?: { keyword?: string | null, locale?: string | null, device?: string | null, engine?: string | null, vicinity?: string | null } | null, error?: { message?: string | null, name?: string | null, data?: { key?: string | null, value?: string | null } | null, httpStatus?: number | null, jsonrpcCode?: number | null } | null } | null)[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.keywords.opportunity",
+      "shortPath": "keywords.opportunity",
+      "description": "Retrieve the most recent organic CTR (opportunity) metric for any keyword that exists in our database. Costs 1 row per call.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "serp_query",
+            "optional": false,
+            "type": "{ keyword: string, locale: string, device: desktop | mobile_android | mobile_ios, engine: google | bing | yahoo, vicinity?: string }",
+            "description": "The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary)."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ include_intent?: boolean, max_age?: number }",
+            "description": "Options to further refine the keyword metrics that are returned. `include_intent` defaults to `false` if not provided."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword_metrics",
+            "optional": true,
+            "type": "{ metadata?: { collected_at?: string | null } | null, volume?: any, difficulty?: any, organic_ctr?: number | null, priority?: any, intent?: any } | null"
+          },
+          {
+            "key": "serp_query",
+            "optional": true,
+            "type": "{ keyword?: string | null, locale?: string | null, device?: string | null, engine?: string | null, vicinity?: string | null } | null"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ include_intent?: boolean | number | null, max_age?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.keywords.priority",
+      "shortPath": "keywords.priority",
+      "description": "Retrieve the most recent priority metric for any keyword that exists in our database. Costs 1 row per call.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "serp_query",
+            "optional": false,
+            "type": "{ keyword: string, locale: string, device: desktop | mobile_android | mobile_ios, engine: google | bing | yahoo, vicinity?: string }",
+            "description": "The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary)."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ include_intent?: boolean, max_age?: number }",
+            "description": "Options to further refine the keyword metrics that are returned. `include_intent` defaults to `false` if not provided."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword_metrics",
+            "optional": true,
+            "type": "{ metadata?: { collected_at?: string | null } | null, volume?: any, difficulty?: any, organic_ctr?: any, priority?: number | null, intent?: any } | null"
+          },
+          {
+            "key": "serp_query",
+            "optional": true,
+            "type": "{ keyword?: string | null, locale?: string | null, device?: string | null, engine?: string | null, vicinity?: string | null } | null"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ include_intent?: boolean | number | null, max_age?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.keywords.serp",
+      "shortPath": "keywords.serp",
+      "description": "Retrieve the most recently collected SERP for a given query. Quota cost varies by request.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "serp_query",
+            "optional": false,
+            "type": "{ keyword: string, locale: string, device: desktop | mobile_android | mobile_ios, engine: google | bing | yahoo, vicinity?: string }",
+            "description": "The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary)."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ max_age?: number }",
+            "description": "Options to further refine the cached SERP that is returned."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "serp_query",
+            "optional": true,
+            "type": "{ keyword?: string | null, locale?: string | null, device?: string | null, engine?: string | null, vicinity?: string | null } | null"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ max_age?: number | null } | null"
+          },
+          {
+            "key": "serp",
+            "optional": true,
+            "type": "{ metadata?: { collected_at?: string | null } | null, metrics?: { volume?: number | null, difficulty?: number | null, organic_ctr?: number | null, priority?: number | null, intent?: { primary_intents?: (string | null)[] | null, all_intents?: ({ label?: string | null, score?: number | null } | null)[] | null } | null } | null, results?: ({ type?: string | null, description?: string | null, position?: string | null, title?: string | null, traits?: (string | null)[] | null, url?: string | null, price?: string | null, rating?: string | null, reviews?: string | null, question?: string | null, displayed_path?: string | null, job_title?: string | null, job_employer?: string | null, job_location?: string | null, job_source?: string | null, job_posted_on?: string | null, job_travel_time?: string | null, job_details?: string | null, business_name?: string | null, related_searches?: (string | null)[] | null, results?: (Record<string, any> | null)[] | null, sitelinks?: (Record<string, any> | null)[] | null, one_line_sitelinks?: (Record<string, any> | null)[] | null, position_index?: number | null, rank?: number | null, brand_authority?: number | null, url_metrics?: { page?: string | null, subdomain?: string | null, root_domain?: string | null, title?: string | null, last_crawled?: string | null, http_code?: number | null, pages_to_page?: number | null, nofollow_pages_to_page?: number | null, redirect_pages_to_page?: number | null, external_pages_to_page?: number | null, external_nofollow_pages_to_page?: number | null, external_redirect_pages_to_page?: number | null, deleted_pages_to_page?: number | null, root_domains_to_page?: number | null, indirect_root_domains_to_page?: number | null, deleted_root_domains_to_page?: number | null, nofollow_root_domains_to_page?: number | null, pages_to_subdomain?: number | null, nofollow_pages_to_subdomain?: number | null, redirect_pages_to_subdomain?: number | null, external_pages_to_subdomain?: number | null, external_nofollow_pages_to_subdomain?: number | null, external_redirect_pages_to_subdomain?: number | null, deleted_pages_to_subdomain?: number | null, root_domains_to_subdomain?: number | null, deleted_root_domains_to_subdomain?: number | null, nofollow_root_domains_to_subdomain?: number | null, pages_to_root_domain?: number | null, nofollow_pages_to_root_domain?: number | null, redirect_pages_to_root_domain?: number | null, external_pages_to_root_domain?: number | null, external_indirect_pages_to_root_domain?: number | null, external_nofollow_pages_to_root_domain?: number | null, external_redirect_pages_to_root_domain?: number | null, deleted_pages_to_root_domain?: number | null, root_domains_to_root_domain?: number | null, indirect_root_domains_to_root_domain?: number | null, deleted_root_domains_to_root_domain?: number | null, nofollow_root_domains_to_root_domain?: number | null, page_authority?: number | null, domain_authority?: number | null, link_propensity?: number | null, spam_score?: number | null, root_domains_from_page?: number | null, nofollow_root_domains_from_page?: number | null, pages_from_page?: number | null, nofollow_pages_from_page?: number | null, root_domains_from_root_domain?: number | null, nofollow_root_domains_from_root_domain?: number | null, pages_from_root_domain?: number | null, nofollow_pages_from_root_domain?: number | null, pages_crawled_from_root_domain?: number | null } | null } | null)[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.keywords.suggestions",
+      "shortPath": "keywords.suggestions",
+      "description": "Retrieve a list of related keyword suggestions for a given input keyword. Asynchronous: answers with an async_call to poll with jobs.lookup. Costs rows per result returned.",
+      "riskLevel": "read",
+      "job": {
+        "idPath": "async_call.id",
+        "status": {
+          "op": "jobs.lookup",
+          "idArg": "id",
+          "statusPath": "async_call.status",
+          "done": ["complete"],
+          "failed": []
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "serp_query",
+            "optional": false,
+            "type": "{ keyword: string, locale: string, device: desktop, engine: google, vicinity?: string }",
+            "description": "The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary)."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ strategy?: default | related_synonyms | related_topics }",
+            "description": "Options to further filter or refine which keyword suggestions are returned. Strategy will default to `default` if not provided."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ n?: number, limit?: number }",
+            "description": "Control how much data is returned by providing a specific page number (n) and limit to the number of results in a given page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "async_call",
+            "optional": true,
+            "type": "{ id?: string | null, action?: string | null, status?: string | null, ttl?: number | null, result?: { suggestions?: ({ keyword?: string | null, relevance?: number | null } | null)[] | null, serp_query?: { keyword?: string | null, locale?: string | null, device?: string | null, engine?: string | null, vicinity?: string | null } | null, options?: { strategy?: string | null } | null, page?: { n?: number | null, limit?: number | null } | null } | null, error?: { message?: string | null, code?: number | null, status?: number | null, data?: { explanation?: string | null, issue?: string | null, key?: string | null, value?: Record<string, any> | null } | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.keywords.volume",
+      "shortPath": "keywords.volume",
+      "description": "Retrieve the most recent volume metric for any keyword that exists in our database. Costs 1 row per call.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "serp_query",
+            "optional": false,
+            "type": "{ keyword: string, locale: string, device: desktop | mobile_android | mobile_ios, engine: google | bing | yahoo, vicinity?: string }",
+            "description": "The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary)."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ include_intent?: boolean, max_age?: number }",
+            "description": "Options to further refine the keyword metrics that are returned. `include_intent` defaults to `false` if not provided."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword_metrics",
+            "optional": true,
+            "type": "{ metadata?: { collected_at?: string | null } | null, volume?: number | null, difficulty?: any, organic_ctr?: any, priority?: any, intent?: any } | null"
+          },
+          {
+            "key": "serp_query",
+            "optional": true,
+            "type": "{ keyword?: string | null, locale?: string | null, device?: string | null, engine?: string | null, vicinity?: string | null } | null"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ include_intent?: boolean | number | null, max_age?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.linkingDomains.list",
+      "shortPath": "linkingDomains.list",
+      "description": "Use this endpoint to get a list of linking root domains to a target, with information about each root domain and the aggregate number of links to the target. Costs rows per result returned.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": false,
+            "type": "{ query: string, scope: domain | subdomain | subfolder | url }",
+            "description": "A SiteQuery provides a target URL along with a scope to define how the query is parsed."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ sort?: source_domain_authority | source_link_propensity | source_spam_score, filters?: (external | follow | nofollow | deleted | not_deleted)[] }",
+            "description": "Options for fetching linking domains."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "{ token?: string | null, limit?: number }",
+            "description": "Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": true,
+            "type": "{ query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "{ provided_token?: string | null, token?: string | null, limit?: number | null } | null"
+          },
+          {
+            "key": "linking_domains",
+            "optional": true,
+            "type": "({ site_metrics?: { page?: string | null, subdomain?: string | null, root_domain?: string | null, title?: string | null, last_crawled?: string | null, http_code?: number | null, pages_to_page?: number | null, nofollow_pages_to_page?: number | null, redirect_pages_to_page?: number | null, external_pages_to_page?: number | null, external_nofollow_pages_to_page?: number | null, external_redirect_pages_to_page?: number | null, deleted_pages_to_page?: number | null, root_domains_to_page?: number | null, indirect_root_domains_to_page?: number | null, deleted_root_domains_to_page?: number | null, nofollow_root_domains_to_page?: number | null, pages_to_subdomain?: number | null, nofollow_pages_to_subdomain?: number | null, redirect_pages_to_subdomain?: number | null, external_pages_to_subdomain?: number | null, external_nofollow_pages_to_subdomain?: number | null, external_redirect_pages_to_subdomain?: number | null, deleted_pages_to_subdomain?: number | null, root_domains_to_subdomain?: number | null, deleted_root_domains_to_subdomain?: number | null, nofollow_root_domains_to_subdomain?: number | null, pages_to_root_domain?: number | null, nofollow_pages_to_root_domain?: number | null, redirect_pages_to_root_domain?: number | null, external_pages_to_root_domain?: number | null, external_indirect_pages_to_root_domain?: number | null, external_nofollow_pages_to_root_domain?: number | null, external_redirect_pages_to_root_domain?: number | null, deleted_pages_to_root_domain?: number | null, root_domains_to_root_domain?: number | null, indirect_root_domains_to_root_domain?: number | null, deleted_root_domains_to_root_domain?: number | null, nofollow_root_domains_to_root_domain?: number | null, page_authority?: number | null, domain_authority?: number | null, link_propensity?: number | null, spam_score?: number | null, root_domains_from_page?: number | null, nofollow_root_domains_from_page?: number | null, pages_from_page?: number | null, nofollow_pages_from_page?: number | null, root_domains_from_root_domain?: number | null, nofollow_root_domains_from_root_domain?: number | null, pages_from_root_domain?: number | null, nofollow_pages_from_root_domain?: number | null, pages_crawled_from_root_domain?: number | null } | null, link_propensity?: number | null, targeted_pages?: number | null, targeted_nofollow_pages?: number | null, targeted_redirect_pages?: number | null, targeted_deleted_pages?: number | null } | null)[] | null"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ sort?: string | null, filters?: (string | null)[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.linkingDomains.recentlyGained",
+      "shortPath": "linkingDomains.recentlyGained",
+      "description": "This endpoint will return information about external root domains that added new links to a target during the past 60 days. Costs rows per result returned.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": false,
+            "type": "{ query: string, scope: domain | subdomain | subfolder | url }",
+            "description": "A SiteQuery provides a target URL along with a scope to define how the query is parsed."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ begin_date?: string | null, end_date?: string | null }",
+            "description": "Optional date ranges to filter by."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "{ token?: string | null, limit: number }",
+            "description": "Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": true,
+            "type": "{ query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "{ provided_token?: string | null, token?: string | null, limit?: number | null } | null"
+          },
+          {
+            "key": "gained_linking_domains",
+            "optional": true,
+            "type": "({ site_metrics?: { page?: string | null, subdomain?: string | null, root_domain?: string | null, title?: string | null, last_crawled?: string | null, http_code?: number | null, pages_to_page?: number | null, nofollow_pages_to_page?: number | null, redirect_pages_to_page?: number | null, external_pages_to_page?: number | null, external_nofollow_pages_to_page?: number | null, external_redirect_pages_to_page?: number | null, deleted_pages_to_page?: number | null, root_domains_to_page?: number | null, indirect_root_domains_to_page?: number | null, deleted_root_domains_to_page?: number | null, nofollow_root_domains_to_page?: number | null, pages_to_subdomain?: number | null, nofollow_pages_to_subdomain?: number | null, redirect_pages_to_subdomain?: number | null, external_pages_to_subdomain?: number | null, external_nofollow_pages_to_subdomain?: number | null, external_redirect_pages_to_subdomain?: number | null, deleted_pages_to_subdomain?: number | null, root_domains_to_subdomain?: number | null, deleted_root_domains_to_subdomain?: number | null, nofollow_root_domains_to_subdomain?: number | null, pages_to_root_domain?: number | null, nofollow_pages_to_root_domain?: number | null, redirect_pages_to_root_domain?: number | null, external_pages_to_root_domain?: number | null, external_indirect_pages_to_root_domain?: number | null, external_nofollow_pages_to_root_domain?: number | null, external_redirect_pages_to_root_domain?: number | null, deleted_pages_to_root_domain?: number | null, root_domains_to_root_domain?: number | null, indirect_root_domains_to_root_domain?: number | null, deleted_root_domains_to_root_domain?: number | null, nofollow_root_domains_to_root_domain?: number | null, page_authority?: number | null, domain_authority?: number | null, link_propensity?: number | null, spam_score?: number | null, root_domains_from_page?: number | null, nofollow_root_domains_from_page?: number | null, pages_from_page?: number | null, nofollow_pages_from_page?: number | null, root_domains_from_root_domain?: number | null, nofollow_root_domains_from_root_domain?: number | null, pages_from_root_domain?: number | null, nofollow_pages_from_root_domain?: number | null, pages_crawled_from_root_domain?: number | null } | null, link_propensity?: number | null, targeted_pages?: number | null, targeted_nofollow_pages?: number | null, targeted_redirect_pages?: number | null, targeted_deleted_pages?: number | null, date_gained?: string | null } | null)[] | null"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ begin_date?: string | null, end_date?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.linkingDomains.recentlyLost",
+      "shortPath": "linkingDomains.recentlyLost",
+      "description": "This endpoint will return information about root domains that removed links to a target during the past 60 days. Costs rows per result returned.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": false,
+            "type": "{ query: string, scope: domain | subdomain | subfolder | url }",
+            "description": "A SiteQuery provides a target URL along with a scope to define how the query is parsed."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ begin_date?: string | null, end_date?: string | null }",
+            "description": "Optional date ranges to filter by."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "{ token?: string | null, limit: number }",
+            "description": "Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": true,
+            "type": "{ query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "{ provided_token?: string | null, token?: string | null, limit?: number | null } | null"
+          },
+          {
+            "key": "lost_linking_domains",
+            "optional": true,
+            "type": "({ site_metrics?: { page?: string | null, subdomain?: string | null, root_domain?: string | null, title?: string | null, last_crawled?: string | null, http_code?: number | null, pages_to_page?: number | null, nofollow_pages_to_page?: number | null, redirect_pages_to_page?: number | null, external_pages_to_page?: number | null, external_nofollow_pages_to_page?: number | null, external_redirect_pages_to_page?: number | null, deleted_pages_to_page?: number | null, root_domains_to_page?: number | null, indirect_root_domains_to_page?: number | null, deleted_root_domains_to_page?: number | null, nofollow_root_domains_to_page?: number | null, pages_to_subdomain?: number | null, nofollow_pages_to_subdomain?: number | null, redirect_pages_to_subdomain?: number | null, external_pages_to_subdomain?: number | null, external_nofollow_pages_to_subdomain?: number | null, external_redirect_pages_to_subdomain?: number | null, deleted_pages_to_subdomain?: number | null, root_domains_to_subdomain?: number | null, deleted_root_domains_to_subdomain?: number | null, nofollow_root_domains_to_subdomain?: number | null, pages_to_root_domain?: number | null, nofollow_pages_to_root_domain?: number | null, redirect_pages_to_root_domain?: number | null, external_pages_to_root_domain?: number | null, external_indirect_pages_to_root_domain?: number | null, external_nofollow_pages_to_root_domain?: number | null, external_redirect_pages_to_root_domain?: number | null, deleted_pages_to_root_domain?: number | null, root_domains_to_root_domain?: number | null, indirect_root_domains_to_root_domain?: number | null, deleted_root_domains_to_root_domain?: number | null, nofollow_root_domains_to_root_domain?: number | null, page_authority?: number | null, domain_authority?: number | null, link_propensity?: number | null, spam_score?: number | null, root_domains_from_page?: number | null, nofollow_root_domains_from_page?: number | null, pages_from_page?: number | null, nofollow_pages_from_page?: number | null, root_domains_from_root_domain?: number | null, nofollow_root_domains_from_root_domain?: number | null, pages_from_root_domain?: number | null, nofollow_pages_from_root_domain?: number | null, pages_crawled_from_root_domain?: number | null } | null, link_propensity?: number | null, targeted_pages?: number | null, targeted_nofollow_pages?: number | null, targeted_redirect_pages?: number | null, targeted_deleted_pages?: number | null, date_lost?: string | null } | null)[] | null"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ begin_date?: string | null, end_date?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.links.filterByAnchorText",
+      "shortPath": "links.filterByAnchorText",
+      "description": "Use this endpoint to get a list of links to a target where the anchor text exactly matches a particular string. Costs rows per result returned.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": false,
+            "type": "{ query: string, scope: domain | subdomain | subfolder | url }",
+            "description": "A SiteQuery provides a target URL along with a scope to define how the query is parsed."
+          },
+          {
+            "key": "anchor_text",
+            "optional": true,
+            "type": "string | null",
+            "description": "The anchor text provided for filtering in the original request. Pass an explicit `null` to request links with no anchor text."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ scope?: subdomain | domain | page, subdomains_limited_to_one?: string[], sort?: source_page_authority | source_domain_authority | source_link_propensity | source_spam_score, filters?: (external | follow | nofollow | deleted | not_deleted | redirect | not_redirect | rel_canonical | not_rel_canonical | via_redirect | not_via_redirect | via_rel_canonical | not_via_rel_canonical | gained_last_60_days | lost_last_60_days)[] }",
+            "description": "Options for filtering links by anchor text."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "{ token?: string | null, limit?: number }",
+            "description": "Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": true,
+            "type": "{ query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "{ provided_token?: string | null, token?: string | null, limit?: number | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "({ source_site_metrics?: { page?: string | null, subdomain?: string | null, root_domain?: string | null, title?: string | null, last_crawled?: string | null, http_code?: number | null, pages_to_page?: number | null, nofollow_pages_to_page?: number | null, redirect_pages_to_page?: number | null, external_pages_to_page?: number | null, external_nofollow_pages_to_page?: number | null, external_redirect_pages_to_page?: number | null, deleted_pages_to_page?: number | null, root_domains_to_page?: number | null, indirect_root_domains_to_page?: number | null, deleted_root_domains_to_page?: number | null, nofollow_root_domains_to_page?: number | null, pages_to_subdomain?: number | null, nofollow_pages_to_subdomain?: number | null, redirect_pages_to_subdomain?: number | null, external_pages_to_subdomain?: number | null, external_nofollow_pages_to_subdomain?: number | null, external_redirect_pages_to_subdomain?: number | null, deleted_pages_to_subdomain?: number | null, root_domains_to_subdomain?: number | null, deleted_root_domains_to_subdomain?: number | null, nofollow_root_domains_to_subdomain?: number | null, pages_to_root_domain?: number | null, nofollow_pages_to_root_domain?: number | null, redirect_pages_to_root_domain?: number | null, external_pages_to_root_domain?: number | null, external_indirect_pages_to_root_domain?: number | null, external_nofollow_pages_to_root_domain?: number | null, external_redirect_pages_to_root_domain?: number | null, deleted_pages_to_root_domain?: number | null, root_domains_to_root_domain?: number | null, indirect_root_domains_to_root_domain?: number | null, deleted_root_domains_to_root_domain?: number | null, nofollow_root_domains_to_root_domain?: number | null, page_authority?: number | null, domain_authority?: number | null, link_propensity?: number | null, spam_score?: number | null, root_domains_from_page?: number | null, nofollow_root_domains_from_page?: number | null, pages_from_page?: number | null, nofollow_pages_from_page?: number | null, root_domains_from_root_domain?: number | null, nofollow_root_domains_from_root_domain?: number | null, pages_from_root_domain?: number | null, nofollow_pages_from_root_domain?: number | null, pages_crawled_from_root_domain?: number | null } | null, target_site_metrics?: { page?: string | null, subdomain?: string | null, root_domain?: string | null, title?: string | null, last_crawled?: string | null, http_code?: number | null, pages_to_page?: number | null, nofollow_pages_to_page?: number | null, redirect_pages_to_page?: number | null, external_pages_to_page?: number | null, external_nofollow_pages_to_page?: number | null, external_redirect_pages_to_page?: number | null, deleted_pages_to_page?: number | null, root_domains_to_page?: number | null, indirect_root_domains_to_page?: number | null, deleted_root_domains_to_page?: number | null, nofollow_root_domains_to_page?: number | null, pages_to_subdomain?: number | null, nofollow_pages_to_subdomain?: number | null, redirect_pages_to_subdomain?: number | null, external_pages_to_subdomain?: number | null, external_nofollow_pages_to_subdomain?: number | null, external_redirect_pages_to_subdomain?: number | null, deleted_pages_to_subdomain?: number | null, root_domains_to_subdomain?: number | null, deleted_root_domains_to_subdomain?: number | null, nofollow_root_domains_to_subdomain?: number | null, pages_to_root_domain?: number | null, nofollow_pages_to_root_domain?: number | null, redirect_pages_to_root_domain?: number | null, external_pages_to_root_domain?: number | null, external_indirect_pages_to_root_domain?: number | null, external_nofollow_pages_to_root_domain?: number | null, external_redirect_pages_to_root_domain?: number | null, deleted_pages_to_root_domain?: number | null, root_domains_to_root_domain?: number | null, indirect_root_domains_to_root_domain?: number | null, deleted_root_domains_to_root_domain?: number | null, nofollow_root_domains_to_root_domain?: number | null, page_authority?: number | null, domain_authority?: number | null, link_propensity?: number | null, spam_score?: number | null, root_domains_from_page?: number | null, nofollow_root_domains_from_page?: number | null, pages_from_page?: number | null, nofollow_pages_from_page?: number | null, root_domains_from_root_domain?: number | null, nofollow_root_domains_from_root_domain?: number | null, pages_from_root_domain?: number | null, nofollow_pages_from_root_domain?: number | null, pages_crawled_from_root_domain?: number | null } | null, anchor_text?: string | null, date_first_seen?: string | null, date_last_seen?: string | null, date_disappeared?: string | null, nofollow?: boolean | number | null, redirect?: boolean | number | null, rel_canonical?: boolean | number | null, via_redirect?: boolean | number | null, via_rel_canonical?: boolean | number | null } | null)[] | null"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ scope?: string | null, subdomains_limited_to_one?: (string | null)[] | null, sort?: string | null, filters?: (string | null)[] | null } | null"
+          },
+          {
+            "key": "anchor_text",
+            "optional": true,
+            "type": "any | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.links.filterByDomain",
+      "shortPath": "links.filterByDomain",
+      "description": "Use this endpoint to find links pointing to a target only if they originate from a particular root domain. Costs rows per result returned.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": false,
+            "type": "{ query: string, scope: domain | subdomain | subfolder | url }",
+            "description": "A SiteQuery provides a target URL along with a scope to define how the query is parsed."
+          },
+          {
+            "key": "domain_site_query",
+            "optional": false,
+            "type": "{ query: string, scope: domain }",
+            "description": "Specify the source domain to filter by. Must be a fully resolved site_query with a scope of `domain`."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ scope?: subdomain | domain | page, subdomains_limited_to_one?: string[], sort?: source_page_authority, filters?: (external | follow | nofollow | deleted | not_deleted | gained_last_60_days | lost_last_60_days)[] }",
+            "description": "Options for filtering links by domain."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "{ token?: string | null, limit?: number }",
+            "description": "Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results."
+          },
+          {
+            "key": "anchor_text",
+            "optional": true,
+            "type": "string",
+            "description": "Used in Moz example requests; not in its schema."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": true,
+            "type": "{ query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null"
+          },
+          {
+            "key": "domain_site_query",
+            "optional": true,
+            "type": "{ query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "{ provided_token?: string | null, token?: string | null, limit?: number | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "({ source_site_metrics?: { page?: string | null, subdomain?: string | null, root_domain?: string | null, title?: string | null, last_crawled?: string | null, http_code?: number | null, pages_to_page?: number | null, nofollow_pages_to_page?: number | null, redirect_pages_to_page?: number | null, external_pages_to_page?: number | null, external_nofollow_pages_to_page?: number | null, external_redirect_pages_to_page?: number | null, deleted_pages_to_page?: number | null, root_domains_to_page?: number | null, indirect_root_domains_to_page?: number | null, deleted_root_domains_to_page?: number | null, nofollow_root_domains_to_page?: number | null, pages_to_subdomain?: number | null, nofollow_pages_to_subdomain?: number | null, redirect_pages_to_subdomain?: number | null, external_pages_to_subdomain?: number | null, external_nofollow_pages_to_subdomain?: number | null, external_redirect_pages_to_subdomain?: number | null, deleted_pages_to_subdomain?: number | null, root_domains_to_subdomain?: number | null, deleted_root_domains_to_subdomain?: number | null, nofollow_root_domains_to_subdomain?: number | null, pages_to_root_domain?: number | null, nofollow_pages_to_root_domain?: number | null, redirect_pages_to_root_domain?: number | null, external_pages_to_root_domain?: number | null, external_indirect_pages_to_root_domain?: number | null, external_nofollow_pages_to_root_domain?: number | null, external_redirect_pages_to_root_domain?: number | null, deleted_pages_to_root_domain?: number | null, root_domains_to_root_domain?: number | null, indirect_root_domains_to_root_domain?: number | null, deleted_root_domains_to_root_domain?: number | null, nofollow_root_domains_to_root_domain?: number | null, page_authority?: number | null, domain_authority?: number | null, link_propensity?: number | null, spam_score?: number | null, root_domains_from_page?: number | null, nofollow_root_domains_from_page?: number | null, pages_from_page?: number | null, nofollow_pages_from_page?: number | null, root_domains_from_root_domain?: number | null, nofollow_root_domains_from_root_domain?: number | null, pages_from_root_domain?: number | null, nofollow_pages_from_root_domain?: number | null, pages_crawled_from_root_domain?: number | null } | null, target_site_metrics?: { page?: string | null, subdomain?: string | null, root_domain?: string | null, title?: string | null, last_crawled?: string | null, http_code?: number | null, pages_to_page?: number | null, nofollow_pages_to_page?: number | null, redirect_pages_to_page?: number | null, external_pages_to_page?: number | null, external_nofollow_pages_to_page?: number | null, external_redirect_pages_to_page?: number | null, deleted_pages_to_page?: number | null, root_domains_to_page?: number | null, indirect_root_domains_to_page?: number | null, deleted_root_domains_to_page?: number | null, nofollow_root_domains_to_page?: number | null, pages_to_subdomain?: number | null, nofollow_pages_to_subdomain?: number | null, redirect_pages_to_subdomain?: number | null, external_pages_to_subdomain?: number | null, external_nofollow_pages_to_subdomain?: number | null, external_redirect_pages_to_subdomain?: number | null, deleted_pages_to_subdomain?: number | null, root_domains_to_subdomain?: number | null, deleted_root_domains_to_subdomain?: number | null, nofollow_root_domains_to_subdomain?: number | null, pages_to_root_domain?: number | null, nofollow_pages_to_root_domain?: number | null, redirect_pages_to_root_domain?: number | null, external_pages_to_root_domain?: number | null, external_indirect_pages_to_root_domain?: number | null, external_nofollow_pages_to_root_domain?: number | null, external_redirect_pages_to_root_domain?: number | null, deleted_pages_to_root_domain?: number | null, root_domains_to_root_domain?: number | null, indirect_root_domains_to_root_domain?: number | null, deleted_root_domains_to_root_domain?: number | null, nofollow_root_domains_to_root_domain?: number | null, page_authority?: number | null, domain_authority?: number | null, link_propensity?: number | null, spam_score?: number | null, root_domains_from_page?: number | null, nofollow_root_domains_from_page?: number | null, pages_from_page?: number | null, nofollow_pages_from_page?: number | null, root_domains_from_root_domain?: number | null, nofollow_root_domains_from_root_domain?: number | null, pages_from_root_domain?: number | null, nofollow_pages_from_root_domain?: number | null, pages_crawled_from_root_domain?: number | null } | null, anchor_text?: string | null, date_first_seen?: string | null, date_last_seen?: string | null, date_disappeared?: string | null, nofollow?: boolean | number | null, redirect?: boolean | number | null, rel_canonical?: boolean | number | null, via_redirect?: boolean | number | null, via_rel_canonical?: boolean | number | null } | null)[] | null"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ scope?: string | null, subdomains_limited_to_one?: (string | null)[] | null, sort?: string | null, filters?: (string | null)[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.links.intersect",
+      "shortPath": "links.intersect",
+      "description": "This endpoint returns information about sites that point to two or more specified domains, or that point at some domains but not others. Quota cost varies by request.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "is_linking_to",
+            "optional": false,
+            "type": "{ query: string, scope: domain | subdomain | subfolder | url }[]",
+            "description": "Get sources that link to at least one of the provided sites, or more if `minimum_matching_targets` is set (see description of `minimum_matching_targets` below). Up to 6 total targets may be specified in the `is_linking_to` and `not_linking_to` fields combined, and at least one target must be specified in `is_linking_to`."
+          },
+          {
+            "key": "not_linking_to",
+            "optional": true,
+            "type": "{ query: string, scope: domain | subdomain | subfolder | url }[]",
+            "description": "Optionally, ensure that the returned sources that do not link to any of the provided sites."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ minimum_matching_targets?: number | null, scope?: page | domain, sort?: matching_target_count | source_spam_score | source_domain_authority }"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "{ token?: string | null, limit?: number }",
+            "description": "Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "is_linking_to",
+            "optional": true,
+            "type": "({ query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null)[] | null"
+          },
+          {
+            "key": "not_linking_to",
+            "optional": true,
+            "type": "({ query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null)[] | null"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ minimum_matching_targets?: number | null, scope?: string | null, sort?: string | null } | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "{ provided_token?: string | null, token?: string | null, limit?: number | null } | null"
+          },
+          {
+            "key": "link_intersects",
+            "optional": true,
+            "type": "({ page?: string | null, title?: string | null, domain_authority?: number | null, spam_score?: number | null, matching_target_indexes?: (number | null)[] | null, matching_source_pages?: ({ page?: string | null, page_authority?: number | null } | null)[] | null } | null)[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.links.list",
+      "shortPath": "links.list",
+      "description": "Use this endpoint to get a list of links to a target. Costs rows per result returned.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": false,
+            "type": "{ query: string, scope: domain | subdomain | subfolder | url }",
+            "description": "A SiteQuery provides a target URL along with a scope to define how the query is parsed."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ scope?: subdomain | domain | page, subdomains_limited_to_one?: string[], sort?: root_domains_to_source_root_domain | root_domains_to_source_page | source_page_authority | source_domain_authority | source_link_propensity | source_spam_score, filters?: (external | follow | nofollow | deleted | not_deleted | redirect | not_redirect | rel_canonical | not_rel_canonical | via_redirect | not_via_redirect | via_rel_canonical | not_via_rel_canonical | gained_last_60_days | lost_last_60_days)[] }",
+            "description": "Options for fetching linking domains."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "{ token?: string | null, limit?: number }",
+            "description": "Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": true,
+            "type": "{ query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "{ provided_token?: string | null, token?: string | null, limit?: number | null } | null"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "({ source_site_metrics?: { page?: string | null, subdomain?: string | null, root_domain?: string | null, title?: string | null, last_crawled?: string | null, http_code?: number | null, pages_to_page?: number | null, nofollow_pages_to_page?: number | null, redirect_pages_to_page?: number | null, external_pages_to_page?: number | null, external_nofollow_pages_to_page?: number | null, external_redirect_pages_to_page?: number | null, deleted_pages_to_page?: number | null, root_domains_to_page?: number | null, indirect_root_domains_to_page?: number | null, deleted_root_domains_to_page?: number | null, nofollow_root_domains_to_page?: number | null, pages_to_subdomain?: number | null, nofollow_pages_to_subdomain?: number | null, redirect_pages_to_subdomain?: number | null, external_pages_to_subdomain?: number | null, external_nofollow_pages_to_subdomain?: number | null, external_redirect_pages_to_subdomain?: number | null, deleted_pages_to_subdomain?: number | null, root_domains_to_subdomain?: number | null, deleted_root_domains_to_subdomain?: number | null, nofollow_root_domains_to_subdomain?: number | null, pages_to_root_domain?: number | null, nofollow_pages_to_root_domain?: number | null, redirect_pages_to_root_domain?: number | null, external_pages_to_root_domain?: number | null, external_indirect_pages_to_root_domain?: number | null, external_nofollow_pages_to_root_domain?: number | null, external_redirect_pages_to_root_domain?: number | null, deleted_pages_to_root_domain?: number | null, root_domains_to_root_domain?: number | null, indirect_root_domains_to_root_domain?: number | null, deleted_root_domains_to_root_domain?: number | null, nofollow_root_domains_to_root_domain?: number | null, page_authority?: number | null, domain_authority?: number | null, link_propensity?: number | null, spam_score?: number | null, root_domains_from_page?: number | null, nofollow_root_domains_from_page?: number | null, pages_from_page?: number | null, nofollow_pages_from_page?: number | null, root_domains_from_root_domain?: number | null, nofollow_root_domains_from_root_domain?: number | null, pages_from_root_domain?: number | null, nofollow_pages_from_root_domain?: number | null, pages_crawled_from_root_domain?: number | null } | null, target_site_metrics?: { page?: string | null, subdomain?: string | null, root_domain?: string | null, title?: string | null, last_crawled?: string | null, http_code?: number | null, pages_to_page?: number | null, nofollow_pages_to_page?: number | null, redirect_pages_to_page?: number | null, external_pages_to_page?: number | null, external_nofollow_pages_to_page?: number | null, external_redirect_pages_to_page?: number | null, deleted_pages_to_page?: number | null, root_domains_to_page?: number | null, indirect_root_domains_to_page?: number | null, deleted_root_domains_to_page?: number | null, nofollow_root_domains_to_page?: number | null, pages_to_subdomain?: number | null, nofollow_pages_to_subdomain?: number | null, redirect_pages_to_subdomain?: number | null, external_pages_to_subdomain?: number | null, external_nofollow_pages_to_subdomain?: number | null, external_redirect_pages_to_subdomain?: number | null, deleted_pages_to_subdomain?: number | null, root_domains_to_subdomain?: number | null, deleted_root_domains_to_subdomain?: number | null, nofollow_root_domains_to_subdomain?: number | null, pages_to_root_domain?: number | null, nofollow_pages_to_root_domain?: number | null, redirect_pages_to_root_domain?: number | null, external_pages_to_root_domain?: number | null, external_indirect_pages_to_root_domain?: number | null, external_nofollow_pages_to_root_domain?: number | null, external_redirect_pages_to_root_domain?: number | null, deleted_pages_to_root_domain?: number | null, root_domains_to_root_domain?: number | null, indirect_root_domains_to_root_domain?: number | null, deleted_root_domains_to_root_domain?: number | null, nofollow_root_domains_to_root_domain?: number | null, page_authority?: number | null, domain_authority?: number | null, link_propensity?: number | null, spam_score?: number | null, root_domains_from_page?: number | null, nofollow_root_domains_from_page?: number | null, pages_from_page?: number | null, nofollow_pages_from_page?: number | null, root_domains_from_root_domain?: number | null, nofollow_root_domains_from_root_domain?: number | null, pages_from_root_domain?: number | null, nofollow_pages_from_root_domain?: number | null, pages_crawled_from_root_domain?: number | null } | null, anchor_text?: string | null, date_first_seen?: string | null, date_last_seen?: string | null, date_disappeared?: string | null, nofollow?: boolean | number | null, redirect?: boolean | number | null, rel_canonical?: boolean | number | null, via_redirect?: boolean | number | null, via_rel_canonical?: boolean | number | null } | null)[] | null"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ scope?: string | null, subdomains_limited_to_one?: (string | null)[] | null, sort?: string | null, filters?: (string | null)[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.links.status",
+      "shortPath": "links.status",
+      "description": "Use this endpoint to get the status of a link from a source to a target. Costs 1 row per call.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target_site_query",
+            "optional": false,
+            "type": "{ query: string, scope: domain | subdomain | subfolder | url }",
+            "description": "Specify the target to check for an existing link."
+          },
+          {
+            "key": "source_site_query",
+            "optional": false,
+            "type": "{ query: string, scope: domain | subdomain | subfolder | url }",
+            "description": "Specify the source to check for an existing link."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target_site_query",
+            "optional": true,
+            "type": "{ query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null"
+          },
+          {
+            "key": "source_site_query",
+            "optional": true,
+            "type": "{ query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null"
+          },
+          {
+            "key": "exists",
+            "optional": true,
+            "type": "boolean | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.links.statusMultiple",
+      "shortPath": "links.statusMultiple",
+      "description": "Use this endpoint to get the status of multiple links from a source to a target. Costs rows per result returned.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "queries",
+            "optional": false,
+            "type": "{ target_site_query?: { query: string, scope: domain | subdomain | subfolder | url }, source_site_query?: { query: string, scope: domain | subdomain | subfolder | url } }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results_by_query",
+            "optional": true,
+            "type": "({ target_site_query?: { query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null, source_site_query?: { query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null, exists?: boolean | number | null } | null)[] | null"
+          },
+          {
+            "key": "errors_by_query",
+            "optional": true,
+            "type": "({ target_site_query?: { query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null, source_site_query?: { query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null, error?: { message?: string | null, name?: string | null, data?: { key?: string | null, value?: string | null } | null, httpStatus?: number | null, jsonrpcCode?: number | null } | null } | null)[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.accounts.create",
+      "shortPath": "local.accounts.create",
+      "description": "Creates a new Moz Local Account. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": false,
+            "type": "{ name?: any }",
+            "description": "A payload to create a local account."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.accounts.list",
+      "shortPath": "local.accounts.list",
+      "description": "List all Moz Local Accounts. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accounts",
+            "optional": true,
+            "type": "({ id?: number | null, name?: string | null } | null)[] | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.accounts.lookup",
+      "shortPath": "local.accounts.lookup",
+      "description": "Lookup a specific Moz Local Account by ID. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the local account."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.customFields.create",
+      "shortPath": "local.customFields.create",
+      "description": "Creates a location custom field definition on a Moz Local Account. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "custom_field",
+            "optional": false,
+            "type": "{ account_id?: any, name?: any }",
+            "description": "A payload to create a local account custom field."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "custom_field",
+            "optional": true,
+            "type": "{ id?: number | null, account_id?: number | null, name?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.customFields.listForAccount",
+      "shortPath": "local.customFields.listForAccount",
+      "description": "List all location custom fields for a given Moz Local Account ID. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "number",
+            "description": "The account ID the custom field is attached to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "({ id?: number | null, account_id?: number | null, name?: string | null } | null)[] | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.customFields.lookup",
+      "shortPath": "local.customFields.lookup",
+      "description": "Lookup a specific custom field by ID for a Moz Local Account. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": false,
+            "type": "number",
+            "description": "The account ID the custom field is attached to."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of a local account custom field."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "custom_field",
+            "optional": true,
+            "type": "{ id?: number | null, account_id?: number | null, name?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.groups.addLocation",
+      "shortPath": "local.groups.addLocation",
+      "description": "Add a location to a group. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the local group."
+          },
+          {
+            "key": "location_id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the location"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | null"
+      }
+    },
+    {
+      "path": "moz.api.local.groups.create",
+      "shortPath": "local.groups.create",
+      "description": "Creates a new group in a Moz Local Account to organize locations. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group",
+            "optional": false,
+            "type": "{ name?: any, account_id?: any }",
+            "description": "A payload to create a local group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, account_id?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.groups.list",
+      "shortPath": "local.groups.list",
+      "description": "List all local groups. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "({ id?: number | null, name?: string | null, account_id?: number | null } | null)[] | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.groups.listForAccount",
+      "shortPath": "local.groups.listForAccount",
+      "description": "List all groups for a given Moz Local Account ID. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The id of the local account the location resides in. May be null for legacy inactive locations."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "({ id?: number | null, name?: string | null, account_id?: number | null } | null)[] | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.groups.listLocations",
+      "shortPath": "local.groups.listLocations",
+      "description": "List locations in a given group. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the local group."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ n?: any, limit?: any }",
+            "description": "Control the number of results returned per call in addition to fetching additional results. The default `limit` is 25 with an `n` value of 0 (indicating the first page of results). Make subsequent calls to the endpoint with incrementing `n` values to fetch additional pages of results. To get all results, you must continue making calls with incrementing `n` values until an empty result set is retur"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "({ id?: number | null } | null)[] | string | null"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ n?: number | null, limit?: number | null, order?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.groups.lookup",
+      "shortPath": "local.groups.lookup",
+      "description": "Lookup a specific group by ID. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the local group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, account_id?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.groups.removeLocation",
+      "shortPath": "local.groups.removeLocation",
+      "description": "Remove a location from a group. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "The ID of the local group."
+          },
+          {
+            "key": "location_id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the location"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any> | null"
+      }
+    },
+    {
+      "path": "moz.api.local.locations.cancel",
+      "shortPath": "local.locations.cancel",
+      "description": "Cancel a specific location by ID. Moz Local Enterprise only. Free (no quota). Stops the paid listing service for the location.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the location"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ id?: number | null, level?: string | null, status?: string | null, account_id?: number | null, auto_sync_enabled?: boolean | number | null, custom_fields?: Record<string, any> | null, remote_id?: string | null, listings_name?: string | null, location_name?: string | null, website_url?: string | null, email_address?: string | null, timezone?: string | null, store_code?: string | null, short_description?: string | null, long_description?: string | null, languages?: (string | null)[] | string | null, keywords?: (string | null)[] | string | null, brands?: (string | null)[] | string | null, payment_forms?: (string | null)[] | string | null, price_range?: string | null, service_areas?: ({ text?: string | null, id?: string | null } | null)[] | string | null, service_area_only?: boolean | number | null, services?: (string | null)[] | string | null, primary_category?: string | null, additional_categories?: (string | null)[] | string | null, attributes?: ({ id?: string | null, value?: string | null } | null)[] | string | null, address?: { address_line_1?: string | null, address_line_2?: string | null, sublocality?: string | null, county?: string | null, city?: string | null, state_province?: string | null, postal_code?: string | null, country?: string | null } | null, lat?: number | null, long?: number | null, opening_status?: string | null, reopen_date?: string | null, hours?: { monday?: (string | null)[] | string | null, tuesday?: (string | null)[] | string | null, wednesday?: (string | null)[] | string | null, thursday?: (string | null)[] | string | null, friday?: (string | null)[] | string | null, saturday?: (string | null)[] | string | null, sunday?: (string | null)[] | string | null } | null, more_hours?: Record<string, any> | null, opening_hours_notes?: string | null, opening_date?: string | null, special_hours?: Record<string, any> | null, phone?: string | null, fax?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.categories",
+      "shortPath": "local.locations.categories",
+      "description": "Retrieve a list of Google category IDs that can be used for `primary_category` or `additional_categories` when creating or updating a location. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "categories",
+            "optional": true,
+            "type": "({ id?: string | null, name?: string | null } | null)[] | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.close",
+      "shortPath": "local.locations.close",
+      "description": "Closes a location, setting its status to closed and opening status to permanently closed. Moz Local Enterprise only. Free (no quota). Marks the business permanently closed on every directory.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the location"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ id?: number | null, level?: string | null, status?: string | null, account_id?: number | null, auto_sync_enabled?: boolean | number | null, custom_fields?: Record<string, any> | null, remote_id?: string | null, listings_name?: string | null, location_name?: string | null, website_url?: string | null, email_address?: string | null, timezone?: string | null, store_code?: string | null, short_description?: string | null, long_description?: string | null, languages?: (string | null)[] | string | null, keywords?: (string | null)[] | string | null, brands?: (string | null)[] | string | null, payment_forms?: (string | null)[] | string | null, price_range?: string | null, service_areas?: ({ text?: string | null, id?: string | null } | null)[] | string | null, service_area_only?: boolean | number | null, services?: (string | null)[] | string | null, primary_category?: string | null, additional_categories?: (string | null)[] | string | null, attributes?: ({ id?: string | null, value?: string | null } | null)[] | string | null, address?: { address_line_1?: string | null, address_line_2?: string | null, sublocality?: string | null, county?: string | null, city?: string | null, state_province?: string | null, postal_code?: string | null, country?: string | null } | null, lat?: number | null, long?: number | null, opening_status?: string | null, reopen_date?: string | null, hours?: { monday?: (string | null)[] | string | null, tuesday?: (string | null)[] | string | null, wednesday?: (string | null)[] | string | null, thursday?: (string | null)[] | string | null, friday?: (string | null)[] | string | null, saturday?: (string | null)[] | string | null, sunday?: (string | null)[] | string | null } | null, more_hours?: Record<string, any> | null, opening_hours_notes?: string | null, opening_date?: string | null, special_hours?: Record<string, any> | null, phone?: string | null, fax?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.create",
+      "shortPath": "local.locations.create",
+      "description": "Creates a new location. Moz Local Enterprise only. Free (no quota). Adds a billed Moz Local location.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": false,
+            "type": "{ level?: any, account_id?: any, auto_sync_enabled?: any, custom_fields?: Record<string, any>, remote_id?: any, listings_name?: any, location_name?: any, website_url?: any, email_address?: any, timezone?: any, store_code?: any, short_description?: any, long_description?: any, languages?: any, keywords?: any, brands?: any, payment_forms?: any, price_range?: any, service_areas?: any, service_area_only?: any, services?: any, primary_category?: any, additional_categories?: any, attributes?: any, address?: { address_line_1?: any, address_line_2?: any, sublocality?: any, county?: any, city?: any, state_province?: any, postal_code?: any, country?: any }, lat?: any, long?: any, opening_status?: any, reopen_date?: any, hours?: { monday?: any, tuesday?: any, wednesday?: any, thursday?: any, friday?: any, saturday?: any, sunday?: any }, opening_hours_notes?: any, opening_date?: any, special_hours?: Record<string, any>, phone?: any, fax?: any, published?: any, create_pages?: any }",
+            "description": "A location to be created."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ id?: number | null, level?: string | null, status?: string | null, account_id?: any | null, auto_sync_enabled?: boolean | number | null, custom_fields?: Record<string, any> | null, remote_id?: string | null, listings_name?: string | null, location_name?: string | null, website_url?: string | null, email_address?: string | null, timezone?: string | null, store_code?: string | null, short_description?: string | null, long_description?: string | null, languages?: (string | null)[] | string | null, keywords?: (string | null)[] | string | null, brands?: (string | null)[] | string | null, payment_forms?: (string | null)[] | string | null, price_range?: string | null, service_areas?: ({ text?: string | null, id?: string | null } | null)[] | string | null, service_area_only?: boolean | number | null, services?: (string | null)[] | string | null, primary_category?: string | null, additional_categories?: (string | null)[] | string | null, attributes?: ({ id?: string | null, value?: string | null } | null)[] | string | null, address?: { address_line_1?: string | null, address_line_2?: string | null, sublocality?: string | null, county?: string | null, city?: string | null, state_province?: string | null, postal_code?: string | null, country?: string | null } | null, lat?: number | null, long?: number | null, opening_status?: string | null, reopen_date?: string | null, hours?: { monday?: (string | null)[] | string | null, tuesday?: (string | null)[] | string | null, wednesday?: (string | null)[] | string | null, thursday?: (string | null)[] | string | null, friday?: (string | null)[] | string | null, saturday?: (string | null)[] | string | null, sunday?: (string | null)[] | string | null } | null, more_hours?: Record<string, any> | null, opening_hours_notes?: string | null, opening_date?: string | null, special_hours?: Record<string, any> | null, phone?: string | null, fax?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.fieldIssues",
+      "shortPath": "local.locations.fieldIssues",
+      "description": "Returns field-level discrepancy issues for a given location. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location_id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the location"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field_issues",
+            "optional": true,
+            "type": "({ location_id?: number | null, network_type?: string | null, network_name?: string | null, field_name?: string | null } | null)[] | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.fieldStatuses",
+      "shortPath": "local.locations.fieldStatuses",
+      "description": "Returns field-level listing health data for a given location. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location_id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the location"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field_statuses",
+            "optional": true,
+            "type": "({ field_name?: string | null, networks_with_field?: number | null, healthy_networks?: number | null, pending_issues?: number | null, solved_issues?: number | null, dismissed_issues?: number | null } | null)[] | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.gbpImpressionHistory",
+      "shortPath": "local.locations.gbpImpressionHistory",
+      "description": "Returns Google Business Profile keyword-impression history over time (month by month) for a location's top-performing keywords. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location_id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the location"
+          },
+          {
+            "key": "date_start",
+            "optional": false,
+            "type": "string",
+            "description": "Inclusive range start, `YYYY-MM-DD`."
+          },
+          {
+            "key": "date_end",
+            "optional": false,
+            "type": "string",
+            "description": "Inclusive range end, `YYYY-MM-DD`. Date range may not exceed 12 months."
+          },
+          {
+            "key": "keyword_limit",
+            "optional": true,
+            "type": "number",
+            "description": "Max number of top keywords returned per Google Business Profile impression bucket."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "gbp_impression_history",
+            "optional": true,
+            "type": "{ location_id?: number | null, date_start?: string | null, date_end?: string | null, keyword_limit?: number | null, gbp_impression_history_reports?: ({ date?: string | null, impressions?: ({ keyword?: string | null, value?: number | null } | null)[] | string | null } | null)[] | string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.gbpImpressionTotals",
+      "shortPath": "local.locations.gbpImpressionTotals",
+      "description": "Returns total Google Business Profile keyword impressions for a given location and date range, ordered from most to least impressions. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location_id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the location"
+          },
+          {
+            "key": "date_start",
+            "optional": false,
+            "type": "string",
+            "description": "Inclusive range start, `YYYY-MM-DD`."
+          },
+          {
+            "key": "date_end",
+            "optional": false,
+            "type": "string",
+            "description": "Inclusive range end, `YYYY-MM-DD`. Date range may not exceed 12 months."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ n?: any, limit?: any }",
+            "description": "Control the number of results returned per call in addition to fetching additional results. The default `limit` is 25 with an `n` value of 0 (indicating the first page of results). Make subsequent calls to the endpoint with incrementing `n` values to fetch additional pages of results. To get all results, you must continue making calls with incrementing `n` values until an empty result set is retur"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "gbp_impression_total",
+            "optional": true,
+            "type": "{ location_id?: number | null, date_start?: string | null, date_end?: string | null, gbp_impression_keyword_totals?: ({ keyword?: string | null, value?: number | null } | null)[] | string | null } | null"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ n?: number | null, limit?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.gbpLeadHistory",
+      "shortPath": "local.locations.gbpLeadHistory",
+      "description": "Returns Google Business Profile lead history over time for a given location, bucketed by day, week, or month. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location_id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the location"
+          },
+          {
+            "key": "date_start",
+            "optional": false,
+            "type": "string",
+            "description": "Inclusive range start, `YYYY-MM-DD`."
+          },
+          {
+            "key": "date_end",
+            "optional": false,
+            "type": "string",
+            "description": "Inclusive range end, `YYYY-MM-DD`. Date range may not exceed 12 months."
+          },
+          {
+            "key": "date_aggregation",
+            "optional": true,
+            "type": "day | week | month",
+            "description": "The bucket size used to aggregate a Google Business Profile insight time series. Accepted and returned in lowercase."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "gbp_lead_history",
+            "optional": true,
+            "type": "{ location_id?: number | null, date_start?: string | null, date_end?: string | null, date_aggregation?: string | null, gbp_lead_history_reports?: ({ date?: string | null, total_leads?: number | null, actions_website?: number | null, actions_phone?: number | null, actions_driving_directions?: number | null, total_impressions?: number | null, ctr?: number | null } | null)[] | string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.levels",
+      "shortPath": "local.locations.levels",
+      "description": "List the available levels of service for locations. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "levels",
+            "optional": true,
+            "type": "(string | null)[] | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.list",
+      "shortPath": "local.locations.list",
+      "description": "List all locations. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ n?: any, limit?: any }",
+            "description": "Control the number of results returned per call in addition to fetching additional results. The default `limit` is 25 with an `n` value of 0 (indicating the first page of results). Make subsequent calls to the endpoint with incrementing `n` values to fetch additional pages of results. To get all results, you must continue making calls with incrementing `n` values until an empty result set is retur"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "({ id?: number | null, level?: string | null, status?: string | null, account_id?: number | null, auto_sync_enabled?: boolean | number | null, custom_fields?: Record<string, any> | null, remote_id?: string | null, listings_name?: string | null, location_name?: string | null, website_url?: string | null, email_address?: string | null, timezone?: string | null, store_code?: string | null, short_description?: string | null, long_description?: string | null, languages?: (string | null)[] | string | null, keywords?: (string | null)[] | string | null, brands?: (string | null)[] | string | null, payment_forms?: (string | null)[] | string | null, price_range?: string | null, service_areas?: ({ text?: string | null, id?: string | null } | null)[] | string | null, service_area_only?: boolean | number | null, services?: (string | null)[] | string | null, primary_category?: string | null, additional_categories?: (string | null)[] | string | null, attributes?: ({ id?: string | null, value?: string | null } | null)[] | string | null, address?: { address_line_1?: string | null, address_line_2?: string | null, sublocality?: string | null, county?: string | null, city?: string | null, state_province?: string | null, postal_code?: string | null, country?: string | null } | null, lat?: number | null, long?: number | null, opening_status?: string | null, reopen_date?: string | null, hours?: { monday?: (string | null)[] | string | null, tuesday?: (string | null)[] | string | null, wednesday?: (string | null)[] | string | null, thursday?: (string | null)[] | string | null, friday?: (string | null)[] | string | null, saturday?: (string | null)[] | string | null, sunday?: (string | null)[] | string | null } | null, more_hours?: Record<string, any> | null, opening_hours_notes?: string | null, opening_date?: string | null, special_hours?: Record<string, any> | null, phone?: string | null, fax?: string | null } | null)[] | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.listByStatus",
+      "shortPath": "local.locations.listByStatus",
+      "description": "List locations filtered by status. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ n?: any, limit?: any }",
+            "description": "Control the number of results returned per call in addition to fetching additional results. The default `limit` is 25 with an `n` value of 0 (indicating the first page of results). Make subsequent calls to the endpoint with incrementing `n` values to fetch additional pages of results. To get all results, you must continue making calls with incrementing `n` values until an empty result set is retur"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "active | canceled | closed | suspended",
+            "description": "The status of the location"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "({ id?: number | null, level?: string | null, status?: string | null, account_id?: number | null, auto_sync_enabled?: boolean | number | null, custom_fields?: Record<string, any> | null, remote_id?: string | null, listings_name?: string | null, location_name?: string | null, website_url?: string | null, email_address?: string | null, timezone?: string | null, store_code?: string | null, short_description?: string | null, long_description?: string | null, languages?: (string | null)[] | string | null, keywords?: (string | null)[] | string | null, brands?: (string | null)[] | string | null, payment_forms?: (string | null)[] | string | null, price_range?: string | null, service_areas?: ({ text?: string | null, id?: string | null } | null)[] | string | null, service_area_only?: boolean | number | null, services?: (string | null)[] | string | null, primary_category?: string | null, additional_categories?: (string | null)[] | string | null, attributes?: ({ id?: string | null, value?: string | null } | null)[] | string | null, address?: { address_line_1?: string | null, address_line_2?: string | null, sublocality?: string | null, county?: string | null, city?: string | null, state_province?: string | null, postal_code?: string | null, country?: string | null } | null, lat?: number | null, long?: number | null, opening_status?: string | null, reopen_date?: string | null, hours?: { monday?: (string | null)[] | string | null, tuesday?: (string | null)[] | string | null, wednesday?: (string | null)[] | string | null, thursday?: (string | null)[] | string | null, friday?: (string | null)[] | string | null, saturday?: (string | null)[] | string | null, sunday?: (string | null)[] | string | null } | null, more_hours?: Record<string, any> | null, opening_hours_notes?: string | null, opening_date?: string | null, special_hours?: Record<string, any> | null, phone?: string | null, fax?: string | null } | null)[] | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.listForAccount",
+      "shortPath": "local.locations.listForAccount",
+      "description": "List all active locations filtered by Moz Local Account ID. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ n?: any, limit?: any }",
+            "description": "Control the number of results returned per call in addition to fetching additional results. The default `limit` is 25 with an `n` value of 0 (indicating the first page of results). Make subsequent calls to the endpoint with incrementing `n` values to fetch additional pages of results. To get all results, you must continue making calls with incrementing `n` values until an empty result set is retur"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "number",
+            "description": "Used in Moz example requests; not in its schema."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "({ id?: number | null, level?: string | null, status?: string | null, account_id?: number | null, auto_sync_enabled?: boolean | number | null, custom_fields?: Record<string, any> | null, remote_id?: string | null, listings_name?: string | null, location_name?: string | null, website_url?: string | null, email_address?: string | null, timezone?: string | null, store_code?: string | null, short_description?: string | null, long_description?: string | null, languages?: (string | null)[] | string | null, keywords?: (string | null)[] | string | null, brands?: (string | null)[] | string | null, payment_forms?: (string | null)[] | string | null, price_range?: string | null, service_areas?: ({ text?: string | null, id?: string | null } | null)[] | string | null, service_area_only?: boolean | number | null, services?: (string | null)[] | string | null, primary_category?: string | null, additional_categories?: (string | null)[] | string | null, attributes?: ({ id?: string | null, value?: string | null } | null)[] | string | null, address?: { address_line_1?: string | null, address_line_2?: string | null, sublocality?: string | null, county?: string | null, city?: string | null, state_province?: string | null, postal_code?: string | null, country?: string | null } | null, lat?: number | null, long?: number | null, opening_status?: string | null, reopen_date?: string | null, hours?: { monday?: (string | null)[] | string | null, tuesday?: (string | null)[] | string | null, wednesday?: (string | null)[] | string | null, thursday?: (string | null)[] | string | null, friday?: (string | null)[] | string | null, saturday?: (string | null)[] | string | null, sunday?: (string | null)[] | string | null } | null, more_hours?: Record<string, any> | null, opening_hours_notes?: string | null, opening_date?: string | null, special_hours?: Record<string, any> | null, phone?: string | null, fax?: string | null } | null)[] | string | null"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ n?: number | null, limit?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.listings",
+      "shortPath": "local.locations.listings",
+      "description": "Returns a list of listings for a given location. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location_id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the location"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listings",
+            "optional": true,
+            "type": "({ name?: string | null, status?: string | null, url?: string | null } | null)[] | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.localGridHistory",
+      "shortPath": "local.locations.localGridHistory",
+      "description": "Returns all Local Grid results over time for a given keyword, device, engine, and location, including every dot of each grid. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location_id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the location"
+          },
+          {
+            "key": "keyword",
+            "optional": false,
+            "type": "string",
+            "description": "The Local Grid keyword the grid ranks are for."
+          },
+          {
+            "key": "device",
+            "optional": false,
+            "type": "desktop | mobile",
+            "description": "The device to perform the query for."
+          },
+          {
+            "key": "engine",
+            "optional": false,
+            "type": "google",
+            "description": "The engine for the query."
+          },
+          {
+            "key": "date_start",
+            "optional": false,
+            "type": "string",
+            "description": "Inclusive range start, `YYYY-MM-DD`."
+          },
+          {
+            "key": "date_end",
+            "optional": false,
+            "type": "string",
+            "description": "Inclusive range end, `YYYY-MM-DD`. Date range may not exceed 12 months."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "local_grid_history",
+            "optional": true,
+            "type": "{ location_id?: number | null, date_start?: string | null, date_end?: string | null, keyword?: string | null, device?: string | null, engine?: string | null, grids?: ({ grid_size?: number | null, grid_distance?: number | null, grid_distance_unit?: string | null, formatted_grid_distance?: string | null, date?: string | null, dots?: ({ row?: number | null, column?: number | null, lat?: number | null, long?: number | null, rank?: number | null, rating?: number | null, votes_count?: number | null } | null)[] | string | null } | null)[] | string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.localGridKeywords",
+      "shortPath": "local.locations.localGridKeywords",
+      "description": "Returns the keywords available to generate a Local Grid report on for a given location. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location_id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the location"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "(string | null)[] | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.lookup",
+      "shortPath": "local.locations.lookup",
+      "description": "Lookup a specific location by ID. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the location"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ id?: number | null, level?: string | null, status?: string | null, account_id?: number | null, auto_sync_enabled?: boolean | number | null, custom_fields?: Record<string, any> | null, remote_id?: string | null, listings_name?: string | null, location_name?: string | null, website_url?: string | null, email_address?: string | null, timezone?: string | null, store_code?: string | null, short_description?: string | null, long_description?: string | null, languages?: (string | null)[] | string | null, keywords?: (string | null)[] | string | null, brands?: (string | null)[] | string | null, payment_forms?: (string | null)[] | string | null, price_range?: string | null, service_areas?: ({ text?: string | null, id?: string | null } | null)[] | string | null, service_area_only?: boolean | number | null, services?: (string | null)[] | string | null, primary_category?: string | null, additional_categories?: (string | null)[] | string | null, attributes?: ({ id?: string | null, value?: string | null } | null)[] | string | null, address?: { address_line_1?: string | null, address_line_2?: string | null, sublocality?: string | null, county?: string | null, city?: string | null, state_province?: string | null, postal_code?: string | null, country?: string | null } | null, lat?: number | null, long?: number | null, opening_status?: string | null, reopen_date?: string | null, hours?: { monday?: (string | null)[] | string | null, tuesday?: (string | null)[] | string | null, wednesday?: (string | null)[] | string | null, thursday?: (string | null)[] | string | null, friday?: (string | null)[] | string | null, saturday?: (string | null)[] | string | null, sunday?: (string | null)[] | string | null } | null, more_hours?: Record<string, any> | null, opening_hours_notes?: string | null, opening_date?: string | null, special_hours?: Record<string, any> | null, phone?: string | null, fax?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.networks",
+      "shortPath": "local.locations.networks",
+      "description": "Returns a list of networks for a given location. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location_id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the location"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "networks",
+            "optional": true,
+            "type": "({ type?: string | null, id?: number | null, name?: string | null, remote_network_id?: string | null, picture?: string | null, profile_url?: string | null, error?: string | null } | null)[] | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.networkStatuses",
+      "shortPath": "local.locations.networkStatuses",
+      "description": "Returns a list of statuses per network for a given location. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location_id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the location"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "network_statuses",
+            "optional": true,
+            "type": "({ network_name?: string | null, network_type?: string | null, monitored_fields?: number | null, healthy_fields?: number | null } | null)[] | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.rankingHistory",
+      "shortPath": "local.locations.rankingHistory",
+      "description": "Returns keyword ranking position over time for a location's tracked keywords. Moz Local Enterprise only. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location_id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the location"
+          },
+          {
+            "key": "date_start",
+            "optional": false,
+            "type": "string",
+            "description": "Inclusive range start, `YYYY-MM-DD`."
+          },
+          {
+            "key": "date_end",
+            "optional": false,
+            "type": "string",
+            "description": "Inclusive range end, `YYYY-MM-DD`. Date range may not exceed 12 months."
+          },
+          {
+            "key": "engine",
+            "optional": false,
+            "type": "google",
+            "description": "The engine for the query."
+          },
+          {
+            "key": "device",
+            "optional": false,
+            "type": "desktop | mobile",
+            "description": "The device to perform the query for."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ranking_history",
+            "optional": true,
+            "type": "{ location_id?: number | null, date_start?: string | null, date_end?: string | null, engine?: string | null, device?: string | null, ranking_history_reports?: ({ date?: string | null, ranks?: ({ keyword?: string | null, rank?: number | null } | null)[] | string | null } | null)[] | string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.update",
+      "shortPath": "local.locations.update",
+      "description": "Update a single location. Moz Local Enterprise only. Free (no quota). Moz Local publishes the change to the business listings on every directory.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": false,
+            "type": "{ id?: any, auto_sync_enabled?: any, custom_fields?: Record<string, any>, remote_id?: any, listings_name?: any, location_name?: any, website_url?: any, email_address?: any, timezone?: any, store_code?: any, short_description?: any, long_description?: any, languages?: any, keywords?: any, brands?: any, payment_forms?: any, price_range?: any, service_areas?: any, service_area_only?: any, services?: any, primary_category?: any, additional_categories?: any, attributes?: any, address?: { address_line_1?: any, address_line_2?: any, sublocality?: any, county?: any, city?: any, state_province?: any, postal_code?: any, country?: any }, lat?: any, long?: any, opening_status?: any, reopen_date?: any, hours?: { monday?: any, tuesday?: any, wednesday?: any, thursday?: any, friday?: any, saturday?: any, sunday?: any }, opening_hours_notes?: any, opening_date?: any, special_hours?: Record<string, any>, phone?: any, fax?: any, create_pages?: any, published?: any }",
+            "description": "A payload to update one or more fields for a location."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ id?: number | null, level?: string | null, status?: string | null, account_id?: number | null, auto_sync_enabled?: boolean | number | null, custom_fields?: Record<string, any> | null, remote_id?: string | null, listings_name?: string | null, location_name?: string | null, website_url?: string | null, email_address?: string | null, timezone?: string | null, store_code?: string | null, short_description?: string | null, long_description?: string | null, languages?: (string | null)[] | string | null, keywords?: (string | null)[] | string | null, brands?: (string | null)[] | string | null, payment_forms?: (string | null)[] | string | null, price_range?: string | null, service_areas?: ({ text?: string | null, id?: string | null } | null)[] | string | null, service_area_only?: boolean | number | null, services?: (string | null)[] | string | null, primary_category?: string | null, additional_categories?: (string | null)[] | string | null, attributes?: ({ id?: string | null, value?: string | null } | null)[] | string | null, address?: { address_line_1?: string | null, address_line_2?: string | null, sublocality?: string | null, county?: string | null, city?: string | null, state_province?: string | null, postal_code?: string | null, country?: string | null } | null, lat?: number | null, long?: number | null, opening_status?: string | null, reopen_date?: string | null, hours?: { monday?: (string | null)[] | string | null, tuesday?: (string | null)[] | string | null, wednesday?: (string | null)[] | string | null, thursday?: (string | null)[] | string | null, friday?: (string | null)[] | string | null, saturday?: (string | null)[] | string | null, sunday?: (string | null)[] | string | null } | null, more_hours?: Record<string, any> | null, opening_hours_notes?: string | null, opening_date?: string | null, special_hours?: Record<string, any> | null, phone?: string | null, fax?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.local.locations.updateLevel",
+      "shortPath": "local.locations.updateLevel",
+      "description": "Updates the tier of service for a single location. Moz Local Enterprise only. Free (no quota). Changes the billed service level.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the location"
+          },
+          {
+            "key": "level",
+            "optional": false,
+            "type": "string",
+            "description": "The name of the tier of service for the location."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ id?: number | null, level?: string | null, status?: string | null, account_id?: number | null, auto_sync_enabled?: boolean | number | null, custom_fields?: Record<string, any> | null, remote_id?: string | null, listings_name?: string | null, location_name?: string | null, website_url?: string | null, email_address?: string | null, timezone?: string | null, store_code?: string | null, short_description?: string | null, long_description?: string | null, languages?: (string | null)[] | string | null, keywords?: (string | null)[] | string | null, brands?: (string | null)[] | string | null, payment_forms?: (string | null)[] | string | null, price_range?: string | null, service_areas?: ({ text?: string | null, id?: string | null } | null)[] | string | null, service_area_only?: boolean | number | null, services?: (string | null)[] | string | null, primary_category?: string | null, additional_categories?: (string | null)[] | string | null, attributes?: ({ id?: string | null, value?: string | null } | null)[] | string | null, address?: { address_line_1?: string | null, address_line_2?: string | null, sublocality?: string | null, county?: string | null, city?: string | null, state_province?: string | null, postal_code?: string | null, country?: string | null } | null, lat?: number | null, long?: number | null, opening_status?: string | null, reopen_date?: string | null, hours?: { monday?: (string | null)[] | string | null, tuesday?: (string | null)[] | string | null, wednesday?: (string | null)[] | string | null, thursday?: (string | null)[] | string | null, friday?: (string | null)[] | string | null, saturday?: (string | null)[] | string | null, sunday?: (string | null)[] | string | null } | null, more_hours?: Record<string, any> | null, opening_hours_notes?: string | null, opening_date?: string | null, special_hours?: Record<string, any> | null, phone?: string | null, fax?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.locales.list",
+      "shortPath": "locales.list",
+      "description": "Use this endpoint to list every locale a search engine supports. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "engine",
+            "optional": false,
+            "type": "google | bing | yahoo",
+            "description": "The search engine to list supported locales for."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "engine",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "locales",
+            "optional": true,
+            "type": "(string | null)[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.metrics.brandAuthority",
+      "shortPath": "metrics.brandAuthority",
+      "description": "This endpoint returns a Brand Authority™ score for the provided site. Costs 1 row per call.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": false,
+            "type": "{ query: string, scope: domain }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_metrics",
+            "optional": true,
+            "type": "{ brand_authority_score?: number | null } | null"
+          },
+          {
+            "key": "site_query",
+            "optional": true,
+            "type": "{ query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.metrics.distributions",
+      "shortPath": "metrics.distributions",
+      "description": "Fetch Site Metrics Distributions. Costs 1 row per call.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": false,
+            "type": "{ query: string, scope: domain | subdomain | subfolder | url }",
+            "description": "A SiteQuery provides a target URL along with a scope to define how the query is parsed."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": true,
+            "type": "{ query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null"
+          },
+          {
+            "key": "site_metrics_distributions",
+            "optional": true,
+            "type": "{ root_domains_to_page_by_root_domains?: (number | null)[] | null, root_domains_to_root_domain_by_root_domains?: (number | null)[] | null, nofollow_root_domains_to_root_domain_by_root_domains?: (number | null)[] | null, root_domains_to_page_by_domain_authority?: (number | null)[] | null, root_domains_to_subdomain_by_domain_authority?: (number | null)[] | null, root_domains_to_root_domain_by_domain_authority?: (number | null)[] | null, nofollow_root_domains_to_root_domain_by_domain_authority?: (number | null)[] | null, pages_to_root_domain_by_spam_score?: (number | null)[] | null, nofollow_pages_to_root_domain_by_spam_score?: (number | null)[] | null, root_domains_to_page_by_spam_score?: (number | null)[] | null, root_domains_to_subdomain_by_spam_score?: (number | null)[] | null, root_domains_to_root_domain_by_spam_score?: (number | null)[] | null, nofollow_root_domains_to_root_domain_by_spam_score?: (number | null)[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.metrics.fetch",
+      "shortPath": "metrics.fetch",
+      "description": "Use this endpoint to get metrics such as Domain Authority, Page Authority, Spam Score, link counts and more for one URL. Costs 1 row per call.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": false,
+            "type": "{ query: string, scope: domain | subdomain | subfolder | url }",
+            "description": "A SiteQuery provides a target URL along with a scope to define how the query is parsed."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": true,
+            "type": "{ query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null"
+          },
+          {
+            "key": "site_metrics",
+            "optional": true,
+            "type": "{ page?: string | null, subdomain?: string | null, root_domain?: string | null, title?: string | null, last_crawled?: string | null, http_code?: number | null, pages_to_page?: number | null, nofollow_pages_to_page?: number | null, redirect_pages_to_page?: number | null, external_pages_to_page?: number | null, external_nofollow_pages_to_page?: number | null, external_redirect_pages_to_page?: number | null, deleted_pages_to_page?: number | null, root_domains_to_page?: number | null, indirect_root_domains_to_page?: number | null, deleted_root_domains_to_page?: number | null, nofollow_root_domains_to_page?: number | null, pages_to_subdomain?: number | null, nofollow_pages_to_subdomain?: number | null, redirect_pages_to_subdomain?: number | null, external_pages_to_subdomain?: number | null, external_nofollow_pages_to_subdomain?: number | null, external_redirect_pages_to_subdomain?: number | null, deleted_pages_to_subdomain?: number | null, root_domains_to_subdomain?: number | null, deleted_root_domains_to_subdomain?: number | null, nofollow_root_domains_to_subdomain?: number | null, pages_to_root_domain?: number | null, nofollow_pages_to_root_domain?: number | null, redirect_pages_to_root_domain?: number | null, external_pages_to_root_domain?: number | null, external_indirect_pages_to_root_domain?: number | null, external_nofollow_pages_to_root_domain?: number | null, external_redirect_pages_to_root_domain?: number | null, deleted_pages_to_root_domain?: number | null, root_domains_to_root_domain?: number | null, indirect_root_domains_to_root_domain?: number | null, deleted_root_domains_to_root_domain?: number | null, nofollow_root_domains_to_root_domain?: number | null, page_authority?: number | null, domain_authority?: number | null, link_propensity?: number | null, spam_score?: number | null, root_domains_from_page?: number | null, nofollow_root_domains_from_page?: number | null, pages_from_page?: number | null, nofollow_pages_from_page?: number | null, root_domains_from_root_domain?: number | null, nofollow_root_domains_from_root_domain?: number | null, pages_from_root_domain?: number | null, nofollow_pages_from_root_domain?: number | null, pages_crawled_from_root_domain?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.metrics.fetchMultiple",
+      "shortPath": "metrics.fetchMultiple",
+      "description": "Use this endpoint to get metrics such as Domain Authority, Page Authority, Spam Score, link counts and more about one or more URLs. Costs rows per result returned.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_queries",
+            "optional": false,
+            "type": "{ query: string, scope: domain | subdomain | subfolder | url }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results_by_site",
+            "optional": true,
+            "type": "({ site_query?: { query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null, site_metrics?: { page?: string | null, subdomain?: string | null, root_domain?: string | null, title?: string | null, last_crawled?: string | null, http_code?: number | null, pages_to_page?: number | null, nofollow_pages_to_page?: number | null, redirect_pages_to_page?: number | null, external_pages_to_page?: number | null, external_nofollow_pages_to_page?: number | null, external_redirect_pages_to_page?: number | null, deleted_pages_to_page?: number | null, root_domains_to_page?: number | null, indirect_root_domains_to_page?: number | null, deleted_root_domains_to_page?: number | null, nofollow_root_domains_to_page?: number | null, pages_to_subdomain?: number | null, nofollow_pages_to_subdomain?: number | null, redirect_pages_to_subdomain?: number | null, external_pages_to_subdomain?: number | null, external_nofollow_pages_to_subdomain?: number | null, external_redirect_pages_to_subdomain?: number | null, deleted_pages_to_subdomain?: number | null, root_domains_to_subdomain?: number | null, deleted_root_domains_to_subdomain?: number | null, nofollow_root_domains_to_subdomain?: number | null, pages_to_root_domain?: number | null, nofollow_pages_to_root_domain?: number | null, redirect_pages_to_root_domain?: number | null, external_pages_to_root_domain?: number | null, external_indirect_pages_to_root_domain?: number | null, external_nofollow_pages_to_root_domain?: number | null, external_redirect_pages_to_root_domain?: number | null, deleted_pages_to_root_domain?: number | null, root_domains_to_root_domain?: number | null, indirect_root_domains_to_root_domain?: number | null, deleted_root_domains_to_root_domain?: number | null, nofollow_root_domains_to_root_domain?: number | null, page_authority?: number | null, domain_authority?: number | null, link_propensity?: number | null, spam_score?: number | null, root_domains_from_page?: number | null, nofollow_root_domains_from_page?: number | null, pages_from_page?: number | null, nofollow_pages_from_page?: number | null, root_domains_from_root_domain?: number | null, nofollow_root_domains_from_root_domain?: number | null, pages_from_root_domain?: number | null, nofollow_pages_from_root_domain?: number | null, pages_crawled_from_root_domain?: number | null } | null } | null)[] | null"
+          },
+          {
+            "key": "errors_by_site",
+            "optional": true,
+            "type": "({ site_query?: { query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null, error?: { message?: string | null, name?: string | null, data?: { key?: string | null, value?: string | null } | null, httpStatus?: number | null, jsonrpcCode?: number | null } | null } | null)[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.metrics.histories",
+      "shortPath": "metrics.histories",
+      "description": "Use this endpoint to get daily or monthly metric histories for a single site. Costs rows per value requested.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": false,
+            "type": "{ query: string, scope: domain | subdomain | subfolder | url }",
+            "description": "A SiteQuery provides a target URL along with a scope to define how the query is parsed."
+          },
+          {
+            "key": "get_daily_history_deltas_for",
+            "optional": true,
+            "type": "(pages_to_page | nofollow_pages_to_page | redirect_pages_to_page | external_pages_to_page | external_nofollow_pages_to_page | external_redirect_pages_to_page | root_domains_to_page | indirect_root_domains_to_page | nofollow_root_domains_to_page | pages_to_subdomain | nofollow_pages_to_subdomain | redirect_pages_to_subdomain | external_pages_to_subdomain | external_nofollow_pages_to_subdomain | external_redirect_pages_to_subdomain | root_domains_to_subdomain | nofollow_root_domains_to_subdomain | pages_to_root_domain | nofollow_pages_to_root_domain | redirect_pages_to_root_domain | external_pages_to_root_domain | external_indirect_pages_to_root_domain | external_nofollow_pages_to_root_domain | external_redirect_pages_to_root_domain | root_domains_to_root_domain | indirect_root_domains_to_root_domain | nofollow_root_domains_to_root_domain | page_authority | domain_authority)[]",
+            "description": "Optional array of values for which to get daily history deltas. Valid values are all non-deleted link count metrics from the site_metrics object in [Fetch Site Metrics](https://moz.com/api/docs/methods/DataSiteMetricsFetchAction) (`pages_to_page`, etc), `page_authority`, and `domain_authority`. At least one value must be provided between `get_daily_history_deltas_for`, `get_daily_history_values_for`, `get_monthl"
+          },
+          {
+            "key": "get_daily_history_values_for",
+            "optional": true,
+            "type": "(pages_to_page | nofollow_pages_to_page | redirect_pages_to_page | external_pages_to_page | external_nofollow_pages_to_page | external_redirect_pages_to_page | root_domains_to_page | indirect_root_domains_to_page | nofollow_root_domains_to_page | pages_to_subdomain | nofollow_pages_to_subdomain | redirect_pages_to_subdomain | external_pages_to_subdomain | external_nofollow_pages_to_subdomain | external_redirect_pages_to_subdomain | root_domains_to_subdomain | nofollow_root_domains_to_subdomain | pages_to_root_domain | nofollow_pages_to_root_domain | redirect_pages_to_root_domain | external_pages_to_root_domain | external_indirect_pages_to_root_domain | external_nofollow_pages_to_root_domain | external_redirect_pages_to_root_domain | root_domains_to_root_domain | indirect_root_domains_to_root_domain | nofollow_root_domains_to_root_domain | page_authority | domain_authority | root_domains_to_root_domain_by_root_domains | nofollow_root_domains_to_root_domain_by_root_domains | pages_to_root_domain_by_spam_score | nofollow_pages_to_root_domain_by_spam_score | root_domains_to_root_domain_by_spam_score | nofollow_root_domains_to_root_domain_by_spam_score)[]",
+            "description": "Optional array of values for which to get daily history values. Valid values are all non-deleted link count metrics from the site_metrics object in [Fetch Site Metrics](https://moz.com/api/docs/methods/DataSiteMetricsFetchAction) (`pages_to_page`, etc), `page_authority`, `domain_authority`, `nofollow_pages_to_root_domain_by_spam_score`, `nofollow_root_domains_to_root_domain_by_root_domains`, `nofollow_root_domai"
+          },
+          {
+            "key": "get_monthly_history_deltas_for",
+            "optional": true,
+            "type": "(pages_to_page | nofollow_pages_to_page | redirect_pages_to_page | external_pages_to_page | external_nofollow_pages_to_page | external_redirect_pages_to_page | root_domains_to_page | indirect_root_domains_to_page | nofollow_root_domains_to_page | pages_to_subdomain | nofollow_pages_to_subdomain | redirect_pages_to_subdomain | external_pages_to_subdomain | external_nofollow_pages_to_subdomain | external_redirect_pages_to_subdomain | root_domains_to_subdomain | nofollow_root_domains_to_subdomain | pages_to_root_domain | nofollow_pages_to_root_domain | redirect_pages_to_root_domain | external_pages_to_root_domain | external_indirect_pages_to_root_domain | external_nofollow_pages_to_root_domain | external_redirect_pages_to_root_domain | root_domains_to_root_domain | indirect_root_domains_to_root_domain | nofollow_root_domains_to_root_domain | page_authority | domain_authority)[]",
+            "description": "Optional array of values for which to get monthly history deltas. Valid values are all non-deleted link count metrics from the site_metrics object in [Fetch Site Metrics](https://moz.com/api/docs/methods/DataSiteMetricsFetchAction) (`pages_to_page`, etc), `page_authority`, and `domain_authority`. At least one value must be provided between `get_daily_history_deltas_for`, `get_daily_history_values_for`, `get_mont"
+          },
+          {
+            "key": "get_monthly_history_values_for",
+            "optional": true,
+            "type": "(pages_to_page | nofollow_pages_to_page | redirect_pages_to_page | external_pages_to_page | external_nofollow_pages_to_page | external_redirect_pages_to_page | root_domains_to_page | indirect_root_domains_to_page | nofollow_root_domains_to_page | pages_to_subdomain | nofollow_pages_to_subdomain | redirect_pages_to_subdomain | external_pages_to_subdomain | external_nofollow_pages_to_subdomain | external_redirect_pages_to_subdomain | root_domains_to_subdomain | nofollow_root_domains_to_subdomain | pages_to_root_domain | nofollow_pages_to_root_domain | redirect_pages_to_root_domain | external_pages_to_root_domain | external_indirect_pages_to_root_domain | external_nofollow_pages_to_root_domain | external_redirect_pages_to_root_domain | root_domains_to_root_domain | indirect_root_domains_to_root_domain | nofollow_root_domains_to_root_domain | page_authority | domain_authority | root_domains_to_root_domain_by_root_domains | nofollow_root_domains_to_root_domain_by_root_domains | pages_to_root_domain_by_spam_score | nofollow_pages_to_root_domain_by_spam_score | root_domains_to_root_domain_by_spam_score | nofollow_root_domains_to_root_domain_by_spam_score)[]",
+            "description": "Optional array of values for which to get monthly history values. Valid values are all non-deleted link count metrics from the site_metrics object in [Fetch Site Metrics](https://moz.com/api/docs/methods/DataSiteMetricsFetchAction) (`pages_to_page`, etc), `page_authority`, `domain_authority`, `nofollow_pages_to_root_domain_by_spam_score`, `nofollow_root_domains_to_root_domain_by_root_domains`, `nofollow_root_dom"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": true,
+            "type": "{ query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null"
+          },
+          {
+            "key": "site_metrics_histories",
+            "optional": true,
+            "type": "{ daily_history_deltas?: ({ metric_name?: string | null, metric_deltas?: { gained?: ({ date?: string | null, count?: number | null } | null)[] | null, lost?: ({ date?: string | null, count?: number | null } | null)[] | null } | null } | null)[] | null, daily_history_values?: ({ metric_name?: string | null, metric_values?: ({ date?: string | null, value?: number | null } | null)[] | null } | null)[] | null, monthly_history_deltas?: ({ metric_name?: string | null, metric_deltas?: { gained?: ({ date?: string | null, count?: number | null } | null)[] | null, lost?: ({ date?: string | null, count?: number | null } | null)[] | null } | null } | null)[] | null, monthly_history_values?: ({ metric_name?: string | null, metric_values?: ({ date?: string | null, value?: number | null } | null)[] | null } | null)[] | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.quota.lookup",
+      "shortPath": "quota.lookup",
+      "description": "Check how much quota is used/available for the current billing period, as well as additional information about the quota such as whether or not overages are enabled. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "api.limits.mozscape.rows | api.limits.data.rows | api.limits.beta.rows",
+            "description": "The quota path specifies a particular quota for which to retrieve information (e.g. beta or production quotas). The quota used by a particular method is specified in the Quota Usage section at the bottom of the method documentation."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "quota",
+            "optional": true,
+            "type": "{ path?: string | null, account_id?: number | null, allotted?: number | null, used?: number | null, report?: string | null, reset?: string | null, overage?: boolean | number | null, period_start?: number | null, period_reset?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.rankingKeywords.count",
+      "shortPath": "rankingKeywords.count",
+      "description": "Retrieve a summary of the number of keywords for which the provided query (domain, subdomain, or page) ranks in the top 50. Costs 1 row per call.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target_query",
+            "optional": false,
+            "type": "{ query: string, scope: domain | subdomain | url, locale: en-US | en-GB | en-CA | en-AU }",
+            "description": "The target query to use for the ranking keyword count."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ranking_keyword_count",
+            "optional": true,
+            "type": "{ total?: number | null, position?: { rank_1?: number | null, rank_2?: number | null, rank_3?: number | null, rank_4?: number | null, rank_5?: number | null, rank_6?: number | null, rank_7?: number | null, rank_8?: number | null, rank_9?: number | null, rank_10?: number | null, rank_11?: number | null, rank_12?: number | null, rank_13?: number | null, rank_14?: number | null, rank_15?: number | null, rank_16?: number | null, rank_17?: number | null, rank_18?: number | null, rank_19?: number | null, rank_20?: number | null, rank_21?: number | null, rank_22?: number | null, rank_23?: number | null, rank_24?: number | null, rank_25?: number | null, rank_26?: number | null, rank_27?: number | null, rank_28?: number | null, rank_29?: number | null, rank_30?: number | null, rank_31?: number | null, rank_32?: number | null, rank_33?: number | null, rank_34?: number | null, rank_35?: number | null, rank_36?: number | null, rank_37?: number | null, rank_38?: number | null, rank_39?: number | null, rank_40?: number | null, rank_41?: number | null, rank_42?: number | null, rank_43?: number | null, rank_44?: number | null, rank_45?: number | null, rank_46?: number | null, rank_47?: number | null, rank_48?: number | null, rank_49?: number | null, rank_50?: number | null } | null } | null"
+          },
+          {
+            "key": "target_query",
+            "optional": true,
+            "type": "{ query?: string | null, scope?: string | null, locale?: string | null, original_target_query?: { query?: string | null, scope?: string | null, locale?: string | null } | null, suggestion?: { query?: string | null, scope?: string | null, locale?: string | null, explanation?: string | null, issue?: string | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.rankingKeywords.list",
+      "shortPath": "rankingKeywords.list",
+      "description": "Retrieve a list of keywords for which the provided site (domain, subdomain, subfolder, or page) ranks in the top 50, along with the ranking position and the difficulty and monthly search volume for each keyword. Costs rows per result returned.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target_query",
+            "optional": false,
+            "type": "{ query: string, scope: domain | subdomain | subfolder | url, locale: en-US | en-GB | en-CA | en-AU }",
+            "description": "A TargetQuery provides a target URL along with several options to specify how the query is run."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ sort: rank | alpha | difficulty | volume }",
+            "description": "The options used when generating site ranking keywords result."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ n?: number, limit?: number }",
+            "description": "Control the number of results returned per call in addition to fetching additional results. The default \"limit\" is 25 with an \"n\" value of 0 (indicating the first page of results). Make subsequent calls to the endpoint with incrementing \"n\" values to fetch additional pages of results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ranking_keywords",
+            "optional": true,
+            "type": "({ keyword?: string | null, ranking_page?: string | null, rank_position?: number | null, difficulty?: number | null, volume?: number | null } | null)[] | null"
+          },
+          {
+            "key": "target_query",
+            "optional": true,
+            "type": "{ query?: string | null, scope?: string | null, locale?: string | null, original_target_query?: { query?: string | null, scope?: string | null, locale?: string | null } | null, suggestion?: { query?: string | null, scope?: string | null, locale?: string | null, explanation?: string | null, issue?: string | null } | null } | null"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ sort?: string | null } | null"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ n?: number | null, limit?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.redirects.fetch",
+      "shortPath": "redirects.fetch",
+      "description": "Use this endpoint to see the final redirect target of a page after following known redirects in the index. Costs 1 row per call.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": false,
+            "type": "{ query: string, scope: domain | subdomain | subfolder | url }",
+            "description": "A SiteQuery provides a target URL along with a scope to define how the query is parsed."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": true,
+            "type": "{ query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null"
+          },
+          {
+            "key": "destination",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.test.ping",
+      "shortPath": "test.ping",
+      "description": "Use this endpoint to verify that your integration with the Moz JSON-RPC API works end to end, without spending any quota. Free (no quota).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "A message to return to the caller."
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "boolean",
+            "description": "If true, the request will fail instead of returning a message. Use this to exercise the error handling in your integration."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.test.pingAsync",
+      "shortPath": "test.pingAsync",
+      "description": "Use this endpoint to verify that your integration correctly handles the asynchronous methods in the Moz JSON-RPC API, without spending any quota. Asynchronous: answers with an async_call to poll with jobs.lookup. Free (no quota).",
+      "riskLevel": "read",
+      "job": {
+        "idPath": "async_call.id",
+        "status": {
+          "op": "jobs.lookup",
+          "idArg": "id",
+          "statusPath": "async_call.status",
+          "done": ["complete"],
+          "failed": []
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "A message to return to the caller."
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "boolean",
+            "description": "If true, the request will fail instead of returning a message. Use this to exercise the error handling in your integration."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "async_call",
+            "optional": true,
+            "type": "{ id?: string | null, action?: string | null, status?: string | null, ttl?: number | null, result?: { message?: string | null } | null, error?: { message?: string | null, code?: number | null, status?: number | null, data?: { explanation?: string | null, issue?: string | null, key?: string | null, value?: Record<string, any> | null } | null } | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moz.api.topPages.list",
+      "shortPath": "topPages.list",
+      "description": "Use this endpoint to return a list of the top pages on a target domain, sorted by descending page authority, linking root domains, or external linking pages. Costs rows per result returned.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": false,
+            "type": "{ query: string, scope: domain | subdomain }",
+            "description": "A SiteQuery provides a target URL along with a scope to define how the query is parsed."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ filter?: all | status_200 | status_301 | status_302 | status_4xx | status_5xx, sort?: page_authority | root_domains_to_page | external_pages_to_page }",
+            "description": "Options for fetching top pages."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "{ token?: string | null, limit?: number }",
+            "description": "Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "site_query",
+            "optional": true,
+            "type": "{ query?: string | null, scope?: string | null, original_site_query?: { query?: string | null, scope?: string | null } | null, site_query_suggestion?: { query?: string | null, scope?: string | null, explanation?: string | null, issue?: string | null } | null } | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "{ provided_token?: string | null, token?: string | null, limit?: number | null } | null"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ filter?: string | null, sort?: string | null } | null"
+          },
+          {
+            "key": "top_pages",
+            "optional": true,
+            "type": "({ page?: string | null, subdomain?: string | null, root_domain?: string | null, title?: string | null, last_crawled?: string | null, http_code?: number | null, pages_to_page?: number | null, nofollow_pages_to_page?: number | null, redirect_pages_to_page?: number | null, external_pages_to_page?: number | null, external_nofollow_pages_to_page?: number | null, external_redirect_pages_to_page?: number | null, deleted_pages_to_page?: number | null, root_domains_to_page?: number | null, indirect_root_domains_to_page?: number | null, deleted_root_domains_to_page?: number | null, nofollow_root_domains_to_page?: number | null, pages_to_subdomain?: number | null, nofollow_pages_to_subdomain?: number | null, redirect_pages_to_subdomain?: number | null, external_pages_to_subdomain?: number | null, external_nofollow_pages_to_subdomain?: number | null, external_redirect_pages_to_subdomain?: number | null, deleted_pages_to_subdomain?: number | null, root_domains_to_subdomain?: number | null, deleted_root_domains_to_subdomain?: number | null, nofollow_root_domains_to_subdomain?: number | null, pages_to_root_domain?: number | null, nofollow_pages_to_root_domain?: number | null, redirect_pages_to_root_domain?: number | null, external_pages_to_root_domain?: number | null, external_indirect_pages_to_root_domain?: number | null, external_nofollow_pages_to_root_domain?: number | null, external_redirect_pages_to_root_domain?: number | null, deleted_pages_to_root_domain?: number | null, root_domains_to_root_domain?: number | null, indirect_root_domains_to_root_domain?: number | null, deleted_root_domains_to_root_domain?: number | null, nofollow_root_domains_to_root_domain?: number | null, page_authority?: number | null, domain_authority?: number | null, link_propensity?: number | null, spam_score?: number | null, root_domains_from_page?: number | null, nofollow_root_domains_from_page?: number | null, pages_from_page?: number | null, nofollow_pages_from_page?: number | null, root_domains_from_root_domain?: number | null, nofollow_root_domains_from_root_domain?: number | null, pages_from_root_domain?: number | null, nofollow_pages_from_root_domain?: number | null, pages_crawled_from_root_domain?: number | null } | null)[] | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "moz.webhooks.locations.canceled",
+      "shortPath": "locations.canceled",
+      "description": "A Moz Local location was canceled; carries the location_id to read with local.locations.lookup",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ location_id: number }"
+          }
+        ]
+      },
+      "responseType": "{ type: string, timestamp?: string | null, data: { location_id: number } }",
+      "usageExample": "moz({\n    webhookHooks: {\n        locations: {\n            canceled: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "moz.webhooks.locations.closed",
+      "shortPath": "locations.closed",
+      "description": "A Moz Local location was closed (permanently closed); carries the location_id to read with local.locations.lookup",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ location_id: number }"
+          }
+        ]
+      },
+      "responseType": "{ type: string, timestamp?: string | null, data: { location_id: number } }",
+      "usageExample": "moz({\n    webhookHooks: {\n        locations: {\n            closed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "moz.webhooks.locations.created",
+      "shortPath": "locations.created",
+      "description": "A Moz Local location was created; carries the location_id to read with local.locations.lookup",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ location_id: number }"
+          }
+        ]
+      },
+      "responseType": "{ type: string, timestamp?: string | null, data: { location_id: number } }",
+      "usageExample": "moz({\n    webhookHooks: {\n        locations: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "moz.webhooks.locations.updated",
+      "shortPath": "locations.updated",
+      "description": "A Moz Local location was updated; carries the location_id to read with local.locations.lookup",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ location_id: number }"
+          }
+        ]
+      },
+      "responseType": "{ type: string, timestamp?: string | null, data: { location_id: number } }",
+      "usageExample": "moz({\n    webhookHooks: {\n        locations: {\n            updated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

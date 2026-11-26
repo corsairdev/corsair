@@ -1,5 +1,7 @@
 import posthog from 'posthog-js';
 
+import { scrubEvent } from '@/lib/posthog-privacy';
+
 const projectToken = process.env.NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN;
 const host = process.env.NEXT_PUBLIC_POSTHOG_HOST;
 
@@ -21,6 +23,8 @@ if (!projectToken || !host) {
 		ui_host: host,
 		defaults: '2026-01-30',
 		capture_exceptions: true,
+		// The name typed for an MCP URL rides in /start and /api/lug-handle URLs.
+		before_send: scrubEvent,
 		debug: process.env.NODE_ENV === 'development',
 		// Share the anonymous id across corsair.dev, docs.corsair.dev and
 		// hub.corsair.dev so the funnel is one session. Localhost can't set a

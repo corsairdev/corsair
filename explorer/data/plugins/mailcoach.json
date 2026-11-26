@@ -1,0 +1,2258 @@
+{
+  "id": "mailcoach",
+  "displayName": "Mailcoach",
+  "description": "Manage Mailcoach email lists, subscribers, campaigns, transactional mails, imports, tags, segments, and delivery statistics through its team-scoped REST API.",
+  "npmPackageName": "@corsair-dev/mailcoach",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 70,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "api_url"]
+    }
+  ],
+  "api": [
+    {
+      "path": "mailcoach.api.automationMails.create",
+      "shortPath": "automationMails.create",
+      "description": "Create an automation mail without starting its automation.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "template_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "utm_tags",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "add_subscriber_tags",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "add_subscriber_link_tags",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, subject?: string | null, html?: string | null, template_uuid?: string | null, structured_html?: JsonValue | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.automationMails.delete",
+      "shortPath": "automationMails.delete",
+      "description": "Delete an automation mail.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "automationMailUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "mailcoach.api.automationMails.get",
+      "shortPath": "automationMails.get",
+      "description": "Get an automation mail by UUID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "automationMailUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, subject?: string | null, html?: string | null, template_uuid?: string | null, structured_html?: JsonValue | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.automationMails.list",
+      "shortPath": "automationMails.list",
+      "description": "List automation mails with filters, sorting, and pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ filter?: { search?: string, name?: string, uuid?: string }, sort?: name | -name | created_at | -created_at }"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, subject?: string | null, html?: string | null, template_uuid?: string | null, structured_html?: JsonValue | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.automationMails.update",
+      "shortPath": "automationMails.update",
+      "description": "Update an automation mail by UUID.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "automationMailUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, subject?: string, html?: string, template_uuid?: string, fields?: Record<string, JsonValue>, utm_tags?: boolean, add_subscriber_tags?: boolean, add_subscriber_link_tags?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, subject?: string | null, html?: string | null, template_uuid?: string | null, structured_html?: JsonValue | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.campaigns.bounces",
+      "shortPath": "campaigns.bounces",
+      "description": "List paginated bounce statistics for a sent campaign.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.campaigns.clicks",
+      "shortPath": "campaigns.clicks",
+      "description": "List paginated click statistics; this route also has a 5 requests/second burst limit.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.campaigns.create",
+      "shortPath": "campaigns.create",
+      "description": "Create a campaign draft; it is not sent. Use campaigns.schedule or campaigns.send to deliver it.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email_list_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "template_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "segment_uuid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utm_tags",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "add_subscriber_tags",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "add_subscriber_link_tags",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "disable_webview",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, subject?: string | null, html?: string | null, scheduled_at?: string | null, status?: string, email_list_uuid?: string, segment_uuid?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.campaigns.delete",
+      "shortPath": "campaigns.delete",
+      "description": "Delete a campaign.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "mailcoach.api.campaigns.get",
+      "shortPath": "campaigns.get",
+      "description": "Get a campaign draft or sent campaign by UUID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, subject?: string | null, html?: string | null, scheduled_at?: string | null, status?: string, email_list_uuid?: string, segment_uuid?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "List campaigns with documented filters, sorting, and pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ filter?: { search?: string, status?: string, email_list_id?: string | number, emailList.uuid?: string, contentItem.template.uuid?: string }, sort?: name | -name | email_list_id | -email_list_id | unique_open_count | -unique_open_count | unique_click_count | -unique_click_count | unsubscribe_rate | -unsubscribe_rate | sent_to_number_of_subscribers | -sent_to_number_of_subscribers | sent | -sent }"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, subject?: string | null, html?: string | null, scheduled_at?: string | null, status?: string, email_list_uuid?: string, segment_uuid?: string | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.campaigns.opens",
+      "shortPath": "campaigns.opens",
+      "description": "List paginated open statistics for a sent campaign.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.campaigns.schedule",
+      "shortPath": "campaigns.schedule",
+      "description": "Schedule a campaign to send to its audience at schedule_at (UTC). Resend all campaign settings; this is a full update.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, email_list_uuid: string, subject?: string, template_uuid?: string, fields?: Record<string, JsonValue>, segment_uuid?: string, html?: string, utm_tags?: boolean, add_subscriber_tags?: boolean, add_subscriber_link_tags?: boolean, disable_webview?: boolean, schedule_at: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, subject?: string | null, html?: string | null, scheduled_at?: string | null, status?: string, email_list_uuid?: string, segment_uuid?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.campaigns.send",
+      "shortPath": "campaigns.send",
+      "description": "Send a campaign to its eligible audience; never automatically retry after a timeout.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "mailcoach.api.campaigns.sendTest",
+      "shortPath": "campaigns.sendTest",
+      "description": "Send a test campaign email to up to ten comma-separated addresses.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "mailcoach.api.campaigns.unsubscribes",
+      "shortPath": "campaigns.unsubscribes",
+      "description": "List paginated unsubscribe statistics for a sent campaign.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.campaigns.update",
+      "shortPath": "campaigns.update",
+      "description": "Replace campaign settings; include all intended fields because omitted values reset, including an existing schedule (use campaigns.schedule to keep one).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, email_list_uuid: string, subject?: string, template_uuid?: string, fields?: Record<string, JsonValue>, segment_uuid?: string, html?: string, utm_tags?: boolean, add_subscriber_tags?: boolean, add_subscriber_link_tags?: boolean, disable_webview?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, subject?: string | null, html?: string | null, scheduled_at?: string | null, status?: string, email_list_uuid?: string, segment_uuid?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.emailLists.create",
+      "shortPath": "emailLists.create",
+      "description": "Create an email list with its required sender address.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "default_from_email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "default_from_name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, default_from_email?: string, default_from_name?: string | null, active_subscribers_count?: number, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.emailLists.delete",
+      "shortPath": "emailLists.delete",
+      "description": "Delete an email list and schedule its associated-data cleanup.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailListUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "mailcoach.api.emailLists.get",
+      "shortPath": "emailLists.get",
+      "description": "Get an email list by its UUID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailListUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, default_from_email?: string, default_from_name?: string | null, active_subscribers_count?: number, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.emailLists.list",
+      "shortPath": "emailLists.list",
+      "description": "List email lists with documented name filters, sorting, and pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ filter?: { search?: string, name?: string }, sort?: name | -name | created_at | -created_at | active_subscribers_count | -active_subscribers_count }"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, default_from_email?: string, default_from_name?: string | null, active_subscribers_count?: number, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.emailLists.update",
+      "shortPath": "emailLists.update",
+      "description": "Update an email list and its required sender defaults.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailListUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, default_from_email: string, default_from_name?: string }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, default_from_email?: string, default_from_name?: string | null, active_subscribers_count?: number, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.links.get",
+      "shortPath": "links.get",
+      "description": "Get a tracked link and click records; this route has a 5 requests/second burst limit.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "linkUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, url: string, unique_click_count: number, click_count: number, clicks: { uuid: string, send_uuid: string, link_uuid: string, subscriber_uuid: string, created_at: string, updated_at: string }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.segments.create",
+      "shortPath": "segments.create",
+      "description": "Create a segment with positive and negative tag conditions.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailListUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, all_positive_tags_required?: boolean, all_negative_tags_required?: boolean, positive_tags?: string[], negative_tags?: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, email_list_uuid?: string, positive_tags?: string[], negative_tags?: string[], all_positive_tags_required?: boolean, all_negative_tags_required?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.segments.delete",
+      "shortPath": "segments.delete",
+      "description": "Delete a segment from an email list.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailListUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "segmentUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "mailcoach.api.segments.get",
+      "shortPath": "segments.get",
+      "description": "Get a tag-based segment by UUID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailListUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "segmentUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, email_list_uuid?: string, positive_tags?: string[], negative_tags?: string[], all_positive_tags_required?: boolean, all_negative_tags_required?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.segments.list",
+      "shortPath": "segments.list",
+      "description": "List tag-based segments belonging to an email list.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailListUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, email_list_uuid?: string, positive_tags?: string[], negative_tags?: string[], all_positive_tags_required?: boolean, all_negative_tags_required?: boolean }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.segments.update",
+      "shortPath": "segments.update",
+      "description": "Replace a segment name and its complete tag conditions.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailListUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "segmentUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, all_positive_tags_required: boolean, all_negative_tags_required: boolean, positive_tags: string[], negative_tags: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, email_list_uuid?: string, positive_tags?: string[], negative_tags?: string[], all_positive_tags_required?: boolean, all_negative_tags_required?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.sends.delete",
+      "shortPath": "sends.delete",
+      "description": "Delete a send record; this cannot recall a delivered email.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sendUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "mailcoach.api.sends.get",
+      "shortPath": "sends.get",
+      "description": "Get a delivery attempt and its recorded engagement events.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sendUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, campaign_uuid?: string | null, automation_mail_uuid?: string | null, transactional_mail_log_item_uuid?: string | null, subscriber_uuid?: string | null, sent_at?: string | null, failed_at?: string | null, failure_reason?: string | null, open_count?: number, click_count?: number, first_opened_at?: string | null, last_opened_at?: string | null, first_clicked_at?: string | null, last_clicked_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.sends.list",
+      "shortPath": "sends.list",
+      "description": "List delivery attempts with association filters and pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ filter?: { subscriber_uuid?: string, campaign_uuid?: string, automation_mail_uuid?: string, transactional_mail_log_item_uuid?: string }, sort?: sent_at | -sent_at }"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, campaign_uuid?: string | null, automation_mail_uuid?: string | null, transactional_mail_log_item_uuid?: string | null, subscriber_uuid?: string | null, sent_at?: string | null, failed_at?: string | null, failure_reason?: string | null, open_count?: number, click_count?: number, first_opened_at?: string | null, last_opened_at?: string | null, first_clicked_at?: string | null, last_clicked_at?: string | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.subscriberImports.append",
+      "shortPath": "subscriberImports.append",
+      "description": "Append CSV rows without repeating the header to a draft import.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "importUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscribers_csv",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, status?: string, email_list_uuid?: string, imported_subscribers_count?: number | null, error_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.subscriberImports.create",
+      "shortPath": "subscriberImports.create",
+      "description": "Create a draft CSV subscriber import without starting processing.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscribers_csv",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email_list_uuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscribe_unsubscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "unsubscribe_others",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "replace_tags",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, status?: string, email_list_uuid?: string, imported_subscribers_count?: number | null, error_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.subscriberImports.delete",
+      "shortPath": "subscriberImports.delete",
+      "description": "Delete a subscriber import.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "importUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "mailcoach.api.subscriberImports.get",
+      "shortPath": "subscriberImports.get",
+      "description": "Get subscriber-import status and processing counts.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "importUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, status?: string, email_list_uuid?: string, imported_subscribers_count?: number | null, error_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.subscriberImports.list",
+      "shortPath": "subscriberImports.list",
+      "description": "List subscriber imports with pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, status?: string, email_list_uuid?: string, imported_subscribers_count?: number | null, error_count?: number }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.subscriberImports.start",
+      "shortPath": "subscriberImports.start",
+      "description": "Start processing an import that can subscribe or unsubscribe contacts.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "importUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "mailcoach.api.subscriberImports.update",
+      "shortPath": "subscriberImports.update",
+      "description": "Replace the CSV and options of a draft subscriber import.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "importUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ subscribers_csv: string, email_list_uuid: string, subscribe_unsubscribed?: boolean, unsubscribe_others?: boolean, replace_tags?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, status?: string, email_list_uuid?: string, imported_subscribers_count?: number | null, error_count?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.subscribers.addTags",
+      "shortPath": "subscribers.addTags",
+      "description": "Add tags to a subscriber without replacing their existing tags.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriberUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ tags: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, email_list_uuid?: string, email?: string, first_name?: string | null, last_name?: string | null, extra_attributes?: Record<string, JsonValue> | JsonValue[], tags?: string[], status?: string, subscribed_at?: string | null, unsubscribed_at?: string | null, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.subscribers.confirm",
+      "shortPath": "subscribers.confirm",
+      "description": "Confirm a subscriber by UUID, changing their subscription state.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriberUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "mailcoach.api.subscribers.confirmByEmail",
+      "shortPath": "subscribers.confirmByEmail",
+      "description": "Confirm a subscriber using their email address and list UUID.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailListUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "mailcoach.api.subscribers.delete",
+      "shortPath": "subscribers.delete",
+      "description": "Permanently remove a subscriber record and its subscription history.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriberUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "mailcoach.api.subscribers.get",
+      "shortPath": "subscribers.get",
+      "description": "Get a subscriber by UUID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriberUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, email_list_uuid?: string, email?: string, first_name?: string | null, last_name?: string | null, extra_attributes?: Record<string, JsonValue> | JsonValue[], tags?: string[], status?: string, subscribed_at?: string | null, unsubscribed_at?: string | null, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.subscribers.list",
+      "shortPath": "subscribers.list",
+      "description": "List subscribers for an email list with documented filters and sorting.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailListUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ filter?: { email?: string, search?: string, status?: unconfirmed | subscribed | unsubscribed }, sort?: created_at | -created_at | updated_at | -updated_at | subscribed_at | -subscribed_at | unsubscribed_at | -unsubscribed_at | email | -email | first_name | -first_name | last_name | -last_name }"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, email_list_uuid?: string, email?: string, first_name?: string | null, last_name?: string | null, extra_attributes?: Record<string, JsonValue> | JsonValue[], tags?: string[], status?: string, subscribed_at?: string | null, unsubscribed_at?: string | null, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.subscribers.removeTags",
+      "shortPath": "subscribers.removeTags",
+      "description": "Remove the specified tags from a subscriber.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriberUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ tags: string[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, email_list_uuid?: string, email?: string, first_name?: string | null, last_name?: string | null, extra_attributes?: Record<string, JsonValue> | JsonValue[], tags?: string[], status?: string, subscribed_at?: string | null, unsubscribed_at?: string | null, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.subscribers.resendConfirmation",
+      "shortPath": "subscribers.resendConfirmation",
+      "description": "Send a confirmation email to a subscriber.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriberUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "mailcoach.api.subscribers.resendConfirmationByEmail",
+      "shortPath": "subscribers.resendConfirmationByEmail",
+      "description": "Send a list confirmation email to the supplied address.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailListUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "mailcoach.api.subscribers.subscribe",
+      "shortPath": "subscribers.subscribe",
+      "description": "Subscribe or update an address; this can restart an unsubscribed contact.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailListUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ email: string, first_name?: string, last_name?: string, extra_attributes?: Record<string, JsonValue>, tags?: string[], skip_confirmation?: boolean, strict?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, email_list_uuid?: string, email?: string, first_name?: string | null, last_name?: string | null, extra_attributes?: Record<string, JsonValue> | JsonValue[], tags?: string[], status?: string, subscribed_at?: string | null, unsubscribed_at?: string | null, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.subscribers.unsubscribe",
+      "shortPath": "subscribers.unsubscribe",
+      "description": "Unsubscribe a subscriber while retaining subscription history.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriberUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "mailcoach.api.subscribers.unsubscribeByEmail",
+      "shortPath": "subscribers.unsubscribeByEmail",
+      "description": "Unsubscribe an address from a list while retaining subscription history.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailListUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "mailcoach.api.subscribers.update",
+      "shortPath": "subscribers.update",
+      "description": "Update subscriber profile data and replace or append tags.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriberUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ email?: string, first_name?: string, last_name?: string, extra_attributes?: Record<string, JsonValue>, tags?: string[], append_tags?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, email_list_uuid?: string, email?: string, first_name?: string | null, last_name?: string | null, extra_attributes?: Record<string, JsonValue> | JsonValue[], tags?: string[], status?: string, subscribed_at?: string | null, unsubscribed_at?: string | null, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.suppressions.create",
+      "shortPath": "suppressions.create",
+      "description": "Block an address across the team by adding a manual suppression.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, email?: string, reason?: string, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.suppressions.delete",
+      "shortPath": "suppressions.delete",
+      "description": "Remove an allowed suppression; hosted Mailcoach forbids deleting spam complaints.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "mailcoach.api.suppressions.get",
+      "shortPath": "suppressions.get",
+      "description": "Get a suppression by UUID or URL-encoded email address.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": false,
+            "type": "string | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, email?: string, reason?: string, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.suppressions.list",
+      "shortPath": "suppressions.list",
+      "description": "List sending suppressions with documented search and reason filters.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ filter?: { search?: string, reason?: hard_bounce | spam_complaint | manual }, sort?: created_at | -created_at }"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, email?: string, reason?: string, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.tags.create",
+      "shortPath": "tags.create",
+      "description": "Create or retrieve a regular tag by its case-insensitive name.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailListUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, visible_in_preferences?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, email_list_uuid?: string, visible_in_preferences?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.tags.delete",
+      "shortPath": "tags.delete",
+      "description": "Delete a tag from an email list.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailListUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tagUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "mailcoach.api.tags.get",
+      "shortPath": "tags.get",
+      "description": "Get a tag by its UUID within an email list.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailListUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tagUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, email_list_uuid?: string, visible_in_preferences?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List tags belonging to an email list.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailListUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, email_list_uuid?: string, visible_in_preferences?: boolean }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.tags.update",
+      "shortPath": "tags.update",
+      "description": "Update a tag name and preference visibility.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailListUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tagUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, visible_in_preferences: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, email_list_uuid?: string, visible_in_preferences?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create a campaign template using HTML and optional editor data.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "structured_html",
+            "optional": true,
+            "type": "JsonValue"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, html?: string, structured_html?: JsonValue | null, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete a campaign template.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "mailcoach.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Get a campaign template by UUID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, html?: string, structured_html?: JsonValue | null, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List campaign templates with name search, sorting, and pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ filter?: { search: string }, sort?: name | -name | updated_at | -updated_at }"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, html?: string, structured_html?: JsonValue | null, created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.templates.update",
+      "shortPath": "templates.update",
+      "description": "Update a campaign template; include its required name.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateUuid",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ name: string, html?: string, structured_html?: JsonValue }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, html?: string, structured_html?: JsonValue | null, created_at?: string, updated_at?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.transactionalMails.getTemplate",
+      "shortPath": "transactionalMails.getTemplate",
+      "description": "Get a saved transactional email template by UUID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateUuid",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, subject?: string | null, html?: string | null, store_mail?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.transactionalMails.listTemplates",
+      "shortPath": "transactionalMails.listTemplates",
+      "description": "List saved transactional email templates, not sent-mail log items.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ filter?: { name: string }, sort?: created_at | -created_at }"
+          },
+          {
+            "key": "next",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name?: string, subject?: string | null, html?: string | null, store_mail?: boolean }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next: string | null }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.transactionalMails.send",
+      "shortPath": "transactionalMails.send",
+      "description": "Send or fake-send a transactional email using inline content or a saved mail.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bcc",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mail_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replacements",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "store",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "mailer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ name: string, content: string, content_type: string, content_id?: string }[]"
+          },
+          {
+            "key": "fake",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ uuid: string } | undefined"
+      }
+    },
+    {
+      "path": "mailcoach.api.uploads.create",
+      "shortPath": "uploads.create",
+      "description": "Upload up to ten JPEG, PNG, GIF, or WebP images via documented JSON base64 input.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "images",
+            "optional": false,
+            "type": "{ name: string, base64: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string, name: string, url: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mailcoach.api.user.get",
+      "shortPath": "user.get",
+      "description": "Get the user associated with the configured Mailcoach API token.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, email: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

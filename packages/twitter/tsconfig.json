@@ -14,7 +14,7 @@
     "declarationMap": true,
     "skipLibCheck": true
   },
-  "include": ["./**/*"],
+  "include": ["./**/*", "./twitter-manifest.json"],
   "exclude": ["dist", "node_modules"],
   "references": []
 }

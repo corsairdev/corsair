@@ -28,7 +28,7 @@
     {
       "path": "googlecalendar.api.calendar.getAvailability",
       "shortPath": "calendar.getAvailability",
-      "description": "Get free/busy availability for a calendar",
+      "description": "Busy time ranges only, no event details; use events.getMany to see the events",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -36,12 +36,14 @@
           {
             "key": "timeMin",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "RFC 3339 with a time zone offset, e.g. \"2025-06-03T00:00:00-07:00\"."
           },
           {
             "key": "timeMax",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "RFC 3339 with a time zone offset, e.g. \"2025-06-04T00:00:00-07:00\"."
           },
           {
             "key": "timeZone",
@@ -61,7 +63,8 @@
           {
             "key": "items",
             "optional": true,
-            "type": "{ id: string }[]"
+            "type": "{ id: string }[]",
+            "description": "Calendars to check, by calendar id (usually an email address)."
           }
         ]
       },
@@ -367,7 +370,7 @@
     {
       "path": "googlecalendar.api.events.get",
       "shortPath": "events.get",
-      "description": "Get a specific calendar event",
+      "description": "Get one event by its event id, not the iCalUID. For one occurrence of a recurring event, use the instance id from events.getMany with singleEvents true",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -375,12 +378,14 @@
           {
             "key": "calendarId",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Calendar ID. Defaults to \"primary\"."
           },
           {
             "key": "id",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "Event id, not the iCalUID. Occurrences of a recurring event have their own ids."
           },
           {
             "key": "timeZone",
@@ -583,7 +588,7 @@
     {
       "path": "googlecalendar.api.events.getMany",
       "shortPath": "events.getMany",
-      "description": "List calendar events",
+      "description": "List events in a time window. Set singleEvents true or recurring events appear once; page with pageToken until nextPageToken is empty",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -591,17 +596,20 @@
           {
             "key": "calendarId",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Calendar ID. Defaults to \"primary\"."
           },
           {
             "key": "timeMin",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "RFC 3339 with a time zone offset, e.g. \"2025-06-03T00:00:00-07:00\" or \"2025-06-03T00:00:00Z\"; a plain date is rejected. Lower bound on event end time, exclusive."
           },
           {
             "key": "timeMax",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "RFC 3339 with a time zone offset, e.g. \"2025-06-04T00:00:00-07:00\" or \"2025-06-04T00:00:00Z\"; a plain date is rejected. Upper bound on event start time, exclusive."
           },
           {
             "key": "timeZone",
@@ -616,17 +624,20 @@
           {
             "key": "singleEvents",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Defaults to false, which returns a recurring event once instead of its occurrences. Set true to expand occurrences; orderBy \"startTime\" needs it."
           },
           {
             "key": "maxResults",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Page size, default 250. A page can be short or empty while more remain; follow nextPageToken."
           },
           {
             "key": "pageToken",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "nextPageToken from the previous response."
           },
           {
             "key": "q",

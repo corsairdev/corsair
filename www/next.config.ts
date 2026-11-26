@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
 			'../explorer/icons/**/*',
 			'../explorer/data/icon-manifest.json',
 		],
+		// /start's app list when there's no database (previews, local runs).
+		'/start': ['../explorer/data/catalog.json'],
 	},
 	images: {
 		remotePatterns: [
@@ -48,6 +50,19 @@ const nextConfig: NextConfig = {
 				destination: 'https://docs.corsair.dev/:path*',
 				permanent: true,
 			},
+			// Lug, the MCP gateway, is one of Corsair's products (Products menu).
+			// /mcp-gateway stays its page, so search keeps one address for it.
+			{
+				source: '/lug',
+				destination: '/mcp-gateway',
+				permanent: true,
+			},
+			// Agents look for auth.md on the company's domain too; hub serves it.
+			{
+				source: '/auth.md',
+				destination: 'https://hub.corsair.dev/auth.md',
+				permanent: false,
+			},
 			// Old slug of this post, still linked from other pages.
 			{
 				source:
@@ -62,6 +77,22 @@ const nextConfig: NextConfig = {
 	// catch-all — first match wins.
 	async rewrites() {
 		return [
+			// Agents are told to read SKILL.md as often as skill.md.
+			{
+				source: '/SKILL.md',
+				destination: '/skill.md',
+			},
+			// The agent skills index (`npx skills add https://corsair.dev`) is served by
+			// the gateway app on lug.dev, so there is one copy of it. lug.dev keeps
+			// serving /.well-known after its pages move here.
+			{
+				source: '/.well-known/skills/:path*',
+				destination: 'https://lug.dev/.well-known/skills/:path*',
+			},
+			{
+				source: '/.well-known/agent-skills/:path*',
+				destination: 'https://lug.dev/.well-known/agent-skills/:path*',
+			},
 			{
 				source: '/ingest/static/:path*',
 				destination: 'https://us-assets.i.posthog.com/static/:path*',

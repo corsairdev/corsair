@@ -1,0 +1,211 @@
+displayName: Moosend
+description: Email marketing with Moosend - mailing lists, custom fields, subscribers and tags, segments, draft and sent campaigns with their reports, senders, and transactional email.
+domain: moosend.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key in Moosend under More → Settings → API key and store it
+  on the account. Every call sends the key as the `apikey` query parameter;
+  errors never carry it, the request body or the email addresses Moosend
+  quotes back.
+
+  - **Errors arrive as HTTP 200.** Moosend wraps every answer in
+    `{Code, Error, Context}` and signals failure with a nonzero Code. The
+    plugin throws core's `ApiError` with the HTTP status the code means:
+    429 for `RATE_LIMITING` (retried with backoff), 401 for
+    `API_KEY_NOT_VALID`, 404 for any `*_NOT_FOUND`, 400 for validation
+    errors, 500 for an internal error. The original Code and Error are on
+    `error.body`.
+  - **Outputs keep Moosend's field names** (`ID`, `Name`, `MailingLists`,
+    `Paging`, ...). Dates come as ASP.NET strings such as
+    `/Date(1795515243966+0000)/`, and most enums as numbers (a subscriber's
+    `SubscribeType` is 1 subscribed, 2 unsubscribed, 3 bounced, 4 removed).
+  - **subscribe is an upsert.** It updates the existing subscriber with that
+    email, re-subscribes one who unsubscribed, and clears custom fields left
+    out of the call (so does `subscribers.update`). On a double opt-in list
+    it emails a confirmation unless `hasExternalDoubleOptIn` is true. Both
+    subscribe operations are `destructive` for that reason.
+    `subscribers.subscribeMany` skips invalid addresses and reports them in
+    `notice`.
+  - **remove, unsubscribe and delete differ.** `remove` marks the member
+    Removed (it stays visible under that status), `unsubscribe` marks it
+    Unsubscribed, and the `delete` operations erase it. Moosend refuses to
+    remove an address that already unsubscribed.
+  - **Segment criteria are addressed by position.** `segments.addCriteria`
+    returns the new criterion's position (1 = first);
+    `segments.updateCriteria` takes that number, not the criterion's `ID`.
+    `segments.update` with `criteria` replaces all of them. To filter on a
+    custom field, set `field` to that field's ID from `lists.get`
+    (`CustomFieldsDefinition[].ID`); the documented `CustomField` +
+    `CustomFieldName` form is rejected by the API.
+  - **No campaigns yet.** Moosend answers the campaign list routes with
+    `CAMPAIGN_NOT_FOUND` when the account has none; `campaigns.list` returns
+    an empty list for that answer.
+  - **Sending.** `campaigns.send`, `campaigns.sendTest`, `campaigns.schedule`
+    and `transactional.send` email real people and are `destructive`.
+    Creating, updating and cloning campaigns only makes drafts.
+  - **Rate limits.** Moosend limits some routes per API key: campaign
+    activity 2 calls a minute, adding subscribers 10 per 10 s, bulk adds 2 per
+    10 s, tag updates 5 per 10 s.
+  - Moosend's website tracking API (track.moosend.com) is a separate,
+    site-ID based API and is not part of this plugin.
+references:
+  - title: Moosend API reference
+    url: https://docs.moosend.com/api-documentation?lang=en_US
+  - title: Mailing lists
+    url: https://docs.moosend.com/api-documentation?c=Topic:Mailing_lists&lang=en_US&catsubsort=true
+  - title: Subscribers
+    url: https://docs.moosend.com/api-documentation?c=Topic:Subscribers&lang=en_US&catsubsort=true
+  - title: Segments
+    url: https://docs.moosend.com/api-documentation?c=Topic:Segments&lang=en_US&catsubsort=true
+  - title: Campaigns
+    url: https://docs.moosend.com/api-documentation?c=Topic:Campaigns_Moosend&lang=en_US&catsubsort=true
+  - title: Transactional campaigns
+    url: https://docs.moosend.com/api-documentation?c=Topic:Transactional_Campaigns&lang=en_US&catsubsort=true
+  - title: API rate limiting
+    url: https://docs.moosend.com/api-documentation/articles/KnowledgeBase/54558-API-rate-limiting?lang=en_US
+examples:
+  read:
+    path: subscribers.list
+    title: List the subscribed members of a mailing list
+    args:
+      mailingListId: 15c677cb-e8b2-438f-b338-1dc393caf0f3
+      status: Subscribed
+      page: 1
+      pageSize: 50
+  write:
+    path: campaigns.create
+    title: Create a draft campaign for a mailing list
+    args:
+      name: November newsletter
+      subject: What's new in November
+      senderEmail: news@example.com
+      htmlContent: <p>Hello {{recipient:name}}</p>
+      mailingLists:
+        - mailingListId: 15c677cb-e8b2-438f-b338-1dc393caf0f3
+apiExamples:
+  lists.list:
+    call: "{ withStatistics: true, sortBy: 'Name', sortMethod: 'ASC' }"
+  lists.listPaged:
+    call: "{ page: 1, pageSize: 10 }"
+  lists.get:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3' }"
+  lists.create:
+    call: "{ name: 'Newsletter', confirmationPage: 'https://example.com/thanks' }"
+  lists.update:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', name: 'Newsletter 2026' }"
+  lists.delete:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3' }"
+  customFields.create:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', name: 'Town', type: 'SingleSelectDropdown', options: ['Athens', 'London'] }"
+  customFields.update:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', customFieldId: 'd7d6775a-c56a-45bf-a69d-649c905647a2', name: 'Country', isHidden: true }"
+  customFields.delete:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', customFieldId: 'd7d6775a-c56a-45bf-a69d-649c905647a2' }"
+  subscribers.list:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', status: 'Unsubscribed', page: 1, pageSize: 100 }"
+  subscribers.getByEmail:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', email: 'jana@example.com' }"
+  subscribers.getById:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', subscriberId: 'dc3bdb0f-cbdd-a2b5-8c0f-ebcfee204170' }"
+  subscribers.getByIdAnyList:
+    call: "{ subscriberId: 'dc3bdb0f-cbdd-a2b5-8c0f-ebcfee204170' }"
+  subscribers.subscribe:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', email: 'jana@example.com', name: 'Jana', customFields: { Country: 'NL' }, tags: ['newsletter'], hasExternalDoubleOptIn: true }"
+  subscribers.subscribeMany:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', subscribers: [{ email: 'a@example.com' }, { email: 'b@example.com', name: 'B' }] }"
+  subscribers.update:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', subscriberId: 'dc3bdb0f-cbdd-a2b5-8c0f-ebcfee204170', email: 'jana@example.com', name: 'Jana B.', customFields: { Country: 'DE' } }"
+  subscribers.unsubscribe:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', email: 'jana@example.com' }"
+  subscribers.unsubscribeFromCampaign:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65', email: 'jana@example.com' }"
+  subscribers.unsubscribeFromAccount:
+    call: "{ email: 'jana@example.com' }"
+  subscribers.remove:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', email: 'jana@example.com' }"
+  subscribers.removeMany:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', emails: ['a@example.com', 'b@example.com'] }"
+  subscribers.delete:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', email: 'jana@example.com' }"
+  subscribers.deleteMany:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', emails: ['a@example.com', 'b@example.com'] }"
+  subscribers.deleteFromAccount:
+    call: "{ email: 'jana@example.com', includeAllSubAccounts: false }"
+  subscribers.addTags:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', members: [{ subscriberId: 'dc3bdb0f-cbdd-a2b5-8c0f-ebcfee204170', tags: ['vip-customer'] }] }"
+  subscribers.removeTags:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', members: [{ subscriberId: 'dc3bdb0f-cbdd-a2b5-8c0f-ebcfee204170', tags: ['vip-customer'] }] }"
+  segments.list:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3' }"
+  segments.get:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', segmentId: 587912 }"
+  segments.members:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', segmentId: 587912, page: 1, pageSize: 100 }"
+  segments.create:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', name: 'Gmail readers', criteria: [{ field: 'RecipientEmail', comparer: 'EndsWith', value: 'gmail.com' }] }"
+  segments.update:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', segmentId: 587912, name: 'Gmail readers', matchType: 'Any' }"
+  segments.addCriteria:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', segmentId: 587912, field: 'DateAdded', dateFunction: 'Year', comparer: 'Is', value: '2026' }"
+  segments.updateCriteria:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', segmentId: 587912, criterionNumber: 1, field: 'RecipientName', comparer: 'Contains', value: 'Jana' }"
+  segments.delete:
+    call: "{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', segmentId: 587912 }"
+  campaigns.list:
+    call: "{ page: 1, pageSize: 20, sortBy: 'CreatedOn', sortMethod: 'DESC' }"
+  campaigns.get:
+    call: "{ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65' }"
+  campaigns.create:
+    call: "{ name: 'November newsletter', subject: 'News', senderEmail: 'news@example.com', htmlContent: '<p>Hello</p>', mailingLists: [{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3' }] }"
+  campaigns.update:
+    call: "{ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65', name: 'November newsletter', subject: 'News, take 2', senderEmail: 'news@example.com', htmlContent: '<p>Hello again</p>' }"
+  campaigns.clone:
+    call: "{ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65' }"
+  campaigns.delete:
+    call: "{ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65' }"
+  campaigns.send:
+    call: "{ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65' }"
+  campaigns.sendTest:
+    call: "{ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65', testEmails: ['qa@example.com'] }"
+  campaigns.schedule:
+    call: "{ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65', dateTime: '24-12-2026 09:00', timezone: 'GMT Standard Time' }"
+  campaigns.unschedule:
+    call: "{ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65' }"
+  campaigns.summary:
+    call: "{ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65' }"
+  campaigns.abSummary:
+    call: "{ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65' }"
+  campaigns.stats:
+    call: "{ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65', type: 'Opened', page: 1, pageSize: 100 }"
+  campaigns.activityByLocation:
+    call: "{ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65' }"
+  campaigns.linkActivity:
+    call: "{ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65' }"
+  senders.list: {}
+  senders.get:
+    call: "{ email: 'news@example.com' }"
+  transactional.send:
+    call: "{ templateName: 'order-receipt', from: { email: 'shop@example.com', name: 'Shop' }, personalizations: [{ to: [{ email: 'jana@example.com', name: 'Jana' }], substitutions: { order: { id: 1042 } } }] }"
+apiNotes:
+  subscribers.subscribe: |
+    `POST /subscribers/{MailingListID}/subscribe.json`. An upsert: an existing
+    email is updated, an unsubscribed one is re-subscribed, and custom fields
+    left out are cleared. `customFields` is sent as `['Name=Value', ...]`.
+  subscribers.removeMany: |
+    `POST /subscribers/{MailingListID}/remove_many.json` with the addresses as
+    one comma-separated string. The current docs show `remove-many`, which
+    answers 404.
+  segments.updateCriteria: |
+    `POST /lists/{MailingListID}/segments/{SegmentID}/criteria/{n}/update.json`
+    where `n` is the criterion's position in the segment (1 = first), not its
+    `ID`; the ID answers `SEGMENT_CRITERIA_NOT_FOUND`.
+  campaigns.list: |
+    No paging input calls `GET /campaigns.json`; `page` alone calls
+    `/campaigns/{page}.json`; `pageSize` calls `/campaigns/{page}/{pageSize}.json`
+    (page 1 when omitted) with the sort options.
+  campaigns.summary: |
+    `GET /campaigns/{CampaignID}/view_summary.json`. The current docs show
+    `view-summary`, which Moosend routes to the paging route and rejects.
+  campaigns.sendTest: |
+    `POST /campaigns/{CampaignID}/send_test.json`. The current docs show
+    `send-test`, which answers 404.

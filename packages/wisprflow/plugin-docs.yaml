@@ -1,0 +1,19 @@
+displayName: Wispr Flow
+description: Voice dictation API that turns speech into formatted text, with endpoints to transcribe audio and to issue and revoke client tokens.
+domain: wisprflow.ai
+examples:
+  read:
+    path: transcriptions.warmup
+    title: Warm the connection before dictation
+    args: {}
+  write:
+    path: transcriptions.create
+    title: Transcribe a dictation
+    args:
+      audio: <base64 of a 16kHz mono PCM16 WAV recording, up to 25MB or 6 minutes>
+      language:
+        - en
+dbExample:
+  entity: transcription
+  note: Search past transcriptions without calling Wispr Flow again.
+  limit: 50

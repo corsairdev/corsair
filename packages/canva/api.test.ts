@@ -394,8 +394,8 @@ describe('Canva API response schemas', () => {
 				},
 			});
 
-			expect(result.dataset.cute_pet_name?.type).toBe('text');
-			expect(result.dataset.cute_pet_image_of_the_day?.type).toBe('image');
+			expect(result.dataset?.cute_pet_name?.type).toBe('text');
+			expect(result.dataset?.cute_pet_image_of_the_day?.type).toBe('image');
 		});
 	});
 
@@ -603,8 +603,8 @@ describe('Canva API response schemas', () => {
 				},
 			});
 
-			expect(result.thread.id).toBe('KeAbcDefGh');
-			expect(result.thread.author?.display_name).toBe('John Doe');
+			expect(result.thread?.id).toBe('KeAbcDefGh');
+			expect(result.thread?.author?.display_name).toBe('John Doe');
 		});
 
 		it('parses get thread response', () => {
@@ -612,11 +612,20 @@ describe('Canva API response schemas', () => {
 				thread: {
 					id: 'KeAbcDefGh',
 					design_id: 'DAFVztcvd9z',
-					assignee: { id: 'auDAbliZ2rQNNOsUl5OLu' },
+					thread_type: {
+						type: 'comment',
+						content: { plaintext: 'Great work!' },
+						mentions: {},
+						assignee: { id: 'auDAbliZ2rQNNOsUl5OLu' },
+					},
+					created_at: 1692928800,
+					updated_at: 1692928900,
 				},
 			});
 
-			expect(result.thread.assignee?.id).toBe('auDAbliZ2rQNNOsUl5OLu');
+			expect(result.thread?.thread_type?.assignee?.id).toBe(
+				'auDAbliZ2rQNNOsUl5OLu',
+			);
 		});
 
 		it('parses create reply response', () => {
@@ -669,6 +678,8 @@ describe('canva plugin', () => {
 
 		expect(Object.keys(endpoints).sort()).toEqual(
 			[
+				'analytics',
+				'apps',
 				'assetUploads',
 				'assets',
 				'autofills',
@@ -677,7 +688,13 @@ describe('canva plugin', () => {
 				'designs',
 				'exports',
 				'folders',
+				'generations',
+				'imageGenerations',
+				'imageTransformations',
 				'imports',
+				'keys',
+				'merges',
+				'printPartner',
 				'resizes',
 				'users',
 			].sort(),

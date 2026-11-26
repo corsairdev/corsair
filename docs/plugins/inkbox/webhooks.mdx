@@ -1,0 +1,2474 @@
+---
+title: "Inkbox webhooks"
+sidebarTitle: "Webhooks"
+description: "Inkbox incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Inkbox plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/inkbox/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `a2a`
+  - `taskEvent` (`a2a.taskEvent`)
+- `imessage`
+  - `messageEvent` (`imessage.messageEvent`)
+- `mail`
+  - `messageEvent` (`mail.messageEvent`)
+- `phone`
+  - `callEnded` (`phone.callEnded`)
+  - `textEvent` (`phone.textEvent`)
+- `slack`
+  - `event` (`slack.event`)
+- `transcriptions`
+  - `finished` (`transcriptions.finished`)
+- `whatsapp`
+  - `messageEvent` (`whatsapp.messageEvent`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## A2a
+
+### Task Event
+
+`a2a.taskEvent`
+
+A2A Task Event: a2a.sent_task.updated, a2a.task.canceled, a2a.task.created, a2a.task.message
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Stable per-event id (evt_...); idempotency key across retries. |
+| `event_type` | `string \| null` | No | — |
+| `timestamp` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  task_id?: string | null,
+  context_id?: string | null,
+  state?: string | null,
+  caller?: {
+    identity_id?: string | null,
+    organization_id?: string | null,
+    handle?: string | null | null,
+    affiliation?: {
+      domain?: string | null,
+      verifier?: string | null,
+      last_success_at?: string | null,
+      valid_until?: string | null
+    } | null | null
+  } | null,
+  sender?: {
+    identity_id?: string | null,
+    organization_id?: string | null,
+    handle?: string | null | null,
+    affiliation?: {
+      domain?: string | null,
+      verifier?: string | null,
+      last_success_at?: string | null,
+      valid_until?: string | null
+    } | null | null
+  } | null | null,
+  message_id?: string | null | null,
+  parts?: {
+  }[] | null | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  event_type?: string | null,
+  timestamp?: string | null,
+  data?: {
+    task_id?: string | null,
+    context_id?: string | null,
+    state?: string | null,
+    caller?: {
+      identity_id?: string | null,
+      organization_id?: string | null,
+      handle?: string | null | null,
+      affiliation?: {
+        domain?: string | null,
+        verifier?: string | null,
+        last_success_at?: string | null,
+        valid_until?: string | null
+      } | null | null
+    } | null,
+    sender?: {
+      identity_id?: string | null,
+      organization_id?: string | null,
+      handle?: string | null | null,
+      affiliation?: {
+        domain?: string | null,
+        verifier?: string | null,
+        last_success_at?: string | null,
+        valid_until?: string | null
+      } | null | null
+    } | null | null,
+    message_id?: string | null | null,
+    parts?: {
+    }[] | null | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+inkbox({
+    webhookHooks: {
+        a2a: {
+            taskEvent: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Imessage
+
+### Message Event
+
+`imessage.messageEvent`
+
+iMessage Event: imessage.delivered, imessage.delivery_failed, imessage.reaction_received, imessage.received, imessage.sent
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Stable per-event id (evt_...); idempotency key, stable across replays. |
+| `event_type` | `string \| null` | No | — |
+| `timestamp` | `string \| null` | No | ISO 8601 timestamp of when the event occurred. |
+| `data` | `object \| null` | No | — |
+| `companion` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  message?: {
+    provider_message_handle?: string | null | null,
+    id?: string | null,
+    conversation_id?: string | null,
+    assignment_id?: string | null | null,
+    reply_to_message_id?: string | null | null,
+    thread_id?: string | null | null,
+    thread_root_message_id?: string | null | null,
+    direction?: string | null,
+    remote_number?: string | null | null,
+    sender_number?: string | null | null,
+    participants?: string[] | null | null,
+    is_group?: boolean | null,
+    content?: string | null | null,
+    message_type?: string | null,
+    service?: string | null,
+    send_style?: string | null | null,
+    media?: {
+      transcription?: {
+        status?: string | null,
+        text?: string | null | null,
+        error_code?: string | null | null
+      } | null | null,
+      id?: string | null | null,
+      content_type?: string | null | null,
+      size?: number | null | null,
+      url?: string | null
+    }[] | null | null,
+    was_downgraded?: boolean | null | null,
+    status?: string | null | null,
+    error_code?: string | null | null,
+    error_message?: string | null | null,
+    error_reason?: string | null | null,
+    error_detail?: string | null | null,
+    is_read?: boolean | null,
+    is_blocked?: boolean | null,
+    recipients?: {
+      remote_number?: string | null,
+      delivery_status?: string | null | null,
+      service?: string | null | null,
+      error_code?: string | null | null,
+      error_message?: string | null | null,
+      error_reason?: string | null | null,
+      error_detail?: string | null | null,
+      sent_at?: string | null | null,
+      delivered_at?: string | null | null,
+      failed_at?: string | null | null
+    }[] | null | null,
+    reactions?: {
+      id?: string | null,
+      direction?: string | null,
+      reaction?: string | null,
+      custom_emoji?: string | null | null,
+      remote_number?: string | null,
+      part_index?: number | null,
+      created_at?: string | null
+    }[] | null | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    sender_access?: string | null
+  } | null | null,
+  reaction?: {
+    provider_message_handle?: string | null | null,
+    id?: string | null,
+    conversation_id?: string | null,
+    assignment_id?: string | null | null,
+    target_message_id?: string | null,
+    direction?: string | null,
+    reaction?: string | null,
+    custom_emoji?: string | null | null,
+    remote_number?: string | null,
+    part_index?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null | null,
+  contacts?: {
+    id?: string | null,
+    name?: string | null | null,
+    memories?: string[] | null
+  }[] | null,
+  agent_identities?: {
+    id?: string | null,
+    agent_handle?: string | null,
+    display_name?: string | null | null
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="companion full type">
+
+```ts
+{
+  scope_id?: string | null,
+  conversation_id?: string | null,
+  channel?: string | null,
+  phase?: string | null,
+  sequence?: number | null,
+  activation_id?: string | null | null,
+  history?: {
+    id?: string | null,
+    author?: string | null,
+    occurred_at?: string | null,
+    text?: string | null,
+    historical?: boolean | null,
+    is_trigger?: boolean | null,
+    attachments?: {
+    }[] | null,
+    sender_access?: string | null
+  }[] | null | null,
+  history_complete?: boolean | null | null,
+  history_next_cursor?: string | null | null,
+  reply_context?: {
+    channel?: string | null,
+    conversation_id?: string | null,
+    connection_id?: string | null | null,
+    slack_conversation_id?: string | null | null,
+    thread_ts?: string | null | null,
+    reply_to_message_id?: string | null | null,
+    to?: string[] | null | null,
+    cc?: string[] | null | null
+  } | null | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  event_type?: string | null,
+  timestamp?: string | null,
+  data?: {
+    message?: {
+      provider_message_handle?: string | null | null,
+      id?: string | null,
+      conversation_id?: string | null,
+      assignment_id?: string | null | null,
+      reply_to_message_id?: string | null | null,
+      thread_id?: string | null | null,
+      thread_root_message_id?: string | null | null,
+      direction?: string | null,
+      remote_number?: string | null | null,
+      sender_number?: string | null | null,
+      participants?: string[] | null | null,
+      is_group?: boolean | null,
+      content?: string | null | null,
+      message_type?: string | null,
+      service?: string | null,
+      send_style?: string | null | null,
+      media?: {
+        transcription?: {
+          status?: string | null,
+          text?: string | null | null,
+          error_code?: string | null | null
+        } | null | null,
+        id?: string | null | null,
+        content_type?: string | null | null,
+        size?: number | null | null,
+        url?: string | null
+      }[] | null | null,
+      was_downgraded?: boolean | null | null,
+      status?: string | null | null,
+      error_code?: string | null | null,
+      error_message?: string | null | null,
+      error_reason?: string | null | null,
+      error_detail?: string | null | null,
+      is_read?: boolean | null,
+      is_blocked?: boolean | null,
+      recipients?: {
+        remote_number?: string | null,
+        delivery_status?: string | null | null,
+        service?: string | null | null,
+        error_code?: string | null | null,
+        error_message?: string | null | null,
+        error_reason?: string | null | null,
+        error_detail?: string | null | null,
+        sent_at?: string | null | null,
+        delivered_at?: string | null | null,
+        failed_at?: string | null | null
+      }[] | null | null,
+      reactions?: {
+        id?: string | null,
+        direction?: string | null,
+        reaction?: string | null,
+        custom_emoji?: string | null | null,
+        remote_number?: string | null,
+        part_index?: number | null,
+        created_at?: string | null
+      }[] | null | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      sender_access?: string | null
+    } | null | null,
+    reaction?: {
+      provider_message_handle?: string | null | null,
+      id?: string | null,
+      conversation_id?: string | null,
+      assignment_id?: string | null | null,
+      target_message_id?: string | null,
+      direction?: string | null,
+      reaction?: string | null,
+      custom_emoji?: string | null | null,
+      remote_number?: string | null,
+      part_index?: number | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null | null,
+    contacts?: {
+      id?: string | null,
+      name?: string | null | null,
+      memories?: string[] | null
+    }[] | null,
+    agent_identities?: {
+      id?: string | null,
+      agent_handle?: string | null,
+      display_name?: string | null | null
+    }[] | null
+  } | null,
+  companion?: {
+    scope_id?: string | null,
+    conversation_id?: string | null,
+    channel?: string | null,
+    phase?: string | null,
+    sequence?: number | null,
+    activation_id?: string | null | null,
+    history?: {
+      id?: string | null,
+      author?: string | null,
+      occurred_at?: string | null,
+      text?: string | null,
+      historical?: boolean | null,
+      is_trigger?: boolean | null,
+      attachments?: {
+      }[] | null,
+      sender_access?: string | null
+    }[] | null | null,
+    history_complete?: boolean | null | null,
+    history_next_cursor?: string | null | null,
+    reply_context?: {
+      channel?: string | null,
+      conversation_id?: string | null,
+      connection_id?: string | null | null,
+      slack_conversation_id?: string | null | null,
+      thread_ts?: string | null | null,
+      reply_to_message_id?: string | null | null,
+      to?: string[] | null | null,
+      cc?: string[] | null | null
+    } | null | null
+  } | null | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+inkbox({
+    webhookHooks: {
+        imessage: {
+            messageEvent: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Mail
+
+### Message Event
+
+`mail.messageEvent`
+
+Mail Event: message.bounced, message.delivered, message.failed, message.forwarded, message.received, message.sent
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Stable per-event id (evt_...); idempotency key, stable across replays. |
+| `event_type` | `string \| null` | No | — |
+| `timestamp` | `string \| null` | No | ISO 8601 timestamp of when the event occurred. |
+| `data` | `object \| null` | No | — |
+| `companion` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  message?: {
+    id?: string | null,
+    mailbox_id?: string | null,
+    thread_id?: string | null | null,
+    message_id?: string | null | null,
+    from_address?: string | null,
+    to_addresses?: string[] | null,
+    cc_addresses?: string[] | null | null,
+    bcc_addresses?: string[] | null | null,
+    subject?: string | null | null,
+    snippet?: string | null | null,
+    email_address?: string | null | null,
+    body?: string | null | null,
+    body_state?: string | null | null,
+    body_truncated?: boolean | null | null,
+    body_total_chars?: number | null | null,
+    body_included_chars?: number | null | null,
+    direction?: string | null,
+    status?: string | null,
+    has_attachments?: boolean | null,
+    created_at?: string | null | null,
+    sender_access?: string | null
+  } | null,
+  contacts?: {
+    bucket?: string | null,
+    address?: string | null,
+    id?: string | null,
+    name?: string | null | null,
+    memories?: string[] | null
+  }[] | null,
+  agent_identities?: {
+    bucket?: string | null,
+    address?: string | null,
+    id?: string | null,
+    agent_handle?: string | null,
+    display_name?: string | null | null
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="companion full type">
+
+```ts
+{
+  scope_id?: string | null,
+  conversation_id?: string | null,
+  channel?: string | null,
+  phase?: string | null,
+  sequence?: number | null,
+  activation_id?: string | null | null,
+  history?: {
+    id?: string | null,
+    author?: string | null,
+    occurred_at?: string | null,
+    text?: string | null,
+    historical?: boolean | null,
+    is_trigger?: boolean | null,
+    attachments?: {
+    }[] | null,
+    sender_access?: string | null
+  }[] | null | null,
+  history_complete?: boolean | null | null,
+  history_next_cursor?: string | null | null,
+  reply_context?: {
+    channel?: string | null,
+    conversation_id?: string | null,
+    connection_id?: string | null | null,
+    slack_conversation_id?: string | null | null,
+    thread_ts?: string | null | null,
+    reply_to_message_id?: string | null | null,
+    to?: string[] | null | null,
+    cc?: string[] | null | null
+  } | null | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  event_type?: string | null,
+  timestamp?: string | null,
+  data?: {
+    message?: {
+      id?: string | null,
+      mailbox_id?: string | null,
+      thread_id?: string | null | null,
+      message_id?: string | null | null,
+      from_address?: string | null,
+      to_addresses?: string[] | null,
+      cc_addresses?: string[] | null | null,
+      bcc_addresses?: string[] | null | null,
+      subject?: string | null | null,
+      snippet?: string | null | null,
+      email_address?: string | null | null,
+      body?: string | null | null,
+      body_state?: string | null | null,
+      body_truncated?: boolean | null | null,
+      body_total_chars?: number | null | null,
+      body_included_chars?: number | null | null,
+      direction?: string | null,
+      status?: string | null,
+      has_attachments?: boolean | null,
+      created_at?: string | null | null,
+      sender_access?: string | null
+    } | null,
+    contacts?: {
+      bucket?: string | null,
+      address?: string | null,
+      id?: string | null,
+      name?: string | null | null,
+      memories?: string[] | null
+    }[] | null,
+    agent_identities?: {
+      bucket?: string | null,
+      address?: string | null,
+      id?: string | null,
+      agent_handle?: string | null,
+      display_name?: string | null | null
+    }[] | null
+  } | null,
+  companion?: {
+    scope_id?: string | null,
+    conversation_id?: string | null,
+    channel?: string | null,
+    phase?: string | null,
+    sequence?: number | null,
+    activation_id?: string | null | null,
+    history?: {
+      id?: string | null,
+      author?: string | null,
+      occurred_at?: string | null,
+      text?: string | null,
+      historical?: boolean | null,
+      is_trigger?: boolean | null,
+      attachments?: {
+      }[] | null,
+      sender_access?: string | null
+    }[] | null | null,
+    history_complete?: boolean | null | null,
+    history_next_cursor?: string | null | null,
+    reply_context?: {
+      channel?: string | null,
+      conversation_id?: string | null,
+      connection_id?: string | null | null,
+      slack_conversation_id?: string | null | null,
+      thread_ts?: string | null | null,
+      reply_to_message_id?: string | null | null,
+      to?: string[] | null | null,
+      cc?: string[] | null | null
+    } | null | null
+  } | null | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+inkbox({
+    webhookHooks: {
+        mail: {
+            messageEvent: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Phone
+
+### Call Ended
+
+`phone.callEnded`
+
+Call Lifecycle Event: call.ended
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Stable per-event id (evt_...); idempotency key, stable across replays. |
+| `event_type` | `string \| null` | No | — |
+| `timestamp` | `string \| null` | No | ISO 8601 timestamp of when the event occurred. |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  call?: {
+    id?: string | null,
+    origin?: string | null,
+    local_phone_number?: string | null | null,
+    remote_phone_number?: string | null,
+    direction?: string | null,
+    status?: string | null,
+    mode?: string | null,
+    hosted_agent_authority_mode?: string | null,
+    voicemail_detection?: string | null,
+    on_voicemail?: string | null | null,
+    reason?: string | null | null,
+    connections?: {
+      id?: string | null,
+      kind?: string | null,
+      trigger?: string | null,
+      status?: string | null,
+      target_type?: string | null,
+      target?: string | null,
+      requested_at?: string | null,
+      dialing_at?: string | null | null,
+      connected_at?: string | null | null,
+      ended_at?: string | null | null,
+      failure_code?: string | null | null
+    }[] | null,
+    forwardings?: {
+      id?: string | null,
+      trigger?: string | null,
+      status?: string | null,
+      target_type?: string | null,
+      target?: string | null,
+      requested_at?: string | null,
+      dialing_at?: string | null | null,
+      forwarded_at?: string | null | null,
+      ended_at?: string | null | null,
+      failure_code?: string | null | null
+    }[] | null,
+    hangup_reason?: string | null | null,
+    ended_by?: string | null | null,
+    provider_hangup_cause?: string | null | null,
+    started_at?: string | null | null,
+    ended_at?: string | null | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    duration_seconds?: number | null | null
+  } | null,
+  contacts?: {
+    id?: string | null,
+    name?: string | null | null,
+    memories?: string[] | null
+  }[] | null,
+  agent_identities?: {
+    id?: string | null,
+    agent_handle?: string | null,
+    display_name?: string | null | null
+  }[] | null,
+  transcript?: {
+    entries?: {
+      party?: string | null | null,
+      phone_number?: string | null | null,
+      text?: string | null | null,
+      ts_ms?: number | null | null,
+      truncated?: boolean | null | null,
+      marker?: string | null | null,
+      omitted_turns?: number | null | null,
+      omitted_ms?: number | null | null
+    }[] | null,
+    abridged?: boolean | null,
+    url?: string | null
+  } | null | null,
+  transcript_url?: string | null,
+  outcome?: string | null | null,
+  post_call_action_items?: {
+    id?: string | null,
+    seq?: number | null,
+    action?: string | null,
+    details?: string | null | null,
+    status?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  event_type?: string | null,
+  timestamp?: string | null,
+  data?: {
+    call?: {
+      id?: string | null,
+      origin?: string | null,
+      local_phone_number?: string | null | null,
+      remote_phone_number?: string | null,
+      direction?: string | null,
+      status?: string | null,
+      mode?: string | null,
+      hosted_agent_authority_mode?: string | null,
+      voicemail_detection?: string | null,
+      on_voicemail?: string | null | null,
+      reason?: string | null | null,
+      connections?: {
+        id?: string | null,
+        kind?: string | null,
+        trigger?: string | null,
+        status?: string | null,
+        target_type?: string | null,
+        target?: string | null,
+        requested_at?: string | null,
+        dialing_at?: string | null | null,
+        connected_at?: string | null | null,
+        ended_at?: string | null | null,
+        failure_code?: string | null | null
+      }[] | null,
+      forwardings?: {
+        id?: string | null,
+        trigger?: string | null,
+        status?: string | null,
+        target_type?: string | null,
+        target?: string | null,
+        requested_at?: string | null,
+        dialing_at?: string | null | null,
+        forwarded_at?: string | null | null,
+        ended_at?: string | null | null,
+        failure_code?: string | null | null
+      }[] | null,
+      hangup_reason?: string | null | null,
+      ended_by?: string | null | null,
+      provider_hangup_cause?: string | null | null,
+      started_at?: string | null | null,
+      ended_at?: string | null | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      duration_seconds?: number | null | null
+    } | null,
+    contacts?: {
+      id?: string | null,
+      name?: string | null | null,
+      memories?: string[] | null
+    }[] | null,
+    agent_identities?: {
+      id?: string | null,
+      agent_handle?: string | null,
+      display_name?: string | null | null
+    }[] | null,
+    transcript?: {
+      entries?: {
+        party?: string | null | null,
+        phone_number?: string | null | null,
+        text?: string | null | null,
+        ts_ms?: number | null | null,
+        truncated?: boolean | null | null,
+        marker?: string | null | null,
+        omitted_turns?: number | null | null,
+        omitted_ms?: number | null | null
+      }[] | null,
+      abridged?: boolean | null,
+      url?: string | null
+    } | null | null,
+    transcript_url?: string | null,
+    outcome?: string | null | null,
+    post_call_action_items?: {
+      id?: string | null,
+      seq?: number | null,
+      action?: string | null,
+      details?: string | null | null,
+      status?: string | null
+    }[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+inkbox({
+    webhookHooks: {
+        phone: {
+            callEnded: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Text Event
+
+`phone.textEvent`
+
+Phone Text Event: text.delivered, text.delivery_failed, text.delivery_unconfirmed, text.received, text.sent
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Stable per-event id (evt_...); idempotency key, stable across replays. |
+| `event_type` | `string \| null` | No | — |
+| `timestamp` | `string \| null` | No | ISO 8601 timestamp of when the event occurred. |
+| `data` | `object \| null` | No | — |
+| `companion` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  text_message?: {
+    id?: string | null,
+    direction?: string | null,
+    sender_access?: string | null,
+    local_phone_number?: string | null,
+    remote_phone_number?: string | null | null,
+    text?: string | null | null,
+    type?: string | null,
+    media?: {
+      transcription?: {
+        status?: string | null,
+        text?: string | null | null,
+        error_code?: string | null | null
+      } | null | null,
+      id?: string | null | null,
+      content_type?: string | null,
+      size?: number | null,
+      url?: string | null
+    }[] | null | null,
+    is_read?: boolean | null,
+    delivery_status?: string | null | null,
+    origin?: string | null,
+    error_code?: string | null | null,
+    error_detail?: string | null | null,
+    sent_at?: string | null | null,
+    delivered_at?: string | null | null,
+    failed_at?: string | null | null,
+    conversation_id?: string | null | null,
+    sender_phone_number?: string | null | null,
+    recipients?: {
+      recipient_phone_number?: string | null,
+      delivery_status?: string | null | null,
+      carrier?: string | null | null,
+      line_type?: string | null | null,
+      error_code?: string | null | null,
+      error_detail?: string | null | null,
+      sent_at?: string | null | null,
+      delivered_at?: string | null | null,
+      failed_at?: string | null | null
+    }[] | null | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  contacts?: {
+    id?: string | null,
+    name?: string | null | null,
+    memories?: string[] | null
+  }[] | null,
+  agent_identities?: {
+    id?: string | null,
+    agent_handle?: string | null,
+    display_name?: string | null | null
+  }[] | null,
+  recipient_phone_number?: string | null | null
+} | null
+```
+</Accordion>
+
+<Accordion title="companion full type">
+
+```ts
+{
+  scope_id?: string | null,
+  conversation_id?: string | null,
+  channel?: string | null,
+  phase?: string | null,
+  sequence?: number | null,
+  activation_id?: string | null | null,
+  history?: {
+    id?: string | null,
+    author?: string | null,
+    occurred_at?: string | null,
+    text?: string | null,
+    historical?: boolean | null,
+    is_trigger?: boolean | null,
+    attachments?: {
+    }[] | null,
+    sender_access?: string | null
+  }[] | null | null,
+  history_complete?: boolean | null | null,
+  history_next_cursor?: string | null | null,
+  reply_context?: {
+    channel?: string | null,
+    conversation_id?: string | null,
+    connection_id?: string | null | null,
+    slack_conversation_id?: string | null | null,
+    thread_ts?: string | null | null,
+    reply_to_message_id?: string | null | null,
+    to?: string[] | null | null,
+    cc?: string[] | null | null
+  } | null | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  event_type?: string | null,
+  timestamp?: string | null,
+  data?: {
+    text_message?: {
+      id?: string | null,
+      direction?: string | null,
+      sender_access?: string | null,
+      local_phone_number?: string | null,
+      remote_phone_number?: string | null | null,
+      text?: string | null | null,
+      type?: string | null,
+      media?: {
+        transcription?: {
+          status?: string | null,
+          text?: string | null | null,
+          error_code?: string | null | null
+        } | null | null,
+        id?: string | null | null,
+        content_type?: string | null,
+        size?: number | null,
+        url?: string | null
+      }[] | null | null,
+      is_read?: boolean | null,
+      delivery_status?: string | null | null,
+      origin?: string | null,
+      error_code?: string | null | null,
+      error_detail?: string | null | null,
+      sent_at?: string | null | null,
+      delivered_at?: string | null | null,
+      failed_at?: string | null | null,
+      conversation_id?: string | null | null,
+      sender_phone_number?: string | null | null,
+      recipients?: {
+        recipient_phone_number?: string | null,
+        delivery_status?: string | null | null,
+        carrier?: string | null | null,
+        line_type?: string | null | null,
+        error_code?: string | null | null,
+        error_detail?: string | null | null,
+        sent_at?: string | null | null,
+        delivered_at?: string | null | null,
+        failed_at?: string | null | null
+      }[] | null | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    contacts?: {
+      id?: string | null,
+      name?: string | null | null,
+      memories?: string[] | null
+    }[] | null,
+    agent_identities?: {
+      id?: string | null,
+      agent_handle?: string | null,
+      display_name?: string | null | null
+    }[] | null,
+    recipient_phone_number?: string | null | null
+  } | null,
+  companion?: {
+    scope_id?: string | null,
+    conversation_id?: string | null,
+    channel?: string | null,
+    phase?: string | null,
+    sequence?: number | null,
+    activation_id?: string | null | null,
+    history?: {
+      id?: string | null,
+      author?: string | null,
+      occurred_at?: string | null,
+      text?: string | null,
+      historical?: boolean | null,
+      is_trigger?: boolean | null,
+      attachments?: {
+      }[] | null,
+      sender_access?: string | null
+    }[] | null | null,
+    history_complete?: boolean | null | null,
+    history_next_cursor?: string | null | null,
+    reply_context?: {
+      channel?: string | null,
+      conversation_id?: string | null,
+      connection_id?: string | null | null,
+      slack_conversation_id?: string | null | null,
+      thread_ts?: string | null | null,
+      reply_to_message_id?: string | null | null,
+      to?: string[] | null | null,
+      cc?: string[] | null | null
+    } | null | null
+  } | null | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+inkbox({
+    webhookHooks: {
+        phone: {
+            textEvent: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Slack
+
+### Event
+
+`slack.event`
+
+Slack Event: slack.channel_message_received, slack.channel_updated, slack.connection_changed, slack.dm_received, slack.file_changed, slack.file_deleted, slack.file_shared, slack.group_dm_received, slack.interaction, slack.member_joined, slack.member_left, slack.mention_received, slack.message_deleted, slack.message_send_failed, slack.message_send_unknown, slack.message_sent, slack.message_updated, slack.pin_added, slack.pin_removed, slack.reaction_added, slack.reaction_removed, slack.session_stopped, slack.thread_reply_received
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `event_type` | `string \| null` | No | — |
+| `timestamp` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+| `companion` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  identity_id?: string | null,
+  connection_id?: string | null,
+  workspace_id?: string | null,
+  conversation_id?: string | null | null,
+  message_ts?: string | null | null,
+  thread_ts?: string | null | null,
+  message_id?: string | null | null,
+  sender_access?: string | null | null,
+  actor_id?: string | null | null,
+  actor_profile?: {
+    id?: string | null,
+    name?: string | null | null,
+    real_name?: string | null | null,
+    is_bot?: boolean | null | null,
+    is_app_user?: boolean | null | null,
+    deleted?: boolean | null | null,
+    team_id?: string | null | null,
+    tz?: string | null | null,
+    tz_label?: string | null | null,
+    tz_offset?: number | null | null,
+    profile?: {
+      display_name?: string | null | null,
+      real_name?: string | null | null,
+      first_name?: string | null | null,
+      last_name?: string | null | null,
+      email?: string | null | null,
+      phone?: string | null | null,
+      title?: string | null | null,
+      status_text?: string | null | null,
+      status_emoji?: string | null | null,
+      image_48?: string | null | null,
+      image_72?: string | null | null,
+      image_192?: string | null | null
+    } | null | null
+  } | null | null,
+  contact_id?: string | null | null,
+  message_kinds?: string[] | null,
+  event?: {
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="companion full type">
+
+```ts
+{
+  scope_id?: string | null,
+  conversation_id?: string | null,
+  channel?: string | null,
+  phase?: string | null,
+  sequence?: number | null,
+  activation_id?: string | null | null,
+  history?: {
+    id?: string | null,
+    author?: string | null,
+    occurred_at?: string | null,
+    text?: string | null,
+    historical?: boolean | null,
+    is_trigger?: boolean | null,
+    attachments?: {
+    }[] | null,
+    sender_access?: string | null
+  }[] | null | null,
+  history_complete?: boolean | null | null,
+  history_next_cursor?: string | null | null,
+  reply_context?: {
+    channel?: string | null,
+    conversation_id?: string | null,
+    connection_id?: string | null | null,
+    slack_conversation_id?: string | null | null,
+    thread_ts?: string | null | null,
+    reply_to_message_id?: string | null | null,
+    to?: string[] | null | null,
+    cc?: string[] | null | null
+  } | null | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  event_type?: string | null,
+  timestamp?: string | null,
+  data?: {
+    identity_id?: string | null,
+    connection_id?: string | null,
+    workspace_id?: string | null,
+    conversation_id?: string | null | null,
+    message_ts?: string | null | null,
+    thread_ts?: string | null | null,
+    message_id?: string | null | null,
+    sender_access?: string | null | null,
+    actor_id?: string | null | null,
+    actor_profile?: {
+      id?: string | null,
+      name?: string | null | null,
+      real_name?: string | null | null,
+      is_bot?: boolean | null | null,
+      is_app_user?: boolean | null | null,
+      deleted?: boolean | null | null,
+      team_id?: string | null | null,
+      tz?: string | null | null,
+      tz_label?: string | null | null,
+      tz_offset?: number | null | null,
+      profile?: {
+        display_name?: string | null | null,
+        real_name?: string | null | null,
+        first_name?: string | null | null,
+        last_name?: string | null | null,
+        email?: string | null | null,
+        phone?: string | null | null,
+        title?: string | null | null,
+        status_text?: string | null | null,
+        status_emoji?: string | null | null,
+        image_48?: string | null | null,
+        image_72?: string | null | null,
+        image_192?: string | null | null
+      } | null | null
+    } | null | null,
+    contact_id?: string | null | null,
+    message_kinds?: string[] | null,
+    event?: {
+    } | null
+  } | null,
+  companion?: {
+    scope_id?: string | null,
+    conversation_id?: string | null,
+    channel?: string | null,
+    phase?: string | null,
+    sequence?: number | null,
+    activation_id?: string | null | null,
+    history?: {
+      id?: string | null,
+      author?: string | null,
+      occurred_at?: string | null,
+      text?: string | null,
+      historical?: boolean | null,
+      is_trigger?: boolean | null,
+      attachments?: {
+      }[] | null,
+      sender_access?: string | null
+    }[] | null | null,
+    history_complete?: boolean | null | null,
+    history_next_cursor?: string | null | null,
+    reply_context?: {
+      channel?: string | null,
+      conversation_id?: string | null,
+      connection_id?: string | null | null,
+      slack_conversation_id?: string | null | null,
+      thread_ts?: string | null | null,
+      reply_to_message_id?: string | null | null,
+      to?: string[] | null | null,
+      cc?: string[] | null | null
+    } | null | null
+  } | null | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+inkbox({
+    webhookHooks: {
+        slack: {
+            event: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Transcriptions
+
+### Finished
+
+`transcriptions.finished`
+
+Message Transcription Finished: message.transcription_finished
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `event_type` | `string \| null` | No | — |
+| `timestamp` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  text_message?: {
+    id?: string | null,
+    direction?: string | null,
+    sender_access?: string | null,
+    local_phone_number?: string | null,
+    remote_phone_number?: string | null | null,
+    text?: string | null | null,
+    type?: string | null,
+    media?: {
+      transcription?: {
+        status?: string | null,
+        text?: string | null | null,
+        error_code?: string | null | null
+      } | null | null,
+      id?: string | null | null,
+      content_type?: string | null,
+      size?: number | null,
+      url?: string | null
+    }[] | null | null,
+    is_read?: boolean | null,
+    delivery_status?: string | null | null,
+    origin?: string | null,
+    error_code?: string | null | null,
+    error_detail?: string | null | null,
+    sent_at?: string | null | null,
+    delivered_at?: string | null | null,
+    failed_at?: string | null | null,
+    conversation_id?: string | null | null,
+    sender_phone_number?: string | null | null,
+    recipients?: {
+      recipient_phone_number?: string | null,
+      delivery_status?: string | null | null,
+      carrier?: string | null | null,
+      line_type?: string | null | null,
+      error_code?: string | null | null,
+      error_detail?: string | null | null,
+      sent_at?: string | null | null,
+      delivered_at?: string | null | null,
+      failed_at?: string | null | null
+    }[] | null | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  contacts?: {
+    id?: string | null,
+    name?: string | null | null,
+    memories?: string[] | null
+  }[] | null,
+  agent_identities?: {
+    id?: string | null,
+    agent_handle?: string | null,
+    display_name?: string | null | null
+  }[] | null,
+  recipient_phone_number?: string | null | null,
+  channel?: string | null,
+  message_id?: string | null
+} | {
+  message?: {
+    provider_message_handle?: string | null | null,
+    id?: string | null,
+    conversation_id?: string | null,
+    assignment_id?: string | null | null,
+    reply_to_message_id?: string | null | null,
+    thread_id?: string | null | null,
+    thread_root_message_id?: string | null | null,
+    direction?: string | null,
+    remote_number?: string | null | null,
+    sender_number?: string | null | null,
+    participants?: string[] | null | null,
+    is_group?: boolean | null,
+    content?: string | null | null,
+    message_type?: string | null,
+    service?: string | null,
+    send_style?: string | null | null,
+    media?: {
+      transcription?: {
+        status?: string | null,
+        text?: string | null | null,
+        error_code?: string | null | null
+      } | null | null,
+      id?: string | null | null,
+      content_type?: string | null | null,
+      size?: number | null | null,
+      url?: string | null
+    }[] | null | null,
+    was_downgraded?: boolean | null | null,
+    status?: string | null | null,
+    error_code?: string | null | null,
+    error_message?: string | null | null,
+    error_reason?: string | null | null,
+    error_detail?: string | null | null,
+    is_read?: boolean | null,
+    is_blocked?: boolean | null,
+    recipients?: {
+      remote_number?: string | null,
+      delivery_status?: string | null | null,
+      service?: string | null | null,
+      error_code?: string | null | null,
+      error_message?: string | null | null,
+      error_reason?: string | null | null,
+      error_detail?: string | null | null,
+      sent_at?: string | null | null,
+      delivered_at?: string | null | null,
+      failed_at?: string | null | null
+    }[] | null | null,
+    reactions?: {
+      id?: string | null,
+      direction?: string | null,
+      reaction?: string | null,
+      custom_emoji?: string | null | null,
+      remote_number?: string | null,
+      part_index?: number | null,
+      created_at?: string | null
+    }[] | null | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    sender_access?: string | null
+  } | null,
+  reaction?: {
+    provider_message_handle?: string | null | null,
+    id?: string | null,
+    conversation_id?: string | null,
+    assignment_id?: string | null | null,
+    target_message_id?: string | null,
+    direction?: string | null,
+    reaction?: string | null,
+    custom_emoji?: string | null | null,
+    remote_number?: string | null,
+    part_index?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null | null,
+  contacts?: {
+    id?: string | null,
+    name?: string | null | null,
+    memories?: string[] | null
+  }[] | null,
+  agent_identities?: {
+    id?: string | null,
+    agent_handle?: string | null,
+    display_name?: string | null | null
+  }[] | null,
+  channel?: string | null,
+  message_id?: string | null
+} | {
+  message?: {
+    id?: string | null,
+    agent_identity_id?: string | null,
+    conversation_id?: string | null,
+    logical_conversation_id?: string | null | null,
+    direction?: string | null,
+    local_number?: string | null | null,
+    remote_number?: string | null | null,
+    sender_number?: string | null | null,
+    participants?: string[] | null,
+    sender_access?: string | null,
+    is_group?: boolean | null,
+    agent_mentioned?: boolean | null,
+    mentions?: {
+      text?: string | null | null,
+      phone_number?: string | null | null,
+      is_agent?: boolean | null
+    }[] | null,
+    group_name?: string | null | null,
+    unresolved_participant_count?: number | null,
+    reply_to_message_id?: string | null | null,
+    thread_id?: string | null | null,
+    thread_root_message_id?: string | null | null,
+    reactions?: {
+      id?: string | null,
+      target_message_id?: string | null,
+      conversation_id?: string | null,
+      agent_identity_id?: string | null,
+      direction?: string | null,
+      remote_number?: string | null | null,
+      reaction?: string | string | null,
+      custom_emoji?: string | null | null,
+      emoji?: string | null,
+      status?: string | null,
+      revision?: number | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      removed_at?: string | null | null
+    }[] | null,
+    content?: string | null | null,
+    media?: {
+      transcription?: {
+        status?: string | null,
+        text?: string | null | null,
+        error_code?: string | null | null
+      } | null | null,
+      id?: string | null,
+      filename?: string | null,
+      content_type?: string | null,
+      size?: number | null | null,
+      status?: string | null,
+      url?: string | null | null
+    }[] | null,
+    status?: string | null,
+    delivery_state?: string | null | null,
+    recipients?: {
+      remote_number?: string | null,
+      delivery_status?: string | null,
+      delivery_state?: string | null,
+      error_code?: string | null | null,
+      error_detail?: string | null | null,
+      sent_at?: string | null | null,
+      delivered_at?: string | null | null,
+      failed_at?: string | null | null
+    }[] | null,
+    is_read?: boolean | null,
+    is_blocked?: boolean | null,
+    error_code?: string | null | null,
+    error_detail?: string | null | null,
+    source_at?: string | null | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    sent_at?: string | null | null,
+    delivered_at?: string | null | null,
+    failed_at?: string | null | null,
+    status_observed_at?: string | null | null,
+    status_refresh_pending?: boolean | null
+  } | null,
+  reaction?: {
+    id?: string | null,
+    target_message_id?: string | null,
+    conversation_id?: string | null,
+    agent_identity_id?: string | null,
+    direction?: string | null,
+    remote_number?: string | null | null,
+    reaction?: string | string | null,
+    custom_emoji?: string | null | null,
+    emoji?: string | null,
+    status?: string | null,
+    revision?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    removed_at?: string | null | null
+  } | null | null,
+  context?: Record<string, {
+    scope?: string | null,
+    mode?: string | null | null,
+    requested?: number | null | null,
+    hours?: number | null | null,
+    items?: (
+      {
+        id?: string | null,
+        direction?: string | null,
+        from_address?: string | null,
+        to_addresses?: string[] | null,
+        subject?: string | null | null,
+        snippet?: string | null | null,
+        email_address?: string | null | null,
+        created_at?: string | null
+      } | {
+        id?: string | null,
+        channel?: string | null,
+        direction?: string | null,
+        sender?: string | null | null,
+        text?: string | null,
+        text_truncated?: boolean | null,
+        status?: string | null | null,
+        media?: {
+        } | null | null,
+        created_at?: string | null
+      } | {
+        call_id?: string | null,
+        direction?: string | null | null,
+        remote_number?: string | null | null,
+        duration?: number | null | null,
+        started_at?: string | null | null,
+        abridged?: boolean | null,
+        transcript?: {
+          party?: string | null | null,
+          phone_number?: string | null | null,
+          text?: string | null | null,
+          ts_ms?: number | null | null,
+          truncated?: boolean | null | null,
+          marker?: string | null | null,
+          omitted_turns?: number | null | null,
+          omitted_ms?: number | null | null
+        }[] | null
+      }
+    )[] | null,
+    truncated?: boolean | null,
+    skipped?: string | null | null
+  }> | null | null,
+  contacts?: {
+    id?: string | null,
+    name?: string | null | null,
+    memories?: string[] | null
+  }[] | null,
+  agent_identities?: {
+    id?: string | null,
+    agent_handle?: string | null,
+    display_name?: string | null | null
+  }[] | null,
+  channel?: string | null,
+  message_id?: string | null
+} | {
+  identity_id?: string | null,
+  connection_id?: string | null,
+  workspace_id?: string | null,
+  conversation_id?: string | null | null,
+  message_ts?: string | null | null,
+  thread_ts?: string | null | null,
+  message_id?: string | null,
+  sender_access?: string | null | null,
+  actor_id?: string | null | null,
+  actor_profile?: {
+    id?: string | null,
+    name?: string | null | null,
+    real_name?: string | null | null,
+    is_bot?: boolean | null | null,
+    is_app_user?: boolean | null | null,
+    deleted?: boolean | null | null,
+    team_id?: string | null | null,
+    tz?: string | null | null,
+    tz_label?: string | null | null,
+    tz_offset?: number | null | null,
+    profile?: {
+      display_name?: string | null | null,
+      real_name?: string | null | null,
+      first_name?: string | null | null,
+      last_name?: string | null | null,
+      email?: string | null | null,
+      phone?: string | null | null,
+      title?: string | null | null,
+      status_text?: string | null | null,
+      status_emoji?: string | null | null,
+      image_48?: string | null | null,
+      image_72?: string | null | null,
+      image_192?: string | null | null
+    } | null | null
+  } | null | null,
+  contact_id?: string | null | null,
+  message_kinds?: string[] | null,
+  event?: {
+  } | null,
+  channel?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  event_type?: string | null,
+  timestamp?: string | null,
+  data?: {
+    text_message?: {
+      id?: string | null,
+      direction?: string | null,
+      sender_access?: string | null,
+      local_phone_number?: string | null,
+      remote_phone_number?: string | null | null,
+      text?: string | null | null,
+      type?: string | null,
+      media?: {
+        transcription?: {
+          status?: string | null,
+          text?: string | null | null,
+          error_code?: string | null | null
+        } | null | null,
+        id?: string | null | null,
+        content_type?: string | null,
+        size?: number | null,
+        url?: string | null
+      }[] | null | null,
+      is_read?: boolean | null,
+      delivery_status?: string | null | null,
+      origin?: string | null,
+      error_code?: string | null | null,
+      error_detail?: string | null | null,
+      sent_at?: string | null | null,
+      delivered_at?: string | null | null,
+      failed_at?: string | null | null,
+      conversation_id?: string | null | null,
+      sender_phone_number?: string | null | null,
+      recipients?: {
+        recipient_phone_number?: string | null,
+        delivery_status?: string | null | null,
+        carrier?: string | null | null,
+        line_type?: string | null | null,
+        error_code?: string | null | null,
+        error_detail?: string | null | null,
+        sent_at?: string | null | null,
+        delivered_at?: string | null | null,
+        failed_at?: string | null | null
+      }[] | null | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null,
+    contacts?: {
+      id?: string | null,
+      name?: string | null | null,
+      memories?: string[] | null
+    }[] | null,
+    agent_identities?: {
+      id?: string | null,
+      agent_handle?: string | null,
+      display_name?: string | null | null
+    }[] | null,
+    recipient_phone_number?: string | null | null,
+    channel?: string | null,
+    message_id?: string | null
+  } | {
+    message?: {
+      provider_message_handle?: string | null | null,
+      id?: string | null,
+      conversation_id?: string | null,
+      assignment_id?: string | null | null,
+      reply_to_message_id?: string | null | null,
+      thread_id?: string | null | null,
+      thread_root_message_id?: string | null | null,
+      direction?: string | null,
+      remote_number?: string | null | null,
+      sender_number?: string | null | null,
+      participants?: string[] | null | null,
+      is_group?: boolean | null,
+      content?: string | null | null,
+      message_type?: string | null,
+      service?: string | null,
+      send_style?: string | null | null,
+      media?: {
+        transcription?: {
+          status?: string | null,
+          text?: string | null | null,
+          error_code?: string | null | null
+        } | null | null,
+        id?: string | null | null,
+        content_type?: string | null | null,
+        size?: number | null | null,
+        url?: string | null
+      }[] | null | null,
+      was_downgraded?: boolean | null | null,
+      status?: string | null | null,
+      error_code?: string | null | null,
+      error_message?: string | null | null,
+      error_reason?: string | null | null,
+      error_detail?: string | null | null,
+      is_read?: boolean | null,
+      is_blocked?: boolean | null,
+      recipients?: {
+        remote_number?: string | null,
+        delivery_status?: string | null | null,
+        service?: string | null | null,
+        error_code?: string | null | null,
+        error_message?: string | null | null,
+        error_reason?: string | null | null,
+        error_detail?: string | null | null,
+        sent_at?: string | null | null,
+        delivered_at?: string | null | null,
+        failed_at?: string | null | null
+      }[] | null | null,
+      reactions?: {
+        id?: string | null,
+        direction?: string | null,
+        reaction?: string | null,
+        custom_emoji?: string | null | null,
+        remote_number?: string | null,
+        part_index?: number | null,
+        created_at?: string | null
+      }[] | null | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      sender_access?: string | null
+    } | null,
+    reaction?: {
+      provider_message_handle?: string | null | null,
+      id?: string | null,
+      conversation_id?: string | null,
+      assignment_id?: string | null | null,
+      target_message_id?: string | null,
+      direction?: string | null,
+      reaction?: string | null,
+      custom_emoji?: string | null | null,
+      remote_number?: string | null,
+      part_index?: number | null,
+      created_at?: string | null,
+      updated_at?: string | null
+    } | null | null,
+    contacts?: {
+      id?: string | null,
+      name?: string | null | null,
+      memories?: string[] | null
+    }[] | null,
+    agent_identities?: {
+      id?: string | null,
+      agent_handle?: string | null,
+      display_name?: string | null | null
+    }[] | null,
+    channel?: string | null,
+    message_id?: string | null
+  } | {
+    message?: {
+      id?: string | null,
+      agent_identity_id?: string | null,
+      conversation_id?: string | null,
+      logical_conversation_id?: string | null | null,
+      direction?: string | null,
+      local_number?: string | null | null,
+      remote_number?: string | null | null,
+      sender_number?: string | null | null,
+      participants?: string[] | null,
+      sender_access?: string | null,
+      is_group?: boolean | null,
+      agent_mentioned?: boolean | null,
+      mentions?: {
+        text?: string | null | null,
+        phone_number?: string | null | null,
+        is_agent?: boolean | null
+      }[] | null,
+      group_name?: string | null | null,
+      unresolved_participant_count?: number | null,
+      reply_to_message_id?: string | null | null,
+      thread_id?: string | null | null,
+      thread_root_message_id?: string | null | null,
+      reactions?: {
+        id?: string | null,
+        target_message_id?: string | null,
+        conversation_id?: string | null,
+        agent_identity_id?: string | null,
+        direction?: string | null,
+        remote_number?: string | null | null,
+        reaction?: string | string | null,
+        custom_emoji?: string | null | null,
+        emoji?: string | null,
+        status?: string | null,
+        revision?: number | null,
+        created_at?: string | null,
+        updated_at?: string | null,
+        removed_at?: string | null | null
+      }[] | null,
+      content?: string | null | null,
+      media?: {
+        transcription?: {
+          status?: string | null,
+          text?: string | null | null,
+          error_code?: string | null | null
+        } | null | null,
+        id?: string | null,
+        filename?: string | null,
+        content_type?: string | null,
+        size?: number | null | null,
+        status?: string | null,
+        url?: string | null | null
+      }[] | null,
+      status?: string | null,
+      delivery_state?: string | null | null,
+      recipients?: {
+        remote_number?: string | null,
+        delivery_status?: string | null,
+        delivery_state?: string | null,
+        error_code?: string | null | null,
+        error_detail?: string | null | null,
+        sent_at?: string | null | null,
+        delivered_at?: string | null | null,
+        failed_at?: string | null | null
+      }[] | null,
+      is_read?: boolean | null,
+      is_blocked?: boolean | null,
+      error_code?: string | null | null,
+      error_detail?: string | null | null,
+      source_at?: string | null | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      sent_at?: string | null | null,
+      delivered_at?: string | null | null,
+      failed_at?: string | null | null,
+      status_observed_at?: string | null | null,
+      status_refresh_pending?: boolean | null
+    } | null,
+    reaction?: {
+      id?: string | null,
+      target_message_id?: string | null,
+      conversation_id?: string | null,
+      agent_identity_id?: string | null,
+      direction?: string | null,
+      remote_number?: string | null | null,
+      reaction?: string | string | null,
+      custom_emoji?: string | null | null,
+      emoji?: string | null,
+      status?: string | null,
+      revision?: number | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      removed_at?: string | null | null
+    } | null | null,
+    context?: Record<string, {
+      scope?: string | null,
+      mode?: string | null | null,
+      requested?: number | null | null,
+      hours?: number | null | null,
+      items?: (
+        {
+          id?: string | null,
+          direction?: string | null,
+          from_address?: string | null,
+          to_addresses?: string[] | null,
+          subject?: string | null | null,
+          snippet?: string | null | null,
+          email_address?: string | null | null,
+          created_at?: string | null
+        } | {
+          id?: string | null,
+          channel?: string | null,
+          direction?: string | null,
+          sender?: string | null | null,
+          text?: string | null,
+          text_truncated?: boolean | null,
+          status?: string | null | null,
+          media?: {
+          } | null | null,
+          created_at?: string | null
+        } | {
+          call_id?: string | null,
+          direction?: string | null | null,
+          remote_number?: string | null | null,
+          duration?: number | null | null,
+          started_at?: string | null | null,
+          abridged?: boolean | null,
+          transcript?: {
+            party?: string | null | null,
+            phone_number?: string | null | null,
+            text?: string | null | null,
+            ts_ms?: number | null | null,
+            truncated?: boolean | null | null,
+            marker?: string | null | null,
+            omitted_turns?: number | null | null,
+            omitted_ms?: number | null | null
+          }[] | null
+        }
+      )[] | null,
+      truncated?: boolean | null,
+      skipped?: string | null | null
+    }> | null | null,
+    contacts?: {
+      id?: string | null,
+      name?: string | null | null,
+      memories?: string[] | null
+    }[] | null,
+    agent_identities?: {
+      id?: string | null,
+      agent_handle?: string | null,
+      display_name?: string | null | null
+    }[] | null,
+    channel?: string | null,
+    message_id?: string | null
+  } | {
+    identity_id?: string | null,
+    connection_id?: string | null,
+    workspace_id?: string | null,
+    conversation_id?: string | null | null,
+    message_ts?: string | null | null,
+    thread_ts?: string | null | null,
+    message_id?: string | null,
+    sender_access?: string | null | null,
+    actor_id?: string | null | null,
+    actor_profile?: {
+      id?: string | null,
+      name?: string | null | null,
+      real_name?: string | null | null,
+      is_bot?: boolean | null | null,
+      is_app_user?: boolean | null | null,
+      deleted?: boolean | null | null,
+      team_id?: string | null | null,
+      tz?: string | null | null,
+      tz_label?: string | null | null,
+      tz_offset?: number | null | null,
+      profile?: {
+        display_name?: string | null | null,
+        real_name?: string | null | null,
+        first_name?: string | null | null,
+        last_name?: string | null | null,
+        email?: string | null | null,
+        phone?: string | null | null,
+        title?: string | null | null,
+        status_text?: string | null | null,
+        status_emoji?: string | null | null,
+        image_48?: string | null | null,
+        image_72?: string | null | null,
+        image_192?: string | null | null
+      } | null | null
+    } | null | null,
+    contact_id?: string | null | null,
+    message_kinds?: string[] | null,
+    event?: {
+    } | null,
+    channel?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+inkbox({
+    webhookHooks: {
+        transcriptions: {
+            finished: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Whatsapp
+
+### Message Event
+
+`whatsapp.messageEvent`
+
+WhatsApp Event: whatsapp.delivered, whatsapp.delivery_failed, whatsapp.delivery_unconfirmed, whatsapp.reaction_received, whatsapp.received, whatsapp.sent
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `event_type` | `string \| null` | No | — |
+| `timestamp` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  message?: {
+    id?: string | null,
+    agent_identity_id?: string | null,
+    conversation_id?: string | null,
+    logical_conversation_id?: string | null | null,
+    direction?: string | null,
+    local_number?: string | null | null,
+    remote_number?: string | null | null,
+    sender_number?: string | null | null,
+    participants?: string[] | null,
+    sender_access?: string | null,
+    is_group?: boolean | null,
+    agent_mentioned?: boolean | null,
+    mentions?: {
+      text?: string | null | null,
+      phone_number?: string | null | null,
+      is_agent?: boolean | null
+    }[] | null,
+    group_name?: string | null | null,
+    unresolved_participant_count?: number | null,
+    reply_to_message_id?: string | null | null,
+    thread_id?: string | null | null,
+    thread_root_message_id?: string | null | null,
+    reactions?: {
+      id?: string | null,
+      target_message_id?: string | null,
+      conversation_id?: string | null,
+      agent_identity_id?: string | null,
+      direction?: string | null,
+      remote_number?: string | null | null,
+      reaction?: string | string | null,
+      custom_emoji?: string | null | null,
+      emoji?: string | null,
+      status?: string | null,
+      revision?: number | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      removed_at?: string | null | null
+    }[] | null,
+    content?: string | null | null,
+    media?: {
+      transcription?: {
+        status?: string | null,
+        text?: string | null | null,
+        error_code?: string | null | null
+      } | null | null,
+      id?: string | null,
+      filename?: string | null,
+      content_type?: string | null,
+      size?: number | null | null,
+      status?: string | null,
+      url?: string | null | null
+    }[] | null,
+    status?: string | null,
+    delivery_state?: string | null | null,
+    recipients?: {
+      remote_number?: string | null,
+      delivery_status?: string | null,
+      delivery_state?: string | null,
+      error_code?: string | null | null,
+      error_detail?: string | null | null,
+      sent_at?: string | null | null,
+      delivered_at?: string | null | null,
+      failed_at?: string | null | null
+    }[] | null,
+    is_read?: boolean | null,
+    is_blocked?: boolean | null,
+    error_code?: string | null | null,
+    error_detail?: string | null | null,
+    source_at?: string | null | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    sent_at?: string | null | null,
+    delivered_at?: string | null | null,
+    failed_at?: string | null | null,
+    status_observed_at?: string | null | null,
+    status_refresh_pending?: boolean | null
+  } | null,
+  reaction?: {
+    id?: string | null,
+    target_message_id?: string | null,
+    conversation_id?: string | null,
+    agent_identity_id?: string | null,
+    direction?: string | null,
+    remote_number?: string | null | null,
+    reaction?: string | string | null,
+    custom_emoji?: string | null | null,
+    emoji?: string | null,
+    status?: string | null,
+    revision?: number | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    removed_at?: string | null | null
+  } | null | null,
+  context?: Record<string, {
+    scope?: string | null,
+    mode?: string | null | null,
+    requested?: number | null | null,
+    hours?: number | null | null,
+    items?: (
+      {
+        id?: string | null,
+        direction?: string | null,
+        from_address?: string | null,
+        to_addresses?: string[] | null,
+        subject?: string | null | null,
+        snippet?: string | null | null,
+        email_address?: string | null | null,
+        created_at?: string | null
+      } | {
+        id?: string | null,
+        channel?: string | null,
+        direction?: string | null,
+        sender?: string | null | null,
+        text?: string | null,
+        text_truncated?: boolean | null,
+        status?: string | null | null,
+        media?: {
+        } | null | null,
+        created_at?: string | null
+      } | {
+        call_id?: string | null,
+        direction?: string | null | null,
+        remote_number?: string | null | null,
+        duration?: number | null | null,
+        started_at?: string | null | null,
+        abridged?: boolean | null,
+        transcript?: {
+          party?: string | null | null,
+          phone_number?: string | null | null,
+          text?: string | null | null,
+          ts_ms?: number | null | null,
+          truncated?: boolean | null | null,
+          marker?: string | null | null,
+          omitted_turns?: number | null | null,
+          omitted_ms?: number | null | null
+        }[] | null
+      }
+    )[] | null,
+    truncated?: boolean | null,
+    skipped?: string | null | null
+  }> | null | null,
+  contacts?: {
+    id?: string | null,
+    name?: string | null | null,
+    memories?: string[] | null
+  }[] | null,
+  agent_identities?: {
+    id?: string | null,
+    agent_handle?: string | null,
+    display_name?: string | null | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  event_type?: string | null,
+  timestamp?: string | null,
+  data?: {
+    message?: {
+      id?: string | null,
+      agent_identity_id?: string | null,
+      conversation_id?: string | null,
+      logical_conversation_id?: string | null | null,
+      direction?: string | null,
+      local_number?: string | null | null,
+      remote_number?: string | null | null,
+      sender_number?: string | null | null,
+      participants?: string[] | null,
+      sender_access?: string | null,
+      is_group?: boolean | null,
+      agent_mentioned?: boolean | null,
+      mentions?: {
+        text?: string | null | null,
+        phone_number?: string | null | null,
+        is_agent?: boolean | null
+      }[] | null,
+      group_name?: string | null | null,
+      unresolved_participant_count?: number | null,
+      reply_to_message_id?: string | null | null,
+      thread_id?: string | null | null,
+      thread_root_message_id?: string | null | null,
+      reactions?: {
+        id?: string | null,
+        target_message_id?: string | null,
+        conversation_id?: string | null,
+        agent_identity_id?: string | null,
+        direction?: string | null,
+        remote_number?: string | null | null,
+        reaction?: string | string | null,
+        custom_emoji?: string | null | null,
+        emoji?: string | null,
+        status?: string | null,
+        revision?: number | null,
+        created_at?: string | null,
+        updated_at?: string | null,
+        removed_at?: string | null | null
+      }[] | null,
+      content?: string | null | null,
+      media?: {
+        transcription?: {
+          status?: string | null,
+          text?: string | null | null,
+          error_code?: string | null | null
+        } | null | null,
+        id?: string | null,
+        filename?: string | null,
+        content_type?: string | null,
+        size?: number | null | null,
+        status?: string | null,
+        url?: string | null | null
+      }[] | null,
+      status?: string | null,
+      delivery_state?: string | null | null,
+      recipients?: {
+        remote_number?: string | null,
+        delivery_status?: string | null,
+        delivery_state?: string | null,
+        error_code?: string | null | null,
+        error_detail?: string | null | null,
+        sent_at?: string | null | null,
+        delivered_at?: string | null | null,
+        failed_at?: string | null | null
+      }[] | null,
+      is_read?: boolean | null,
+      is_blocked?: boolean | null,
+      error_code?: string | null | null,
+      error_detail?: string | null | null,
+      source_at?: string | null | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      sent_at?: string | null | null,
+      delivered_at?: string | null | null,
+      failed_at?: string | null | null,
+      status_observed_at?: string | null | null,
+      status_refresh_pending?: boolean | null
+    } | null,
+    reaction?: {
+      id?: string | null,
+      target_message_id?: string | null,
+      conversation_id?: string | null,
+      agent_identity_id?: string | null,
+      direction?: string | null,
+      remote_number?: string | null | null,
+      reaction?: string | string | null,
+      custom_emoji?: string | null | null,
+      emoji?: string | null,
+      status?: string | null,
+      revision?: number | null,
+      created_at?: string | null,
+      updated_at?: string | null,
+      removed_at?: string | null | null
+    } | null | null,
+    context?: Record<string, {
+      scope?: string | null,
+      mode?: string | null | null,
+      requested?: number | null | null,
+      hours?: number | null | null,
+      items?: (
+        {
+          id?: string | null,
+          direction?: string | null,
+          from_address?: string | null,
+          to_addresses?: string[] | null,
+          subject?: string | null | null,
+          snippet?: string | null | null,
+          email_address?: string | null | null,
+          created_at?: string | null
+        } | {
+          id?: string | null,
+          channel?: string | null,
+          direction?: string | null,
+          sender?: string | null | null,
+          text?: string | null,
+          text_truncated?: boolean | null,
+          status?: string | null | null,
+          media?: {
+          } | null | null,
+          created_at?: string | null
+        } | {
+          call_id?: string | null,
+          direction?: string | null | null,
+          remote_number?: string | null | null,
+          duration?: number | null | null,
+          started_at?: string | null | null,
+          abridged?: boolean | null,
+          transcript?: {
+            party?: string | null | null,
+            phone_number?: string | null | null,
+            text?: string | null | null,
+            ts_ms?: number | null | null,
+            truncated?: boolean | null | null,
+            marker?: string | null | null,
+            omitted_turns?: number | null | null,
+            omitted_ms?: number | null | null
+          }[] | null
+        }
+      )[] | null,
+      truncated?: boolean | null,
+      skipped?: string | null | null
+    }> | null | null,
+    contacts?: {
+      id?: string | null,
+      name?: string | null | null,
+      memories?: string[] | null
+    }[] | null,
+    agent_identities?: {
+      id?: string | null,
+      agent_handle?: string | null,
+      display_name?: string | null | null
+    }[] | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+inkbox({
+    webhookHooks: {
+        whatsapp: {
+            messageEvent: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

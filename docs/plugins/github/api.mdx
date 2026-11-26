@@ -81,7 +81,7 @@ await corsair.github.api.comments.get({});
 
 `comments.list`
 
-List all comments in a repository
+Issue and pull request conversation comments across one repo, not inline code-review comments. For one issue or PR use comments.listForIssue.
 
 **Risk:** `read`
 
@@ -98,7 +98,7 @@ await corsair.github.api.comments.list({});
 | `sort` | `created \| updated` | No | — |
 | `direction` | `asc \| desc` | No | — |
 | `since` | `string` | No | — |
-| `perPage` | `number` | No | — |
+| `perPage` | `number` | No | Default 30, at most 100. |
 | `page` | `number` | No | — |
 
 
@@ -1781,7 +1781,7 @@ await corsair.github.api.issues.get({});
 
 `issues.list`
 
-List issues in a repository
+List open issues in one repo unless state is set. Pull requests come back too, marked by a pullRequest key.
 
 **Risk:** `read`
 
@@ -1796,15 +1796,15 @@ await corsair.github.api.issues.list({});
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
 | `milestone` | `string` | No | — |
-| `state` | `open \| closed \| all` | No | — |
-| `assignee` | `string` | No | — |
+| `state` | `open \| closed \| all` | No | Defaults to open. |
+| `assignee` | `string` | No | A login, "none" for unassigned, or "*" for any assignee. |
 | `creator` | `string` | No | — |
 | `mentioned` | `string` | No | — |
-| `labels` | `string` | No | — |
+| `labels` | `string` | No | Comma-separated label names, e.g. "bug,ui". |
 | `sort` | `created \| updated \| comments` | No | — |
 | `direction` | `asc \| desc` | No | — |
-| `since` | `string` | No | — |
-| `perPage` | `number` | No | — |
+| `since` | `string` | No | Only issues updated after this time, ISO 8601 such as 2025-01-31T00:00:00Z. |
+| `perPage` | `number` | No | Default 30, at most 100. |
 | `page` | `number` | No | — |
 
 
@@ -2570,7 +2570,7 @@ await corsair.github.api.pullRequests.get({});
 
 `pullRequests.list`
 
-List pull requests
+List open pull requests in one repo unless state is set. To find them by author or reviewer, use search.issues with is:pr.
 
 **Risk:** `read`
 
@@ -2584,12 +2584,12 @@ await corsair.github.api.pullRequests.list({});
 |------|------|----------|-------------|
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
-| `state` | `open \| closed \| all` | No | — |
-| `head` | `string` | No | — |
+| `state` | `open \| closed \| all` | No | Defaults to open. |
+| `head` | `string` | No | Head branch as "user:branch" or "organization:branch". |
 | `base` | `string` | No | — |
 | `sort` | `created \| updated \| popularity \| long-running` | No | — |
 | `direction` | `asc \| desc` | No | — |
-| `perPage` | `number` | No | — |
+| `perPage` | `number` | No | Default 30, at most 100. |
 | `page` | `number` | No | — |
 
 
@@ -3493,7 +3493,7 @@ await corsair.github.api.repositories.get({});
 
 `repositories.getContent`
 
-Get file or directory content from a repository
+A file returns base64-encoded content; a directory returns an array of entries without content, at most 1,000.
 
 **Risk:** `read`
 
@@ -3507,8 +3507,8 @@ await corsair.github.api.repositories.getContent({});
 |------|------|----------|-------------|
 | `owner` | `string` | Yes | — |
 | `repo` | `string` | Yes | — |
-| `path` | `string` | Yes | — |
-| `ref` | `string` | No | — |
+| `path` | `string` | Yes | File or directory path; "" is the repo root. |
+| `ref` | `string` | No | Branch, tag or commit sha. Defaults to the default branch. |
 
 
 
@@ -3562,7 +3562,7 @@ await corsair.github.api.repositories.getContent({});
 
 `repositories.list`
 
-List repositories for the authenticated user
+No owner: repos you own, collaborate on or reach through an org, private included. With owner: that account's public repos only. Other repos: search.repositories.
 
 **Risk:** `read`
 
@@ -3574,11 +3574,11 @@ await corsair.github.api.repositories.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `owner` | `string` | No | — |
-| `type` | `all \| owner \| public \| private \| member` | No | — |
+| `owner` | `string` | No | A user or org login. Leave empty for your own repos; set, it returns only that account's public repos. |
+| `type` | `all \| owner \| public \| private \| member` | No | With owner set GitHub accepts only all, owner and member; public and private need owner empty. |
 | `sort` | `created \| updated \| pushed \| full_name` | No | — |
 | `direction` | `asc \| desc` | No | — |
-| `perPage` | `number` | No | — |
+| `perPage` | `number` | No | Default 30, at most 100. |
 | `page` | `number` | No | — |
 
 
@@ -3971,7 +3971,7 @@ await corsair.github.api.repositories.unstar({});
 
 `search.issues`
 
-Search GitHub issues and pull requests
+Search issues and pull requests with structured fields (keywords, type, state, author, assignee, label, repo, org, created, updated, ...) or a raw q of GitHub qualifiers; no qualifier syntax needed. users.getAuthenticated gives your own login.
 
 **Risk:** `read`
 
@@ -3983,7 +3983,25 @@ await corsair.github.api.search.issues({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `q` | `string` | Yes | — |
+| `q` | `string` | No | Keywords then qualifiers: is:issue or is:pr (GitHub App user tokens get a 422 without one), repo:owner/name, author:, assignee:, label:, state:, updated:&gt;=2025-01-31. Max 256 characters excluding operators and qualifiers, five AND/OR/NOT at most. Optional: prefer the structured fields below; when both are given, an item must match both. |
+| `keywords` | `string[]` | No | Words that must all appear |
+| `exactPhrase` | `string` | No | Exact phrase that must appear |
+| `exclude` | `string[]` | No | Words that must not appear |
+| `in` | `(title \| body \| comments)[]` | No | Limit the keywords to these fields; all three are searched when omitted |
+| `type` | `issue \| pr` | No | issue: issues only; pr: pull requests only |
+| `state` | `open \| closed \| merged \| unmerged` | No | merged and unmerged apply to pull requests only |
+| `author` | `string` | No | Login of the author, or "@me" |
+| `assignee` | `string` | No | Login of an assignee, or "@me" |
+| `mentions` | `string` | No | Login mentioned in the item |
+| `involves` | `string` | No | Login that authored, was assigned, mentioned or commented |
+| `reviewRequested` | `string` | No | Login whose review is requested and not yet given (pull requests) |
+| `label` | `string[]` | No | Label names; the item must have all of them |
+| `excludeLabels` | `string[]` | No | Label names the item must not have |
+| `repo` | `string` | No | One repository, as "owner/name" |
+| `org` | `string` | No | All repositories of this organization |
+| `created` | `string` | No | When it was created: YYYY-MM-DD, with a &gt;, &gt;=, &lt; or &lt;= prefix, or a range such as 2025-01-01..2025-01-31 |
+| `updated` | `string` | No | When it was last updated: YYYY-MM-DD, with a &gt;, &gt;=, &lt; or &lt;= prefix, or a range such as 2025-01-01..2025-01-31 |
+| `closed` | `string` | No | When it was closed: YYYY-MM-DD, with a &gt;, &gt;=, &lt; or &lt;= prefix, or a range such as 2025-01-01..2025-01-31 |
 | `sort` | `comments \| reactions \| reactions-+1 \| reactions--1 \| reactions-smile \| reactions-thinking_face \| reactions-heart \| reactions-tada \| interactions \| created \| updated` | No | — |
 | `order` | `asc \| desc` | No | — |
 | `perPage` | `number` | No | — |
@@ -4635,7 +4653,7 @@ await corsair.github.api.users.getHovercard({});
 
 `users.list`
 
-List all GitHub users
+Every GitHub account in id order, paged by since (a user id). To find a person use search.users or users.get.
 
 **Risk:** `read`
 
@@ -4647,7 +4665,7 @@ await corsair.github.api.users.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `since` | `number` | No | — |
+| `since` | `number` | No | A user id; returns accounts with a higher id. |
 | `perPage` | `number` | No | — |
 
 

@@ -33,6 +33,7 @@ import {
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
 import { buildOAuthAuthorizeUrl } from './authorize-url';
+import { pkceVerifier } from './pkce';
 import { subscribeAndStoreLink } from './subscribe-and-store';
 
 // Re-export state utilities for backward compatibility (barrel oauth.ts re-exports these)
@@ -41,6 +42,13 @@ export {
 	type BuildOAuthAuthorizeUrlInput,
 	buildOAuthAuthorizeUrl,
 } from './authorize-url';
+export {
+	localPkceVerifier,
+	newPkceNonce,
+	pkceAuthParams,
+	pkceChallenge,
+	pkceVerifier,
+} from './pkce';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Structured errors
@@ -319,6 +327,10 @@ export async function generateOAuthUrl(
 			clientId,
 			redirectUri,
 			state,
+			// Made again from the state at the callback; see oauth/pkce.
+			codeVerifier: oauthCfg.pkce
+				? pkceVerifier(state, internal.kek)
+				: undefined,
 		}),
 		state,
 	};
@@ -456,6 +468,10 @@ export async function processOAuthCallback(
 		clientSecret,
 		oauthCfg,
 		redirectUri,
+		// A trusted (Hub) delivery carries Hub's state, which this KEK never signed.
+		oauthCfg.pkce && !options.trusted
+			? pkceVerifier(state, internal.kek)
+			: undefined,
 	);
 
 	if (!tokens.access_token) {

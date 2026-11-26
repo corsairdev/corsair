@@ -1,3 +1,4 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 const ChannelsArchiveInputSchema = z.object({
@@ -20,9 +21,12 @@ const ChannelsGetInputSchema = z.object({
 	include_num_members: z.boolean().optional(),
 });
 
+const CHANNEL_TYPES_DESCRIPTION =
+	'Comma-separated: public_channel, private_channel, mpim, im. Slack returns only public_channel when omitted, so pass "public_channel,private_channel" to include private ones.';
+
 const ChannelsListInputSchema = z.object({
 	exclude_archived: z.boolean().optional(),
-	types: z.string().optional(),
+	types: z.string().optional().describe(CHANNEL_TYPES_DESCRIPTION),
 	team_id: z.string().optional(),
 	cursor: z.string().optional(),
 	limit: z.number().optional(),
@@ -30,7 +34,7 @@ const ChannelsListInputSchema = z.object({
 
 const ChannelsListMineInputSchema = z.object({
 	user: z.string().optional(),
-	types: z.string().optional(),
+	types: z.string().optional().describe(CHANNEL_TYPES_DESCRIPTION),
 	exclude_archived: z.boolean().optional(),
 	team_id: z.string().optional(),
 	cursor: z.string().optional(),
@@ -38,13 +42,37 @@ const ChannelsListMineInputSchema = z.object({
 });
 
 const ChannelsGetHistoryInputSchema = z.object({
-	channel: z.string(),
-	latest: z.string().optional(),
-	oldest: z.string().optional(),
-	inclusive: z.boolean().optional(),
+	channel: z
+		.string()
+		.describe(
+			'Conversation id such as C0123ABCD, not the name. channels.list and channels.listMine return ids.',
+		),
+	latest: z
+		.string()
+		.optional()
+		.describe(
+			'Unix timestamp such as "1700000000.000000", not an ISO date. Only messages before it.',
+		),
+	oldest: z
+		.string()
+		.optional()
+		.describe(
+			'Unix timestamp such as "1700000000.000000", not an ISO date. Only messages after it.',
+		),
+	inclusive: z
+		.boolean()
+		.optional()
+		.describe(
+			'Also return messages at exactly oldest or latest. Ignored unless one is set.',
+		),
 	include_all_metadata: z.boolean().optional(),
 	cursor: z.string().optional(),
-	limit: z.number().optional(),
+	limit: z
+		.number()
+		.optional()
+		.describe(
+			'Default 100, at most 999. A page can be shorter; follow the cursor.',
+		),
 });
 
 const ChannelsInviteInputSchema = z.object({
@@ -85,14 +113,35 @@ const ChannelsRenameInputSchema = z.object({
 });
 
 const ChannelsGetRepliesInputSchema = z.object({
-	channel: z.string(),
-	ts: z.string(),
-	latest: z.string().optional(),
-	oldest: z.string().optional(),
-	inclusive: z.boolean().optional(),
+	channel: z
+		.string()
+		.describe('Conversation id such as C0123ABCD, not the name.'),
+	ts: z
+		.string()
+		.describe(
+			'ts of the thread parent, or of a message in the thread, e.g. "1700000000.000100". With no replies only that message comes back.',
+		),
+	latest: z
+		.string()
+		.optional()
+		.describe(
+			'Unix timestamp such as "1700000000.000000". Only messages before it.',
+		),
+	oldest: z
+		.string()
+		.optional()
+		.describe(
+			'Unix timestamp such as "1700000000.000000". Only messages after it.',
+		),
+	inclusive: z
+		.boolean()
+		.optional()
+		.describe(
+			'Also return messages at exactly oldest or latest. Ignored unless one is set.',
+		),
 	include_all_metadata: z.boolean().optional(),
 	cursor: z.string().optional(),
-	limit: z.number().optional(),
+	limit: z.number().optional().describe('Default 1000.'),
 });
 
 const ChannelsSetPurposeInputSchema = z.object({
@@ -118,7 +167,12 @@ const UsersListInputSchema = z.object({
 	include_locale: z.boolean().optional(),
 	team_id: z.string().optional(),
 	cursor: z.string().optional(),
-	limit: z.number().optional(),
+	limit: z
+		.number()
+		.optional()
+		.describe(
+			'Set it. With no limit Slack tries to return every user, which can fail with limit_required or HTTP 500 on a large workspace. Follow the cursor.',
+		),
 });
 
 const UsersGetProfileInputSchema = z.object({
@@ -176,23 +230,42 @@ const UserGroupsUpdateInputSchema = z.object({
 });
 
 const FilesGetInputSchema = z.object({
-	file: z.string(),
+	file: z.string().describe('File id such as F2147483862.'),
 	cursor: z.string().optional(),
 	limit: z.number().optional(),
 	page: z.number().optional(),
 	count: z.number().optional(),
 });
 
+const FilesDownloadInputSchema = z.object({
+	file: z
+		.string()
+		.describe(
+			'Slack file id such as F0CL9G3CAR2, from files[] in channels.getHistory or files.list.',
+		),
+});
+
 const FilesListInputSchema = z.object({
 	channel: z.string().optional(),
 	user: z.string().optional(),
-	types: z.string().optional(),
-	ts_from: z.string().optional(),
-	ts_to: z.string().optional(),
+	types: z
+		.string()
+		.optional()
+		.describe(
+			'Comma-separated: all, spaces, snippets, images, gdocs, zips, pdfs. Default all.',
+		),
+	ts_from: z
+		.string()
+		.optional()
+		.describe('Unix timestamp. Files created at or after it.'),
+	ts_to: z
+		.string()
+		.optional()
+		.describe('Unix timestamp. Files created at or before it.'),
 	show_files_hidden_by_limit: z.boolean().optional(),
 	team_id: z.string().optional(),
-	page: z.number().optional(),
-	count: z.number().optional(),
+	page: z.number().optional().describe('Default 1.'),
+	count: z.number().optional().describe('Files per page, default 100.'),
 });
 
 const FilesUploadInputSchema = z.object({
@@ -217,17 +290,162 @@ const MessagesGetPermalinkInputSchema = z.object({
 	message_ts: z.string(),
 });
 
+const SlackDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be YYYY-MM-DD');
+
 const MessagesSearchInputSchema = z.object({
-	query: z.string(),
-	sort: z.enum(['score', 'timestamp']).optional(),
-	sort_dir: z.enum(['asc', 'desc']).optional(),
+	query: z
+		.string()
+		.optional()
+		.describe(
+			'Slack search string; modifiers such as in:#channel, from:@user and has: narrow it. Optional: prefer the structured fields below; when both are given, a message must match both.',
+		),
+	keywords: z
+		.array(z.string().min(1))
+		.optional()
+		.describe('Words that must all appear in the message'),
+	exactPhrase: z
+		.string()
+		.optional()
+		.describe('Exact phrase that must appear in the message'),
+	exclude: z
+		.array(z.string().min(1))
+		.optional()
+		.describe('Words that must not appear in the message'),
+	in: z
+		.string()
+		.optional()
+		.describe('Channel name, e.g. "team-marketing" (the # is added for you)'),
+	notIn: z
+		.array(z.string().min(1))
+		.optional()
+		.describe('Channel names to leave out of the results'),
+	from: z
+		.string()
+		.optional()
+		.describe('Sender display name, e.g. "Sara" (the @ is added for you)'),
+	notFrom: z
+		.array(z.string().min(1))
+		.optional()
+		.describe('Sender display names to leave out of the results'),
+	with: z
+		.string()
+		.optional()
+		.describe('Display name of a person: threads and DMs with them'),
+	after: SlackDate.optional().describe(
+		'Only messages after this date (YYYY-MM-DD)',
+	),
+	before: SlackDate.optional().describe(
+		'Only messages before this date (YYYY-MM-DD)',
+	),
+	on: SlackDate.optional().describe('Only messages on this date (YYYY-MM-DD)'),
+	during: z
+		.string()
+		.optional()
+		.describe('A month or year, e.g. "august" or "2025"'),
+	hasPin: z.boolean().optional().describe('true: only pinned messages'),
+	hasReaction: z
+		.string()
+		.optional()
+		.describe('Emoji name of a reaction on the message, e.g. "eyes"'),
+	isSaved: z
+		.boolean()
+		.optional()
+		.describe('true: only messages you saved for later'),
+	isThread: z
+		.boolean()
+		.optional()
+		.describe('true: only messages that are part of a thread'),
+	sort: z
+		.enum(['score', 'timestamp'])
+		.optional()
+		.describe('Default score (relevance). Use timestamp to sort by time.'),
+	sort_dir: z.enum(['asc', 'desc']).optional().describe('Default desc.'),
 	highlight: z.boolean().optional(),
 	team_id: z.string().optional(),
 	cursor: z.string().optional(),
 	limit: z.number().optional(),
-	page: z.number().optional(),
-	count: z.number().optional(),
+	page: z.number().optional().describe('Default 1.'),
+	count: z
+		.number()
+		.optional()
+		.describe('Results per page, default 20, at most 100.'),
 });
+
+export type MessagesSearchInput = z.infer<typeof MessagesSearchInputSchema>;
+
+const STRUCTURED_SEARCH_KEYS = [
+	'keywords',
+	'exactPhrase',
+	'exclude',
+	'in',
+	'notIn',
+	'from',
+	'notFrom',
+	'with',
+	'after',
+	'before',
+	'on',
+	'during',
+	'hasPin',
+	'hasReaction',
+	'isSaved',
+	'isThread',
+] as const;
+
+// A word that is quoted, or that Slack would read as a modifier or exclusion.
+function slackTerm(value: string): string {
+	const v = value.trim().replace(/"/g, '');
+	return /[\s:]|^-/.test(v) ? `"${v}"` : v;
+}
+
+// Channel and person names are written after # or @ with no spaces.
+const handle = (prefix: '#' | '@', v: string) =>
+	`${prefix}${v.trim().replace(/^[#@]/, '').replace(/\s+/g, '-')}`;
+
+/**
+ * Build a Slack search string from structured inputs. Modifiers follow
+ * https://slack.com/help/articles/202528808-Search-in-Slack. A user-given
+ * `query` is ANDed in.
+ */
+export function buildSlackSearchQuery(
+	input: Partial<MessagesSearchInput>,
+): string {
+	const parts: string[] = [];
+	const nonEmpty = (xs?: string[]) => (xs ?? []).filter((x) => x.trim());
+	parts.push(...nonEmpty(input.keywords).map(slackTerm));
+	if (input.exactPhrase?.trim()) {
+		parts.push(`"${input.exactPhrase.trim().replace(/"/g, '')}"`);
+	}
+	parts.push(...nonEmpty(input.exclude).map((w) => `-${slackTerm(w)}`));
+	if (input.in?.trim()) parts.push(`in:${handle('#', input.in)}`);
+	parts.push(...nonEmpty(input.notIn).map((c) => `-in:${handle('#', c)}`));
+	if (input.from?.trim()) parts.push(`from:${handle('@', input.from)}`);
+	parts.push(...nonEmpty(input.notFrom).map((u) => `-from:${handle('@', u)}`));
+	if (input.with?.trim()) parts.push(`with:${handle('@', input.with)}`);
+	if (input.after) parts.push(`after:${input.after}`);
+	if (input.before) parts.push(`before:${input.before}`);
+	if (input.on) parts.push(`on:${input.on}`);
+	if (input.during?.trim()) parts.push(`during:${input.during.trim()}`);
+	if (input.hasPin) parts.push('has:pin');
+	if (input.hasReaction?.trim()) {
+		parts.push(`has::${input.hasReaction.trim().replace(/^:|:$/g, '')}:`);
+	}
+	if (input.isSaved) parts.push('is:saved');
+	if (input.isThread) parts.push('is:thread');
+
+	const structured = parts.join(' ');
+	const q = input.query?.trim();
+	if (!q) return structured;
+	if (!structured) return q;
+	return `${q} ${structured}`;
+}
+
+/** The search.messages params: the compiled query plus the paging fields. */
+export function slackSearchParams(input: MessagesSearchInput) {
+	const rest: Record<string, unknown> = { ...input };
+	for (const k of STRUCTURED_SEARCH_KEYS) delete rest[k];
+	return { ...rest, query: buildSlackSearchQuery(input) };
+}
 
 const PostMessageInputSchema = z.object({
 	channel: z.string(),
@@ -391,6 +609,7 @@ export const SlackEndpointInputSchemas = {
 	userGroupsEnable: UserGroupsEnableInputSchema,
 	userGroupsList: UserGroupsListInputSchema,
 	userGroupsUpdate: UserGroupsUpdateInputSchema,
+	filesDownload: FilesDownloadInputSchema,
 	filesGet: FilesGetInputSchema,
 	filesList: FilesListInputSchema,
 	filesUpload: FilesUploadInputSchema,
@@ -927,6 +1146,7 @@ export const SlackEndpointOutputSchemas = {
 	userGroupsEnable: UsergroupsEnableResponseSchema,
 	userGroupsList: UsergroupsListResponseSchema,
 	userGroupsUpdate: UsergroupsUpdateResponseSchema,
+	filesDownload: FileOutputSchema,
 	filesGet: FilesInfoResponseSchema,
 	filesList: FilesListResponseSchema,
 	filesUpload: FilesUploadResponseSchema,

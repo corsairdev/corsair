@@ -12,6 +12,7 @@ import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
 } from 'corsair/core';
+import { localPkceVerifier, newPkceNonce, pkceAuthParams } from 'corsair/oauth';
 import { readJsonBody } from '../router';
 import type { HandlerFn } from '../types';
 
@@ -60,6 +61,17 @@ function findFreePort(): Promise<number> {
  * Tracks in-flight OAuth code listeners. Key: pluginId:tenantId.
  * Each entry resolves when the user hits the redirect URL with ?code=.
  */
+/**
+ * The PKCE nonce of each sign-in in progress (key pluginId:tenantId), so the
+ * listener or a pasted code exchanges with the verifier its link was built for.
+ */
+const pkceNonces = new Map<string, string>();
+
+/** Forgets a sign-in's nonce, unless a newer sign-in has replaced it meanwhile. */
+function forgetPkceNonce(key: string, nonce: string | undefined): void {
+	if (nonce && pkceNonces.get(key) === nonce) pkceNonces.delete(key);
+}
+
 const pendingListeners = new Map<
 	string,
 	{ redirectUri: string; codePromise: Promise<string>; server: http.Server }
@@ -116,6 +128,7 @@ function exchangeCodeForTokens(
 	clientSecret: string,
 	oauthConfig: OAuthConfig,
 	redirectUri: string,
+	codeVerifier?: string,
 ): Promise<{
 	access_token?: string;
 	refresh_token?: string;
@@ -130,6 +143,7 @@ function exchangeCodeForTokens(
 			redirect_uri: redirectUri,
 			grant_type: 'authorization_code',
 		};
+		if (codeVerifier) params.code_verifier = codeVerifier;
 		if (!useBasicAuth) {
 			params.client_id = clientId;
 			params.client_secret = clientSecret;
@@ -215,6 +229,13 @@ export const startOAuth: HandlerFn = async (ctx) => {
 			`client_id and/or client_secret not set for '${plugin.id}'. Set them in Credentials first.`,
 		);
 	}
+	// Studio sends no state, so each sign-in gets its own nonce; a pasted code
+	// finds it here too (see corsair/oauth).
+	const pkceNonce = oauthCfg.pkce ? newPkceNonce() : undefined;
+	if (pkceNonce) pkceNonces.set(`${plugin.id}:${tenantId}`, pkceNonce);
+	const verifier = pkceNonce
+		? localPkceVerifier(plugin.id, tenantId, internal.kek, pkceNonce)
+		: undefined;
 
 	let redirectUri: string;
 	let localhostPort: number;
@@ -230,7 +251,7 @@ export const startOAuth: HandlerFn = async (ctx) => {
 		if (!m?.[1]) {
 			return {
 				status: 'needs_code',
-				authUrl: buildAuthUrl(oauthCfg, clientId, redirectUri),
+				authUrl: buildAuthUrl(oauthCfg, clientId, redirectUri, verifier),
 				redirectUri,
 				note: 'This redirect URI is not a localhost URL — complete the flow manually and paste the code back in.',
 			};
@@ -241,7 +262,7 @@ export const startOAuth: HandlerFn = async (ctx) => {
 		redirectUri = `http://localhost:${localhostPort}`;
 	}
 
-	const authUrl = buildAuthUrl(oauthCfg, clientId, redirectUri);
+	const authUrl = buildAuthUrl(oauthCfg, clientId, redirectUri, verifier);
 
 	const key = `${pluginId}:${tenantId}`;
 	const existing = pendingListeners.get(key);
@@ -261,8 +282,11 @@ export const startOAuth: HandlerFn = async (ctx) => {
 					clientSecret,
 					oauthCfg,
 					redirectUri,
+					verifier,
 				);
 				if (!tokens.access_token) return;
+				// The code is spent once the provider answers with a token.
+				forgetPkceNonce(`${plugin.id}:${tenantId}`, pkceNonce);
 				const extraAccount = getCustomAccountFields(plugin, 'oauth_2');
 				const accountKm = createAccountKeyManager({
 					authType: 'oauth_2',
@@ -294,6 +318,7 @@ function buildAuthUrl(
 	oauthCfg: OAuthConfig,
 	clientId: string,
 	redirectUri: string,
+	codeVerifier: string | undefined,
 ): string {
 	const params: Record<string, string | null> = {
 		client_id: clientId,
@@ -301,6 +326,7 @@ function buildAuthUrl(
 		response_type: 'code',
 		scope: oauthCfg.scopes.join(' '),
 		...oauthCfg.authParams,
+		...(codeVerifier ? pkceAuthParams(codeVerifier, oauthCfg.authParams) : {}),
 	};
 	return `${oauthCfg.authUrl}?${querystring.stringify(params)}`;
 }
@@ -340,16 +366,32 @@ export const exchangeOAuth: HandlerFn = async (ctx) => {
 		);
 	}
 
+	let codeVerifier: string | undefined;
+	const nonce = oauthCfg.pkce
+		? pkceNonces.get(`${plugin.id}:${tenantId}`)
+		: undefined;
+	if (oauthCfg.pkce) {
+		if (!nonce) {
+			throw new Error(
+				`No sign-in for '${plugin.id}' is waiting for a code. Start it again.`,
+			);
+		}
+		codeVerifier = localPkceVerifier(plugin.id, tenantId, internal.kek, nonce);
+	}
+
 	const tokens = await exchangeCodeForTokens(
 		code,
 		clientId,
 		clientSecret,
 		oauthCfg,
 		redirectUri,
+		codeVerifier,
 	);
 	if (!tokens.access_token) {
 		throw new Error('No access_token in response from provider.');
 	}
+	// Kept after a failure (a mistyped code) so the same sign-in can be retried.
+	forgetPkceNonce(`${plugin.id}:${tenantId}`, nonce);
 
 	const extraAccount = getCustomAccountFields(plugin, 'oauth_2');
 	const accountKm = createAccountKeyManager({

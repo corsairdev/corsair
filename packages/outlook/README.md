@@ -26,13 +26,13 @@ pnpm add @corsair-dev/outlook
 | `events.delete` | `outlook.api.events.delete` | `destructive` | Delete a calendar event [DESTRUCTIVE] |
 | `events.findMeetingTimes` | `outlook.api.events.findMeetingTimes` | `read` | Find available meeting times for attendees |
 | `events.get` | `outlook.api.events.get` | `read` | Get a calendar event by ID |
-| `events.getSchedule` | `outlook.api.events.getSchedule` | `read` | Get free/busy schedule for a calendar |
-| `events.list` | `outlook.api.events.list` | `read` | List calendar events |
+| `events.getSchedule` | `outlook.api.events.getSchedule` | `read` | Free/busy for the listed schedules (email addresses), not event details. startTime and endTime are {dateTime, timeZone} objects. |
+| `events.list` | `outlook.api.events.list` | `read` | Single events and series masters; with expand_recurring_events it lists the occurrences between start_datetime and end_datetime, one page at a time (next skip is in @odata.nextLink). Times are UTC unless timezone is set. |
 | `events.update` | `outlook.api.events.update` | `write` | Update a calendar event |
 | `folders.create` | `outlook.api.folders.create` | `write` | Create a new mail folder |
 | `folders.delete` | `outlook.api.folders.delete` | `destructive` | Delete a mail folder [DESTRUCTIVE] |
 | `folders.get` | `outlook.api.folders.get` | `read` | Get a mail folder by ID |
-| `folders.list` | `outlook.api.folders.list` | `read` | List mail folders |
+| `folders.list` | `outlook.api.folders.list` | `read` | Top-level mail folders only; nested folders are not listed. Use a folder id or a name like "inbox" as folder in messages.list. |
 | `folders.update` | `outlook.api.folders.update` | `write` | Rename a mail folder |
 | `messages.addAttachment` | `outlook.api.messages.addAttachment` | `write` | Add an attachment to a message |
 | `messages.batchMove` | `outlook.api.messages.batchMove` | `write` | Batch move up to 20 messages to a folder |
@@ -40,12 +40,12 @@ pnpm add @corsair-dev/outlook
 | `messages.createDraft` | `outlook.api.messages.createDraft` | `write` | Create an email draft |
 | `messages.delete` | `outlook.api.messages.delete` | `destructive` | Delete an email message [DESTRUCTIVE] |
 | `messages.forward` | `outlook.api.messages.forward` | `write` | Forward an email message |
-| `messages.get` | `outlook.api.messages.get` | `read` | Get an email message by ID |
-| `messages.list` | `outlook.api.messages.list` | `read` | List email messages in a folder |
+| `messages.get` | `outlook.api.messages.get` | `read` | Reads one message by id. Body is HTML. Attachments are not included and this plugin cannot download them; hasAttachments only says whether any non-inline attachment exists, so it is false for a message with only inline ones. |
+| `messages.list` | `outlook.api.messages.list` | `read` | Lists messages from one folder, or the whole mailbox including Deleted Items when folder is unset. 10 per page unless top is set (max 1000). Take the next skip from @odata.nextLink; it can exceed top, so do not add top to skip. |
 | `messages.move` | `outlook.api.messages.move` | `write` | Move a message to a different folder |
-| `messages.query` | `outlook.api.messages.query` | `read` | Query email messages with OData filters |
+| `messages.query` | `outlook.api.messages.query` | `read` | Raw OData filter over one folder or the whole mailbox. 10 per page unless top is set. Properties in orderby must also be in filter, first and in the same order, or Graph returns InefficientFilter. |
 | `messages.reply` | `outlook.api.messages.reply` | `write` | Reply to an email message |
-| `messages.search` | `outlook.api.messages.search` | `read` | Search email messages |
+| `messages.search` | `outlook.api.messages.search` | `read` | KQL search over the signed-in user's whole mailbox, newest sent first, at most 1,000 results. For a folder or date range use messages.list or messages.query. |
 | `messages.send` | `outlook.api.messages.send` | `write` | Send an email message |
 | `messages.sendDraft` | `outlook.api.messages.sendDraft` | `write` | Send a saved draft message |
 | `messages.update` | `outlook.api.messages.update` | `write` | Update an email message (e.g. mark as read) |

@@ -118,6 +118,7 @@ export type SlackEndpoints = {
 	userGroupsEnable: SlackEndpoint<'userGroupsEnable'>;
 	userGroupsList: SlackEndpoint<'userGroupsList'>;
 	userGroupsUpdate: SlackEndpoint<'userGroupsUpdate'>;
+	filesDownload: SlackEndpoint<'filesDownload'>;
 	filesGet: SlackEndpoint<'filesGet'>;
 	filesList: SlackEndpoint<'filesList'>;
 	filesUpload: SlackEndpoint<'filesUpload'>;
@@ -174,6 +175,7 @@ const slackEndpointsNested = {
 		update: UserGroups.update,
 	},
 	files: {
+		download: Files.download,
 		get: Files.get,
 		list: Files.list,
 		upload: Files.upload,
@@ -316,6 +318,10 @@ export const slackEndpointSchemas = {
 		input: SlackEndpointInputSchemas.userGroupsUpdate,
 		output: SlackEndpointOutputSchemas.userGroupsUpdate,
 	},
+	'files.download': {
+		input: SlackEndpointInputSchemas.filesDownload,
+		output: SlackEndpointOutputSchemas.filesDownload,
+	},
 	'files.get': {
 		input: SlackEndpointInputSchemas.filesGet,
 		output: SlackEndpointOutputSchemas.filesGet,
@@ -451,11 +457,13 @@ const slackEndpointMeta = {
 	},
 	'channels.list': {
 		riskLevel: 'read',
-		description: 'List all channels in the workspace',
+		description:
+			"List channels the app can see. Public only unless types includes private_channel, which adds private ones the app was added to. channels.listMine lists a user's own conversations",
 	},
 	'channels.getHistory': {
 		riskLevel: 'read',
-		description: 'Fetch message history for a channel',
+		description:
+			'Top-level messages of one conversation. Thread replies are not included; use channels.getReplies.',
 	},
 	'channels.invite': {
 		riskLevel: 'write',
@@ -470,7 +478,7 @@ const slackEndpointMeta = {
 	'channels.listMine': {
 		riskLevel: 'read',
 		description:
-			"List the connected user's own conversations (needs a user token)",
+			"List the conversations the connected user is in. Public only unless types includes private_channel, mpim or im. Needs a user token; with only a bot token it lists the bot's conversations",
 	},
 	'channels.getMembers': {
 		riskLevel: 'read',
@@ -483,7 +491,8 @@ const slackEndpointMeta = {
 	'channels.rename': { riskLevel: 'write', description: 'Rename a channel' },
 	'channels.getReplies': {
 		riskLevel: 'read',
-		description: 'Fetch replies for a thread',
+		description:
+			"Messages of one thread. ts is the parent message's ts, from channels.getHistory or messages.search.",
 	},
 	'channels.setPurpose': {
 		riskLevel: 'write',
@@ -500,7 +509,8 @@ const slackEndpointMeta = {
 	'users.get': { riskLevel: 'read', description: 'Get info about a user' },
 	'users.list': {
 		riskLevel: 'read',
-		description: 'List all users in the workspace',
+		description:
+			'List workspace members, including invited, deactivated and deleted users. profile.email needs the users:read.email scope. Use users.get for a known id.',
 	},
 	'users.getProfile': { riskLevel: 'read', description: 'Get a user profile' },
 	'users.getPresence': {
@@ -531,10 +541,19 @@ const slackEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Update a user group',
 	},
-	'files.get': { riskLevel: 'read', description: 'Get info about a file' },
+	'files.download': {
+		riskLevel: 'read',
+		description:
+			"Download one file's content by id (an image, PDF or any upload). Needs a token that can see the file; private channels and DMs need the user token.",
+	},
+	'files.get': {
+		riskLevel: 'read',
+		description: 'Get metadata of one file by id, not its content.',
+	},
 	'files.list': {
 		riskLevel: 'read',
-		description: 'List files in the workspace',
+		description:
+			'List file metadata, not file content. Filter by channel, user, types or ts_from/ts_to.',
 	},
 	'files.upload': { riskLevel: 'write', description: 'Upload a file to Slack' },
 	'messages.delete': {
@@ -547,7 +566,8 @@ const slackEndpointMeta = {
 	},
 	'messages.search': {
 		riskLevel: 'read',
-		description: 'Search messages in the workspace',
+		description:
+			'Search messages with structured fields (keywords, in, from, with, after, before, on, during, hasPin, hasReaction, isThread, ...) or a raw query in Slack search syntax; no modifier syntax needed. Needs a user token.',
 	},
 	'messages.post': {
 		riskLevel: 'write',

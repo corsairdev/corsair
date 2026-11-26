@@ -1,4 +1,10 @@
 import { z } from 'zod';
+import { pipedriveCatalogEndpointFunctions } from './endpoints/catalog-registry';
+import { PipedriveCatalog } from './endpoints/catalog-schemas';
+import {
+	PipedriveCatalogOperationKeys,
+	PipedriveCatalogTestCases,
+} from './endpoints/catalog-test-cases';
 import {
 	PipedriveEndpointInputSchemas,
 	PipedriveEndpointOutputSchemas,
@@ -107,6 +113,156 @@ const validTask = {
 };
 
 describe('Pipedrive endpoint schemas', () => {
+	it('keeps every official catalog operation registered with strict input and output schemas', () => {
+		const plugin = pipedrive();
+		const configuredScopes = new Set(plugin.oauthConfig?.scopes ?? []);
+		expect(Object.keys(pipedriveCatalogEndpointFunctions).sort()).toEqual(
+			[...PipedriveCatalogOperationKeys].sort(),
+		);
+		expect(Object.keys(plugin.endpointSchemas ?? {}).sort()).toEqual(
+			Object.keys(pipedriveEndpointSchemas).sort(),
+		);
+		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(
+			Object.keys(pipedriveEndpointSchemas).sort(),
+		);
+		for (const key of PipedriveCatalogOperationKeys) {
+			const route = PipedriveCatalog[key];
+			const testCase = PipedriveCatalogTestCases[key];
+			expect(route.tokenCost).toBeGreaterThan(0);
+			expect(route.oauthScopes.length).toBeGreaterThan(0);
+			expect(
+				route.oauthScopes.every((scope) => configuredScopes.has(scope)),
+			).toBe(true);
+			const inputResult = route.input.safeParse(testCase.input);
+			if (!inputResult.success) {
+				throw new Error(`${key} input fixture: ${inputResult.error.message}`);
+			}
+			const outputResult = route.output.safeParse(testCase.response);
+			if (!outputResult.success) {
+				throw new Error(`${key} output fixture: ${outputResult.error.message}`);
+			}
+			expect(
+				route.input.safeParse({
+					...testCase.input,
+					undocumented_callback: 'rejected',
+				}).success,
+			).toBe(false);
+			expect(route.output.safeParse(null).success).toBe(false);
+		}
+	});
+
+	it('accepts documented nested goal, filter, field-option, and role payloads strictly', () => {
+		const goal = PipedriveCatalogTestCases['apiV1.goals.addGoal'].input;
+		expect(
+			PipedriveCatalog['apiV1.goals.addGoal'].input.safeParse(goal).success,
+		).toBe(true);
+		expect(
+			PipedriveCatalog['apiV1.goals.addGoal'].input.safeParse({
+				...goal,
+				body: {
+					...goal.body,
+					assignee: { ...goal.body.assignee, callback: 'not documented' },
+				},
+			}).success,
+		).toBe(false);
+
+		const filter = PipedriveCatalogTestCases['apiV1.filters.addFilter'].input;
+		expect(
+			PipedriveCatalog['apiV1.filters.addFilter'].input.safeParse(filter)
+				.success,
+		).toBe(true);
+		expect(
+			PipedriveCatalog['apiV1.filters.addFilter'].input.safeParse({
+				...filter,
+				body: {
+					...filter.body,
+					conditions: { ...filter.body.conditions, callback: 'not documented' },
+				},
+			}).success,
+		).toBe(false);
+
+		const field =
+			PipedriveCatalogTestCases['apiV1.dealFields.addDealField'].input;
+		expect(
+			PipedriveCatalog['apiV1.dealFields.addDealField'].input.safeParse(field)
+				.success,
+		).toBe(true);
+		expect(
+			PipedriveCatalog['apiV1.dealFields.addDealField'].input.safeParse({
+				...field,
+				body: {
+					...field.body,
+					options: [{ label: 'New option', callback: 'not documented' }],
+				},
+			}).success,
+		).toBe(false);
+
+		const role =
+			PipedriveCatalogTestCases['apiV1.roles.updateRolePipelines'].input;
+		expect(
+			PipedriveCatalog['apiV1.roles.updateRolePipelines'].input.safeParse(role)
+				.success,
+		).toBe(true);
+		expect(
+			PipedriveCatalog['apiV1.roles.updateRolePipelines'].input.safeParse({
+				...role,
+				body: {
+					visible_pipeline_ids: {
+						...role.body.visible_pipeline_ids,
+						callback: 'not documented',
+					},
+				},
+			}).success,
+		).toBe(false);
+	});
+
+	it('accepts open-ended durations in every goal response shape', () => {
+		const openEndedGoal = {
+			id: 'x',
+			type: { params: { pipeline_id: null, activity_type_id: null } },
+			duration: { start: '2026-01-01', end: null },
+		};
+		const cases = [
+			['apiV1.goals.addGoal', { success: true, data: { goal: openEndedGoal } }],
+			[
+				'apiV1.goals.getGoals',
+				{ success: true, data: { goals: [openEndedGoal] } },
+			],
+			[
+				'apiV1.goals.updateGoal',
+				{ success: true, data: { goal: openEndedGoal } },
+			],
+			[
+				'apiV1.goals.getGoalResult',
+				{ success: true, data: { progress: 1, goal: openEndedGoal } },
+			],
+		] as const;
+
+		for (const [key, response] of cases) {
+			expect(PipedriveCatalog[key].output.safeParse(response).success).toBe(
+				true,
+			);
+		}
+	});
+
+	it('requires and caps deal IDs for bulk product and installment lookups', () => {
+		const cases = [
+			'apiV2.dealProducts.getDealsProducts',
+			'apiV2.dealInstallments.getInstallments',
+		] as const;
+		const tooManyDealIds = Array.from({ length: 101 }, (_, index) => index + 1);
+
+		for (const key of cases) {
+			const input = PipedriveCatalog[key].input;
+			expect(input.safeParse({}).success).toBe(false);
+			expect(input.safeParse({ query: {} }).success).toBe(false);
+			expect(input.safeParse({ query: { deal_ids: [1] } }).success).toBe(true);
+			expect(
+				input.safeParse({ query: { deal_ids: tooManyDealIds } }).success,
+			).toBe(false);
+		}
+	});
+
 	it('accepts and bounds documented deal-list filters and pagination', () => {
 		expect(
 			PipedriveEndpointInputSchemas.dealList.parse({
@@ -182,59 +338,17 @@ describe('Pipedrive endpoint schemas', () => {
 
 	it('keeps endpoint implementation, schema map, and metadata synchronized', () => {
 		const plugin = pipedrive({});
-		expect(Object.keys(pipedriveEndpointSchemas).sort()).toEqual(
-			[
-				'deals.create',
-				'deals.delete',
-				'deals.get',
-				'deals.list',
-				'deals.update',
-				'organizations.create',
-				'organizations.delete',
-				'organizations.get',
-				'organizations.list',
-				'organizations.update',
-				'persons.create',
-				'persons.delete',
-				'persons.get',
-				'persons.list',
-				'persons.update',
-				'products.create',
-				'products.delete',
-				'products.duplicate',
-				'products.followers.changelog',
-				'products.followers.create',
-				'products.followers.delete',
-				'products.followers.list',
-				'products.get',
-				'products.images.delete',
-				'products.images.get',
-				'products.images.update',
-				'products.images.upload',
-				'products.list',
-				'products.search',
-				'products.update',
-				'products.variations.create',
-				'products.variations.delete',
-				'products.variations.list',
-				'products.variations.update',
-				'activities.create',
-				'activities.delete',
-				'activities.get',
-				'activities.list',
-				'activities.update',
-				'tasks.create',
-				'tasks.delete',
-				'tasks.get',
-				'tasks.list',
-				'tasks.update',
-			].sort(),
+		expect(Object.keys(pipedriveEndpointSchemas)).toHaveLength(365);
+		expect(Object.keys(plugin.endpointSchemas ?? {}).sort()).toEqual(
+			Object.keys(pipedriveEndpointSchemas).sort(),
 		);
 		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(
 			Object.keys(pipedriveEndpointSchemas).sort(),
 		);
 		expect(plugin.webhooks).toEqual({});
 		expect(plugin.endpoints?.deals.list).toBeDefined();
+		expect(plugin.endpoints?.apiV1.deals.getArchivedDeals).toBeDefined();
+		expect(plugin.endpoints?.apiV2.dealProducts.addDealProduct).toBeDefined();
 		expect(plugin.endpointMeta?.['deals.delete']?.riskLevel).toBe(
 			'destructive',
 		);

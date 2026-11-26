@@ -310,8 +310,16 @@ export const linearAuthConfig = {
  * Used by the MCP server permission system to decide allow / deny / require_approval.
  */
 const linearEndpointMeta = {
-	'issues.list': { riskLevel: 'read', description: 'List issues in a team' },
-	'issues.get': { riskLevel: 'read', description: 'Get a specific issue' },
+	'issues.list': {
+		riskLevel: 'read',
+		description:
+			'Lists issues, newest created first, across the workspace or one team. Search with structured fields (keywords, assignee, creator, stateName, stateType, teamKey, label, priority, createdAfter, updatedAfter, ...) or a raw filter; no GraphQL needed.',
+	},
+	'issues.get': {
+		riskLevel: 'read',
+		description:
+			'Reads one issue; id is the UUID or an identifier such as "ENG-123".',
+	},
 	'issues.create': { riskLevel: 'write', description: 'Create a new issue' },
 	'issues.update': {
 		riskLevel: 'write',
@@ -324,7 +332,8 @@ const linearEndpointMeta = {
 	},
 	'comments.list': {
 		riskLevel: 'read',
-		description: 'List comments on an issue',
+		description:
+			'Comments on one issue; issueId is the UUID or an identifier such as "ENG-123".',
 	},
 	'comments.create': {
 		riskLevel: 'write',
@@ -338,7 +347,8 @@ const linearEndpointMeta = {
 	},
 	'projects.list': {
 		riskLevel: 'read',
-		description: 'List projects in a team',
+		description:
+			"Lists every project in the workspace; there is no team filter, so check each project's teams. Page with after.",
 	},
 	'projects.get': { riskLevel: 'read', description: 'Get a specific project' },
 	'projects.create': {

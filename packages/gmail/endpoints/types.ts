@@ -1,3 +1,5 @@
+import type { FileOutput } from 'corsair/http';
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 import type {
 	Draft,
@@ -20,20 +22,212 @@ const GmailRawMessageFieldsSchema = z.object({
 	threadId: z.string().optional(),
 });
 
+const GMAIL_QUERY_DESCRIPTION =
+	'Same syntax as the Gmail search box, e.g. "from:alice newer_than:7d" or "after:2025/01/31 has:attachment".';
+const GMAIL_LABEL_IDS_DESCRIPTION =
+	'Label ids such as INBOX, UNREAD or Label_123, not label names; all of them must match. labels.list returns the ids.';
+const GMAIL_INCLUDE_SPAM_TRASH_DESCRIPTION =
+	'Spam and trash are left out unless this is true.';
+
+const isCalendarDate = (value: string): boolean => {
+	const [y, m, d] = value.split('-').map(Number);
+	const date = new Date(Date.UTC(y as number, (m as number) - 1, d as number));
+	return date.getUTCMonth() === (m as number) - 1 && date.getUTCDate() === d;
+};
+const GmailDate = z
+	.string()
+	.regex(/^\d{4}-\d{2}-\d{2}$/, 'Must be YYYY-MM-DD')
+	.refine(isCalendarDate, 'Must be a real calendar date');
+const GmailSize = z
+	.union([z.number().int().positive(), z.string().regex(/^\d+[KMG]?$/i)])
+	.describe('Bytes, or a number with a K, M or G suffix such as "5M"');
+const addressList = (what: string) =>
+	z
+		.array(z.string().min(1))
+		.optional()
+		.describe(`${what}: email address or name; several match any of them`);
+
 const MessagesListInputSchema = z.object({
 	userId: z.string().optional(),
-	q: z.string().optional(),
-	maxResults: z.number().optional(),
+	q: z
+		.string()
+		.optional()
+		.describe(
+			`${GMAIL_QUERY_DESCRIPTION} Optional: prefer the structured fields below; when both are given, a message must match both.`,
+		),
+
+	// ── Content filters ────────────────────────────────────────────────────
+	keywords: z
+		.array(z.string().min(1))
+		.optional()
+		.describe('Words that must all appear in the message (AND logic)'),
+	exactPhrase: z
+		.string()
+		.optional()
+		.describe('Exact phrase that must appear in the message'),
+	anyOf: z
+		.array(z.string().trim().min(1))
+		.min(2)
+		.optional()
+		.describe(
+			'At least one of these words must appear (OR logic, minimum 2 items)',
+		),
+	exclude: z
+		.array(z.string().min(1))
+		.optional()
+		.describe('Words that must not appear in the message'),
+	subject: z
+		.string()
+		.optional()
+		.describe('Words that must appear in the subject line'),
+
+	// ── People ─────────────────────────────────────────────────────────────
+	from: addressList('Sender'),
+	to: addressList('Recipient in the To field'),
+	cc: addressList('Recipient in the Cc field'),
+
+	// ── Time ───────────────────────────────────────────────────────────────
+	after: GmailDate.optional().describe(
+		'Only messages sent on or after this date (YYYY-MM-DD)',
+	),
+	before: GmailDate.optional().describe(
+		'Only messages sent before this date (YYYY-MM-DD)',
+	),
+
+	// ── Message properties ─────────────────────────────────────────────────
+	hasAttachment: z
+		.boolean()
+		.optional()
+		.describe('true: only messages with an attachment'),
+	filename: z
+		.string()
+		.optional()
+		.describe('Attachment file name or type, e.g. "report.pdf" or "pdf"'),
+	label: z
+		.string()
+		.optional()
+		.describe(
+			'Label name (not id), e.g. "work". Spaces in a name are written as hyphens.',
+		),
+	in: z
+		.enum(['inbox', 'sent', 'drafts', 'trash', 'spam', 'snoozed', 'anywhere'])
+		.optional()
+		.describe('Mailbox location; "anywhere" also searches spam and trash'),
+	isUnread: z
+		.boolean()
+		.optional()
+		.describe('true: only unread messages; false: only read messages'),
+	isStarred: z
+		.boolean()
+		.optional()
+		.describe('true: only starred messages; false: only unstarred ones'),
+	larger: GmailSize.optional(),
+	smaller: GmailSize.optional(),
+
+	maxResults: z
+		.number()
+		.optional()
+		.describe('Defaults to 100, at most 500. Follow nextPageToken for more.'),
 	pageToken: z.string().optional(),
-	labelIds: z.array(z.string()).optional(),
-	includeSpamTrash: z.boolean().optional(),
+	labelIds: z
+		.array(z.string())
+		.optional()
+		.describe(GMAIL_LABEL_IDS_DESCRIPTION),
+	includeSpamTrash: z
+		.boolean()
+		.optional()
+		.describe(GMAIL_INCLUDE_SPAM_TRASH_DESCRIPTION),
 });
+
+export type MessagesListInput = z.infer<typeof MessagesListInputSchema>;
+
+// Values Gmail would read as an operator, a group or a boolean keyword.
+const NEEDS_QUOTES = /[\s:(){}"]|^(?:OR|AND|AROUND)$|^-/;
+
+function term(value: string): string {
+	// Gmail has no escape for a double quote inside a phrase, so drop it.
+	const v = value.trim().replace(/"/g, '');
+	return NEEDS_QUOTES.test(v) ? `"${v}"` : v;
+}
+
+function operator(name: string, values?: string[]): string[] {
+	const ops = (values ?? [])
+		.filter((v) => v.trim())
+		.map((v) => `${name}:${term(v)}`);
+	// {a b} is Gmail's OR group
+	return ops.length > 1 ? [`{${ops.join(' ')}}`] : ops;
+}
+
+const gmailDate = (d: string) => d.replace(/-/g, '/');
+
+/**
+ * Build a Gmail search string from structured inputs. Operators follow
+ * https://support.google.com/mail/answer/7190. A user-given `q` is ANDed in.
+ */
+export function buildGmailQuery(input: Partial<MessagesListInput>): string {
+	const parts: string[] = [];
+	const words = (input.keywords ?? []).filter((w) => w.trim());
+	parts.push(...words.map(term));
+	if (input.exactPhrase?.trim()) {
+		parts.push(`"${input.exactPhrase.trim().replace(/"/g, '')}"`);
+	}
+	const any = (input.anyOf ?? []).filter((w) => w.trim());
+	if (any.length) {
+		parts.push(`{${any.map(term).join(' ')}}`);
+	}
+	parts.push(
+		...(input.exclude ?? []).filter((w) => w.trim()).map((w) => `-${term(w)}`),
+	);
+	if (input.subject?.trim()) {
+		const s = input.subject.trim().replace(/"/g, '');
+		parts.push(
+			/\s/.test(s)
+				? `subject:(${s.split(/\s+/).map(term).join(' ')})`
+				: `subject:${term(s)}`,
+		);
+	}
+	parts.push(...operator('from', input.from));
+	parts.push(...operator('to', input.to));
+	parts.push(...operator('cc', input.cc));
+	if (input.after) parts.push(`after:${gmailDate(input.after)}`);
+	if (input.before) parts.push(`before:${gmailDate(input.before)}`);
+	if (input.hasAttachment) parts.push('has:attachment');
+	if (input.filename?.trim()) parts.push(`filename:${term(input.filename)}`);
+	if (input.label?.trim()) {
+		parts.push(`label:${input.label.trim().replace(/["\s]+/g, '-')}`);
+	}
+	if (input.in) parts.push(`in:${input.in}`);
+	if (input.isUnread !== undefined) {
+		parts.push(input.isUnread ? 'is:unread' : '-is:unread');
+	}
+	if (input.isStarred !== undefined) {
+		parts.push(input.isStarred ? 'is:starred' : '-is:starred');
+	}
+	if (input.larger !== undefined) parts.push(`larger:${input.larger}`);
+	if (input.smaller !== undefined) parts.push(`smaller:${input.smaller}`);
+
+	const structured = parts.join(' ');
+	const q = input.q?.trim();
+	if (!q) return structured;
+	if (!structured) return q;
+	return `${/\s/.test(q) ? `(${q})` : q} ${structured}`;
+}
 
 const MessagesGetInputSchema = z.object({
 	userId: z.string().optional(),
 	id: z.string(),
-	format: z.enum(['minimal', 'full', 'raw', 'metadata']).optional(),
-	metadataHeaders: z.array(z.string()).optional(),
+	format: z
+		.enum(['minimal', 'full', 'raw', 'metadata'])
+		.optional()
+		.describe(
+			'Defaults to full: parsed payload. metadata: headers only (pick them with metadataHeaders). minimal: ids and labels. raw: whole RFC 2822 message, base64url-encoded.',
+		),
+	metadataHeaders: z
+		.array(z.string())
+		.optional()
+		.describe(
+			'Header names to return, e.g. ["From","Subject"]; format must be metadata.',
+		),
 });
 
 const MessagesSendInputSchema = z.object({
@@ -64,6 +258,23 @@ const MessagesTrashInputSchema = z.object({
 const MessagesUntrashInputSchema = z.object({
 	userId: z.string().optional(),
 	id: z.string(),
+});
+
+const MessagesGetAttachmentInputSchema = z.object({
+	userId: z.string().optional(),
+	messageId: z.string(),
+	partId: z
+		.string()
+		.optional()
+		.describe(
+			'partId of an attachment part, e.g. "1.2"; shown in messages.get with format full, or in a database search of messages fetched with format full. Give partId or attachmentId',
+		),
+	attachmentId: z
+		.string()
+		.optional()
+		.describe(
+			"Gmail attachmentId, if already known. Give partId or attachmentId; with partId, the part's own attachment is read.",
+		),
 });
 
 const LabelsListInputSchema = z.object({
@@ -168,18 +379,37 @@ const DraftsSendInputSchema = z.object({
 
 const ThreadsListInputSchema = z.object({
 	userId: z.string().optional(),
-	q: z.string().optional(),
-	maxResults: z.number().optional(),
+	q: z.string().optional().describe(GMAIL_QUERY_DESCRIPTION),
+	maxResults: z
+		.number()
+		.optional()
+		.describe('Defaults to 100, at most 500. Follow nextPageToken for more.'),
 	pageToken: z.string().optional(),
-	labelIds: z.array(z.string()).optional(),
-	includeSpamTrash: z.boolean().optional(),
+	labelIds: z
+		.array(z.string())
+		.optional()
+		.describe(GMAIL_LABEL_IDS_DESCRIPTION),
+	includeSpamTrash: z
+		.boolean()
+		.optional()
+		.describe(GMAIL_INCLUDE_SPAM_TRASH_DESCRIPTION),
 });
 
 const ThreadsGetInputSchema = z.object({
 	userId: z.string().optional(),
 	id: z.string(),
-	format: z.enum(['minimal', 'full', 'metadata']).optional(),
-	metadataHeaders: z.array(z.string()).optional(),
+	format: z
+		.enum(['minimal', 'full', 'metadata'])
+		.optional()
+		.describe(
+			'Defaults to full: parsed payload for every message. metadata: headers only. minimal: ids and labels.',
+		),
+	metadataHeaders: z
+		.array(z.string())
+		.optional()
+		.describe(
+			'Header names to return, e.g. ["From","Subject"]; format must be metadata.',
+		),
 });
 
 const ThreadsModifyInputSchema = z.object({
@@ -211,6 +441,7 @@ export const GmailEndpointInputSchemas = {
 	messagesBatchModify: MessagesBatchModifyInputSchema,
 	messagesTrash: MessagesTrashInputSchema,
 	messagesUntrash: MessagesUntrashInputSchema,
+	messagesGetAttachment: MessagesGetAttachmentInputSchema,
 	labelsList: LabelsListInputSchema,
 	labelsGet: LabelsGetInputSchema,
 	labelsCreate: LabelsCreateInputSchema,
@@ -370,6 +601,7 @@ export const GmailEndpointOutputSchemas = {
 	messagesBatchModify: z.void(),
 	messagesTrash: MessageSchema,
 	messagesUntrash: MessageSchema,
+	messagesGetAttachment: FileOutputSchema,
 	labelsList: LabelListResponseSchema,
 	labelsGet: LabelSchema,
 	labelsCreate: LabelSchema,
@@ -397,6 +629,7 @@ export type GmailEndpointOutputs = {
 	messagesBatchModify: void;
 	messagesTrash: Message;
 	messagesUntrash: Message;
+	messagesGetAttachment: FileOutput;
 	labelsList: LabelListResponse;
 	labelsGet: Label;
 	labelsCreate: Label;

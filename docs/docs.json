@@ -33,6 +33,7 @@
               "quick-start",
               "cloud/overview",
               "cloud/mcp",
+              "cloud/agent-signup",
               {
                 "group": "Use cases",
                 "pages": [
@@ -432,6 +433,14 @@
                   "plugins/amcards/overview",
                   "plugins/amcards/api",
                   "plugins/amcards/database"
+                ]
+              },
+              {
+                "group": "Amika",
+                "pages": [
+                  "plugins/amika/overview",
+                  "plugins/amika/api",
+                  "plugins/amika/database"
                 ]
               },
               {
@@ -2238,6 +2247,15 @@
                 ]
               },
               {
+                "group": "Fathom AI Notetaker",
+                "pages": [
+                  "plugins/fathomai/overview",
+                  "plugins/fathomai/api",
+                  "plugins/fathomai/database",
+                  "plugins/fathomai/webhooks"
+                ]
+              },
+              {
                 "group": "Felt",
                 "pages": [
                   "plugins/felt/overview",
@@ -3151,6 +3169,15 @@
                 ]
               },
               {
+                "group": "Inkbox",
+                "pages": [
+                  "plugins/inkbox/overview",
+                  "plugins/inkbox/api",
+                  "plugins/inkbox/database",
+                  "plugins/inkbox/webhooks"
+                ]
+              },
+              {
                 "group": "Insighto AI",
                 "pages": [
                   "plugins/insightoai/overview",
@@ -3593,6 +3620,14 @@
                 ]
               },
               {
+                "group": "Mailcoach",
+                "pages": [
+                  "plugins/mailcoach/overview",
+                  "plugins/mailcoach/api",
+                  "plugins/mailcoach/database"
+                ]
+              },
+              {
                 "group": "Mails.so",
                 "pages": [
                   "plugins/mailsso/overview",
@@ -3673,6 +3708,22 @@
                 ]
               },
               {
+                "group": "Meta Ads",
+                "pages": [
+                  "plugins/metaads/overview",
+                  "plugins/metaads/api",
+                  "plugins/metaads/database"
+                ]
+              },
+              {
+                "group": "Metabase",
+                "pages": [
+                  "plugins/metabase/overview",
+                  "plugins/metabase/api",
+                  "plugins/metabase/database"
+                ]
+              },
+              {
                 "group": "Microsoft Clarity",
                 "pages": [
                   "plugins/microsoftclarity/overview",
@@ -3738,6 +3789,30 @@
                 ]
               },
               {
+                "group": "Mixpanel",
+                "pages": [
+                  "plugins/mixpanel/overview",
+                  "plugins/mixpanel/api",
+                  "plugins/mixpanel/database"
+                ]
+              },
+              {
+                "group": "Mocean",
+                "pages": [
+                  "plugins/mocean/overview",
+                  "plugins/mocean/api",
+                  "plugins/mocean/database"
+                ]
+              },
+              {
+                "group": "Moco",
+                "pages": [
+                  "plugins/moco/overview",
+                  "plugins/moco/api",
+                  "plugins/moco/database"
+                ]
+              },
+              {
                 "group": "Modelry",
                 "pages": [
                   "plugins/modelry/overview",
@@ -3780,11 +3855,36 @@
                 ]
               },
               {
+                "group": "Moosend",
+                "pages": [
+                  "plugins/moosend/overview",
+                  "plugins/moosend/api",
+                  "plugins/moosend/database"
+                ]
+              },
+              {
+                "group": "Mopinion",
+                "pages": [
+                  "plugins/mopinion/overview",
+                  "plugins/mopinion/api",
+                  "plugins/mopinion/database"
+                ]
+              },
+              {
                 "group": "Motion",
                 "pages": [
                   "plugins/motion/overview",
                   "plugins/motion/api",
                   "plugins/motion/database"
+                ]
+              },
+              {
+                "group": "Moz",
+                "pages": [
+                  "plugins/moz/overview",
+                  "plugins/moz/api",
+                  "plugins/moz/database",
+                  "plugins/moz/webhooks"
                 ]
               },
               {
@@ -4516,6 +4616,14 @@
                 ]
               },
               {
+                "group": "Productboard",
+                "pages": [
+                  "plugins/productboard/overview",
+                  "plugins/productboard/api",
+                  "plugins/productboard/database"
+                ]
+              },
+              {
                 "group": "Proofly",
                 "pages": [
                   "plugins/proofly/overview",
@@ -4553,6 +4661,14 @@
                   "plugins/quaderno/overview",
                   "plugins/quaderno/api",
                   "plugins/quaderno/database"
+                ]
+              },
+              {
+                "group": "QuickBooks",
+                "pages": [
+                  "plugins/quickbooks/overview",
+                  "plugins/quickbooks/api",
+                  "plugins/quickbooks/database"
                 ]
               },
               {
@@ -5265,6 +5381,14 @@
                   "plugins/splitwise/overview",
                   "plugins/splitwise/api",
                   "plugins/splitwise/database"
+                ]
+              },
+              {
+                "group": "Spondyr",
+                "pages": [
+                  "plugins/spondyr/overview",
+                  "plugins/spondyr/api",
+                  "plugins/spondyr/database"
                 ]
               },
               {
@@ -6228,6 +6352,14 @@
                 ]
               },
               {
+                "group": "Wispr Flow",
+                "pages": [
+                  "plugins/wisprflow/overview",
+                  "plugins/wisprflow/api",
+                  "plugins/wisprflow/database"
+                ]
+              },
+              {
                 "group": "Wit.ai",
                 "pages": [
                   "plugins/witai/overview",
@@ -6405,6 +6537,14 @@
                   "plugins/zohobigin/overview",
                   "plugins/zohobigin/api",
                   "plugins/zohobigin/database"
+                ]
+              },
+              {
+                "group": "Zoho Books",
+                "pages": [
+                  "plugins/zohobooks/overview",
+                  "plugins/zohobooks/api",
+                  "plugins/zohobooks/database"
                 ]
               },
               {
