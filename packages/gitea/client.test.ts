@@ -1,3 +1,4 @@
+import { inspect } from 'node:util';
 import {
 	describeGiteaError,
 	GiteaAPIError,
@@ -35,9 +36,12 @@ function respondEmpty(status: number) {
 	fetchMock.mockResolvedValueOnce(new Response(null, { status }));
 }
 
-// unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<GiteaAPIError> { // unknown: a rejection can be any value until the instanceof check narrows it.
-	const error = await promise.catch((e: unknown) => e); // unknown: see note above, the rejection type is open.
+// The alias keeps the open type off the signature line, where a trailing
+// annotation would sit between code and a brace.
+type Rejection = unknown; // unknown: a rejection can be any value until the instanceof check narrows it.
+
+async function failure(promise: Promise<Rejection>): Promise<GiteaAPIError> {
+	const error = await promise.catch((e: unknown) => e); // unknown: see the Rejection note above.
 	expect(error).toBeInstanceOf(GiteaAPIError);
 	if (!(error instanceof GiteaAPIError)) throw error;
 	return error;
@@ -267,7 +271,7 @@ describe('makeGiteaRequest', () => {
 		expect(error.replayable).toBe(false);
 	});
 
-	it('leaves the API key out of the error and its JSON forms', async () => {
+	it('leaves the API key out of the error, its JSON forms and its inspect output', async () => {
 		respond(errorEnvelope('token is required'), 401);
 
 		const error = await failure(
@@ -279,7 +283,14 @@ describe('makeGiteaRequest', () => {
 		);
 		expect(error.message).not.toContain(API_KEY);
 		expect(JSON.stringify(error)).not.toContain(API_KEY);
-		expect(JSON.stringify(error.cause)).not.toContain(API_KEY);
+		// The cause is non-enumerable, so JSON.stringify says nothing about it;
+		// util.inspect is what console.error prints, and it must not carry the
+		// Authorization value or the request either. The provider's own message
+		// ("token is required") is fine to show.
+		expect(inspect(error)).not.toContain(API_KEY);
+		expect(inspect(error)).not.toContain('Authorization');
+		// HTTP errors drop the cause: the ApiError holds the full request.
+		expect(error.cause).toBeUndefined();
 	});
 });
 

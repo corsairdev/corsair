@@ -6,6 +6,10 @@ import type {
 } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
+// The alias keeps the open type off the signatures below, where a trailing
+// annotation would sit between code and a brace.
+type UntypedBody = unknown; // unknown: provider bodies are open JSON; every use site parses with an output schema or reads one field.
+
 /**
  * Gitea is self-hosted, so the instance URL is account config, not a constant.
  * Every request goes to `<instance>/api/v1`; the account may store the site
@@ -105,12 +109,12 @@ export type GiteaRequest = {
 	path: string;
 	query?: GiteaQuery;
 	// unknown: the endpoint's input schema has already validated the body.
-	body?: unknown; // unknown: the endpoint's input schema has already validated the body.
+	body?: UntypedBody;
 	/**
 	 * True only for reads. Set per operation, never derived from the method:
-	 * replaying a write after an unresolved outcome can repeat it (a retried issue
-	 * create duplicates the issue), so SERVER_ERROR and transport retries gate
-	 * on this flag.
+	 * replaying a write after an unresolved outcome can repeat it (a retried
+	 * issue create duplicates the issue), so SERVER_ERROR and transport
+	 * retries gate on this flag.
 	 */
 	replayable: boolean;
 };
@@ -132,16 +136,14 @@ export class GiteaAPIError extends Error {
 	 * replaying a read cannot have repeated anything.
 	 */
 	readonly isTransportFailure: boolean;
-	// unknown: a proxy can answer HTML or plain text instead of the JSON error.
-	readonly body?: unknown; // unknown: a proxy can answer HTML or plain text instead of the JSON error.
+	readonly body?: UntypedBody; // unknown: a proxy can answer HTML or plain text instead of the JSON error.
 
 	constructor(
 		message: string,
 		options: {
 			cause?: Error;
 			status?: number;
-			// unknown: same open error body as the field above.
-			body?: unknown; // unknown: same open error body as the field above.
+			body?: UntypedBody; // unknown: same open error body as the field above.
 			retryAfter?: number;
 			replayable?: boolean;
 			isTransportFailure?: boolean;
@@ -162,15 +164,14 @@ export class GiteaAPIError extends Error {
 	}
 }
 
-// unknown: the body is an untyped error body until asRecord narrows it.
-function readMessage(body: unknown): string | undefined { // unknown: the body is an untyped error body until asRecord narrows it.
+function readMessage(body: UntypedBody): string | undefined {
 	const value = asRecord(body)?.message;
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
 export function describeGiteaError(
 	status: number | undefined,
-	body: unknown, // unknown: JSON error envelope, plain text, or a proxy's HTML.
+	body: UntypedBody, // unknown: JSON error envelope, plain text, or a proxy's HTML.
 	fallback: string,
 ): string {
 	const text =
@@ -181,13 +182,11 @@ export function describeGiteaError(
 	return label ? `Gitea ${label}: ${text}` : text;
 }
 
-// unknown: callers parse the body with the endpoint's zod output schema. It is
-// undefined for the bodyless answers: 204 on repos.delete and webhooks.delete.
 export async function makeGiteaRequest(
 	apiKey: string,
 	baseUrl: string,
 	{ method, path, query, body, replayable }: GiteaRequest,
-): Promise<unknown> { // unknown: callers parse the body with the endpoint's zod output schema; it is undefined for the bodyless 204s.
+): Promise<UntypedBody> {
 	const config: OpenAPIConfig = {
 		// Normalized here too, so a raw instance URL passed straight to the
 		// client still lands on the API root.
@@ -212,20 +211,27 @@ export async function makeGiteaRequest(
 	};
 
 	try {
-		// unknown: the caller parses the response with the endpoint's output schema.
-		return await request<unknown>(config, requestOptions, { // unknown: see note above.
+		return await request<UntypedBody>(config, requestOptions, {
 			rateLimitConfig: GITEA_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		// Rethrow core's ApiError as is: its status and retryAfter are what the
-		// error handlers match (429 retries) and what core reads after a 401.
-		// Wrapping it in a new error loses both.
+		// Core's ApiError carries the status and retryAfter the handlers match
+		// (429 retries) and core reads after a 401, so both are copied onto the
+		// plugin error. The cause itself is dropped: the ApiError holds the full
+		// request, and only transport errors keep one.
 		if (error instanceof ApiError) {
 			throw new GiteaAPIError(
 				describeGiteaError(error.status, error.body, error.message),
-				{ cause: error, replayable },
+				{
+					status: error.status,
+					body: error.body,
+					retryAfter: error.retryAfter,
+					replayable,
+				},
 			);
 		}
+		// Transport failures (reset, DNS, abort) never reached the provider and
+		// never held a body, so this is the one branch that keeps the cause.
 		// DOMException (fetch timeouts) can fail instanceof Error across realms.
 		if (error instanceof Error || error instanceof DOMException) {
 			throw new GiteaAPIError(error.message, {
@@ -234,7 +240,6 @@ export async function makeGiteaRequest(
 				isTransportFailure: true,
 			});
 		}
-		// unknown: a rejection can be any value; nothing about it is recoverable.
 		throw new GiteaAPIError('Unknown Gitea error', {
 			replayable,
 			isTransportFailure: true,
