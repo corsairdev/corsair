@@ -59,6 +59,40 @@ describe('keyBuilder', () => {
 		).rejects.toThrow(/api_key/);
 	});
 
+	it('resolves the admin key, not the search key, for admin.* operations', async () => {
+		const adminCtx = (stored: string | null) => ({
+			authType: 'api_key',
+			meteredOperationId: 'admin.me',
+			keys: {
+				get_api_key: async () => null,
+				get_admin_key: async () => stored,
+			},
+		});
+		await expect(
+			builder({ adminKey: 'bsk_admin_opt' })(adminCtx(null), 'endpoint'),
+		).resolves.toBe('bsk_admin_opt');
+		await expect(
+			builder()(adminCtx('bsk_admin_stored'), 'endpoint'),
+		).resolves.toBe('bsk_admin_stored');
+		await expect(
+			builder({ key: 'search-key' })(adminCtx(null), 'endpoint'),
+		).rejects.toThrow(/admin_key/);
+	});
+
+	it('never sends the admin key to a search operation', async () => {
+		const searchCtx = {
+			authType: 'api_key',
+			meteredOperationId: 'web.search',
+			keys: {
+				get_api_key: async () => 'stored-search',
+				get_admin_key: async () => 'bsk_admin_stored',
+			},
+		};
+		await expect(
+			builder({ adminKey: 'bsk_admin_opt' })(searchCtx, 'endpoint'),
+		).resolves.toBe('stored-search');
+	});
+
 	it('has no webhook key', async () => {
 		await expect(
 			builder()(

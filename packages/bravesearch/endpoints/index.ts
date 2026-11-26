@@ -1,5 +1,4 @@
 import type { CorsairEndpoint } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
 import type { z } from 'zod';
 import type { BraveSearchContext } from '..';
 import type { BraveQuery } from '../client';
@@ -7,7 +6,6 @@ import {
 	assembleAnswerStream,
 	braveAdminRequest,
 	braveSearchRequest,
-	tryGetStoredKey,
 } from '../client';
 import {
 	AdminListAdminKeysInput,
@@ -220,21 +218,6 @@ export const Answers = {
 
 // ── Admin API ───────────────────────────────────────────────────────────────
 
-/** What an admin call reads from the endpoint context. */
-type AdminContext = {
-	options: { adminKey?: string };
-	keys?: { get_admin_key?: () => Promise<string | null | undefined> };
-};
-
-/** The admin key: the `adminKey` option, else the account's stored `admin_key`. */
-export async function resolveAdminKey(ctx: AdminContext): Promise<string> {
-	const key =
-		ctx.options.adminKey?.trim() ||
-		(await tryGetStoredKey(ctx.keys?.get_admin_key));
-	if (!key) throw new AuthMissingError('bravesearch', 'admin_key');
-	return key;
-}
-
 function admin<I extends z.ZodType<object>, O extends z.ZodType>(
 	path: string,
 	input: I,
@@ -244,7 +227,8 @@ function admin<I extends z.ZodType<object>, O extends z.ZodType>(
 		const parsed = input.parse(raw) as BraveQuery;
 		const result = await braveAdminRequest<unknown>(
 			path,
-			await resolveAdminKey(ctx as unknown as AdminContext),
+			// For admin.* the keyBuilder resolves the admin key (index.ts).
+			ctx.key,
 			{ query: parsed },
 		);
 		return output.parse(result);

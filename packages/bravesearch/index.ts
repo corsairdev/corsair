@@ -268,6 +268,21 @@ export function bravesearch<const T extends BraveSearchPluginOptions>(
 		})(),
 		keyBuilder: async (ctx: BraveSearchKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
+			// The Admin API takes its own key (bsk_admin_...), never the search
+			// key: the adminKey option, else the stored admin_key. Hub prices no
+			// admin.* operation, so managed_pricing refuses them before here.
+			if (ctx.meteredOperationId?.startsWith('admin.')) {
+				const adminKey =
+					options.adminKey?.trim() ||
+					(await tryGetStoredKey(
+						// Only api_key accounts declare the admin_key field.
+						ctx.keys && 'get_admin_key' in ctx.keys
+							? ctx.keys.get_admin_key
+							: undefined,
+					));
+				if (adminKey) return adminKey;
+				throw new AuthMissingError('bravesearch', 'admin_key');
+			}
 			if (options.key?.trim()) return options.key;
 			if (ctx.authType === 'managed_pricing') {
 				return resolveManagedPricingApiKey(ctx, {

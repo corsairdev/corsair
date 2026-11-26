@@ -144,11 +144,11 @@ function withoutRequestData(error: ApiError): ApiError {
 	return new ApiError(
 		{ method: error.request.method, url: error.request.url },
 		{
-			url: error.url,
+			url: withoutQuery(error.url),
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
-			body: error.body,
+			body: withoutEchoedInput(error.body),
 		},
 		safeMessage(error),
 		{
@@ -157,6 +157,31 @@ function withoutRequestData(error: ApiError): ApiError {
 			rateLimitRemaining: error.rateLimitRemaining,
 			rateLimitLimit: error.rateLimitLimit,
 		},
+	);
+}
+
+/** The URL without its query string, which holds the search terms. */
+function withoutQuery(url: string): string {
+	const cut = url.search(/[?#]/);
+	return cut === -1 ? url : url.slice(0, cut);
+}
+
+// Keys under which a validation error can echo a rejected request value.
+const ECHO_KEYS = new Set(['input', 'value', 'ctx', 'query', 'q']);
+
+/**
+ * Brave's error body with any echoed request value removed: a validation
+ * error's `meta` can carry the rejected input (`meta.errors[].input`), which
+ * may be a user's query. `id`, `status`, `code` and `detail` stay.
+ */
+// `unknown` is necessary because an error body is whatever JSON (or text) Brave sent.
+export function withoutEchoedInput(body: unknown): unknown {
+	if (Array.isArray(body)) return body.map(withoutEchoedInput);
+	if (typeof body !== 'object' || body === null) return body;
+	return Object.fromEntries(
+		Object.entries(body)
+			.filter(([key]) => !ECHO_KEYS.has(key))
+			.map(([key, value]) => [key, withoutEchoedInput(value)]),
 	);
 }
 
@@ -249,10 +274,15 @@ export function assembleAnswerStream(raw: string): AssembledAnswer {
 	let content = '';
 	let finish: string | null = null;
 	let chunks = 0;
+	let done = false;
 	for (const line of raw.split(/\r?\n/)) {
 		if (!line.startsWith('data:')) continue;
 		const data = line.slice(5).trim();
-		if (!data || data === '[DONE]') continue;
+		if (data === '[DONE]') {
+			done = true;
+			continue;
+		}
+		if (!data) continue;
 		let chunk: StreamChunk;
 		try {
 			chunk = JSON.parse(data) as StreamChunk;
@@ -285,6 +315,14 @@ export function assembleAnswerStream(raw: string): AssembledAnswer {
 	if (chunks === 0) {
 		throw new Error(
 			'Brave Search Answers returned no stream chunks; the response could not be read.',
+		);
+	}
+	// A stream that stops before its finish chunk or [DONE] lost the rest of
+	// the answer and the cost line. It is refused rather than returned as a
+	// complete answer, and not replayed: the call was billed.
+	if (!done && finish === null) {
+		throw new Error(
+			'Brave Search Answers stream ended before it finished; the answer is incomplete.',
 		);
 	}
 	answer.choices.push({

@@ -303,6 +303,43 @@ describe('errors', () => {
 		expect(JSON.stringify(located.request)).not.toContain('12.3456');
 	});
 
+	it('keeps the search terms out of the error URL and body', async () => {
+		respond(
+			{
+				type: 'ErrorResponse',
+				error: {
+					id: 'e1',
+					status: 422,
+					code: 'VALIDATION',
+					detail: 'Unable to validate request parameter(s)',
+					meta: {
+						errors: [
+							{
+								loc: ['query', 'q'],
+								input: 'my secret query',
+								ctx: { max: 600 },
+							},
+						],
+					},
+				},
+			},
+			{ status: 422 },
+		);
+		const error = (await Web.search(ctx(), { q: 'my secret query' }).catch(
+			(e: unknown) => e,
+		)) as { url: string; body: unknown; status: number; message: string };
+		expect(error.status).toBe(422);
+		expect(error.url).toBe('https://api.search.brave.com/res/v1/web/search');
+		expect(JSON.stringify(error.body)).not.toContain('my secret query');
+		expect(error.body).toMatchObject({
+			error: {
+				code: 'VALIDATION',
+				meta: { errors: [{ loc: ['query', 'q'] }] },
+			},
+		});
+		expect(error.message).not.toContain('my secret query');
+	});
+
 	it('refuses an empty key without calling Brave', async () => {
 		respond({});
 		await expect(Web.search(ctx({ key: '' }), { q: 'x' })).rejects.toThrow(
@@ -429,12 +466,9 @@ describe('admin endpoints', () => {
 		organization: { name: 'Acme Search' },
 	};
 
-	it('admin.me sends the adminKey option as a bearer token, not the search key', async () => {
+	it('admin.me sends ctx.key (the admin key) as a bearer token', async () => {
 		respond(me);
-		const result = await Admin.me(
-			ctx({ options: { adminKey: 'bsk_admin_live_x' } }),
-			{},
-		);
+		const result = await Admin.me(ctx({ key: 'bsk_admin_live_x' }), {});
 		const call = last();
 		expect(call.url.href).toBe('https://api.search.brave.com/admin/v1/me');
 		expect(call.headers.get('authorization')).toBe('Bearer bsk_admin_live_x');
@@ -442,26 +476,9 @@ describe('admin endpoints', () => {
 		expect(result.organization?.name).toBe('Acme Search');
 	});
 
-	it('falls back to the stored admin_key', async () => {
+	it('refuses an empty admin key without calling Brave', async () => {
 		respond(me);
-		const base = ctx();
-		await Admin.me(
-			ctx({
-				keys: {
-					...base.keys,
-					get_admin_key: () => Promise.resolve('bsk_admin_live_stored'),
-				},
-			}),
-			{},
-		);
-		expect(last().headers.get('authorization')).toBe(
-			'Bearer bsk_admin_live_stored',
-		);
-	});
-
-	it('refuses without an admin key', async () => {
-		respond(me);
-		await expect(Admin.me(ctx(), {})).rejects.toThrow(/admin_key/);
+		await expect(Admin.me(ctx({ key: '' }), {})).rejects.toThrow(/admin_key/);
 		expect(sent).toHaveLength(0);
 	});
 
@@ -475,16 +492,13 @@ describe('admin endpoints', () => {
 			next_page: null,
 			data_refreshed_at: null,
 		});
-		const result = await Admin.usage(
-			ctx({ options: { adminKey: 'bsk_admin_live_x' } }),
-			{
-				starting_at: '2026-11-01T00:00:00Z',
-				bucket_width: '1d',
-				group_by: ['plan_id', 'endpoint'],
-				endpoints: ['web', 'llm_context'],
-				limit: 7,
-			},
-		);
+		const result = await Admin.usage(ctx({ key: 'bsk_admin_live_x' }), {
+			starting_at: '2026-11-01T00:00:00Z',
+			bucket_width: '1d',
+			group_by: ['plan_id', 'endpoint'],
+			endpoints: ['web', 'llm_context'],
+			limit: 7,
+		});
 		const url = last().url;
 		expect(url.pathname).toBe('/admin/v1/usage');
 		expect(url.searchParams.get('starting_at')).toBe('2026-11-01T00:00:00Z');
@@ -511,14 +525,11 @@ describe('admin endpoints', () => {
 			has_more: true,
 			next_page: 'p2',
 		});
-		const result = await endpoint(
-			ctx({ options: { adminKey: 'bsk_admin_live_x' } }),
-			{
-				limit: 10,
-				page: 'p1',
-				include_deleted: true,
-			},
-		);
+		const result = await endpoint(ctx({ key: 'bsk_admin_live_x' }), {
+			limit: 10,
+			page: 'p1',
+			include_deleted: true,
+		});
 		const url = last().url;
 		expect(url.pathname).toBe(path);
 		expect(url.searchParams.get('limit')).toBe('10');
@@ -530,7 +541,7 @@ describe('admin endpoints', () => {
 	it('reports ADMIN_KEY_INVALID from Brave', async () => {
 		respond(fixture('error-admin-key-invalid'), { status: 401 });
 		await expect(
-			Admin.me(ctx({ options: { adminKey: 'bsk_admin_live_bad' } }), {}),
+			Admin.me(ctx({ key: 'bsk_admin_live_bad' }), {}),
 		).rejects.toThrow(/ADMIN_KEY_INVALID/);
 	});
 });

@@ -119,3 +119,26 @@ describe('bravesearch on managed pricing', () => {
 		).toThrow(/managed_pricing/);
 	});
 });
+
+describe('bravesearch admin operations through createCorsair', () => {
+	it('work with only adminKey set and no search key', async () => {
+		const sent: { url: string; headers: Headers }[] = [];
+		jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
+			sent.push({ url: String(input), headers: new Headers(init?.headers) });
+			return new Response(
+				JSON.stringify({ object: 'admin_key', id: 'akey_x', status: 'active' }),
+				{ status: 200, headers: { 'content-type': 'application/json' } },
+			);
+		});
+		const corsair = createCorsair({
+			plugins: [bravesearch({ adminKey: 'bsk_admin_live_only' })],
+		});
+		const me = await corsair.bravesearch.api.admin.me({});
+		expect(me.status).toBe('active');
+		expect(sent).toHaveLength(1);
+		expect(sent[0]?.url).toBe('https://api.search.brave.com/admin/v1/me');
+		expect(sent[0]?.headers.get('authorization')).toBe(
+			'Bearer bsk_admin_live_only',
+		);
+	});
+});
