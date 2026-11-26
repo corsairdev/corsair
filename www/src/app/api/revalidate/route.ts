@@ -1,7 +1,9 @@
 import { revalidatePath, revalidateTag } from 'next/cache';
 import type { NextRequest } from 'next/server';
-import { NextResponse } from 'next/server';
+import { after, NextResponse } from 'next/server';
 import { parseBody } from 'next-sanity/webhook';
+
+import { blogPostIndexNowUrls, submitToIndexNow } from '@/lib/indexnow';
 
 type SanityWebhookPayload = {
 	_type: string;
@@ -40,6 +42,9 @@ export async function POST(request: NextRequest) {
 			if (body.slug?.current) {
 				revalidatePath(`/blog/${body.slug.current}`);
 			}
+
+			// Tell Bing and IndexNow engines the post changed, after the response.
+			after(() => submitToIndexNow(blogPostIndexNowUrls(body.slug?.current)));
 		}
 
 		return NextResponse.json({ revalidated: true, now: Date.now() });

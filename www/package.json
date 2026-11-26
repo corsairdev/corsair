@@ -18,7 +18,8 @@
     "test": "node --conditions=dev-source --import tsx --test 'src/**/*.test.ts'",
     "sanity:schema": "sanity schema deploy",
     "sanity:deploy": "sanity deploy",
-    "blog:migrate": "tsx scripts/migrate-blog-to-sanity.ts"
+    "blog:migrate": "tsx scripts/migrate-blog-to-sanity.ts",
+    "indexnow:sitemap": "tsx scripts/indexnow-sitemap.ts"
   },
   "dependencies": {
     "@corsair-dev/discord": "workspace:*",
