@@ -192,6 +192,29 @@ export function nextPageOf(
 	return count >= perPage ? page + 1 : null;
 }
 
+/**
+ * A paged list without `per_page` (contacts.listDuplicates): Moneybird sizes
+ * its pages by contacts while the body holds groups of them, so a page's
+ * length says nothing about what is left. Any page with entries may have a
+ * next one; an empty page is the last.
+ */
+// `unknown` because the input was validated against an open schema.
+export function nextPageWhileAny(
+	input: Record<string, unknown>,
+	count: number,
+): number | null {
+	return count > 0 ? (positiveInteger(input.page) ?? 1) + 1 : null;
+}
+
+function takesPageSize(operation: MoneybirdOperationDefinition): boolean {
+	const properties = operation.input.properties;
+	return (
+		typeof properties === 'object' &&
+		properties !== null &&
+		'per_page' in properties
+	);
+}
+
 // `unknown` because the value is a validated number or digit string.
 function positiveInteger(value: unknown): number | undefined {
 	const number =
@@ -337,7 +360,11 @@ export function createMoneybirdOperation<Id extends MoneybirdOperationId>(
 					break;
 			}
 		}
-		if (operation.paginated && query.per_page === undefined) {
+		if (
+			operation.paginated &&
+			takesPageSize(operation) &&
+			query.per_page === undefined
+		) {
 			// Moneybird's default page size differs per route: ask for a known one.
 			query.per_page = MONEYBIRD_PAGE_SIZE;
 		}
@@ -396,7 +423,9 @@ export function createMoneybirdOperation<Id extends MoneybirdOperationId>(
 			} else if (operation.paginated && Array.isArray(body)) {
 				response = {
 					items: body,
-					next_page: nextPageOf(parsedInput.data, body.length),
+					next_page: takesPageSize(operation)
+						? nextPageOf(parsedInput.data, body.length)
+						: nextPageWhileAny(parsedInput.data, body.length),
 				};
 			} else {
 				response = body;

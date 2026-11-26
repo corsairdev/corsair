@@ -337,6 +337,26 @@ describe('responses', () => {
 		expect(nextPageOf({ page: '4', per_page: '10' }, 10)).toBe(5);
 	});
 
+	it('keeps paging duplicate contacts while a page has groups', async () => {
+		// contacts.listDuplicates takes no per_page and Moneybird sizes its pages
+		// by contacts, not by the groups it returns: only an empty page is the last.
+		reply(200, [{ contacts: [{ id: '1' }, { id: '2' }] }]);
+		const first = await endpointFor('contacts.listDuplicates')(ctx(), {
+			page: 2,
+		});
+		expect(first).toEqual({
+			items: [{ contacts: [{ id: '1' }, { id: '2' }] }],
+			next_page: 3,
+		});
+		const url = new URL(String(calls[0]?.url));
+		expect(url.searchParams.get('page')).toBe('2');
+		expect(url.searchParams.has('per_page')).toBe(false);
+		reply(200, []);
+		await expect(
+			endpointFor('contacts.listDuplicates')(ctx(), { page: 3 }),
+		).resolves.toEqual({ items: [], next_page: null });
+	});
+
 	it('returns a bare list for routes Moneybird does not page', async () => {
 		reply(200, [{ id: '1', name: 'Revenue' }]);
 		await expect(
