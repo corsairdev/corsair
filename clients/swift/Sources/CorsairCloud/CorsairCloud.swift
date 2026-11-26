@@ -99,7 +99,7 @@ public struct CorsairError: Error, Equatable, Sendable {
 		if case let .object(top)? = body {
 			if case let .string(code)? = top["error"] {
 				var providerStatus: Int?
-				if case let .number(n)? = top["providerStatus"] { providerStatus = Int(n) }
+				if case let .number(n)? = top["providerStatus"] { providerStatus = Int(exactly: n) }
 				return CorsairError(
 					status: status, code: code, message: top["message"]?.stringValue,
 					reason: top["reason"]?.stringValue, providerStatus: providerStatus,

@@ -269,6 +269,15 @@ struct CorsairCloudTests {
 		#expect(!e.retryable)
 	}
 
+	@Test func outOfRangeProviderStatusIsDroppedNotFatal() async throws {
+		// The body comes off the network: a status Int can't hold must not crash.
+		let huge = try await error(409, #"{"error":"not_connected","providerStatus":1e30}"#)
+		#expect(huge.code == "not_connected")
+		#expect(huge.providerStatus == nil)
+		let fractional = try await error(409, #"{"error":"not_connected","providerStatus":401.5}"#)
+		#expect(fractional.providerStatus == nil)
+	}
+
 	@Test func managementErrorBodyThrowsTypedError() async throws {
 		let e = try await error(
 			401,
