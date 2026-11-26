@@ -44,7 +44,7 @@ overviewNote: |
   invoices.
   - Not wrapped: four routes Moneybird marks deprecated (the old
   `register_payment` routes and `DELETE purchase_transactions/{id}/delete`;
-  use `payments.create` and `purchaseTransactions.delete`), and the
+  use the `*.payments.create` operations and `purchaseTransactions.delete`), and the
   `events.list` cursor, which only comes in a Link header.
 examples:
   read:

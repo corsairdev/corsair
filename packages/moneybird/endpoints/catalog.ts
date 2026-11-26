@@ -1175,137 +1175,137 @@ export const moneybirdEndpointMeta = {
 	'contacts.archive': {
 		riskLevel: 'write',
 		description:
-			'Archive a contact: archives a contact (scope: estimates, sales_invoices, documents, bank, settings)',
+			'Archive a contact: archives a contact (scopes: any of estimates, sales_invoices, documents, bank or settings)',
 	},
 	'contacts.contactPeople.create': {
 		riskLevel: 'write',
 		description:
-			'Create a new contact person: creating a new contact person in the administration requires at least a `contact_person` hash including `firstname` and `lastname` (scope: estimates, sales_invoices, documents, bank, settings)',
+			'Create a new contact person: creating a new contact person in the administration requires at least a `contact_person` hash including `firstname` and `lastname` (scopes: any of estimates, sales_invoices, documents, bank or settings)',
 	},
 	'contacts.contactPeople.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete a contact person (scope: estimates, sales_invoices, documents, bank, settings)',
+			'Delete a contact person (scopes: any of estimates, sales_invoices, documents, bank or settings)',
 	},
 	'contacts.contactPeople.get': {
 		riskLevel: 'read',
 		description:
-			'Get contact person (scope: estimates, sales_invoices, documents, bank, settings)',
+			'Get contact person (scopes: any of estimates, sales_invoices, documents, bank or settings)',
 	},
 	'contacts.contactPeople.update': {
 		riskLevel: 'write',
 		description:
-			'Update a contact person: when updating a contact, you only need to provide the information you want to change (scope: estimates, sales_invoices, documents, bank, settings)',
+			'Update a contact person: when updating a contact, you only need to provide the information you want to change (scopes: any of estimates, sales_invoices, documents, bank or settings)',
 	},
 	'contacts.create': {
 		riskLevel: 'write',
 		description:
-			'Create a new contact: creating a new contact in the administration requires at least a `company_name` or a `firstname` and `lastname` (scope: estimates, sales_invoices, documents, bank, settings)',
+			'Create a new contact: creating a new contact in the administration requires at least a `company_name` or a `firstname` and `lastname` (scopes: any of estimates, sales_invoices, documents, bank or settings)',
 	},
 	'contacts.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete a contact (scope: estimates, sales_invoices, documents, bank, settings)',
+			'Delete a contact (scopes: any of estimates, sales_invoices, documents, bank or settings)',
 	},
 	'contacts.fetchByIds': {
 		riskLevel: 'read',
 		description:
-			'Fetch contacts with given ids: given a list of contact ids, returns the contact information belonging to the contacts (scope: estimates, sales_invoices, documents, bank, settings)',
+			'Fetch contacts with given ids: given a list of contact ids, returns the contact information belonging to the contacts (scopes: any of estimates, sales_invoices, documents, bank or settings)',
 	},
 	'contacts.filter': {
 		riskLevel: 'read',
 		description:
-			'Filter contacts, one page at a time (scope: estimates, sales_invoices, documents, bank, settings)',
+			'Filter contacts, one page at a time (scopes: any of estimates, sales_invoices, documents, bank or settings)',
 	},
 	'contacts.get': {
 		riskLevel: 'read',
 		description:
-			'Get contact (scope: estimates, sales_invoices, documents, bank, settings)',
+			'Get contact (scopes: any of estimates, sales_invoices, documents, bank or settings)',
 	},
 	'contacts.getByCustomerId': {
 		riskLevel: 'read',
 		description:
-			'Get contact by customer id (scope: estimates, sales_invoices, documents, bank, settings)',
+			'Get contact by customer id (scopes: any of estimates, sales_invoices, documents, bank or settings)',
 	},
 	'contacts.list': {
 		riskLevel: 'read',
 		description:
-			'List all contacts, one page at a time (scope: estimates, sales_invoices, documents, bank, settings)',
+			'List all contacts, one page at a time (scopes: any of estimates, sales_invoices, documents, bank or settings)',
 	},
 	'contacts.listDuplicates': {
 		riskLevel: 'read',
 		description:
-			'List possible duplicate contacts, one page at a time (scope: estimates, sales_invoices, documents, bank, settings)',
+			'List possible duplicate contacts, one page at a time (scopes: any of estimates, sales_invoices, documents, bank or settings)',
 	},
 	'contacts.listVersions': {
 		riskLevel: 'read',
 		description:
-			'List all ids and versions (scope: estimates, sales_invoices, documents, bank, settings)',
+			'List all ids and versions (scopes: any of estimates, sales_invoices, documents, bank or settings)',
 	},
 	'contacts.notes.create': {
 		riskLevel: 'write',
 		description:
-			'Adds note to entity: adds a note to the contact (scope: estimates, sales_invoices, documents, bank, settings)',
+			'Adds note to entity: adds a note to the contact (scopes: any of estimates, sales_invoices, documents, bank or settings)',
 	},
 	'contacts.notes.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Destroys note from entity (scope: estimates, sales_invoices, documents, bank, settings)',
+			'Destroys note from entity (scopes: any of estimates, sales_invoices, documents, bank or settings)',
 	},
 	'contacts.paymentsMandate.createUrl': {
 		riskLevel: 'write',
 		description:
-			'Request an URL for setting up a Moneybird Payments mandate: obtains an URL for setting up a Moneybird Payments mandate (scope: sales_invoices, settings)',
+			'Request an URL for setting up a Moneybird Payments mandate: obtains an URL for setting up a Moneybird Payments mandate (scopes: sales_invoices and settings)',
 	},
 	'contacts.paymentsMandate.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete a stored Moneybird Payments mandate (scope: estimates, sales_invoices, documents, bank, settings)',
+			'Delete a stored Moneybird Payments mandate (scopes: any of estimates, sales_invoices, documents, bank or settings)',
 	},
 	'contacts.paymentsMandate.get': {
 		riskLevel: 'read',
 		description:
-			'Get Moneybird Payments mandate (scope: estimates, sales_invoices, documents, bank, settings)',
+			'Get Moneybird Payments mandate (scopes: any of estimates, sales_invoices, documents, bank or settings)',
 	},
 	'contacts.paymentsMandate.request': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Email the contact a request to set up a Moneybird Payments direct debit mandate (they pay 15 cents to confirm) (scope: sales_invoices, settings)',
+			'Email the contact a request to set up a Moneybird Payments direct debit mandate (they pay 15 cents to confirm) (scopes: sales_invoices and settings)',
 	},
 	'contacts.update': {
 		riskLevel: 'write',
 		description:
-			'Update a contact: when updating a contact, you only need to provide the information you want to change (scope: estimates, sales_invoices, documents, bank, settings)',
+			'Update a contact: when updating a contact, you only need to provide the information you want to change (scopes: any of estimates, sales_invoices, documents, bank or settings)',
 	},
 	'customFields.list': {
 		riskLevel: 'read',
 		description:
-			'List all custom fields: custom fields are used to add extra information to entities in the administration (scope: settings, sales_invoices, documents, estimates, bank)',
+			'List all custom fields: custom fields are used to add extra information to entities in the administration (scopes: any of settings, sales_invoices, documents, estimates or bank)',
 	},
 	'customerContactPortal.get': {
 		riskLevel: 'read',
 		description:
-			'Get a temporary link to the customer contact portal: generate a temporary link to the customer contact portal (scope: sales_invoices, estimates)',
+			'Get a temporary link to the customer contact portal: generate a temporary link to the customer contact portal (scopes: any of sales_invoices or estimates)',
 	},
 	'customerContactPortal.getSubscription': {
 		riskLevel: 'read',
 		description:
-			'Get a temporary link to the subscriptions in the customer contact portal: generate a temporary link to the subscriptions in the customer contact portal (scope: sales_invoices, estimates)',
+			'Get a temporary link to the subscriptions in the customer contact portal: generate a temporary link to the subscriptions in the customer contact portal (scopes: any of sales_invoices or estimates)',
 	},
 	'customerContactPortal.listInvoices': {
 		riskLevel: 'read',
 		description:
-			'Get a temporary link to the invoices in the customer contact portal: generate a temporary link to the invoices in the customer contact portal (scope: sales_invoices, estimates)',
+			'Get a temporary link to the invoices in the customer contact portal: generate a temporary link to the invoices in the customer contact portal (scopes: any of sales_invoices or estimates)',
 	},
 	'documentStyles.list': {
 		riskLevel: 'read',
 		description:
-			'List all document styles (scope: settings, sales_invoices, estimates)',
+			'List all document styles (scopes: any of settings, sales_invoices or estimates)',
 	},
 	'documents.generalDocuments.attachments.create': {
 		riskLevel: 'write',
@@ -1620,7 +1620,7 @@ export const moneybirdEndpointMeta = {
 	'estimates.bill': {
 		riskLevel: 'write',
 		description:
-			'Bills an estimate: an invoice is created based on the accepted estimate (scope: estimates, sales_invoices)',
+			'Bills an estimate: an invoice is created based on the accepted estimate (scopes: estimates and sales_invoices)',
 	},
 	'estimates.changeState': {
 		riskLevel: 'write',
@@ -1863,12 +1863,12 @@ export const moneybirdEndpointMeta = {
 	'ledgerAccounts.get': {
 		riskLevel: 'read',
 		description:
-			'Returns information about a ledger account (scope: settings, sales_invoices, documents, estimates)',
+			'Returns information about a ledger account (scopes: any of settings, sales_invoices, documents or estimates)',
 	},
 	'ledgerAccounts.list': {
 		riskLevel: 'read',
 		description:
-			'List all ledger accounts of an administration (scope: settings, sales_invoices, documents, estimates)',
+			'List all ledger accounts of an administration (scopes: any of settings, sales_invoices, documents or estimates)',
 	},
 	'ledgerAccounts.update': {
 		riskLevel: 'write',
@@ -2058,17 +2058,17 @@ export const moneybirdEndpointMeta = {
 	'reports.exportAuditfile': {
 		riskLevel: 'write',
 		description:
-			'Export auditfile: queue the export of an auditfile (XAF XML format) for the specified year (scope: bank, documents, estimates, sales_invoices, settings)',
+			'Export auditfile: queue the export of an auditfile (XAF XML format) for the specified year (scopes: bank, documents, estimates, sales_invoices and settings)',
 	},
 	'reports.exportBrugstaat': {
 		riskLevel: 'write',
 		description:
-			'Export brugstaat: queue the export of a brugstaat XML file for the specified year (scope: bank, documents, sales_invoices)',
+			'Export brugstaat: queue the export of a brugstaat XML file for the specified year (scopes: bank, documents and sales_invoices)',
 	},
 	'reports.exportLedgerAccounts': {
 		riskLevel: 'write',
 		description:
-			'Export ledger accounts: queue the export of ledger accounts (grootboekkaarten) to an Excel file for the specified year (scope: documents, sales_invoices)',
+			'Export ledger accounts: queue the export of ledger accounts (grootboekkaarten) to an Excel file for the specified year (scopes: documents and sales_invoices)',
 	},
 	'reports.generalLedger': {
 		riskLevel: 'read',
@@ -2078,12 +2078,12 @@ export const moneybirdEndpointMeta = {
 	'reports.journalEntries': {
 		riskLevel: 'read',
 		description:
-			'Journal entries report: get the journal entries report showing all bookings within the specified period, one page at a time (scope: documents, sales_invoices)',
+			'Journal entries report: get the journal entries report showing all bookings within the specified period, one page at a time (scopes: documents and sales_invoices)',
 	},
 	'reports.profitLoss': {
 		riskLevel: 'read',
 		description:
-			'Profit loss report: get the profit loss report for the administration (scope: documents, sales_invoices)',
+			'Profit loss report: get the profit loss report for the administration (scopes: documents and sales_invoices)',
 	},
 	'reports.revenueByContact': {
 		riskLevel: 'read',
@@ -2101,7 +2101,7 @@ export const moneybirdEndpointMeta = {
 	'reports.tax': {
 		riskLevel: 'read',
 		description:
-			'Tax report: get the tax report for the administration (scope: documents, sales_invoices)',
+			'Tax report: get the tax report for the administration (scopes: documents and sales_invoices)',
 	},
 	'reports.workingCapital': {
 		riskLevel: 'read',
@@ -2299,137 +2299,137 @@ export const moneybirdEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Deletes a task list group: permanently deletes a task list group and all its tasks (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Deletes a task list group: permanently deletes a task list group and all its tasks (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskListGroups.get': {
 		riskLevel: 'read',
 		description:
-			'Returns information about a task list group (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Returns information about a task list group (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskListGroups.tasks.create': {
 		riskLevel: 'write',
 		description:
-			'Creates a new task in a group (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Creates a new task in a group (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskListGroups.update': {
 		riskLevel: 'write',
 		description:
-			'Updates a task list group (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Updates a task list group (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskListTasks.assign': {
 		riskLevel: 'write',
 		description:
-			'Assigns a user to a task: assigns a user to the specified task (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Assigns a user to a task: assigns a user to the specified task (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskListTasks.complete': {
 		riskLevel: 'write',
 		description:
-			'Completes a task: marks a task and all its subtasks as completed (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Completes a task: marks a task and all its subtasks as completed (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskListTasks.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Deletes a task: permanently deletes a task and all its subtasks (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Deletes a task: permanently deletes a task and all its subtasks (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskListTasks.get': {
 		riskLevel: 'read',
 		description:
-			'Returns information about a task (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Returns information about a task (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskListTasks.notes.create': {
 		riskLevel: 'write',
 		description:
-			'Creates a note on a task (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Creates a note on a task (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskListTasks.reopen': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Reopens a task: reopens a completed task and possible parent tasks (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Reopens a task: reopens a completed task and possible parent tasks (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskListTasks.unassign': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Unassigns the user from a task: removes the current assignment from the specified task (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Unassigns the user from a task: removes the current assignment from the specified task (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskListTasks.update': {
 		riskLevel: 'write',
 		description:
-			'Updates a task (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Updates a task (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskListTemplates.create': {
 		riskLevel: 'write',
 		description:
-			'Creates a new task list template (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Creates a new task list template (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskListTemplates.createTaskList': {
 		riskLevel: 'write',
 		description:
-			'Creates a task list from a template (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Creates a task list from a template (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskListTemplates.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Deletes a task list template: permanently deletes a task list template and all its groups and tasks (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Deletes a task list template: permanently deletes a task list template and all its groups and tasks (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskListTemplates.get': {
 		riskLevel: 'read',
 		description:
-			'Returns information about a task list template (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Returns information about a task list template (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskListTemplates.groups.create': {
 		riskLevel: 'write',
 		description:
-			'Creates a new group in a task list template (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Creates a new group in a task list template (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskListTemplates.list': {
 		riskLevel: 'read',
 		description:
-			'List all task list templates of an administration (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'List all task list templates of an administration (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskListTemplates.update': {
 		riskLevel: 'write',
 		description:
-			'Updates a task list template (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Updates a task list template (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskLists.create': {
 		riskLevel: 'write',
 		description:
-			'Creates a new task list (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Creates a new task list (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskLists.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Deletes a task list: permanently deletes a task list and all its groups and tasks (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Deletes a task list: permanently deletes a task list and all its groups and tasks (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskLists.get': {
 		riskLevel: 'read',
 		description:
-			'Returns information about a task list (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Returns information about a task list (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskLists.groups.create': {
 		riskLevel: 'write',
 		description:
-			'Creates a new group in a task list (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Creates a new group in a task list (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskLists.list': {
 		riskLevel: 'read',
 		description:
-			'List all task lists of an administration, one page at a time (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'List all task lists of an administration, one page at a time (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taskLists.update': {
 		riskLevel: 'write',
 		description:
-			'Updates a task list (scope: bank, documents, estimates, sales_invoices, settings, time_entries)',
+			'Updates a task list (scopes: bank, documents, estimates, sales_invoices, settings and time_entries)',
 	},
 	'taxRates.list': {
 		riskLevel: 'read',
 		description:
-			'List all available tax rates for the administration, one page at a time (scope: settings, sales_invoices, documents, estimates)',
+			'List all available tax rates for the administration, one page at a time (scopes: any of settings, sales_invoices, documents or estimates)',
 	},
 	'timeEntries.create': {
 		riskLevel: 'write',
@@ -2512,12 +2512,12 @@ export const moneybirdEndpointMeta = {
 	'workflows.get': {
 		riskLevel: 'read',
 		description:
-			'Get a workflow by id (scope: settings, sales_invoices, documents, estimates, bank)',
+			'Get a workflow by id (scopes: any of settings, sales_invoices, documents, estimates or bank)',
 	},
 	'workflows.list': {
 		riskLevel: 'read',
 		description:
-			'Retrieve available workflows (scope: settings, sales_invoices, documents, estimates, bank)',
+			'Retrieve available workflows (scopes: any of settings, sales_invoices, documents, estimates or bank)',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof moneybirdEndpointsNested
