@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeOutlookRequest } from '../client';
 import type { OutlookEndpoints } from '../index';
 import type { OutlookEndpointOutputs } from './types';
+import { OutlookEndpointInputSchemas } from './types';
 
 const userPath = (userId?: string) => (userId ? `/users/${userId}` : '/me');
 
@@ -129,26 +130,39 @@ export const getEvent: OutlookEndpoints['eventsGet'] = async (ctx, input) => {
 
 export const listEvents: OutlookEndpoints['eventsList'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	// Core doesn't apply input schemas to direct calls; the timezone goes into a header.
+	const input = OutlookEndpointInputSchemas.eventsList.parse(rawInput);
 	const base = userPath(input.user_id);
 	const calendarPath = input.calendar_id
 		? `/calendars/${input.calendar_id}`
 		: '';
 
+	const expandOccurrences = input.expand_recurring_events;
+	// calendarView rejects $select of these two; Graph says to omit $select to get them.
+	const select = input.select?.length ? input.select : undefined;
+	const selectBreaksCalendarView =
+		expandOccurrences &&
+		select?.some((f) => /^(createdDateTime|lastModifiedDateTime)$/i.test(f));
 	const result = await makeOutlookRequest<OutlookEndpointOutputs['eventsList']>(
-		`${base}${calendarPath}/events`,
+		`${base}${calendarPath}/${expandOccurrences ? 'calendarView' : 'events'}`,
 		ctx.key,
 		{
+			headers: input.timezone
+				? { Prefer: `outlook.timezone="${input.timezone}"` }
+				: undefined,
 			query: {
+				...(expandOccurrences && {
+					startDateTime: input.start_datetime,
+					endDateTime: input.end_datetime,
+				}),
 				...(input.top && { $top: input.top }),
 				...(input.skip && { $skip: input.skip }),
 				...(input.filter && { $filter: input.filter }),
-				...(input.select?.length && { $select: input.select.join(',') }),
+				...(select &&
+					!selectBreaksCalendarView && { $select: select.join(',') }),
 				...(input.orderby?.length && { $orderby: input.orderby.join(',') }),
-				...(input.timezone && {
-					Prefer: `outlook.timezone="${input.timezone}"`,
-				}),
 			},
 		},
 	);

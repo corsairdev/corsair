@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import type {
 	GoogleCalendarEndpointInputs,
 	GoogleCalendarEndpointOutputs,
@@ -130,7 +131,7 @@ const googleCalendarWebhooksNested = {
 } as const;
 
 export type GoogleCalendarPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalGoogleCalendarPlugin['hooks'];
 	webhookHooks?: InternalGoogleCalendarPlugin['webhookHooks'];
@@ -166,9 +167,14 @@ const googleCalendarEndpointMeta = {
 	},
 	'events.get': {
 		riskLevel: 'read',
-		description: 'Get a specific calendar event',
+		description:
+			'Get one event by its event id, not the iCalUID. For one occurrence of a recurring event, use the instance id from events.getMany with singleEvents true',
 	},
-	'events.getMany': { riskLevel: 'read', description: 'List calendar events' },
+	'events.getMany': {
+		riskLevel: 'read',
+		description:
+			'List events in a time window. Set singleEvents true or recurring events appear once; page with pageToken until nextPageToken is empty',
+	},
 	'events.update': {
 		riskLevel: 'write',
 		description: 'Update an existing calendar event',
@@ -179,12 +185,16 @@ const googleCalendarEndpointMeta = {
 	},
 	'calendar.getAvailability': {
 		riskLevel: 'read',
-		description: 'Get free/busy availability for a calendar',
+		description:
+			'Busy time ranges only, no event details; use events.getMany to see the events',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof googleCalendarEndpointsNested>;
 
 export const googleCalendarAuthConfig = {
 	oauth_2: {
+		account: ['channel_id'] as const,
+	},
+	managed: {
 		account: ['channel_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -250,6 +260,25 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 					plugin: 'googlecalendar',
 					tokenUrl: 'https://oauth2.googleapis.com/token',
 				});
+			}
+
+			// Corsair's own Google app: Hub holds the client secret, so the token
+			// comes from (and refreshes through) Hub rather than Google directly.
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:googlecalendar:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'googlecalendar',
+					tenantId: ctx.tenantId,
+				};
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('googlecalendar', 'oauth_2');

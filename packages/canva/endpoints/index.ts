@@ -1,3 +1,4 @@
+import * as Analytics from './analytics';
 import {
 	create as createAssetUpload,
 	createFromUrl as createAssetUploadFromUrl,
@@ -14,6 +15,7 @@ import {
 	get as getBrandTemplate,
 	getDataset as getBrandTemplateDataset,
 	list as listBrandTemplates,
+	publish as publishBrandTemplate,
 } from './brand-templates';
 import {
 	createReply,
@@ -25,11 +27,16 @@ import {
 import {
 	create as createDesign,
 	get as getDesign,
+	getDataset as getDesignDataset,
 	getExportFormats as getDesignExportFormats,
 	getPages as getDesignPages,
 	list as listDesigns,
 } from './designs';
-import { create as createExport, get as getExport } from './exports';
+import {
+	create as createExport,
+	download as downloadExport,
+	get as getExport,
+} from './exports';
 import {
 	create as createFolder,
 	deleteFolder as deleteFolderHandler,
@@ -38,12 +45,20 @@ import {
 	moveItem as moveFolderItem,
 	update as updateFolder,
 } from './folders';
+import * as GenerationsModule from './generations';
+import * as ImageGenerationsModule from './image-generations';
+import * as ImageTransformationsModule from './image-transformations';
 import {
 	create as createImport,
+	createFromImage as createImportFromImage,
 	createFromUrl as createImportFromUrl,
 	get as getImport,
+	getFromImage as getImportFromImage,
 	getFromUrl as getImportFromUrl,
 } from './imports';
+import { getAppJwks, listSigningKeys } from './keys';
+import * as MergesModule from './merges';
+import * as PrintPartnerModule from './print-partner';
 import { create as createResize, get as getResize } from './resizes';
 import { getCapabilities, getMe, getProfile } from './users';
 
@@ -59,6 +74,15 @@ export const Designs = {
 	create: createDesign,
 	getPages: getDesignPages,
 	getExportFormats: getDesignExportFormats,
+	getDataset: getDesignDataset,
+};
+
+export const DesignAnalytics = {
+	get: Analytics.get,
+	listViewers: Analytics.listViewers,
+	listViewsOverTime: Analytics.listViewsOverTime,
+	listPageViews: Analytics.listPageViews,
+	listLinks: Analytics.listLinks,
 };
 
 export const Assets = {
@@ -79,12 +103,14 @@ export const Folders = {
 export const Exports = {
 	create: createExport,
 	get: getExport,
+	download: downloadExport,
 };
 
 export const BrandTemplates = {
 	list: listBrandTemplates,
 	get: getBrandTemplate,
 	getDataset: getBrandTemplateDataset,
+	publish: publishBrandTemplate,
 };
 
 export const AssetUploads = {
@@ -99,6 +125,8 @@ export const Imports = {
 	get: getImport,
 	createFromUrl: createImportFromUrl,
 	getFromUrl: getImportFromUrl,
+	createFromImage: createImportFromImage,
+	getFromImage: getImportFromImage,
 };
 
 export const Resizes = {
@@ -117,6 +145,40 @@ export const Comments = {
 	createReply,
 	listReplies,
 	getReply,
+};
+
+export const Generations = {
+	create: GenerationsModule.create,
+	get: GenerationsModule.get,
+};
+
+export const ImageGenerations = {
+	create: ImageGenerationsModule.create,
+	get: ImageGenerationsModule.get,
+};
+
+export const ImageTransformations = {
+	create: ImageTransformationsModule.create,
+	get: ImageTransformationsModule.get,
+};
+
+export const Merges = {
+	create: MergesModule.create,
+	get: MergesModule.get,
+};
+
+export const PrintPartner = {
+	createDesign: PrintPartnerModule.createDesign,
+	getDesign: PrintPartnerModule.getDesign,
+	createExport: PrintPartnerModule.createExport,
+};
+
+export const Keys = {
+	list: listSigningKeys,
+};
+
+export const Apps = {
+	getJwks: getAppJwks,
 };
 
 export * from './types';

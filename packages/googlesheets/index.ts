@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import type {
 	GoogleSheetsEndpointInputs,
 	GoogleSheetsEndpointOutputs,
@@ -158,7 +159,7 @@ const googleSheetsWebhooksNested = {
 } as const;
 
 export type GoogleSheetsPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalGoogleSheetsPlugin['hooks'];
 	webhookHooks?: InternalGoogleSheetsPlugin['webhookHooks'];
@@ -246,6 +247,9 @@ export const googlesheetsAuthConfig = {
 	oauth_2: {
 		account: ['spreadsheet_id'] as const,
 	},
+	managed: {
+		account: ['spreadsheet_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseGoogleSheetsPlugin<T extends GoogleSheetsPluginOptions> =
@@ -308,6 +312,25 @@ export function googlesheets<const T extends GoogleSheetsPluginOptions>(
 					plugin: 'googlesheets',
 					tokenUrl: 'https://oauth2.googleapis.com/token',
 				});
+			}
+
+			// Corsair's own Google app: Hub holds the client secret, so the token
+			// comes from (and refreshes through) Hub rather than Google directly.
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:googlesheets:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'googlesheets',
+					tenantId: ctx.tenantId,
+				};
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('googlesheets', 'oauth_2');

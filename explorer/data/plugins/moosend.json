@@ -1,0 +1,3092 @@
+{
+  "id": "moosend",
+  "displayName": "Moosend",
+  "description": "Email marketing with Moosend - mailing lists, custom fields, subscribers and tags, segments, draft and sent campaigns with their reports, senders, and transactional email.",
+  "npmPackageName": "@corsair-dev/moosend",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 52,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "moosend.api.campaigns.abSummary",
+      "shortPath": "campaigns.abSummary",
+      "description": "Read an A/B campaign's totals per version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "moosend.api.campaigns.activityByLocation",
+      "shortPath": "campaigns.activityByLocation",
+      "description": "Count campaign opens per country",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Paging",
+            "optional": true,
+            "type": "{ PageSize?: number | null, CurrentPage?: number | null, TotalResults?: number | null, TotalPageCount?: number | null, SortExpression?: string | null, SortIsAscending?: boolean | null } | null"
+          },
+          {
+            "key": "Analytics",
+            "optional": false,
+            "type": "{ Context?: string | null, ContextName?: string | null, ContextDescription?: string | null, TotalCount?: number | null, UniqueCount?: number | null, Email?: string | null, IpAddress?: string | null, MailingListId?: string | null, MemberID?: string | null, Name?: string | null, Status?: number | string | null, Timestamp?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.campaigns.clone",
+      "shortPath": "campaigns.clone",
+      "description": "Copy a campaign into a new draft and return the copy",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "WebLocation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "HTMLContent",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "PlainContent",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Sender",
+            "optional": true,
+            "type": "{ ID?: string | null, Name?: string | null, Email?: string | null, CreatedOn?: string | null, IsEnabled?: boolean | null, SpfVerified?: boolean | null, DkimVerified?: boolean | null, DkimPublic?: string | null, DmarcVerified?: boolean | null, IsVerified?: boolean | null } | null"
+          },
+          {
+            "key": "DeliveredOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReplyToEmail",
+            "optional": true,
+            "type": "{ ID?: string | null, Name?: string | null, Email?: string | null, CreatedOn?: string | null, IsEnabled?: boolean | null, SpfVerified?: boolean | null, DkimVerified?: boolean | null, DkimPublic?: string | null, DmarcVerified?: boolean | null, IsVerified?: boolean | null } | null"
+          },
+          {
+            "key": "CreatedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UpdatedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ScheduledFor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "FormatType",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "ABCampaignData",
+            "optional": false,
+            "type": "any"
+          },
+          {
+            "key": "MailingLists",
+            "optional": true,
+            "type": "{ MailingListID?: string | null, SegmentID?: number | null }[] | null"
+          },
+          {
+            "key": "ConfirmationTo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "IsTransactional",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.campaigns.create",
+      "shortPath": "campaigns.create",
+      "description": "Create a draft campaign (regular or A/B); nothing is sent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Campaign name"
+          },
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string",
+            "description": "Subject line"
+          },
+          {
+            "key": "senderEmail",
+            "optional": false,
+            "type": "string",
+            "description": "Email of one of the account senders"
+          },
+          {
+            "key": "replyToEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Reply-to address; must be one of the account senders (sender when omitted)"
+          },
+          {
+            "key": "confirmationToEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Where Moosend sends its \"campaign sent\" confirmation (sender when omitted)"
+          },
+          {
+            "key": "htmlContent",
+            "optional": true,
+            "type": "string",
+            "description": "Full HTML body"
+          },
+          {
+            "key": "webLocation",
+            "optional": true,
+            "type": "string",
+            "description": "URL Moosend fetches the HTML body from"
+          },
+          {
+            "key": "mailingLists",
+            "optional": true,
+            "type": "{ mailingListId: string, segmentId?: number }[]",
+            "description": "Lists (and optional segments) the campaign goes to"
+          },
+          {
+            "key": "trackInGoogleAnalytics",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isAB",
+            "optional": true,
+            "type": "boolean",
+            "description": "Create an A/B split campaign (false when omitted)"
+          },
+          {
+            "key": "abCampaignType",
+            "optional": true,
+            "type": "Subjectline | Content | Sender"
+          },
+          {
+            "key": "subjectB",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "htmlContentB",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webLocationB",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "senderEmailB",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hoursToTest",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "listPercentage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "abWinnerSelectionType",
+            "optional": true,
+            "type": "OpenRate | TotalUniqueClicks"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.campaigns.delete",
+      "shortPath": "campaigns.delete",
+      "description": "Delete a campaign; cannot be undone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.campaigns.get",
+      "shortPath": "campaigns.get",
+      "description": "Read one campaign with its content, sender and mailing lists (no statistics)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "WebLocation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "HTMLContent",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "PlainContent",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Sender",
+            "optional": true,
+            "type": "{ ID?: string | null, Name?: string | null, Email?: string | null, CreatedOn?: string | null, IsEnabled?: boolean | null, SpfVerified?: boolean | null, DkimVerified?: boolean | null, DkimPublic?: string | null, DmarcVerified?: boolean | null, IsVerified?: boolean | null } | null"
+          },
+          {
+            "key": "DeliveredOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReplyToEmail",
+            "optional": true,
+            "type": "{ ID?: string | null, Name?: string | null, Email?: string | null, CreatedOn?: string | null, IsEnabled?: boolean | null, SpfVerified?: boolean | null, DkimVerified?: boolean | null, DkimPublic?: string | null, DmarcVerified?: boolean | null, IsVerified?: boolean | null } | null"
+          },
+          {
+            "key": "CreatedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UpdatedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ScheduledFor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "FormatType",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "ABCampaignData",
+            "optional": false,
+            "type": "any"
+          },
+          {
+            "key": "MailingLists",
+            "optional": true,
+            "type": "{ MailingListID?: string | null, SegmentID?: number | null }[] | null"
+          },
+          {
+            "key": "ConfirmationTo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "IsTransactional",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.campaigns.linkActivity",
+      "shortPath": "campaigns.linkActivity",
+      "description": "Count campaign clicks per link",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Paging",
+            "optional": true,
+            "type": "{ PageSize?: number | null, CurrentPage?: number | null, TotalResults?: number | null, TotalPageCount?: number | null, SortExpression?: string | null, SortIsAscending?: boolean | null } | null"
+          },
+          {
+            "key": "Analytics",
+            "optional": false,
+            "type": "{ Context?: string | null, ContextName?: string | null, ContextDescription?: string | null, TotalCount?: number | null, UniqueCount?: number | null, Email?: string | null, IpAddress?: string | null, MailingListId?: string | null, MemberID?: string | null, Name?: string | null, Status?: number | string | null, Timestamp?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "List campaigns (drafts, scheduled and sent) with their totals, optionally by page and page size",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (needs page)"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string",
+            "description": "Sort by this campaign property (needs pageSize)"
+          },
+          {
+            "key": "sortMethod",
+            "optional": true,
+            "type": "ASC | DESC",
+            "description": "Sort direction"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Paging",
+            "optional": true,
+            "type": "{ PageSize?: number | null, CurrentPage?: number | null, TotalResults?: number | null, TotalPageCount?: number | null, SortExpression?: string | null, SortIsAscending?: boolean | null } | null"
+          },
+          {
+            "key": "Campaigns",
+            "optional": false,
+            "type": "{ ID: string, Name?: string | null, Subject?: string | null, SiteName?: string | null, ConfirmationTo?: string | null, CreatedOn?: string | null, Status?: number | string | null, DeliveredOn?: string | null, ScheduledFor?: string | null, ScheduledForTimezone?: string | null, MailingLists?: { MailingList?: { ID: string, Name?: string | null, ActiveMemberCount?: number | null, BouncedMemberCount?: number | null, RemovedMemberCount?: number | null, UnsubscribedMemberCount?: number | null, Status?: number | string | null, CustomFieldsDefinition?: { ID?: string | null, Name?: string | null, Context?: string | null, IsRequired?: boolean | null, IsHidden?: boolean | null, Type?: number | string | null }[] | null, CreatedBy?: string | null, CreatedOn?: string | null, UpdatedBy?: string | null, UpdatedOn?: string | null, Preferences?: { FallbackValue?: string | null, IsRequired?: boolean | null, Options?: string[] | null, SelectType?: number | string | null } | null } | null, Segment?: { ID: number, Name?: string | null, MatchType?: number | string | null, Criteria?: { ID?: number | null, SegmentID?: number | null, Field?: number | string | null, CustomFieldID?: string | null, Comparer?: number | string | null, Value?: string | null, DateFrom?: string | null, DateTo?: string | null, OtherMailingListID?: string | null, CampaignID?: string | null, ProductCode?: string | null, DateFunction?: number | string | null, LastXMinutes?: number | null, WebsiteId?: string | null }[] | null, CreatedBy?: string | null, CreatedOn?: string | null, UpdatedBy?: string | null, UpdatedOn?: string | null, FetchType?: number | string | null, FetchValue?: number | null, Description?: string | null, SortBy?: string | null, SegmentType?: number | string | null } | null }[] | null, TotalSent?: number | null, TotalOpens?: number | null, UniqueOpens?: number | null, TotalBounces?: number | null, TotalForwards?: number | null, UniqueForwards?: number | null, TotalLinkClicks?: number | null, UniqueLinkClicks?: number | null, RecipientsCount?: number | null, IsTransactional?: boolean | null, TotalComplaints?: number | null, TotalUnsubscribes?: number | null, CampaignType?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.campaigns.schedule",
+      "shortPath": "campaigns.schedule",
+      "description": "Schedule a draft campaign to be sent at a set time",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign ID"
+          },
+          {
+            "key": "dateTime",
+            "optional": false,
+            "type": "string",
+            "description": "When to send, as Moosend expects it: \"dd-MM-yyyy HH:mm\""
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "Windows time zone name, e.g. \"US Eastern Standard Time\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.campaigns.send",
+      "shortPath": "campaigns.send",
+      "description": "Send a draft campaign to its mailing lists now",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.campaigns.sendTest",
+      "shortPath": "campaigns.sendTest",
+      "description": "Email a test copy of a campaign to up to 5 addresses",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign ID"
+          },
+          {
+            "key": "testEmails",
+            "optional": false,
+            "type": "string[]",
+            "description": "Who gets the test email"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.campaigns.stats",
+      "shortPath": "campaigns.stats",
+      "description": "List per-recipient campaign activity of one type (sent, opened, clicked, bounced, unsubscribed, complained), with paging and dates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign ID"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "Sent | Opened | LinkClicked | Forward | Unsubscribed | Bounced | Complained | Activity",
+            "description": "Which activity to list (Sent when omitted)"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Only activity on or after this date"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "Only activity on or before this date"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Paging",
+            "optional": true,
+            "type": "{ PageSize?: number | null, CurrentPage?: number | null, TotalResults?: number | null, TotalPageCount?: number | null, SortExpression?: string | null, SortIsAscending?: boolean | null } | null"
+          },
+          {
+            "key": "Analytics",
+            "optional": false,
+            "type": "{ Context?: string | null, ContextName?: string | null, ContextDescription?: string | null, TotalCount?: number | null, UniqueCount?: number | null, Email?: string | null, IpAddress?: string | null, MailingListId?: string | null, MemberID?: string | null, Name?: string | null, Status?: number | string | null, Timestamp?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.campaigns.summary",
+      "shortPath": "campaigns.summary",
+      "description": "Read a campaign's totals: sent, opens, clicks, bounces, complaints, unsubscribes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CampaignID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ABVersion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CampaignName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CampaignSubject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "MailingLists",
+            "optional": true,
+            "type": "{ MailingListID?: string | null, SegmentID?: number | null }[] | null"
+          },
+          {
+            "key": "CampaignDeliveredOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "To",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "From",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TotalOpens",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UniqueOpens",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "TotalBounces",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "TotalComplaints",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "TotalForwards",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UniqueForwards",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "TotalUnsubscribes",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "TotalLinkClicks",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UniqueLinkClicks",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Sent",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.campaigns.unschedule",
+      "shortPath": "campaigns.unschedule",
+      "description": "Cancel a scheduled send; the campaign goes back to draft",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.campaigns.update",
+      "shortPath": "campaigns.update",
+      "description": "Change a draft campaign; nothing is sent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign ID"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Campaign name"
+          },
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string",
+            "description": "Subject line"
+          },
+          {
+            "key": "senderEmail",
+            "optional": false,
+            "type": "string",
+            "description": "Email of one of the account senders"
+          },
+          {
+            "key": "replyToEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Reply-to address; must be one of the account senders (sender when omitted)"
+          },
+          {
+            "key": "confirmationToEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Where Moosend sends its \"campaign sent\" confirmation (sender when omitted)"
+          },
+          {
+            "key": "htmlContent",
+            "optional": true,
+            "type": "string",
+            "description": "Full HTML body"
+          },
+          {
+            "key": "webLocation",
+            "optional": true,
+            "type": "string",
+            "description": "URL Moosend fetches the HTML body from"
+          },
+          {
+            "key": "mailingLists",
+            "optional": true,
+            "type": "{ mailingListId: string, segmentId?: number }[]",
+            "description": "Lists (and optional segments) the campaign goes to"
+          },
+          {
+            "key": "trackInGoogleAnalytics",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "isAB",
+            "optional": true,
+            "type": "boolean",
+            "description": "Create an A/B split campaign (false when omitted)"
+          },
+          {
+            "key": "abCampaignType",
+            "optional": true,
+            "type": "Subjectline | Content | Sender"
+          },
+          {
+            "key": "subjectB",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "htmlContentB",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webLocationB",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "senderEmailB",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hoursToTest",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "listPercentage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "abWinnerSelectionType",
+            "optional": true,
+            "type": "OpenRate | TotalUniqueClicks"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.customFields.create",
+      "shortPath": "customFields.create",
+      "description": "Add a custom field (text, number, date, dropdown or checkbox) to a mailing list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the custom field"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "Text | Number | DateTime | SingleSelectDropdown | CheckBox",
+            "description": "Data type of the field (Text when omitted)"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "string[]",
+            "description": "Choices for a SingleSelectDropdown field"
+          },
+          {
+            "key": "isRequired",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether a value is required when adding a subscriber"
+          },
+          {
+            "key": "isHidden",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the field is hidden on the subscriber's profile page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customFieldId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.customFields.delete",
+      "shortPath": "customFields.delete",
+      "description": "Remove a custom field and every subscriber's value for it; cannot be undone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "customFieldId",
+            "optional": false,
+            "type": "string",
+            "description": "The custom field ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.customFields.update",
+      "shortPath": "customFields.update",
+      "description": "Change a custom field's name, type, options or visibility",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "customFieldId",
+            "optional": false,
+            "type": "string",
+            "description": "The custom field ID"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the custom field"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "Text | Number | DateTime | SingleSelectDropdown | CheckBox",
+            "description": "Data type of the field (Text when omitted)"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "string[]",
+            "description": "Choices for a SingleSelectDropdown field"
+          },
+          {
+            "key": "isRequired",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether a value is required when adding a subscriber"
+          },
+          {
+            "key": "isHidden",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the field is hidden on the subscriber's profile page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.lists.create",
+      "shortPath": "lists.create",
+      "description": "Create an empty mailing list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the mailing list"
+          },
+          {
+            "key": "confirmationPage",
+            "optional": true,
+            "type": "string",
+            "description": "URL shown at the end of the subscription process"
+          },
+          {
+            "key": "redirectAfterUnsubscribePage",
+            "optional": true,
+            "type": "string",
+            "description": "URL subscribers land on after they unsubscribe"
+          },
+          {
+            "key": "preferences",
+            "optional": true,
+            "type": "{ selectType: SingleSelect | MultiSelect, options: string[], isRequired?: boolean }",
+            "description": "Preference options subscribers can pick (up to 10)"
+          },
+          {
+            "key": "preferencePageId",
+            "optional": true,
+            "type": "string",
+            "description": "ID of the preference page to use"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.lists.delete",
+      "shortPath": "lists.delete",
+      "description": "Delete a mailing list and its subscribers; cannot be undone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.lists.get",
+      "shortPath": "lists.get",
+      "description": "Read one mailing list with its custom field definitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "withStatistics",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ActiveMemberCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "BouncedMemberCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "RemovedMemberCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "UnsubscribedMemberCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "CustomFieldsDefinition",
+            "optional": true,
+            "type": "{ ID?: string | null, Name?: string | null, Context?: string | null, IsRequired?: boolean | null, IsHidden?: boolean | null, Type?: number | string | null }[] | null"
+          },
+          {
+            "key": "CreatedBy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CreatedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UpdatedBy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UpdatedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Preferences",
+            "optional": true,
+            "type": "{ FallbackValue?: string | null, IsRequired?: boolean | null, Options?: string[] | null, SelectType?: number | string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.lists.list",
+      "shortPath": "lists.list",
+      "description": "List the active mailing lists with subscriber counts and custom field definitions (first page of 10)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "withStatistics",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include subscriber counts (true when omitted)"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string",
+            "description": "List property to sort by"
+          },
+          {
+            "key": "sortMethod",
+            "optional": true,
+            "type": "ASC | DESC",
+            "description": "Sort direction"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Paging",
+            "optional": true,
+            "type": "{ PageSize?: number | null, CurrentPage?: number | null, TotalResults?: number | null, TotalPageCount?: number | null, SortExpression?: string | null, SortIsAscending?: boolean | null } | null"
+          },
+          {
+            "key": "MailingLists",
+            "optional": false,
+            "type": "{ ID: string, Name?: string | null, ActiveMemberCount?: number | null, BouncedMemberCount?: number | null, RemovedMemberCount?: number | null, UnsubscribedMemberCount?: number | null, Status?: number | string | null, CustomFieldsDefinition?: { ID?: string | null, Name?: string | null, Context?: string | null, IsRequired?: boolean | null, IsHidden?: boolean | null, Type?: number | string | null }[] | null, CreatedBy?: string | null, CreatedOn?: string | null, UpdatedBy?: string | null, UpdatedOn?: string | null, Preferences?: { FallbackValue?: string | null, IsRequired?: boolean | null, Options?: string[] | null, SelectType?: number | string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.lists.listPaged",
+      "shortPath": "lists.listPaged",
+      "description": "List mailing lists one page at a time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": false,
+            "type": "number",
+            "description": "Page number, starting at 1"
+          },
+          {
+            "key": "pageSize",
+            "optional": false,
+            "type": "number",
+            "description": "Results per page"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "sortMethod",
+            "optional": true,
+            "type": "ASC | DESC",
+            "description": "Sort direction"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Paging",
+            "optional": true,
+            "type": "{ PageSize?: number | null, CurrentPage?: number | null, TotalResults?: number | null, TotalPageCount?: number | null, SortExpression?: string | null, SortIsAscending?: boolean | null } | null"
+          },
+          {
+            "key": "MailingLists",
+            "optional": false,
+            "type": "{ ID: string, Name?: string | null, ActiveMemberCount?: number | null, BouncedMemberCount?: number | null, RemovedMemberCount?: number | null, UnsubscribedMemberCount?: number | null, Status?: number | string | null, CustomFieldsDefinition?: { ID?: string | null, Name?: string | null, Context?: string | null, IsRequired?: boolean | null, IsHidden?: boolean | null, Type?: number | string | null }[] | null, CreatedBy?: string | null, CreatedOn?: string | null, UpdatedBy?: string | null, UpdatedOn?: string | null, Preferences?: { FallbackValue?: string | null, IsRequired?: boolean | null, Options?: string[] | null, SelectType?: number | string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.lists.update",
+      "shortPath": "lists.update",
+      "description": "Change a mailing list's name, confirmation and unsubscribe pages, or preferences",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the mailing list"
+          },
+          {
+            "key": "confirmationPage",
+            "optional": true,
+            "type": "string",
+            "description": "URL shown at the end of the subscription process"
+          },
+          {
+            "key": "redirectAfterUnsubscribePage",
+            "optional": true,
+            "type": "string",
+            "description": "URL subscribers land on after they unsubscribe"
+          },
+          {
+            "key": "preferences",
+            "optional": true,
+            "type": "{ selectType: SingleSelect | MultiSelect, options: string[], isRequired?: boolean }",
+            "description": "Preference options subscribers can pick (up to 10)"
+          },
+          {
+            "key": "preferencePageId",
+            "optional": true,
+            "type": "string",
+            "description": "ID of the preference page to use"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.segments.addCriteria",
+      "shortPath": "segments.addCriteria",
+      "description": "Add one criterion to a segment; returns its position for updateCriteria",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "segmentId",
+            "optional": false,
+            "type": "number",
+            "description": "The segment ID (Moosend segment IDs are integers)"
+          },
+          {
+            "key": "field",
+            "optional": false,
+            "type": "string",
+            "description": "What to filter on: DateAdded, DateUpdated, RecipientName, RecipientEmail, SubscribeMethod, MailingListIncluded, CampaignsOpened, LinksClicked, CampaignName, LinkURL, CampaignSent, Platform, OperatingSystems, EmailClient, WebBrowser, MobileBrowser, AddedAnythingToCart, ViewedProduct, PurchasedProduct, ViewedProductCategory, PurchasedProductCategory, ViewedProductBrand, PurchasedProductBrand, Preference; or, to filter on a custom field, the ID of that field from lists.get (CustomFieldsDefinition[].ID)"
+          },
+          {
+            "key": "comparer",
+            "optional": false,
+            "type": "string",
+            "description": "Operator: Is, IsNot, Contains, DoesNotContain, StartsWith, DoesNotStartWith, EndsWith, DoesNotEndWith, IsGreaterThan, IsGreaterThanOrEqualTo, IsLessThan, IsLessThanOrEqualTo, IsBefore, IsAfter, IsEmpty, IsNotEmpty, IsTrue, IsFalse"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string",
+            "description": "The value to compare against"
+          },
+          {
+            "key": "lastXMinutes",
+            "optional": true,
+            "type": "number",
+            "description": "Only count activity in the last X minutes"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string",
+            "description": "Start of a date span"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string",
+            "description": "End of a date span"
+          },
+          {
+            "key": "dateFunction",
+            "optional": true,
+            "type": "string",
+            "description": "For date fields: Year, Month, Day, DayOfWeek, ..."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "criterionNumber",
+            "optional": false,
+            "type": "number",
+            "description": "The new criterion's position in the segment; segments.updateCriteria takes it"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.segments.create",
+      "shortPath": "segments.create",
+      "description": "Create a segment of a mailing list, empty or with criteria",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the segment"
+          },
+          {
+            "key": "matchType",
+            "optional": true,
+            "type": "All | Any",
+            "description": "Match all criteria (default) or any of them"
+          },
+          {
+            "key": "fetchType",
+            "optional": true,
+            "type": "All | Top | TopPercent",
+            "description": "Keep every match, the top N, or the top N percent"
+          },
+          {
+            "key": "fetchValue",
+            "optional": true,
+            "type": "number",
+            "description": "N for Top, or the percentage for TopPercent"
+          },
+          {
+            "key": "criteria",
+            "optional": true,
+            "type": "{ field: string, comparer: string, value?: string, lastXMinutes?: number, dateFrom?: string, dateTo?: string, dateFunction?: string }[]",
+            "description": "Filters; an empty segment matches every subscriber"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "segmentId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.segments.delete",
+      "shortPath": "segments.delete",
+      "description": "Delete a segment; its subscribers stay on the list. Cannot be undone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "segmentId",
+            "optional": false,
+            "type": "number",
+            "description": "The segment ID (Moosend segment IDs are integers)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.segments.get",
+      "shortPath": "segments.get",
+      "description": "Read one segment with its criteria",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "segmentId",
+            "optional": false,
+            "type": "number",
+            "description": "The segment ID (Moosend segment IDs are integers)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "MatchType",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "Criteria",
+            "optional": true,
+            "type": "{ ID?: number | null, SegmentID?: number | null, Field?: number | string | null, CustomFieldID?: string | null, Comparer?: number | string | null, Value?: string | null, DateFrom?: string | null, DateTo?: string | null, OtherMailingListID?: string | null, CampaignID?: string | null, ProductCode?: string | null, DateFunction?: number | string | null, LastXMinutes?: number | null, WebsiteId?: string | null }[] | null"
+          },
+          {
+            "key": "CreatedBy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CreatedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UpdatedBy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UpdatedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "FetchType",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "FetchValue",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SortBy",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SegmentType",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.segments.list",
+      "shortPath": "segments.list",
+      "description": "List a mailing list's segments with their criteria",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Paging",
+            "optional": true,
+            "type": "{ PageSize?: number | null, CurrentPage?: number | null, TotalResults?: number | null, TotalPageCount?: number | null, SortExpression?: string | null, SortIsAscending?: boolean | null } | null"
+          },
+          {
+            "key": "Segments",
+            "optional": false,
+            "type": "{ ID: number, Name?: string | null, MatchType?: number | string | null, Criteria?: { ID?: number | null, SegmentID?: number | null, Field?: number | string | null, CustomFieldID?: string | null, Comparer?: number | string | null, Value?: string | null, DateFrom?: string | null, DateTo?: string | null, OtherMailingListID?: string | null, CampaignID?: string | null, ProductCode?: string | null, DateFunction?: number | string | null, LastXMinutes?: number | null, WebsiteId?: string | null }[] | null, CreatedBy?: string | null, CreatedOn?: string | null, UpdatedBy?: string | null, UpdatedOn?: string | null, FetchType?: number | string | null, FetchValue?: number | null, Description?: string | null, SortBy?: string | null, SegmentType?: number | string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.segments.members",
+      "shortPath": "segments.members",
+      "description": "List the subscribers a segment matches, one page at a time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "segmentId",
+            "optional": false,
+            "type": "number",
+            "description": "The segment ID (Moosend segment IDs are integers)"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Paging",
+            "optional": true,
+            "type": "{ PageSize?: number | null, CurrentPage?: number | null, TotalResults?: number | null, TotalPageCount?: number | null, SortExpression?: string | null, SortIsAscending?: boolean | null } | null"
+          },
+          {
+            "key": "Subscribers",
+            "optional": false,
+            "type": "{ ID: string, Name?: string | null, Mobile?: string | null, Email?: string | null, CreatedOn?: string | null, UpdatedOn?: string | null, UnsubscribedOn?: string | null, UnsubscribedFromID?: string | null, SubscribeType?: number | string | null, SubscribeMethod?: number | string | null, CustomFields?: { CustomFieldID?: string | null, Name?: string | null, Value: any }[] | null, RemovedOn?: string | null, Tags?: string[] | null, Preferences: any }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.segments.update",
+      "shortPath": "segments.update",
+      "description": "Change a segment's name and match settings; criteria, when given, replace all existing ones",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "segmentId",
+            "optional": false,
+            "type": "number",
+            "description": "The segment ID (Moosend segment IDs are integers)"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the segment"
+          },
+          {
+            "key": "matchType",
+            "optional": true,
+            "type": "All | Any",
+            "description": "Match all criteria (default) or any of them"
+          },
+          {
+            "key": "fetchType",
+            "optional": true,
+            "type": "All | Top | TopPercent",
+            "description": "Keep every match, the top N, or the top N percent"
+          },
+          {
+            "key": "fetchValue",
+            "optional": true,
+            "type": "number",
+            "description": "N for Top, or the percentage for TopPercent"
+          },
+          {
+            "key": "criteria",
+            "optional": true,
+            "type": "{ field: string, comparer: string, value?: string, lastXMinutes?: number, dateFrom?: string, dateTo?: string, dateFunction?: string }[]",
+            "description": "When given, replaces every existing criterion"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.segments.updateCriteria",
+      "shortPath": "segments.updateCriteria",
+      "description": "Change one segment criterion, addressed by its position (1 = first)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "segmentId",
+            "optional": false,
+            "type": "number",
+            "description": "The segment ID (Moosend segment IDs are integers)"
+          },
+          {
+            "key": "criterionNumber",
+            "optional": false,
+            "type": "number",
+            "description": "The criterion's position in the segment, starting at 1 (not its ID)"
+          },
+          {
+            "key": "field",
+            "optional": false,
+            "type": "string",
+            "description": "What to filter on: DateAdded, DateUpdated, RecipientName, RecipientEmail, SubscribeMethod, MailingListIncluded, CampaignsOpened, LinksClicked, CampaignName, LinkURL, CampaignSent, Platform, OperatingSystems, EmailClient, WebBrowser, MobileBrowser, AddedAnythingToCart, ViewedProduct, PurchasedProduct, ViewedProductCategory, PurchasedProductCategory, ViewedProductBrand, PurchasedProductBrand, Preference; or, to filter on a custom field, the ID of that field from lists.get (CustomFieldsDefinition[].ID)"
+          },
+          {
+            "key": "comparer",
+            "optional": false,
+            "type": "string",
+            "description": "Operator: Is, IsNot, Contains, DoesNotContain, StartsWith, DoesNotStartWith, EndsWith, DoesNotEndWith, IsGreaterThan, IsGreaterThanOrEqualTo, IsLessThan, IsLessThanOrEqualTo, IsBefore, IsAfter, IsEmpty, IsNotEmpty, IsTrue, IsFalse"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string",
+            "description": "The value to compare against"
+          },
+          {
+            "key": "lastXMinutes",
+            "optional": true,
+            "type": "number",
+            "description": "Only count activity in the last X minutes"
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string",
+            "description": "Start of a date span"
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string",
+            "description": "End of a date span"
+          },
+          {
+            "key": "dateFunction",
+            "optional": true,
+            "type": "string",
+            "description": "For date fields: Year, Month, Day, DayOfWeek, ..."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.senders.get",
+      "shortPath": "senders.get",
+      "description": "Read one sender by email address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CreatedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsEnabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "SpfVerified",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "DkimVerified",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "DkimPublic",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "DmarcVerified",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "IsVerified",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.senders.list",
+      "shortPath": "senders.list",
+      "description": "List the account senders (from addresses) with their SPF, DKIM and DMARC checks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "senders",
+            "optional": false,
+            "type": "{ ID?: string | null, Name?: string | null, Email?: string | null, CreatedOn?: string | null, IsEnabled?: boolean | null, SpfVerified?: boolean | null, DkimVerified?: boolean | null, DkimPublic?: string | null, DmarcVerified?: boolean | null, IsVerified?: boolean | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.subscribers.addTags",
+      "shortPath": "subscribers.addTags",
+      "description": "Add tags to up to 1,000 subscribers of one mailing list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "members",
+            "optional": false,
+            "type": "{ subscriberId: string, tags: string[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.subscribers.delete",
+      "shortPath": "subscribers.delete",
+      "description": "Delete a subscriber from one mailing list for good; cannot be undone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.subscribers.deleteFromAccount",
+      "shortPath": "subscribers.deleteFromAccount",
+      "description": "Delete an email address from every mailing list in the account (and optionally its sub-accounts); cannot be undone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includeAllSubAccounts",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also delete the address from every sub-account"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.subscribers.deleteMany",
+      "shortPath": "subscribers.deleteMany",
+      "description": "Delete up to 1,000 subscribers from one mailing list for good; cannot be undone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "EmailsProcessed",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "EmailsIgnored",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.subscribers.getByEmail",
+      "shortPath": "subscribers.getByEmail",
+      "description": "Find a subscriber by email address in one mailing list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Mobile",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CreatedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UpdatedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UnsubscribedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UnsubscribedFromID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SubscribeType",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "1 subscribed, 2 unsubscribed, 3 bounced, 4 removed"
+          },
+          {
+            "key": "SubscribeMethod",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "CustomFields",
+            "optional": true,
+            "type": "{ CustomFieldID?: string | null, Name?: string | null, Value: any }[] | null"
+          },
+          {
+            "key": "RemovedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "Preferences",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.subscribers.getById",
+      "shortPath": "subscribers.getById",
+      "description": "Find a subscriber by ID in one mailing list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "subscriberId",
+            "optional": false,
+            "type": "string",
+            "description": "The subscriber ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Mobile",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CreatedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UpdatedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UnsubscribedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UnsubscribedFromID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SubscribeType",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "1 subscribed, 2 unsubscribed, 3 bounced, 4 removed"
+          },
+          {
+            "key": "SubscribeMethod",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "CustomFields",
+            "optional": true,
+            "type": "{ CustomFieldID?: string | null, Name?: string | null, Value: any }[] | null"
+          },
+          {
+            "key": "RemovedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "Preferences",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.subscribers.getByIdAnyList",
+      "shortPath": "subscribers.getByIdAnyList",
+      "description": "Find a subscriber by ID without naming the mailing list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriberId",
+            "optional": false,
+            "type": "string",
+            "description": "The subscriber ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Mobile",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CreatedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UpdatedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UnsubscribedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UnsubscribedFromID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SubscribeType",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "1 subscribed, 2 unsubscribed, 3 bounced, 4 removed"
+          },
+          {
+            "key": "SubscribeMethod",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "CustomFields",
+            "optional": true,
+            "type": "{ CustomFieldID?: string | null, Name?: string | null, Value: any }[] | null"
+          },
+          {
+            "key": "RemovedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "Preferences",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.subscribers.list",
+      "shortPath": "subscribers.list",
+      "description": "List a mailing list's subscribed, unsubscribed, bounced or removed members, one page at a time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Subscribed | Unsubscribed | Bounced | Removed",
+            "description": "Which subscribers to list (Subscribed when omitted)"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Paging",
+            "optional": true,
+            "type": "{ PageSize?: number | null, CurrentPage?: number | null, TotalResults?: number | null, TotalPageCount?: number | null, SortExpression?: string | null, SortIsAscending?: boolean | null } | null"
+          },
+          {
+            "key": "Subscribers",
+            "optional": false,
+            "type": "{ ID: string, Name?: string | null, Mobile?: string | null, Email?: string | null, CreatedOn?: string | null, UpdatedOn?: string | null, UnsubscribedOn?: string | null, UnsubscribedFromID?: string | null, SubscribeType?: number | string | null, SubscribeMethod?: number | string | null, CustomFields?: { CustomFieldID?: string | null, Name?: string | null, Value: any }[] | null, RemovedOn?: string | null, Tags?: string[] | null, Preferences: any }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.subscribers.remove",
+      "shortPath": "subscribers.remove",
+      "description": "Mark a subscriber as removed from one mailing list (no more campaigns)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.subscribers.removeMany",
+      "shortPath": "subscribers.removeMany",
+      "description": "Mark up to 1,000 subscribers as removed from one mailing list",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "EmailsProcessed",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "EmailsIgnored",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.subscribers.removeTags",
+      "shortPath": "subscribers.removeTags",
+      "description": "Remove tags from up to 1,000 subscribers of one mailing list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "members",
+            "optional": false,
+            "type": "{ subscriberId: string, tags: string[] }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.subscribers.subscribe",
+      "shortPath": "subscribers.subscribe",
+      "description": "Add a subscriber or update the one with that email; re-subscribes an unsubscribed contact, clears custom fields left out, and on a double opt-in list emails a confirmation unless hasExternalDoubleOptIn is true",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "Email address of the subscriber"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Subscriber name"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Custom field values by field name; fields left out are cleared on an existing subscriber"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Tags to set on the subscriber"
+          },
+          {
+            "key": "preferences",
+            "optional": true,
+            "type": "string[]",
+            "description": "The list's preference options the subscriber picked"
+          },
+          {
+            "key": "hasExternalDoubleOptIn",
+            "optional": true,
+            "type": "boolean",
+            "description": "True when consent was collected elsewhere, so a double opt-in list does not email a confirmation"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Mobile",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CreatedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UpdatedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UnsubscribedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UnsubscribedFromID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SubscribeType",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "1 subscribed, 2 unsubscribed, 3 bounced, 4 removed"
+          },
+          {
+            "key": "SubscribeMethod",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "CustomFields",
+            "optional": true,
+            "type": "{ CustomFieldID?: string | null, Name?: string | null, Value: any }[] | null"
+          },
+          {
+            "key": "RemovedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "Preferences",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.subscribers.subscribeMany",
+      "shortPath": "subscribers.subscribeMany",
+      "description": "Add or update up to 1,000 subscribers in one call (same effects as subscribe); Moosend skips invalid addresses and reports them in notice",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "subscribers",
+            "optional": false,
+            "type": "{ email: string, name?: string, customFields?: Record<string, string | number | boolean>, tags?: string[], preferences?: string[] }[]"
+          },
+          {
+            "key": "hasExternalDoubleOptIn",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscribers",
+            "optional": false,
+            "type": "{ ID: string, Name?: string | null, Mobile?: string | null, Email?: string | null, CreatedOn?: string | null, UpdatedOn?: string | null, UnsubscribedOn?: string | null, UnsubscribedFromID?: string | null, SubscribeType?: number | string | null, SubscribeMethod?: number | string | null, CustomFields?: { CustomFieldID?: string | null, Name?: string | null, Value: any }[] | null, RemovedOn?: string | null, Tags?: string[] | null, Preferences: any }[]"
+          },
+          {
+            "key": "notice",
+            "optional": false,
+            "type": "string | null",
+            "description": "Moosend skips invalid addresses and says how many here; null when all were added"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.subscribers.unsubscribe",
+      "shortPath": "subscribers.unsubscribe",
+      "description": "Unsubscribe an email address from one mailing list",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.subscribers.unsubscribeFromAccount",
+      "shortPath": "subscribers.unsubscribeFromAccount",
+      "description": "Unsubscribe an email address from every mailing list in the account",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.subscribers.unsubscribeFromCampaign",
+      "shortPath": "subscribers.unsubscribeFromCampaign",
+      "description": "Unsubscribe an email address from one mailing list and count it against a campaign",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign ID"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Moosend answered Code 0 for the request"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.subscribers.update",
+      "shortPath": "subscribers.update",
+      "description": "Update a subscriber's email, name, tags, preferences and custom fields; custom fields left out are cleared",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string",
+            "description": "The mailing list ID"
+          },
+          {
+            "key": "subscriberId",
+            "optional": false,
+            "type": "string",
+            "description": "The subscriber ID"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "Email address of the subscriber"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Subscriber name"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Custom field values by field name; fields left out are cleared on an existing subscriber"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Tags to set on the subscriber"
+          },
+          {
+            "key": "preferences",
+            "optional": true,
+            "type": "string[]",
+            "description": "The list's preference options the subscriber picked"
+          },
+          {
+            "key": "hasExternalDoubleOptIn",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ID",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Mobile",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CreatedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UpdatedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UnsubscribedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "UnsubscribedFromID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SubscribeType",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "1 subscribed, 2 unsubscribed, 3 bounced, 4 removed"
+          },
+          {
+            "key": "SubscribeMethod",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "CustomFields",
+            "optional": true,
+            "type": "{ CustomFieldID?: string | null, Name?: string | null, Value: any }[] | null"
+          },
+          {
+            "key": "RemovedOn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Tags",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "Preferences",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moosend.api.transactional.send",
+      "shortPath": "transactional.send",
+      "description": "Send a transactional email (from a template or inline content) to the given recipients",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string",
+            "description": "Transactional campaign to send and record statistics on"
+          },
+          {
+            "key": "templateName",
+            "optional": true,
+            "type": "string",
+            "description": "Transactional campaign name; a new one is created when unknown"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ email: string, name?: string }",
+            "description": "A verified sender"
+          },
+          {
+            "key": "replyTo",
+            "optional": true,
+            "type": "{ email: string, name?: string }"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "bcc",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "{ type: string, value?: string, webLocation?: string }[]",
+            "description": "Message body; overrides the template content"
+          },
+          {
+            "key": "personalizations",
+            "optional": false,
+            "type": "{ to: { email: string, name?: string }[], cc?: string[], bcc?: string[], substitutions?: Record<string, any>, customArguments?: Record<string, string> }[]",
+            "description": "One entry per recipient group, with its substitutions"
+          },
+          {
+            "key": "mailSettings",
+            "optional": true,
+            "type": "{ bypassUnsubscribeManagement?: boolean, includeUnsubscribeLink?: boolean, scheduledForDatetime?: string, scheduledForTimezone?: string }"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ content: string, type: string, fileName: string, disposition: inline | attachment, contentId?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "any"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

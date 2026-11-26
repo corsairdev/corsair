@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import type {
 	GoogleDriveEndpointInputs,
 	GoogleDriveEndpointOutputs,
@@ -247,7 +248,7 @@ const googleDriveWebhooksNested = {
 } as const;
 
 export type GoogleDrivePluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalGoogleDrivePlugin['hooks'];
 	webhookHooks?: InternalGoogleDrivePlugin['webhookHooks'];
@@ -281,11 +282,13 @@ const defaultAuthType = 'oauth_2' as const;
 const googleDriveEndpointMeta = {
 	'files.list': {
 		riskLevel: 'read',
-		description: 'List files in Google Drive',
+		description:
+			'Lists files, returning only id, name and mimeType unless fields is set. Includes trashed files unless q has "trashed = false". Page with nextPageToken.',
 	},
 	'files.get': {
 		riskLevel: 'read',
-		description: 'Get metadata for a specific file',
+		description:
+			'Metadata of one file; set fields to choose which, e.g. "id,name,modifiedTime,owners,webViewLink,size". For content use files.download, files.export or files.exportText.',
 	},
 	'files.createFromText': {
 		riskLevel: 'write',
@@ -329,7 +332,7 @@ const googleDriveEndpointMeta = {
 	'files.exportText': {
 		riskLevel: 'read',
 		description:
-			'Get the plain text of a Google Doc across all of its tabs and store it',
+			'Google Docs only; returns the plain text of all tabs, cut at 500,000 characters. For other files use files.export or files.download.',
 	},
 	'folders.create': { riskLevel: 'write', description: 'Create a new folder' },
 	'folders.get': {
@@ -338,7 +341,8 @@ const googleDriveEndpointMeta = {
 	},
 	'folders.list': {
 		riskLevel: 'read',
-		description: 'List folders in Google Drive',
+		description:
+			'Lists folders only. For what is inside a folder use files.list with q "\'FOLDER_ID\' in parents and trashed = false".',
 	},
 	'folders.delete': {
 		riskLevel: 'destructive',
@@ -371,7 +375,8 @@ const googleDriveEndpointMeta = {
 	},
 	'search.filesAndFolders': {
 		riskLevel: 'read',
-		description: 'Search for files and folders in Google Drive',
+		description:
+			'Files and folders matching a Drive q, returning only id, name and mimeType unless fields is set. Includes trashed files unless q has "trashed = false".',
 	},
 	'storage.getQuota': {
 		riskLevel: 'read',
@@ -381,6 +386,9 @@ const googleDriveEndpointMeta = {
 
 export const googledriveAuthConfig = {
 	oauth_2: {
+		account: ['channel_id', 'changes_page_token'] as const,
+	},
+	managed: {
 		account: ['channel_id', 'changes_page_token'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -444,6 +452,25 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 					plugin: 'googledrive',
 					tokenUrl: 'https://oauth2.googleapis.com/token',
 				});
+			}
+
+			// Corsair's own Google app: Hub holds the client secret, so the token
+			// comes from (and refreshes through) Hub rather than Google directly.
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:googledrive:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'googledrive',
+					tenantId: ctx.tenantId,
+				};
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('googledrive', 'oauth_2');

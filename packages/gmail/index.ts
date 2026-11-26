@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import type { GmailEndpointInputs, GmailEndpointOutputs } from './endpoints';
 import {
 	DraftsEndpoints,
@@ -60,6 +61,10 @@ export const gmailAuthConfig = {
 		integration: ['topic_id', 'pubsub_audience'] as const,
 		account: ['email_address', 'last_history_id'] as const,
 	},
+	managed: {
+		integration: ['topic_id', 'pubsub_audience'] as const,
+		account: ['email_address', 'last_history_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type GmailContext = CorsairPluginContext<
@@ -83,6 +88,7 @@ export type GmailEndpoints = {
 	messagesBatchModify: GmailEndpoint<'messagesBatchModify'>;
 	messagesTrash: GmailEndpoint<'messagesTrash'>;
 	messagesUntrash: GmailEndpoint<'messagesUntrash'>;
+	messagesGetAttachment: GmailEndpoint<'messagesGetAttachment'>;
 	labelsList: GmailEndpoint<'labelsList'>;
 	labelsGet: GmailEndpoint<'labelsGet'>;
 	labelsCreate: GmailEndpoint<'labelsCreate'>;
@@ -128,6 +134,7 @@ export const gmailEndpointsNested = {
 		batchModify: MessagesEndpoints.batchModify,
 		trash: MessagesEndpoints.trash,
 		untrash: MessagesEndpoints.untrash,
+		getAttachment: MessagesEndpoints.getAttachment,
 	},
 	labels: {
 		list: LabelsEndpoints.list,
@@ -181,6 +188,10 @@ export const gmailEndpointSchemas = {
 	'messages.untrash': {
 		input: GmailEndpointInputSchemas.messagesUntrash,
 		output: GmailEndpointOutputSchemas.messagesUntrash,
+	},
+	'messages.getAttachment': {
+		input: GmailEndpointInputSchemas.messagesGetAttachment,
+		output: GmailEndpointOutputSchemas.messagesGetAttachment,
 	},
 	'labels.list': {
 		input: GmailEndpointInputSchemas.labelsList,
@@ -253,7 +264,7 @@ export const gmailWebhooksNested = {
 } as const;
 
 export type GmailPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	credentials?: GmailCredentials;
 	hooks?: InternalGmailPlugin['hooks'];
@@ -299,9 +310,14 @@ const defaultAuthType = 'oauth_2' as const;
 const gmailEndpointMeta = {
 	'messages.list': {
 		riskLevel: 'read',
-		description: 'List messages in a mailbox',
+		description:
+			'Search messages with structured fields (keywords, from, to, subject, after, before, hasAttachment, label, in, isUnread, ...) or a raw q; no Gmail syntax needed. Returns only id and threadId per message, no subject or body. Use messages.get to read one',
 	},
-	'messages.get': { riskLevel: 'read', description: 'Get a specific message' },
+	'messages.get': {
+		riskLevel: 'read',
+		description:
+			'Read one message. Default format is full, with body text base64url-encoded in payload.body.data, or for multipart messages in payload.parts[].body.data (parts nest); use format metadata for headers only.',
+	},
 	'messages.send': {
 		riskLevel: 'write',
 		description: 'Send an email to one or more recipients',
@@ -322,6 +338,11 @@ const gmailEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Restore a message from the trash',
 	},
+	'messages.getAttachment': {
+		riskLevel: 'read',
+		description:
+			'Fetch an attachment of a message by partId (shown in messages.get with format full, or in a database search of messages fetched with format full) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId',
+	},
 	'labels.list': {
 		riskLevel: 'read',
 		description: 'List all labels in the mailbox',
@@ -338,7 +359,8 @@ const gmailEndpointMeta = {
 	},
 	'drafts.list': {
 		riskLevel: 'read',
-		description: 'List drafts in the mailbox',
+		description:
+			'Returns only draft id and message id/threadId. Use drafts.get to read subject and body',
 	},
 	'drafts.get': { riskLevel: 'read', description: 'Get a specific draft' },
 	'drafts.create': { riskLevel: 'write', description: 'Create a new draft' },
@@ -356,9 +378,14 @@ const gmailEndpointMeta = {
 	},
 	'threads.list': {
 		riskLevel: 'read',
-		description: 'List threads in the mailbox',
+		description:
+			'Returns thread id and snippet only, no messages. Use threads.get for the messages',
 	},
-	'threads.get': { riskLevel: 'read', description: 'Get a specific thread' },
+	'threads.get': {
+		riskLevel: 'read',
+		description:
+			'Get every message in a thread. format works as in messages.get',
+	},
 	'threads.modify': {
 		riskLevel: 'write',
 		description: 'Add or remove labels from a thread',
@@ -435,6 +462,25 @@ export function gmail<const T extends GmailPluginOptions>(
 					plugin: 'gmail',
 					tokenUrl: 'https://oauth2.googleapis.com/token',
 				});
+			}
+
+			// Corsair's own Google app: Hub holds the client secret, so the token
+			// comes from (and refreshes through) Hub rather than Google directly.
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:gmail:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'gmail',
+					tenantId: ctx.tenantId,
+				};
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('gmail', 'oauth_2');

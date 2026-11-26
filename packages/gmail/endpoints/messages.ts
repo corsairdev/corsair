@@ -1,8 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
+import { ApiError, toFileOutput } from 'corsair/http';
 import { makeAuthenticatedGmailRequest } from '../client';
 import type { GmailBoundEndpoints, GmailEndpoints } from '../index';
 import type { Message, MessagePart } from '../types';
 import type { GmailEndpointOutputs } from './types';
+import { buildGmailQuery } from './types';
 
 function getHeaderValue(
 	part: MessagePart | undefined,
@@ -81,12 +83,13 @@ function extractBody(message: Message): string | undefined {
 }
 
 export const list: GmailEndpoints['messagesList'] = async (ctx, input) => {
+	const q = buildGmailQuery(input) || undefined;
 	const result = await makeAuthenticatedGmailRequest<
 		GmailEndpointOutputs['messagesList']
 	>(`/users/${input.userId || 'me'}/messages`, ctx, {
 		method: 'GET',
 		query: {
-			q: input.q,
+			q,
 			maxResults: input.maxResults,
 			pageToken: input.pageToken,
 			labelIds: input.labelIds,
@@ -302,4 +305,81 @@ export const untrash: GmailEndpoints['messagesUntrash'] = async (
 		'completed',
 	);
 	return result;
+};
+
+function findPart(
+	part: MessagePart | undefined,
+	partId: string,
+): MessagePart | undefined {
+	if (!part) return undefined;
+	if (part.partId === partId) return part;
+	for (const child of part.parts ?? []) {
+		const found = findPart(child, partId);
+		if (found) return found;
+	}
+	return undefined;
+}
+
+function attachmentError(url: string, message: string): ApiError {
+	return new ApiError(
+		{ method: 'GET', url },
+		{ url, ok: false, status: 404, statusText: 'Not Found', body: { message } },
+		message,
+	);
+}
+
+export const getAttachment: GmailEndpoints['messagesGetAttachment'] = async (
+	ctx,
+	input,
+) => {
+	const base = `/users/${input.userId || 'me'}/messages/${input.messageId}`;
+	if (input.partId === undefined && input.attachmentId === undefined) {
+		throw attachmentError(base, 'Give partId or attachmentId.');
+	}
+
+	let attachmentId = input.attachmentId;
+	let part: MessagePart | undefined;
+	if (input.partId !== undefined) {
+		// Attachment ids change between reads, so the part is resolved fresh.
+		const message = await makeAuthenticatedGmailRequest<Message>(base, ctx, {
+			method: 'GET',
+			query: { format: 'full' },
+		});
+		part = findPart(message.payload, input.partId);
+		if (!part) {
+			throw attachmentError(
+				base,
+				`Message ${input.messageId} has no part ${input.partId}.`,
+			);
+		}
+		attachmentId = part.body?.attachmentId;
+		if (!attachmentId && part.body?.data === undefined) {
+			throw attachmentError(
+				base,
+				`Part ${input.partId} of message ${input.messageId} has no attachment.`,
+			);
+		}
+	}
+
+	const data = attachmentId
+		? (
+				await makeAuthenticatedGmailRequest<{ data?: string }>(
+					`${base}/attachments/${attachmentId}`,
+					ctx,
+					{ method: 'GET' },
+				)
+			).data
+		: part?.body?.data;
+
+	await logEventFromContext(
+		ctx,
+		'gmail.messages.getAttachment',
+		{ ...input },
+		'completed',
+	);
+	return toFileOutput(
+		Buffer.from(data ?? '', 'base64url'),
+		part?.mimeType,
+		part?.filename ? { filename: part.filename } : {},
+	);
 };

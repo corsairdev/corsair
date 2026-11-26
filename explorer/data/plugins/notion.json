@@ -94,7 +94,7 @@
     {
       "path": "notion.api.blocks.getManyChildBlocks",
       "shortPath": "blocks.getManyChildBlocks",
-      "description": "Retrieve child blocks of a block or page",
+      "description": "Page body as blocks, one level only. Call again with the id of any block that has has_children true. Pass the page id as block_id for top-level content. Up to 100 blocks per call; while has_more is true, pass next_cursor as start_cursor",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -102,17 +102,20 @@
           {
             "key": "block_id",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "Block id, or a page id for the top level of that page."
           },
           {
             "key": "start_cursor",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "next_cursor from the previous response; omit for the first page."
           },
           {
             "key": "page_size",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Default and maximum 100."
           }
         ]
       },
@@ -261,7 +264,7 @@
     {
       "path": "notion.api.databasePages.getDatabasePage",
       "shortPath": "databasePages.getDatabasePage",
-      "description": "Get a page from a database",
+      "description": "Properties of any page by id, not its body; read the body with blocks.getManyChildBlocks using the page id",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -357,7 +360,7 @@
     {
       "path": "notion.api.databasePages.getManyDatabasePages",
       "shortPath": "databasePages.getManyDatabasePages",
-      "description": "List and filter pages in a database",
+      "description": "Rows of one database, properties only. Read property names with databases.getDatabase first; a 404 means the database id is wrong or the database is not shared with the integration",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -370,12 +373,14 @@
           {
             "key": "filter",
             "optional": true,
-            "type": "any"
+            "type": "any",
+            "description": "{\"property\":\"Status\",\"select\":{\"equals\":\"Done\"}}: the inner key is the property type. Combine with {\"and\":[...]} or {\"or\":[...]}."
           },
           {
             "key": "sorts",
             "optional": true,
-            "type": "any[]"
+            "type": "any[]",
+            "description": "[{\"property\":\"Due\",\"direction\":\"ascending\"}]"
           },
           {
             "key": "start_cursor",
@@ -706,7 +711,7 @@
     {
       "path": "notion.api.databases.searchDatabase",
       "shortPath": "databases.searchDatabase",
-      "description": "Search and filter databases",
+      "description": "Search databases by title only. To filter rows inside a database use databasePages.getManyDatabasePages",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -714,17 +719,20 @@
           {
             "key": "query",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Text matched against database titles only."
           },
           {
             "key": "sort",
             "optional": true,
-            "type": "any"
+            "type": "any",
+            "description": "{\"timestamp\":\"last_edited_time\",\"direction\":\"descending\"}"
           },
           {
             "key": "filter",
             "optional": true,
-            "type": "any"
+            "type": "any",
+            "description": "Defaults to databases only, {\"property\":\"object\",\"value\":\"database\"}."
           },
           {
             "key": "start_cursor",
@@ -984,7 +992,7 @@
     {
       "path": "notion.api.pages.searchPage",
       "shortPath": "pages.searchPage",
-      "description": "Search pages and databases by title",
+      "description": "Matches titles only, not page text, and only items shared with the integration, so a miss does not mean the page is absent. Pass filter {\"property\":\"object\",\"value\":\"page\"} for pages only",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -992,17 +1000,20 @@
           {
             "key": "query",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Text matched against page and database titles only."
           },
           {
             "key": "sort",
             "optional": true,
-            "type": "any"
+            "type": "any",
+            "description": "{\"timestamp\":\"last_edited_time\",\"direction\":\"descending\"}"
           },
           {
             "key": "filter",
             "optional": true,
-            "type": "any"
+            "type": "any",
+            "description": "Results include pages and databases unless this is {\"property\":\"object\",\"value\":\"page\"}."
           },
           {
             "key": "start_cursor",

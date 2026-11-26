@@ -2,10 +2,12 @@ import { logEventFromContext } from 'corsair/core';
 import { makeCanvaRequest } from '../client';
 import type { CanvaEndpoints } from '../index';
 import {
+	loggable,
+	saveDesign,
 	toAssetEntity,
 	toBrandTemplateEntity,
-	toDesignEntity,
 } from './mappers';
+import { seg } from './shared';
 import type { CanvaEndpointOutputs, Folder } from './types';
 
 function toFolderEntity(folder: Folder) {
@@ -44,7 +46,7 @@ export const create: CanvaEndpoints['foldersCreate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canva.folders.create',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -52,7 +54,7 @@ export const create: CanvaEndpoints['foldersCreate'] = async (ctx, input) => {
 
 export const get: CanvaEndpoints['foldersGet'] = async (ctx, input) => {
 	const result = await makeCanvaRequest<CanvaEndpointOutputs['foldersGet']>(
-		`v1/folders/${input.folderId}`,
+		`v1/folders/${seg(input.folderId)}`,
 		ctx.key,
 		{ method: 'GET' },
 	);
@@ -71,7 +73,7 @@ export const get: CanvaEndpoints['foldersGet'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canva.folders.get',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -80,7 +82,7 @@ export const get: CanvaEndpoints['foldersGet'] = async (ctx, input) => {
 export const update: CanvaEndpoints['foldersUpdate'] = async (ctx, input) => {
 	const { folderId, name } = input;
 	const result = await makeCanvaRequest<CanvaEndpointOutputs['foldersUpdate']>(
-		`v1/folders/${folderId}`,
+		`v1/folders/${seg(folderId)}`,
 		ctx.key,
 		{
 			method: 'PATCH',
@@ -102,7 +104,7 @@ export const update: CanvaEndpoints['foldersUpdate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canva.folders.update',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -112,7 +114,7 @@ export const deleteFolder: CanvaEndpoints['foldersDelete'] = async (
 	ctx,
 	input,
 ) => {
-	await makeCanvaRequest<void>(`v1/folders/${input.folderId}`, ctx.key, {
+	await makeCanvaRequest<void>(`v1/folders/${seg(input.folderId)}`, ctx.key, {
 		method: 'DELETE',
 	});
 
@@ -127,7 +129,7 @@ export const deleteFolder: CanvaEndpoints['foldersDelete'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.folders.delete',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return { success: true };
@@ -141,7 +143,7 @@ export const listItems: CanvaEndpoints['foldersListItems'] = async (
 		input;
 	const result = await makeCanvaRequest<
 		CanvaEndpointOutputs['foldersListItems']
-	>(`v1/folders/${folderId}/items`, ctx.key, {
+	>(`v1/folders/${seg(folderId)}/items`, ctx.key, {
 		method: 'GET',
 		query: {
 			...(continuation !== undefined && { continuation }),
@@ -166,10 +168,7 @@ export const listItems: CanvaEndpoints['foldersListItems'] = async (
 						toFolderEntity(item.folder),
 					);
 				} else if (item.type === 'design' && ctx.db.designs) {
-					await ctx.db.designs.upsertByEntityId(
-						item.design.id,
-						toDesignEntity(item.design),
-					);
+					await saveDesign(ctx, item.design);
 				} else if (item.type === 'image' && ctx.db.assets) {
 					await ctx.db.assets.upsertByEntityId(
 						item.image.id,
@@ -190,7 +189,7 @@ export const listItems: CanvaEndpoints['foldersListItems'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.folders.listItems',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -211,7 +210,7 @@ export const moveItem: CanvaEndpoints['foldersMoveItem'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.folders.moveItem',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return { success: true };

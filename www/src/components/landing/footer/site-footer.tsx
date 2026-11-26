@@ -4,7 +4,7 @@ import { DiscordLogo, GithubLogo, TwitterLogo } from '@phosphor-icons/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-	APP_URL,
+	CONSOLE_URL,
 	DISCORD_URL,
 	DOCS_URL,
 	GITHUB_ISSUES_URL,
@@ -12,6 +12,16 @@ import {
 	GITHUB_URL,
 	TWITTER_URL,
 } from '@/lib/site-links';
+
+const PRODUCT_LINKS = [
+	{ href: '/mcp-gateway', label: 'Lug MCP gateway' },
+	{ href: '/developers', label: 'Hub for developers' },
+	{ href: '/pricing', label: 'Pricing' },
+	{ href: '/connect', label: 'Connect an agent' },
+	{ href: '/skills', label: 'Skills' },
+	{ href: '/integrations', label: 'Integrations' },
+	{ href: '/use-cases', label: 'Use cases' },
+] as const;
 
 export function SiteFooter() {
 	const currentYear = new Date().getFullYear();
@@ -39,33 +49,27 @@ export function SiteFooter() {
 							</span>
 						</Link>
 						<p className="text-sm leading-relaxed text-[#1c1c1c99]">
-							AI-first integrations and tools platform. Secure, multi-tenant
-							execution and OAuth management for developers.
+							One MCP URL for every app and every agent, built on open-source
+							integrations.
 						</p>
 					</div>
 
 					{/* Product Column */}
 					<div className="flex flex-col gap-3">
 						<h3 className="font-[family-name:var(--landing-font-mono)] text-[11px] font-semibold uppercase tracking-wider text-[#1c1c1c66]">
-							Product
+							Products
 						</h3>
 						<ul className="flex flex-col gap-2 p-0 list-none">
-							<li>
-								<Link
-									href="/#pricing"
-									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
-								>
-									Pricing
-								</Link>
-							</li>
-							<li>
-								<Link
-									href="/use-cases"
-									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
-								>
-									Use cases
-								</Link>
-							</li>
+							{PRODUCT_LINKS.map((link) => (
+								<li key={link.href}>
+									<Link
+										href={link.href}
+										className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
+									>
+										{link.label}
+									</Link>
+								</li>
+							))}
 							<li>
 								<a
 									href={DOCS_URL}
@@ -75,34 +79,6 @@ export function SiteFooter() {
 								>
 									Documentation
 								</a>
-							</li>
-							<li>
-								<a
-									href={GITHUB_URL}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
-								>
-									GitHub
-								</a>
-							</li>
-							<li>
-								<a
-									href={APP_URL}
-									target="_blank"
-									rel="noopener noreferrer"
-									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
-								>
-									Cloud Dashboard
-								</a>
-							</li>
-							<li>
-								<Link
-									href="/oss"
-									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
-								>
-									OSS Integrations
-								</Link>
 							</li>
 						</ul>
 					</div>
@@ -129,6 +105,14 @@ export function SiteFooter() {
 									vs Composio
 								</Link>
 							</li>
+							<li>
+								<Link
+									href="/compare"
+									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
+								>
+									All comparisons
+								</Link>
+							</li>
 						</ul>
 					</div>
 
@@ -138,6 +122,24 @@ export function SiteFooter() {
 							Developers
 						</h3>
 						<ul className="flex flex-col gap-2 p-0 list-none">
+							<li>
+								<Link
+									href="/developers"
+									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
+								>
+									Corsair SDK
+								</Link>
+							</li>
+							<li>
+								<a
+									href={CONSOLE_URL}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
+								>
+									Developer console
+								</a>
+							</li>
 							<li>
 								<Link
 									href="/blog"

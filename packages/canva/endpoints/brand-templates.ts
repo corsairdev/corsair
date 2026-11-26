@@ -1,7 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCanvaRequest } from '../client';
 import type { CanvaEndpoints } from '../index';
-import { toBrandTemplateEntity } from './mappers';
+import { loggable, toBrandTemplateEntity } from './mappers';
+import { callCanva, seg } from './shared';
 import type { CanvaEndpointOutputs } from './types';
 
 export const list: CanvaEndpoints['brandTemplatesList'] = async (
@@ -39,7 +40,7 @@ export const list: CanvaEndpoints['brandTemplatesList'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.brandTemplates.list',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -48,7 +49,7 @@ export const list: CanvaEndpoints['brandTemplatesList'] = async (
 export const get: CanvaEndpoints['brandTemplatesGet'] = async (ctx, input) => {
 	const result = await makeCanvaRequest<
 		CanvaEndpointOutputs['brandTemplatesGet']
-	>(`v1/brand-templates/${input.brandTemplateId}`, ctx.key, {
+	>(`v1/brand-templates/${seg(input.brandTemplateId)}`, ctx.key, {
 		method: 'GET',
 	});
 
@@ -66,7 +67,7 @@ export const get: CanvaEndpoints['brandTemplatesGet'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canva.brandTemplates.get',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -78,15 +79,39 @@ export const getDataset: CanvaEndpoints['brandTemplatesGetDataset'] = async (
 ) => {
 	const result = await makeCanvaRequest<
 		CanvaEndpointOutputs['brandTemplatesGetDataset']
-	>(`v1/brand-templates/${input.brandTemplateId}/dataset`, ctx.key, {
+	>(`v1/brand-templates/${seg(input.brandTemplateId)}/dataset`, ctx.key, {
 		method: 'GET',
 	});
 
 	await logEventFromContext(
 		ctx,
 		'canva.brandTemplates.getDataset',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
+	return result;
+};
+
+export const publish: CanvaEndpoints['brandTemplatesPublish'] = async (
+	ctx,
+	input,
+) => {
+	const result = await callCanva<CanvaEndpointOutputs['brandTemplatesPublish']>(
+		ctx,
+		'brandTemplates.publish',
+		loggable(input),
+		'v1/brand-templates',
+		{ method: 'POST', body: { design_id: input.design_id } },
+	);
+	if (ctx.db.brandTemplates) {
+		try {
+			await ctx.db.brandTemplates.upsertByEntityId(
+				result.brand_template.id,
+				toBrandTemplateEntity(result.brand_template),
+			);
+		} catch (error) {
+			console.warn('Failed to save brand template to database:', error);
+		}
+	}
 	return result;
 };
