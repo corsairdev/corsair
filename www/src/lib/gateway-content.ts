@@ -17,12 +17,21 @@ const VERSION = 1;
 
 export type CopyValue = { label: string; value: string; secret?: boolean };
 export type GuideStep = { text: string; copy?: CopyValue[]; or?: string };
+export type GuideVideo = {
+	src: string;
+	poster: string;
+	label: string;
+	seconds: number;
+};
+
 export type ClientGuide = {
 	snippet?: { label: string; code: string };
 	install?: { label: string; href: string };
 	or?: string;
 	steps: GuideStep[];
 	note?: string;
+	/** A clip of the setup (Hub hosts it in its media store), for steps that are clicks in an app. */
+	video?: GuideVideo;
 };
 
 export type GatewayClient = {
@@ -108,6 +117,14 @@ const clientSchema = z.object({
 		or: z.string().optional(),
 		steps: z.array(guideStep),
 		note: z.string().optional(),
+		video: z
+			.object({
+				src: z.string().url(),
+				poster: z.string().url(),
+				label: z.string(),
+				seconds: z.number(),
+			})
+			.optional(),
 	}),
 });
 
