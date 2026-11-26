@@ -1,8 +1,14 @@
 import type { CorsairErrorHandler, RetryStrategy } from 'corsair/core';
 import { ZodError } from 'zod';
-import { LinkhutAPIError } from './client';
+import {
+	LINKHUT_MIN_INTERVAL_MS,
+	linkhutApiError,
+	linkhutRequestGap,
+	makeLinkhutRequest,
+} from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { unauthenticated } from './test-fixtures';
+import { captureError, mockFetchRejection } from './test-helpers';
 
 type HandlerName = keyof typeof errorHandlers;
 
@@ -22,125 +28,94 @@ async function strategy(error: Error): Promise<RetryStrategy> {
 }
 
 function linkhutError(
-	status: number | undefined,
-	options: {
-		code?: string;
-		replayable?: boolean;
-		retryAfter?: number;
-		method?: 'GET';
-		transport?: Error;
-	} = {},
-) {
-	return new LinkhutAPIError(
-		options.transport?.message ?? `Linkhut HTTP ${status ?? '?'} failed`,
-		{
-			status,
-			code: options.code,
-			replayable: options.replayable,
-			retryAfter: options.retryAfter,
-			method: options.method ?? 'GET',
-			cause: options.transport,
-		},
+	status: number,
+	options: { replayable?: boolean; retryAfter?: number; body?: unknown } = {},
+): Error {
+	return linkhutApiError(
+		{ method: 'GET', path: '/v1/posts/get' },
+		{ status, body: options.body },
+		`Linkhut HTTP ${status}`,
+		options.replayable ?? false,
+		options.retryAfter,
 	);
 }
 
+async function transportError(replayable: boolean): Promise<Error> {
+	linkhutRequestGap.minIntervalMs = 0;
+	mockFetchRejection(new TypeError('fetch failed'));
+	try {
+		return (await captureError(
+			makeLinkhutRequest('k', {
+				method: 'GET',
+				path: '/v1/posts/get',
+				replayable,
+			}),
+		)) as Error;
+	} finally {
+		linkhutRequestGap.minIntervalMs = LINKHUT_MIN_INTERVAL_MS;
+		jest.restoreAllMocks();
+	}
+}
+
 describe('Linkhut error handlers', () => {
-	it('retries a 429 with backoff', async () => {
-		const error = linkhutError(429, { replayable: true });
-		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
-		expect(await strategy(error)).toEqual({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff',
-			headersRetryAfterMs: undefined,
-		});
-	});
-
-	it('retries a 429 even on a destructive GET, which was refused before it ran', async () => {
-		const error = linkhutError(429, { replayable: false });
-		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
-		expect(await strategy(error)).toMatchObject({ maxRetries: 2 });
-	});
-
-	it('passes a Retry-After value through as the fixed delay', async () => {
-		const error = linkhutError(429, { replayable: true, retryAfter: 2000 });
-		expect(await strategy(error)).toEqual({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff',
-			headersRetryAfterMs: 2000,
-		});
-	});
+	it.each([true, false])(
+		'leaves a 429 to core, which already retried it (replayable %s)',
+		async (replayable) => {
+			const error = linkhutError(429, { replayable, retryAfter: 2000 });
+			expect(classify(error)).toBe('RATE_LIMIT_ERROR');
+			expect(await strategy(error)).toEqual({ maxRetries: 0 });
+		},
+	);
 
 	it('retries a 500 on a read, which linkhut documents as a throttle signal', async () => {
 		const error = linkhutError(500, { replayable: true });
-		expect(error.isThrottled).toBe(true);
 		expect(classify(error)).toBe('THROTTLED_ERROR');
-		expect(await strategy(error)).toMatchObject({
+		expect(await strategy(error)).toEqual({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff',
 		});
 	});
 
-	it('does not replay a 500 on a destructive GET', async () => {
-		const error = linkhutError(500, { replayable: false });
-		expect(classify(error)).toBe('DEFAULT');
-		expect(await strategy(error)).toEqual({ maxRetries: 0 });
-	});
-
-	it('separates the converging add from a delete on a 502', async () => {
-		// posts.add is an upsert keyed by the url, so a 502 that already applied
-		// converges when it is sent again. A delete does not, so it never replays.
-		const add = linkhutError(502, { replayable: true });
-		expect(classify(add)).toBe('THROTTLED_ERROR');
-		expect(await strategy(add)).toMatchObject({ maxRetries: 2 });
-		const deleteRequest = linkhutError(502, { replayable: false });
-		expect(classify(deleteRequest)).toBe('DEFAULT');
-		expect(await strategy(deleteRequest)).toEqual({ maxRetries: 0 });
+	it('does not replay a 500 or 502 on a write that may have landed', async () => {
+		for (const status of [500, 502]) {
+			const error = linkhutError(status, { replayable: false });
+			expect(classify(error)).toBe('DEFAULT');
+			expect(await strategy(error)).toEqual({ maxRetries: 0 });
+		}
 	});
 
 	it('retries a dropped connection on a read', async () => {
-		const error = linkhutError(undefined, {
-			replayable: true,
-			transport: new TypeError('fetch failed'),
-		});
-		expect(error.isTransportError).toBe(true);
+		const error = await transportError(true);
 		expect(classify(error)).toBe('NETWORK_ERROR');
-		expect(await strategy(error)).toMatchObject({
+		expect(await strategy(error)).toEqual({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff',
 		});
 	});
 
-	it('does not replay a dropped connection on a destructive GET', async () => {
-		const error = linkhutError(undefined, {
-			replayable: false,
-			transport: new TypeError('fetch failed'),
-		});
+	it('does not replay a dropped connection on a write', async () => {
+		const error = await transportError(false);
 		expect(classify(error)).toBe('DEFAULT');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
-	it('retries a dropped connection on posts.add, which converges as an upsert', async () => {
-		const error = linkhutError(undefined, {
-			replayable: true,
-			transport: new TypeError('fetch failed'),
-		});
-		expect(classify(error)).toBe('NETWORK_ERROR');
-	});
-
 	it('does not retry a 401 Unauthenticated', async () => {
-		const error = linkhutError(401, { code: 'Unauthenticated' });
+		const error = linkhutError(401, {
+			replayable: true,
+			body: unauthenticated,
+		});
 		expect(classify(error)).toBe('AUTH_ERROR');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('does not retry a 403', async () => {
-		const error = linkhutError(403);
+		const error = linkhutError(403, { replayable: true });
 		expect(classify(error)).toBe('PERMISSION_ERROR');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it.each([400, 404, 406, 422])('does not retry a %i', async (status) => {
-		const error = linkhutError(status);
+		const error = linkhutError(status, { replayable: true });
 		expect(classify(error)).toBe('VALIDATION_ERROR');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
@@ -152,11 +127,8 @@ describe('Linkhut error handlers', () => {
 	});
 
 	it('does not retry a result_code failure that arrived at HTTP 200', async () => {
-		// requireDone raises this: linkhut acted on the request and reported a
-		// failure in the body, so no handler may send it again.
 		const error = linkhutError(200, {
-			code: 'something went wrong',
-			replayable: false,
+			body: { result_code: 'something went wrong' },
 		});
 		expect(classify(error)).toBe('DEFAULT');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
@@ -166,11 +138,6 @@ describe('Linkhut error handlers', () => {
 		const error = new Error('something unexpected');
 		expect(classify(error)).toBe('DEFAULT');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
-	});
-
-	it('matches the 401 body shape Linkhut actually sends', () => {
-		const body = unauthenticated;
-		expect(body.errors[0]?.message).toBe('Unauthenticated');
 	});
 });
 

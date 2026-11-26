@@ -1,68 +1,65 @@
 import type { CorsairErrorHandler, RetryStrategy } from 'corsair/core';
-import { LinkhutAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { linkhutRequestFacts } from './client';
 
+// 406 is also what linkhut answers for a path it has no route for.
 const VALIDATION_STATUSES = new Set([400, 404, 406, 422]);
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof LinkhutAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
-/** Two more attempts with exponential backoff, or the delay Retry-After names. */
-function backOff(error: Error): Promise<RetryStrategy> {
-	return Promise.resolve({
-		maxRetries: 2,
-		retryStrategy: 'exponential_backoff',
-		headersRetryAfterMs:
-			error instanceof LinkhutAPIError ? error.retryAfter : undefined,
-	});
-}
-
-const noRetry = async (): Promise<RetryStrategy> => ({ maxRetries: 0 });
+const noRetry = async (_error?: Error): Promise<RetryStrategy> => ({
+	maxRetries: 0,
+});
 
 export const errorHandlers = {
-	// Not documented for linkhut, but the standard signal. Such a request is
-	// refused before it runs, so any operation may repeat it.
+	// Core's request() has already retried the 429 three times, honouring
+	// Retry-After, before this sees it (PLUGIN_PR_RULES R8).
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof LinkhutAPIError && error.status === 429,
-		handler: backOff,
+		match: (error: Error) => statusOf(error) === 429,
+		handler: noRetry,
 	},
 	// "Please watch for 500 or 999 errors and back-off appropriately. It means
-	// that you have been throttled." A 999 never reaches a handler with a
-	// status: fetch rejects it as a network error, so it arrives through
-	// NETWORK_ERROR. Only a replayable request is repeated, because a failed
-	// write may already have been applied.
+	// that you have been throttled." A 999 never arrives with a status: fetch
+	// rejects it as a network error, so it comes through NETWORK_ERROR. Only a
+	// replayable request is repeated, because a failed write may already have
+	// been applied.
 	THROTTLED_ERROR: {
 		match: (error: Error) =>
-			error instanceof LinkhutAPIError && error.isThrottled && error.replayable,
-		handler: backOff,
-	},
-	// A dropped connection on a read never reached linkhut.
-	NETWORK_ERROR: {
-		match: (error: Error) =>
-			error instanceof LinkhutAPIError &&
-			error.isTransportError &&
-			error.replayable,
-		handler: async () => ({
+			(statusOf(error) ?? 0) >= 500 &&
+			linkhutRequestFacts(error)?.replayable === true,
+		handler: async (_error?: Error): Promise<RetryStrategy> => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff',
 		}),
 	},
-	// 401: no token, a wrong token or an expired one.
+	// A dropped connection on a replayable request.
+	NETWORK_ERROR: {
+		match: (error: Error) => {
+			const facts = linkhutRequestFacts(error);
+			return facts?.transport === true && facts.replayable;
+		},
+		handler: async (_error?: Error): Promise<RetryStrategy> => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff',
+		}),
+	},
+	// 401 {"errors":[{"message":"Unauthenticated"}]}: no token, a wrong one,
+	// an expired or revoked one.
 	AUTH_ERROR: {
 		match: (error: Error) => statusOf(error) === 401,
 		handler: noRetry,
 	},
-	// 403. No body for it could be observed without a key.
+	// 403: the OAuth token lacks the scope (posts:read, posts:write,
+	// tags:read, tags:write) the operation needs.
 	PERMISSION_ERROR: {
 		match: (error: Error) => statusOf(error) === 403,
 		handler: noRetry,
 	},
-	// None of these statuses was observed on an authenticated route: every
-	// malformed-parameter probe hit auth first. They are the conventional
-	// meanings of 400 (refused input), 404 (no such operation), 406 (a format
-	// linkhut will not serve) and 422 (a value it cannot process). A ZodError
-	// is input the schema refused before any request was sent.
+	// 404 is posts/get for a url that is not saved; 406 an unknown route or a
+	// format linkhut will not serve. 400 and 422 are the conventional refusals.
+	// A ZodError is input the schema refused before any request was sent.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			const status = statusOf(error);

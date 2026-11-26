@@ -1,9 +1,11 @@
+import { ApiError } from 'corsair/http';
 import {
 	LINKHUT_API_BASE,
 	LINKHUT_MIN_INTERVAL_MS,
-	LinkhutAPIError,
+	linkhutRequestFacts,
 	linkhutRequestGap,
 	makeLinkhutRequest,
+	normaliseLinkhutKey,
 } from './client';
 import { unauthenticated } from './test-fixtures';
 import {
@@ -105,7 +107,7 @@ describe('makeLinkhutRequest', () => {
 		expect(url.search).toBe('?tag=');
 	});
 
-	it('reads the errors of the 401 envelope into the message and code', async () => {
+	it('throws core ApiError with the 401 envelope message', async () => {
 		const fetchMock = mockFetchResponse({ status: 401, body: unauthenticated });
 
 		const error = (await captureError(
@@ -114,54 +116,83 @@ describe('makeLinkhutRequest', () => {
 				path: '/v1/posts/update',
 				replayable: true,
 			}),
-		)) as LinkhutAPIError;
+		)) as ApiError;
 
-		expect(error).toBeInstanceOf(LinkhutAPIError);
+		expect(error).toBeInstanceOf(ApiError);
 		expect(error.status).toBe(401);
-		expect(error.code).toBe('Unauthenticated');
-		expect(error.message).toBe(
-			'Linkhut HTTP 401 Unauthorized: Unauthenticated',
-		);
-		expect(error.isTransportError).toBe(false);
+		expect(error.body).toEqual(unauthenticated);
+		expect(error.message).toBe('Linkhut HTTP 401: Unauthenticated');
+		expect(linkhutRequestFacts(error)).toEqual({
+			method: 'GET',
+			replayable: true,
+			transport: false,
+		});
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
-	it('falls back to the status text when an error body carries no message', async () => {
+	it('drops an HTML error body and keeps the status in the message', async () => {
 		mockFetchResponse({ status: 503, body: html });
 
 		const error = (await captureError(
 			makeLinkhutRequest(API_KEY, {
 				method: 'GET',
 				path: '/v1/posts/update',
-				replayable: true,
+				replayable: false,
 			}),
-		)) as LinkhutAPIError;
+		)) as ApiError;
 
-		expect(error.message).toBe('Linkhut HTTP 503 Service Unavailable');
-		expect(error.code).toBeUndefined();
-		expect(error.isThrottled).toBe(true);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.message).toBe('Linkhut HTTP 503');
+		expect(error.body).toBeUndefined();
+		expect(linkhutRequestFacts(error)?.replayable).toBe(false);
 	});
 
-	it('carries the Retry-After header in milliseconds', async () => {
-		mockFetchResponse({
+	it('keeps bookmark data from the query out of the error', async () => {
+		mockFetchResponse({ status: 500, body: { result_code: 'x' } });
+
+		const error = (await captureError(
+			makeLinkhutRequest(API_KEY, {
+				method: 'GET',
+				path: '/v1/posts/add',
+				query: {
+					url: 'https://private.example/secret-page',
+					description: 'mine',
+				},
+				replayable: false,
+			}),
+		)) as ApiError;
+
+		expect(error.request).toEqual({ method: 'GET', url: '/v1/posts/add' });
+		expect(error.url).toBe('https://api.ln.ht/v1/posts/add');
+		expect(JSON.stringify(error)).not.toContain('private.example');
+	});
+
+	it('lets core retry a 429 and carries Retry-After in milliseconds', async () => {
+		jest.useFakeTimers();
+		const fetchMock = mockFetchResponse({
 			status: 429,
 			body: unauthenticated,
 			headers: { 'retry-after': '2' },
 		});
 
-		const error = (await captureError(
+		const pending = captureError(
 			makeLinkhutRequest(API_KEY, {
 				method: 'GET',
 				path: '/v1/posts/update',
 				replayable: true,
 			}),
-		)) as LinkhutAPIError;
+		);
+		await jest.advanceTimersByTimeAsync(10_000);
+		const error = (await pending) as ApiError;
+		jest.useRealTimers();
 
 		expect(error.status).toBe(429);
 		expect(error.retryAfter).toBe(2000);
+		// One attempt plus core's three retries.
+		expect(fetchMock).toHaveBeenCalledTimes(4);
 	});
 
-	it('wraps a dropped connection as a transport error and keeps the cause', async () => {
+	it('turns a dropped connection into a fixed-message transport error', async () => {
 		mockFetchRejection(new TypeError('fetch failed'));
 
 		const error = (await captureError(
@@ -170,15 +201,21 @@ describe('makeLinkhutRequest', () => {
 				path: '/v1/posts/update',
 				replayable: true,
 			}),
-		)) as LinkhutAPIError;
+		)) as Error;
 
-		expect(error.status).toBeUndefined();
-		expect(error.isTransportError).toBe(true);
-		expect(error.message).toBe('fetch failed');
-		expect(error.cause).toBeInstanceOf(TypeError);
+		expect(error).not.toBeInstanceOf(ApiError);
+		expect(error.message).toBe(
+			'Linkhut request failed before a response arrived (TypeError)',
+		);
+		expect(error.cause).toBeUndefined();
+		expect(linkhutRequestFacts(error)).toEqual({
+			method: 'GET',
+			replayable: true,
+			transport: true,
+		});
 	});
 
-	it('reads a rejected string reason', async () => {
+	it('reads a rejected string reason as a transport error', async () => {
 		mockFetchRejection('999');
 
 		const error = (await captureError(
@@ -187,13 +224,63 @@ describe('makeLinkhutRequest', () => {
 				path: '/v1/posts/update',
 				replayable: true,
 			}),
-		)) as LinkhutAPIError;
+		)) as Error;
 
-		expect(error.isTransportError).toBe(true);
-		expect(error.message).toBe('999');
+		expect(linkhutRequestFacts(error)?.transport).toBe(true);
+		expect(error.message).toBe(
+			'Linkhut request failed before a response arrived',
+		);
 	});
 
-	it('keeps the API key out of the error, its JSON form and its inspect form', async () => {
+	it('does not repeat a transport message that quotes the key', async () => {
+		mockFetchRejection(
+			new TypeError(
+				`Headers.append: "Bearer ${API_KEY}" is an invalid header value.`,
+			),
+		);
+
+		const error = (await captureError(
+			makeLinkhutRequest(API_KEY, {
+				method: 'GET',
+				path: '/v1/posts/update',
+				replayable: true,
+			}),
+		)) as Error;
+
+		expect(error.message).not.toContain(API_KEY);
+		expect(JSON.stringify(error)).not.toContain(API_KEY);
+		expect(error.cause).toBeUndefined();
+	});
+
+	it('trims a pasted key and refuses one with inner whitespace before sending', async () => {
+		const fetchMock = mockFetchResponse({ body: { update_time: 'x' } });
+
+		await makeLinkhutRequest(`${API_KEY}\n`, {
+			method: 'GET',
+			path: '/v1/posts/update',
+			replayable: true,
+		});
+		const { init } = sentCall(fetchMock);
+		expect(new Headers(init.headers).get('authorization')).toBe(
+			`Bearer ${API_KEY}`,
+		);
+
+		const error = (await captureError(
+			makeLinkhutRequest(`\n${API_KEY}x\ny`, {
+				method: 'GET',
+				path: '/v1/posts/update',
+				replayable: true,
+			}),
+		)) as Error;
+		expect(error.message).toBe(
+			'Linkhut API key is empty or holds whitespace or control characters',
+		);
+		expect(error.message).not.toContain(API_KEY);
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(() => normaliseLinkhutKey('   ')).toThrow();
+	});
+
+	it('keeps the API key out of an HTTP error, its JSON form and its request', async () => {
 		mockFetchResponse({ status: 401, body: unauthenticated });
 
 		const error = (await captureError(
@@ -202,13 +289,11 @@ describe('makeLinkhutRequest', () => {
 				path: '/v1/posts/update',
 				replayable: true,
 			}),
-		)) as LinkhutAPIError;
+		)) as ApiError;
 
 		expect(error.message).not.toContain(API_KEY);
 		expect(JSON.stringify(error)).not.toContain(API_KEY);
-		// The cause carries no request record, so nothing else can print the
-		// Authorization header.
-		expect(error.cause).toBeUndefined();
+		expect(JSON.stringify(error.request)).not.toContain(API_KEY);
 	});
 });
 

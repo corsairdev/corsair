@@ -174,7 +174,7 @@ export function mockFetchRejection(
  * Awaits a promise that is expected to reject and resolves with the reason,
  * so a test fails on a resolved promise instead of on a thrown one. When the
  * promise does not reject, it resolves with the promise's own value. Narrow
- * the result with `toBeInstanceOf(LinkhutAPIError)` before reading a field.
+ * the result with `toBeInstanceOf(ApiError)` before reading a field.
  */
 export async function captureError(
 	promise: Promise<unknown>, // unknown: the promise under test, which may reject with any value.
