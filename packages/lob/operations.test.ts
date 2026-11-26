@@ -842,6 +842,17 @@ describe('headers and special bodies', () => {
 		expect(form.get('ride_along_image')).toBeInstanceOf(Blob);
 	});
 
+	it('sends no status on an Informed Delivery create that omits it (Lob approves it)', async () => {
+		mockFetch(ok({ id: 'idc_1' }));
+		await operation('informedDelivery.create')(makeCtx(), {
+			quantity: 2,
+			start_date: '2026-12-01',
+		});
+		const form = lastCall().init.body as FormData;
+		expect(form).toBeInstanceOf(FormData);
+		expect(form.has('status')).toBe(false);
+	});
+
 	it('approves an Informed Delivery campaign with PATCH and no id field', async () => {
 		mockFetch(ok({ id: 'idc_1' }));
 		await operation('informedDelivery.update')(makeCtx(), {

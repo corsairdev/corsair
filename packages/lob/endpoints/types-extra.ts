@@ -872,7 +872,12 @@ const informedDeliveryFields = {
 
 const InformedDeliveryCreateInputSchema = z.object({
 	...informedDeliveryFields,
-	status: z.enum(['pending_approval']).optional(),
+	status: z
+		.enum(['pending_approval'])
+		.optional()
+		.describe(
+			"Pass 'pending_approval' to keep the campaign editable and inactive. When omitted, Lob creates it approved: active and no longer editable.",
+		),
 });
 
 const InformedDeliveryUpdateInputSchema = z.object({

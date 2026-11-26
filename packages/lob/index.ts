@@ -867,7 +867,7 @@ export const lobEndpointMeta = {
 	'informedDelivery.create': {
 		riskLevel: 'write',
 		description:
-			'Create a USPS Informed Delivery campaign (an email preview with a ride-along image and link) pending approval',
+			"Create a USPS Informed Delivery campaign (an email preview with a ride-along image and link). Lob approves it on create unless status is 'pending_approval'",
 	},
 	'informedDelivery.get': {
 		riskLevel: 'read',
