@@ -42,6 +42,26 @@ async function createClient() {
 	return { corsair, testDb };
 }
 
+type LiveCorsair = Awaited<ReturnType<typeof createClient>>['corsair'];
+
+/**
+ * Deletes a list a failed test left behind. A failure here is only logged,
+ * so the test still reports the error that stopped it.
+ */
+async function deleteLeftoverList(
+	corsair: LiveCorsair,
+	list_id: number | undefined,
+) {
+	if (list_id === undefined) return;
+	try {
+		await corsair.listclean.api.lists.delete({ list_id });
+	} catch (error) {
+		console.warn(
+			`Could not delete live test list ${list_id}: ${error instanceof Error ? error.message : String(error)}`,
+		);
+	}
+}
+
 describeIfKey('Listclean live smoke', () => {
 	it('reads the credit balance', async () => {
 		const { corsair, testDb } = await createClient();
@@ -133,12 +153,14 @@ describeIfKey('Listclean live smoke', () => {
 		'runs a two-address batch, downloads both formats and deletes the list',
 		async () => {
 			const { corsair, testDb } = await createClient();
+			let leftover: number | undefined;
 			try {
 				const api = corsair.listclean.api;
 				const { list_id } = await api.verify.startBatchVerification({
 					emails: ['corsair-test-1@example.com', 'corsair-test-2@example.com'],
 					filename: 'corsair-plugin-test.csv',
 				});
+				leftover = list_id;
 				let status: string | null | undefined;
 				for (let poll = 0; poll < 30 && status !== 'COMPLETED'; poll++) {
 					await new Promise((done) => setTimeout(done, 5_000));
@@ -152,9 +174,14 @@ describeIfKey('Listclean live smoke', () => {
 					expect(typeof csv).toBe('string');
 				}
 				const deleted = await api.lists.delete({ list_id });
+				leftover = undefined;
 				expect(typeof deleted.message).toBe('string');
 			} finally {
-				testDb.cleanup();
+				try {
+					await deleteLeftoverList(corsair, leftover);
+				} finally {
+					testDb.cleanup();
+				}
 			}
 		},
 		240_000,
@@ -164,6 +191,7 @@ describeIfKey('Listclean live smoke', () => {
 		'uploads a CSV in chunks, polls it, reads the list and deletes it',
 		async () => {
 			const { corsair, testDb } = await createClient();
+			let leftover: number | undefined;
 			try {
 				const api = corsair.listclean.api;
 				const csv = Buffer.from(
@@ -202,6 +230,7 @@ describeIfKey('Listclean live smoke', () => {
 				const list_id = upload.request_id;
 				expect(typeof list_id).toBe('number');
 				if (!list_id) throw new Error('the upload became no list');
+				leftover = list_id;
 
 				let status: string | null | undefined;
 				for (let poll = 0; poll < 36 && status !== 'COMPLETED'; poll++) {
@@ -225,9 +254,14 @@ describeIfKey('Listclean live smoke', () => {
 				expect(rows).toBe(3);
 
 				const deleted = await api.lists.delete({ list_id });
+				leftover = undefined;
 				expect(typeof deleted.message).toBe('string');
 			} finally {
-				testDb.cleanup();
+				try {
+					await deleteLeftoverList(corsair, leftover);
+				} finally {
+					testDb.cleanup();
+				}
 			}
 		},
 		420_000,
