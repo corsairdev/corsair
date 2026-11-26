@@ -1,7 +1,7 @@
 ---
 title: "Publora plugin"
 sidebarTitle: "Overview"
-description: "Draft, schedule and publish posts with text, media and first comments to LinkedIn, X, Instagram, Threads, TikTok, YouTube, Facebook Pages, Bluesky, Mastodon and Telegram, check plan quotas, upload media and receive signed post events."
+description: "Draft, schedule and publish posts with text, media and first comments to LinkedIn, X, Instagram, Threads, TikTok, YouTube, Facebook Pages, Bluesky, Mastodon and Telegram, check plan quotas, upload media, read Mastodon, Bluesky and LinkedIn analytics, comment and react on LinkedIn, run Agency workspaces with client reviews, and receive signed post events."
 ---
 
 Use **Publora** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -19,10 +19,14 @@ Things to know:
 - **Editing.** `posts.update` works on drafts and scheduled posts. `platforms` replaces the whole target list; every other field is a patch.
 - **Webhooks.** `webhooks.create` subscribes an HTTPS URL to `post.scheduled`, `post.published`, `post.failed` and `post.demoted`; the reply is the only time its signing secret is shown. Store it with `keys.set_webhook_signature` (or the `webhookSecret` option) and the plugin verifies each delivery's `X-Publora-Signature` before handling it.
 - **Paging.** `posts.list` takes `page` (from 1) and `limit` (up to 100); `pagination.hasNextPage` says whether to ask for the next page.
+- **Before scheduling.** `accounts.getPlatformLimits` returns the per-network limits Publora checks, `accounts.testConnection` checks one connection, and `posts.getLogs` shows why a post failed.
+- **Analytics.** `analytics.postStatistics` and `analytics.profileStatistics` cover Mastodon and Bluesky; the `linkedin.*` statistics cover posts, accounts, profile and followers. They need a plan with analytics and are cached for about 2 hours.
+- **LinkedIn engagement.** `linkedin.createComment`, `linkedin.reshare` and `linkedin.addReaction` act publicly as the connected account. Comments and reshares are published at once.
+- **Agency (Company) API.** Start with `company.listContexts`, pick a Workspace and pass its id as `workspaceId` to every `company.*` operation. Drafts never schedule themselves: `company.posts.createDraft`, then `company.posts.schedule`. `company.posts.requestApproval` returns a private `reviewUrl` for the client; Publora does not send it. Company commands take an `idempotencyKey`; the plugin generates one when it is left out.
 
 **What you get:**
 
-- 14 typed API operations
+- 57 typed API operations
 - 2 synced entities (`accounts`, `posts`) for fast `.search()` / `.list()`
 - 4 incoming webhook event types
 

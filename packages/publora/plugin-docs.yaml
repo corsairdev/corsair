@@ -1,5 +1,5 @@
 displayName: Publora
-description: 'Draft, schedule and publish posts with text, media and first comments to LinkedIn, X, Instagram, Threads, TikTok, YouTube, Facebook Pages, Bluesky, Mastodon and Telegram, check plan quotas, upload media and receive signed post events.'
+description: 'Draft, schedule and publish posts with text, media and first comments to LinkedIn, X, Instagram, Threads, TikTok, YouTube, Facebook Pages, Bluesky, Mastodon and Telegram, check plan quotas, upload media, read Mastodon, Bluesky and LinkedIn analytics, comment and react on LinkedIn, run Agency workspaces with client reviews, and receive signed post events.'
 domain: publora.com
 recommendedAuth: api_key
 overviewNote: |
@@ -16,6 +16,10 @@ overviewNote: |
   - **Editing.** `posts.update` works on drafts and scheduled posts. `platforms` replaces the whole target list; every other field is a patch.
   - **Webhooks.** `webhooks.create` subscribes an HTTPS URL to `post.scheduled`, `post.published`, `post.failed` and `post.demoted`; the reply is the only time its signing secret is shown. Store it with `keys.set_webhook_signature` (or the `webhookSecret` option) and the plugin verifies each delivery's `X-Publora-Signature` before handling it.
   - **Paging.** `posts.list` takes `page` (from 1) and `limit` (up to 100); `pagination.hasNextPage` says whether to ask for the next page.
+  - **Before scheduling.** `accounts.getPlatformLimits` returns the per-network limits Publora checks, `accounts.testConnection` checks one connection, and `posts.getLogs` shows why a post failed.
+  - **Analytics.** `analytics.postStatistics` and `analytics.profileStatistics` cover Mastodon and Bluesky; the `linkedin.*` statistics cover posts, accounts, profile and followers. They need a plan with analytics and are cached for about 2 hours.
+  - **LinkedIn engagement.** `linkedin.createComment`, `linkedin.reshare` and `linkedin.addReaction` act publicly as the connected account. Comments and reshares are published at once.
+  - **Agency (Company) API.** Start with `company.listContexts`, pick a Workspace and pass its id as `workspaceId` to every `company.*` operation. Drafts never schedule themselves: `company.posts.createDraft`, then `company.posts.schedule`. `company.posts.requestApproval` returns a private `reviewUrl` for the client; Publora does not send it. Company commands take an `idempotencyKey`; the plugin generates one when it is left out.
 
 examples:
   read:
@@ -56,3 +60,86 @@ apiExamples:
     call: "{ id: 'WEBHOOK_ID', isActive: false }"
   webhooks.delete:
     call: "{ id: 'WEBHOOK_ID' }"
+  accounts.testConnection:
+    call: "{ platformId: 'linkedin-ABC123' }"
+  accounts.getPlatformLimits: {}
+  posts.getLogs:
+    call: "{ postGroupId: 'POST_GROUP_ID' }"
+  media.attach:
+    call: "{ postGroupId: 'POST_GROUP_ID', file: { download_url: 'https://example.com/launch.png', file_id: 'file_123' } }"
+  media.uploadInstagramCover:
+    call: "{ postGroupId: 'POST_GROUP_ID', cover: 'https://example.com/cover.jpg' }"
+  media.uploadYoutubeThumbnail:
+    call: "{ postGroupId: 'POST_GROUP_ID', thumbnail: 'https://example.com/thumbnail.jpg' }"
+  webhooks.regenerateSecret:
+    call: "{ id: 'WEBHOOK_ID' }"
+  analytics.postStatistics:
+    call: "{ posts: [{ platform: 'bluesky', platformId: 'bluesky-ABC123', postedId: 'POSTED_ID' }] }"
+  analytics.profileStatistics:
+    call: "{ platform: 'mastodon', platformId: 'mastodon-ABC123' }"
+  linkedin.postStatistics:
+    call: "{ postedId: 'urn:li:share:7000000000000000000', platformId: 'linkedin-ABC123', queryTypes: 'ALL' }"
+  linkedin.accountStatistics:
+    call: "{ platformId: 'linkedin-ABC123', aggregation: 'TOTAL' }"
+  linkedin.profileSummary:
+    call: "{ platformId: 'linkedin-ABC123' }"
+  linkedin.followers:
+    call: "{ platformId: 'linkedin-ABC123', period: 'lifetime' }"
+  linkedin.mentionables:
+    call: "{ q: 'Jane', limit: 10 }"
+  linkedin.addReaction:
+    call: "{ postedId: 'urn:li:share:7000000000000000000', reactionType: 'LIKE', platformId: 'linkedin-ABC123' }"
+  linkedin.removeReaction:
+    call: "{ postedId: 'urn:li:share:7000000000000000000', platformId: 'linkedin-ABC123' }"
+  linkedin.reshare:
+    call: "{ platformId: 'linkedin-ABC123', parent: 'urn:li:share:7000000000000000000', commentary: 'Worth a read' }"
+  linkedin.createComment:
+    call: "{ postedId: 'urn:li:share:7000000000000000000', message: 'Thanks for sharing', platformId: 'linkedin-ABC123' }"
+  linkedin.deleteComment:
+    call: "{ postedId: 'urn:li:share:7000000000000000000', commentId: 'COMMENT_ID', platformId: 'linkedin-ABC123' }"
+  company.listContexts: {}
+  company.getWorkspaceContext:
+    call: "{ accountId: 'ACCOUNT_ID', workspaceId: 'WORKSPACE_ID' }"
+  company.listConnections:
+    call: "{ workspaceId: 'WORKSPACE_ID' }"
+  company.listPlatforms: {}
+  company.posts.createDraft:
+    call: "{ workspaceId: 'WORKSPACE_ID', content: 'Launching today', platforms: ['linkedin-ABC123'] }"
+  company.posts.updateDraft:
+    call: "{ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID', content: 'Launching tomorrow' }"
+  company.posts.get:
+    call: "{ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID', includeApproval: true }"
+  company.posts.schedule:
+    call: "{ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID', scheduledTime: '2026-12-01T15:00:00.000Z' }"
+  company.posts.reschedule:
+    call: "{ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID', scheduledTime: '2026-12-02T15:00:00.000Z' }"
+  company.posts.unschedule:
+    call: "{ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID' }"
+  company.posts.recover:
+    call: "{ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID' }"
+  company.posts.getApproval:
+    call: "{ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID' }"
+  company.posts.requestApproval:
+    call: "{ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID', managerComment: 'Ready for review' }"
+  company.posts.cancelApproval:
+    call: "{ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID' }"
+  company.posts.retryApprovalNotification:
+    call: "{ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID' }"
+  company.posts.listMedia:
+    call: "{ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID' }"
+  company.posts.reserveMedia:
+    call: "{ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID', fileName: 'launch.png', contentType: 'image/png', sizeBytes: 204800 }"
+  company.posts.completeMedia:
+    call: "{ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID', mediaFileId: 'MEDIA_FILE_ID' }"
+  company.posts.removeMedia:
+    call: "{ workspaceId: 'WORKSPACE_ID', postGroupId: 'POST_GROUP_ID', mediaFileId: 'MEDIA_FILE_ID' }"
+  company.webhooks.list:
+    call: "{ workspaceId: 'WORKSPACE_ID' }"
+  company.webhooks.create:
+    call: "{ workspaceId: 'WORKSPACE_ID', name: 'Production', url: 'https://example.com/publora-events', events: ['post.published', 'post.failed'] }"
+  company.webhooks.update:
+    call: "{ workspaceId: 'WORKSPACE_ID', webhookId: 'WEBHOOK_ID', isActive: false }"
+  company.webhooks.delete:
+    call: "{ workspaceId: 'WORKSPACE_ID', webhookId: 'WEBHOOK_ID' }"
+  company.webhooks.regenerateSecret:
+    call: "{ workspaceId: 'WORKSPACE_ID', webhookId: 'WEBHOOK_ID' }"
