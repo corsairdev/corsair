@@ -11,6 +11,7 @@ import { domainOf } from './endpoints/verify';
 import {
 	BASE,
 	captureError,
+	currentFetch,
 	endpoints,
 	installFetchMock,
 	jsonResponse,
@@ -138,6 +139,18 @@ describe('uploads', () => {
 			md5_checksum: '0a52067b38f4485d42eb5f7040d476b3',
 		});
 		expect(result.message).toBe('Chunk uploaded successfully');
+	});
+
+	it('refuses chunk number 0 before sending, since chunks count from 1', async () => {
+		const zero = await captureError(
+			endpoints.uploads.uploadChunk(makeCtx(), {
+				upload_id: 1,
+				chunk_sequence_number: 0,
+				content: 'AAAA',
+			}),
+		);
+		expect((zero as Error).name).toBe('ZodError');
+		expect(currentFetch()).not.toHaveBeenCalled();
 	});
 
 	it('refuses a chunk that is not base64 or a checksum that is not md5', async () => {

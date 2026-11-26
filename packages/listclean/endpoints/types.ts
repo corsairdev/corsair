@@ -596,7 +596,7 @@ const UploadChunkInputSchema = z.object({
 	chunk_sequence_number: z
 		.number()
 		.int()
-		.min(0)
+		.min(1)
 		.describe(
 			'Position of this chunk, counted from 1: the last chunk of a 24-chunk file is 24.',
 		),
