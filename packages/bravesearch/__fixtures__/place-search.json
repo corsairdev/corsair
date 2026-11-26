@@ -1,0 +1,85 @@
+{
+  "type": "locations",
+  "results": [
+    {
+      "title": "Zuni Café",
+      "url": "https://zunicafe.com/",
+      "is_source_local": false,
+      "is_source_both": false,
+      "description": "Restaurant",
+      "family_friendly": true,
+      "type": "location_result",
+      "provider_url": "",
+      "coordinates": [37.7736, -122.421608],
+      "zoom_level": 7,
+      "thumbnail": {
+        "src": "https://imgs.search.brave.com/zIGLZ4PjXSXuV7pI-yBhYl8wUXzdY8kTcI2wdkkgj6Y/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy8x/LzE4L1p1bmlfQ2Fm/ZV9pbl9TYW5fRnJh/bm",
+        "original": "https://upload.wikimedia.org/wikipedia/commons/1/18/Zuni_Cafe_in_San_Francisco.jpg"
+      },
+      "postal_address": {
+        "type": "PostalAddress",
+        "displayAddress": "1658 Market St, San Francisco, CA 94102"
+      },
+      "opening_hours": {
+        "current_day": [
+          {
+            "abbr_name": "Thu",
+            "full_name": "Thursday",
+            "opens": "17:00",
+            "closes": "21:30"
+          }
+        ],
+        "days": [
+          [
+            {
+              "abbr_name": "Tue",
+              "full_name": "Tuesday",
+              "opens": "17:00",
+              "closes": "21:30"
+            }
+          ]
+        ]
+      },
+      "contact": {
+        "telephone": "+14155522522"
+      },
+      "price_range": "$$ - $$$",
+      "rating": {
+        "ratingValue": 4.2,
+        "bestRating": 5.0,
+        "reviewCount": 1082,
+        "is_tripadvisor": true
+      },
+      "profiles": [],
+      "pictures": {
+        "results": [
+          {
+            "src": "https://imgs.search.brave.com/zIGLZ4PjXSXuV7pI-yBhYl8wUXzdY8kTcI2wdkkgj6Y/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly91cGxv/YWQud2lraW1lZGlh/Lm9yZy93aWtpcGVk/aWEvY29tbW9ucy8x/LzE4L1p1bmlfQ2Fm/ZV9pbl9TYW5fRnJh/bm",
+            "original": "https://upload.wikimedia.org/wikipedia/commons/1/18/Zuni_Cafe_in_San_Francisco.jpg"
+          }
+        ]
+      },
+      "serves_cuisine": ["American", "Contemporary", "Fusion"],
+      "categories": ["cafe", "restaurant"],
+      "id": "loc4YILSMUYF4NBEBWPOD2QPXGS6YCQ3PLJV35UGQWY="
+    }
+  ],
+  "cities": [],
+  "countries": [],
+  "regions": [],
+  "neighborhoods": [],
+  "addresses": [],
+  "streets": [],
+  "mixed": [
+    {
+      "type": "results",
+      "index": 0,
+      "all": false
+    }
+  ],
+  "location": {
+    "coordinates": [37.77493, -122.41942],
+    "name": "San Francisco",
+    "country": "US"
+  }
+}

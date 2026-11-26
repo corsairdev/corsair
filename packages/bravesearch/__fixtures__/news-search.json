@@ -1,0 +1,38 @@
+{
+  "type": "news",
+  "query": {
+    "original": "brave search api",
+    "spellcheck_off": false,
+    "show_strict_warning": false
+  },
+  "results": [
+    {
+      "type": "news_result",
+      "title": "The Brave Search API now accepts agentic payments via the x402 protocol | Brave",
+      "url": "https://brave.com/blog/search-api-agentic-payments/",
+      "description": "Developers and AI agents can now pay for the Brave Search API on demand with USDC via the open x402 protocol, settling each query in real time without an account or API key.",
+      "age": "2 weeks ago",
+      "page_age": "2026-11-12T00:00:00",
+      "profile": {
+        "name": "Brave",
+        "url": "https://brave.com/blog/search-api-agentic-payments/"
+      },
+      "meta_url": {
+        "scheme": "https",
+        "netloc": "brave.com",
+        "hostname": "brave.com",
+        "favicon": "https://imgs.search.brave.com/vnilI-MeUh5_v9ywDuoJrW0Q4m2J3p50IzXyFgVktSA/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvZTg1MzQ2NjVk/ZGY5NDczMmYzN2I4/MjYwN2Y4MDdlMDlj/Zj",
+        "path": "› blog  › search-api-agentic-payments"
+      },
+      "thumbnail": {
+        "src": "https://imgs.search.brave.com/kEBDK1FFqtQBlM6msmQlNcM3HkafDPMlkm71530n4vU/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly9icmF2/ZS5jb20vYmxvZy9z/ZWFyY2gtYXBpLWFn/ZW50aWMtcGF5bWVu/dHMvaW1hZ2VzL2Zl/YXR1cmVkLmpwZw"
+      },
+      "extra_snippets": [
+        "Developers and autonomous AI agents that specifically require agentic search can now programmatically query Brave’s independent search index, ground agent responses, and settle requests in real time, which eliminates the need for traditional API key management.",
+        "Integrating x402 with the Brave Search API makes it easier for an agentic harness to leverage Brave Search API via a CLI wallet, as Brave runs its own facilitator accepting USDC on the Base blockchain, with acceptance on other networks and with other stablecoins incoming soon.",
+        "Brave Search API endpoints behind x402 require payment on every request rather than authentication. A request sent without payment receives an HTTP 402 Payment Required response that states the price of that search and the payment details needed to pay it. The agent signs a USDC payment for that amount and retries the request with the signed payment attached.",
+        "Once the payment is verified, the search runs and results are returned with a receipt of the transaction that occurred on the Base blockchain. Pricing follows Brave’s published API rates: LLM Context, an API designed specifically for providing search context for agents, will cost $0.005 ($5 per 1,000)."
+      ]
+    }
+  ]
+}

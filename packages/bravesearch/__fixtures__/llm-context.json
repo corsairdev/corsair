@@ -1,0 +1,28 @@
+{
+  "grounding": {
+    "generic": [
+      {
+        "url": "https://armycadets.com/feature/the-tallest-mountains-in-the-world/",
+        "title": "The Tallest Mountains in the World",
+        "snippets": [
+          "### Table of the Tallest Mountains in the World\n|  |  |  |  |  |  |\n| --- | --- | --- | --- | --- | --- |\n| Mount Everest | Nepal/China | Himalayas | 8,849 | 29,032 | 1953 |\n| K2 | Pakistan/China | Ka",
+          "## What is the Tallest Mountain in the World?\nThe tallest mountain is defined by the greatest distance from base to peak. The actual crown for the tallest mountain in the world goes to the lesser-know"
+        ]
+      }
+    ],
+    "map": []
+  },
+  "sources": {
+    "https://armycadets.com/feature/the-tallest-mountains-in-the-world/": {
+      "title": "The Tallest Mountains in the World",
+      "hostname": "armycadets.com",
+      "age": [
+        "Wednesday, August 26, 2026",
+        "2026-08-26",
+        "92 days ago",
+        "2026-08-26T09:40:05Z"
+      ],
+      "snippet": "What are the Highest Peaks in the World? **Mount K2, Pakistan – 8,611 m** · **Mount Kangchenjunga, Nepal – 8,586 m** · Mount Lhotse, Nepal – 8,516 m · Mount Makalu, Nepal – 8,481 m · Mount Cho Oyu, Nepal – 8,201 m"
+    }
+  }
+}

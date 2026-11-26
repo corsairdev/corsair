@@ -975,6 +975,14 @@
                 ]
               },
               {
+                "group": "Brave Search",
+                "pages": [
+                  "plugins/bravesearch/overview",
+                  "plugins/bravesearch/api",
+                  "plugins/bravesearch/database"
+                ]
+              },
+              {
                 "group": "Breathe HR",
                 "pages": [
                   "plugins/breathehr/overview",

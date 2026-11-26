@@ -1,0 +1,43 @@
+{
+  "type": "videos",
+  "query": {
+    "original": "rust programming",
+    "spellcheck_off": false,
+    "show_strict_warning": false
+  },
+  "results": [
+    {
+      "type": "video_result",
+      "url": "https://www.youtube.com/watch?v=gAX3Zj-JGE0",
+      "title": "Learn the Rust programming language - Course for beginners - YouTube",
+      "description": "Do you want to learn Rust in a single video? That's challenging, but I'll try my best. In this 3.5-hour video on learning Rust, you'll develop a solid unders...",
+      "age": "May 6, 2025",
+      "page_age": "2025-05-06T13:45:46",
+      "video": {
+        "duration": "03:30:58",
+        "creator": "Francesco Ciulla",
+        "publisher": "YouTube",
+        "requires_subscription": false,
+        "tags": ["js"],
+        "author": {
+          "name": "Francesco Ciulla",
+          "url": "http://www.youtube.com/@francescociulla"
+        }
+      },
+      "meta_url": {
+        "scheme": "https",
+        "netloc": "youtube.com",
+        "hostname": "www.youtube.com",
+        "favicon": "https://imgs.search.brave.com/Wg4wjE5SHAargkzePU3eSLmWgVz84BEZk1SjSglJK_U/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOTkyZTZiMWU3/YzU3Nzc5YjExYzUy/N2VhZTIxOWNlYjM5/ZG",
+        "path": "› watch"
+      },
+      "thumbnail": {
+        "src": "https://imgs.search.brave.com/7w_r_ER-VlWkR1m3o3vNg0k2phCoBrrpqYgtLYM4OPg/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly9pLnl0/aW1nLmNvbS92aS9n/QVgzWmotSkdFMC9t/YXhyZXNkZWZhdWx0/LmpwZw",
+        "original": "https://i.ytimg.com/vi/gAX3Zj-JGE0/maxresdefault.jpg"
+      }
+    }
+  ],
+  "extra": {
+    "might_be_offensive": false
+  }
+}

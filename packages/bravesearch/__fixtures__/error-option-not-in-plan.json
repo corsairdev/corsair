@@ -1,0 +1,13 @@
+{
+  "type": "ErrorResponse",
+  "error": {
+    "id": "08efdabd-3d78-4925-8c85-f96e857a67c9",
+    "status": 400,
+    "detail": "The option is not included in the plan.",
+    "meta": {
+      "component": "authentication"
+    },
+    "code": "OPTION_NOT_IN_PLAN"
+  },
+  "time": 1795723495
+}

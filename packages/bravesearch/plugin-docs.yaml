@@ -1,0 +1,63 @@
+displayName: Brave Search
+description: Search the web, news, videos, images and places from Brave's independent index, get LLM-ready page context, live rich results, autocomplete, spellcheck and cited AI answers, and read organization usage with the Brave Search API.
+domain: search.brave.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a search key in the Brave Search API dashboard (https://api-dashboard.search.brave.com/app/keys); it is sent as the `X-Subscription-Token` header.
+
+  Things to know before you call:
+
+  - **Plans.** Brave sells three plans, each with its own key scope: Search ($5 per 1,000 requests: `web.*`, `llm.context`, `news`, `videos`, `images`, `local.*`), Answers ($4 per 1,000 searches plus $5 per million input and output tokens: `answers.*`) and Autosuggest/Spellcheck ($5 per 10,000 requests: `suggest.search`, `spellcheck.search`). A call outside the key's plan answers `400 OPTION_NOT_IN_PLAN`. Failed calls are not billed.
+  - **`llm.context` vs `web.search`.** `llm.context` returns extracted page text sized to a token budget, for grounding a model; `web.search` returns ranked titles, URLs and snippets plus news, video, discussion, FAQ and local sections.
+  - **Places.** `local.placeSearch` finds businesses and landmarks by text (`location: "tokyo japan"`) or `latitude`/`longitude`. Its result ids (and the ids in `web.search` `locations`) feed `local.pois` and `local.descriptions`; they expire after 8 hours.
+  - **Rich results.** `web.search` with `enable_rich_callback: true` returns `rich.hint.callback_key` for queries like "weather in london"; `web.rich` fetches the live data for it.
+  - **Answers.** `answers.create` answers from one search; `enable_citations` collects inline citations (offsets into the answer text) into `citations`. `answers.research` runs multi-search deep research for up to `research_maximum_number_of_seconds` (default 180). Both stream from Brave and return one completion with `citations`, `cost` (Brave's usage line in USD) and any other tagged items in `tags`.
+  - **Location headers.** Pass `location: { lat, long, city, country, ... }` on `web.search`, `llm.context` and `local.pois` for local results; it is sent as `X-Loc-*` headers and kept out of error messages.
+  - **Admin API.** `admin.*` reads usage and key lists with a separate admin key (`bsk_admin_...`, made on the dashboard's Admin keys page). Set it as the `adminKey` option or store it as the account's `admin_key`; a search key gets `401 ADMIN_KEY_INVALID`.
+  - **Managed pricing.** With `authType: 'managed_pricing'`, searches run on Corsair's Brave Search key and are billed in Corsair credits. Operations Corsair doesn't price (Answers research, the Admin API) are refused and nothing is charged.
+  - **Rate limits.** Every response carries `X-RateLimit-*` headers with one value per window (per second, per month). A per-second `429 RATE_LIMITED` is retried after a second; a spent monthly quota is not.
+  - Brave's Summarizer endpoints are deprecated (replaced by Answers) and not included.
+examples:
+  read:
+    path: web.search
+    title: Search the web
+    args: {"q": "corsair mcp gateway", "count": 5}
+  write:
+    path: llm.context
+    title: Get LLM context for a question
+    args: {"q": "tallest mountains in the world", "maximum_number_of_tokens": 2048}
+apiExamples:
+  web.search:
+    args: {"q": "corsair mcp gateway", "count": 5, "freshness": "pm"}
+  web.rich:
+    args: {"callback_key": "c9b33a0598a146bf877cc739ba938ce5"}
+  llm.context:
+    args: {"q": "tallest mountains in the world", "count": 5, "maximum_number_of_tokens": 2048}
+  news.search:
+    args: {"q": "brave search api", "count": 10, "freshness": "pw"}
+  videos.search:
+    args: {"q": "rust programming", "count": 5}
+  images.search:
+    args: {"q": "golden gate bridge", "count": 10}
+  local.placeSearch:
+    args: {"q": "coffee", "location": "san francisco ca united states", "count": 5}
+  local.pois:
+    args: {"ids": ["loc4YILSMUYF4NBEBWPOD2QPXGS6YCQ3PLJV35UGQWY="]}
+  local.descriptions:
+    args: {"ids": ["loc4YILSMUYF4NBEBWPOD2QPXGS6YCQ3PLJV35UGQWY="]}
+  suggest.search:
+    args: {"q": "hello wor", "count": 5}
+  spellcheck.search:
+    args: {"q": "helo wrold"}
+  answers.create:
+    args: {"messages": [{"role": "user", "content": "What is the second highest mountain?"}], "enable_citations": true}
+  answers.research:
+    args: {"messages": [{"role": "user", "content": "History of quantum mechanics"}], "research_maximum_number_of_seconds": 120}
+  admin.me:
+    args: {}
+  admin.usage:
+    args: {"starting_at": "2026-11-01T00:00:00Z", "bucket_width": "1d", "group_by": ["endpoint"]}
+  admin.listApiKeys:
+    args: {"limit": 100}
+  admin.listAdminKeys:
+    args: {"limit": 100}

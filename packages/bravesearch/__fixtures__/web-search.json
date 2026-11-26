@@ -1,0 +1,146 @@
+{
+  "type": "search",
+  "query": {
+    "original": "corsair mcp gateway",
+    "show_strict_warning": false,
+    "is_navigational": false,
+    "is_news_breaking": false,
+    "spellcheck_off": false,
+    "country": "us",
+    "bad_results": false,
+    "should_fallback": false,
+    "postal_code": "",
+    "city": "",
+    "header_country": "",
+    "more_results_available": true,
+    "state": "",
+    "related_queries": []
+  },
+  "faq": {
+    "type": "faq",
+    "results": [
+      {
+        "question": "How do I use Corsair MCP?",
+        "answer": "1. Click on \"Deploy Server\".\n2. Wait a few minutes for the server to deploy. Once ready, it will show a \"Started\" state.\n3. In the chat, type @ followed by the <strong>MCP</strong> server name and you",
+        "title": "Corsair MCP by Haris87-star | Glama",
+        "url": "https://glama.ai/mcp/servers/Haris87-star/corsair",
+        "meta_url": {
+          "scheme": "https",
+          "netloc": "glama.ai",
+          "hostname": "glama.ai",
+          "favicon": "https://imgs.search.brave.com/s6awkkV1VAPs1kX1mBSa8rPfcKJOadCwwU_qJ59V6BI/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvMDViZjdhYmQ4/OGJhNDU0YzVkNTUz/ZTgzYmJkZmUwYzlm/M2",
+          "path": "  › mcp  › servers  › corsair mcp"
+        }
+      }
+    ]
+  },
+  "mixed": {
+    "type": "mixed",
+    "main": [
+      {
+        "type": "web",
+        "index": 0,
+        "all": false
+      }
+    ],
+    "top": [],
+    "side": []
+  },
+  "videos": {
+    "type": "videos",
+    "results": [
+      {
+        "type": "video_result",
+        "url": "https://www.youtube.com/watch?v=sPtTDDXsew0",
+        "title": "MCP is Dead - Why no one uses Model Context Protocol! - YouTube",
+        "description": "Hey everyone, In this video, We are going to talk about MCP Model Context Protocol and why no one is using MCP. We will talk about fundamental problem behind...",
+        "age": "April 26, 2026",
+        "page_age": "2026-04-26T11:30:30",
+        "fetched_content_timestamp": 1794766486,
+        "video": {
+          "duration": "16:52",
+          "creator": "Piyush Garg",
+          "publisher": "YouTube"
+        },
+        "meta_url": {
+          "scheme": "https",
+          "netloc": "youtube.com",
+          "hostname": "www.youtube.com",
+          "favicon": "https://imgs.search.brave.com/Wg4wjE5SHAargkzePU3eSLmWgVz84BEZk1SjSglJK_U/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOTkyZTZiMWU3/YzU3Nzc5YjExYzUy/N2VhZTIxOWNlYjM5/ZG",
+          "path": "› watch"
+        },
+        "thumbnail": {
+          "src": "https://imgs.search.brave.com/TqpovYLSj7lBp87Wdt0PXfI8IkYl3xjP8W4zVj5ZdsI/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly9pLnl0/aW1nLmNvbS92aS9z/UHRURERYc2V3MC9t/YXhyZXNkZWZhdWx0/LmpwZw",
+          "original": "https://i.ytimg.com/vi/sPtTDDXsew0/maxresdefault.jpg"
+        }
+      }
+    ],
+    "mutated_by_goggles": false
+  },
+  "web": {
+    "type": "search",
+    "results": [
+      {
+        "title": "MCP Gateway: What It Is, How It Works & Why You Need One | Corsair",
+        "url": "https://corsair.dev/blog/mcp-gateway-for-ai-agents",
+        "is_source_local": false,
+        "is_source_both": false,
+        "description": "If you&#x27;d rather not run a gateway yourself, Lug is Corsair&#x27;s hosted one: connect your apps once, then give Claude, ChatGPT, Cursor and Codex one URL, with approvals before anything destructi",
+        "page_age": "2026-08-25T15:22:00",
+        "profile": {
+          "name": "Corsair",
+          "url": "https://corsair.dev/blog/mcp-gateway-for-ai-agents",
+          "long_name": "corsair.dev",
+          "img": "https://imgs.search.brave.com/xA9ZNLqcLWC-cF7eDMrwOB92WbXmurZdIwDI93dNplI/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOGIxNDhhMDUy/OGFkNWI1MzIyOTEx/YzQwYjJhNjczYmJj/YT"
+        },
+        "language": "en",
+        "family_friendly": true,
+        "type": "search_result",
+        "subtype": "faq",
+        "is_live": false,
+        "meta_url": {
+          "scheme": "https",
+          "netloc": "corsair.dev",
+          "hostname": "corsair.dev",
+          "favicon": "https://imgs.search.brave.com/xA9ZNLqcLWC-cF7eDMrwOB92WbXmurZdIwDI93dNplI/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOGIxNDhhMDUy/OGFkNWI1MzIyOTEx/YzQwYjJhNjczYmJj/YT",
+          "path": "  › blog  › mcp gateway: what it is, how it works, and why ai agents need one"
+        },
+        "thumbnail": {
+          "src": "https://imgs.search.brave.com/XLbwqa_L0JRuJ1r71N8oK8mbcpAng5cFAVkzznCkEUg/rs:fit:200:200:1:0/g:ce/aHR0cHM6Ly9jZG4u/c2FuaXR5LmlvL2lt/YWdlcy9tbHozN2Q5/bS9wcm9kdWN0aW9u/L2JkOTYwNzAxNjU3/MjMzZThmZjkyODA4/",
+          "original": "https://cdn.sanity.io/images/mlz37d9m/production/bd960701657233e8ff92808c8c70afce334e5381-1672x941.png?rect=0,32,1672,878&amp;w=1200&amp;h=630&amp;fit=crop&amp;auto=format",
+          "logo": false
+        },
+        "age": "August 25, 2026",
+        "faq": {
+          "items": [
+            {
+              "question": "What is the difference between an MCP server and an MCP gateway?",
+              "answer": "An MCP server exposes one system's tools, resources, and prompts, for example a GitHub or Slack server. An MCP gateway sits in front of many MCP servers at once, giving agents a single address while h",
+              "title": "MCP Gateway: What It Is, How It Works & Why You Need One | Corsair",
+              "url": "https://corsair.dev/blog/mcp-gateway-for-ai-agents",
+              "meta_url": {
+                "scheme": "https",
+                "netloc": "corsair.dev",
+                "hostname": "corsair.dev",
+                "favicon": "https://imgs.search.brave.com/xA9ZNLqcLWC-cF7eDMrwOB92WbXmurZdIwDI93dNplI/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvOGIxNDhhMDUy/OGFkNWI1MzIyOTEx/YzQwYjJhNjczYmJj/YT",
+                "path": "  › blog  › mcp gateway: what it is, how it works, and why ai agents need one"
+              }
+            }
+          ]
+        },
+        "organization": {
+          "type": "organization",
+          "name": "Corsair",
+          "contact_points": []
+        },
+        "extra_snippets": [
+          "If you'd rather not run a gateway yourself, Lug is Corsair's hosted one: connect your apps once, then give Claude, ChatGPT, Cursor and Codex one URL, with approvals before anything destructive. See how the Lug MCP gateway works.",
+          "The moment you add more agents, more teams, or a customer facing product where different users need different access, direct connections turn into a pile of scattered credentials and unanswerable questions about who touched what. This post breaks down what an MCP gateway actually is, how the request path works end to end, the risks it exists to close, and when direct connections are still the simpler and correct choice.",
+          "An MCP gateway is a specialized reverse proxy built for Model Context Protocol traffic. It sits in front of one or more MCP servers, and every agent that needs a tool connects to the gateway's single address instead of connecting to each server individually. The gateway authenticates the request, checks it against policy, forwards it to the correct backend server, and returns the result.",
+          "MCP itself is the open protocol that lets an AI application discover and call tools, read resources, and pull structured context from external systems through a standard interface, using JSON-RPC messages over either a local stdio transport or a remote HTTP based transport. If you want the fundamentals of how an individual MCP server exposes tools to systems like GitHub, Slack, or Notion, the complete guide to MCP servers covers that ground in detail. An MCP gateway builds on top of that layer rather than replacing it."
+        ]
+      }
+    ],
+    "family_friendly": true
+  }
+}
