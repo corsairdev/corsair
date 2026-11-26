@@ -433,6 +433,7 @@ export const BaseProviders = [
 	'listennotes',
 	'litescrape',
 	'livesession',
+	'lob',
 	'logodev',
 	'loyverse',
 	'magichour',
@@ -1226,6 +1227,7 @@ export const ProviderDisplayNames = {
 	listennotes: 'Listen Notes',
 	litescrape: 'LiteScrape',
 	livesession: 'LiveSession',
+	lob: 'Lob',
 	logodev: 'Logo.dev',
 	loyverse: 'Loyverse',
 	magichour: 'Magic Hour',
@@ -2026,6 +2028,7 @@ export type AllProviders =
 	| 'listennotes'
 	| 'litescrape'
 	| 'livesession'
+	| 'lob'
 	| 'logodev'
 	| 'loyverse'
 	| 'magichour'

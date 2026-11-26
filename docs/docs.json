@@ -3595,6 +3595,14 @@
                 ]
               },
               {
+                "group": "Lob",
+                "pages": [
+                  "plugins/lob/overview",
+                  "plugins/lob/api",
+                  "plugins/lob/database"
+                ]
+              },
+              {
                 "group": "Logo.dev",
                 "pages": [
                   "plugins/logodev/overview",
