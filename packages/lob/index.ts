@@ -723,7 +723,7 @@ export const lobEndpointMeta = {
 		description: 'Page through buckslips with cursors',
 	},
 	'buckslips.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Change a buckslip's description or auto-reorder settings. Auto-reorder places billed print orders when stock runs low",
 	},
@@ -757,7 +757,7 @@ export const lobEndpointMeta = {
 		description: 'Page through cards with cursors',
 	},
 	'cards.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Change a card's description or auto-reorder settings. Auto-reorder places billed print orders when stock runs low",
 	},
