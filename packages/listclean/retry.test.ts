@@ -178,7 +178,7 @@ describe('retry behaviour', () => {
 				corsair.listclean.api.verify.verifyEmail({
 					email: 'test@example.com',
 				}),
-			).rejects.toMatchObject({ transport: true, replayable: false });
+			).rejects.toThrow('fetch failed');
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();

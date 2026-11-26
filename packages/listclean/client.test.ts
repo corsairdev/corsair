@@ -1,19 +1,23 @@
+import { ApiError } from 'corsair/http';
 import {
 	describeListcleanError,
 	envelopeData,
 	envelopeMessage,
 	LISTCLEAN_API_BASE,
-	ListcleanAPIError,
 	makeListcleanRequest,
 	readEnvelope,
+	requestFactsOf,
+	withoutAddresses,
 } from './client';
 import { RESULT_ROWS } from './test-fixtures';
 import {
 	captureError,
+	currentFetch,
 	downloadResponse,
 	fail,
 	htmlResponse,
 	installFetchMock,
+	jsonResponse,
 	lastCall,
 	mockFetch,
 	ok,
@@ -63,12 +67,13 @@ describe('Listclean client', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(ListcleanAPIError);
-		// No HTTP status rides along: request() only surfaces the body here.
+		expect(error).toBeInstanceOf(ApiError);
+		// request() surfaces only the body here, so the status is the 200 the
+		// failure came over.
 		expect(error).toMatchObject({
+			status: 200,
 			message: expect.stringContaining('Invalid token or token expired'),
 		});
-		expect((error as ListcleanAPIError).status).toBeUndefined();
 	});
 
 	it('carries the envelope error code on an HTTP error', async () => {
@@ -82,12 +87,13 @@ describe('Listclean client', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(ListcleanAPIError);
-		const apiError = error as ListcleanAPIError;
+		expect(error).toBeInstanceOf(ApiError);
+		const apiError = error as ApiError;
 		expect(apiError.status).toBe(401);
-		expect(apiError.code).toBe(401);
-		expect(apiError.isAuthError).toBe(true);
-		expect(apiError.message).toContain('Invalid token or token expired');
+		expect(apiError.body).toMatchObject({ error_code: 401 });
+		expect(apiError.message).toBe(
+			'Listclean 401 401: Invalid token or token expired',
+		);
 	});
 
 	it('fails loudly on the HTML page a missing route answers, instead of returning an empty result', async () => {
@@ -102,9 +108,9 @@ describe('Listclean client', () => {
 		);
 
 		// Core reports the 404 before the body is read; either way the caller
-		// gets a thrown ListcleanAPIError, never an empty result.
-		expect(error).toBeInstanceOf(ListcleanAPIError);
-		const apiError = error as ListcleanAPIError;
+		// gets a thrown ApiError, never an empty result.
+		expect(error).toBeInstanceOf(ApiError);
+		const apiError = error as ApiError;
 		expect(apiError.status).toBe(404);
 		expect(apiError.message).toContain('404');
 	});
@@ -120,32 +126,44 @@ describe('Listclean client', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(ListcleanAPIError);
-		expect((error as ListcleanAPIError).message).toContain(
-			'not the JSON envelope',
-		);
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).message).toContain('not the JSON envelope');
 	});
 
-	it('keeps a retry-after value on an HTTP error', async () => {
-		mockFetch(
-			new Response(JSON.stringify({ success: 0, message: 'Slow' }), {
-				status: 429,
-				headers: { 'Content-Type': 'application/json', 'Retry-After': '3' },
-			}),
-		);
+	it('lets core retry a 429 three times and keeps its retry-after value', async () => {
+		jest.useFakeTimers();
+		try {
+			for (let attempt = 0; attempt < 4; attempt++) {
+				mockFetch(
+					new Response(JSON.stringify({ success: 0, message: 'Slow' }), {
+						status: 429,
+						headers: {
+							'Content-Type': 'application/json',
+							'Retry-After': '3',
+						},
+					}),
+				);
+			}
 
-		const error = await captureError(
-			makeListcleanRequest('lc-key', {
-				method: 'GET',
-				path: '/credits',
-				replayable: true,
-			}),
-		);
+			const pending = captureError(
+				makeListcleanRequest('lc-key', {
+					method: 'GET',
+					path: '/credits',
+					replayable: true,
+				}),
+			);
+			await jest.advanceTimersByTimeAsync(30_000);
+			const error = await pending;
 
-		expect(error).toMatchObject({ status: 429, retryAfter: 3000 });
+			expect(error).toBeInstanceOf(ApiError);
+			expect(error).toMatchObject({ status: 429, retryAfter: 3000 });
+			expect(currentFetch()).toHaveBeenCalledTimes(4);
+		} finally {
+			jest.useRealTimers();
+		}
 	});
 
-	it('wraps a dropped connection as a transport error and carries the replay flag', async () => {
+	it('passes a dropped connection through with its replay facts beside it', async () => {
 		const spy = jest.spyOn(globalThis, 'fetch');
 		// Replace the installFetchMock stub so the rejection below is the only
 		// behaviour this test gets.
@@ -161,11 +179,12 @@ describe('Listclean client', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(ListcleanAPIError);
-		const apiError = error as ListcleanAPIError;
-		expect(apiError.transport).toBe(true);
-		expect(apiError.replayable).toBe(false);
-		expect(apiError.method).toBe('POST');
+		expect(error).toBeInstanceOf(TypeError);
+		expect(requestFactsOf(error)).toEqual({
+			method: 'POST',
+			replayable: false,
+			transport: true,
+		});
 	});
 
 	it('parses the download route JSON stream and fails loudly on HTML', async () => {
@@ -175,7 +194,7 @@ describe('Listclean client', () => {
 			method: 'GET',
 			path: '/downloads/json/159261/clean',
 			replayable: true,
-			download: true,
+			response: 'json',
 		});
 
 		expect(Array.isArray(raw)).toBe(true);
@@ -188,11 +207,115 @@ describe('Listclean client', () => {
 				method: 'GET',
 				path: '/downloads/json/1/clean',
 				replayable: true,
-				download: true,
+				response: 'json',
 			}),
 		);
-		expect(error).toBeInstanceOf(ListcleanAPIError);
-		expect((error as ListcleanAPIError).message).toContain('not JSON');
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).message).toContain('not JSON');
+	});
+
+	it('strips addresses and profile data from the error it throws', async () => {
+		mockFetch(
+			jsonResponse(
+				{
+					success: 0,
+					error_code: 0,
+					message: 'Could not verify alice@example.com',
+					data: { email: 'alice@example.com', name: 'Alice Smith' },
+				},
+				{ status: 500 },
+			),
+		);
+
+		const error = await captureError(
+			makeListcleanRequest('lc-key', {
+				method: 'GET',
+				path: '/verify/email/alice%40example.com',
+				query: { email: 'alice@example.com' },
+				replayable: false,
+			}),
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		const apiError = error as ApiError;
+		expect(apiError.status).toBe(500);
+		const dumped = JSON.stringify({
+			message: apiError.message,
+			url: apiError.url,
+			body: apiError.body,
+			request: apiError.request,
+		});
+		expect(dumped).not.toContain('alice');
+		expect(dumped).not.toContain('Alice');
+		expect(dumped).not.toContain('lc-key');
+		expect(apiError.url).toBe(`${LISTCLEAN_API_BASE}/verify/email/[REDACTED]`);
+		expect(apiError.message).toBe('Listclean 500 0: Could not verify [email]');
+	});
+
+	it('drops the request body (a batch of addresses) from the error', async () => {
+		mockFetch(jsonResponse({ success: 0, message: 'nope' }, { status: 400 }));
+
+		const error = await captureError(
+			makeListcleanRequest('lc-key', {
+				method: 'POST',
+				path: '/verify/email/batch',
+				body: { emails: ['bob@example.com'] },
+				replayable: false,
+			}),
+		);
+
+		const apiError = error as ApiError;
+		expect(apiError.status).toBe(400);
+		expect(apiError.request.body).toBeUndefined();
+		expect(apiError.url).toBe(`${LISTCLEAN_API_BASE}/verify/email/batch`);
+		expect(JSON.stringify(apiError)).not.toContain('bob@');
+	});
+
+	it('reads the CSV download as text and fails on an envelope or HTML', async () => {
+		mockFetch(
+			new Response('email,status\nuser@example.com,clean\n', {
+				status: 200,
+				headers: { 'Content-Type': 'application/octet-stream' },
+			}),
+		);
+		const csv = await makeListcleanRequest('lc-key', {
+			method: 'GET',
+			path: '/downloads/1/clean',
+			response: 'text',
+			replayable: true,
+		});
+		expect(csv).toBe('email,status\nuser@example.com,clean\n');
+
+		mockFetch(fail('List not found'));
+		const notFound = await captureError(
+			makeListcleanRequest('lc-key', {
+				method: 'GET',
+				path: '/downloads/9/clean',
+				response: 'text',
+				replayable: true,
+			}),
+		);
+		expect(notFound).toMatchObject({
+			status: 200,
+			message: expect.stringContaining('List not found'),
+		});
+
+		mockFetch(htmlResponse(200));
+		const html = await captureError(
+			makeListcleanRequest('lc-key', {
+				method: 'GET',
+				path: '/downloads/9/clean',
+				response: 'text',
+				replayable: true,
+			}),
+		);
+		expect((html as ApiError).message).toContain('not CSV');
+	});
+
+	it('masks anything shaped like an address in a message', () => {
+		expect(withoutAddresses('bad <a.b+c@x.co> and d@e.org')).toBe(
+			'bad <[email]> and [email]',
+		);
 	});
 
 	it('drops undefined query keys instead of sending them', async () => {
@@ -239,6 +362,8 @@ describe('envelope readers', () => {
 				'fallback',
 			),
 		).toBe('Listclean 401: No auth token provided');
-		expect(describeListcleanError(undefined, {}, 'fallback')).toBe('fallback');
+		expect(describeListcleanError(undefined, {}, 'fallback')).toBe(
+			'Listclean: fallback',
+		);
 	});
 });

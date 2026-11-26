@@ -1,9 +1,5 @@
 import { asRecord } from 'corsair/core';
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export const LISTCLEAN_API_BASE = 'https://api.listclean.xyz/v1';
@@ -12,17 +8,7 @@ export const LISTCLEAN_API_BASE = 'https://api.listclean.xyz/v1';
 // exchanger, which can take tens of seconds on a slow domain.
 const LISTCLEAN_TIMEOUT_MS = 60_000;
 
-// Listclean documents no rate limit and no Retry-After, and a live burst of 12
-// requests produced no 429 and no rate-limit headers. This keeps the default
-// shape complete (request.ts replaces the defaults wholesale) so a Retry-After
-// would still be read if Listclean ever sends one.
-const LISTCLEAN_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
-	headerNames: { retryAfter: 'retry-after' },
-};
+const HIDDEN = '[REDACTED]';
 
 /**
  * Every Listclean answer is `{ success, error_code, message, data }` with an
@@ -54,6 +40,11 @@ export function readEnvelope(body: unknown): {
 	};
 }
 
+/** Replaces anything shaped like an email address, so a message never carries one. */
+export function withoutAddresses(text: string): string {
+	return text.replace(/[^\s@"'<>()]+@[^\s@"'<>()]+/g, '[email]');
+}
+
 /** The message Listclean sent, with the status and its error code in front. */
 // unknown: the body is the envelope above, or text from a proxy that never
 // reached Listclean.
@@ -63,65 +54,11 @@ export function describeListcleanError(
 	fallback: string,
 ): string {
 	const envelope = readEnvelope(body);
-	const text = envelope.message ?? fallback;
+	const text = withoutAddresses(envelope.message ?? fallback);
 	const label = [status, envelope.errorCode]
 		.filter((part) => part !== undefined)
 		.join(' ');
-	return label ? `Listclean ${label}: ${text}` : text;
-}
-
-/**
- * A Listclean failure: an HTTP error, a 2xx body whose envelope says
- * `success: 0`, or a request that got no answer at all.
- */
-export class ListcleanAPIError extends Error {
-	readonly status?: number;
-	/** Listclean's own `error_code`, an integer (`0` on most failures). */
-	readonly code?: number;
-	/** Milliseconds from a Retry-After header, when Listclean sent one. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request. */
-	readonly method?: string;
-	/** True when the request got no HTTP answer (reset, DNS, abort, timeout). */
-	readonly transport: boolean;
-	/**
-	 * True only for operations a retry cannot repeat on the provider:
-	 * `verify.email` spends a credit even when the answer is lost, batch
-	 * submit creates a second billed job, and delete is destructive. Every
-	 * handler gates retries on this flag, never on the method alone.
-	 */
-	readonly replayable: boolean;
-
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			code?: number;
-			retryAfter?: number;
-			method?: string;
-			transport?: boolean;
-			replayable?: boolean;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'ListcleanAPIError';
-		this.status = options.status;
-		this.code = options.code;
-		this.retryAfter = options.retryAfter;
-		this.method = options.method;
-		this.transport = options.transport ?? false;
-		this.replayable = options.replayable ?? false;
-	}
-
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
-	/** A missing, wrong or expired key (both 401 wordings Listclean sends). */
-	get isAuthError(): boolean {
-		return this.status === 401;
-	}
+	return label ? `Listclean ${label}: ${text}` : `Listclean: ${text}`;
 }
 
 export type ListcleanQueryValue = string | number | boolean;
@@ -132,15 +69,41 @@ export type ListcleanRequest = {
 	query?: Record<string, ListcleanQueryValue | undefined>;
 	// unknown: the endpoint's input schema has already validated the body.
 	body?: unknown;
-	/** See {@link ListcleanAPIError.replayable}. */
+	/**
+	 * True when sending the request twice is harmless. A 5xx or a lost answer
+	 * is retried only then: `verify.verifyEmail` spends a credit even when the
+	 * answer is lost, a batch submit or upload creates a second billed job, and
+	 * delete is irreversible.
+	 */
 	replayable: boolean;
 	/**
-	 * True for the JSON result download. That route answers a bare JSON stream
-	 * (octet-stream), not the envelope, and corsair/http hands an
-	 * octet-stream body back as text.
+	 * How the success body is read. `envelope` (the default) checks the JSON
+	 * envelope; `json` is the JSON result download, which answers a bare JSON
+	 * stream as octet-stream text; `text` is the CSV download.
 	 */
-	download?: boolean;
+	response?: 'envelope' | 'json' | 'text';
 };
+
+/** What the error handlers need to know about the request behind an error. */
+export type ListcleanRequestFacts = {
+	method: ListcleanRequest['method'];
+	replayable: boolean;
+	/** True when the request got no HTTP answer (reset, DNS, abort, timeout). */
+	transport: boolean;
+};
+
+// Facts ride beside the error instead of on a wrapper class, so core's
+// ApiError (status, retryAfter) reaches the handlers unchanged.
+const requestFacts = new WeakMap<object, ListcleanRequestFacts>();
+
+// unknown: handlers receive any thrown value.
+export function requestFactsOf(
+	error: unknown,
+): ListcleanRequestFacts | undefined {
+	return typeof error === 'object' && error !== null
+		? requestFacts.get(error)
+		: undefined;
+}
 
 /** Encodes one path segment. */
 export function segment(value: string | number): string {
@@ -158,21 +121,115 @@ export function definedQuery(
 	);
 }
 
+/** The single-verify path carries the address itself; it is masked in errors. */
+function safePath(path: string): string {
+	return path.replace(
+		/^\/verify\/email\/(?!batch$)[^/?#]+/,
+		`/verify/email/${HIDDEN}`,
+	);
+}
+
+/**
+ * Core's ApiError keeps the request (body, query, URL) and the provider's
+ * body. Here those carry email addresses (the verified address in the path,
+ * a batch's list, an uploaded CSV chunk, the `email` log filter) and the
+ * profile's name, phone and address. The error is rebuilt with the request
+ * body dropped, the address masked in the URL and query, and only the three
+ * envelope fields of the provider's body kept. Status, statusText and the
+ * rate-limit fields are copied, so handlers and core read them as before.
+ */
+function rebuild(
+	options: ApiRequestOptions,
+	result: { status: number; statusText: string; body: unknown },
+	message: string,
+	rateLimit: Pick<
+		ApiError,
+		'retryAfter' | 'rateLimitReset' | 'rateLimitRemaining' | 'rateLimitLimit'
+	> = {},
+): ApiError {
+	const query = options.query?.email
+		? { ...options.query, email: HIDDEN }
+		: options.query;
+	const envelope = asRecord(result.body);
+	const body = envelope
+		? {
+				success: envelope.success,
+				error_code: envelope.error_code,
+				message:
+					typeof envelope.message === 'string'
+						? withoutAddresses(envelope.message)
+						: envelope.message,
+			}
+		: undefined;
+	const url = `${LISTCLEAN_API_BASE}${safePath(options.url)}`;
+	return new ApiError(
+		{ ...options, url: safePath(options.url), query, body: undefined },
+		{
+			url,
+			ok: false,
+			status: result.status,
+			statusText: result.statusText,
+			body,
+		},
+		message,
+		{
+			retryAfter: rateLimit.retryAfter,
+			rateLimitReset: rateLimit.rateLimitReset,
+			rateLimitRemaining: rateLimit.rateLimitRemaining,
+			rateLimitLimit: rateLimit.rateLimitLimit,
+		},
+	);
+}
+
+/**
+ * A 2xx answer that is not a success. request() hands back only the body,
+ * so the status is the 200 every observed envelope failure used.
+ */
+function okStatusFailure(
+	options: ApiRequestOptions,
+	// unknown: the body that failed the check, kept for its envelope fields.
+	body: unknown,
+	message: string,
+): ApiError {
+	return rebuild(options, { status: 200, statusText: 'OK', body }, message);
+}
+
 /**
  * The result download answers a JSON stream as text; an HTML page (a wrong
  * route or id) must fail here rather than become an empty result list.
  */
 // unknown: the body arrives as text or parsed JSON depending on the
 // content-type, so the download row's shape is the caller's output schema.
-function parseDownloadBody(raw: unknown): unknown {
+function parseJsonDownload(options: ApiRequestOptions, raw: unknown): unknown {
 	if (typeof raw !== 'string') return raw;
 	try {
 		return JSON.parse(raw) as unknown;
 	} catch {
-		throw new ListcleanAPIError(
-			'Listclean answered a body that is not JSON on a result download; an HTML page means the route or list id does not exist',
+		throw okStatusFailure(
+			options,
+			undefined,
+			'Listclean: the result download answered a body that is not JSON; an HTML page means the route or list id does not exist',
 		);
 	}
+}
+
+/**
+ * The CSV download answers text. A JSON envelope there is a failure
+ * (Listclean answers `success: 0` for an unknown list), and an HTML page
+ * means the route is wrong.
+ */
+// unknown: the body arrives as text, or parsed JSON when Listclean answers
+// the envelope instead of the file.
+function readCsvDownload(options: ApiRequestOptions, raw: unknown): string {
+	if (asRecord(raw)) validateEnvelope(options, raw);
+	if (typeof raw !== 'string' || /^\s*</.test(raw)) {
+		throw okStatusFailure(
+			options,
+			undefined,
+			'Listclean: the CSV download answered a body that is not CSV; an HTML page means the route or list id does not exist',
+		);
+	}
+	return raw;
 }
 
 /**
@@ -181,18 +238,21 @@ function parseDownloadBody(raw: unknown): unknown {
  * `message` with {@link envelopeMessage}.
  */
 // unknown: each endpoint's output schema parses what this returns.
-function validateEnvelope(raw: unknown): unknown {
+function validateEnvelope(options: ApiRequestOptions, raw: unknown): unknown {
 	const record = asRecord(raw);
 	if (!record) {
-		throw new ListcleanAPIError(
-			'Listclean answered a body that is not the JSON envelope; an HTML page means the route does not exist',
+		throw okStatusFailure(
+			options,
+			undefined,
+			'Listclean: the answer is not the JSON envelope; an HTML page means the route does not exist',
 		);
 	}
 	const envelope = readEnvelope(record);
 	if (envelope.success !== 1) {
-		throw new ListcleanAPIError(
-			describeListcleanError(undefined, record, 'Listclean reported a failure'),
-			{ code: envelope.errorCode },
+		throw okStatusFailure(
+			options,
+			record,
+			describeListcleanError(200, record, 'Listclean reported a failure'),
 		);
 	}
 	return record;
@@ -202,20 +262,23 @@ function validateEnvelope(raw: unknown): unknown {
 // the client's return type stays unknown by design.
 export async function makeListcleanRequest(
 	apiKey: string,
-	{ method, path, query, body, replayable, download }: ListcleanRequest,
+	{ method, path, query, body, replayable, response }: ListcleanRequest,
 ): Promise<unknown> {
 	const config: OpenAPIConfig = {
 		BASE: LISTCLEAN_API_BASE,
-		VERSION: '1.0.0',
+		VERSION: '0.1.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TIMEOUT: LISTCLEAN_TIMEOUT_MS,
 		// The key rides in this header as a plain value; Listclean documents no
-		// Bearer or Basic scheme (spec, section "Authentication").
-		HEADERS: { Accept: 'application/json', 'X-Auth-Token': apiKey },
+		// Bearer or Basic scheme (spec, securityDefinitions.api_key).
+		HEADERS: {
+			Accept: response === 'text' ? 'text/csv, */*' : 'application/json',
+			'X-Auth-Token': apiKey,
+		},
 	};
 
-	const requestOptions: ApiRequestOptions = {
+	const options: ApiRequestOptions = {
 		method,
 		url: path,
 		query: query ? definedQuery(query) : undefined,
@@ -223,44 +286,39 @@ export async function makeListcleanRequest(
 		mediaType: body === undefined ? undefined : 'application/json',
 	};
 
+	let raw: unknown;
 	try {
+		// Core's request() retries a 429 three times, honouring Retry-After.
 		// unknown: the endpoint's zod output schema parses the body.
-		const raw = await request<unknown>(config, requestOptions, {
-			rateLimitConfig: LISTCLEAN_RATE_LIMIT_CONFIG,
-		});
-		return download ? parseDownloadBody(raw) : validateEnvelope(raw);
+		raw = await request<unknown>(config, options);
 	} catch (error) {
-		if (error instanceof ListcleanAPIError) throw error;
 		if (error instanceof ApiError) {
-			// The key travels in a header, which ApiError does not print, so the
-			// error is rebuilt without the cause and the body: only the status,
-			// the envelope message and Retry-After are carried over.
-			throw new ListcleanAPIError(
-				describeListcleanError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					code: readEnvelope(error.body).errorCode,
-					retryAfter: error.retryAfter,
-					method,
-					replayable,
-				},
+			const rebuilt = rebuild(
+				options,
+				error,
+				describeListcleanError(error.status, error.body, error.statusText),
+				error,
 			);
+			requestFacts.set(rebuilt, { method, replayable, transport: false });
+			throw rebuilt;
 		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			// A transport failure never had a response body, so its cause is safe.
-			throw new ListcleanAPIError(error.message, {
-				cause: error,
-				method,
-				transport: true,
-				replayable,
-			});
+		// No HTTP answer (reset, DNS, abort, timeout): there was no response
+		// body, so the error passes through with the request's facts beside it.
+		if (typeof error === 'object' && error !== null) {
+			requestFacts.set(error, { method, replayable, transport: true });
 		}
-		throw new ListcleanAPIError('Unknown Listclean error', {
-			method,
-			transport: true,
-			replayable,
-		});
+		throw error;
+	}
+
+	try {
+		if (response === 'json') return parseJsonDownload(options, raw);
+		if (response === 'text') return readCsvDownload(options, raw);
+		return validateEnvelope(options, raw);
+	} catch (error) {
+		if (error instanceof ApiError) {
+			requestFacts.set(error, { method, replayable, transport: false });
+		}
+		throw error;
 	}
 }
 
@@ -270,7 +328,7 @@ export function envelopeData(raw: unknown): unknown {
 	return asRecord(raw)?.data;
 }
 
-/** The envelope `message`, which the delete answer documents in place of data. */
+/** The envelope `message`, which some writes document in place of data. */
 // unknown: the output schema validates this as a string; here it is untyped.
 export function envelopeMessage(raw: unknown): unknown {
 	return asRecord(raw)?.message;
