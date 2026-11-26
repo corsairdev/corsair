@@ -77,7 +77,7 @@ const TableWriteOut = z
 		tableId: z.union([z.string(), z.number()]).nullish(),
 		added: z.number().nullish(),
 		alreadyPresent: z.number().nullish(),
-		columnsCreated: z.number().nullish(),
+		columnsCreated: z.union([z.number(), z.array(z.unknown())]).nullish(),
 		rowsProcessed: z.number().nullish(),
 		rowsCharged: z.number().nullish(),
 		rowsAlreadyPaidInTable: z.number().nullish(),

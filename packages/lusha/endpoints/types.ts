@@ -207,7 +207,9 @@ const TableWriteSchema = z
 		tableId: z.string().nullish(),
 		added: z.number().nullish(),
 		alreadyPresent: z.number().nullish(),
-		columnsCreated: z.number().nullish(),
+		// unknown: the spec says integer, but its own prospecting example sends
+		// an empty array, so both are accepted.
+		columnsCreated: z.union([z.number(), z.array(z.unknown())]).nullish(),
 		rowsProcessed: z.number().nullish(),
 		rowsCharged: z.number().nullish(),
 		rowsAlreadyPaidInTable: z.number().nullish(),
