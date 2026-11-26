@@ -1,0 +1,3552 @@
+{
+  "id": "lusha",
+  "displayName": "Lusha",
+  "description": "B2B contact and company data with Lusha - search, enrich and prospect contacts and companies, find lookalikes, recommendations and buying groups, read signals, signal and ICP fit scores and website visits, manage contact and company tables and signal webhooks, search call conversations and read account credit usage.",
+  "npmPackageName": "@corsair-dev/lusha",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 68,
+    "webhooks": 2,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "lusha.api.account.getAccountUsage",
+      "shortPath": "account.getAccountUsage",
+      "description": "Read the account credit balance, rate-limit windows, plan and per-action pricing map. Free, but Lusha caps it at 5 requests per minute.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "{ total?: number | null, used?: number | null, remaining?: number | null } | null"
+          },
+          {
+            "key": "rateLimits",
+            "optional": true,
+            "type": "{ daily?: { limit?: number | null, used?: number | null, remaining?: number | null, resetsAt?: string | null } | null, hourly?: { limit?: number | null, used?: number | null, remaining?: number | null, resetsAt?: string | null } | null, minute?: { limit?: number | null, used?: number | null, remaining?: number | null, resetsAt?: string | null } | null } | null"
+          },
+          {
+            "key": "plan",
+            "optional": true,
+            "type": "{ category?: string | null, renewalType?: string | null, startDate?: string | null, endDate?: string | null } | null"
+          },
+          {
+            "key": "pricing",
+            "optional": true,
+            "type": "Record<string, { credits?: number | null, perQuantity?: number | null }> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.auditLogs.getStats",
+      "shortPath": "auditLogs.getStats",
+      "description": "Get Audit Log Statistics. Get delivery statistics for your account.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": true,
+            "type": "string",
+            "description": "Filter statistics by subscription ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "failed",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "permanentFailure",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalCreditsConsumed",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "successRate",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.auditLogs.list",
+      "shortPath": "auditLogs.list",
+      "description": "Get Audit Logs. Retrieve webhook delivery logs for your account.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by subscription ID"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "success | failed | permanent_failure",
+            "description": "Filter by delivery status"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results (1-100)"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results to skip"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number | null, subscriptionId?: string | number | null, payloadId?: string | number | null, status?: string | null, statusCode?: number | null, url?: string | null, deliveredAt?: string | null, durationMs?: number | null, error?: string | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ total?: number | null, limit?: number | null, offset?: number | null, hasMore?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.company.enrichCompanies",
+      "shortPath": "company.enrichCompanies",
+      "description": "Reveal full firmographics for up to 100 company ids, including premium fields named in reveal (each charged separately per result). Omitting reveal returns base firmographics only. Charges credits per result via reveal_company.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "1 to 100 ids from a search result."
+          },
+          {
+            "key": "reveal",
+            "optional": true,
+            "type": "(employeesByDepartment | employeesByLocation | employeesBySeniority | competitors | estimatedAnnualItSpend | monthlyWebsiteTraffic | openJobsTotal | openJobsByDepartment | openJobsByLocation | openJobsBySeniority | directParent | ultimateParent)[]",
+            "description": "Premium fields to reveal, each charged separately per result: employeesByDepartment, employeesByLocation, employeesBySeniority, competitors, estimatedAnnualItSpend, monthlyWebsiteTraffic, openJobsTotal, openJobsByDepartment, openJobsByLocation, openJobsBySeniority, directParent, ultimateParent. Omitting reveal returns base firmographics only."
+          },
+          {
+            "key": "tableId",
+            "optional": true,
+            "type": "string",
+            "description": "Also add these companies to this table and fill its columns."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ clientReferenceId?: string | null, id?: string | null, name?: string | null, alternativeName?: string | null, domain?: string | null, alternativeDomains?: string[] | null, emailDomain?: string | null, homepageUrl?: string | null, description?: string | null, additionalDescriptions?: string[] | null, companyOffering?: string | null, companyType?: string | null, yearFounded?: number | null, employeeCount?: { exact?: number | null, min?: number | null, max?: number | null } | null, industry?: string | null, subIndustry?: string | null, additionalIndustries?: { industry?: string | null, subIndustry?: string | null }[] | null, specialities?: string[] | null, sicCodes?: { code?: number | null, description?: string | null }[] | null, naicsCodes?: { code?: number | null, description?: string | null }[] | null, location?: { country?: string | null, countryIso2?: string | null, continent?: string | null, state?: string | null, stateCode?: string | null, city?: string | null, zipCode?: string | null, coordinates?: number[] | null, isEuContact?: boolean | null } | null, additionalLocations?: { country?: string | null, countryIso2?: string | null, continent?: string | null, state?: string | null, stateCode?: string | null, city?: string | null, zipCode?: string | null, coordinates?: number[] | null, isEuContact?: boolean | null }[] | null, socialLinks?: { linkedin?: string | null, xUrl?: string | null, x?: string | null, facebook?: string | null, instagram?: string[] | null, youtube?: string[] | null, tiktok?: string[] | null, crunchbase?: string[] | null } | null, linkedinFollowers?: number | null, funding?: { rounds?: Record<string, any>[] | null, totalRounds?: number | null, totalRoundsAmount?: number | null, currency?: string | null, isIpo?: boolean | null, lastRoundType?: string | null, lastRoundAmount?: number | null, lastRoundDate?: string | null } | null, revenueRange?: { exact?: number | null, min?: number | null, max?: number | null } | null, technologies?: string[] | null, popularityTier?: number | null, logoUrl?: string | null, businessModel?: string[] | null, phones?: { number?: string | null, type?: string | null, doNotCall?: boolean | null, updateDate?: string | null, dataSource?: string | null, credits?: number | null }[] | null, emails?: { email?: string | null, type?: string | null, confidence?: string | null, updateDate?: string | null, dataSource?: string | null, credits?: number | null }[] | null, keywords?: string[] | null, openJobs?: { total?: number | null, byDepartment?: { department?: string | null, count?: number | null }[] | null, byLocation?: { location?: string | null, count?: number | null }[] | null, bySeniority?: { seniority?: string | null, count?: number | null }[] | null } | null, estimatedAnnualItSpend?: { value?: number | null, currency?: string | null, valueUsd?: number | null } | null, monthlyWebsiteTraffic?: { visits?: number | null, momChangePercent?: number | null, month?: string | null } | null, employeesByDepartment?: { department?: string | null, count?: number | null }[] | null, employeesByLocation?: { country?: string | null, state?: string | null, count?: number | null }[] | null, employeesBySeniority?: { seniority?: string | null, count?: number | null }[] | null, competitors?: { id?: string | null, name?: string | null, domain?: string | null }[] | null, keyContacts?: { fullName?: string | null, jobTitle?: { title?: string | null, departments?: string[] | null, seniority?: string | null, startDate?: string | null } | null, profileUrl?: string | null, status?: string | null }[] | null, directParent?: { lushaCompanyId?: string | null, name?: string | null, domain?: string | null, hqCountry?: string | null } | null, ultimateParent?: { lushaCompanyId?: string | null, name?: string | null, domain?: string | null, hqCountry?: string | null } | null, error?: { code?: string | null, message?: string | null } | null }[]"
+          },
+          {
+            "key": "tableWrite",
+            "optional": true,
+            "type": "{ tableId?: string | null, added?: number | null, alreadyPresent?: number | null, columnsCreated?: number | any[] | null, rowsProcessed?: number | null, rowsCharged?: number | null, rowsAlreadyPaidInTable?: number | null, creditsCharged?: number | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.company.getCompanyFilterTypes",
+      "shortPath": "company.getCompanyFilterTypes",
+      "description": "Get Company Filter Types (Discovery). Returns all available filter types for company prospecting and whether each requires a search query.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "availableFilters",
+            "optional": true,
+            "type": "{ filterType?: string | null, requiresQuery?: boolean | null, supportsQuery?: boolean | null }[] | null"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ path?: string | null, type?: string | null, description?: string | null, valueSource?: string | null, values?: string[] | null, lookup?: { filterType?: string | null, url?: string | null, requiresQuery?: boolean | null } | null }[] | null"
+          },
+          {
+            "key": "generatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.company.getCompanyFilterValues",
+      "shortPath": "company.getCompanyFilterValues",
+      "description": "Get Company Filter Values. Returns valid values for a single company filter type.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filterType",
+            "optional": false,
+            "type": "names | sizes | revenues | locations | sics | naics | industriesLabels | technologies"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "values",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "truncated",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.company.getCompanyIcpFitScores",
+      "shortPath": "company.getCompanyIcpFitScores",
+      "description": "Score Companies by ICP Fit. Score how well each company fits 1-3 of your Target Profiles, from '0' to '1'. Billing: 1 credit per scored company, regardless of how many profiles it's scored against. A score of '0' is charged. Error rows ('NOT_FOUND' / 'NO_SCORE') are never charged.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "targetProfileIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "1-3 Target Profile IDs to score against. Each must be an 'active' profile you own or that is shared with your account - get them from [List Target Profiles](#operation/listIcpProfiles)."
+          },
+          {
+            "key": "companies",
+            "optional": false,
+            "type": "{ clientReferenceId?: string, id?: string, domain?: string, name?: string, email?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ clientReferenceId?: string | number | null, id?: string | number | null, name?: string | null, domain?: string | null, icpFitScore?: number | null, topProfile?: { id?: string | number | null, name?: string | null } | null, profileScores?: { id?: string | number | null, name?: string | null, score?: number | null }[] | null, error?: { code?: string | null, message?: string | null } | null }[] | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.company.getCompanyLookalikes",
+      "shortPath": "company.getCompanyLookalikes",
+      "description": "Company Lookalikes. Find companies similar to a set of seed companies using AI-powered recommendations. Billing: Charged per result via the 'lookalikeCompany' action.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dedupeSessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "seeds",
+            "optional": false,
+            "type": "{ domains?: string[], linkedinUrls?: string[] }",
+            "description": "**Required. Minimum 5, maximum 100 seed companies in total**, counted across all identifier types combined ('domains' + 'linkedinUrls'). Fewer than 5 total seeds is rejected with '400'."
+          },
+          {
+            "key": "exclude",
+            "optional": true,
+            "type": "{ domains?: string[], linkedinUrls?: string[] }",
+            "description": "Optional. Companies to always filter out of the results (for example, existing customers or competitors). Omit the field entirely if you have nothing to exclude."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tableId",
+            "optional": true,
+            "type": "string",
+            "description": "Optional. If provided, results are also persisted to this table. See the Tables API."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dedupeSessionId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null, domain?: string | null, employeeCount?: { exact?: number | null } | null, industry?: string | null, location?: { country?: string | null, state?: string | null, city?: string | null } | null, socialLinks?: { linkedin?: string | null } | null }[] | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ returned?: number | null, hasMore?: boolean | null } | null"
+          },
+          {
+            "key": "tableWrite",
+            "optional": true,
+            "type": "{ tableId?: string | number | null, added?: number | null, alreadyPresent?: number | null, columnsCreated?: number | any[] | null, rowsProcessed?: number | null, rowsCharged?: number | null, rowsAlreadyPaidInTable?: number | null, creditsCharged?: number | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.company.getCompanyRecommendationFilters",
+      "shortPath": "company.getCompanyRecommendationFilters",
+      "description": "Company Recommendation Filters. Lists the Target Profiles and signal types that currently appear in your company recommendations. Billing: Free.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "availableSignals",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "availableTargetIcps",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.company.getCompanyRecommendations",
+      "shortPath": "company.getCompanyRecommendations",
+      "description": "Company Recommendations. Returns the recommended companies for the calling user, ranked by Lusha against your Target Profiles and recent signals. Billing: Charged per result without an 'error', via the 'companyRecommendationsReveal' action.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page: number, size: number }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ by: leadScore | signalScore | icpFitScore | targetIcp, order?: asc | desc }[]",
+            "description": "Sort keys, applied in order. Up to 4 entries, all with the same 'order'. Defaults to 'leadScore' descending."
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ targetIcp?: string[], signals?: string[], leadScore?: { min?: number, max?: number }, signalScore?: { min?: number, max?: number }, icpFitScore?: { min?: number, max?: number } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "userRecommendationsId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ clientReferenceId?: string | number | null, id?: string | number | null, name?: string | null, domain?: string | null, employeeCount?: { exact?: number | null, min?: number | null, max?: number | null } | null, industry?: string | null, location?: { city?: string | null, state?: string | null, stateCode?: string | null, country?: string | null, countryIso2?: string | null, continent?: string | null } | null, socialLinks?: { linkedin?: string | null } | null, has?: string[] | null, canReveal?: { field?: string | null, credits?: number | null }[] | null, signalTypes?: string[] | null, error?: { code?: string | null, message?: string | null } | null, recommendation?: { leadScore?: number | null, icpFitScore?: number | null, signalScore?: number | null, targetIcp?: { id?: string | number | null, name?: string | null }[] | null, intentTopics?: string[] | null } | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number | null, size?: number | null, total?: number | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          },
+          {
+            "key": "recommendationListIds",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.company.getCompanySignalFilters",
+      "shortPath": "company.getCompanySignalFilters",
+      "description": "Get Company Signal Filters (Discovery). Returns all available filter types for company signals and whether each requires a search query.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "availableFilters",
+            "optional": true,
+            "type": "{ filterType?: string | null, requiresQuery?: boolean | null, supportsQuery?: boolean | null }[] | null"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ path?: string | null, type?: string | null, description?: string | null, valueSource?: string | null, values?: string[] | null, lookup?: { filterType?: string | null, url?: string | null, requiresQuery?: boolean | null } | null }[] | null"
+          },
+          {
+            "key": "generatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.company.getCompanySignalFilterValues",
+      "shortPath": "company.getCompanySignalFilterValues",
+      "description": "Get Company Signal Filter Values. Returns valid values for a single company signal filter type. Billing: Free.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filterType",
+            "optional": false,
+            "type": "newsEventTypes | hiringByDepartments | hiringByLocations | intentCategories | intentTopics"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Text to match values against. Required for 'hiringByLocations' and 'intentTopics'."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "values",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "truncated",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.company.getCompanySignals",
+      "shortPath": "company.getCompanySignals",
+      "description": "Company Signals. Retrieve signal events for a list of companies - hiring activity, headcount changes, web traffic, IT spend, news, and intent. Billing: Charged per matched signal per result via the 'showSignalsCompany' action. Intent signals are charged the same way as every other company signal - no matches, no charge.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "signalTypes",
+            "optional": false,
+            "type": "(allSignals | linkedinActivityIntent | newIntentTopic | intentScoreIncrease | intentScoreDecrease | intentTopicRemoved | websiteTrafficDecrease | websiteTrafficIncrease | itSpendIncrease | itSpendDecrease | linkedinFollowersIncrease | linkedinFollowersDecrease | surgeInHiring | headcountIncrease1m | headcountIncrease3m | headcountIncrease6m | headcountIncrease12m | headcountDecrease1m | headcountDecrease3m | headcountDecrease6m | headcountDecrease12m | surgeInHiringByDepartment | surgeInHiringByLocation | riskNews | commercialActivityNews | corporateStrategyNews | financialEventsNews | peopleNews | marketIntelligenceNews | productActivityNews)[]",
+            "description": "Signal types to retrieve. 'allSignals' returns every company signal type except the four intent types ('newIntentTopic', 'intentScoreIncrease', 'intentScoreDecrease', 'intentTopicRemoved') - name those explicitly to get..."
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string",
+            "description": "For linkedinActivityIntent, results are limited to a trailing 90-day window regardless of the value passed (legal requirement). Other signal types are unaffected."
+          },
+          {
+            "key": "maxResultsPerSignal",
+            "optional": true,
+            "type": "number",
+            "description": "For linkedinActivityIntent, results are capped at 50 per company regardless of the value passed. Other signal types use the requested value as-is (1-100)."
+          },
+          {
+            "key": "tableId",
+            "optional": true,
+            "type": "string",
+            "description": "Optional. If provided, these companies are also added to this table (if not already present) and the Signals column is populated. See the Tables API."
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ include?: { intentCategories?: string[], intentTopics?: string[] } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | number | null, companyName?: string | null, domain?: string | null, linkedinActivityIntent?: { companyId?: string | number | null, activityPublicationDate?: string | null, signalCategory?: string | null, intentTopics?: { topic?: string | null, category?: string | null }[] | null, author?: { id?: string | number | null, fullName?: string | null, linkedinUrl?: string | null } | null, contactsMentioned?: { id?: string | number | null, fullName?: string | null, linkedinUrl?: string | null }[] | null, companiesMentioned?: { id?: string | number | null, name?: string | null, linkedinUrl?: string | null }[] | null, activityUrl?: string | null, activitySummary?: string | null, activityLikes?: number | null, activityComments?: number | null, activityShares?: number | null, activityType?: string | null }[] | null, newIntentTopic?: { id?: string | number | null, signalDate?: string | null, topic?: string | null, category?: string | null, score?: number | null, previousScore?: number | null, changeRatePercent?: number | null }[] | null, intentScoreIncrease?: { id?: string | number | null, signalDate?: string | null, topic?: string | null, category?: string | null, score?: number | null, previousScore?: number | null, changeRatePercent?: number | null }[] | null, intentScoreDecrease?: { id?: string | number | null, signalDate?: string | null, topic?: string | null, category?: string | null, score?: number | null, previousScore?: number | null, changeRatePercent?: number | null }[] | null, intentTopicRemoved?: { id?: string | number | null, signalDate?: string | null, topic?: string | null, category?: string | null, score?: number | null, previousScore?: number | null, changeRatePercent?: number | null }[] | null, error?: { code?: string | null, message?: string | null } | null }[] | null"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tableWrite",
+            "optional": true,
+            "type": "{ tableId?: string | number | null, added?: number | null, alreadyPresent?: number | null, columnsCreated?: number | any[] | null, rowsProcessed?: number | null, rowsCharged?: number | null, rowsAlreadyPaidInTable?: number | null, creditsCharged?: number | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.company.getCompanySignalScores",
+      "shortPath": "company.getCompanySignalScores",
+      "description": "Score Companies by Signal Activity. Score companies by their active buying signals. Billing: 1 credit is charged per scored row via 'signal_score_company_reveal'. This action is currently limited-availability - while it isn't yet seeded on an account's pricebook, the endpoint stays free ('billing.creditsCharged' is '0').",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companies",
+            "optional": false,
+            "type": "{ clientReferenceId?: string, id?: string, domain?: string, name?: string, email?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ clientReferenceId?: string | number | null, id?: string | number | null, name?: string | null, domain?: string | null, signalScore?: number | null, signalTypes?: string[] | null, noActiveSignals?: boolean | null, error?: { code?: string | null, message?: string | null } | null }[] | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.company.getCompanySignalTypes",
+      "shortPath": "company.getCompanySignalTypes",
+      "description": "Get Company Signal Types. Returns the full list of supported signal types for companies.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signalTypes",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.company.getWebsiteVisits",
+      "shortPath": "company.getWebsiteVisits",
+      "description": "Get Website Visitors. Returns companies ranked by website-visit signals for your tracked domains and date range. Billing: not documented; the response reports any credits charged in billing.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domains",
+            "optional": false,
+            "type": "string[]",
+            "description": "Domains configured for tracking in the Lusha dashboard."
+          },
+          {
+            "key": "startDate",
+            "optional": false,
+            "type": "string",
+            "description": "Window start date (YYYY-MM-DD)."
+          },
+          {
+            "key": "endDate",
+            "optional": false,
+            "type": "string",
+            "description": "Window end date (YYYY-MM-DD). Range must be ≤ 3 months."
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ size: number, page: number }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ by?: string, order?: asc | desc }"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ scoreBands?: (cold | warm | hot)[], visitorCountries?: { include?: string[], exclude?: string[] }, score?: { min?: number, max?: number }, totalSessions?: { min?: number, max?: number }, avgSessionMinutes?: { min?: number, max?: number }, uniqueVisitors?: { min?: number, max?: number }, daysVisited?: { min?: number, max?: number }, highIntentPageviews?: { min?: number, max?: number }, daysSinceLastVisit?: { min?: number, max?: number } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ clientReferenceId?: string | number | null, id?: string | number | null, name?: string | null, domain?: string | null, employeeCount?: { exact?: number | null, min?: number | null, max?: number | null } | null, industry?: string | null, location?: { city?: string | null, state?: string | null, stateCode?: string | null, country?: string | null, countryIso2?: string | null, continent?: string | null } | null, socialLinks?: { linkedin?: string | null } | null, has?: string[] | null, canReveal?: { field?: string | null, credits?: number | null }[] | null, signalTypes?: string[] | null, error?: { code?: string | null, message?: string | null } | null, score?: number | null, scoreBand?: string | null, totalSessions?: number | null, uniqueVisitors?: number | null, avgSessionMinutes?: number | null, daysVisited?: number | null, highIntentPageviews?: number | null, daysSinceLastVisit?: number | null, lastVisit?: string | null, visitorCountry?: string | null, siteId?: string | number | null, trackedDomain?: string | null, visitorCountries?: string[] | null, highIntentPages?: { label?: string | null, url?: string | null, views?: number | null }[] | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ size?: number | null, page?: number | null, total?: number | null, hasMore?: boolean | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.company.prospectCompanies",
+      "shortPath": "company.prospectCompanies",
+      "description": "Prospecting Companies. Search for companies that match your target market using rich filter criteria. Billing: Charged per result via 'api_search'. If signals are requested, an additional charge applies per matched signal per result.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number, size: number }"
+          },
+          {
+            "key": "filters",
+            "optional": false,
+            "type": "{ companies: { include: { names?: string[], domains?: string[], ids?: string[], searchText?: string, locations?: { city?: string, state?: string, country?: string, continent?: string, countryGrouping?: string, region?: string, countryIso2?: string }[], sizes?: { min?: number, max?: number }[], revenues?: { min?: number, max?: number }[], technologies?: string[], technologiesCondition?: or | and, mainIndustriesIds?: number[], subIndustriesIds?: number[], sicCodes?: string[], naicsCodes?: string[], signals?: { types?: string[], startDate?: string, filterByLocation?: { country?: string, state?: string, startDate?: string }[], filterByDepartment?: { department: string, startDate?: string }[], filterByIntentCategory?: string[] }, foundedYear?: { min?: number, max?: number }[], businessModel?: (B2B | B2C | B2G)[], companyType?: (Government | Private Company | Public Company | Educational | Non Profit | Self Employed)[], linkedinUrls?: string[], keywords?: string[], specialities?: string[], exactSpecialities?: string[], exactKeywords?: string[], keywordsSearchFields?: string[], previousCompanyDomains?: string[], previousCompanyNames?: string[], geographicDetails?: { country?: string, zipcode?: string, distance?: number }[], locationsZipcodes?: { countryIso2?: string, zipcode?: string }[], headquarterZipcodes?: { countryIso2?: string, zipcode?: string }[] }, exclude?: { names?: string[], domains?: string[], ids?: string[], searchText?: string, locations?: { city?: string, state?: string, country?: string, continent?: string, countryGrouping?: string, region?: string, countryIso2?: string }[], sizes?: { min?: number, max?: number }[], revenues?: { min?: number, max?: number }[], technologies?: string[], technologiesCondition?: or | and, mainIndustriesIds?: number[], subIndustriesIds?: number[], sicCodes?: string[], naicsCodes?: string[], signals?: { types?: string[], startDate?: string, filterByLocation?: { country?: string, state?: string, startDate?: string }[], filterByDepartment?: { department: string, startDate?: string }[], filterByIntentCategory?: string[] }, foundedYear?: { min?: number, max?: number }[], businessModel?: (B2B | B2C | B2G)[], companyType?: (Government | Private Company | Public Company | Educational | Non Profit | Self Employed)[], linkedinUrls?: string[], keywords?: string[], specialities?: string[], exactSpecialities?: string[], exactKeywords?: string[], keywordsSearchFields?: string[], previousCompanyDomains?: string[], previousCompanyNames?: string[], geographicDetails?: { country?: string, zipcode?: string, distance?: number }[], locationsZipcodes?: { countryIso2?: string, zipcode?: string }[], headquarterZipcodes?: { countryIso2?: string, zipcode?: string }[] } }, contacts?: { include?: { jobTitles?: string[], departments?: string[], seniorityIds?: number[], skills?: string[], locations?: { city?: string, state?: string, country?: string, continent?: string, countryGrouping?: string, region?: string, countryIso2?: string }[], existingDataPoints?: string[] }, exclude?: { jobTitles?: string[], departments?: string[], seniorityIds?: number[], skills?: string[], locations?: { city?: string, state?: string, country?: string, continent?: string, countryGrouping?: string, region?: string, countryIso2?: string }[], existingDataPoints?: string[] } } }",
+            "description": "'filters.contacts' cannot be combined with company 'searchText', 'signals', or 'technologies' on the same request - doing so returns '400' (contact filters are never silently ignored)."
+          },
+          {
+            "key": "tableId",
+            "optional": true,
+            "type": "string",
+            "description": "Optional. If provided, results are also persisted to this table. See the Tables API."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ includePartialProfiles?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ clientReferenceId?: string | number | null, id?: string | number | null, name?: string | null, domain?: string | null, employeeCount?: { exact?: number | null, min?: number | null, max?: number | null } | null, industry?: string | null, location?: { city?: string | null, state?: string | null, stateCode?: string | null, country?: string | null, countryIso2?: string | null, continent?: string | null } | null, socialLinks?: { linkedin?: string | null } | null, has?: string[] | null, canReveal?: { field?: string | null, credits?: number | null }[] | null, signalTypes?: string[] | null, error?: { code?: string | null, message?: string | null } | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number | null, size?: number | null, total?: number | null } | null"
+          },
+          {
+            "key": "tableWrite",
+            "optional": true,
+            "type": "{ tableId?: string | number | null, added?: number | null, alreadyPresent?: number | null, columnsCreated?: number | any[] | null, rowsProcessed?: number | null, rowsCharged?: number | null, rowsAlreadyPaidInTable?: number | null, creditsCharged?: number | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.company.searchAndEnrichCompanies",
+      "shortPath": "company.searchAndEnrichCompanies",
+      "description": "Search up to 100 companies by id, name or domain and return their full firmographics in one call. Charges credits per result and per reveal field.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companies",
+            "optional": false,
+            "type": "{ clientReferenceId?: string, id?: string, name?: string, domain?: string }[]",
+            "description": "1 to 100 companies, each identified by id, name or domain."
+          },
+          {
+            "key": "reveal",
+            "optional": true,
+            "type": "(employeesByDepartment | employeesByLocation | employeesBySeniority | competitors | estimatedAnnualItSpend | monthlyWebsiteTraffic | openJobsTotal | openJobsByDepartment | openJobsByLocation | openJobsBySeniority | directParent | ultimateParent)[]",
+            "description": "Premium fields to reveal, each charged separately per result: employeesByDepartment, employeesByLocation, employeesBySeniority, competitors, estimatedAnnualItSpend, monthlyWebsiteTraffic, openJobsTotal, openJobsByDepartment, openJobsByLocation, openJobsBySeniority, directParent, ultimateParent. Omitting reveal returns base firmographics only."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ includePartialProfiles?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ clientReferenceId?: string | null, id?: string | null, name?: string | null, alternativeName?: string | null, domain?: string | null, alternativeDomains?: string[] | null, emailDomain?: string | null, homepageUrl?: string | null, description?: string | null, additionalDescriptions?: string[] | null, companyOffering?: string | null, companyType?: string | null, yearFounded?: number | null, employeeCount?: { exact?: number | null, min?: number | null, max?: number | null } | null, industry?: string | null, subIndustry?: string | null, additionalIndustries?: { industry?: string | null, subIndustry?: string | null }[] | null, specialities?: string[] | null, sicCodes?: { code?: number | null, description?: string | null }[] | null, naicsCodes?: { code?: number | null, description?: string | null }[] | null, location?: { country?: string | null, countryIso2?: string | null, continent?: string | null, state?: string | null, stateCode?: string | null, city?: string | null, zipCode?: string | null, coordinates?: number[] | null, isEuContact?: boolean | null } | null, additionalLocations?: { country?: string | null, countryIso2?: string | null, continent?: string | null, state?: string | null, stateCode?: string | null, city?: string | null, zipCode?: string | null, coordinates?: number[] | null, isEuContact?: boolean | null }[] | null, socialLinks?: { linkedin?: string | null, xUrl?: string | null, x?: string | null, facebook?: string | null, instagram?: string[] | null, youtube?: string[] | null, tiktok?: string[] | null, crunchbase?: string[] | null } | null, linkedinFollowers?: number | null, funding?: { rounds?: Record<string, any>[] | null, totalRounds?: number | null, totalRoundsAmount?: number | null, currency?: string | null, isIpo?: boolean | null, lastRoundType?: string | null, lastRoundAmount?: number | null, lastRoundDate?: string | null } | null, revenueRange?: { exact?: number | null, min?: number | null, max?: number | null } | null, technologies?: string[] | null, popularityTier?: number | null, logoUrl?: string | null, businessModel?: string[] | null, phones?: { number?: string | null, type?: string | null, doNotCall?: boolean | null, updateDate?: string | null, dataSource?: string | null, credits?: number | null }[] | null, emails?: { email?: string | null, type?: string | null, confidence?: string | null, updateDate?: string | null, dataSource?: string | null, credits?: number | null }[] | null, keywords?: string[] | null, openJobs?: { total?: number | null, byDepartment?: { department?: string | null, count?: number | null }[] | null, byLocation?: { location?: string | null, count?: number | null }[] | null, bySeniority?: { seniority?: string | null, count?: number | null }[] | null } | null, estimatedAnnualItSpend?: { value?: number | null, currency?: string | null, valueUsd?: number | null } | null, monthlyWebsiteTraffic?: { visits?: number | null, momChangePercent?: number | null, month?: string | null } | null, employeesByDepartment?: { department?: string | null, count?: number | null }[] | null, employeesByLocation?: { country?: string | null, state?: string | null, count?: number | null }[] | null, employeesBySeniority?: { seniority?: string | null, count?: number | null }[] | null, competitors?: { id?: string | null, name?: string | null, domain?: string | null }[] | null, keyContacts?: { fullName?: string | null, jobTitle?: { title?: string | null, departments?: string[] | null, seniority?: string | null, startDate?: string | null } | null, profileUrl?: string | null, status?: string | null }[] | null, directParent?: { lushaCompanyId?: string | null, name?: string | null, domain?: string | null, hqCountry?: string | null } | null, ultimateParent?: { lushaCompanyId?: string | null, name?: string | null, domain?: string | null, hqCountry?: string | null } | null, error?: { code?: string | null, message?: string | null } | null }[]"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.company.searchCompanies",
+      "shortPath": "company.searchCompanies",
+      "description": "Look up up to 100 companies by id, name or domain and get firmographic previews. Charges credits per matched result.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companies",
+            "optional": false,
+            "type": "{ clientReferenceId?: string, id?: string, name?: string, domain?: string }[]",
+            "description": "1 to 100 companies, each identified by id, name or domain."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ includePartialProfiles?: boolean }"
+          },
+          {
+            "key": "signals",
+            "optional": true,
+            "type": "{ types: (allSignals | linkedinActivityIntent | websiteTrafficDecrease | websiteTrafficIncrease | itSpendIncrease | itSpendDecrease | linkedinFollowersIncrease | linkedinFollowersDecrease | surgeInHiring | headcountIncrease1m | headcountIncrease3m | headcountIncrease6m | headcountIncrease12m | headcountDecrease1m | headcountDecrease3m | headcountDecrease6m | headcountDecrease12m | surgeInHiringByDepartment | surgeInHiringByLocation | riskNews | commercialActivityNews | corporateStrategyNews | financialEventsNews | peopleNews | marketIntelligenceNews | productActivityNews | newJobPost | newIntentTopic | intentScoreIncrease | intentScoreDecrease | intentTopicRemoved)[], startDate?: string, maxResultsPerSignal?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ clientReferenceId?: string | null, id?: string | null, name?: string | null, domain?: string | null, employeeCount?: { exact?: number | null, min?: number | null, max?: number | null } | null, industry?: string | null, location?: { country?: string | null, countryIso2?: string | null, continent?: string | null, state?: string | null, stateCode?: string | null, city?: string | null, zipCode?: string | null, coordinates?: number[] | null, isEuContact?: boolean | null } | null, socialLinks?: { linkedin?: string | null, xUrl?: string | null, x?: string | null, facebook?: string | null, instagram?: string[] | null, youtube?: string[] | null, tiktok?: string[] | null, crunchbase?: string[] | null } | null, has?: string[] | null, canReveal?: { field?: string | null, credits?: number | null }[] | null, signalTypes?: string[] | null, error?: { code?: string | null, message?: string | null } | null }[]"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.companyTables.addEntities",
+      "shortPath": "companyTables.addEntities",
+      "description": "Add Entities to Companies Table. Add up to 500 company IDs to an existing table. Billing: Charges 'reveal_company' per newly-added company, deduped via row-count delta - duplicates and already-present companies aren't charged again.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string",
+            "description": "The table's ID."
+          },
+          {
+            "key": "entityIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Lusha IDs as strings - 'personId' for contacts, 'lushaCompanyId' for companies. Accepts either the encrypted token ('v{N}.…', as returned by Search/Enrich/Get Entities) or the legacy numeric ID."
+          },
+          {
+            "key": "companyIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Contacts tables only. One 'lushaCompanyId' per contact (encrypted token or numeric), index-aligned with 'entityIds', to help pair company-level enrichment to the right company for each contact."
+          },
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "{ email?: string }",
+            "description": "Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ added?: number | null, alreadyPresent?: number | null, invalidIds?: string[] | null, addedBy?: { surface?: string | null } | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.companyTables.create",
+      "shortPath": "companyTables.create",
+      "description": "Create Companies Table. Create a new, empty companies table, optionally seeded with an initial list of company IDs. Billing: Free.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Table name, up to 250 characters. Allowed: letters in any language, digits, spaces, and '- _ . , ' & ( ) / # + : ! ? @'."
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "private | shared"
+          },
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "{ email?: string }",
+            "description": "Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'."
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Optional initial entity IDs to seed the table with."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ tableId?: string | number | null, name?: string | null, entityType?: string | null, visibility?: string | null, status?: string | null, owner?: { id?: number | null, email?: string | null, name?: string | null } | null, createdBy?: { surface?: string | null, createdByUserId?: number | null } | null, workspaceUrl?: string | null, entityCount?: number | null, isProcessing?: boolean | null, columns?: { columnId?: string | number | null, name?: string | null, type?: string | null, key?: string | null, isDefault?: boolean | null, addedAt?: string | null, updatedAt?: string | null, rowsNotRun?: number | null, rowsProcessing?: number | null, rowsSuccess?: number | null, rowsNoData?: number | null, rowsFailed?: number | null }[] | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.companyTables.delete",
+      "shortPath": "companyTables.delete",
+      "description": "Delete Companies Table. Permanently delete a table and all its data. Billing: Free.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string",
+            "description": "The table's ID."
+          },
+          {
+            "key": "ownerEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ tableId?: string | number | null, status?: string | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.companyTables.get",
+      "shortPath": "companyTables.get",
+      "description": "Get Companies Table. Get a table's metadata and current processing status. Billing: Free.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string",
+            "description": "The table's ID."
+          },
+          {
+            "key": "ownerEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ tableId?: string | number | null, name?: string | null, entityType?: string | null, visibility?: string | null, status?: string | null, owner?: { id?: number | null, email?: string | null, name?: string | null } | null, createdBy?: { surface?: string | null, createdByUserId?: number | null } | null, workspaceUrl?: string | null, entityCount?: number | null, isProcessing?: boolean | null, columns?: { columnId?: string | number | null, name?: string | null, type?: string | null, key?: string | null, isDefault?: boolean | null, addedAt?: string | null, updatedAt?: string | null, rowsNotRun?: number | null, rowsProcessing?: number | null, rowsSuccess?: number | null, rowsNoData?: number | null, rowsFailed?: number | null }[] | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.companyTables.getColumnCatalog",
+      "shortPath": "companyTables.getColumnCatalog",
+      "description": "Get Companies Column Catalog. List every Lusha data column that can be added to a companies table - 46 columns. Billing: Free - no credits charged.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ category?: string | null, displayName?: string | null, columnKey?: string | null, type?: string | null }[] | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.companyTables.list",
+      "shortPath": "companyTables.list",
+      "description": "List Companies Tables. List companies tables owned by the given user, plus any tables shared with the account. Billing: Free.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "{ email?: string }",
+            "description": "Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Optional filter - matches tables whose name contains this text."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | archived",
+            "description": "'deleted' is not a filterable status."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ tableId?: string | number | null, name?: string | null, entityType?: string | null, visibility?: string | null, status?: string | null, owner?: { id?: number | null, email?: string | null, name?: string | null } | null, createdBy?: { surface?: string | null, createdByUserId?: number | null } | null, workspaceUrl?: string | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number | null, size?: number | null, total?: number | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.companyTables.listEntities",
+      "shortPath": "companyTables.listEntities",
+      "description": "Get Companies Table Entities. Read a page of rows in the table, with all column values and per-cell status. Billing: Charged per row returned via 'export_api'.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string",
+            "description": "The table's ID."
+          },
+          {
+            "key": "ownerEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number | null, columns?: { id?: string | number | null, name?: string | null, type?: string | null, sourceType?: string | null, value?: any | null, status?: string | null }[] | null, createdAt?: string | null, rowCreatedAt?: string | null, type?: string | null, tableContactId?: string | number | null, dateAddedToList?: string | null, firstName?: string | null, lastName?: string | null, fullName?: string | null, job?: { title?: string | null, seniority?: string | null, departments?: string[] | null } | null, location?: { city?: string | null, country?: string | null, countryIso2?: string | null, continent?: string | null } | null, socialLinks?: { linkedin?: string | null } | null, datapoints?: { emails?: { datapointId?: string | number | null, value?: string | null, type?: string | null, confidence?: string | null, dataSource?: string | null, isMasked?: boolean | null, isManuallyAdded?: boolean | null, isCorrectFeedback?: boolean | null }[] | null, phones?: { datapointId?: string | number | null, value?: string | null, type?: string | null, confidence?: string | null, dataSource?: string | null, isMasked?: boolean | null, isManuallyAdded?: boolean | null, isCorrectFeedback?: boolean | null }[] | null } | null, isFullDNC?: boolean | null, tags?: any[] | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number | null, size?: number | null, total?: number | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.companyTables.removeColumn",
+      "shortPath": "companyTables.removeColumn",
+      "description": "Remove Column from Companies Table. Remove a column and delete all of its cell data across the table. Billing: Free.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string",
+            "description": "The table's ID."
+          },
+          {
+            "key": "columnId",
+            "optional": false,
+            "type": "string",
+            "description": "The column's ID."
+          },
+          {
+            "key": "ownerEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "columnId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "removed",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.companyTables.removeEntities",
+      "shortPath": "companyTables.removeEntities",
+      "description": "Remove Entities from Companies Table. Remove specific company IDs from a table. Billing: Free.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string",
+            "description": "The table's ID."
+          },
+          {
+            "key": "entityIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Accepts either the encrypted token ('v{N}.…', as returned by Get Entities) or the legacy numeric ID. Unresolved IDs are echoed back in 'invalidIds' in the exact form you sent them."
+          },
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "{ email?: string }",
+            "description": "Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ removed?: number | null, invalidIds?: string[] | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.companyTables.runColumn",
+      "shortPath": "companyTables.runColumn",
+      "description": "Run Column on Companies Table. Populate or refresh a column's data for some or all rows in the table. Billing: Charged per row processed, per the column's credit tier. Company enrichment charges once per company per table - re-runs on an already-paid company in the same table are free.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string",
+            "description": "The table's ID."
+          },
+          {
+            "key": "columnId",
+            "optional": false,
+            "type": "string",
+            "description": "The column's ID."
+          },
+          {
+            "key": "runScope",
+            "optional": false,
+            "type": "all | missing | specific",
+            "description": "Controls which rows a column operation applies to. 'all' re-runs every row, including already-processed ones. 'missing' only runs rows that don't have a value for this column yet. 'specific' requires 'entityIds'."
+          },
+          {
+            "key": "entityIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Required when 'runScope' is 'specific'."
+          },
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "{ email?: string }",
+            "description": "Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ columnId?: string | number | null, runScope?: string | null, status?: string | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.companyTables.update",
+      "shortPath": "companyTables.update",
+      "description": "Update Companies Table. Rename a table, change its visibility, or reassign its owner. Billing: Free.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string",
+            "description": "The table's ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "New name, up to 250 characters. Allowed: letters in any language, digits, spaces, and '- _ . , ' & ( ) / # + : ! ? @'."
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "private | shared"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean",
+            "description": "Set 'true' to archive the table (hides it from default List Tables results), 'false' to restore it."
+          },
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "{ email?: string }",
+            "description": "Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ tableId?: string | number | null, name?: string | null, entityType?: string | null, visibility?: string | null, status?: string | null, owner?: { id?: number | null, email?: string | null, name?: string | null } | null, createdBy?: { surface?: string | null, createdByUserId?: number | null } | null, workspaceUrl?: string | null, entityCount?: number | null, isProcessing?: boolean | null, columns?: { columnId?: string | number | null, name?: string | null, type?: string | null, key?: string | null, isDefault?: boolean | null, addedAt?: string | null, updatedAt?: string | null, rowsNotRun?: number | null, rowsProcessing?: number | null, rowsSuccess?: number | null, rowsNoData?: number | null, rowsFailed?: number | null }[] | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.contactTables.addColumns",
+      "shortPath": "contactTables.addColumns",
+      "description": "Add Columns to Contacts Table. Add up to 10 Lusha columns to a table in one call. Billing: Free today - credits aren't charged for adding columns yet.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string",
+            "description": "The table's ID."
+          },
+          {
+            "key": "columns",
+            "optional": true,
+            "type": "{ columnKey: string }[]",
+            "description": "Up to 10 Lusha columns to add in one call."
+          },
+          {
+            "key": "columnKey",
+            "optional": true,
+            "type": "string",
+            "description": "Shorthand for adding exactly one column."
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ email?: string }",
+            "description": "Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ columns?: { status?: string | null, columnId?: string | number | null, name?: string | null, runStatus?: string | null, error?: { code?: string | null, message?: string | null } | null }[] | null, added?: number | null, failed?: number | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.contactTables.addEntities",
+      "shortPath": "contactTables.addEntities",
+      "description": "Add Entities to Contacts Table. Add up to 500 contact IDs to an existing table. Billing: Free.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string",
+            "description": "The table's ID."
+          },
+          {
+            "key": "entityIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Lusha IDs as strings - 'personId' for contacts, 'lushaCompanyId' for companies. Accepts either the encrypted token ('v{N}.…', as returned by Search/Enrich/Get Entities) or the legacy numeric ID."
+          },
+          {
+            "key": "companyIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Contacts tables only. One 'lushaCompanyId' per contact (encrypted token or numeric), index-aligned with 'entityIds', to help pair company-level enrichment to the right company for each contact."
+          },
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "{ email?: string }",
+            "description": "Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ added?: number | null, alreadyPresent?: number | null, invalidIds?: string[] | null, addedBy?: { surface?: string | null } | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.contactTables.create",
+      "shortPath": "contactTables.create",
+      "description": "Create Contacts Table. Create a new, empty contacts table, optionally seeded with an initial list of contact IDs. Billing: Free.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Table name, up to 250 characters. Allowed: letters in any language, digits, spaces, and '- _ . , ' & ( ) / # + : ! ? @'."
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "private | shared"
+          },
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "{ email?: string }",
+            "description": "Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'."
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Optional initial entity IDs to seed the table with."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ tableId?: string | number | null, name?: string | null, entityType?: string | null, visibility?: string | null, status?: string | null, owner?: { id?: number | null, email?: string | null, name?: string | null } | null, createdBy?: { surface?: string | null, createdByUserId?: number | null } | null, workspaceUrl?: string | null, entityCount?: number | null, isProcessing?: boolean | null, columns?: { columnId?: string | number | null, name?: string | null, type?: string | null, key?: string | null, isDefault?: boolean | null, addedAt?: string | null, updatedAt?: string | null, rowsNotRun?: number | null, rowsProcessing?: number | null, rowsSuccess?: number | null, rowsNoData?: number | null, rowsFailed?: number | null }[] | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.contactTables.delete",
+      "shortPath": "contactTables.delete",
+      "description": "Delete Contacts Table. Permanently delete a table and all its data. Billing: Free.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string",
+            "description": "The table's ID."
+          },
+          {
+            "key": "ownerEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ tableId?: string | number | null, status?: string | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.contactTables.get",
+      "shortPath": "contactTables.get",
+      "description": "Get Contacts Table. Get a table's metadata and current processing status. Billing: Free.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string",
+            "description": "The table's ID."
+          },
+          {
+            "key": "ownerEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ tableId?: string | number | null, name?: string | null, entityType?: string | null, visibility?: string | null, status?: string | null, owner?: { id?: number | null, email?: string | null, name?: string | null } | null, createdBy?: { surface?: string | null, createdByUserId?: number | null } | null, workspaceUrl?: string | null, entityCount?: number | null, isProcessing?: boolean | null, columns?: { columnId?: string | number | null, name?: string | null, type?: string | null, key?: string | null, isDefault?: boolean | null, addedAt?: string | null, updatedAt?: string | null, rowsNotRun?: number | null, rowsProcessing?: number | null, rowsSuccess?: number | null, rowsNoData?: number | null, rowsFailed?: number | null }[] | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.contactTables.getColumnCatalog",
+      "shortPath": "contactTables.getColumnCatalog",
+      "description": "Get Contacts Column Catalog. List every Lusha data column that can be added to a contacts table - 22 columns. Billing: Free - no credits charged.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ category?: string | null, displayName?: string | null, columnKey?: string | null, type?: string | null }[] | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.contactTables.list",
+      "shortPath": "contactTables.list",
+      "description": "List Contacts Tables. List contacts tables owned by the given user, plus any tables shared with the account. Billing: Free.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "{ email?: string }",
+            "description": "Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Optional filter - matches tables whose name contains this text."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | archived",
+            "description": "'deleted' is not a filterable status."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ tableId?: string | number | null, name?: string | null, entityType?: string | null, visibility?: string | null, status?: string | null, owner?: { id?: number | null, email?: string | null, name?: string | null } | null, createdBy?: { surface?: string | null, createdByUserId?: number | null } | null, workspaceUrl?: string | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number | null, size?: number | null, total?: number | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.contactTables.listColumns",
+      "shortPath": "contactTables.listColumns",
+      "description": "List Contacts Table Columns. List the columns on a table, with type and aggregated per-cell status counts. Billing: Free.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string",
+            "description": "The table's ID."
+          },
+          {
+            "key": "ownerEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ columnId?: string | number | null, name?: string | null, type?: string | null, key?: string | null, isDefault?: boolean | null, addedAt?: string | null, updatedAt?: string | null, rowsNotRun?: number | null, rowsProcessing?: number | null, rowsSuccess?: number | null, rowsNoData?: number | null, rowsFailed?: number | null }[] | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.contactTables.listEntities",
+      "shortPath": "contactTables.listEntities",
+      "description": "Get Contacts Table Entities. Read a page of rows in the table, with all column values and per-cell status. Billing: Charged per row returned via 'export_api'.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string",
+            "description": "The table's ID."
+          },
+          {
+            "key": "ownerEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number | null, columns?: { id?: string | number | null, name?: string | null, type?: string | null, sourceType?: string | null, value?: any | null, status?: string | null }[] | null, createdAt?: string | null, rowCreatedAt?: string | null, type?: string | null, tableContactId?: string | number | null, dateAddedToList?: string | null, firstName?: string | null, lastName?: string | null, fullName?: string | null, job?: { title?: string | null, seniority?: string | null, departments?: string[] | null } | null, location?: { city?: string | null, country?: string | null, countryIso2?: string | null, continent?: string | null } | null, socialLinks?: { linkedin?: string | null } | null, datapoints?: { emails?: { datapointId?: string | number | null, value?: string | null, type?: string | null, confidence?: string | null, dataSource?: string | null, isMasked?: boolean | null, isManuallyAdded?: boolean | null, isCorrectFeedback?: boolean | null }[] | null, phones?: { datapointId?: string | number | null, value?: string | null, type?: string | null, confidence?: string | null, dataSource?: string | null, isMasked?: boolean | null, isManuallyAdded?: boolean | null, isCorrectFeedback?: boolean | null }[] | null } | null, isFullDNC?: boolean | null, tags?: any[] | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number | null, size?: number | null, total?: number | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.contactTables.removeColumn",
+      "shortPath": "contactTables.removeColumn",
+      "description": "Remove Column from Contacts Table. Remove a column and delete all of its cell data across the table. Billing: Free.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string",
+            "description": "The table's ID."
+          },
+          {
+            "key": "columnId",
+            "optional": false,
+            "type": "string",
+            "description": "The column's ID."
+          },
+          {
+            "key": "ownerEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ columnId?: string | number | null, removed?: boolean | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.contactTables.removeEntities",
+      "shortPath": "contactTables.removeEntities",
+      "description": "Remove Entities from Contacts Table. Remove specific contact IDs from a table. Billing: Free.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string",
+            "description": "The table's ID."
+          },
+          {
+            "key": "entityIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Accepts either the encrypted token ('v{N}.…', as returned by Get Entities) or the legacy numeric ID. Unresolved IDs are echoed back in 'invalidIds' in the exact form you sent them."
+          },
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "{ email?: string }",
+            "description": "Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ removed?: number | null, invalidIds?: string[] | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.contactTables.runColumn",
+      "shortPath": "contactTables.runColumn",
+      "description": "Run Column on Contacts Table. Populate or refresh a column's data for some or all rows in the table. Billing: Charged per row processed, per the column's credit tier. Re-running with 'all' charges again for rows that already have data.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string",
+            "description": "The table's ID."
+          },
+          {
+            "key": "columnId",
+            "optional": false,
+            "type": "string",
+            "description": "The column's ID."
+          },
+          {
+            "key": "runScope",
+            "optional": false,
+            "type": "all | missing | specific",
+            "description": "Controls which rows a column operation applies to. 'all' re-runs every row, including already-processed ones. 'missing' only runs rows that don't have a value for this column yet. 'specific' requires 'entityIds'."
+          },
+          {
+            "key": "entityIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Required when 'runScope' is 'specific'."
+          },
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "{ email?: string }",
+            "description": "Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ columnId?: string | number | null, runScope?: string | null, status?: string | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.contactTables.update",
+      "shortPath": "contactTables.update",
+      "description": "Update Contacts Table. Rename a table, change its visibility, or reassign its owner. Billing: Free.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableId",
+            "optional": false,
+            "type": "string",
+            "description": "The table's ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "New name, up to 250 characters. Allowed: letters in any language, digits, spaces, and '- _ . , ' & ( ) / # + : ! ? @'."
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "private | shared"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean",
+            "description": "Set 'true' to archive the table (hides it from default List Tables results), 'false' to restore it."
+          },
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "{ email?: string }",
+            "description": "Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ tableId?: string | number | null, name?: string | null, entityType?: string | null, visibility?: string | null, status?: string | null, owner?: { id?: number | null, email?: string | null, name?: string | null } | null, createdBy?: { surface?: string | null, createdByUserId?: number | null } | null, workspaceUrl?: string | null, entityCount?: number | null, isProcessing?: boolean | null, columns?: { columnId?: string | number | null, name?: string | null, type?: string | null, key?: string | null, isDefault?: boolean | null, addedAt?: string | null, updatedAt?: string | null, rowsNotRun?: number | null, rowsProcessing?: number | null, rowsSuccess?: number | null, rowsNoData?: number | null, rowsFailed?: number | null }[] | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.conversations.getTranscript",
+      "shortPath": "conversations.getTranscript",
+      "description": "Get Conversation Transcript. Returns the speaker-attributed, timestamped transcript of a single conversation. Billing: 1 credit per successful request via 'ci_transcript_analysis', including repeat requests for the same conversation. A '404' is never charged. While 'ci_transcript_analysis' isn't seeded on your account's pricebook, the endpoint stays free.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversationId",
+            "optional": false,
+            "type": "string",
+            "description": "Conversation identifier returned by Search Conversations."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "conversationId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "segments",
+            "optional": true,
+            "type": "{ speaker?: string | null, side?: string | null, text?: string | null, startTime?: string | null, endTime?: string | null }[] | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.conversations.search",
+      "shortPath": "conversations.search",
+      "description": "Search Conversations. Search the sales conversations recorded by Lusha Conversations for your account. Billing: 1 credit per block of up to 25 conversations returned (1–25 = 1, 26–50 = 2, 51–75 = 3, 76–100 = 4), via 'ci_meeting_data_export'. Charged on results returned, not the page size requested. A request that returns nothing is free.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Free-text search over transcript content. When present, the structural filters below are ignored."
+          },
+          {
+            "key": "conversationIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Return only these conversations. IDs that don't exist, are still processing, or belong to another account are omitted from the response rather than erroring."
+          },
+          {
+            "key": "dateFrom",
+            "optional": true,
+            "type": "string",
+            "description": "Earliest meeting date, inclusive (YYYY-MM-DD)."
+          },
+          {
+            "key": "dateTo",
+            "optional": true,
+            "type": "string",
+            "description": "Latest meeting date, inclusive (YYYY-MM-DD)."
+          },
+          {
+            "key": "contactNames",
+            "optional": true,
+            "type": "string[]",
+            "description": "Partial, case-insensitive match on participant names. Multiple values are ORed."
+          },
+          {
+            "key": "companyDomains",
+            "optional": true,
+            "type": "string[]",
+            "description": "Company domains of the external participants (e.g. acme.com). Matches on domain, not display name. Multiple values are ORed."
+          },
+          {
+            "key": "meetingTitles",
+            "optional": true,
+            "type": "string[]",
+            "description": "Partial, case-insensitive match on the meeting title. Multiple values are ORed."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1."
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Conversations per page. Values above 100 are rejected with 400 (not silently clamped)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "conversations",
+            "optional": true,
+            "type": "{ id?: string | number | null, title?: string | null, date?: string | null, startTime?: string | null, durationSeconds?: number | null, durationFormatted?: string | null, meetingType?: string | null, isExternal?: boolean | null, company?: { name?: string | null, domain?: string | null } | null, participants?: { name?: string | null, email?: string | null, role?: string | null, isInternal?: boolean | null }[] | null, topicLabels?: string[] | null, summary?: { text?: string | null, keyHighlights?: string[] | null, actionItems?: { text?: string | null, owner?: string | null, dueDate?: string | null }[] | null, nextSteps?: string[] | null, risks?: { text?: string | null, severity?: string | null }[] | null, objections?: { text?: string | null, severity?: string | null }[] | null, competition?: { name?: string | null, context?: string | null, sentiment?: string | null }[] | null } | null, coaching?: { overallScore?: number | null, likelihoodOfSale?: number | null, sections?: { section?: string | null, score?: number | null, whatHappened?: string | null, whatToKeep?: string[] | null, whatToImprove?: string[] | null }[] | null, notes?: string | null } | null, chapters?: { index?: number | null, title?: string | null, startTime?: string | null, endTime?: string | null, summary?: string | null }[] | null }[] | null"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ page?: number | null, pageSize?: number | null, totalItems?: number | null, totalPages?: number | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.icp.listProfiles",
+      "shortPath": "icp.listProfiles",
+      "description": "List Target Profiles. Returns the Target Profiles (ICPs) you can see: your own, plus any an admin has shared with the account. Billing: Free (0 credits).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | disabled",
+            "description": "Return only profiles with this status."
+          },
+          {
+            "key": "access",
+            "optional": true,
+            "type": "private | shared",
+            "description": "Return only private profiles, or only profiles shared with the account."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "profiles",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null, status?: string | null, access?: string | null, canEdit?: boolean | null, isOwner?: boolean | null, createdAt?: string | null, updatedAt?: string | null }[] | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.jobs.getContactsEnrichJob",
+      "shortPath": "jobs.getContactsEnrichJob",
+      "description": "Where a partial contacts enrich job stands: processing (poll again after retryAfter seconds), complete (contacts to merge by id plus creditsCharged), or the terminal expired and failed. Free.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string",
+            "description": "The job id from a partial enrichContacts response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "processing | complete | expired | failed"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "retryAfter",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "covers",
+            "optional": true,
+            "type": "{ contactId?: string | null, refId?: string | null, dataPoints?: string[] | null }[] | null"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "{ clientReferenceId?: string | null, id?: string | null, firstName?: string | null, lastName?: string | null, fullName?: string | null, jobTitle?: { title?: string | null, departments?: string[] | null, seniority?: string | null, startDate?: string | null } | null, location?: { country?: string | null, countryIso2?: string | null, continent?: string | null, state?: string | null, stateCode?: string | null, city?: string | null, zipCode?: string | null, coordinates?: number[] | null, isEuContact?: boolean | null } | null, tags?: { id?: string | null, name?: string | null, color?: string | null }[] | null, emails?: { email?: string | null, type?: string | null, confidence?: string | null, updateDate?: string | null, dataSource?: string | null, credits?: number | null }[] | null, phones?: { number?: string | null, type?: string | null, doNotCall?: boolean | null, updateDate?: string | null, dataSource?: string | null, credits?: number | null }[] | null, company?: { id?: string | null, name?: string | null, domain?: string | null, industry?: string | null } | null, socialLinks?: { linkedin?: string | null, xUrl?: string | null } | null, previousEmployment?: Record<string, any>[] | null, linkedinFollowers?: number | null, linkedinConnections?: number | null, partialProfile?: boolean | null, updateDate?: string | null, error?: { code?: string | null, message?: string | null } | null, missingDataPoints?: { type?: string | null, status?: string | null, description?: string | null }[] | null }[] | null"
+          },
+          {
+            "key": "creditsCharged",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.person.enrichContacts",
+      "shortPath": "person.enrichContacts",
+      "description": "Reveal emails and phone numbers for up to 100 contact ids from search results. Charges credits per revealed data point; a data point already revealed for the account is free to re-enrich (canReveal.credits is 0 in search). May answer status partial with a job; follow it with jobs.getContactsEnrichJob until it reports complete, expired or failed.",
+      "riskLevel": "read",
+      "job": {
+        "idPath": "job.id",
+        "status": {
+          "op": "jobs.getContactsEnrichJob",
+          "idArg": "jobId",
+          "statusPath": "status",
+          "done": ["complete"],
+          "failed": ["expired", "failed"]
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "1 to 100 ids from a search result."
+          },
+          {
+            "key": "reveal",
+            "optional": true,
+            "type": "(emails | phones)[]",
+            "description": "Data points to reveal, each charged per result: emails, phones."
+          },
+          {
+            "key": "waterfallEnabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "Allow the Data Waterfall to fall through to your enabled third-party providers when Lusha has no match. Defaults to true when the waterfall is enabled on your account; false means Lusha data only."
+          },
+          {
+            "key": "tableId",
+            "optional": true,
+            "type": "string",
+            "description": "Also add these contacts to this table and fill its columns."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ clientReferenceId?: string | null, id?: string | null, firstName?: string | null, lastName?: string | null, fullName?: string | null, jobTitle?: { title?: string | null, departments?: string[] | null, seniority?: string | null, startDate?: string | null } | null, location?: { country?: string | null, countryIso2?: string | null, continent?: string | null, state?: string | null, stateCode?: string | null, city?: string | null, zipCode?: string | null, coordinates?: number[] | null, isEuContact?: boolean | null } | null, tags?: { id?: string | null, name?: string | null, color?: string | null }[] | null, emails?: { email?: string | null, type?: string | null, confidence?: string | null, updateDate?: string | null, dataSource?: string | null, credits?: number | null }[] | null, phones?: { number?: string | null, type?: string | null, doNotCall?: boolean | null, updateDate?: string | null, dataSource?: string | null, credits?: number | null }[] | null, company?: { id?: string | null, name?: string | null, domain?: string | null, industry?: string | null } | null, socialLinks?: { linkedin?: string | null, xUrl?: string | null } | null, previousEmployment?: Record<string, any>[] | null, linkedinFollowers?: number | null, linkedinConnections?: number | null, partialProfile?: boolean | null, updateDate?: string | null, error?: { code?: string | null, message?: string | null } | null, missingDataPoints?: { type?: string | null, status?: string | null, description?: string | null }[] | null }[]"
+          },
+          {
+            "key": "tableWrite",
+            "optional": true,
+            "type": "{ tableId?: string | null, added?: number | null, alreadyPresent?: number | null, columnsCreated?: number | any[] | null, rowsProcessed?: number | null, rowsCharged?: number | null, rowsAlreadyPaidInTable?: number | null, creditsCharged?: number | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "completed | partial | halted | OUT_OF_CREDITS | PARTIAL_OUT_OF_CREDITS | null"
+          },
+          {
+            "key": "statusDescription",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "statusReason",
+            "optional": true,
+            "type": "WATERFALL_NOT_CONFIGURED | WATERFALL_NOT_IN_PLAN | WATERFALL_DISABLED | null"
+          },
+          {
+            "key": "job",
+            "optional": true,
+            "type": "{ id?: string | null, status?: processing | null, expiresAt?: string | null, retryAfter?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.person.getBuyingGroup",
+      "shortPath": "person.getBuyingGroup",
+      "description": "Get Buying Group Contacts. Identify the buying group within a set of target companies. Billing: 1 credit per contact record returned, via the 'buyingGroupContact' action. Credits are charged per record, not per person - if the same person appears at more than one company in the request, each record is charged.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "companies",
+            "optional": false,
+            "type": "{ clientReferenceId?: string, domain?: string, id?: string }[]"
+          },
+          {
+            "key": "personas",
+            "optional": true,
+            "type": "(decision_maker | potential_champion | end_user)[]",
+            "description": "Filter results to specific persona roles. Omit to return all three."
+          },
+          {
+            "key": "contactsLimit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of contacts returned per company."
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number, size?: number }",
+            "description": "Optional. If omitted, defaults to page 0, size 100."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ clientReferenceId?: string | number | null, companyId?: string | number | null, contacts?: { id?: string | number | null, firstName?: string | null, lastName?: string | null, jobTitle?: { title?: string | null, departments?: string[] | null, seniority?: string | null } | null, company?: { id?: string | number | null, name?: string | null, domain?: string | null } | null, location?: { country?: string | null, state?: string | null, city?: string | null } | null, socialLinks?: { linkedin?: string | null } | null, has?: string[] | null, canReveal?: { field?: string | null, credits?: number | null, source?: string | null, availability?: string | null, vendors?: string[] | null }[] | null, roles?: string[] | null, score?: number | null, error?: { code?: string | null, message?: string | null } | null }[] | null, error?: { code?: string | null, message?: string | null } | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number | null, size?: number | null, total?: number | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.person.getContactFilterTypes",
+      "shortPath": "person.getContactFilterTypes",
+      "description": "Get Contact Filter Types (Discovery). Returns all available filter types for contact prospecting and whether each requires a search query.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "availableFilters",
+            "optional": true,
+            "type": "{ filterType?: string | null, requiresQuery?: boolean | null, supportsQuery?: boolean | null }[] | null"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ path?: string | null, type?: string | null, description?: string | null, valueSource?: string | null, values?: string[] | null, lookup?: { filterType?: string | null, url?: string | null, requiresQuery?: boolean | null } | null }[] | null"
+          },
+          {
+            "key": "generatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.person.getContactFilterValues",
+      "shortPath": "person.getContactFilterValues",
+      "description": "Get Contact Filter Values. Returns valid values for a single contact filter type.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filterType",
+            "optional": false,
+            "type": "departments | seniority | existingDataPoints | countries | locations"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "values",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "truncated",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.person.getContactIcpFitScores",
+      "shortPath": "person.getContactIcpFitScores",
+      "description": "Score Contacts by ICP Fit. Score how well each contact fits 1-3 of your Target Profiles, from '0' to '1'. Billing: 1 credit per scored contact, regardless of how many profiles it's scored against. A score of '0' is charged. Error rows ('NOT_FOUND' / 'NO_SCORE') are never charged.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "targetProfileIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "1-3 Target Profile IDs to score against. Each must be an 'active' profile you own or that is shared with your account - get them from [List Target Profiles](#operation/listIcpProfiles)."
+          },
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ clientReferenceId?: string, id?: string, linkedinUrl?: string, email?: string, firstName?: string, lastName?: string, companyName?: string, companyDomain?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ clientReferenceId?: string | number | null, id?: string | number | null, fullName?: string | null, company?: { id?: string | number | null, name?: string | null, domain?: string | null } | null, icpFitScore?: number | null, topProfile?: { id?: string | number | null, name?: string | null } | null, profileScores?: { id?: string | number | null, name?: string | null, score?: number | null }[] | null, error?: { code?: string | null, message?: string | null } | null }[] | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.person.getContactLookalikes",
+      "shortPath": "person.getContactLookalikes",
+      "description": "Contact Lookalikes. Find contacts similar to a set of seed contacts using AI-powered recommendations. Billing: Charged per result via the 'lookalikeContact' action.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dedupeSessionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "seeds",
+            "optional": false,
+            "type": "{ linkedinUrls?: string[], contacts?: { firstName: string, lastName: string, companyDomain?: string, companyName?: string }[], emails?: string[], ids?: string[], contactIds?: number[] }",
+            "description": "**Required. Minimum 5, maximum 100 seed contacts in total**, counted across all identifier types combined ('linkedinUrls' + 'emails' + 'ids' + 'contactIds' + 'contacts'). Fewer than 5 total seeds is rejected with '400'."
+          },
+          {
+            "key": "exclude",
+            "optional": true,
+            "type": "{ linkedinUrls?: string[], contacts?: { firstName: string, lastName: string, companyDomain?: string, companyName?: string }[], emails?: string[], ids?: string[], contactIds?: number[] }",
+            "description": "Optional. Contacts to always filter out of the results (for example, existing customers). Omit the field entirely if you have nothing to exclude."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tableId",
+            "optional": true,
+            "type": "string",
+            "description": "Optional. If provided, results are also persisted to this table. See the Tables API."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dedupeSessionId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | number | null, firstName?: string | null, lastName?: string | null, socialLinks?: { linkedin?: string | null } | null, company?: { id?: string | number | null, name?: string | null, domain?: string | null } | null, jobTitle?: { title?: string | null, departments?: string[] | null, seniority?: string | null } | null, location?: { country?: string | null, state?: string | null, city?: string | null } | null }[] | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ returned?: number | null, hasMore?: boolean | null } | null"
+          },
+          {
+            "key": "tableWrite",
+            "optional": true,
+            "type": "{ tableId?: string | number | null, added?: number | null, alreadyPresent?: number | null, columnsCreated?: number | any[] | null, rowsProcessed?: number | null, rowsCharged?: number | null, rowsAlreadyPaidInTable?: number | null, creditsCharged?: number | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.person.getContactRecommendationFilters",
+      "shortPath": "person.getContactRecommendationFilters",
+      "description": "Contact Recommendation Filters. Lists the Target Profiles and signal types that currently appear in your contact recommendations. Billing: Free.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "availableSignals",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "availableTargetIcps",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.person.getContactRecommendations",
+      "shortPath": "person.getContactRecommendations",
+      "description": "Contact Recommendations. Returns the recommended contacts for the calling user, ranked by Lusha against your Target Profiles and recent signals. Billing: Charged per result without an 'error', via the 'contactRecommendationsReveal' action. Results with an 'error' (e.g. 'COMPLIANCE_RESTRICTED') keep their scores but carry no personal data and are not charged.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page: number, size: number }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ by: leadScore | signalScore | icpFitScore | targetIcp, order?: asc | desc }[]",
+            "description": "Sort keys, applied in order. Up to 4 entries, all with the same 'order'. Defaults to 'leadScore' descending."
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ targetIcp?: string[], signals?: string[], leadScore?: { min?: number, max?: number }, signalScore?: { min?: number, max?: number }, icpFitScore?: { min?: number, max?: number } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "userRecommendationsId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ clientReferenceId?: string | number | null, id?: string | number | null, firstName?: string | null, lastName?: string | null, jobTitle?: { title?: string | null, departments?: string[] | null, seniority?: string | null } | null, company?: { id?: string | number | null, name?: string | null, domain?: string | null, industry?: string | null } | null, location?: { country?: string | null, state?: string | null, city?: string | null } | null, socialLinks?: { linkedin?: string | null } | null, has?: string[] | null, canReveal?: { field?: string | null, credits?: number | null, source?: string | null, availability?: string | null, vendors?: string[] | null }[] | null, signalTypes?: string[] | null, error?: { code?: string | null, message?: string | null } | null, recommendation?: { leadScore?: number | null, icpFitScore?: number | null, signalScore?: number | null, targetIcp?: { id?: string | number | null, name?: string | null }[] | null } | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number | null, size?: number | null, total?: number | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          },
+          {
+            "key": "recommendationListIds",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.person.getContactSignals",
+      "shortPath": "person.getContactSignals",
+      "description": "Contact Signals. Retrieve signal events for a list of contacts - job changes and promotions. Billing: Charged per matched signal per result via the 'showSignalsContact' action.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "signalTypes",
+            "optional": false,
+            "type": "(allSignals | promotion | companyChange)[]"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maxResultsPerSignal",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "tableId",
+            "optional": true,
+            "type": "string",
+            "description": "Optional. If provided, these contacts are also added to this table (if not already present) and the Signals column is populated. See the Tables API."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | number | null, companyChange?: Record<string, any>[] | null, promotion?: Record<string, any>[] | null }[] | null"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tableWrite",
+            "optional": true,
+            "type": "{ tableId?: string | number | null, added?: number | null, alreadyPresent?: number | null, columnsCreated?: number | any[] | null, rowsProcessed?: number | null, rowsCharged?: number | null, rowsAlreadyPaidInTable?: number | null, creditsCharged?: number | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.person.getContactSignalScores",
+      "shortPath": "person.getContactSignalScores",
+      "description": "Score Contacts by Signal Activity. Score contacts by their active buying signals. Billing: 1 credit is charged per scored row via 'signal_score_contact_reveal'. This action is currently limited-availability - while it isn't yet seeded on an account's pricebook, the endpoint stays free ('billing.creditsCharged' is '0').",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ clientReferenceId?: string, id?: string, linkedinUrl?: string, email?: string, firstName?: string, lastName?: string, companyName?: string, companyDomain?: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ clientReferenceId?: string | number | null, id?: string | number | null, fullName?: string | null, company?: { id?: string | number | null, name?: string | null, domain?: string | null } | null, signalScore?: number | null, signalTypes?: string[] | null, noActiveSignals?: boolean | null, error?: { code?: string | null, message?: string | null } | null, contactSignalTypes?: string[] | null, companySignalTypes?: string[] | null }[] | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.person.getContactSignalTypes",
+      "shortPath": "person.getContactSignalTypes",
+      "description": "Get Contact Signal Types. Returns the full list of supported signal types for contacts.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signalTypes",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.person.prospectContacts",
+      "shortPath": "person.prospectContacts",
+      "description": "Prospecting Contacts. Search for contacts that match your Ideal Customer Profile using rich filter criteria. Billing: Charged per result via 'api_search'. If signals are requested, an additional charge applies per matched signal per result.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number, size: number }"
+          },
+          {
+            "key": "filters",
+            "optional": false,
+            "type": "{ contacts?: { include?: { names?: string[], jobTitles?: string[], jobTitlesExactMatch?: string[], normalizedJobTitles?: string[], searchText?: string, countries?: string[], locations?: { city?: string, state?: string, country?: string, continent?: string, countryGrouping?: string, region?: string, countryIso2?: string }[], seniorityIds?: number[], departments?: string[], linkedinUrls?: string[], existingDataPoints?: string[], signals?: { types?: (allSignals | promotion | companyChange)[], startDate?: string }, emails?: string[], previousEmails?: string[], previousJobTitle?: string[], skills?: string[], certifications?: string[], awards?: string[], ids?: string[], existingDataPointsCondition?: or | and, jobChangedAfterDate?: string, jobChangedLastViewDate?: string, education?: { degrees?: string[], fieldsOfStudy?: string[], schools?: string[], startYearGte?: number, graduationYearLte?: number }, score?: { minScore?: number, maxScore?: number }, geographicDetails?: { country?: string, zipcode?: string, distance?: number }[] }, exclude?: { names?: string[], jobTitles?: string[], jobTitlesExactMatch?: string[], normalizedJobTitles?: string[], searchText?: string, countries?: string[], locations?: { city?: string, state?: string, country?: string, continent?: string, countryGrouping?: string, region?: string, countryIso2?: string }[], seniorityIds?: number[], departments?: string[], linkedinUrls?: string[], existingDataPoints?: string[], signals?: { types?: (allSignals | promotion | companyChange)[], startDate?: string }, emails?: string[], previousEmails?: string[], previousJobTitle?: string[], skills?: string[], certifications?: string[], awards?: string[], ids?: string[], existingDataPointsCondition?: or | and, jobChangedAfterDate?: string, jobChangedLastViewDate?: string, education?: { degrees?: string[], fieldsOfStudy?: string[], schools?: string[], startYearGte?: number, graduationYearLte?: number }, score?: { minScore?: number, maxScore?: number }, geographicDetails?: { country?: string, zipcode?: string, distance?: number }[] } }, companies?: { include?: { names?: string[], domains?: string[], ids?: string[], locations?: { city?: string, state?: string, country?: string, continent?: string, countryGrouping?: string, region?: string, countryIso2?: string }[], sizes?: { min?: number, max?: number }[], revenues?: { min?: number, max?: number }[], technologies?: string[], technologiesCondition?: or | and, industriesLabels?: string[], mainIndustriesIds?: number[], subIndustriesIds?: number[], sicCodes?: string[], naicsCodes?: string[], funding?: { isIpo?: boolean, ranges?: { coverage?: last_funding | any_round | total_funds | last_round, min?: number, max?: number }[], date?: { coverage?: last_funding | any_round | total_funds | last_round, date?: string }, rounds?: { coverage?: last_funding | any_round | total_funds | last_round, round?: pre_seed | seed | series_a | series_b | series_c | series_d | series_e | series_f | series_g | series_h | other }[], names?: { coverage?: last_funding | any_round | total_funds | last_round, name?: angel | venture | private_equity | crowdfunding | grant | debt_financing | other }[], investors?: string[], types?: string[] }, foundedYear?: { min?: number, max?: number }[], businessModel?: (B2B | B2C | B2G)[], companyType?: (Government | Private Company | Public Company | Educational | Non Profit | Self Employed)[], linkedinUrls?: string[], keywords?: string[], specialities?: string[], exactSpecialities?: string[], exactKeywords?: string[], keywordsSearchFields?: string[], previousCompanyDomains?: string[], previousCompanyNames?: string[], geographicDetails?: { country?: string, zipcode?: string, distance?: number }[], locationsZipcodes?: { countryIso2?: string, zipcode?: string }[], headquarterZipcodes?: { countryIso2?: string, zipcode?: string }[] }, exclude?: { names?: string[], domains?: string[], ids?: string[], locations?: { city?: string, state?: string, country?: string, continent?: string, countryGrouping?: string, region?: string, countryIso2?: string }[], sizes?: { min?: number, max?: number }[], revenues?: { min?: number, max?: number }[], technologies?: string[], technologiesCondition?: or | and, industriesLabels?: string[], mainIndustriesIds?: number[], subIndustriesIds?: number[], sicCodes?: string[], naicsCodes?: string[], funding?: { isIpo?: boolean, ranges?: { coverage?: last_funding | any_round | total_funds | last_round, min?: number, max?: number }[], date?: { coverage?: last_funding | any_round | total_funds | last_round, date?: string }, rounds?: { coverage?: last_funding | any_round | total_funds | last_round, round?: pre_seed | seed | series_a | series_b | series_c | series_d | series_e | series_f | series_g | series_h | other }[], names?: { coverage?: last_funding | any_round | total_funds | last_round, name?: angel | venture | private_equity | crowdfunding | grant | debt_financing | other }[], investors?: string[], types?: string[] }, foundedYear?: { min?: number, max?: number }[], businessModel?: (B2B | B2C | B2G)[], companyType?: (Government | Private Company | Public Company | Educational | Non Profit | Self Employed)[], linkedinUrls?: string[], keywords?: string[], specialities?: string[], exactSpecialities?: string[], exactKeywords?: string[], keywordsSearchFields?: string[], previousCompanyDomains?: string[], previousCompanyNames?: string[], geographicDetails?: { country?: string, zipcode?: string, distance?: number }[], locationsZipcodes?: { countryIso2?: string, zipcode?: string }[], headquarterZipcodes?: { countryIso2?: string, zipcode?: string }[] } } }"
+          },
+          {
+            "key": "tableId",
+            "optional": true,
+            "type": "string",
+            "description": "Optional. If provided, results are also persisted to this table. See the Tables API."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ includePartialProfiles?: boolean, excludeDnc?: boolean, maxContactsPerCompany?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ clientReferenceId?: string | number | null, id?: string | number | null, firstName?: string | null, lastName?: string | null, jobTitle?: { title?: string | null, departments?: string[] | null, seniority?: string | null } | null, company?: { id?: string | number | null, name?: string | null, domain?: string | null, industry?: string | null } | null, location?: { country?: string | null, state?: string | null, city?: string | null } | null, socialLinks?: { linkedin?: string | null } | null, has?: string[] | null, canReveal?: { field?: string | null, credits?: number | null, source?: string | null, availability?: string | null, vendors?: string[] | null }[] | null, signalTypes?: string[] | null, error?: { code?: string | null, message?: string | null } | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number | null, size?: number | null, total?: number | null, totalGuaranteed?: boolean | null, totalDescription?: string | null } | null"
+          },
+          {
+            "key": "tableWrite",
+            "optional": true,
+            "type": "{ tableId?: string | number | null, added?: number | null, alreadyPresent?: number | null, columnsCreated?: number | any[] | null, rowsProcessed?: number | null, rowsCharged?: number | null, rowsAlreadyPaidInTable?: number | null, creditsCharged?: number | null } | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.person.searchAndEnrichContacts",
+      "shortPath": "person.searchAndEnrichContacts",
+      "description": "Search up to 100 contacts by email, LinkedIn URL or name plus company and return their full enriched records in one call. Charges credits per result and per revealed field.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ clientReferenceId?: string, id?: string, linkedinUrl?: string, email?: string, firstName?: string, lastName?: string, companyName?: string, companyDomain?: string }[]",
+            "description": "1 to 100 contacts to look up, each with exactly one identifier."
+          },
+          {
+            "key": "reveal",
+            "optional": true,
+            "type": "(emails | phones)[]",
+            "description": "Data points to reveal, each charged per result: emails, phones."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ includePartialProfiles?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ clientReferenceId?: string | null, id?: string | null, firstName?: string | null, lastName?: string | null, fullName?: string | null, jobTitle?: { title?: string | null, departments?: string[] | null, seniority?: string | null, startDate?: string | null } | null, location?: { country?: string | null, countryIso2?: string | null, continent?: string | null, state?: string | null, stateCode?: string | null, city?: string | null, zipCode?: string | null, coordinates?: number[] | null, isEuContact?: boolean | null } | null, tags?: { id?: string | null, name?: string | null, color?: string | null }[] | null, emails?: { email?: string | null, type?: string | null, confidence?: string | null, updateDate?: string | null, dataSource?: string | null, credits?: number | null }[] | null, phones?: { number?: string | null, type?: string | null, doNotCall?: boolean | null, updateDate?: string | null, dataSource?: string | null, credits?: number | null }[] | null, company?: { id?: string | null, name?: string | null, domain?: string | null, industry?: string | null } | null, socialLinks?: { linkedin?: string | null, xUrl?: string | null } | null, previousEmployment?: Record<string, any>[] | null, linkedinFollowers?: number | null, linkedinConnections?: number | null, partialProfile?: boolean | null, updateDate?: string | null, error?: { code?: string | null, message?: string | null } | null, missingDataPoints?: { type?: string | null, status?: string | null, description?: string | null }[] | null }[]"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "completed | partial | halted | OUT_OF_CREDITS | PARTIAL_OUT_OF_CREDITS | null"
+          },
+          {
+            "key": "statusDescription",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "statusReason",
+            "optional": true,
+            "type": "WATERFALL_NOT_CONFIGURED | WATERFALL_NOT_IN_PLAN | WATERFALL_DISABLED | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.person.searchContacts",
+      "shortPath": "person.searchContacts",
+      "description": "Look up up to 100 contacts by id, LinkedIn URL, email, or name plus company, and get previews that say which data points exist and what revealing them costs. Charges credits per matched result.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ clientReferenceId?: string, id?: string, linkedinUrl?: string, email?: string, firstName?: string, lastName?: string, companyName?: string, companyDomain?: string }[]",
+            "description": "1 to 100 contacts to look up, each with exactly one identifier."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ includePartialProfiles?: boolean }"
+          },
+          {
+            "key": "signals",
+            "optional": true,
+            "type": "{ types: (allSignals | promotion | companyChange)[], startDate?: string, maxResultsPerSignal?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ clientReferenceId?: string | null, id?: string | null, firstName?: string | null, lastName?: string | null, jobTitle?: { title?: string | null, departments?: string[] | null, seniority?: string | null, startDate?: string | null } | null, company?: { id?: string | null, name?: string | null, domain?: string | null, industry?: string | null } | null, location?: { country?: string | null, countryIso2?: string | null, continent?: string | null, state?: string | null, stateCode?: string | null, city?: string | null, zipCode?: string | null, coordinates?: number[] | null, isEuContact?: boolean | null } | null, socialLinks?: { linkedin?: string | null, xUrl?: string | null } | null, has?: string[] | null, canReveal?: { field?: string | null, credits?: number | null, source?: string | null, availability?: string | null, vendors?: string[] | null }[] | null, signalTypes?: string[] | null, error?: { code?: string | null, message?: string | null } | null }[]"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null, resultsReturned?: number | null, lowBalance?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.subscriptions.create",
+      "shortPath": "subscriptions.create",
+      "description": "Create Subscription. Creates one or more webhook subscriptions for real-time signal notifications. Billing: Lusha charges credits for each signal it delivers to a subscription. Needs an account webhook secret, set in the Lusha dashboard. The secret is never returned here.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "defaults",
+            "optional": false,
+            "type": "{ url: string, entityType?: contact | company, signalTypes?: string[] }"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Default subscription name prefix"
+          },
+          {
+            "key": "subscriptions",
+            "optional": false,
+            "type": "{ entityId: string, entityType?: contact | company, signalTypes?: string[], name?: string }[]",
+            "description": "Array of subscriptions to create (max 25)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "successful",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "failed",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "({ index?: number | null, success?: boolean | null, subscription?: { id?: string | number | null, entityType?: string | null, entityId?: string | number | null, signalTypes?: string[] | null, url?: string | null, name?: string | null, isActive?: boolean | null, blockReason?: string | null, blockedAt?: string | null, createdAt?: string | null, updatedAt?: string | null } | null } | { index?: number | null, success?: boolean | null, error?: { code?: string | null, message?: string | null } | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.subscriptions.createOptOut",
+      "shortPath": "subscriptions.createOptOut",
+      "description": "Create Opt-Out Subscription. Subscribe to real-time notifications when a contact opts out of data processing. Needs an account webhook secret, set in the Lusha dashboard.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entityType",
+            "optional": false,
+            "type": "contact",
+            "description": "Entity type for opt-out subscriptions. Currently only 'contact' is supported."
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Your webhook endpoint URL (HTTPS required in production)"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Descriptive name for this subscription"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "entityType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "entityId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "signalTypes",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.subscriptions.delete",
+      "shortPath": "subscriptions.delete",
+      "description": "Delete Subscriptions. Delete one or more webhook subscriptions. Deletes 1 to 25 subscriptions; this cannot be undone.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "Array of subscription IDs to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "successful",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "failed",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "({ index?: number | null, success?: boolean | null, subscription?: { id?: string | number | null, entityType?: string | null, entityId?: string | number | null, name?: string | null } | null } | { index?: number | null, success?: boolean | null, error?: { code?: string | null, message?: string | null } | null })[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.subscriptions.get",
+      "shortPath": "subscriptions.get",
+      "description": "Get Subscription by ID. Returns a single webhook subscription by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Subscription ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "entityType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "entityId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "signalTypes",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "blockReason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "blockedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.subscriptions.list",
+      "shortPath": "subscriptions.list",
+      "description": "List Subscriptions. Returns all webhook subscriptions for your account with pagination support.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results (1-100)"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results to skip"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number | null, entityType?: string | null, entityId?: string | number | null, signalTypes?: string[] | null, url?: string | null, name?: string | null, isActive?: boolean | null, blockReason?: string | null, blockedAt?: string | null, createdAt?: string | null, updatedAt?: string | null }[] | null"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ total?: number | null, limit?: number | null, offset?: number | null, hasMore?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.subscriptions.test",
+      "shortPath": "subscriptions.test",
+      "description": "Test Subscription. Test a webhook subscription by sending a test signal. Billing: test deliveries are free.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Subscription ID"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "direct | kafka | full",
+            "description": "Test mode"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "subscriptionId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "subscriptionName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "flowCheck",
+            "optional": true,
+            "type": "{ success?: boolean | null, statusCode?: number | null, durationMs?: number | null, error?: string | null } | null"
+          },
+          {
+            "key": "testPayload",
+            "optional": true,
+            "type": "{ entityType?: string | null, signalType?: string | null, data?: Record<string, any> | null } | null"
+          },
+          {
+            "key": "isSuccess",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lusha.api.subscriptions.update",
+      "shortPath": "subscriptions.update",
+      "description": "Update Subscription. Updates an existing webhook subscription. Setting isActive true reactivates a subscription that was disabled after failed deliveries; active subscriptions are charged per delivered signal.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Subscription ID"
+          },
+          {
+            "key": "signalTypes",
+            "optional": true,
+            "type": "string[]",
+            "description": "New signal types to subscribe to"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "New webhook URL"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "New subscription name"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean",
+            "description": "Enable or disable subscription"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "entityType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "entityId",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "signalTypes",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "lusha.webhooks.optOuts.received",
+      "shortPath": "optOuts.received",
+      "description": "A contact opted out of Lusha data processing; remove the listed emails and phone numbers from your own systems.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "fullName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "jobTitle",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "linkedinUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contactOptOutDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contactExposureDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "datapoints",
+            "optional": false,
+            "type": "{ datapointId?: string | null, datapointType?: string | null }[]"
+          },
+          {
+            "key": "partnerClientId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "responseType": "{ contactId: string | number, fullName?: string | null, companyName?: string | null, jobTitle?: string | null, linkedinUrl?: string | null, contactOptOutDate?: string | null, contactExposureDate?: string | null, datapoints: { datapointId?: string | null, datapointType?: string | null }[], partnerClientId?: string | null }",
+      "usageExample": "lusha({\n    webhookHooks: {\n        optOuts: {\n            received: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "lusha.webhooks.signals.received",
+      "shortPath": "signals.received",
+      "description": "A signal for a subscribed contact or company (promotion, company change, news, hiring, intent...). Lusha charges the credits in billing.creditsCharged for each delivery.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entityType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entityId",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "subscriptionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "billing",
+            "optional": true,
+            "type": "{ creditsCharged?: number | null } | null"
+          }
+        ]
+      },
+      "responseType": "{ id: string, type: string, entityType: string, entityId: string | number, subscriptionId?: string | null, data?: Record<string, any> | null, timestamp?: string | null, billing?: { creditsCharged?: number | null } | null }",
+      "usageExample": "lusha({\n    webhookHooks: {\n        signals: {\n            received: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

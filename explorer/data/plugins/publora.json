@@ -1,0 +1,3098 @@
+{
+  "id": "publora",
+  "displayName": "Publora",
+  "description": "Draft, schedule and publish posts with text, media and first comments to LinkedIn, X, Instagram, Threads, TikTok, YouTube, Facebook Pages, Bluesky, Mastodon and Telegram, check plan quotas, upload media, read Mastodon, Bluesky and LinkedIn analytics, comment and react on LinkedIn, run Agency workspaces with client reviews, and receive signed post events.",
+  "npmPackageName": "@corsair-dev/publora",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 57,
+    "webhooks": 4,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "publora.api.accounts.getContext",
+      "shortPath": "accounts.getContext",
+      "description": "The plan, features, monthly and scheduled post quotas, latest allowed schedule date and allowed networks of the key's account. Check it before a batch of posts.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scheduledTime",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 date-time of a planned batch; selects its monthly quota period. Omit for the current period."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "context",
+            "optional": false,
+            "type": "{ plan?: { key?: string | null, name?: string | null } | null, features?: Record<string, boolean> | null, quotas?: { monthlyPosts?: { metric?: string | null, scope?: string | null, unit?: string | null, limit?: number | null, used?: number | null, remaining?: number | null, resetAt?: string | null } | null, scheduledPosts?: { metric?: string | null, scope?: string | null, unit?: string | null, limit?: number | null, used?: number | null, remaining?: number | null, resetAt?: string | null } | null, scheduleHorizon?: { limit?: number | null, maxScheduledDate?: string | null } | null, connections?: { metric?: string | null, scope?: string | null, unit?: string | null, limit?: number | null, used?: number | null, remaining?: number | null, resetAt?: string | null } | null } | null, allowedPlatforms?: string[] | null, serverTime?: string | null, advisory?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.accounts.getPlatformLimits",
+      "shortPath": "accounts.getPlatformLimits",
+      "description": "Live per-network limits Publora checks before scheduling (characters, images, videos, documents, GIFs, thumbnails). Use them to validate a post before sending it.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "schemaVersion",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "packageVersion",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "limitsLastUpdated",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "supportedPlatforms",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "platforms",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.accounts.list",
+      "shortPath": "accounts.list",
+      "description": "List connected social accounts (LinkedIn, X, Instagram, Threads, TikTok, YouTube, Facebook Pages, Bluesky, Mastodon, Telegram) with connection and token status. Their platformId values are the targets for posts.create.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "connections",
+            "optional": false,
+            "type": "{ platformId: string, username?: string | null, displayName?: string | null, profileImageUrl?: string | null, profileUrl?: string | null, connectionStatus?: string | null, tokenStatus?: string | null, accessTokenExpiresAt?: string | null, tokenExpiresIn?: string | null, lastSuccessfulPost?: string | null, lastError?: { message?: string | null, occurredAt?: string | null } | null, subscriptionType?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.accounts.testConnection",
+      "shortPath": "accounts.testConnection",
+      "description": "Check that one connected account still works: token status, granted permissions and the last error, if any.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "platformId",
+            "optional": false,
+            "type": "string",
+            "description": "Connection id from accounts.list (platformId)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "platformId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "ok or error"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "permissions",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "permissionsKnown",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "tokenExpiresIn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastSuccessfulPost",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastError",
+            "optional": true,
+            "type": "{ message?: string | null, occurredAt?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.analytics.postStatistics",
+      "shortPath": "analytics.postStatistics",
+      "description": "Engagement counters (reactions, comments, reposts, quotes, saves and more) for up to 50 published Mastodon or Bluesky posts. Cached for about 2 hours; needs a plan with analytics.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ platform: mastodon | bluesky, platformId: string, postedId: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "stats",
+            "optional": true,
+            "type": "Record<string, { reactions?: number | null, comments?: number | null, reposts?: number | null, quotes?: number | null, saves?: number | null, impressions?: number | null, reach?: number | null, clicks?: number | null } | null> | null"
+          },
+          {
+            "key": "rateLimited",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "issues",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.analytics.profileStatistics",
+      "shortPath": "analytics.profileStatistics",
+      "description": "Followers, following and post count of one connected Mastodon or Bluesky account. Cached for about 2 hours; needs a plan with analytics.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "platform",
+            "optional": false,
+            "type": "mastodon | bluesky"
+          },
+          {
+            "key": "platformId",
+            "optional": false,
+            "type": "string",
+            "description": "Connection id from accounts.list (platformId)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "{ followers?: number | null, following?: number | null, posts?: number | null } | null"
+          },
+          {
+            "key": "cached",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "fetchedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rateLimited",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "unavailable",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.getWorkspaceContext",
+      "shortPath": "company.getWorkspaceContext",
+      "description": "Context of one Agency Account and Workspace, to refresh its capabilities before a command.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string",
+            "description": "Account id from company.listContexts"
+          },
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ schemaVersion?: number | null, defaultContext?: { accountId?: string | null, workspaceId?: string | null } | null, singleContext?: boolean | null, accounts?: { id?: string | null, membershipId?: string | null, name?: string | null, logoUrl?: string | null, kind?: string | null, status?: string | null, billing?: Record<string, any> | null, accountRole?: string | null, presentationMode?: string | null, runtimeMode?: string | null, publishingPaused?: boolean | null, commandVersion?: number | null, capabilities?: Record<string, any> | null, workspaces?: { id?: string | null, name?: string | null, capabilities?: Record<string, any> | null }[] | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.listConnections",
+      "shortPath": "company.listConnections",
+      "description": "Publishing channels of a Workspace. Their channel keys (<platform>-<platformId>) are the platforms of company drafts. A channel with status reconnect_required must be reconnected before scheduling.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "includeLinkedinReconnectRecommended",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add linkedinReconnectRecommended to LinkedIn channels"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ accountId?: string | null, workspaceId?: string | null, items?: { id?: string | null, accountId?: string | null, workspaceId?: string | null, platform?: string | null, platformId?: string | null, username?: string | null, displayName?: string | null, profileImageUrl?: string | null, profileUrl?: string | null, connectionSubtype?: string | null, subscriptionType?: string | null, status?: string | null, lastSuccessfulPost?: string | null, lastErrorAt?: string | null, addedAt?: string | null, linkedinReconnectRecommended?: boolean | null, activationStatus?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.listContexts",
+      "shortPath": "company.listContexts",
+      "description": "Agency API start point: the Accounts and Workspaces the key's owner can act in, with each Workspace's capabilities. Pass a workspace id to the other company operations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ schemaVersion?: number | null, defaultContext?: { accountId?: string | null, workspaceId?: string | null } | null, singleContext?: boolean | null, accounts?: { id?: string | null, membershipId?: string | null, name?: string | null, logoUrl?: string | null, kind?: string | null, status?: string | null, billing?: Record<string, any> | null, accountRole?: string | null, presentationMode?: string | null, runtimeMode?: string | null, publishingPaused?: boolean | null, commandVersion?: number | null, capabilities?: Record<string, any> | null, workspaces?: { id?: string | null, name?: string | null, capabilities?: Record<string, any> | null }[] | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.listPlatforms",
+      "shortPath": "company.listPlatforms",
+      "description": "Publishable networks with the text, media and platformSettings limits of Agency drafts.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "includeXPremiumLimits",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add X character limits per subscription type"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ publishablePlatforms?: string[] | null, connectOnlyPlatforms?: string[] | null, basicVariants?: Record<string, any> | null, xPostCharacterLimits?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.posts.cancelApproval",
+      "shortPath": "company.posts.cancelApproval",
+      "description": "Remove the client review from a draft so it can be scheduled without the client's approval. Use only when the user asks.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Post group id"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ result?: string | null, postGroupId?: string | null, status?: string | null, requestedAt?: string | null, decidedAt?: string | null, expiresAt?: string | null, reviewId?: string | null, managerComment?: string | null, reviewUrl?: string | null, expired?: boolean | null, decision?: any, notificationStatus?: string | null, publication?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.posts.completeMedia",
+      "shortPath": "company.posts.completeMedia",
+      "description": "Verify an uploaded Agency media file after the PUT. On 409 AGENCY_CORE_MEDIA_UPLOAD_PENDING retry after Retry-After.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Post group id"
+          },
+          {
+            "key": "mediaFileId",
+            "optional": false,
+            "type": "string",
+            "description": "mediaFileId from company.posts.reserveMedia"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ accountId?: string | null, workspaceId?: string | null, mediaFileId?: string | null, postGroupId?: string | null, status?: string | null, contentType?: string | null, type?: string | null, sizeBytes?: number | null, purpose?: string | null, fileUrl?: string | null, metadata?: Record<string, any> | null, bytesProbedAt?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.posts.createDraft",
+      "shortPath": "company.posts.createDraft",
+      "description": "Create an Agency draft in a Workspace (text, channels, per-channel text, settings, first comment). It never schedules; use company.posts.schedule.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response."
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "Base post text"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string",
+            "description": "Internal notes"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platforms",
+            "optional": true,
+            "type": "string[]",
+            "description": "Channel keys from company.listConnections (<platform>-<platformId>)"
+          },
+          {
+            "key": "platformContents",
+            "optional": true,
+            "type": "Record<string, { content: string, isBase: boolean }>",
+            "description": "Per-channel text keyed by channel key"
+          },
+          {
+            "key": "isPlatformSpecific",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sameContent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "platformSettings",
+            "optional": true,
+            "type": "Record<string, Record<string, any>>",
+            "description": "Per-network settings (threads, tiktok, instagram, youtube, linkedin, telegram, twitter); discover them with company.listPlatforms"
+          },
+          {
+            "key": "videoTimestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "firstComment",
+            "optional": true,
+            "type": "{ text: string, platforms?: (twitter | threads | bluesky | tiktok | instagram | mastodon | youtube | linkedin | telegram | facebook)[] } | null",
+            "description": "One first comment under the published post; null clears it"
+          },
+          {
+            "key": "repostSourceSnapshot",
+            "optional": true,
+            "type": "{ postedId: string, commentary: string, authorName?: string | null, publishedAt?: string | null, capturedAt: string } | null",
+            "description": "LinkedIn post shown as the review preview of a reshare"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ result?: string | null, accountId?: string | null, workspaceId?: string | null, groupId?: string | null, postIds?: string[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.posts.get",
+      "shortPath": "company.posts.get",
+      "description": "An Agency post group and its channel posts: status, errors, and postedId and permalink once published. includeApproval adds the client review.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Post group id"
+          },
+          {
+            "key": "includeApproval",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add the client review (declined reviews included)"
+          },
+          {
+            "key": "includePublishDeferral",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeRepostSource",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ group: { id?: string | null, accountId?: string | null, workspaceId?: string | null, approval?: Record<string, any> | null, scheduledTime?: string | null, platforms?: string[] | null, platformContents?: Record<string, any> | null, isPlatformSpecific?: boolean | null, sameContent?: boolean | null, topic?: string | null, content?: string | null, notes?: string | null, videoTimestamp?: number | null, mediaFileIds?: string[] | null, postIds?: string[] | null, status?: string | null, processingStatus?: string | null, platformSettings?: Record<string, any> | null, errorMessage?: string | null, createdAt?: string | null, updatedAt?: string | null }, posts?: { id?: string | null, postGroupId?: string | null, content?: string | null, platform?: string | null, platformId?: string | null, status?: string | null, error?: { code?: string | null, message?: string | null, platformStatusCode?: number | null } | null, postedId?: string | null, permalink?: string | null, publishedAt?: string | null, createdAt?: string | null, updatedAt?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.posts.getApproval",
+      "shortPath": "company.posts.getApproval",
+      "description": "The client review of an Agency post group: status, comment, private review URL, expiry and decision.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Post group id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ result?: string | null, postGroupId?: string | null, status?: string | null, requestedAt?: string | null, decidedAt?: string | null, expiresAt?: string | null, reviewId?: string | null, managerComment?: string | null, reviewUrl?: string | null, expired?: boolean | null, decision?: any, notificationStatus?: string | null, publication?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.posts.listMedia",
+      "shortPath": "company.posts.listMedia",
+      "description": "Media and the selected YouTube thumbnail of an Agency post group; url is set only for ready files.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Post group id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ accountId?: string | null, workspaceId?: string | null, postGroupId?: string | null, mediaFileIds?: string[] | null, items?: { id?: string | null, url?: string | null, type?: string | null, mimeType?: string | null, status?: string | null, purpose?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.posts.recover",
+      "shortPath": "company.posts.recover",
+      "description": "Copy the failed channels of a failed or partly published post group into a new draft, with its media. The source is not changed.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Post group id"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ result?: string | null, accountId?: string | null, workspaceId?: string | null, sourceGroupId?: string | null, groupId?: string | null, status?: string | null, postIds?: string[] | null, recoveredPlatforms?: string[] | null, excludedPlatforms?: any[] | null, mediaCount?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.posts.removeMedia",
+      "shortPath": "company.posts.removeMedia",
+      "description": "Detach a file from an Agency draft; storage deletes it after deletionAfter. A requested client review becomes outdated.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Post group id"
+          },
+          {
+            "key": "mediaFileId",
+            "optional": false,
+            "type": "string",
+            "description": "mediaFileId from company.posts.reserveMedia"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ accountId?: string | null, workspaceId?: string | null, mediaFileId?: string | null, postGroupId?: string | null, status?: string | null, deletionAfter?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.posts.requestApproval",
+      "shortPath": "company.posts.requestApproval",
+      "description": "Start a client review round for a draft and get a private review URL. Publora does not send the URL; deliver it yourself. Editing the draft afterwards makes the round outdated.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Post group id"
+          },
+          {
+            "key": "managerComment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scheduledTime",
+            "optional": true,
+            "type": "string | null",
+            "description": "Publication time shown to the client"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ result?: string | null, postGroupId?: string | null, status?: string | null, requestedAt?: string | null, decidedAt?: string | null, expiresAt?: string | null, reviewId?: string | null, managerComment?: string | null, reviewUrl?: string | null, expired?: boolean | null, decision?: any, notificationStatus?: string | null, publication?: Record<string, any> | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.posts.reschedule",
+      "shortPath": "company.posts.reschedule",
+      "description": "Move a scheduled Agency post to another time, before publishing starts.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Post group id"
+          },
+          {
+            "key": "scheduledTime",
+            "optional": false,
+            "type": "string",
+            "description": "UTC time with milliseconds. To publish now send the current time, and the same value on retries."
+          },
+          {
+            "key": "includeValidationDetails",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add validationErrors to a failed publishing check"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ result?: string | null, accountId?: string | null, workspaceId?: string | null, groupId?: string | null, scheduledTime?: string | null, postCount?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.posts.reserveMedia",
+      "shortPath": "company.posts.reserveMedia",
+      "description": "Reserve an upload for an Agency draft (or a YouTube thumbnail). PUT the exact bytes to uploadUrl with every uploadHeaders entry, then call company.posts.completeMedia.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Post group id"
+          },
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "image/jpeg | image/png | image/gif | image/webp | image/tiff | image/avif | video/mp4 | video/quicktime | video/webm | application/pdf"
+          },
+          {
+            "key": "sizeBytes",
+            "optional": false,
+            "type": "number",
+            "description": "Exact byte size of the file"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "image | video | document"
+          },
+          {
+            "key": "purpose",
+            "optional": true,
+            "type": "youtube_thumbnail",
+            "description": "Reserve a YouTube thumbnail instead of post media"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ accountId?: string | null, workspaceId?: string | null, mediaFileId?: string | null, postGroupId?: string | null, uploadUrl?: string | null, uploadHeaders?: Record<string, string> | null, fileUrl?: string | null, contentType?: string | null, type?: string | null, sizeBytes?: number | null, expiresAt?: string | null, status?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.posts.retryApprovalNotification",
+      "shortPath": "company.posts.retryApprovalNotification",
+      "description": "Send the review decision email to the user who requested the review again, when notificationStatus is failed.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Post group id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ notificationStatus?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.posts.schedule",
+      "shortPath": "company.posts.schedule",
+      "description": "Schedule an Agency draft for a UTC time; the current time publishes it now. Channels must be usable, media ready and, while a client review is requested, approved.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Post group id"
+          },
+          {
+            "key": "scheduledTime",
+            "optional": false,
+            "type": "string",
+            "description": "UTC time with milliseconds. To publish now send the current time, and the same value on retries."
+          },
+          {
+            "key": "includeValidationDetails",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add validationErrors to a failed publishing check"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ result?: string | null, accountId?: string | null, workspaceId?: string | null, groupId?: string | null, scheduledTime?: string | null, postCount?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.posts.unschedule",
+      "shortPath": "company.posts.unschedule",
+      "description": "Return a scheduled Agency post to draft, before publishing starts. Allowed while billing is required.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Post group id"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ result?: string | null, accountId?: string | null, workspaceId?: string | null, groupId?: string | null, status?: string | null, postCount?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.posts.updateDraft",
+      "shortPath": "company.posts.updateDraft",
+      "description": "Change an Agency draft. Omitted fields keep their value. Editing makes a requested client review outdated.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Post group id"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response."
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "Base post text"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string",
+            "description": "Internal notes"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platforms",
+            "optional": true,
+            "type": "string[]",
+            "description": "Channel keys from company.listConnections (<platform>-<platformId>)"
+          },
+          {
+            "key": "platformContents",
+            "optional": true,
+            "type": "Record<string, { content: string, isBase: boolean }>",
+            "description": "Per-channel text keyed by channel key"
+          },
+          {
+            "key": "isPlatformSpecific",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sameContent",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "platformSettings",
+            "optional": true,
+            "type": "Record<string, Record<string, any>>",
+            "description": "Per-network settings (threads, tiktok, instagram, youtube, linkedin, telegram, twitter); discover them with company.listPlatforms"
+          },
+          {
+            "key": "videoTimestamp",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "firstComment",
+            "optional": true,
+            "type": "{ text: string, platforms?: (twitter | threads | bluesky | tiktok | instagram | mastodon | youtube | linkedin | telegram | facebook)[] } | null",
+            "description": "One first comment under the published post; null clears it"
+          },
+          {
+            "key": "repostSourceSnapshot",
+            "optional": true,
+            "type": "{ postedId: string, commentary: string, authorName?: string | null, publishedAt?: string | null, capturedAt: string } | null",
+            "description": "LinkedIn post shown as the review preview of a reshare"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ result?: string | null, accountId?: string | null, workspaceId?: string | null, groupId?: string | null, postIds?: string[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.webhooks.create",
+      "shortPath": "company.webhooks.create",
+      "description": "Subscribe a URL to a Workspace's post.published and post.failed events (up to 10). The reply is the only time the signing secret is shown.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "(post.published | post.failed)[]"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ accountId?: string | null, workspaceId?: string | null, webhook: { id?: string | null, name?: string | null, url?: string | null, events?: string[] | null, isActive?: boolean | null, failureCount?: number | null, lastTriggeredAt?: string | null, createdAt?: string | null, updatedAt?: string | null }, secret: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.webhooks.delete",
+      "shortPath": "company.webhooks.delete",
+      "description": "Delete a Workspace webhook subscription.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "Subscription id from company.webhooks.list"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ accountId?: string | null, workspaceId?: string | null, webhookId?: string | null, deleted?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.webhooks.list",
+      "shortPath": "company.webhooks.list",
+      "description": "Webhook subscriptions of a Workspace (post.published, post.failed). Workspace settings managers only.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ accountId?: string | null, workspaceId?: string | null, items?: { id?: string | null, name?: string | null, url?: string | null, events?: string[] | null, isActive?: boolean | null, failureCount?: number | null, lastTriggeredAt?: string | null, createdAt?: string | null, updatedAt?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.webhooks.regenerateSecret",
+      "shortPath": "company.webhooks.regenerateSecret",
+      "description": "Issue a new signing secret for a Workspace subscription; the old one stops working at once.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "Subscription id from company.webhooks.list"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ accountId?: string | null, workspaceId?: string | null, webhook: { id?: string | null, name?: string | null, url?: string | null, events?: string[] | null, isActive?: boolean | null, failureCount?: number | null, lastTriggeredAt?: string | null, createdAt?: string | null, updatedAt?: string | null }, secret: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.company.webhooks.update",
+      "shortPath": "company.webhooks.update",
+      "description": "Change a Workspace subscription's name, URL or events, or turn it on or off.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspaceId",
+            "optional": false,
+            "type": "string",
+            "description": "Workspace id from company.listContexts (accounts[].workspaces[].id), sent as X-Publora-Workspace-Id"
+          },
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "Subscription id from company.webhooks.list"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "(post.published | post.failed)[]"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Idempotency-Key header (required by Publora; generated when omitted). Send the same key and body to retry after an uncertain response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ accountId?: string | null, workspaceId?: string | null, webhook: { id?: string | null, name?: string | null, url?: string | null, events?: string[] | null, isActive?: boolean | null, failureCount?: number | null, lastTriggeredAt?: string | null, createdAt?: string | null, updatedAt?: string | null } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.linkedin.accountStatistics",
+      "shortPath": "linkedin.accountStatistics",
+      "description": "Totals or daily figures across all published LinkedIn posts of one account, optionally for a date range.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "platformId",
+            "optional": false,
+            "type": "string",
+            "description": "Connection id from accounts.list (platformId)"
+          },
+          {
+            "key": "queryType",
+            "optional": true,
+            "type": "IMPRESSION | MEMBERS_REACHED | RESHARE | REACTION | COMMENT"
+          },
+          {
+            "key": "queryTypes",
+            "optional": true,
+            "type": "(IMPRESSION | MEMBERS_REACHED | RESHARE | REACTION | COMMENT)[] | ALL",
+            "description": "Several metrics at once, or \"ALL\" for all five"
+          },
+          {
+            "key": "aggregation",
+            "optional": true,
+            "type": "TOTAL | DAILY"
+          },
+          {
+            "key": "dateRange",
+            "optional": true,
+            "type": "{ start?: { year: number, month: number, day: number }, end?: { year: number, month: number, day: number } }",
+            "description": "Date range as { start: {year, month, day}, end: {...} }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "aggregation",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cached",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.linkedin.addReaction",
+      "shortPath": "linkedin.addReaction",
+      "description": "React to a LinkedIn post as the connected account (LIKE, PRAISE, EMPATHY, INTEREST, APPRECIATION or ENTERTAINMENT). The reaction is public.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postedId",
+            "optional": false,
+            "type": "string",
+            "description": "LinkedIn post URN (postedId from posts.get)"
+          },
+          {
+            "key": "reactionType",
+            "optional": false,
+            "type": "LIKE | PRAISE | EMPATHY | INTEREST | APPRECIATION | ENTERTAINMENT"
+          },
+          {
+            "key": "platformId",
+            "optional": false,
+            "type": "string",
+            "description": "Connection id from accounts.list (platformId)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "reaction",
+            "optional": true,
+            "type": "{ reactionType?: string | null, actor?: string | null, object?: string | null } | null"
+          },
+          {
+            "key": "urnTranslated",
+            "optional": true,
+            "type": "{ from?: string | null, to?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.linkedin.createComment",
+      "shortPath": "linkedin.createComment",
+      "description": "Publish a comment, or a reply to a comment, on a LinkedIn post as the connected account. Supports @mentions and an image.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postedId",
+            "optional": false,
+            "type": "string",
+            "description": "LinkedIn post URN (postedId from posts.get)"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Comment text; may be empty only with imageUrl. Mentions: @{urn:li:person:ID|Name}"
+          },
+          {
+            "key": "platformId",
+            "optional": false,
+            "type": "string",
+            "description": "Connection id from accounts.list (platformId)"
+          },
+          {
+            "key": "parentComment",
+            "optional": true,
+            "type": "string",
+            "description": "Comment URN to reply to"
+          },
+          {
+            "key": "imageUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "{ id?: string | null, message?: string | null, imageUrn?: string | null, actor?: string | null, object?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.linkedin.deleteComment",
+      "shortPath": "linkedin.deleteComment",
+      "description": "Delete a comment from a LinkedIn post.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postedId",
+            "optional": false,
+            "type": "string",
+            "description": "LinkedIn post URN (postedId from posts.get)"
+          },
+          {
+            "key": "commentId",
+            "optional": false,
+            "type": "string",
+            "description": "Comment id or URN"
+          },
+          {
+            "key": "platformId",
+            "optional": false,
+            "type": "string",
+            "description": "Connection id from accounts.list (platformId)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.linkedin.followers",
+      "shortPath": "linkedin.followers",
+      "description": "LinkedIn follower count (lifetime) or daily follower growth for a date range.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "platformId",
+            "optional": false,
+            "type": "string",
+            "description": "Connection id from accounts.list (platformId)"
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "lifetime | daily"
+          },
+          {
+            "key": "dateRange",
+            "optional": true,
+            "type": "{ start?: { year: number, month: number, day: number }, end?: { year: number, month: number, day: number } }",
+            "description": "Date range as { start: {year, month, day}, end: {...} }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "followersCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ date?: string | null, count?: number | null }[] | null"
+          },
+          {
+            "key": "totalGrowth",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "cached",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.linkedin.mentionables",
+      "shortPath": "linkedin.mentionables",
+      "description": "LinkedIn members you can @mention, collected from comments and reactions on connected company pages, each with a ready mention token. Paid plans only.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Name to search for"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "people",
+            "optional": true,
+            "type": "{ personId?: string | null, name?: string | null, profileUrl?: string | null, profilePicture?: string | null, source?: string | null, lastSeenAt?: string | null, mention?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.linkedin.postStatistics",
+      "shortPath": "linkedin.postStatistics",
+      "description": "Analytics for one LinkedIn post: impressions, members reached, reactions, comments and reshares. queryTypes \"ALL\" returns all five. Cached for 2 hours.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postedId",
+            "optional": false,
+            "type": "string",
+            "description": "LinkedIn post URN (postedId from posts.get)"
+          },
+          {
+            "key": "platformId",
+            "optional": false,
+            "type": "string",
+            "description": "Connection id from accounts.list (platformId)"
+          },
+          {
+            "key": "queryType",
+            "optional": true,
+            "type": "IMPRESSION | MEMBERS_REACHED | RESHARE | REACTION | COMMENT"
+          },
+          {
+            "key": "queryTypes",
+            "optional": true,
+            "type": "(IMPRESSION | MEMBERS_REACHED | RESHARE | REACTION | COMMENT)[] | ALL",
+            "description": "Several metrics at once, or \"ALL\" for all five"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "metrics",
+            "optional": true,
+            "type": "Record<string, number> | null"
+          },
+          {
+            "key": "cached",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.linkedin.profileSummary",
+      "shortPath": "linkedin.profileSummary",
+      "description": "LinkedIn profile summary: follower total and growth, plus aggregated post impressions, reactions, comments, reshares and reach.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "platformId",
+            "optional": false,
+            "type": "string",
+            "description": "Connection id from accounts.list (platformId)"
+          },
+          {
+            "key": "dateRange",
+            "optional": true,
+            "type": "{ start?: { year: number, month: number, day: number }, end?: { year: number, month: number, day: number } }",
+            "description": "Date range as { start: {year, month, day}, end: {...} }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "partialData",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "{ followers?: { total?: number | null, periodGrowth?: number | null } | null, posts?: { totalImpressions?: number | null, totalReactions?: number | null, totalComments?: number | null, totalReshares?: number | null, totalMembersReached?: number | null } | null } | null"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ metric?: string | null, error?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.linkedin.removeReaction",
+      "shortPath": "linkedin.removeReaction",
+      "description": "Remove the connected account's reaction from a LinkedIn post.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postedId",
+            "optional": false,
+            "type": "string",
+            "description": "LinkedIn post URN (postedId from posts.get)"
+          },
+          {
+            "key": "platformId",
+            "optional": false,
+            "type": "string",
+            "description": "Connection id from accounts.list (platformId)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "reaction",
+            "optional": true,
+            "type": "{ reactionType?: string | null, actor?: string | null, object?: string | null } | null"
+          },
+          {
+            "key": "urnTranslated",
+            "optional": true,
+            "type": "{ from?: string | null, to?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.linkedin.reshare",
+      "shortPath": "linkedin.reshare",
+      "description": "Reshare a LinkedIn post to the connected account's feed (member or company page), with optional commentary. It is published right away.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "platformId",
+            "optional": false,
+            "type": "string",
+            "description": "Connection id from accounts.list (platformId)"
+          },
+          {
+            "key": "parent",
+            "optional": false,
+            "type": "string",
+            "description": "URN of the LinkedIn post to reshare"
+          },
+          {
+            "key": "commentary",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "PUBLIC | CONNECTIONS"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "reshare",
+            "optional": true,
+            "type": "{ id?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.media.attach",
+      "shortPath": "media.attach",
+      "description": "Attach one image or video to a draft or scheduled post by reference (an HTTPS download URL and a stable file id). Publora downloads it right away. A scheduled post goes back to draft and keeps its time.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Draft or scheduled post group id"
+          },
+          {
+            "key": "file",
+            "optional": false,
+            "type": "{ download_url: string, file_id: string, mime_type?: string, file_name?: string }"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the Idempotency-Key header. A repeat with the same key and body returns the first result instead of acting twice."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "scheduledTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "postGroup",
+            "optional": true,
+            "type": "{ _id?: string | null, status?: string | null, content?: string | null, platforms?: string[] | null, scheduledTime?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.media.complete",
+      "shortPath": "media.complete",
+      "description": "Check an uploaded file right away instead of when the post is scheduled. Optional.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mediaId",
+            "optional": false,
+            "type": "string",
+            "description": "mediaId from media.createUpload"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "mediaFile",
+            "optional": false,
+            "type": "{ _id: string, type?: string | null, mimeType?: string | null, fileName?: string | null, url?: string | null, status?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.media.createUpload",
+      "shortPath": "media.createUpload",
+      "description": "Get a pre-signed URL (valid for an hour) to PUT an image, video or PDF to, attached to a draft or scheduled post group. Use this for files that are not at a public URL.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Post group to attach the file to (create a draft first)"
+          },
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string",
+            "description": "File name, e.g. \"photo.jpg\""
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "MIME type: image/*, video/* or application/pdf"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "image | video | document",
+            "description": "Media type; inferred from contentType when omitted"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "uploadUrl",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mediaId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.media.delete",
+      "shortPath": "media.delete",
+      "description": "Remove an uploaded file from its post group. A scheduled post goes back to draft.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mediaId",
+            "optional": false,
+            "type": "string",
+            "description": "mediaId of the attached file"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.media.uploadInstagramCover",
+      "shortPath": "media.uploadInstagramCover",
+      "description": "Upload a cover image for an Instagram Reel (stored as JPEG). Set the returned URL as platformSettings.instagram.coverUrl with posts.update.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Draft or scheduled post group id"
+          },
+          {
+            "key": "cover",
+            "optional": false,
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string }",
+            "description": "The cover image (JPEG, PNG or WebP): a public URL, {url}, or {base64}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "cover",
+            "optional": true,
+            "type": "{ mediaId?: string | null, url?: string | null } | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.media.uploadYoutubeThumbnail",
+      "shortPath": "media.uploadYoutubeThumbnail",
+      "description": "Upload a custom YouTube thumbnail (JPEG or PNG, 2 MB max, at least 640x360) for a draft or scheduled post. Attach the returned mediaId as platformSettings.youtube.thumbnail with posts.update.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Draft or scheduled post group id"
+          },
+          {
+            "key": "thumbnail",
+            "optional": false,
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string }",
+            "description": "JPEG or PNG, at most 2 MB, at least 640x360: a public URL, {url}, or {base64}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "{ mediaId?: string | null, url?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.posts.create",
+      "shortPath": "posts.create",
+      "description": "Create one post for one or more connected accounts, with text, media URLs, per-network settings and first comments. Without scheduledTime or publishNow it is saved as a draft; with scheduledTime it is scheduled; publishNow publishes it right away and it cannot be recalled once live. An idempotencyKey makes a retry return the original post.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "Post text. Required unless the only target is a LinkedIn repost."
+          },
+          {
+            "key": "platforms",
+            "optional": false,
+            "type": "string[]",
+            "description": "Connection ids from accounts.list (platformId, e.g. \"linkedin-ABC123\"), each at most once"
+          },
+          {
+            "key": "scheduledTime",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 UTC date-time to publish at. Omit (and leave publishNow off) to save a draft."
+          },
+          {
+            "key": "publishNow",
+            "optional": true,
+            "type": "boolean",
+            "description": "Publish immediately. Cannot be combined with a future scheduledTime."
+          },
+          {
+            "key": "platformSettings",
+            "optional": true,
+            "type": "Record<string, Record<string, any>>",
+            "description": "Per-network settings keyed by platform, e.g. { youtube: { title, privacy }, tiktok: { viewerSetting }, instagram: { videoType: \"REELS\" } }. See https://docs.publora.com/endpoints/create-post"
+          },
+          {
+            "key": "firstComments",
+            "optional": true,
+            "type": "{ text: string, platforms?: (linkedin | twitter | threads | bluesky | mastodon | instagram | facebook | youtube | tiktok | telegram)[], delaySeconds?: number }[]",
+            "description": "Up to three comments Publora posts under the published post (LinkedIn, X, Threads, Bluesky, Mastodon)"
+          },
+          {
+            "key": "mediaUrls",
+            "optional": true,
+            "type": "string[]",
+            "description": "Public https image or video URLs that Publora downloads (images 25 MB, videos 150 MB, 300 MB in total). Instagram, TikTok and YouTube need media."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the Idempotency-Key header. A repeat with the same key and body within 24 hours returns the first result instead of acting twice; the same key with another body is rejected with 422."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scheduledTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ code: string, message?: string | null, requested?: string | null, effective?: string | null, platforms?: string[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.posts.delete",
+      "shortPath": "posts.delete",
+      "description": "Delete a post group with all its network copies and media. Content already published on a network stays live.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Post group id (postGroupId) from posts.create or posts.list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.posts.get",
+      "shortPath": "posts.get",
+      "description": "Get one post group with its status, publish time, settings, attached media and each network's delivery state, including the live post id and link once published.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Post group id (postGroupId) from posts.create or posts.list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "scheduledTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "platforms",
+            "optional": true,
+            "type": "(string | { platformId?: string | null, platform?: string | null, status?: string | null })[] | null"
+          },
+          {
+            "key": "posts",
+            "optional": true,
+            "type": "{ platform?: string | null, platformId?: string | null, content?: string | null, status?: string | null, postedId?: string | null, permalink?: string | null, isThread?: boolean | null }[] | null"
+          },
+          {
+            "key": "mediaUrls",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "platformSettings",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "media",
+            "optional": true,
+            "type": "{ mediaId?: string | null, fileName?: string | null, type?: string | null, mimeType?: string | null, status?: string | null, url?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.posts.getLogs",
+      "shortPath": "posts.getLogs",
+      "description": "Publishing log of a post group from the last 90 days, oldest first (up to 100 events): scheduled, processing, attempts, successes, failures and retries per network.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Post group id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "{ _id?: string | null, postGroupId?: string | null, platform?: string | null, postId?: string | null, event?: string | null, error?: string | null, httpStatus?: number | null, retryCount?: number | null, metadata?: Record<string, any> | null, createdAt?: string | null, updatedAt?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.posts.list",
+      "shortPath": "posts.list",
+      "description": "List posts, newest first, filtered by status, network and scheduled date. Page with page and limit; pagination.hasNextPage says whether another page exists.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Posts per page (1-100, default 20)"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "draft | scheduled | published | failed | partially_published"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "twitter | linkedin | instagram | threads | tiktok | youtube | facebook | bluesky | mastodon | telegram | pinterest"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "createdAt | updatedAt | scheduledTime"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "fromDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only posts scheduled after this ISO 8601 date"
+          },
+          {
+            "key": "toDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only posts scheduled before this ISO 8601 date"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ postGroupId: string, content?: string | null, status?: string | null, scheduledTime?: string | null, createdAt?: string | null, updatedAt?: string | null, platforms?: (string | { platformId?: string | null, platform?: string | null, status?: string | null })[] | null, posts?: { platform?: string | null, platformId?: string | null, content?: string | null, status?: string | null, postedId?: string | null, permalink?: string | null, isThread?: boolean | null }[] | null, mediaUrls?: string[] | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ page?: number, limit?: number, totalItems?: number, totalPages?: number, hasNextPage?: boolean, hasPrevPage?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.posts.update",
+      "shortPath": "posts.update",
+      "description": "Change a draft or scheduled post: text, targets (the list is replaced), publish time, status, settings, first comments or extra media. publishNow publishes it immediately.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "postGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "Post group id (postGroupId) from posts.create or posts.list"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "Replacement post text"
+          },
+          {
+            "key": "platforms",
+            "optional": true,
+            "type": "string[]",
+            "description": "Replacement target list (not merged). Send the complete final list of connection ids."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "draft | scheduled",
+            "description": "Move the post back to draft or schedule it"
+          },
+          {
+            "key": "scheduledTime",
+            "optional": true,
+            "type": "string",
+            "description": "New ISO 8601 UTC publish time"
+          },
+          {
+            "key": "publishNow",
+            "optional": true,
+            "type": "boolean",
+            "description": "Publish this draft or scheduled post immediately"
+          },
+          {
+            "key": "platformSettings",
+            "optional": true,
+            "type": "Record<string, Record<string, any>>",
+            "description": "Per-network settings keyed by platform, e.g. { youtube: { title, privacy }, tiktok: { viewerSetting }, instagram: { videoType: \"REELS\" } }. See https://docs.publora.com/endpoints/create-post"
+          },
+          {
+            "key": "firstComments",
+            "optional": true,
+            "type": "{ text: string, platforms?: (linkedin | twitter | threads | bluesky | mastodon | instagram | facebook | youtube | tiktok | telegram)[], delaySeconds?: number }[] | null",
+            "description": "Replace the comments; null or [] removes them"
+          },
+          {
+            "key": "mediaUrls",
+            "optional": true,
+            "type": "string[]",
+            "description": "Public https media URLs appended to the existing media"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the Idempotency-Key header. A repeat with the same key and body within 24 hours returns the first result instead of acting twice; the same key with another body is rejected with 422."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "scheduledTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ code: string, message?: string | null, requested?: string | null, effective?: string | null, platforms?: string[] | null }[]"
+          },
+          {
+            "key": "postGroup",
+            "optional": true,
+            "type": "{ _id: string, status?: string | null, content?: string | null, platforms?: string[] | null, scheduledTime?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Subscribe an HTTPS URL to post.scheduled, post.published, post.failed and post.demoted events (up to 10 per account; needs a paid plan). The reply is the only time the signing secret is shown.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "A name to recognise the subscription by"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Public HTTPS URL that receives the events"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "(post.scheduled | post.published | post.failed | post.demoted | token.expiring)[]",
+            "description": "post.scheduled, post.published, post.failed, post.demoted (token.expiring is accepted but not sent yet)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ _id: string, name?: string | null, url?: string | null, events?: string[] | null, isActive?: boolean | null, createdAt?: string | null, updatedAt?: string | null, secret?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook subscription.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id (_id)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List webhook subscriptions (signing secrets are not returned).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhooks",
+            "optional": false,
+            "type": "{ _id: string, name?: string | null, url?: string | null, events?: string[] | null, isActive?: boolean | null, createdAt?: string | null, updatedAt?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.webhooks.regenerateSecret",
+      "shortPath": "webhooks.regenerateSecret",
+      "description": "Issue a new signing secret for a webhook subscription. The old secret stops working at once, so deliveries fail verification until the receiver has the new one.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id (_id)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "secret",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "publora.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Change a subscription's name, URL or events, or pause and resume it.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id (_id)"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "(post.scheduled | post.published | post.failed | post.demoted | token.expiring)[]"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean",
+            "description": "Pause or resume deliveries"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ _id: string, name?: string | null, url?: string | null, events?: string[] | null, isActive?: boolean | null, createdAt?: string | null, updatedAt?: string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "publora.webhooks.posts.demoted",
+      "shortPath": "posts.demoted",
+      "description": "A scheduled post went back to draft",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "post.demoted"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ postGroupId: string, reason?: string | null, changeType?: string | null, mediaFileId?: string | null, errorCode?: string | null, demotedAt?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ version?: string, event: post.demoted, timestamp: string, data: { postGroupId: string, reason?: string | null, changeType?: string | null, mediaFileId?: string | null, errorCode?: string | null, demotedAt?: string | null } }",
+      "usageExample": "publora({\n    webhookHooks: {\n        posts: {\n            demoted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "publora.webhooks.posts.failed",
+      "shortPath": "posts.failed",
+      "description": "A post could not be published on one network",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "post.failed"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ postId?: string | null, postGroupId: string, platform?: string | null, error?: { code?: string | null, message?: string | null } | null, failedAt?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ version?: string, event: post.failed, timestamp: string, data: { postId?: string | null, postGroupId: string, platform?: string | null, error?: { code?: string | null, message?: string | null } | null, failedAt?: string | null } }",
+      "usageExample": "publora({\n    webhookHooks: {\n        posts: {\n            failed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "publora.webhooks.posts.published",
+      "shortPath": "posts.published",
+      "description": "A post went live on one network (one event per network copy)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "post.published"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ postId: string, postGroupId: string, platform: string, platformId?: string | null, postedId?: string | null, permalink?: string | null, publishedAt?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ version?: string, event: post.published, timestamp: string, data: { postId: string, postGroupId: string, platform: string, platformId?: string | null, postedId?: string | null, permalink?: string | null, publishedAt?: string | null } }",
+      "usageExample": "publora({\n    webhookHooks: {\n        posts: {\n            published: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "publora.webhooks.posts.scheduled",
+      "shortPath": "posts.scheduled",
+      "description": "A post was given a publish time",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "post.scheduled"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ postGroupId: string, scheduledTime?: string | null, platforms?: string[] | null }"
+          }
+        ]
+      },
+      "responseType": "{ version?: string, event: post.scheduled, timestamp: string, data: { postGroupId: string, scheduledTime?: string | null, platforms?: string[] | null } }",
+      "usageExample": "publora({\n    webhookHooks: {\n        posts: {\n            scheduled: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": [
+    {
+      "path": "publora.db.accounts.search",
+      "entityName": "accounts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "platformId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "username",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "displayName",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profileImageUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "profileUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "connectionStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tokenStatus",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "accessTokenExpiresAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "tokenExpiresIn",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "lastSuccessfulPost",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "subscriptionType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "publora.db.posts.search",
+      "entityName": "posts",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "postGroupId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "content",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "scheduledTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "updatedAt",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

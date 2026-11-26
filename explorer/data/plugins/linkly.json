@@ -1,0 +1,2261 @@
+{
+  "id": "linkly",
+  "displayName": "Linkly",
+  "description": "Link tracking and URL shortening with Linkly - create, bulk-update, trash and restore tracked short links, read click analytics and raw click exports, manage custom domains and webhooks, and report conversions.",
+  "npmPackageName": "@corsair-dev/linkly",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 28,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "linkly.api.auth.test",
+      "shortPath": "auth.test",
+      "description": "Check that the API key is valid",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "linkly.api.clicks.export",
+      "shortPath": "clicks.export",
+      "description": "Export raw click rows (time, browser, country, destination, platform, referer, bot, ISP, params) for a workspace or one link. Not in Linkly's OpenAPI spec; Linkly's analytics docs and MCP server use it. Counts against the workspace's analytics allowance (free plans: 100 a month; when a paid plan runs out, Linkly adds a billed API pack).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          },
+          {
+            "key": "link_id",
+            "optional": true,
+            "type": "string | number",
+            "description": "Only clicks on this link, e.g. 30."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ."
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 code, e.g. US."
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bots",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include bot clicks. Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>[] | { clicks: Record<string, any>[] }"
+      }
+    },
+    {
+      "path": "linkly.api.clicks.getCounters",
+      "shortPath": "clicks.getCounters",
+      "description": "Group a workspace's clicks by one dimension, such as country or UTM campaign, ordered by count (top 10,000 values). Counts against the workspace's analytics allowance (free plans: 100 a month; when a paid plan runs out, Linkly adds a billed API pack).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          },
+          {
+            "key": "counter",
+            "optional": false,
+            "type": "country | city | region | platform | destination | referer | bot_name | isp | link_id | remote_ip | top_params | ad_network | utm_source | utm_medium | utm_campaign | utm_content | utm_term",
+            "description": "The dimension to group clicks by."
+          },
+          {
+            "key": "link_id",
+            "optional": true,
+            "type": "string | number",
+            "description": "A link ID, e.g. 30. One ID also works in link_ids."
+          },
+          {
+            "key": "link_ids",
+            "optional": true,
+            "type": "string",
+            "description": "Hyphen-separated link IDs, e.g. \"24-25-26\"."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ."
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 code, e.g. US."
+          },
+          {
+            "key": "bots",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include bot clicks. Defaults to false."
+          },
+          {
+            "key": "unique",
+            "optional": true,
+            "type": "boolean",
+            "description": "Count unique visitors only."
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json",
+            "description": "Only 'json', the default. Linkly also serves csv and tsv, which this plugin does not parse."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number",
+            "description": "Clicks across all groups, including any beyond the top 10,000 returned."
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "{ count: number, value?: string | { id: number, url: string, full_url: string, workspace_id: number, name?: string | null, note?: string | null, domain?: string | null, slug?: string | null, enabled?: boolean | null, deleted?: boolean | null, password?: string | null, cloaking?: boolean | null, forward_params?: boolean | null, hide_referrer?: boolean | null, block_bots?: boolean | null, skip_social_crawler_tracking?: boolean | null, public_analytics?: boolean | null, privacy_mode?: boolean | null, sticky_rotator?: boolean | null, head_tags?: string | null, body_tags?: string | null, linkify_words?: string | null, replacements?: string | null, utm_source?: string | null, utm_medium?: string | null, utm_campaign?: string | null, utm_term?: string | null, utm_content?: string | null, og_title?: string | null, og_description?: string | null, og_image?: string | null, fb_pixel_id?: string | null, tiktok_pixel_id?: string | null, ga4_tag_id?: string | null, gtm_id?: string | null, expiry_datetime?: string | null, expiry_destination?: string | null, expiry_clicks?: number | null, rules?: { matches?: string | null, percentage?: number | null, url?: string | null, what?: string | null }[] | null, webhooks?: string[] | null, notify_user_ids?: number[] | null, notify_slack?: boolean | null, qr_styles?: Record<string, any> | null, metadata?: Record<string, string> | null, created_by_user_id?: number | null } | null, key?: string | null }[]",
+            "description": "Ordered by count, highest first."
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkly.api.clicks.getTimeSeries",
+      "shortPath": "clicks.getTimeSeries",
+      "description": "Read click counts over time for a workspace, filtered by link, date range, country and device, optionally pivoted into a links-by-date matrix. Counts against the workspace's analytics allowance (free plans: 100 a month; when a paid plan runs out, Linkly adds a billed API pack).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          },
+          {
+            "key": "link_id",
+            "optional": true,
+            "type": "string | number",
+            "description": "A link ID, e.g. 30. One ID also works in link_ids."
+          },
+          {
+            "key": "link_ids",
+            "optional": true,
+            "type": "string",
+            "description": "Hyphen-separated link IDs, e.g. \"24-25-26\"."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ."
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string",
+            "description": "YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 code, e.g. US."
+          },
+          {
+            "key": "browser",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "platform",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "referer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "isp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bots",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include bot clicks. Defaults to false."
+          },
+          {
+            "key": "unique",
+            "optional": true,
+            "type": "boolean",
+            "description": "Count unique visitors only."
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json",
+            "description": "Only 'json', the default. Linkly also serves csv and tsv, which this plugin does not parse."
+          },
+          {
+            "key": "pivot",
+            "optional": true,
+            "type": "link_id",
+            "description": "Return a matrix instead of a time series: dates as rows, links as columns."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA name for bucket boundaries, e.g. America/New_York. Data is stored in UTC."
+          },
+          {
+            "key": "frequency",
+            "optional": true,
+            "type": "day | hour",
+            "description": "Bucket size. Defaults to 'day'."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ traffic: { t: string, y?: number | null }[] } | { links: { id: number, name?: string | null, full_url: string }[], data: { date: string, clicks: Record<string, number | null> }[] }"
+      }
+    },
+    {
+      "path": "linkly.api.conversions.create",
+      "shortPath": "conversions.create",
+      "description": "Report a lead, sale or custom event and attribute it to the link that drove it through its linkly_cid. Unattributable events are discarded and answer attributed: false. Pass event_id so a repeat does not count twice",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          },
+          {
+            "key": "event_name",
+            "optional": false,
+            "type": "string",
+            "description": "e.g. purchase or signup."
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "lead | sale | custom",
+            "description": "lead for signups and trials, sale when money changes hands."
+          },
+          {
+            "key": "linkly_cid",
+            "optional": true,
+            "type": "string",
+            "description": "The token Linkly appended to the destination URL. Without it (and no earlier attributed event for external_id) the conversion is discarded."
+          },
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "string",
+            "description": "Your id for this event. Repeating it returns the original conversion instead of counting twice, which also makes the call safe to retry."
+          },
+          {
+            "key": "external_id",
+            "optional": true,
+            "type": "string",
+            "description": "Your customer id; links later events to an earlier attributed one."
+          },
+          {
+            "key": "amount_cents",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 4217, e.g. USD."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "occurred_at",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 date-time. Defaults to now."
+          },
+          {
+            "key": "visitor_ip",
+            "optional": true,
+            "type": "string",
+            "description": "The visitor's IP, for geography. Never returned."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, link_id?: number | null, click_id?: string | null, event_type?: string | null, event_name?: string | null, source?: string | null, occurred_at?: string | null, inserted_at?: string | null, amount_cents?: number | null, currency?: string | null, country?: string | null, event_id?: string | null, external_id?: string | null, ip_source?: string | null, metadata?: Record<string, any> | null } | { attributed: false, message?: string | null }"
+      }
+    },
+    {
+      "path": "linkly.api.conversions.list",
+      "shortPath": "conversions.list",
+      "description": "List a workspace's attributed conversions (leads, sales, custom events), newest first or paged oldest-first with since and after",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 100."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "A conversion id: return the ones recorded after it, oldest first. Pass the last id of the previous page."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 date or date-time: return conversions recorded at or after it, oldest first. Without since or after, the newest come first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conversions",
+            "optional": false,
+            "type": "{ id: string, link_id?: number | null, click_id?: string | null, event_type?: string | null, event_name?: string | null, source?: string | null, occurred_at?: string | null, inserted_at?: string | null, amount_cents?: number | null, currency?: string | null, country?: string | null, event_id?: string | null, external_id?: string | null, ip_source?: string | null, metadata?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": false,
+            "type": "boolean",
+            "description": "More follow. To walk the whole history, start with since set before the first conversion (e.g. 2020-01-01), then pass the last id as after while has_more is true; a page without since or after is newest first and cannot be continued with after."
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkly.api.domains.create",
+      "shortPath": "domains.create",
+      "description": "Attach a custom domain to a workspace. Its CNAME must already point at domains.linklyhq.com",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The domain, e.g. go.yourcompany.com. Point a CNAME at domains.linklyhq.com first."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkly.api.domains.delete",
+      "shortPath": "domains.delete",
+      "description": "Remove a custom domain from a workspace. Every short link on that domain stops working",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          },
+          {
+            "key": "domain_id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The domain ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "linkly.api.domains.list",
+      "shortPath": "domains.list",
+      "description": "List the custom domains attached to a workspace, usable as links.create domain values",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domains",
+            "optional": false,
+            "type": "{ name?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkly.api.domains.updateFavicon",
+      "shortPath": "domains.updateFavicon",
+      "description": "Set or clear the favicon URL for a custom domain",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          },
+          {
+            "key": "domain_id",
+            "optional": false,
+            "type": "string | number",
+            "description": "The domain ID."
+          },
+          {
+            "key": "favicon_url",
+            "optional": false,
+            "type": "string | null",
+            "description": "Icon shown for the domain. null clears it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "favicon_url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkly.api.links.bulkUpsert",
+      "shortPath": "links.bulkUpsert",
+      "description": "Create or update up to 1000 links in one call: items with an id update, items without create. Answers 200 even when some items fail; check each item's status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ workspace_id: number, id?: number, url?: string, name?: string, note?: string, domain?: string, slug?: string, enabled?: boolean, deleted?: boolean, cloaking?: boolean, forward_params?: boolean, hide_referrer?: boolean, block_bots?: boolean, head_tags?: string, body_tags?: string, linkify_words?: string, replacements?: string, utm_source?: string, utm_medium?: string, utm_campaign?: string, utm_term?: string, utm_content?: string, og_title?: string, og_description?: string, og_image?: string, fb_pixel_id?: string, tiktok_pixel_id?: string, ga4_tag_id?: string, gtm_id?: string, expiry_datetime?: string, expiry_destination?: string, expiry_clicks?: number, rules?: { url: string, matches?: string, what?: string, percentage?: string, rule_url?: string }[], password?: string, metadata?: Record<string, string | null>, privacy_mode?: boolean, skip_social_crawler_tracking?: boolean, public_analytics?: boolean, webhooks?: string[], notify_user_ids?: number[], qr_styles?: Record<string, any> }[]",
+            "description": "Up to 1000 links, each shaped like links.create (or links.update with an id)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ index?: number | null, status: string, link?: { id: number, url: string, full_url: string, workspace_id: number, name?: string | null, note?: string | null, domain?: string | null, slug?: string | null, enabled?: boolean | null, deleted?: boolean | null, password?: string | null, cloaking?: boolean | null, forward_params?: boolean | null, hide_referrer?: boolean | null, block_bots?: boolean | null, skip_social_crawler_tracking?: boolean | null, public_analytics?: boolean | null, privacy_mode?: boolean | null, sticky_rotator?: boolean | null, head_tags?: string | null, body_tags?: string | null, linkify_words?: string | null, replacements?: string | null, utm_source?: string | null, utm_medium?: string | null, utm_campaign?: string | null, utm_term?: string | null, utm_content?: string | null, og_title?: string | null, og_description?: string | null, og_image?: string | null, fb_pixel_id?: string | null, tiktok_pixel_id?: string | null, ga4_tag_id?: string | null, gtm_id?: string | null, expiry_datetime?: string | null, expiry_destination?: string | null, expiry_clicks?: number | null, rules?: { matches?: string | null, percentage?: number | null, url?: string | null, what?: string | null }[] | null, webhooks?: string[] | null, notify_user_ids?: number[] | null, notify_slack?: boolean | null, qr_styles?: Record<string, any> | null, metadata?: Record<string, string> | null, created_by_user_id?: number | null } | null, error?: any }[]"
+      }
+    },
+    {
+      "path": "linkly.api.links.create",
+      "shortPath": "links.create",
+      "description": "Create a tracked short link in a workspace, with its destination, UTM fields and optional rules",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The destination URL. Required to create."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Display name, shown in the dashboard."
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string",
+            "description": "A custom domain attached to the workspace, e.g. go.yourcompany.com. List them with domains.list."
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string",
+            "description": "The back-half of the short URL. Auto-generated when omitted."
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to true."
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cloaking",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "forward_params",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hide_referrer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "block_bots",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "head_tags",
+            "optional": true,
+            "type": "string",
+            "description": "HTML injected into <head> on the cloaking page."
+          },
+          {
+            "key": "body_tags",
+            "optional": true,
+            "type": "string",
+            "description": "HTML injected into <body> on the cloaking page."
+          },
+          {
+            "key": "linkify_words",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replacements",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utm_source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utm_medium",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utm_campaign",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utm_term",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utm_content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "og_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "og_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "og_image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fb_pixel_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tiktok_pixel_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ga4_tag_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gtm_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiry_datetime",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 instant, e.g. 2026-12-31T23:59:59Z. After this time visitors go to expiry_destination. The year must be between 2000 and 2100."
+          },
+          {
+            "key": "expiry_destination",
+            "optional": true,
+            "type": "string",
+            "description": "Where visitors go once the link has expired. Must start with http."
+          },
+          {
+            "key": "expiry_clicks",
+            "optional": true,
+            "type": "number",
+            "description": "Expire the link after this many clicks."
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{ url: string, matches?: string, what?: string, percentage?: string, rule_url?: string }[]",
+            "description": "Click routing rules, e.g. send matches to another URL or split traffic. Only sent as JSON."
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "Visitors must enter this password before the redirect."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string | null>",
+            "description": "Your own key-value data, up to 20 keys. Updates merge into the existing keys; set a key to null to remove it. Never shown to visitors."
+          },
+          {
+            "key": "privacy_mode",
+            "optional": true,
+            "type": "boolean",
+            "description": "Record clicks without personal data (no IP, location, user agent, referrer or query parameters; click times kept to the hour). Turning it on also clears pixels, custom scripts, conversion tracking, webhooks and click notifications on the link. Paid plans only."
+          },
+          {
+            "key": "skip_social_crawler_tracking",
+            "optional": true,
+            "type": "boolean",
+            "description": "With block_bots on, still let social crawlers through so link previews work."
+          },
+          {
+            "key": "public_analytics",
+            "optional": true,
+            "type": "boolean",
+            "description": "Turns on the link's public stats page."
+          },
+          {
+            "key": "webhooks",
+            "optional": true,
+            "type": "string[]",
+            "description": "Per-link webhook URLs. On update this replaces the list; use webhooks.subscribeToLink to add one."
+          },
+          {
+            "key": "notify_user_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Workspace user IDs to notify on each click."
+          },
+          {
+            "key": "qr_styles",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "QR code styling, e.g. { fgColor: \"#000000\", qrStyle: \"dots\" }."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "full_url",
+            "optional": false,
+            "type": "string",
+            "description": "The public short URL, e.g. https://l.linklyhq.com/l/2TQ."
+          },
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cloaking",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "forward_params",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hide_referrer",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "block_bots",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "skip_social_crawler_tracking",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "public_analytics",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "privacy_mode",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "sticky_rotator",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "head_tags",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "body_tags",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "linkify_words",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "replacements",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_medium",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_campaign",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_term",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_content",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "og_title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "og_description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "og_image",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fb_pixel_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tiktok_pixel_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ga4_tag_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gtm_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiry_datetime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiry_destination",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiry_clicks",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{ matches?: string | null, percentage?: number | null, url?: string | null, what?: string | null }[] | null"
+          },
+          {
+            "key": "webhooks",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notify_user_ids",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "notify_slack",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "qr_styles",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "created_by_user_id",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkly.api.links.delete",
+      "shortPath": "links.delete",
+      "description": "Move a link to the trash: its short URL stops redirecting straight away. links.restore can undo this while the link is still in the trash, and deleting a trashed link again is a harmless no-op",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The link to move to the trash."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "linkly.api.links.deleteMany",
+      "shortPath": "links.deleteMany",
+      "description": "Move several links to the trash at once: their short URLs stop redirecting straight away. links.restore can bring them back while they are in the trash",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          },
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "number[]",
+            "description": "Link IDs to move to the trash."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "linkly.api.links.export",
+      "shortPath": "links.export",
+      "description": "Export every link in a workspace with their click counts, unpaginated. Counts against the workspace's analytics allowance (free plans: 100 a month; when a paid plan runs out, Linkly adds a billed API pack).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "json",
+            "description": "Only 'json', the default. Linkly also serves csv, which this plugin does not parse."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Only links matching this search."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number | null, url: string, full_url: string, workspace_id?: number | null, name?: string | null, note?: string | null, domain?: string | null, slug?: string | null, enabled?: boolean | null, deleted?: boolean | null, cloaking?: boolean | null, forward_params?: boolean | null, hide_referrer?: boolean | null, block_bots?: boolean | null, public_analytics?: boolean | null, head_tags?: string | null, body_tags?: string | null, linkify_words?: string | null, replacements?: string | null, utm_source?: string | null, utm_medium?: string | null, utm_campaign?: string | null, utm_term?: string | null, utm_content?: string | null, og_title?: string | null, og_description?: string | null, og_image?: string | null, fb_pixel_id?: string | null, tiktok_pixel_id?: string | null, ga4_tag_id?: string | null, gtm_id?: string | null, rules?: { matches?: string | null, percentage?: number | null, url?: string | null, what?: string | null }[] | null, metadata?: Record<string, string> | null, clicks_total?: number | null, clicks_today?: number | null, clicks_thirty_days?: number | null, human_clicks_total?: number | null, human_clicks_today?: number | null, human_clicks_thirty_days?: number | null, human_clicks_previous_day?: number | null, sparkline?: number[] | null }[]"
+      }
+    },
+    {
+      "path": "linkly.api.links.get",
+      "shortPath": "links.get",
+      "description": "Read one link by ID: destination, short URL and settings, without click counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string | number"
+          },
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace the link belongs to. Linkly refuses the call without it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "full_url",
+            "optional": false,
+            "type": "string",
+            "description": "The public short URL, e.g. https://l.linklyhq.com/l/2TQ."
+          },
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cloaking",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "forward_params",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hide_referrer",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "block_bots",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "skip_social_crawler_tracking",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "public_analytics",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "privacy_mode",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "sticky_rotator",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "head_tags",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "body_tags",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "linkify_words",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "replacements",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_medium",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_campaign",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_term",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_content",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "og_title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "og_description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "og_image",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fb_pixel_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tiktok_pixel_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ga4_tag_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gtm_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiry_datetime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiry_destination",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiry_clicks",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{ matches?: string | null, percentage?: number | null, url?: string | null, what?: string | null }[] | null"
+          },
+          {
+            "key": "webhooks",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notify_user_ids",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "notify_slack",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "qr_styles",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "created_by_user_id",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkly.api.links.getDetails",
+      "shortPath": "links.getDetails",
+      "description": "Read one link with its lifetime and recent click counts, plus the workspace's domains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The link to read."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "base62_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "clicks_count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Lifetime clicks, bots included."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | Record<string, any> | null",
+            "description": "The link's domain, e.g. linkly.link."
+          },
+          {
+            "key": "domains",
+            "optional": true,
+            "type": "(string | Record<string, any>)[] | null",
+            "description": "Domains the workspace can use."
+          },
+          {
+            "key": "link",
+            "optional": false,
+            "type": "{ id?: number | null, url: string, full_url: string, workspace_id?: number | null, name?: string | null, note?: string | null, domain?: string | null, slug?: string | null, enabled?: boolean | null, deleted?: boolean | null, cloaking?: boolean | null, forward_params?: boolean | null, hide_referrer?: boolean | null, block_bots?: boolean | null, public_analytics?: boolean | null, head_tags?: string | null, body_tags?: string | null, linkify_words?: string | null, replacements?: string | null, utm_source?: string | null, utm_medium?: string | null, utm_campaign?: string | null, utm_term?: string | null, utm_content?: string | null, og_title?: string | null, og_description?: string | null, og_image?: string | null, fb_pixel_id?: string | null, tiktok_pixel_id?: string | null, ga4_tag_id?: string | null, gtm_id?: string | null, rules?: { matches?: string | null, percentage?: number | null, url?: string | null, what?: string | null }[] | null, metadata?: Record<string, string> | null, clicks_total?: number | null, clicks_today?: number | null, clicks_thirty_days?: number | null, human_clicks_total?: number | null, human_clicks_today?: number | null, human_clicks_thirty_days?: number | null, human_clicks_previous_day?: number | null, sparkline?: number[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkly.api.links.list",
+      "shortPath": "links.list",
+      "description": "List the links in a workspace with their click counts, one page at a time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Match link names, URLs, slugs and notes."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "1-based page. Defaults to 1."
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Rows per page. Defaults to 1000."
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "string",
+            "description": "Column to sort, e.g. 'clicks_total' or 'created_at'."
+          },
+          {
+            "key": "sort_dir",
+            "optional": true,
+            "type": "desc | asc",
+            "description": "Sort direction. Defaults to 'desc'."
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean",
+            "description": "Set true to page through the trash instead of live links."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ domain?: string, slug?: string, utm_source?: string, utm_medium?: string, utm_campaign?: string, utm_term?: string, utm_content?: string }",
+            "description": "Exact-match filters, ANDed together."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ id?: number | null, url: string, full_url: string, workspace_id?: number | null, name?: string | null, note?: string | null, domain?: string | null, slug?: string | null, enabled?: boolean | null, deleted?: boolean | null, cloaking?: boolean | null, forward_params?: boolean | null, hide_referrer?: boolean | null, block_bots?: boolean | null, public_analytics?: boolean | null, head_tags?: string | null, body_tags?: string | null, linkify_words?: string | null, replacements?: string | null, utm_source?: string | null, utm_medium?: string | null, utm_campaign?: string | null, utm_term?: string | null, utm_content?: string | null, og_title?: string | null, og_description?: string | null, og_image?: string | null, fb_pixel_id?: string | null, tiktok_pixel_id?: string | null, ga4_tag_id?: string | null, gtm_id?: string | null, rules?: { matches?: string | null, percentage?: number | null, url?: string | null, what?: string | null }[] | null, metadata?: Record<string, string> | null, clicks_total?: number | null, clicks_today?: number | null, clicks_thirty_days?: number | null, human_clicks_total?: number | null, human_clicks_today?: number | null, human_clicks_thirty_days?: number | null, human_clicks_previous_day?: number | null, sparkline?: number[] | null }[]"
+          },
+          {
+            "key": "page_number",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page_size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_entries",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_pages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_rows",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "workspace_link_count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkly.api.links.restore",
+      "shortPath": "links.restore",
+      "description": "Take deleted links out of the trash by ID; a restored link whose back-half is taken reports a conflict",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          },
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "number[]",
+            "description": "Link IDs to take out of the trash."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "restored",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "conflicts",
+            "optional": true,
+            "type": "{ id?: number | null, domain?: string | null, slug?: string | null }[] | null",
+            "description": "Restored links whose back-half is already taken on the domain. The conflict lists what is in the way."
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkly.api.links.update",
+      "shortPath": "links.update",
+      "description": "Update an existing link in place by sending its ID with the fields to change",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The link to update. POST /link with an id updates in place."
+          },
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "A new destination URL."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Display name, shown in the dashboard."
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string",
+            "description": "A custom domain attached to the workspace, e.g. go.yourcompany.com. List them with domains.list."
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string",
+            "description": "The back-half of the short URL. Auto-generated when omitted."
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to true."
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "cloaking",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "forward_params",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hide_referrer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "block_bots",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "head_tags",
+            "optional": true,
+            "type": "string",
+            "description": "HTML injected into <head> on the cloaking page."
+          },
+          {
+            "key": "body_tags",
+            "optional": true,
+            "type": "string",
+            "description": "HTML injected into <body> on the cloaking page."
+          },
+          {
+            "key": "linkify_words",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "replacements",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utm_source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utm_medium",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utm_campaign",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utm_term",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "utm_content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "og_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "og_description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "og_image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fb_pixel_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tiktok_pixel_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ga4_tag_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "gtm_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expiry_datetime",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 instant, e.g. 2026-12-31T23:59:59Z. After this time visitors go to expiry_destination. The year must be between 2000 and 2100."
+          },
+          {
+            "key": "expiry_destination",
+            "optional": true,
+            "type": "string",
+            "description": "Where visitors go once the link has expired. Must start with http."
+          },
+          {
+            "key": "expiry_clicks",
+            "optional": true,
+            "type": "number",
+            "description": "Expire the link after this many clicks."
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{ url: string, matches?: string, what?: string, percentage?: string, rule_url?: string }[]",
+            "description": "Click routing rules, e.g. send matches to another URL or split traffic. Only sent as JSON."
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "Visitors must enter this password before the redirect."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string | null>",
+            "description": "Your own key-value data, up to 20 keys. Updates merge into the existing keys; set a key to null to remove it. Never shown to visitors."
+          },
+          {
+            "key": "privacy_mode",
+            "optional": true,
+            "type": "boolean",
+            "description": "Record clicks without personal data (no IP, location, user agent, referrer or query parameters; click times kept to the hour). Turning it on also clears pixels, custom scripts, conversion tracking, webhooks and click notifications on the link. Paid plans only."
+          },
+          {
+            "key": "skip_social_crawler_tracking",
+            "optional": true,
+            "type": "boolean",
+            "description": "With block_bots on, still let social crawlers through so link previews work."
+          },
+          {
+            "key": "public_analytics",
+            "optional": true,
+            "type": "boolean",
+            "description": "Turns on the link's public stats page."
+          },
+          {
+            "key": "webhooks",
+            "optional": true,
+            "type": "string[]",
+            "description": "Per-link webhook URLs. On update this replaces the list; use webhooks.subscribeToLink to add one."
+          },
+          {
+            "key": "notify_user_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Workspace user IDs to notify on each click."
+          },
+          {
+            "key": "qr_styles",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "QR code styling, e.g. { fgColor: \"#000000\", qrStyle: \"dots\" }."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "full_url",
+            "optional": false,
+            "type": "string",
+            "description": "The public short URL, e.g. https://l.linklyhq.com/l/2TQ."
+          },
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cloaking",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "forward_params",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hide_referrer",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "block_bots",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "skip_social_crawler_tracking",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "public_analytics",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "privacy_mode",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "sticky_rotator",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "head_tags",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "body_tags",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "linkify_words",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "replacements",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_source",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_medium",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_campaign",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_term",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "utm_content",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "og_title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "og_description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "og_image",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fb_pixel_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tiktok_pixel_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ga4_tag_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gtm_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiry_datetime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiry_destination",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiry_clicks",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{ matches?: string | null, percentage?: number | null, url?: string | null, what?: string | null }[] | null"
+          },
+          {
+            "key": "webhooks",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "notify_user_ids",
+            "optional": true,
+            "type": "number[] | null"
+          },
+          {
+            "key": "notify_slack",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "qr_styles",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "created_by_user_id",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkly.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List the webhook URLs registered on a workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string }[]"
+      }
+    },
+    {
+      "path": "linkly.api.webhooks.listForLink",
+      "shortPath": "webhooks.listForLink",
+      "description": "List the webhook URLs registered on one link",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_id",
+            "optional": false,
+            "type": "number",
+            "description": "The link the webhook belongs to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string }[]"
+      }
+    },
+    {
+      "path": "linkly.api.webhooks.subscribe",
+      "shortPath": "webhooks.subscribe",
+      "description": "Register a webhook URL on a workspace; Linkly then POSTs there for every click, link.created, link.updated and link.deleted. Deliveries arrive at that URL, not to this plugin",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Receives a POST for every click, link.created, link.updated and link.deleted in the workspace; branch on the body's `event` field (only click events carry a `click` object). Respond 2xx within 5 seconds; delivery is fire-and-forget with no retries."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The webhook URL. Pass it to webhooks.unsubscribe."
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkly.api.webhooks.subscribeToLink",
+      "shortPath": "webhooks.subscribeToLink",
+      "description": "Register a webhook URL on one link; Linkly then POSTs its clicks, link.updated and link.deleted there. Deliveries arrive at that URL, not to this plugin",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_id",
+            "optional": false,
+            "type": "number",
+            "description": "The link the webhook belongs to."
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Receives a POST for each click, link.updated and link.deleted on this link; branch on the body's `event` field. Respond 2xx within 5 seconds; no retries."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The webhook URL. Pass it as hook_id, with link_id, to webhooks.unsubscribeFromLink."
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkly.api.webhooks.unsubscribe",
+      "shortPath": "webhooks.unsubscribe",
+      "description": "Remove a webhook registration from a workspace by its URL, so it stops receiving events",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          },
+          {
+            "key": "hook_id",
+            "optional": false,
+            "type": "string",
+            "description": "The webhook URL, exactly as webhooks.list or webhooks.subscribe returned it. Encoded into the path for you."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "linkly.api.webhooks.unsubscribeFromLink",
+      "shortPath": "webhooks.unsubscribeFromLink",
+      "description": "Remove a webhook registration from one link by its URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "link_id",
+            "optional": false,
+            "type": "number",
+            "description": "The link the webhook belongs to."
+          },
+          {
+            "key": "hook_id",
+            "optional": false,
+            "type": "string",
+            "description": "The webhook URL, exactly as webhooks.listForLink returned it. Encoded into the path for you."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "linkly.api.workspaces.listWorkspaces",
+      "shortPath": "workspaces.listWorkspaces",
+      "description": "List the workspaces the API key can reach, with their IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: number, name: string }[]"
+      }
+    },
+    {
+      "path": "linkly.api.workspaces.update",
+      "shortPath": "workspaces.update",
+      "description": "Rename a workspace or replace its whole webhook list. Sending webhooks overwrites every registered URL, so a missing one stops receiving events. Not in Linkly's OpenAPI spec; Linkly's own MCP server uses it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workspace_id",
+            "optional": false,
+            "type": "number",
+            "description": "The workspace that owns the links. Find IDs with workspaces.listWorkspaces."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "A new workspace name."
+          },
+          {
+            "key": "webhooks",
+            "optional": true,
+            "type": "string[]",
+            "description": "REPLACES the workspace's whole webhook list. Omit to leave it alone; use webhooks.subscribe or webhooks.unsubscribe for one URL."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

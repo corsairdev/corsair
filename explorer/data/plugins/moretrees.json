@@ -1,0 +1,222 @@
+{
+  "id": "moretrees",
+  "displayName": "More Trees",
+  "description": "Climate action with More Trees - read the account credit balance, forest stats, planting projects and CO2 figures, and plant trees for yourself or as gifts.",
+  "npmPackageName": "@corsair-dev/moretrees",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "account_code"]
+    }
+  ],
+  "api": [
+    {
+      "path": "moretrees.api.account.get",
+      "shortPath": "account.get",
+      "description": "Read one account: name, credit balance, forest name and slug",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountCode",
+            "optional": true,
+            "type": "string",
+            "description": "The More Trees account code, from Settings > Account Settings. Defaults to the stored account_code."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "account_code",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "account_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "credit_balance",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "forest_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "forest_slug",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moretrees.api.forest.get",
+      "shortPath": "forest.get",
+      "description": "Read one virtual forest: branding plus planted, gifted and received tree totals and CO2 captured",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "forestSlugOrAccountCode",
+            "optional": true,
+            "type": "string",
+            "description": "The forest slug or the account code, from Settings > Account Settings. Defaults to the stored account_code."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "forest_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "logo_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "brand_color",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "totals",
+            "optional": true,
+            "type": "{ trees_planted?: number | null, trees_gifted?: number | null, trees_received?: number | null, co2_captured?: number | null, projects_supported?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moretrees.api.projects.calculateCo2",
+      "shortPath": "projects.calculateCo2",
+      "description": "Calculate the CO2 captured and projects supported for a set of tree counts; plants nothing",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalTreesByProjectTree",
+            "optional": false,
+            "type": "Record<string, { receivedAndPlantedTrees?: number, giftedAndPlantedTrees?: number }>",
+            "description": "Tree counts keyed by project tree ID. Project tree IDs are not tree IDs and no API-key route lists them; 26 and 28 are known (probed 11-26)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalCo2",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "supportedProjects",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moretrees.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List every active planting project with country, supplier and the trees you can plant in it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ default?: boolean | null, id?: string | null, name?: string | null, description?: string | null, country?: string | null, project_type?: string | null, supplier_name?: string | null, project_image?: string | null, trees?: { default?: boolean | null, id?: string | null, name?: string | null, description?: string | null, tonnes_co2?: number | null, credits_required?: number | null, tree_image?: string | null, total?: number | null }[] | null }[]"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "moretrees.api.trees.plant",
+      "shortPath": "trees.plant",
+      "description": "Plant trees from the payment account for yourself or as gifts; spends credits unless test mode is on",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "inline",
+        "type": "{ payment_account_code?: string, test?: boolean, project_id?: string | number, tree_id?: string | number, plant_for_others: false, quantity: number } | { payment_account_code?: string, test?: boolean, project_id?: string | number, tree_id?: string | number, plant_for_others: true, recipients: { account_code?: string, email?: string, name: string, quantity: number }[] }"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "plant_for_others",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "credits_used",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "credits_remaining",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "project_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "A More Trees ID, as a string (IDs can exceed 2^53)."
+          },
+          {
+            "key": "tree_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "A More Trees ID, as a string (IDs can exceed 2^53)."
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ account_code?: string | null, account_name?: string | null, quantity?: number | null }[] | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
