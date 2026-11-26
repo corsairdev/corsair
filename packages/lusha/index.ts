@@ -1,5 +1,6 @@
 import type {
 	BindEndpoints,
+	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
@@ -10,6 +11,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { Account, Company, Jobs, Person } from './endpoints';
@@ -28,11 +30,21 @@ import {
 } from './endpoints/types';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { LushaSchema } from './schema';
+import {
+	LushaOptOutEventSchema,
+	LushaSignalEventSchema,
+	matchLushaWebhook,
+	optOutReceived,
+	signalReceived,
+} from './webhooks';
 
 export type LushaPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	/** Account webhook secret; otherwise the stored webhook_signature key. */
+	webhookSecret?: string;
 	hooks?: InternalLushaPlugin['hooks'];
+	webhookHooks?: InternalLushaPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof lushaEndpointsNested>;
 };
@@ -45,6 +57,7 @@ export type LushaContext = CorsairPluginContext<
 export type LushaKeyBuilderContext = KeyBuilderContext<LushaPluginOptions>;
 
 export type LushaBoundEndpoints = BindEndpoints<typeof lushaEndpointsNested>;
+export type LushaBoundWebhooks = BindWebhooks<typeof lushaWebhooksNested>;
 
 type LushaEndpoint<K extends keyof LushaEndpointOutputs> = CorsairEndpoint<
 	LushaContext,
@@ -89,6 +102,26 @@ const lushaEndpointsNested = {
 		getContactsEnrichJob: Jobs.getContactsEnrichJob,
 	},
 } as const;
+
+const lushaWebhooksNested = {
+	signals: { received: signalReceived },
+	optOuts: { received: optOutReceived },
+} as const;
+
+const lushaWebhookSchemas = {
+	'signals.received': {
+		description:
+			'A signal for a subscribed contact or company (promotion, company change, news, hiring, intent...). Lusha charges the credits in billing.creditsCharged for each delivery.',
+		payload: LushaSignalEventSchema,
+		response: LushaSignalEventSchema,
+	},
+	'optOuts.received': {
+		description:
+			'A contact opted out of Lusha data processing; remove the listed emails and phone numbers from your own systems.',
+		payload: LushaOptOutEventSchema,
+		response: LushaOptOutEventSchema,
+	},
+} as const satisfies RequiredPluginWebhookSchemas<typeof lushaWebhooksNested>;
 
 export const lushaEndpointSchemas = {
 	'person.searchContacts': {
@@ -190,7 +223,7 @@ export type BaseLushaPlugin<T extends LushaPluginOptions> = CorsairPlugin<
 	'lusha',
 	typeof LushaSchema,
 	typeof lushaEndpointsNested,
-	{},
+	typeof lushaWebhooksNested,
 	T,
 	typeof defaultAuthType
 >;
@@ -214,13 +247,20 @@ export function lusha<const T extends LushaPluginOptions>(
 		schema: LushaSchema,
 		options: options,
 		hooks: options.hooks,
+		webhookHooks: options.webhookHooks,
 		endpoints: lushaEndpointsNested,
-		webhooks: {},
+		webhooks: lushaWebhooksNested,
 		endpointMeta: lushaEndpointMeta,
 		endpointSchemas: lushaEndpointSchemas,
-		pluginWebhookMatcher: () => false,
+		webhookSchemas: lushaWebhookSchemas,
+		pluginWebhookMatcher: matchLushaWebhook,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: LushaKeyBuilderContext, source) => {
+			if (source === 'webhook') {
+				// An empty secret makes verifyLushaSignature reject the delivery.
+				if (options.webhookSecret) return options.webhookSecret;
+				return (await ctx.keys.get_webhook_signature()) ?? '';
+			}
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}

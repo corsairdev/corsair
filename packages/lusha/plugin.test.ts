@@ -181,10 +181,14 @@ describe('lusha plugin', () => {
 		}
 	});
 
-	it('receives no webhooks', () => {
+	it('receives signal and opt-out webhooks', () => {
 		// unknown: the webhook map's value type varies with the plugin generic,
 		// and only the keys are asserted on.
-		expect(Object.keys(plugin.webhooks as Record<string, unknown>)).toEqual([]);
+		const webhooks = plugin.webhooks as unknown as Record<
+			string,
+			Record<string, unknown>
+		>;
+		expect(flatten(webhooks)).toEqual(['optOuts.received', 'signals.received']);
 		expect(plugin.pluginWebhookMatcher?.({ headers: {}, body: '' })).toBe(
 			false,
 		);
