@@ -56,8 +56,13 @@ function attr(node, name) {
 	return undefined;
 }
 
-/** Internal links become absolute links to the page's .md, as Mintlify serves it. */
-function absoluteUrl(url) {
+/**
+ * Internal links become absolute links to the page's .md, as Mintlify serves
+ * it. A same-page link (#errors) gets its page's URL: in the combined file it
+ * would otherwise land on the first #errors of any earlier page.
+ */
+function absoluteUrl(url, slug) {
+	if (url.startsWith('#')) return `${SITE_URL}/${slug}.md${url}`;
 	if (!url.startsWith('/') || url.startsWith('//')) return url;
 	const [pathPart, hash] = url.split('#');
 	const withMd = /\.[a-z]+$/i.test(pathPart ?? '')
@@ -105,10 +110,13 @@ const WIDGETS = {
 		),
 };
 
+/** A file's text with LF line endings, so a CRLF checkout parses the same. */
+async function readText(file) {
+	return (await readFile(file, 'utf8')).replace(/\r\n?/g, '\n');
+}
+
 async function snippetChildren(source) {
-	const tree = parser.parse(
-		await readFile(path.join(DOCS_DIR, source), 'utf8'),
-	);
+	const tree = parser.parse(await readText(path.join(DOCS_DIR, source)));
 	return tree.children;
 }
 
@@ -132,7 +140,7 @@ async function convert(nodes, ctx) {
 			if (/^[A-Za-z_$][\w$.]*$/.test(value)) out.push(text(`{${value}}`));
 			continue;
 		}
-		if (node.type === 'link') node.url = absoluteUrl(node.url);
+		if (node.type === 'link') node.url = absoluteUrl(node.url, ctx.slug);
 		// Fence metas stay as Mintlify writes them (```ts corsair.ts).
 		if (node.type === 'code') {
 			out.push(node);
@@ -209,7 +217,11 @@ async function element(node, ctx) {
 			const href = attr(node, 'href');
 			const body = await inner();
 			const label = href
-				? { type: 'link', url: absoluteUrl(href), children: [text(title)] }
+				? {
+						type: 'link',
+						url: absoluteUrl(href, ctx.slug),
+						children: [text(title)],
+					}
 				: { type: 'strong', children: [text(title)] };
 			const first = body[0];
 			const description =
@@ -290,10 +302,11 @@ async function element(node, ctx) {
 const FRONTMATTER = /^---\n([\s\S]*?)\n---\n/;
 
 async function pageMarkdown(slug) {
-	const raw = await readFile(path.join(DOCS_DIR, `${slug}.mdx`), 'utf8');
+	const raw = await readText(path.join(DOCS_DIR, `${slug}.mdx`));
 	const front = parseYaml(FRONTMATTER.exec(raw)?.[1] ?? '') ?? {};
 	const tree = parser.parse(raw.replace(FRONTMATTER, ''));
 	tree.children = await convert(tree.children, {
+		slug,
 		snippets: new Map(),
 		step: 0,
 	});

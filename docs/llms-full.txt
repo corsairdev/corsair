@@ -321,7 +321,7 @@ so that's the whole configuration.
 >
 > The API key is a server secret, sent as a bearer token. Keep it on your
 > server; never put it in browser code or a mobile app you ship. For the browser,
-> see [Server vs. browser](#server-vs-browser).
+> see [Server vs. browser](https://docs.corsair.dev/cloud/overview.md#server-vs-browser).
 
 ## Your first call
 
@@ -530,7 +530,7 @@ You add it once, sign in to Corsair, and choose which of your links the client u
 
 ### Add the address to your client
 
-See [Add it to your client](#add-it-to-your-client) below.
+See [Add it to your client](https://docs.corsair.dev/cloud/mcp.md#add-it-to-your-client) below.
 
 **Step 2**
 
@@ -542,7 +542,7 @@ The client opens Corsair in your browser.
 
 ### Pick a link
 
-A link is a set of your connected apps plus a [mode](#modes-and-approvals) that decides what the agent may do without asking. Pick an existing link or make a new one for this client. If you have no link yet, Corsair asks you to make one first.
+A link is a set of your connected apps plus a [mode](https://docs.corsair.dev/cloud/mcp.md#modes-and-approvals) that decides what the agent may do without asking. Pick an existing link or make a new one for this client. If you have no link yet, Corsair asks you to make one first.
 
 **Step 4**
 
@@ -641,25 +641,25 @@ Any other client that supports remote MCP servers with OAuth sign-in works the s
 
 ## What the agent can do
 
-| Tool                | What it does                                                                                                                                                                                                                                                                                                                                                  | Type            |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
-| `list_integrations` | Lists the apps on this link, whether each is ready and which account it's signed in as, with the Corsair credits left and spent this month. Also checks whether Corsair can connect an app that isn't here yet                                                                                                                                                | Read            |
-| `get_connect_link`  | Returns the sign-in link for an app, adding the app first if it isn't here. Apps that run on Corsair's own account come back ready, with no link. Shows a [connect card](#cards) where the chat supports it                                                                                                                                                   | Write           |
-| `list_operations`   | Shows what connected apps can do, with each action's risk and price. Searched by what you want to do, it returns the matching actions with the arguments they require                                                                                                                                                                                         | Read            |
-| `get_schema`        | Shows the full arguments and return shape of one or more actions                                                                                                                                                                                                                                                                                              | Read            |
-| `search`            | Answers a question about your data, usually in one call: Corsair's own PM, CRM, routines and files, and the email, chat, issues, docs and calendars of your connected apps. When an app's synced copy is behind, it reads that app live. When nothing matches, it says so instead of offering the closest records as an answer. It also opens results in full | Read            |
-| `read_data`         | Reads your apps live with a short script, for what `search` doesn't have or what must be current. It stops before any action that would change something                                                                                                                                                                                                      | Read            |
-| `run_script`        | Makes changes in your apps with a short script: send, create, update or delete                                                                                                                                                                                                                                                                                | Sensitive write |
-| `get_job`           | Waits for a [long job](#long-jobs) a script started, such as a crawl or a document parse, and returns its result. Shows a [job card](#cards) where the chat supports it                                                                                                                                                                                       | Read            |
-| `upload_file`       | Adds a file to your [Files](#files) so your apps can use it: a file you attached in the chat, a public URL or a file on your computer. With none of these, it gives you a link to pick the file. It only adds files and never replaces one. Shows an [upload card](#cards) where the chat supports it                                                         | Write           |
-| `view_routines`     | Lists the routines on this link and their recent runs, or shows one run step by step with its error                                                                                                                                                                                                                                                           | Read            |
-| `update_routine`    | Creates, changes, pauses or removes a routine, an automation that runs on an app event or a schedule. Describe it in plain words and Corsair writes and tests it                                                                                                                                                                                              | Sensitive write |
-| `use_skill`         | Loads one of your saved [skills](#skills) by name: its `SKILL.md`, then any file that comes with it                                                                                                                                                                                                                                                           | Read            |
-| `find_skill`        | Searches the public [skills.sh](https://skills.sh) directory for skills you haven't saved yet. Shows a [skills card](#cards) where the chat supports it                                                                                                                                                                                                       | Read            |
-| `save_skill`        | Saves a skill for every agent on your link, from text, a GitHub URL or a skills.sh id. For a folder on your computer, such as `~/.claude/skills`, it gives you one command that uploads it                                                                                                                                                                    | Write           |
-| `submit_feedback`   | Sends the Corsair team a short note about Corsair itself. The agent sends one on its own when Corsair lacks an app or action you asked for, or when a reply says the fault is on Corsair's side, and tells you it did. For a wrong or confusing answer it asks you first. A note never includes your app data                                                 | Write           |
+| Tool                | What it does                                                                                                                                                                                                                                                                                                                                                                    | Type            |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| `list_integrations` | Lists the apps on this link, whether each is ready and which account it's signed in as, with the Corsair credits left and spent this month. Also checks whether Corsair can connect an app that isn't here yet                                                                                                                                                                  | Read            |
+| `get_connect_link`  | Returns the sign-in link for an app, adding the app first if it isn't here. Apps that run on Corsair's own account come back ready, with no link. Shows a [connect card](https://docs.corsair.dev/cloud/mcp.md#cards) where the chat supports it                                                                                                                                | Write           |
+| `list_operations`   | Shows what connected apps can do, with each action's risk and price. Searched by what you want to do, it returns the matching actions with the arguments they require                                                                                                                                                                                                           | Read            |
+| `get_schema`        | Shows the full arguments and return shape of one or more actions                                                                                                                                                                                                                                                                                                                | Read            |
+| `search`            | Answers a question about your data, usually in one call: Corsair's own PM, CRM, routines and files, and the email, chat, issues, docs and calendars of your connected apps. When an app's synced copy is behind, it reads that app live. When nothing matches, it says so instead of offering the closest records as an answer. It also opens results in full                   | Read            |
+| `read_data`         | Reads your apps live with a short script, for what `search` doesn't have or what must be current. It stops before any action that would change something                                                                                                                                                                                                                        | Read            |
+| `run_script`        | Makes changes in your apps with a short script: send, create, update or delete                                                                                                                                                                                                                                                                                                  | Sensitive write |
+| `get_job`           | Waits for a [long job](https://docs.corsair.dev/cloud/mcp.md#long-jobs) a script started, such as a crawl or a document parse, and returns its result. Shows a [job card](https://docs.corsair.dev/cloud/mcp.md#cards) where the chat supports it                                                                                                                               | Read            |
+| `upload_file`       | Adds a file to your [Files](https://docs.corsair.dev/cloud/mcp.md#files) so your apps can use it: a file you attached in the chat, a public URL or a file on your computer. With none of these, it gives you a link to pick the file. It only adds files and never replaces one. Shows an [upload card](https://docs.corsair.dev/cloud/mcp.md#cards) where the chat supports it | Write           |
+| `view_routines`     | Lists the routines on this link and their recent runs, or shows one run step by step with its error                                                                                                                                                                                                                                                                             | Read            |
+| `update_routine`    | Creates, changes, pauses or removes a routine, an automation that runs on an app event or a schedule. Describe it in plain words and Corsair writes and tests it                                                                                                                                                                                                                | Sensitive write |
+| `use_skill`         | Loads one of your saved [skills](https://docs.corsair.dev/cloud/mcp.md#skills) by name: its `SKILL.md`, then any file that comes with it                                                                                                                                                                                                                                        | Read            |
+| `find_skill`        | Searches the public [skills.sh](https://skills.sh) directory for skills you haven't saved yet. Shows a [skills card](https://docs.corsair.dev/cloud/mcp.md#cards) where the chat supports it                                                                                                                                                                                    | Read            |
+| `save_skill`        | Saves a skill for every agent on your link, from text, a GitHub URL or a skills.sh id. For a folder on your computer, such as `~/.claude/skills`, it gives you one command that uploads it                                                                                                                                                                                      | Write           |
+| `submit_feedback`   | Sends the Corsair team a short note about Corsair itself. The agent sends one on its own when Corsair lacks an app or action you asked for, or when a reply says the fault is on Corsair's side, and tells you it did. For a wrong or confusing answer it asks you first. A note never includes your app data                                                                   | Write           |
 
-Read tools never change anything in your apps. A read can still use [credits](#corsair-credits): `read_data` on an app that runs on Corsair's account is billed like any other call there. Write tools change only your Corsair setup and files, which you can undo, or send Corsair a note. Sensitive writes act in your apps, or set up a routine that will act later without asking, so a client should ask you before every call.
+Read tools never change anything in your apps. A read can still use [credits](https://docs.corsair.dev/cloud/mcp.md#corsair-credits): `read_data` on an app that runs on Corsair's account is billed like any other call there. Write tools change only your Corsair setup and files, which you can undo, or send Corsair a note. Sensitive writes act in your apps, or set up a routine that will act later without asking, so a client should ask you before every call.
 
 Scripts run in a sandbox that can only call your connected apps' actions. They have no network, filesystem or other system access, and the agent never sees your app credentials.
 
@@ -695,8 +695,8 @@ Besides the apps you connect, the agent can use apps that Corsair runs itself. T
 
 - **PM**: issues and projects, with a status, priority, assignee, labels and a due date.
 - **CRM**: people, companies and deals, with notes and tasks.
-- **pg**: your own Postgres databases, queried by name. See [Postgres databases](#postgres-databases).
-- **Files**: files your apps can use. See [Files](#files).
+- **pg**: your own Postgres databases, queried by name. See [Postgres databases](https://docs.corsair.dev/cloud/mcp.md#postgres-databases).
+- **Files**: files your apps can use. See [Files](https://docs.corsair.dev/cloud/mcp.md#files).
 - **Mate**: the chat assistant in Corsair. The agent can find and read your Mate chats, including ones in Shared.
 
 Each one has a page on your link at [hub.corsair.dev/me](https://hub.corsair.dev/me).
@@ -1046,7 +1046,7 @@ Each of these takes the key as `Authorization: Bearer <api_key>`.
 | `POST /api/lug/agent-signup/resend` | `{"human_email": "..."}`          | Sends the claim email again, or to someone new. One every 5 minutes. While waiting for approval, only to the same person |
 | `POST /api/lug/agent-signup/revoke` |                                   | Gives the account up. An unclaimed account turns off; for a claimed one, only the agent's link closes                    |
 
-All paths are on `https://hub.corsair.dev`. Call `/status` after a claim. If your person already had a handle, `mcp_url` now points at it and the old address stops working, so update your client as described in [Connect to the MCP server](#connect-to-the-mcp-server).
+All paths are on `https://hub.corsair.dev`. Call `/status` after a claim. If your person already had a handle, `mcp_url` now points at it and the old address stops working, so update your client as described in [Connect to the MCP server](https://docs.corsair.dev/cloud/agent-signup.md#connect-to-the-mcp-server).
 
 ### The auth.md protocol
 
@@ -8164,7 +8164,7 @@ Source: https://docs.corsair.dev/concepts/permissions.md
 
 When an AI agent calls Corsair, you need guardrails. Permissions let you set a policy per integration. Reads go through, writes may need sign-off, destructive actions can be blocked entirely.
 
-With Corsair Hub, permission approvals are handled automatically. If you're building the review UI yourself, see [Handling permission approvals](#handling-permission-approvals).
+With Corsair Hub, permission approvals are handled automatically. If you're building the review UI yourself, see [Handling permission approvals](https://docs.corsair.dev/concepts/permissions.md#handling-permission-approvals).
 
 ```ts corsair.ts highlight={14-20}
 import { createCorsair } from "corsair";
@@ -9437,16 +9437,16 @@ For general information about how Corsair handles authentication, see [Authentic
 
 ## Table of contents
 
-- [Slack](#slack)
-- [GitHub](#github)
-- [Gmail](#gmail)
-- [Google Sheets](#google-sheets)
-- [Google Drive](#google-drive)
-- [Google Calendar](#google-calendar)
-- [HubSpot](#hubspot)
-- [Linear](#linear)
-- [PostHog](#posthog)
-- [Resend](#resend)
+- [Slack](https://docs.corsair.dev/guides/plugin-credentials.md#slack)
+- [GitHub](https://docs.corsair.dev/guides/plugin-credentials.md#github)
+- [Gmail](https://docs.corsair.dev/guides/plugin-credentials.md#gmail)
+- [Google Sheets](https://docs.corsair.dev/guides/plugin-credentials.md#google-sheets)
+- [Google Drive](https://docs.corsair.dev/guides/plugin-credentials.md#google-drive)
+- [Google Calendar](https://docs.corsair.dev/guides/plugin-credentials.md#google-calendar)
+- [HubSpot](https://docs.corsair.dev/guides/plugin-credentials.md#hubspot)
+- [Linear](https://docs.corsair.dev/guides/plugin-credentials.md#linear)
+- [PostHog](https://docs.corsair.dev/guides/plugin-credentials.md#posthog)
+- [Resend](https://docs.corsair.dev/guides/plugin-credentials.md#resend)
 
 ## Slack
 
@@ -10752,7 +10752,7 @@ createCorsairClient({
 
 `baseURL` is the origin + base path the handler is mounted at, e.g. `https://app.example.com/api/corsair`. A trailing slash is tolerated.
 
-`fetch` is optional. See [Custom fetch](#custom-fetch) below.
+`fetch` is optional. See [Custom fetch](https://docs.corsair.dev/adapters/client.md#custom-fetch) below.
 
 Need auth headers, custom retry, or interceptors? Pass a wrapped `fetch`:
 
@@ -11106,7 +11106,7 @@ function ConnectSlack() {
 }
 ```
 
-`useConnections()` returns `{ connect, call, isConnected, connections, loading }` for the app's own (default-scope) user. For a multi-tenant **admin dashboard** reading arbitrary tenants, use the factory's [`useConnectionStatus({ tenantId })`](#read-hooks) instead.
+`useConnections()` returns `{ connect, call, isConnected, connections, loading }` for the app's own (default-scope) user. For a multi-tenant **admin dashboard** reading arbitrary tenants, use the factory's [`useConnectionStatus({ tenantId })`](https://docs.corsair.dev/adapters/react.md#read-hooks) instead.
 
 > [!NOTE]
 >
@@ -13338,7 +13338,7 @@ The handler dispatches 9 read/write routes. Connect/OAuth is covered separately 
 | GET    | `/permissions/:id`             | Get a permission record                   |
 | POST   | `/permissions/lookup-by-token` | Resolve a permission by email-link token  |
 
-All routes return JSON. Errors return `{ error, message, …extra }` with a non-2xx status. See [Errors](#errors).
+All routes return JSON. Errors return `{ error, message, …extra }` with a non-2xx status. See [Errors](https://docs.corsair.dev/management/handler.md#errors).
 
 ## Options
 
