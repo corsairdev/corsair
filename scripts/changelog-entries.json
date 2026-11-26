@@ -13065,5 +13065,32 @@
     "version": "0.2.36",
     "isNew": false,
     "changes": []
+  },
+  {
+    "date": "2026-11-26",
+    "package": "@corsair-dev/llamaindex",
+    "dir": "adapters/llamaindex",
+    "name": "llamaindex",
+    "version": "0.1.92",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-26",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.120",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-26",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.106",
+    "isNew": false,
+    "changes": []
   }
 ]
