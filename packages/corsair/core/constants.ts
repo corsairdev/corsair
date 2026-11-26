@@ -437,6 +437,7 @@ export const BaseProviders = [
 	'mailcheck',
 	'mailchimp',
 	'mailcoach',
+	'mailerlite',
 	'mailsso',
 	'mailtrap',
 	'make',
@@ -1225,6 +1226,7 @@ export const ProviderDisplayNames = {
 	mailcheck: 'Mailcheck',
 	mailchimp: 'Mailchimp',
 	mailcoach: 'Mailcoach',
+	mailerlite: 'MailerLite',
 	mailsso: 'Mails.so',
 	mailtrap: 'Mailtrap',
 	make: 'Make',
@@ -2020,6 +2022,7 @@ export type AllProviders =
 	| 'mailcheck'
 	| 'mailchimp'
 	| 'mailcoach'
+	| 'mailerlite'
 	| 'mailsso'
 	| 'mailtrap'
 	| 'make'
