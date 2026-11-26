@@ -101,7 +101,7 @@ describe('Linkly output parsing', () => {
 		mockFetch(jsonResponse(link));
 
 		await expect(
-			invoke(endpoints.links.get, { id: 41657524 }),
+			invoke(endpoints.links.get, { id: 41657524, workspace_id: 42 }),
 		).resolves.toEqual(link);
 	});
 
@@ -109,7 +109,7 @@ describe('Linkly output parsing', () => {
 		mockFetch(jsonResponse({ ...link, full_url: undefined }));
 
 		await expect(
-			invoke(endpoints.links.get, { id: 41657524 }),
+			invoke(endpoints.links.get, { id: 41657524, workspace_id: 42 }),
 		).rejects.toMatchObject({ name: 'ZodError' });
 	});
 
@@ -333,6 +333,8 @@ describe('Linkly input rejection', () => {
 			{ workspace_id: 42, sort_dir: 'up' },
 		],
 		['links.get without an id', endpoints.links.get, {}],
+		// Live 2026-11-26: Linkly answers 400 workspace_required without it.
+		['links.get without workspace_id', endpoints.links.get, { id: 41657524 }],
 		[
 			'links.create without a url',
 			endpoints.links.create,

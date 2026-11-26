@@ -231,8 +231,9 @@ const LinksGetInputSchema = z.object({
 	// The spec types this path segment as a string; every response carries a
 	// numeric `id`, so both spellings are accepted.
 	id: z.union([z.string().min(1), z.number().int().positive()]),
-	workspace_id: WorkspaceIdSchema.optional().describe(
-		'Optional. The workspace the link belongs to.',
+	// Live 2026-11-26: an API-key call without it gets 400 workspace_required.
+	workspace_id: WorkspaceIdSchema.describe(
+		'The workspace the link belongs to. Linkly refuses the call without it.',
 	),
 });
 
@@ -448,9 +449,8 @@ export type LinksExportResponse = z.infer<typeof LinksExportResponseSchema>;
 // ── clicks.getTimeSeries ────────────────────────────────────────────────────
 
 const LinkIdQuerySchema = z
-	.string()
-	.min(1)
-	.describe('A link ID, e.g. "30". One ID also works in link_ids.');
+	.union([z.string().min(1), z.number().int().positive()])
+	.describe('A link ID, e.g. 30. One ID also works in link_ids.');
 
 const LinkIdsQuerySchema = z
 	.string()
@@ -728,7 +728,9 @@ export type WebhooksUnsubscribeInput = z.infer<
 >;
 
 // The spec documents a bare string acknowledgement.
-const WebhooksUnsubscribeResponseSchema = z.string();
+// Live 2026-11-26: 200 with an empty body (undefined here); the spec says a
+// string, which is still accepted.
+const WebhooksUnsubscribeResponseSchema = z.string().optional();
 
 export type WebhooksUnsubscribeResponse = z.infer<
 	typeof WebhooksUnsubscribeResponseSchema
@@ -752,9 +754,16 @@ const LinksGetDetailsResponseSchema = z
 			.int()
 			.nullish()
 			.describe('Lifetime clicks, bots included.'),
-		// The spec types both as bare objects.
-		domain: z.record(z.string(), z.unknown()).nullish(), // unknown: untyped object in the spec
-		domains: z.array(z.record(z.string(), z.unknown())).nullish(), // unknown: untyped objects in the spec
+		// The spec types both as bare objects; the live API (2026-11-26) sends
+		// host names. Both are accepted.
+		domain: z
+			.union([z.string(), z.record(z.string(), z.unknown())]) // unknown: the spec's untyped object
+			.nullish()
+			.describe("The link's domain, e.g. linkly.link."),
+		domains: z
+			.array(z.union([z.string(), z.record(z.string(), z.unknown())])) // unknown: the spec's untyped objects
+			.nullish()
+			.describe('Domains the workspace can use.'),
 		link: WorkspaceLinkSchema,
 	})
 	.loose();
@@ -994,7 +1003,8 @@ export type WebhooksUnsubscribeFromLinkInput = z.infer<
 	typeof WebhooksUnsubscribeFromLinkInputSchema
 >;
 
-const WebhooksUnsubscribeFromLinkResponseSchema = z.string();
+// Live 2026-11-26: 200 with an empty body, like the workspace unsubscribe.
+const WebhooksUnsubscribeFromLinkResponseSchema = z.string().optional();
 
 export type WebhooksUnsubscribeFromLinkResponse = z.infer<
 	typeof WebhooksUnsubscribeFromLinkResponseSchema

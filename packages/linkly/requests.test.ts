@@ -320,7 +320,7 @@ describe('Linkly request shapes', () => {
 		mockFetch(jsonResponse(notFound, 404));
 
 		await expect(
-			endpoints.links.get(makeCtx(), { id: '999' }),
+			endpoints.links.get(makeCtx(), { id: '999', workspace_id: 42 }),
 		).rejects.toMatchObject({
 			status: 404,
 			body: { code: 'not_found' },

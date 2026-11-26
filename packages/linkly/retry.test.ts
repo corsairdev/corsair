@@ -58,7 +58,10 @@ describe('rate-limit retries through createCorsair', () => {
 			respond('', 429);
 			respond(link);
 
-			const result = await corsair.linkly.api.links.get({ id: 41657524 });
+			const result = await corsair.linkly.api.links.get({
+				id: 41657524,
+				workspace_id: 42,
+			});
 
 			expect(result.id).toBe(41657524);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
@@ -103,7 +106,7 @@ describe('rate-limit retries through createCorsair', () => {
 			}
 
 			await expect(
-				corsair.linkly.api.links.get({ id: 41657524 }),
+				corsair.linkly.api.links.get({ id: 41657524, workspace_id: 42 }),
 			).rejects.toMatchObject({ status: 429 });
 			expect(fetchMock).toHaveBeenCalledTimes(4);
 		} finally {
@@ -139,7 +142,10 @@ describe('rate-limit retries through createCorsair', () => {
 			respond('', 429);
 			respond(link);
 
-			const promise = corsair.linkly.api.links.get({ id: 41657524 });
+			const promise = corsair.linkly.api.links.get({
+				id: 41657524,
+				workspace_id: 42,
+			});
 
 			await jest.advanceTimersByTimeAsync(999);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
