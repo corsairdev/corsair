@@ -12,7 +12,7 @@ pnpm add @corsair-dev/lob
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `account.getBalance` | `lob.api.account.getBalance` | `read` | Read the account's current Lob Credits balance |
+| `account.getBalance` | `lob.api.account.getBalance` | `read` | Read the account's current Lob Credits balance (live keys only; a test key gets 401) |
 | `addresses.create` | `lob.api.addresses.create` | `write` | Create a US or international address in the Lob address book for reuse as a mail to or from address |
 | `addresses.delete` | `lob.api.addresses.delete` | `destructive` | Permanently delete an address book entry. Lob marks it deleted and does not restore it |
 | `addresses.get` | `lob.api.addresses.get` | `read` | Read one address book entry by its adr_ ID |

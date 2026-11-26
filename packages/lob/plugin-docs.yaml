@@ -15,6 +15,7 @@ overviewNote: |
   - **Every mail product sends for real on a live key.** `checks.send`, `selfMailers.send`, `snapPacks.send`, `booklets.send` and `campaigns.send` print, mail and bill like postcards and letters; `checks.send` also moves money from a verified bank account. Print orders (`cards.createOrder`, `buckslips.createOrder`) bill thousands of pieces at once. All of these are `destructive`.
   - **Cancels.** `postcards.cancel`, `letters.cancel`, `checks.cancel`, `selfMailers.cancel`, `snapPacks.cancel` and `booklets.cancel` work only before the piece goes to production (within the account's cancellation window).
   - **Campaigns.** Create a campaign, add a creative (the artwork) and an upload (the audience), attach the CSV with `uploads.uploadFile`, check `uploads.getReport`, then `campaigns.send`. Campaigns, uploads and Informed Delivery need those features enabled on the Lob account.
+  - **Features Lob turns on per account.** On a new self-serve account, billing groups, snap packs, booklets, Informed Delivery and campaign creates answer 403, self mailers answer 404 `unrecognized_endpoint`, and buckslips and cards answer 422 `<feature>_not_allowed`. Lob enables them on request. `account.getBalance` needs a live key; a test key gets 401 there.
   - **Multipart.** `uploads.uploadFile` and the two Informed Delivery writes send files: pass a public URL, `{ url }`, or `{ base64, filename }`.
   - **Webhooks.** The plugin does not receive Lob webhooks; track deliveries by reading a mailpiece (`postcards.get`, `letters.get`, `checks.get`, ...).
 examples:
@@ -101,7 +102,7 @@ apiNotes:
   letters.get:
     '`tracking_number` and `tracking_events` appear on certified and registered mail.'
   account.getBalance:
-    'Returns the Lob Credits balance; it can be negative.'
+    'Returns the Lob Credits balance; it can be negative. Needs a live key: Lob answers a test key with 401 `invalid_api_key` here, though every other route accepts it.'
   checks.send:
     'Draws on a verified bank account (bankAccounts.create, then bankAccounts.verify). Provide `message` or `check_bottom`, not both. Test keys never move money.'
   campaigns.send:

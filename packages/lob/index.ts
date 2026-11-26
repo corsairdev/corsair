@@ -986,7 +986,8 @@ export const lobEndpointMeta = {
 	},
 	'account.getBalance': {
 		riskLevel: 'read',
-		description: "Read the account's current Lob Credits balance",
+		description:
+			"Read the account's current Lob Credits balance (live keys only; a test key gets 401)",
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof lobEndpointsNested>;
 

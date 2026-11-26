@@ -14,7 +14,7 @@ description: "API reference for the Lob plugin in Corsair: every `lob.api.*` ope
 
 `account.getBalance`
 
-Read the account's current Lob Credits balance
+Read the account's current Lob Credits balance (live keys only; a test key gets 401)
 
 **Risk:** `read`
 
@@ -24,7 +24,7 @@ await corsair.lob.api.account.getBalance({});
 
 **Input:** _empty object_
 
-Returns the Lob Credits balance; it can be negative.
+Returns the Lob Credits balance; it can be negative. Needs a live key: Lob answers a test key with 401 `invalid_api_key` here, though every other route accepts it.
 
 
 **Output**
