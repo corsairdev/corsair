@@ -44,8 +44,27 @@ export function isReplayable(error: Error): boolean {
 	return replayable.has(error);
 }
 
+// The same truthiness test decides whether the header is sent, so a request
+// counts as keyed only when Loops really got a key.
 function canReplay(req: LoopsRequest): boolean {
-	return req.method === 'GET' || req.idempotencyKey !== undefined;
+	return req.method === 'GET' || Boolean(req.idempotencyKey);
+}
+
+/**
+ * Loops' 409 for a reused key quotes the key, and a caller's key can hold an
+ * email address or an order id, so it is cut from the message and body.
+ */
+// unknown: the error body is untyped JSON; only its strings are rewritten.
+function withoutKey(value: unknown, key: string | undefined): unknown {
+	if (!key) return value;
+	if (typeof value === 'string')
+		return value.split(key).join('[idempotency key]');
+	if (Array.isArray(value)) return value.map((item) => withoutKey(item, key));
+	const record = asRecord(value);
+	if (!record) return value;
+	return Object.fromEntries(
+		Object.entries(record).map(([name, item]) => [name, withoutKey(item, key)]),
+	);
 }
 
 /** True for a 401 whose message says a feature flag is off, not that the key is bad. */
@@ -101,6 +120,8 @@ function loopsApiError(
 		rateLimitLimit?: number;
 	},
 ): ApiError {
+	const safeBody = withoutKey(body, req.idempotencyKey);
+	const message = describeLoopsError(status, safeBody, fallback);
 	const error = new ApiError(
 		{ method: req.method, url: req.path },
 		{
@@ -108,9 +129,9 @@ function loopsApiError(
 			ok: false,
 			status,
 			statusText,
-			body,
+			body: safeBody,
 		},
-		`Loops ${status}: ${describeLoopsError(status, body, fallback)}`,
+		`Loops ${status}: ${withoutKey(message, req.idempotencyKey)}`,
 		rateLimit,
 	);
 	if (canReplay(req)) replayable.add(error);

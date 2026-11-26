@@ -209,4 +209,29 @@ describe('Loops client', () => {
 		).rejects.toMatchObject({ status: 429 });
 		expect(spy).toHaveBeenCalledTimes(1);
 	});
+
+	it('cuts the idempotency key Loops quotes in a 409 out of the error', async () => {
+		const key = 'receipt:alex@company.com';
+		queue(
+			{
+				success: false,
+				message: `Idempotency key ${key} has already been used`,
+			},
+			409,
+		);
+
+		const caught = await captureError(
+			makeLoopsRequest('test-key', {
+				method: 'POST',
+				path: '/v1/transactional',
+				body: { email: 'alex@company.com', transactionalId: 'cll42l54f' },
+				idempotencyKey: key,
+			}),
+		);
+
+		expect((caught as ApiError).status).toBe(409);
+		expect(JSON.stringify(caught)).not.toContain(key);
+		expect((caught as ApiError).message).not.toContain(key);
+		expect((caught as ApiError).message).toContain('[idempotency key]');
+	});
 });

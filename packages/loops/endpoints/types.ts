@@ -252,7 +252,7 @@ const EventsSendInputSchema = z
 			.record(z.string(), CustomPropertyValueSchema)
 			.optional(),
 		// Sent as the Idempotency-Key header; a reuse within 24 hours answers 409.
-		idempotencyKey: z.string().max(100).optional(),
+		idempotencyKey: z.string().min(1).max(100).optional(),
 	})
 	.superRefine((value, ctx) => {
 		rejectReservedProperties(value, ctx);
@@ -279,7 +279,7 @@ const TransactionalSendInputSchema = z.object({
 	dataVariables: TemplateDataSchema.optional(),
 	attachments: z.array(AttachmentSchema).optional(),
 	// Reusing a key within 24 hours answers 409; the API recommends a V4 UUID.
-	idempotencyKey: z.string().max(100).optional(),
+	idempotencyKey: z.string().min(1).max(100).optional(),
 });
 
 const TransactionalSendResponseSchema = z.object({

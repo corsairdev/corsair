@@ -36,6 +36,7 @@ export const send: LoopsEndpoints['eventsSend'] = (ctx, input) =>
 			idempotencyKey,
 		}),
 		{
-			log: (parsed) => ({ eventName: parsed.eventName, userId: parsed.userId }),
+			// userId is caller text and can hold an email address, so it is not logged.
+			log: (parsed) => ({ eventName: parsed.eventName }),
 		},
 	);

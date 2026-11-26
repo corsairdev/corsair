@@ -158,8 +158,8 @@ describe('Loops output parsing', () => {
 });
 
 describe('Loops input validation', () => {
-	it('rejects contacts.find with both identifiers', () => {
-		expect(() =>
+	it('rejects contacts.find with both identifiers', async () => {
+		await expect(() =>
 			endpoints.contacts.find(makeCtx(), {
 				email: 'alex@company.com',
 				userId: 'usr_7f8e9d0c1b2a',
@@ -167,25 +167,27 @@ describe('Loops input validation', () => {
 		).rejects.toThrow();
 	});
 
-	it('rejects contacts.find with no identifier', () => {
-		expect(() => endpoints.contacts.find(makeCtx(), {})).rejects.toThrow();
+	it('rejects contacts.find with no identifier', async () => {
+		await expect(() =>
+			endpoints.contacts.find(makeCtx(), {}),
+		).rejects.toThrow();
 	});
 
-	it('rejects contacts.update with no identifier', () => {
-		expect(() =>
+	it('rejects contacts.update with no identifier', async () => {
+		await expect(() =>
 			endpoints.contacts.update(makeCtx(), { firstName: 'Alex' }),
 		).rejects.toThrow();
 	});
 
-	it('rejects contacts.create with no email', () => {
+	it('rejects contacts.create with no email', async () => {
 		// Loops answers 400 for an identifier-less create; fail before the call.
-		expect(() =>
+		await expect(() =>
 			endpoints.contacts.create(makeCtx(), { firstName: 'Alex' }),
 		).rejects.toThrow(/Provide an email/);
 	});
 
-	it('rejects a custom property named email, which would overwrite the selector', () => {
-		expect(() =>
+	it('rejects a custom property named email, which would overwrite the selector', async () => {
+		await expect(() =>
 			endpoints.contacts.update(makeCtx(), {
 				email: 'right@company.com',
 				customProperties: {
@@ -196,8 +198,8 @@ describe('Loops input validation', () => {
 		).rejects.toThrow(/fixed field/);
 	});
 
-	it('rejects a custom property longer than 500 characters', () => {
-		expect(() =>
+	it('rejects a custom property longer than 500 characters', async () => {
+		await expect(() =>
 			endpoints.contacts.create(makeCtx(), {
 				email: 'alex@company.com',
 				customProperties: { note: 'x'.repeat(501) } as never,
@@ -205,14 +207,14 @@ describe('Loops input validation', () => {
 		).rejects.toThrow();
 	});
 
-	it('rejects an events.send with neither email nor userId', () => {
-		expect(() =>
+	it('rejects an events.send with neither email nor userId', async () => {
+		await expect(() =>
 			endpoints.events.send(makeCtx(), { eventName: 'signup' }),
 		).rejects.toThrow();
 	});
 
-	it('rejects a transactional idempotency key over 100 characters', () => {
-		expect(() =>
+	it('rejects a transactional idempotency key over 100 characters', async () => {
+		await expect(() =>
 			endpoints.transactional.send(makeCtx(), {
 				email: 'alex@company.com',
 				transactionalId: 'cll42l54f20i1la0lfooe3z12',
@@ -221,8 +223,8 @@ describe('Loops input validation', () => {
 		).rejects.toThrow();
 	});
 
-	it('rejects a non-base64 attachment payload', () => {
-		expect(() =>
+	it('rejects a non-base64 attachment payload', async () => {
+		await expect(() =>
 			endpoints.transactional.send(makeCtx(), {
 				email: 'alex@company.com',
 				transactionalId: 'cll42l54f20i1la0lfooe3z12',
@@ -240,5 +242,34 @@ describe('Loops input validation', () => {
 			endpoints.contacts.create(makeCtx(), { email: 'not-an-email' }),
 		).rejects.toThrow();
 		expect(spy).not.toHaveBeenCalled();
+	});
+
+	it('rejects a custom property that would overwrite an events.send field', async () => {
+		for (const key of ['eventName', 'eventProperties', 'idempotencyKey']) {
+			await expect(
+				endpoints.events.send(makeCtx(), {
+					eventName: 'signup',
+					email: 'alex@company.com',
+					customProperties: { [key]: 'cancelled' },
+				}),
+			).rejects.toThrow(/fixed field/);
+		}
+	});
+
+	it('rejects an empty idempotency key, which would be sent without the header', async () => {
+		await expect(
+			endpoints.transactional.send(makeCtx(), {
+				email: 'alex@company.com',
+				transactionalId: 'cll42l54f20i1la0lfooe3z12',
+				idempotencyKey: '',
+			}),
+		).rejects.toThrow();
+		await expect(
+			endpoints.events.send(makeCtx(), {
+				eventName: 'signup',
+				email: 'alex@company.com',
+				idempotencyKey: '',
+			}),
+		).rejects.toThrow();
 	});
 });

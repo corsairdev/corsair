@@ -42,7 +42,6 @@ export const create: LoopsEndpoints['contactsCreate'] = (ctx, input) =>
 		{
 			log: (parsed, result) => ({
 				contactId: result.id,
-				userId: parsed.userId,
 				subscribed: parsed.subscribed,
 			}),
 		},
@@ -63,10 +62,7 @@ export const update: LoopsEndpoints['contactsUpdate'] = (ctx, input) =>
 			body: withCustomProperties(parsed),
 		}),
 		{
-			log: (parsed, result) => ({
-				contactId: result.id,
-				userId: parsed.userId,
-			}),
+			log: (_parsed, result) => ({ contactId: result.id }),
 		},
 	);
 

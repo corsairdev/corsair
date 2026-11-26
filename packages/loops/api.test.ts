@@ -64,7 +64,7 @@ describeIfKey('Loops live API', () => {
 		}
 		const find = await api.contacts.find(liveCtx(), { email });
 		if (find.length === 0) {
-			console.warn(`No contact found for LOOPS_TEST_EMAIL=${email}.`);
+			console.warn('No contact found for LOOPS_TEST_EMAIL.');
 			return;
 		}
 
