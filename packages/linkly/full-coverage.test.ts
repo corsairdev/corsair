@@ -138,19 +138,22 @@ describe('links: the rest of the API', () => {
 			password: 'open-sesame',
 			metadata: { crm_id: 'acme-4711', old_key: null },
 			public_analytics: true,
+			privacy_mode: true,
 			skip_social_crawler_tracking: true,
 			webhooks: [webhookUrl],
 			notify_user_ids: [7],
 			qr_styles: { fgColor: '#000000' },
 		});
 
-		// CodeRabbit thread on types.ts:252: password used to be stripped.
+		// CodeRabbit threads on types.ts:252 and :250: password and
+		// privacy_mode used to be stripped.
 		expect(sentBody()).toEqual({
 			workspace_id: 42,
 			url: 'https://www.example.com',
 			password: 'open-sesame',
 			metadata: { crm_id: 'acme-4711', old_key: null },
 			public_analytics: true,
+			privacy_mode: true,
 			skip_social_crawler_tracking: true,
 			webhooks: [webhookUrl],
 			notify_user_ids: [7],

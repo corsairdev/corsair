@@ -323,6 +323,12 @@ const linkWriteFields = {
 		.describe(
 			'Your own key-value data, up to 20 keys. Updates merge into the existing keys; set a key to null to remove it. Never shown to visitors.',
 		),
+	privacy_mode: z
+		.boolean()
+		.optional()
+		.describe(
+			'Record clicks without personal data (no IP, location, user agent, referrer or query parameters; click times kept to the hour). Turning it on also clears pixels, custom scripts, conversion tracking, webhooks and click notifications on the link. Paid plans only.',
+		),
 	skip_social_crawler_tracking: z
 		.boolean()
 		.optional()
@@ -852,7 +858,11 @@ export type LinksDeleteManyResponse = z.infer<
 
 const ClicksExportInputSchema = z.object({
 	workspace_id: WorkspaceIdSchema,
-	link_id: LinkIdQuerySchema.optional(),
+	// The export takes one link_id and no link_ids, so it gets its own text.
+	link_id: z
+		.union([z.string().min(1), z.number().int().positive()])
+		.optional()
+		.describe('Only clicks on this link, e.g. 30.'),
 	start: DateQuerySchema,
 	end: DateQuerySchema,
 	country: CountryQuerySchema.optional(),
@@ -983,7 +993,15 @@ export type WebhooksSubscribeToLinkInput = z.infer<
 	typeof WebhooksSubscribeToLinkInputSchema
 >;
 
-const WebhooksSubscribeToLinkResponseSchema = WebhooksSubscribeResponseSchema;
+const WebhooksSubscribeToLinkResponseSchema = z
+	.object({
+		id: z
+			.string()
+			.describe(
+				'The webhook URL. Pass it as hook_id, with link_id, to webhooks.unsubscribeFromLink.',
+			),
+	})
+	.loose();
 
 export type WebhooksSubscribeToLinkResponse = z.infer<
 	typeof WebhooksSubscribeToLinkResponseSchema
@@ -1065,7 +1083,11 @@ export type ConversionsListInput = z.infer<typeof ConversionsListInputSchema>;
 const ConversionsListResponseSchema = z
 	.object({
 		conversions: z.array(ConversionSchema),
-		has_more: z.boolean().describe('More follow; page on with after.'),
+		has_more: z
+			.boolean()
+			.describe(
+				'More follow. To walk the whole history, start with since set before the first conversion (e.g. 2020-01-01), then pass the last id as after while has_more is true; a page without since or after is newest first and cannot be continued with after.',
+			),
 	})
 	.loose();
 
