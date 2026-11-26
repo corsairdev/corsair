@@ -1,12 +1,14 @@
+import { ApiError } from 'corsair/http';
 import { ZodError } from 'zod';
 import {
 	LINKHUT_MIN_INTERVAL_MS,
-	LinkhutAPIError,
+	linkhutRequestFacts,
 	linkhutRequestGap,
 } from './client';
 import { Posts, Tags } from './endpoints';
 import { shapePostsAllPage, shapePostsSuggest } from './endpoints/posts';
 import {
+	allHashes as allHashesBody,
 	dates as datesBody,
 	done,
 	failure,
@@ -53,7 +55,13 @@ describe('posts.lastUpdated', () => {
 		);
 	});
 
-	it('tolerates a missing update time for an account with no bookmarks', async () => {
+	it('reads the epoch linkhut answers for an account with no bookmarks', async () => {
+		responds({ update_time: '1970-01-01T00:00:00Z' });
+		const result = await Posts.lastUpdated(createTestContext(), {});
+		expect(result.update_time).toBe('1970-01-01T00:00:00Z');
+	});
+
+	it('tolerates a missing update time', async () => {
 		responds({});
 		const result = await Posts.lastUpdated(createTestContext(), {});
 		expect(result.update_time).toBeUndefined();
@@ -61,6 +69,43 @@ describe('posts.lastUpdated', () => {
 });
 
 describe('posts.get', () => {
+	it('answers no posts when the url is not saved (linkhut sends 404)', async () => {
+		responds(failure, 404);
+		const result = await Posts.get(createTestContext(), {
+			url: 'https://not-saved.example/',
+		});
+		expect(result).toEqual({ posts: [] });
+	});
+
+	it('lets a 404 through when no url was asked for', async () => {
+		responds(failure, 404);
+		const error = (await captureError(
+			Posts.get(createTestContext(), { tag: 'oss' }),
+		)) as ApiError;
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.status).toBe(404);
+	});
+
+	it('cuts a full timestamp to the day linkhut parses', async () => {
+		const fetchMock = responds(postsOfOneDay);
+		await Posts.get(createTestContext(), { dt: '2020-12-24T16:11:14Z' });
+		const [url] = fetchMock.mock.calls[0] as [string];
+		expect(new URL(url).searchParams.get('dt')).toBe('2020-12-24');
+	});
+
+	it('refuses a dt that is neither a day nor a UTC timestamp', async () => {
+		responds(postsOfOneDay);
+		await expect(
+			Posts.get(createTestContext(), { dt: '24/12/2020' }),
+		).rejects.toBeInstanceOf(ZodError);
+	});
+
+	it('reads the others count the server sends', async () => {
+		responds({ posts: [post] });
+		const result = await Posts.get(createTestContext(), {});
+		expect(result.posts[0]?.others).toBe(0);
+	});
+
 	it('parses the posts of one day', async () => {
 		responds(postsOfOneDay);
 		const result = await Posts.get(createTestContext(), {
@@ -179,7 +224,7 @@ describe('posts.suggest', () => {
 		const error = await captureError(
 			Posts.suggest(createTestContext(), { url: 'https://sourcehut.org/' }),
 		);
-		expect(error).toBeInstanceOf(LinkhutAPIError);
+		expect(error).toBeInstanceOf(ApiError);
 	});
 
 	it('rejects an element that is not an object', async () => {
@@ -187,7 +232,7 @@ describe('posts.suggest', () => {
 		const error = await captureError(
 			Posts.suggest(createTestContext(), { url: 'https://sourcehut.org/' }),
 		);
-		expect(error).toBeInstanceOf(LinkhutAPIError);
+		expect(error).toBeInstanceOf(ApiError);
 	});
 
 	it('rejects a list that is not an array', async () => {
@@ -195,7 +240,7 @@ describe('posts.suggest', () => {
 		const error = await captureError(
 			Posts.suggest(createTestContext(), { url: 'https://sourcehut.org/' }),
 		);
-		expect(error).toBeInstanceOf(LinkhutAPIError);
+		expect(error).toBeInstanceOf(ApiError);
 	});
 });
 
@@ -263,13 +308,11 @@ describe('writes that answer result_code', () => {
 		],
 	])('%s fails loudly on a %s body at HTTP 200', async (_name, run) => {
 		responds(failure);
-		const error = (await captureError(
-			run('https://example.com/'),
-		)) as LinkhutAPIError;
-		expect(error).toBeInstanceOf(LinkhutAPIError);
-		expect(error.code).toBe('something went wrong');
+		const error = (await captureError(run('https://example.com/'))) as ApiError;
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.body).toEqual(failure);
 		expect(error.status).toBe(200);
-		expect(error.replayable).toBe(false);
+		expect(linkhutRequestFacts(error)?.replayable).toBe(false);
 		expect(error.message).toContain('something went wrong');
 	});
 
@@ -290,11 +333,62 @@ describe('writes that answer result_code', () => {
 			responds(htmlShell);
 			const error = (await captureError(
 				run('https://example.com/'),
-			)) as LinkhutAPIError;
-			expect(error).toBeInstanceOf(LinkhutAPIError);
+			)) as ApiError;
+			expect(error).toBeInstanceOf(ApiError);
 			expect(error.message).not.toContain(htmlShell);
 		},
 	);
+});
+
+describe('posts.allHashes', () => {
+	it('wraps the bare manifest array in { hashes }', async () => {
+		responds(allHashesBody);
+		const result = await Posts.allHashes(createTestContext(), {});
+		expect(result.hashes).toEqual(allHashesBody);
+	});
+
+	it('rejects a body that is not an array', async () => {
+		responds({ posts: [] });
+		await expect(
+			Posts.allHashes(createTestContext(), {}),
+		).rejects.toBeInstanceOf(ZodError);
+	});
+});
+
+describe('posts.add replace', () => {
+	it('accepts yes and no for replace, shared and toread', async () => {
+		responds(done);
+		await expect(
+			Posts.add(createTestContext(), {
+				url: 'https://example.com/',
+				description: 'x',
+				replace: 'yes',
+				shared: 'yes',
+				toread: 'no',
+			}),
+		).resolves.toEqual(done);
+	});
+
+	it('marks only an update replayable', async () => {
+		responds(failure, 500);
+		const create = (await captureError(
+			Posts.add(createTestContext(), {
+				url: 'https://example.com/',
+				description: 'x',
+			}),
+		)) as ApiError;
+		expect(linkhutRequestFacts(create)?.replayable).toBe(false);
+
+		responds(failure, 500);
+		const update = (await captureError(
+			Posts.add(createTestContext(), {
+				url: 'https://example.com/',
+				description: 'x',
+				replace: 'yes',
+			}),
+		)) as ApiError;
+		expect(linkhutRequestFacts(update)?.replayable).toBe(true);
+	});
 });
 
 describe('tags.get', () => {

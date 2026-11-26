@@ -68,7 +68,7 @@ describe('retries through the bound client', () => {
 		}
 	});
 
-	it('gives up after two retries on a 429 and rethrows', async () => {
+	it('gives up after the three 429 retries core makes', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			fetchMock.mockImplementation(() =>
@@ -83,8 +83,8 @@ describe('retries through the bound client', () => {
 			});
 			await jest.advanceTimersByTimeAsync(10_000);
 			await expectation;
-			// One attempt plus the two retries RATE_LIMIT_ERROR allows.
-			expect(fetchMock).toHaveBeenCalledTimes(3);
+			// One attempt plus core's three retries; RATE_LIMIT_ERROR adds none.
+			expect(fetchMock).toHaveBeenCalledTimes(4);
 		} finally {
 			testDb.cleanup();
 		}
@@ -144,7 +144,27 @@ describe('retries through the bound client', () => {
 		}
 	});
 
-	it('replays a 500 on posts.add, which converges as an upsert', async () => {
+	it('never replays a 500 on a posts.add create, which may have landed', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			fetchMock.mockResolvedValueOnce(respond(done, 500));
+
+			const pending = corsair.linkhut.api.posts.add({
+				url: 'https://example.com/',
+				description: 'Example',
+			});
+			const expectation = expect(pending).rejects.toMatchObject({
+				status: 500,
+			});
+			await jest.advanceTimersByTimeAsync(10_000);
+			await expectation;
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('replays a 500 on a posts.add update (replace=yes), which converges', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			fetchMock
@@ -154,6 +174,7 @@ describe('retries through the bound client', () => {
 			const pending = corsair.linkhut.api.posts.add({
 				url: 'https://example.com/',
 				description: 'Example',
+				replace: 'yes',
 			});
 			await jest.advanceTimersByTimeAsync(3000);
 			await expect(pending).resolves.toEqual({ result_code: 'done' });
@@ -172,7 +193,7 @@ describe('retries through the bound client', () => {
 				url: 'https://example.com/',
 			});
 			const expectation = expect(pending).rejects.toMatchObject({
-				name: 'LinkhutAPIError',
+				name: 'LinkhutNetworkError',
 			});
 			await jest.advanceTimersByTimeAsync(10_000);
 			await expectation;
@@ -230,7 +251,8 @@ describe('retries through the bound client', () => {
 				description: 'Example',
 			});
 			const expectation = expect(pending).rejects.toMatchObject({
-				code: 'something went wrong',
+				status: 200,
+				body: { result_code: 'something went wrong' },
 			});
 			await jest.advanceTimersByTimeAsync(10_000);
 			await expectation;

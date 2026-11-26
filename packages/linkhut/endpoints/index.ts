@@ -1,6 +1,7 @@
 import {
 	add,
 	all,
+	allHashes,
 	dates,
 	get,
 	lastUpdated,
@@ -18,6 +19,7 @@ export const Posts = {
 	recent,
 	dates,
 	all,
+	allHashes,
 	suggest,
 };
 

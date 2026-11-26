@@ -1,6 +1,7 @@
 import { asRecord } from 'corsair/core';
 import type { LinkhutEndpoints } from '..';
-import { LinkhutAPIError } from '../client';
+import type { LinkhutRequest } from '../client';
+import { linkhutApiError } from '../client';
 import { call, requireDone } from './call';
 import type { PostsAllInput } from './types';
 import {
@@ -46,9 +47,10 @@ export const add: LinkhutEndpoints['postsAdd'] = (ctx, input) =>
 				shared,
 				toread,
 			},
-			// posts/add is an upsert keyed by the url, so a request the server
-			// already applied converges when it is sent again.
-			replayable: true,
+			// replace=yes rewrites the saved bookmark with the same fields, so a
+			// repeat converges. A create is not repeated: if the first one
+			// landed, the repeat fails because the url is already saved.
+			replayable: replace === 'yes',
 		}),
 		{ shape: requireDone('posts.add') },
 	);
@@ -83,10 +85,22 @@ export const get: LinkhutEndpoints['postsGet'] = (ctx, input) =>
 		({ tag, dt, url, hashes, meta }) => ({
 			method: 'GET',
 			path: '/v1/posts/get',
-			query: { tag, dt, url, hashes: hashes?.join(' '), meta },
+			// linkhut parses dt as a day (Date.from_iso8601!) and answers 500
+			// to a full timestamp.
+			query: {
+				tag,
+				dt: dt?.slice(0, 10),
+				url,
+				hashes: hashes?.join(' '),
+				meta,
+			},
 			replayable: true,
 		}),
-		{ log: (_, result) => ({ count: result.posts.length }) },
+		{
+			log: (_, result) => ({ count: result.posts.length }),
+			// posts/get answers 404 for a url that is not saved: no bookmark.
+			onNotFound: ({ url }) => (url ? { posts: [] } : undefined),
+		},
 	);
 
 export const recent: LinkhutEndpoints['postsRecent'] = (ctx, input) =>
@@ -185,30 +199,59 @@ export function shapePostsAllPage(
 	return { posts: raw, start, results, nextStart };
 }
 
+export const allHashes: LinkhutEndpoints['postsAllHashes'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'posts.allHashes',
+			input: Inputs.postsAllHashes,
+			output: Outputs.postsAllHashes,
+		},
+		input,
+		() => ({
+			method: 'GET',
+			path: '/v1/posts/all',
+			// Any `hashes` value switches posts/all to the change manifest; the
+			// other posts/all filters are then ignored.
+			query: { hashes: 'yes' },
+			replayable: true,
+		}),
+		{
+			shape: (raw) => ({ hashes: raw }),
+			log: (_, result) => ({ count: result.hashes.length }),
+		},
+	);
+
 export type PostsSuggestShape = {
 	popular: unknown[]; // unknown: entries as linkhut sent them. The output schema checks each is a string.
 	recommended: unknown[]; // unknown: same as `popular`.
 };
 
 /**
- * `shapePostsSuggest(raw: unknown): PostsSuggestShape` (unknown: the
- * unvalidated response body.)
+ * `shapePostsSuggest(raw: unknown, parsed?: unknown, request?: LinkhutRequest): PostsSuggestShape`
+ * (unknown: the unvalidated response body.)
  *
  * `posts.suggest` answers `[{"popular":[...]},{"recommended":[...]}]`. This
  * returns both lists, merging every element, and a list no element names is
- * `[]`. It throws a `LinkhutAPIError` when the body is not an array of
+ * `[]`. It throws core's `ApiError` (status 200) when the body is not an array of
  * objects, or when a list is not an array, instead of returning empty lists.
  * The entries are left for the output schema to check.
  */
 export function shapePostsSuggest(
 	raw: unknown, // unknown: the response body, unvalidated.
+	_parsed?: unknown, // unknown: the parsed input, not read here.
+	request: LinkhutRequest = {
+		method: 'GET',
+		path: '/v1/posts/suggest',
+		replayable: true,
+	},
 ): PostsSuggestShape {
 	const reject = () =>
-		new LinkhutAPIError(
+		linkhutApiError(
+			request,
+			{ status: 200, statusText: 'OK', body: raw },
 			'Linkhut posts/suggest did not answer an array of objects',
-			// makeLinkhutRequest resolves only on a 2xx. Without a status the
-			// error would read as a transport failure.
-			{ status: 200, replayable: true, method: 'GET' },
+			false,
 		);
 	if (!Array.isArray(raw)) throw reject();
 	const popular: unknown[] = []; // unknown: entries are checked by the output schema.

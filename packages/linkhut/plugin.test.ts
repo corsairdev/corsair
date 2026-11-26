@@ -21,6 +21,7 @@ function buildKey(
 const operations = [
 	'posts.add',
 	'posts.all',
+	'posts.allHashes',
 	'posts.dates',
 	'posts.delete',
 	'posts.get',
@@ -44,7 +45,7 @@ describe('linkhut plugin definition', () => {
 		).toBe(false);
 	});
 
-	it('exposes exactly the eleven operations', () => {
+	it('exposes exactly the twelve operations', () => {
 		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
 			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
 		);
@@ -64,6 +65,7 @@ describe('linkhut plugin definition', () => {
 		).toEqual({
 			'posts.add': 'write',
 			'posts.all': 'read',
+			'posts.allHashes': 'read',
 			'posts.dates': 'read',
 			'posts.delete': 'destructive',
 			'posts.get': 'read',

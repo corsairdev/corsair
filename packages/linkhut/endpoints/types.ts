@@ -23,7 +23,14 @@ export const LinkhutPostSchema = z
 		// plain string.
 		hash: z.string(),
 		href: z.string(),
+		// MD5 of the bookmark's update time with `meta: 'yes'`; null without it.
+		// posts.recent always sends it.
 		meta: z.string().nullish(),
+		others: z
+			.number()
+			.int()
+			.nullish()
+			.describe('How many other users saved the same url.'),
 		shared: LinkhutYesNoSchema,
 		tags: z.string(),
 		time: z.string(),
@@ -47,7 +54,7 @@ const PostsLastUpdatedResponseSchema = z
 			.string()
 			.nullish()
 			.describe(
-				'Time of the last bookmark change, UTC. Missing or null for an account with no bookmarks (from the docs, not seen live).',
+				'Time of the last bookmark added or changed, UTC. 1970-01-01T00:00:00Z for an account with no bookmarks.',
 			),
 	})
 	.loose();
@@ -71,20 +78,15 @@ const PostsAddInputSchema = z.object({
 	dt: LinkhutTimestampSchema.optional().describe(
 		'The creation time to record for the bookmark.',
 	),
-	replace: z
-		.literal('no')
-		.optional()
-		.describe(
-			"Set to 'no' to leave an existing bookmark for this url unchanged; omitted, the bookmark is replaced",
-		),
-	shared: z
-		.literal('no')
-		.optional()
-		.describe("'no' makes the bookmark private"),
-	toread: z
-		.literal('yes')
-		.optional()
-		.describe("'yes' marks the bookmark as unread"),
+	replace: LinkhutYesNoSchema.optional().describe(
+		"'yes' updates the bookmark already saved for this url and fails when there is none; every field is rewritten, so an omitted `extended` or `tags` becomes empty, `shared` becomes yes and `toread` no, and `dt` is ignored. Omitted or 'no', a new bookmark is created and the call fails when the url is already saved.",
+	),
+	shared: LinkhutYesNoSchema.optional().describe(
+		"'no' makes the bookmark private. Omitted counts as 'yes' (public).",
+	),
+	toread: LinkhutYesNoSchema.optional().describe(
+		"'yes' marks the bookmark as unread. Omitted counts as 'no'.",
+	),
 });
 
 export type PostsAddInput = z.input<typeof PostsAddInputSchema>;
@@ -107,10 +109,19 @@ const PostsGetInputSchema = z.object({
 	tag: z
 		.string()
 		.optional()
-		.describe('One tag, or several separated by spaces.'),
-	dt: LinkhutTimestampSchema.optional().describe(
-		'The day to list. Omitted, the most recent day that has a bookmark.',
-	),
+		.describe(
+			'One tag, or several separated by spaces or commas. Without `dt`, `url` or `hashes`, a tag searches every day.',
+		),
+	dt: z
+		.string()
+		.regex(
+			/^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}Z)?$/,
+			'A UTC day as CCYY-MM-DD, or a CCYY-MM-DDThh:mm:ssZ time on that day',
+		)
+		.optional()
+		.describe(
+			'The day to list, CCYY-MM-DD (a full CCYY-MM-DDThh:mm:ssZ time is cut to its day; linkhut reads only a day). With no argument at all, the most recent day that has a bookmark.',
+		),
 	url: z.string().url().optional().describe('The one bookmark to look up.'),
 	hashes: z
 		.array(z.string().regex(/^[0-9a-f]{32}$/))
@@ -236,6 +247,35 @@ const PostsAllResponseSchema = z
 
 export type PostsAllResponse = z.infer<typeof PostsAllResponseSchema>;
 
+// ── posts.allHashes ───────────────────────────────────────────────────────
+
+const PostsAllHashesInputSchema = z.object({});
+
+export type PostsAllHashesInput = z.input<typeof PostsAllHashesInputSchema>;
+
+export const LinkhutPostHashSchema = z
+	.object({
+		url: z.string().describe('MD5 of the bookmark url (the post `hash`).'),
+		meta: z
+			.string()
+			.describe(
+				"MD5 of the bookmark's update time; it changes when the bookmark changes.",
+			),
+	})
+	.loose();
+
+const PostsAllHashesResponseSchema = z
+	.object({
+		hashes: z
+			.array(LinkhutPostHashSchema)
+			.describe('One entry per bookmark, newest first.'),
+	})
+	.loose();
+
+export type PostsAllHashesResponse = z.infer<
+	typeof PostsAllHashesResponseSchema
+>;
+
 // ── posts.suggest ─────────────────────────────────────────────────────────
 
 const PostsSuggestInputSchema = z.object({
@@ -296,6 +336,7 @@ export type LinkhutEndpointInputs = {
 	postsRecent: PostsRecentInput;
 	postsDates: PostsDatesInput;
 	postsAll: PostsAllInput;
+	postsAllHashes: PostsAllHashesInput;
 	postsSuggest: PostsSuggestInput;
 	tagsGet: TagsGetInput;
 	tagsDelete: TagsDeleteInput;
@@ -310,6 +351,7 @@ export type LinkhutEndpointOutputs = {
 	postsRecent: PostsRecentResponse;
 	postsDates: PostsDatesResponse;
 	postsAll: PostsAllResponse;
+	postsAllHashes: PostsAllHashesResponse;
 	postsSuggest: PostsSuggestResponse;
 	tagsGet: TagsGetResponse;
 	tagsDelete: TagsDeleteResponse;
@@ -324,6 +366,7 @@ export const LinkhutEndpointInputSchemas = {
 	postsRecent: PostsRecentInputSchema,
 	postsDates: PostsDatesInputSchema,
 	postsAll: PostsAllInputSchema,
+	postsAllHashes: PostsAllHashesInputSchema,
 	postsSuggest: PostsSuggestInputSchema,
 	tagsGet: TagsGetInputSchema,
 	tagsDelete: TagsDeleteInputSchema,
@@ -338,6 +381,7 @@ export const LinkhutEndpointOutputSchemas = {
 	postsRecent: PostsRecentResponseSchema,
 	postsDates: PostsDatesResponseSchema,
 	postsAll: PostsAllResponseSchema,
+	postsAllHashes: PostsAllHashesResponseSchema,
 	postsSuggest: PostsSuggestResponseSchema,
 	tagsGet: TagsGetResponseSchema,
 	tagsDelete: LinkhutResultCodeSchema,

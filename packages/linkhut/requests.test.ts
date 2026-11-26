@@ -63,7 +63,7 @@ describe('requests', () => {
 	it('posts.get GETs /v1/posts/get with tag, dt, url, hashes and meta', async () => {
 		const check = expectRequest({ body: postsOfOneDay }, '/v1/posts/get', {
 			tag: 'git oss',
-			dt: '2020-12-24T00:00:00Z',
+			dt: '2020-12-24',
 			url: 'https://sourcehut.org/',
 			hashes:
 				'f76bae21f8ea04facdb544655745c924 8f4f71216f404ce3442bae67564d88cd',
@@ -167,6 +167,46 @@ describe('requests', () => {
 				toread: 'yes',
 			}),
 		);
+	});
+
+	it('posts.get sends a bare day as it is', async () => {
+		const check = expectRequest({ body: postsOfOneDay }, '/v1/posts/get', {
+			dt: '2024-01-01',
+		});
+		await check(() => Posts.get(createTestContext(), { dt: '2024-01-01' }));
+	});
+
+	it('posts.add sends replace=yes for an update', async () => {
+		const check = expectRequest({ body: done }, '/v1/posts/add', {
+			url: 'https://sourcehut.org/',
+			description: 'sourcehut',
+			replace: 'yes',
+			shared: 'yes',
+		});
+		await check(() =>
+			Posts.add(createTestContext(), {
+				url: 'https://sourcehut.org/',
+				description: 'sourcehut',
+				replace: 'yes',
+				shared: 'yes',
+			}),
+		);
+	});
+
+	it('posts.allHashes GETs /v1/posts/all with hashes=yes only', async () => {
+		const check = expectRequest(
+			{
+				body: [
+					{
+						url: 'f76bae21f8ea04facdb544655745c924',
+						meta: '8f4f71216f404ce3442bae67564d88cd',
+					},
+				],
+			},
+			'/v1/posts/all',
+			{ hashes: 'yes' },
+		);
+		await check(() => Posts.allHashes(createTestContext(), {}));
 	});
 
 	it('posts.delete GETs /v1/posts/delete with the url', async () => {

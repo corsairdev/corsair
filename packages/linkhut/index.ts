@@ -56,6 +56,7 @@ export type LinkhutEndpoints = {
 	postsRecent: LinkhutEndpoint<'postsRecent'>;
 	postsDates: LinkhutEndpoint<'postsDates'>;
 	postsAll: LinkhutEndpoint<'postsAll'>;
+	postsAllHashes: LinkhutEndpoint<'postsAllHashes'>;
 	postsSuggest: LinkhutEndpoint<'postsSuggest'>;
 	tagsGet: LinkhutEndpoint<'tagsGet'>;
 	tagsDelete: LinkhutEndpoint<'tagsDelete'>;
@@ -71,6 +72,7 @@ const linkhutEndpointsNested = {
 		recent: Posts.recent,
 		dates: Posts.dates,
 		all: Posts.all,
+		allHashes: Posts.allHashes,
 		suggest: Posts.suggest,
 	},
 	tags: {
@@ -109,6 +111,10 @@ export const linkhutEndpointSchemas = {
 		input: LinkhutEndpointInputSchemas.postsAll,
 		output: LinkhutEndpointOutputSchemas.postsAll,
 	},
+	'posts.allHashes': {
+		input: LinkhutEndpointInputSchemas.postsAllHashes,
+		output: LinkhutEndpointOutputSchemas.postsAllHashes,
+	},
 	'posts.suggest': {
 		input: LinkhutEndpointInputSchemas.postsSuggest,
 		output: LinkhutEndpointOutputSchemas.postsSuggest,
@@ -140,7 +146,7 @@ const linkhutEndpointMeta = {
 	'posts.add': {
 		riskLevel: 'write',
 		description:
-			"Save a bookmark. A bookmark that already exists for the url is replaced, unless `replace` is 'no'",
+			"Save a new bookmark; fails when the url is already saved. With `replace: 'yes'`, rewrite the saved bookmark for the url instead (omitted fields are cleared)",
 	},
 	'posts.delete': {
 		riskLevel: 'destructive',
@@ -150,7 +156,7 @@ const linkhutEndpointMeta = {
 	'posts.get': {
 		riskLevel: 'read',
 		description:
-			'Get the bookmarks of one day, the ones with a tag on that day, or the one bookmark for a url or a hash',
+			'Get the bookmarks of one day, the bookmarks with a tag, the bookmark for a url (empty when it is not saved) or the bookmarks for URL MD5 hashes',
 	},
 	'posts.recent': {
 		riskLevel: 'read',
@@ -165,6 +171,11 @@ const linkhutEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'List bookmarks by offset, up to 1000 per page. Follow `nextStart` until it is null',
+	},
+	'posts.allHashes': {
+		riskLevel: 'read',
+		description:
+			'List every bookmark as a URL MD5 and a change signature, to find what changed without downloading all bookmarks',
 	},
 	'posts.suggest': {
 		riskLevel: 'read',
@@ -233,13 +244,16 @@ export function linkhut<const T extends LinkhutPluginOptions>(
 	} satisfies InternalLinkhutPlugin;
 }
 
-export { LinkhutAPIError } from './client';
+export type { LinkhutRequestFacts } from './client';
+export { linkhutRequestFacts } from './client';
 
 export type {
 	LinkhutEndpointInputs,
 	LinkhutEndpointOutputs,
 	PostsAddInput,
 	PostsAddResponse,
+	PostsAllHashesInput,
+	PostsAllHashesResponse,
 	PostsAllInput,
 	PostsAllResponse,
 	PostsDatesInput,
