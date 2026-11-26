@@ -1,0 +1,201 @@
+---
+title: "Lusha webhooks"
+sidebarTitle: "Webhooks"
+description: "Lusha incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Lusha plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/lusha/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `optOuts`
+  - `received` (`optOuts.received`)
+- `signals`
+  - `received` (`signals.received`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Opt Outs
+
+### Received
+
+`optOuts.received`
+
+A contact opted out of Lusha data processing; remove the listed emails and phone numbers from your own systems.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string \| number` | Yes | — |
+| `fullName` | `string \| null` | No | — |
+| `companyName` | `string \| null` | No | — |
+| `jobTitle` | `string \| null` | No | — |
+| `linkedinUrl` | `string \| null` | No | — |
+| `contactOptOutDate` | `string \| null` | No | — |
+| `contactExposureDate` | `string \| null` | No | — |
+| `datapoints` | `object[]` | Yes | — |
+| `partnerClientId` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="datapoints full type">
+
+```ts
+{
+  datapointId?: string | null,
+  datapointType?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  contactId: string | number,
+  fullName?: string | null,
+  companyName?: string | null,
+  jobTitle?: string | null,
+  linkedinUrl?: string | null,
+  contactOptOutDate?: string | null,
+  contactExposureDate?: string | null,
+  datapoints: {
+    datapointId?: string | null,
+    datapointType?: string | null
+  }[],
+  partnerClientId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+lusha({
+    webhookHooks: {
+        optOuts: {
+            received: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Signals
+
+### Received
+
+`signals.received`
+
+A signal for a subscribed contact or company (promotion, company change, news, hiring, intent...). Lusha charges the credits in billing.creditsCharged for each delivery.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `entityType` | `string` | Yes | — |
+| `entityId` | `string \| number` | Yes | — |
+| `subscriptionId` | `string \| null` | No | — |
+| `data` | `Record<string, any> \| null` | No | — |
+| `timestamp` | `string \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  entityType: string,
+  entityId: string | number,
+  subscriptionId?: string | null,
+  data?: Record<string, any> | null,
+  timestamp?: string | null,
+  billing?: {
+    creditsCharged?: number | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+lusha({
+    webhookHooks: {
+        signals: {
+            received: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

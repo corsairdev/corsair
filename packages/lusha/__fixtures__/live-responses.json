@@ -1,0 +1,677 @@
+{
+  "company.searchCompanies": {
+    "requestId": "example-requestId",
+    "results": [
+      {
+        "id": "v1.example-id",
+        "name": "Example Corp",
+        "domain": "example.com",
+        "employeeCount": {
+          "exact": 357,
+          "min": 501,
+          "max": 1000
+        },
+        "industry": "Technology, Information & Media",
+        "location": {
+          "city": "Tel Aviv",
+          "state": "Massachusetts",
+          "stateCode": "MA",
+          "country": "United States",
+          "countryIso2": "US",
+          "continent": "North America"
+        },
+        "socialLinks": {
+          "linkedin": "https://www.linkedin.com/in/alex-example"
+        },
+        "has": ["alternativeName"],
+        "canReveal": [
+          {
+            "field": "employeesByDepartment",
+            "credits": 1
+          }
+        ],
+        "clientReferenceId": "clientReferenceId-example",
+        "error": {
+          "code": "NOT_FOUND",
+          "message": "Company not found"
+        }
+      }
+    ],
+    "billing": {
+      "creditsCharged": 1,
+      "resultsReturned": 2,
+      "lowBalance": false
+    }
+  },
+  "company.prospectCompanies": {
+    "requestId": "example-requestId",
+    "pagination": {
+      "page": 0,
+      "size": 5,
+      "total": 5
+    },
+    "results": [
+      {
+        "id": "v1.example-id",
+        "name": "Example Corp",
+        "domain": "example.com",
+        "employeeCount": {
+          "exact": 39,
+          "min": 11,
+          "max": 50
+        },
+        "industry": "Technology, Information & Media",
+        "location": {
+          "city": "Tel Aviv",
+          "country": "Israel",
+          "countryIso2": "IL",
+          "continent": "Asia"
+        },
+        "socialLinks": {
+          "linkedin": "https://www.linkedin.com/in/alex-example"
+        },
+        "has": ["description"],
+        "canReveal": [
+          {
+            "field": "employeesByDepartment",
+            "credits": 1
+          }
+        ]
+      }
+    ],
+    "billing": {
+      "creditsCharged": 1,
+      "resultsReturned": 5,
+      "lowBalance": false
+    }
+  },
+  "company.enrichCompanies": {
+    "requestId": "example-requestId",
+    "results": [
+      {
+        "id": "v1.example-id",
+        "name": "Example Corp",
+        "alternativeName": "alternativeName-example",
+        "domain": "example.com",
+        "emailDomain": "example.com",
+        "homepageUrl": "https://example.com/homepageUrl",
+        "alternativeDomains": ["alternativeDomains-example"],
+        "description": "description-example",
+        "companyOffering": "companyOffering-example",
+        "companyType": "Private Company",
+        "yearFounded": 2016,
+        "employeeCount": {
+          "exact": 357,
+          "min": 501,
+          "max": 1000
+        },
+        "industry": "Technology, Information & Media",
+        "subIndustry": "Software Development",
+        "additionalIndustries": [
+          {
+            "industry": "Technology, Information & Media",
+            "subIndustry": "Information Services"
+          }
+        ],
+        "specialities": ["account prioritization"],
+        "sicCodes": [
+          {
+            "code": 7372,
+            "description": "description-example"
+          }
+        ],
+        "naicsCodes": [
+          {
+            "code": 513210,
+            "description": "description-example"
+          }
+        ],
+        "location": {
+          "city": "Tel Aviv",
+          "state": "Massachusetts",
+          "stateCode": "MA",
+          "country": "United States",
+          "countryIso2": "US",
+          "continent": "North America",
+          "zipCode": "zipCode-example"
+        },
+        "additionalLocations": [
+          {
+            "city": "Tel Aviv",
+            "state": "New York",
+            "stateCode": "NY",
+            "country": "United States",
+            "countryIso2": "US",
+            "continent": "North America"
+          }
+        ],
+        "socialLinks": {
+          "linkedin": "https://www.linkedin.com/in/alex-example",
+          "x": "https://example.com/x",
+          "facebook": "https://example.com/facebook",
+          "crunchbase": ["https://example.com/crunchbase"],
+          "youtube": ["https://example.com/youtube"],
+          "tiktok": ["https://example.com/tiktok"],
+          "instagram": ["instagram-example"]
+        },
+        "linkedinFollowers": 69522,
+        "revenueRange": {
+          "min": 50000000,
+          "max": 100000000
+        },
+        "funding": {
+          "rounds": [
+            {
+              "currency": "USD",
+              "roundAmount": 205000000,
+              "roundType": "Private Equity Round",
+              "roundDate": "Nov 10, 2021"
+            }
+          ],
+          "totalRounds": 2,
+          "totalRoundsAmount": 245000000,
+          "currency": "USD",
+          "isIpo": false,
+          "lastRoundType": "Private Equity Round",
+          "lastRoundAmount": 205000000,
+          "lastRoundDate": "Nov 10, 2021"
+        },
+        "popularityTier": 1,
+        "logoUrl": "https://example.com/logoUrl",
+        "competitors": [
+          {
+            "id": "v1.example-id",
+            "name": "Example Corp",
+            "domain": "example.com"
+          }
+        ],
+        "businessModel": ["B2B"],
+        "additionalDescriptions": ["additionalDescriptions-example"],
+        "phones": [
+          {
+            "number": "+15555550100"
+          }
+        ],
+        "emails": [
+          {
+            "email": "alex@example.com"
+          }
+        ],
+        "keywords": ["account prioritization"],
+        "keyContacts": [
+          {
+            "fullName": "Alex Example",
+            "jobTitle": {
+              "title": "Head of Sales"
+            },
+            "profileUrl": "https://www.linkedin.com/in/alex-example",
+            "status": "current"
+          }
+        ]
+      }
+    ],
+    "billing": {
+      "creditsCharged": 5,
+      "resultsReturned": 3,
+      "lowBalance": false
+    }
+  },
+  "company.searchAndEnrichCompanies": {
+    "requestId": "example-requestId",
+    "results": [
+      {
+        "clientReferenceId": "clientReferenceId-example",
+        "id": "v1.example-id",
+        "name": "Example Corp",
+        "alternativeName": "alternativeName-example",
+        "domain": "example.com",
+        "emailDomain": "example.com",
+        "homepageUrl": "https://example.com/homepageUrl",
+        "alternativeDomains": ["alternativeDomains-example"],
+        "description": "description-example",
+        "companyOffering": "companyOffering-example",
+        "companyType": "Private Company",
+        "yearFounded": 2016,
+        "employeeCount": {
+          "exact": 357,
+          "min": 501,
+          "max": 1000
+        },
+        "industry": "Technology, Information & Media",
+        "subIndustry": "Software Development",
+        "additionalIndustries": [
+          {
+            "industry": "Technology, Information & Media",
+            "subIndustry": "Information Services"
+          }
+        ],
+        "specialities": ["account prioritization"],
+        "sicCodes": [
+          {
+            "code": 7372,
+            "description": "description-example"
+          }
+        ],
+        "naicsCodes": [
+          {
+            "code": 513210,
+            "description": "description-example"
+          }
+        ],
+        "location": {
+          "city": "Tel Aviv",
+          "state": "Massachusetts",
+          "stateCode": "MA",
+          "country": "United States",
+          "countryIso2": "US",
+          "continent": "North America",
+          "zipCode": "zipCode-example"
+        },
+        "additionalLocations": [
+          {
+            "city": "Tel Aviv",
+            "state": "New York",
+            "stateCode": "NY",
+            "country": "United States",
+            "countryIso2": "US",
+            "continent": "North America"
+          }
+        ],
+        "socialLinks": {
+          "linkedin": "https://www.linkedin.com/in/alex-example",
+          "x": "https://example.com/x",
+          "facebook": "https://example.com/facebook",
+          "crunchbase": ["https://example.com/crunchbase"],
+          "youtube": ["https://example.com/youtube"],
+          "tiktok": ["https://example.com/tiktok"],
+          "instagram": ["instagram-example"]
+        },
+        "linkedinFollowers": 69522,
+        "revenueRange": {
+          "min": 50000000,
+          "max": 100000000
+        },
+        "funding": {
+          "rounds": [
+            {
+              "currency": "USD",
+              "roundAmount": 205000000,
+              "roundType": "Private Equity Round",
+              "roundDate": "Nov 10, 2021"
+            }
+          ],
+          "totalRounds": 2,
+          "totalRoundsAmount": 245000000,
+          "currency": "USD",
+          "isIpo": false,
+          "lastRoundType": "Private Equity Round",
+          "lastRoundAmount": 205000000,
+          "lastRoundDate": "Nov 10, 2021"
+        },
+        "popularityTier": 1,
+        "logoUrl": "https://example.com/logoUrl",
+        "businessModel": ["B2B"],
+        "additionalDescriptions": ["additionalDescriptions-example"],
+        "phones": [
+          {
+            "number": "+15555550100"
+          }
+        ],
+        "emails": [
+          {
+            "email": "alex@example.com"
+          }
+        ],
+        "keywords": ["account prioritization"],
+        "keyContacts": [
+          {
+            "fullName": "Alex Example",
+            "jobTitle": {
+              "title": "Head of Sales"
+            },
+            "profileUrl": "https://www.linkedin.com/in/alex-example",
+            "status": "current"
+          }
+        ]
+      }
+    ],
+    "billing": {
+      "creditsCharged": 3,
+      "resultsReturned": 2,
+      "lowBalance": false
+    }
+  },
+  "person.searchContacts": {
+    "requestId": "example-requestId",
+    "results": [
+      {
+        "clientReferenceId": "clientReferenceId-example",
+        "id": "v1.example-id",
+        "firstName": "Alex",
+        "lastName": "Example",
+        "jobTitle": {
+          "title": "Head of Sales",
+          "departments": ["Other"],
+          "seniority": "Non-Manager"
+        },
+        "company": {
+          "id": "v1.example-id",
+          "name": "name-example",
+          "domain": "example.com",
+          "industry": "Technology, Information & Media"
+        },
+        "location": {
+          "country": "Israel",
+          "city": "Tel Aviv"
+        },
+        "socialLinks": {
+          "linkedin": "https://www.linkedin.com/in/alex-example"
+        },
+        "has": ["firstName"],
+        "canReveal": [
+          {
+            "field": "emails",
+            "credits": 1,
+            "source": "lusha",
+            "availability": "available",
+            "vendors": ["Wiza"]
+          }
+        ]
+      }
+    ],
+    "billing": {
+      "creditsCharged": 1,
+      "resultsReturned": 3,
+      "lowBalance": false
+    }
+  },
+  "person.prospectContacts": {
+    "requestId": "example-requestId",
+    "pagination": {
+      "page": 0,
+      "size": 10,
+      "total": 15
+    },
+    "results": [
+      {
+        "id": "v1.example-id",
+        "firstName": "Alex",
+        "lastName": "Example",
+        "jobTitle": {
+          "title": "Head of Sales",
+          "departments": ["Sales"],
+          "seniority": "director"
+        },
+        "company": {
+          "id": "v1.example-id",
+          "name": "name-example",
+          "domain": "example.com"
+        },
+        "location": {
+          "country": "United States",
+          "city": "Tel Aviv"
+        },
+        "socialLinks": {
+          "linkedin": "https://www.linkedin.com/in/alex-example"
+        },
+        "has": ["firstName"],
+        "canReveal": [
+          {
+            "field": "emails",
+            "credits": 1,
+            "source": "lusha",
+            "availability": "available",
+            "vendors": ["DataLegion"]
+          }
+        ]
+      }
+    ],
+    "billing": {
+      "creditsCharged": 1,
+      "resultsReturned": 10,
+      "lowBalance": false
+    }
+  },
+  "person.enrichContacts": {
+    "requestId": "example-requestId",
+    "results": [
+      {
+        "id": "v1.example-id",
+        "emails": [
+          {
+            "email": "alex@example.com",
+            "type": "work",
+            "confidence": "A+",
+            "updateDate": "2026-11-26",
+            "dataSource": "Lusha"
+          }
+        ],
+        "firstName": "Alex",
+        "lastName": "Example",
+        "fullName": "Alex Example",
+        "updateDate": "2026-11-26",
+        "partialProfile": false,
+        "jobTitle": {
+          "title": "Head of Sales",
+          "departments": ["Other"],
+          "seniority": "Non-Manager",
+          "startDate": "2025-01-20"
+        },
+        "company": {
+          "id": "v1.example-id",
+          "name": "name-example",
+          "domain": "example.com",
+          "industry": "Technology, Information & Media"
+        },
+        "location": {
+          "country": "Israel",
+          "countryIso2": "IL",
+          "city": "Tel Aviv",
+          "continent": "Asia",
+          "coordinates": [34.78057098388672],
+          "isEuContact": false
+        },
+        "socialLinks": {
+          "linkedin": "https://www.linkedin.com/in/alex-example"
+        },
+        "error": {
+          "code": "COMPLIANCE_RESTRICTED",
+          "message": "Contact is restricted due to compliance rules"
+        }
+      }
+    ],
+    "billing": {
+      "creditsCharged": 2,
+      "resultsReturned": 2,
+      "lowBalance": false
+    }
+  },
+  "person.searchAndEnrichContacts": {
+    "requestId": "example-requestId",
+    "results": [
+      {
+        "clientReferenceId": "clientReferenceId-example",
+        "id": "v1.example-id",
+        "emails": [
+          {
+            "email": "alex@example.com",
+            "type": "work",
+            "confidence": "A+",
+            "updateDate": "2026-11-26",
+            "dataSource": "Lusha"
+          }
+        ],
+        "firstName": "Alex",
+        "lastName": "Example",
+        "fullName": "Alex Example",
+        "updateDate": "2026-11-26",
+        "partialProfile": false,
+        "jobTitle": {
+          "title": "Head of Sales",
+          "departments": ["Other"],
+          "seniority": "Non-Manager",
+          "startDate": "2025-01-20"
+        },
+        "company": {
+          "id": "v1.example-id",
+          "name": "name-example",
+          "domain": "example.com",
+          "industry": "Technology, Information & Media"
+        },
+        "location": {
+          "country": "Israel",
+          "countryIso2": "IL",
+          "city": "Tel Aviv",
+          "continent": "Asia",
+          "coordinates": [34.78057098388672],
+          "isEuContact": false
+        },
+        "socialLinks": {
+          "linkedin": "https://www.linkedin.com/in/alex-example"
+        }
+      }
+    ],
+    "billing": {
+      "creditsCharged": 1,
+      "resultsReturned": 2,
+      "lowBalance": false
+    }
+  },
+  "company.getCompanySignals.error402": {
+    "name": "Example Corp",
+    "message": "You've reached your credit limit. Upgrade your account for more credits",
+    "code": 402,
+    "className": "payment-required",
+    "errors": {}
+  },
+  "person.getContactRecommendations": {
+    "requestId": "example-requestId",
+    "userRecommendationsId": "example-userRecommendationsId",
+    "results": [],
+    "pagination": {
+      "page": 0,
+      "size": 25,
+      "total": 0
+    },
+    "billing": {
+      "creditsCharged": 0,
+      "resultsReturned": 0,
+      "lowBalance": false
+    }
+  },
+  "account.getAccountUsage": {
+    "credits": {
+      "total": 40,
+      "used": 12,
+      "remaining": 28
+    },
+    "rateLimits": {
+      "daily": {
+        "limit": 100,
+        "used": 97,
+        "remaining": 3,
+        "resetsAt": "2026-11-27T12:22:29.925Z"
+      },
+      "hourly": null,
+      "minute": {
+        "limit": 40,
+        "used": 11,
+        "remaining": 29,
+        "resetsAt": "2026-11-26T14:28:40.864Z"
+      }
+    },
+    "plan": {
+      "category": "free"
+    },
+    "pricing": {
+      "companySearch": {
+        "credits": 1,
+        "perQuantity": 25
+      },
+      "contactSearch": {
+        "credits": 1,
+        "perQuantity": 25
+      },
+      "revealCompany": {
+        "credits": 1,
+        "perQuantity": 1
+      },
+      "revealCompanyPremiumData": {
+        "credits": 1,
+        "perQuantity": 1
+      },
+      "revealEmail": {
+        "credits": 1,
+        "perQuantity": 1
+      },
+      "revealPhone": {
+        "credits": 5,
+        "perQuantity": 1
+      },
+      "lookalikeCompany": {
+        "credits": 1,
+        "perQuantity": 5
+      },
+      "lookalikeContact": {
+        "credits": 1,
+        "perQuantity": 5
+      },
+      "contactRecommendationsReveal": {
+        "credits": 1,
+        "perQuantity": 1
+      },
+      "companyRecommendationsReveal": {
+        "credits": 1,
+        "perQuantity": 1
+      },
+      "showSignalsCompany": {
+        "credits": 1,
+        "perQuantity": 1
+      },
+      "showSignalsContact": {
+        "credits": 1,
+        "perQuantity": 1
+      },
+      "signalScoreCompany": {
+        "credits": 1,
+        "perQuantity": 1
+      },
+      "signalScoreContact": {
+        "credits": 1,
+        "perQuantity": 1
+      },
+      "icpFitScoreCompany": {
+        "credits": 1,
+        "perQuantity": 1
+      },
+      "icpFitScoreContact": {
+        "credits": 1,
+        "perQuantity": 1
+      },
+      "tableRead": {
+        "credits": 1,
+        "perQuantity": 1
+      },
+      "exportCompanies": {
+        "credits": 1,
+        "perQuantity": 1
+      },
+      "exportContacts": {
+        "credits": 1,
+        "perQuantity": 1
+      },
+      "buyingGroupReveal": {
+        "credits": 1,
+        "perQuantity": 1
+      },
+      "conversationsSearch": {
+        "credits": 1,
+        "perQuantity": 25
+      },
+      "conversationsTranscript": {
+        "credits": 1,
+        "perQuantity": 1
+      }
+    }
+  }
+}

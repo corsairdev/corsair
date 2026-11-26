@@ -1,0 +1,2871 @@
+{
+  "DELETE /addresses/{adr_id}": {
+    "deleted": true,
+    "id": "adr_123456789"
+  },
+  "DELETE /bank_accounts/{bank_id}": {
+    "deleted": true,
+    "id": "bank_123456789"
+  },
+  "DELETE /booklets/{booklet_id}": {
+    "deleted": true,
+    "id": "ord_0d6a16a3fff6318ac8f8008dc1"
+  },
+  "DELETE /buckslips/{buckslip_id}": {
+    "deleted": true,
+    "id": "buckslip_123456789"
+  },
+  "DELETE /campaigns/{cmp_id}": {
+    "deleted": true,
+    "id": "cmp_e05ee61ff80764b"
+  },
+  "DELETE /cards/{card_id}": {
+    "deleted": true,
+    "id": "card_123456789"
+  },
+  "DELETE /checks/{chk_id}": {
+    "deleted": true,
+    "id": "chk_123456789"
+  },
+  "DELETE /letters/{ltr_id}": {
+    "deleted": true,
+    "id": "ltr_123456789"
+  },
+  "DELETE /postcards/{psc_id}": {
+    "deleted": true,
+    "id": "psc_123456789"
+  },
+  "DELETE /self_mailers/{sfm_id}": {
+    "deleted": true,
+    "id": "sfm_123456789"
+  },
+  "DELETE /snap_packs/{snap_pack_id}": {
+    "deleted": true,
+    "id": "ord_0d6a16a3fff6318ac8f8008dc1"
+  },
+  "DELETE /templates/{tmpl_id}": {
+    "deleted": true,
+    "id": "tmpl_123456789"
+  },
+  "DELETE /templates/{tmpl_id}/versions/{vrsn_id}": {
+    "deleted": true,
+    "id": "vrsn_123456789"
+  },
+  "GET /accounts": {
+    "balance": 0
+  },
+  "GET /addresses": {
+    "count": 2,
+    "data": [
+      {
+        "address_city": "SAN FRANCISCO",
+        "address_country": "UNITED STATES",
+        "address_line1": "210 KING ST STE 6100",
+        "address_line2": null,
+        "address_state": "CA",
+        "address_zip": "94107-1741",
+        "company": "LOB",
+        "date_created": "2019-08-12T00:16:00.361Z",
+        "date_modified": "2019-08-12T00:16:00.361Z",
+        "description": "Harry - Office",
+        "email": "harry@lob.com",
+        "id": "adr_e68217bd744d65c8",
+        "metadata": {},
+        "name": "HARRY ZHANG",
+        "object": "address",
+        "phone": "5555555555"
+      }
+    ],
+    "next_url": "https://api.lob.com/v1/addresses?limit=2&after=eyJkYXRlT2Zmc2V0IjoiMjAxOS0wOC0wN1QyMTo1OTo0Ni43NjRaIiwiaWRPZmZzZXQiOiJhZHJfODMwYmYwZWFiZGFhYTQwOSJ9",
+    "object": "list",
+    "previous_url": null
+  },
+  "GET /bank_accounts": {
+    "count": 2,
+    "data": [
+      {
+        "account_number": "1234564789",
+        "account_type": "company",
+        "bank_name": "JPMORGAN CHASE BANK, NA",
+        "date_created": "2019-03-30T13:13:22.200Z",
+        "date_modified": "2019-03-30T13:13:23.385Z",
+        "description": "Example bank account",
+        "id": "bank_0e3fb07eba0b35b",
+        "metadata": {},
+        "object": "bank_account",
+        "routing_number": "122100024",
+        "signatory": "John Doe",
+        "signature_url": "https://lob-assets.com/letters/asd_asdfghjklqwertyu.pdf?version=45&expires=1234567890&signature=a",
+        "verified": true
+      }
+    ],
+    "next_url": "https://api.lob.com/v1/bank_accounts?limit=2&after=eyJkYXRlT2Zmc2V0IjoiMjAxOS0wMy0zMFQxMzoxMTowNi44MDlaIiwiaWRPZmZzZXQiOiJiYW5rX2ViYTkzZjdkZTNjMDJkOSJ9",
+    "object": "list",
+    "previous_url": null
+  },
+  "GET /bank_accounts/{bank_id}": {
+    "account_number": "123456789",
+    "account_type": "company",
+    "bank_city": "Columbus",
+    "bank_name": "J.P. MORGAN CHASE BANK, N.A.,",
+    "bank_state": "OH",
+    "bank_zip": "43240",
+    "check_template": "jpm",
+    "date_created": "2015-11-06T19:24:24.440Z",
+    "date_modified": "2015-11-06T19:24:24.440Z",
+    "description": "Test Bank Account",
+    "fractional_routing_number": "25-3/440",
+    "id": "bank_8cad8df5354d33f",
+    "metadata": {},
+    "microdeposit_type": null,
+    "object": "bank_account",
+    "routing_number": "322271627",
+    "signatory": "John Doe",
+    "signature_url": "https://lob-assets.com/letters/asd_asdfghjklqwertyu.pdf?version=45&expires=1234567890&signature=a",
+    "verified": true
+  },
+  "GET /billing_groups": {
+    "count": 2,
+    "data": [
+      {
+        "date_created": "2019-07-27T23:49:01.511Z",
+        "date_modified": "2019-07-27T23:49:01.511Z",
+        "description": "Test billing_group",
+        "id": "bg_d5a5a89da9106f8",
+        "metadata": {},
+        "object": "billing_group"
+      }
+    ],
+    "next_url": null,
+    "object": "list",
+    "prev_url": null
+  },
+  "GET /billing_groups/{bg_id}": {
+    "date_created": "2017-11-07T22:56:10.962Z",
+    "date_modified": "2017-11-07T22:56:10.962Z",
+    "description": "Usage group used for the Marketing Dept resource sends",
+    "id": "bg_c94e83ca2cd5121",
+    "name": "Marketing Dept",
+    "object": "billing_group"
+  },
+  "GET /booklets": {
+    "count": 2,
+    "data": [
+      {
+        "carrier": "USPS",
+        "date_created": "2021-03-16T18:40:40.504Z",
+        "date_modified": "2021-03-16T18:40:40.504Z",
+        "description": "April Campaign",
+        "expected_delivery_date": "2021-03-24",
+        "from": {
+          "address_city": "SAN FRANCISCO",
+          "address_country": "UNITED STATES",
+          "address_line1": "210 KING ST STE 6100",
+          "address_line2": null,
+          "address_state": "CA",
+          "address_zip": "94107-1741",
+          "company": null,
+          "date_created": "2017-09-05T15:54:53.264Z",
+          "date_modified": "2017-09-05T15:54:53.264Z",
+          "deleted": true,
+          "description": null,
+          "email": null,
+          "id": "adr_b8fb5acf3a2b55db",
+          "metadata": {},
+          "name": "LEORE AVIDAR",
+          "object": "address",
+          "phone": null
+        },
+        "fsc": false,
+        "id": "ord_0d6a16a3fff6318ac8f8008dc1",
+        "mail_type": "usps_first_class",
+        "merge_variables": {
+          "name": "Harry"
+        },
+        "metadata": {},
+        "object": "booklet",
+        "pages": 8,
+        "send_date": "2021-03-16T18:45:40.493Z",
+        "size": "8.375x5.375",
+        "source_material": "60# Gloss Text",
+        "thumbnails": [
+          {
+            "large": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_large_1.png?version=v1&expires=1618512040&signature=kBrm00xkyCkJNJRHxH8HshFaebtOxnzjVWOs1VVmGMuw8H6OBNcMAMxt9s49K0jlpHoh3Nr9uSncEZMQaaNjAg",
+            "medium": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_medium_1.png?version=v1&expires=1618512040&signature=ryxN7bsXGtw_GRFSP3Cs3A3IYjxZi3cW9BHDCNgMt6p3nobVmsc_iFHt2e-S7ndAXhhN7nP-MQVov3bt3r37BQ",
+            "small": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_small_1.png?version=v1&expires=1618512040&signature=-bipeUHP-hAMcCBSrWM0ZH1VwRdSPNVGGZN9hAZKr6Lh4ly6uxvratVd5LXJCK_zOEMYk_mTWASt0ge7OY6SDA"
+          }
+        ],
+        "to": {
+          "address_city": "SAN FRANCISCO",
+          "address_country": "UNITED STATES",
+          "address_line1": "210 KING ST STE 6100",
+          "address_line2": null,
+          "address_state": "CA",
+          "address_zip": "94107-1741",
+          "company": null,
+          "date_created": "2017-09-05T15:54:53.264Z",
+          "date_modified": "2017-09-05T15:54:53.264Z",
+          "deleted": true,
+          "description": null,
+          "email": null,
+          "id": "adr_d3489cd64c791ab5",
+          "metadata": {},
+          "name": "HARRY ZHANG",
+          "object": "address",
+          "phone": null
+        },
+        "tracking_events": [],
+        "tracking_number": null,
+        "url": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d.pdf?version=v1&expires=1618512040&signature=qvyCqXI1ndBvc4AjvG8FlirqLXEcfmYo4sDrRtabaXMOsX88to9G3K49uIk_aqevvZXe8HoRYD_nWydbQHqaCA",
+        "use_type": "marketing"
+      }
+    ],
+    "next_url": null,
+    "object": "list",
+    "previous_url": null
+  },
+  "GET /booklets/{booklet_id}": {
+    "carrier": "USPS",
+    "date_created": "2021-03-16T18:40:40.504Z",
+    "date_modified": "2021-03-16T18:40:40.504Z",
+    "description": "April Campaign",
+    "expected_delivery_date": "2021-03-24",
+    "from": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": null,
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": null,
+      "date_created": "2017-09-05T15:54:53.264Z",
+      "date_modified": "2017-09-05T15:54:53.264Z",
+      "deleted": true,
+      "description": null,
+      "email": null,
+      "id": "adr_b8fb5acf3a2b55db",
+      "metadata": {},
+      "name": "LEORE AVIDAR",
+      "object": "address",
+      "phone": null
+    },
+    "fsc": false,
+    "id": "ord_0d6a16a3fff6318ac8f8008dc1",
+    "mail_type": "usps_first_class",
+    "merge_variables": {
+      "name": "Harry"
+    },
+    "metadata": {},
+    "object": "booklet",
+    "pages": 8,
+    "send_date": "2021-03-16T18:45:40.493Z",
+    "size": "8.375x5.375",
+    "sla": "2",
+    "source_material": "60# Gloss Text",
+    "thumbnails": [
+      {
+        "large": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_large_1.png?version=v1&expires=1618512040&signature=kBrm00xkyCkJNJRHxH8HshFaebtOxnzjVWOs1VVmGMuw8H6OBNcMAMxt9s49K0jlpHoh3Nr9uSncEZMQaaNjAg",
+        "medium": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_medium_1.png?version=v1&expires=1618512040&signature=ryxN7bsXGtw_GRFSP3Cs3A3IYjxZi3cW9BHDCNgMt6p3nobVmsc_iFHt2e-S7ndAXhhN7nP-MQVov3bt3r37BQ",
+        "small": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_small_1.png?version=v1&expires=1618512040&signature=-bipeUHP-hAMcCBSrWM0ZH1VwRdSPNVGGZN9hAZKr6Lh4ly6uxvratVd5LXJCK_zOEMYk_mTWASt0ge7OY6SDA"
+      }
+    ],
+    "to": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": null,
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": null,
+      "date_created": "2017-09-05T15:54:53.264Z",
+      "date_modified": "2017-09-05T15:54:53.264Z",
+      "deleted": true,
+      "description": null,
+      "email": null,
+      "id": "adr_d3489cd64c791ab5",
+      "metadata": {},
+      "name": "HARRY ZHANG",
+      "object": "address",
+      "phone": null
+    },
+    "tracking_events": [],
+    "tracking_number": null,
+    "url": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d.pdf?version=v1&expires=1618512040&signature=qvyCqXI1ndBvc4AjvG8FlirqLXEcfmYo4sDrRtabaXMOsX88to9G3K49uIk_aqevvZXe8HoRYD_nWydbQHqaCA",
+    "use_type": "marketing"
+  },
+  "GET /buckslips": {
+    "count": 1,
+    "data": [
+      {
+        "account_id": "fa9ea650fc7b31a89f92",
+        "allocated_quantity": 0,
+        "auto_reorder": false,
+        "available_quantity": 0,
+        "back_original_url": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+        "buckslip_orders": [],
+        "date_created": "2021-03-24T22:51:42.838Z",
+        "date_modified": "2021-03-24T22:51:42.838Z",
+        "description": null,
+        "finish": "gloss",
+        "front_original_url": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+        "has_back": true,
+        "has_front": true,
+        "id": "bck_7a6d73c5c8457fc",
+        "mode": "test",
+        "object": "buckslip",
+        "onhand_quantity": 0,
+        "pending_quantity": 0,
+        "projected_quantity": 0,
+        "raw_url": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+        "reorder_quantity": null,
+        "send_date": "2021-03-24T22:51:42.838Z",
+        "size": "8.75x3.75",
+        "status": "rendered",
+        "stock": "text",
+        "threshold_amount": 0,
+        "thumbnails": [
+          {
+            "large": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_large_1.png?version=v1&expires=1636910992&signature=FKSzymA13j-CQ0uk20cGHZTzT3vimzNBYrgp-xifLFg4mMdo1BZALR5O0aF_jVhsX614hKP35ONdYl47TQxXAw",
+            "medium": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_medium_1.png?version=v1&expires=1636910992&signature=VgL_2Ckm_kxKiWGgWtdNoy9HHOn8dGYSVOn7UqyCbwdbVlUtx28TRN4Bo8Iru3n0keKp9He0YhKT1ILotznMDA",
+            "small": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_small_1.png?version=v1&expires=1636910992&signature=mrv8JDvpZK4I8WUGH0tPdtK-My5oes0Ltj_gL7BDw96SpCTTeZFHkz81SzclyFP9dQRtlsvAsjcuGcTBvCvOCg"
+          }
+        ],
+        "url": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e.pdf?version=v1&expires=1636910992&signature=mnsDH2DAxdkN9VibdlLMxJC86sME5WYDqkNtmvGwdNsAaUWfbnv0rJhJ1mR8Ol4uxQq61j5wYZ0r3s-lBkQfDA",
+        "weight": "80#"
+      }
+    ],
+    "next_url": null,
+    "object": "list",
+    "previous_url": null
+  },
+  "GET /buckslips/{buckslip_id}": {
+    "account_id": "fa9ea650fc7b31a89f92",
+    "allocated_quantity": 0,
+    "auto_reorder": false,
+    "available_quantity": 0,
+    "back_original_url": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+    "buckslip_orders": [],
+    "date_created": "2021-03-24T22:51:42.838Z",
+    "date_modified": "2021-03-24T22:51:42.838Z",
+    "description": "Test buckslip",
+    "finish": "gloss",
+    "front_original_url": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+    "id": "bck_7a6d73c5c8457fc",
+    "mode": "test",
+    "object": "buckslip",
+    "onhand_quantity": 0,
+    "pending_quantity": 0,
+    "projected_quantity": 0,
+    "raw_url": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+    "reorder_quantity": null,
+    "send_date": "2021-03-24T22:51:42.838Z",
+    "size": "8.75x3.755",
+    "status": "rendered",
+    "stock": "text",
+    "threshold_amount": 0,
+    "thumbnails": [
+      {
+        "large": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_large_1.png?version=v1&expires=1636910992&signature=FKSzymA13j-CQ0uk20cGHZTzT3vimzNBYrgp-xifLFg4mMdo1BZALR5O0aF_jVhsX614hKP35ONdYl47TQxXAw",
+        "medium": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_medium_1.png?version=v1&expires=1636910992&signature=VgL_2Ckm_kxKiWGgWtdNoy9HHOn8dGYSVOn7UqyCbwdbVlUtx28TRN4Bo8Iru3n0keKp9He0YhKT1ILotznMDA",
+        "small": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_small_1.png?version=v1&expires=1636910992&signature=mrv8JDvpZK4I8WUGH0tPdtK-My5oes0Ltj_gL7BDw96SpCTTeZFHkz81SzclyFP9dQRtlsvAsjcuGcTBvCvOCg"
+      },
+      {
+        "large": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_large_2.png?version=v1&expires=1636910992&signature=r0OFUhh315ZwN0raMZdIwJd2oCIEYsz0BABaMxIuO1PKTD0ckGWrhcGdzk2dlWQ6vSvp0CUQ5k1RXGqkIIqkDw",
+        "medium": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_medium_2.png?version=v1&expires=1636910992&signature=zxK7VKGiTvz5Ywrkaydd0v3GcYf58R7A08J4tNfI7-aiNODDcTF3l0MqY13n9Pyc8RXSdD0XVBY-OpbA1VM-Ag",
+        "small": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_small_2.png?version=v1&expires=1636910992&signature=IWsmPa_ULlv2yyqjX564d_YfHHY_M7i9YxDnw-WXDr2jtOFcArmRZQbnHeE9g_rYxnddJbgosuv8-c2utiu7Cg"
+      }
+    ],
+    "url": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e.pdf?version=v1&expires=1636910992&signature=mnsDH2DAxdkN9VibdlLMxJC86sME5WYDqkNtmvGwdNsAaUWfbnv0rJhJ1mR8Ol4uxQq61j5wYZ0r3s-lBkQfDA",
+    "weight": "80#"
+  },
+  "GET /buckslips/{buckslip_id}/orders": {
+    "count": 1,
+    "data": [
+      {
+        "availability_date": "2021-10-12T21:41:48.326Z",
+        "buckslip_id": "bck_6afffd19045076c",
+        "cancelled_reason": "No longer needed",
+        "date_created": "2021-10-07T21:03:18.871Z",
+        "date_modified": "2021-10-16T01:00:30.144Z",
+        "expected_availability_date": "2021-11-04T21:03:18.871Z",
+        "id": "bo_e0f8a0562a06bea7f",
+        "object": "buckslip_order",
+        "quantity_ordered": 5000,
+        "status": "available",
+        "unit_price": 0.75
+      }
+    ],
+    "next_url": null,
+    "object": "list",
+    "previous_url": null
+  },
+  "GET /campaigns": {
+    "count": 1,
+    "data": [
+      {
+        "auto_cancel_if_ncoa": false,
+        "billing_group_id": "bg_fe3079dcdd80e5ae",
+        "cancel_window_campaign_minutes": 60,
+        "creatives": [],
+        "date_created": "2017-09-05T17:47:53.767Z",
+        "date_modified": "2017-09-05T17:47:53.767Z",
+        "deleted": false,
+        "description": "My Campaign's description",
+        "id": "cmp_e05ee61ff80764b",
+        "is_draft": true,
+        "metadata": {},
+        "name": "My Campaign",
+        "object": "campaign",
+        "schedule_type": "immediate",
+        "send_date": null,
+        "target_delivery_date": null,
+        "uploads": [],
+        "use_type": "marketing"
+      }
+    ],
+    "next_url": null,
+    "object": "list",
+    "previous_url": null
+  },
+  "GET /campaigns/{cmp_id}": {
+    "auto_cancel_if_ncoa": false,
+    "billing_group_id": "bg_fe3079dcdd80e5ae",
+    "cancel_window_campaign_minutes": 60,
+    "creatives": [],
+    "date_created": "2017-09-05T17:47:53.767Z",
+    "date_modified": "2017-09-05T17:47:53.767Z",
+    "deleted": false,
+    "description": "My Campaign's description",
+    "id": "cmp_e05ee61ff80764b",
+    "is_draft": true,
+    "metadata": {},
+    "name": "My Campaign",
+    "object": "campaign",
+    "schedule_type": "immediate",
+    "uploads": [],
+    "use_type": "marketing"
+  },
+  "GET /cards": {
+    "count": 1,
+    "data": [
+      {
+        "account_id": "fa9ea650fc7b31a89f92",
+        "auto_reorder": false,
+        "available_quantity": 10000,
+        "back_original_url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+        "countries": null,
+        "date_created": "2021-03-24T22:51:42.838Z",
+        "date_modified": "2021-03-24T22:51:42.838Z",
+        "description": null,
+        "front_original_url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+        "id": "card_7a6d73c5c8457fc",
+        "mode": "test",
+        "object": "card",
+        "orientation": "horizontal",
+        "pending_quantity": 0,
+        "raw_url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+        "reorder_quantity": null,
+        "send_date": "2021-03-24T22:51:42.838Z",
+        "size": "2.125x3.375",
+        "status": "rendered",
+        "threshold_amount": 0,
+        "thumbnails": [
+          {
+            "large": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_large_1.png?version=v1&expires=1636910992&signature=FKSzymA13j-CQ0uk20cGHZTzT3vimzNBYrgp-xifLFg4mMdo1BZALR5O0aF_jVhsX614hKP35ONdYl47TQxXAw",
+            "medium": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_medium_1.png?version=v1&expires=1636910992&signature=VgL_2Ckm_kxKiWGgWtdNoy9HHOn8dGYSVOn7UqyCbwdbVlUtx28TRN4Bo8Iru3n0keKp9He0YhKT1ILotznMDA",
+            "small": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_small_1.png?version=v1&expires=1636910992&signature=mrv8JDvpZK4I8WUGH0tPdtK-My5oes0Ltj_gL7BDw96SpCTTeZFHkz81SzclyFP9dQRtlsvAsjcuGcTBvCvOCg"
+          }
+        ],
+        "url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e.pdf?version=v1&expires=1636910992&signature=mnsDH2DAxdkN9VibdlLMxJC86sME5WYDqkNtmvGwdNsAaUWfbnv0rJhJ1mR8Ol4uxQq61j5wYZ0r3s-lBkQfDA"
+      }
+    ],
+    "next_url": null,
+    "object": "list",
+    "previous_url": null
+  },
+  "GET /cards/{card_id}": {
+    "account_id": "fa9ea650fc7b31a89f92",
+    "auto_reorder": false,
+    "available_quantity": 10000,
+    "back_original_url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+    "countries": null,
+    "date_created": "2021-03-24T22:51:42.838Z",
+    "date_modified": "2021-03-24T22:51:42.838Z",
+    "description": "Test card",
+    "front_original_url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+    "id": "card_7a6d73c5c8457fc",
+    "mode": "test",
+    "object": "card",
+    "orientation": "horizontal",
+    "pending_quantity": 0,
+    "raw_url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+    "reorder_quantity": null,
+    "send_date": "2021-03-24T22:51:42.838Z",
+    "size": "2.125x3.375",
+    "status": "rendered",
+    "threshold_amount": 0,
+    "thumbnails": [
+      {
+        "large": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_large_1.png?version=v1&expires=1636910992&signature=FKSzymA13j-CQ0uk20cGHZTzT3vimzNBYrgp-xifLFg4mMdo1BZALR5O0aF_jVhsX614hKP35ONdYl47TQxXAw",
+        "medium": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_medium_1.png?version=v1&expires=1636910992&signature=VgL_2Ckm_kxKiWGgWtdNoy9HHOn8dGYSVOn7UqyCbwdbVlUtx28TRN4Bo8Iru3n0keKp9He0YhKT1ILotznMDA",
+        "small": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_small_1.png?version=v1&expires=1636910992&signature=mrv8JDvpZK4I8WUGH0tPdtK-My5oes0Ltj_gL7BDw96SpCTTeZFHkz81SzclyFP9dQRtlsvAsjcuGcTBvCvOCg"
+      },
+      {
+        "large": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_large_2.png?version=v1&expires=1636910992&signature=r0OFUhh315ZwN0raMZdIwJd2oCIEYsz0BABaMxIuO1PKTD0ckGWrhcGdzk2dlWQ6vSvp0CUQ5k1RXGqkIIqkDw",
+        "medium": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_medium_2.png?version=v1&expires=1636910992&signature=zxK7VKGiTvz5Ywrkaydd0v3GcYf58R7A08J4tNfI7-aiNODDcTF3l0MqY13n9Pyc8RXSdD0XVBY-OpbA1VM-Ag",
+        "small": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_small_2.png?version=v1&expires=1636910992&signature=IWsmPa_ULlv2yyqjX564d_YfHHY_M7i9YxDnw-WXDr2jtOFcArmRZQbnHeE9g_rYxnddJbgosuv8-c2utiu7Cg"
+      }
+    ],
+    "url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e.pdf?version=v1&expires=1636910992&signature=mnsDH2DAxdkN9VibdlLMxJC86sME5WYDqkNtmvGwdNsAaUWfbnv0rJhJ1mR8Ol4uxQq61j5wYZ0r3s-lBkQfDA"
+  },
+  "GET /cards/{card_id}/orders": {
+    "count": 1,
+    "data": [
+      {
+        "availability_date": "2021-10-12T21:41:48.326Z",
+        "cancelled_reason": "No longer needed",
+        "card_id": "card_6afffd19045076c",
+        "date_created": "2021-10-07T21:03:18.871Z",
+        "date_modified": "2021-10-16T01:00:30.144Z",
+        "expected_availability_date": "2021-11-04T21:03:18.871Z",
+        "id": "co_e0f8a0562a06bea7f",
+        "inventory": 9500,
+        "object": "card_order",
+        "quantity_ordered": 10000,
+        "status": "available",
+        "unit_price": 0.75
+      }
+    ],
+    "next_url": null,
+    "object": "list",
+    "previous_url": null
+  },
+  "GET /checks": {
+    "count": 2,
+    "data": [
+      {
+        "amount": 22.5,
+        "attachment_template_id": "tmpl_a",
+        "attachment_template_version_id": "vrsn_a",
+        "bank_account": {
+          "account_number": "123456789",
+          "account_type": "individual",
+          "bank_name": "J.P. MORGAN CHASE BANK, N.A.",
+          "date_created": "2015-11-06T19:24:24.440Z",
+          "date_modified": "2015-11-06T19:41:28.312Z",
+          "description": "Test Bank Account",
+          "id": "bank_8cad8df5354d33f",
+          "metadata": {},
+          "object": "bank_account",
+          "routing_number": "322271627",
+          "signatory": "John Doe",
+          "signature_url": "https://lob-assets.com/bank-accounts/asd_asdfghjkqwertyui.pdf?expires=1234567890&signature=aksdf",
+          "verified": true
+        },
+        "carrier": "USPS",
+        "check_bottom_template_id": "tmpl_a",
+        "check_bottom_template_version_id": "vrsn_a",
+        "check_number": 12559,
+        "date_created": "2019-08-08T19:34:47.571Z",
+        "date_modified": "2019-08-08T19:34:49.612Z",
+        "deleted": true,
+        "description": "Demo Check",
+        "expected_delivery_date": "2019-08-16",
+        "from": {
+          "address_city": "SAN FRANCISCO",
+          "address_country": "UNITED STATES",
+          "address_line1": "210 KING ST STE 6100",
+          "address_state": "CA",
+          "address_zip": "94107-1741",
+          "date_created": "2018-12-08T03:01:07.651Z",
+          "date_modified": "2018-12-08T03:01:07.651Z",
+          "id": "adr_210a8d4b0b76d77b",
+          "metadata": {},
+          "name": "LEORE AVIDAR",
+          "object": "address"
+        },
+        "id": "chk_0176bf6197100185",
+        "mail_type": "usps_first_class",
+        "memo": "rent",
+        "merge_variables": {},
+        "message": "pancakes are good",
+        "metadata": {},
+        "object": "check",
+        "send_date": "2019-08-08",
+        "thumbnails": [
+          {
+            "large": "https://lob-assets.com/checks/chk_0176bf6197100185_thumb_large_1.png?version=v1&expires=1568239682&signature=VJlOkVDPKZThstdd632r3Grm2WhoyPkC-pffpcePTw1i1NkpAObDSRaItKMOQgeWkAcUud3SH0tYcVOadaNiCw",
+            "medium": "https://lob-assets.com/checks/chk_0176bf6197100185_thumb_medium_1.png?version=v1&expires=1568239682&signature=-iJD7C58xOCD8eQ01StqSlw9WbDymL0Ygze9twfTs9s17zQppr2Zx363_Z4bP3ATHNhF3osjHuAxIasI2Wf6DQ",
+            "small": "https://lob-assets.com/checks/chk_0176bf6197100185_thumb_small_1.png?version=v1&expires=1568239682&signature=T8DfMm_mxJJzIPgm8I0lvYY4Z6I8aFjsGsrEAicEqw8Ei_FaOtiGQKGeY16rdugAt8lmS_iX0lveBoG2RgWDDw"
+          },
+          {
+            "large": "https://lob-assets.com/checks/chk_0176bf6197100185_thumb_large_2.png?version=v1&expires=1568239682&signature=ybe8ovBh8Gf-AWKGRs4CB4XkU-erPVbY66umXARhTiJG2Dg1QlyCb9WmBXWt0tBCwD5NGMl20mHeAgHwecLxBA",
+            "medium": "https://lob-assets.com/checks/chk_0176bf6197100185_thumb_medium_2.png?version=v1&expires=1568239682&signature=sdgnJMzusEfndu7dNmk37eKc0AV7Hmqev6TQAqkCESs5pg7j6dDTsp7v4pnDvhsj8d7SIMcahl1aGiysoom0CA",
+            "small": "https://lob-assets.com/checks/chk_0176bf6197100185_thumb_small_2.png?version=v1&expires=1568239682&signature=XpCkOjy2zIKXkuc0s-UAYGNwpD_pgt7c9FKTDUCYbyqXupAg1MV1l2tdqevr0L0LT5FJqrGZH9khD5QRMQTkAA"
+          }
+        ],
+        "to": {
+          "address_city": "SAN FRANCISCO",
+          "address_country": "UNITED STATES",
+          "address_line1": "210 KING ST STE 6100",
+          "address_line2": "",
+          "address_state": "CA",
+          "address_zip": "94107-1741",
+          "company": "LOB",
+          "date_created": "2018-12-08T03:08:43.446Z",
+          "date_modified": "2018-12-08T03:08:43.446Z",
+          "description": "Harry - Office",
+          "email": "harry@lob.com",
+          "id": "adr_bae820679f3f536b",
+          "metadata": {},
+          "name": "HARRY ZHANG",
+          "object": "address",
+          "phone": "5555555555",
+          "recipient_moved": false
+        },
+        "tracking_events": [],
+        "url": "https://lob-assets.com/checks/chk_0176bf6197100185.pdf?version=v1&expires=1568239682&signature=aqKV5lmg_ktxzyl-qEwIf8-7DbvcguLO0LrfFcyMrUDDt6hxX_da0MEEpElxKR876VUaZrpHq_i_ayDWrsK3BA",
+        "use_type": "operational"
+      }
+    ],
+    "next_url": "https://api.lob.com/v1/checks?limit=2&after=eyJkYXRlT2Zmc2V0IjoiMjAxOS0wOC0wOFQxOTozNDoyNy44MDJaIiwiaWRPZmZzZXQiOiJjaGtfOTJiOWE2NzE0YmMwNTU3YyJ9",
+    "object": "list",
+    "previous_url": null
+  },
+  "GET /checks/{chk_id}": {
+    "amount": 22.5,
+    "attachment_template_id": "tmpl_a",
+    "attachment_template_version_id": "vrsn_a",
+    "bank_account": {
+      "account_number": "123456789",
+      "account_type": "company",
+      "bank_name": "J.P. MORGAN CHASE BANK, N.A.",
+      "date_created": "2015-11-06T19:24:24.440Z",
+      "date_modified": "2015-11-06T19:41:28.312Z",
+      "description": "Test Bank Account",
+      "id": "bank_8cad8df5354d33f",
+      "metadata": {},
+      "object": "bank_account",
+      "routing_number": "322271627",
+      "signatory": "John Doe",
+      "signature_url": "https://lob-assets.com/bank-accounts/asd_asdfghjkqwertyui.pdf?expires=1234567890&signature=aksdf",
+      "verified": true
+    },
+    "carrier": "USPS",
+    "check_bottom_template_id": "tmpl_a",
+    "check_bottom_template_version_id": "vrsn_a",
+    "check_number": 10062,
+    "date_created": "2017-09-05T17:47:53.896Z",
+    "date_modified": "2017-09-05T17:47:53.896Z",
+    "deleted": true,
+    "description": "Demo Check",
+    "expected_delivery_date": "2017-09-12",
+    "from": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "date_created": "2017-09-05T17:47:53.767Z",
+      "date_modified": "2017-09-05T17:47:53.767Z",
+      "id": "adr_b8fb5acf3a2b55db",
+      "metadata": {},
+      "name": "LEORE AVIDAR",
+      "object": "address"
+    },
+    "id": "chk_534f10783683daa0",
+    "mail_type": "usps_first_class",
+    "memo": "rent",
+    "merge_variables": {
+      "name": "Harry"
+    },
+    "message": "pancakes are good",
+    "metadata": {},
+    "object": "check",
+    "send_date": "2017-09-05T17:47:53.896Z",
+    "sla": "2",
+    "thumbnails": [
+      {
+        "large": "https://lob-assets.com/checks/chk_534f10783683daa0_thumb_large_1.png?expires=1540372221&signature=04nLEwE9d2qgQJNgJYWSOgPnU0FZbEv",
+        "medium": "https://lob-assets.com/checks/chk_534f10783683daa0_thumb_medium_1.png?expires=1540372221&signature=tmIOq6aAyKgzAECp7STj1rvJuMS5Svd",
+        "small": "https://lob-assets.com/checks/chk_534f10783683daa0_thumb_small_1.png?expires=1540372221&signature=ShhPpH74wYkNiAj7Il9B6q8ZKkzlGd4"
+      }
+    ],
+    "to": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": "",
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": "LOB",
+      "date_created": "2018-12-08T03:08:43.446Z",
+      "date_modified": "2018-12-08T03:08:43.446Z",
+      "description": "Harry - Office",
+      "email": "harry@lob.com",
+      "id": "adr_bae820679f3f536b",
+      "metadata": {},
+      "name": "HARRY ZHANG",
+      "object": "address",
+      "phone": "5555555555",
+      "recipient_moved": false
+    },
+    "tracking_events": [],
+    "url": "https://lob-assets.com/checks/chk_534f10783683daa0.pdf?expires=1540372221&signature=Ty3IV2bGPEoQfrdraYHlNYTaarnHLXb",
+    "use_type": "operational"
+  },
+  "GET /creatives/{crv_id}": {
+    "campaigns": [],
+    "date_created": "2017-09-05T17:47:53.767Z",
+    "date_modified": "2017-09-05T17:47:53.767Z",
+    "description": "Our 4x6 postcard creative",
+    "details": {},
+    "from": "adr_210a8d4b0b76d77b",
+    "id": "crv_2a3b096c409b32c",
+    "metadata": {},
+    "object": "creative",
+    "resource_type": "postcard",
+    "template_preview_urls": {},
+    "template_previews": []
+  },
+  "GET /informed_delivery_campaigns": {
+    "count": 2,
+    "data": [
+      {
+        "account_id": "xxxxxxxxxxxxxxxxxxxx",
+        "brand_name": "Lob",
+        "campaign_code": "1a1a1a1a-9657-423b-b3c7-2+Code",
+        "date_created": "2024-08-30T23:30:02.980Z",
+        "date_modified": "2024-08-30T23:30:05.027Z",
+        "deleted": false,
+        "end_date": "2024-10-15T00:00:00.000Z",
+        "end_serial": 3183506,
+        "id": "infd_234g5324g324g23",
+        "lob_campaign_id": null,
+        "mode": "live",
+        "object": "informed_delivery_campaign",
+        "quantity": 20,
+        "representative_image_s3_link": null,
+        "ride_along_image_s3_link": "https://lob-assets.com/informed-delivery/infd_234g5324g324g23_ride_along.jpg",
+        "ride_along_url": "https://www.lob.com",
+        "service_request_number": null,
+        "start_date": "2024-08-31T00:00:00.000Z",
+        "start_serial": 3183487,
+        "status": "approved",
+        "usps_campaign_id": "1234567890",
+        "usps_title": "Campaign: 1a1a1a1a-9657-423b-b3c7-2"
+      }
+    ],
+    "next_url": null,
+    "object": "list",
+    "previous_url": null
+  },
+  "GET /informed_delivery_campaigns/{usps_campaign_id}": {
+    "account_id": "xxxxxxxxxxxxxxxxxxxx",
+    "brand_name": "Lob",
+    "campaign_code": "1a1a1a1a-9657-423b-b3c7-2+Code",
+    "date_created": "2024-08-30T23:30:02.980Z",
+    "date_modified": "2024-08-30T23:30:05.027Z",
+    "deleted": false,
+    "end_date": "2024-10-15T00:00:00.000Z",
+    "end_serial": 3183506,
+    "id": "infd_234g5324g324g23",
+    "lob_campaign_id": null,
+    "mode": "live",
+    "object": "informed_delivery_campaign",
+    "quantity": 20,
+    "representative_image_s3_link": null,
+    "ride_along_image_s3_link": "https://lob-assets.com/informed-delivery/infd_234g5324g324g23_ride_along.jpg",
+    "ride_along_url": "https://www.lob.com",
+    "service_request_number": null,
+    "start_date": "2024-08-31T00:00:00.000Z",
+    "start_serial": 3183487,
+    "status": "approved",
+    "usps_campaign_id": "1234567890",
+    "usps_title": "Campaign: 1a1a1a1a-9657-423b-b3c7-2"
+  },
+  "GET /letters": {
+    "count": 2,
+    "data": [
+      {
+        "address_placement": "top_first_page",
+        "carrier": "USPS",
+        "color": true,
+        "custom_envelope": null,
+        "date_created": "2019-08-08T17:09:14.514Z",
+        "date_modified": "2019-08-08T17:09:16.850Z",
+        "description": "Demo Letter",
+        "double_sided": false,
+        "expected_delivery_date": "2019-08-16",
+        "extra_service": "certified",
+        "from": {
+          "address_city": "SAN FRANCISCO",
+          "address_country": "UNITED STATES",
+          "address_line1": "210 KING ST STE 6100",
+          "address_line2": null,
+          "address_state": "CA",
+          "address_zip": "94107-1741",
+          "company": null,
+          "date_created": "2018-12-08T03:01:07.651Z",
+          "date_modified": "2018-12-08T03:01:07.651Z",
+          "description": null,
+          "email": null,
+          "id": "adr_210a8d4b0b76d77b",
+          "metadata": {},
+          "name": "LEORE AVIDAR",
+          "object": "address",
+          "phone": null
+        },
+        "fsc": false,
+        "id": "ltr_5ba44b462c79f07c",
+        "mail_type": "usps_first_class",
+        "merge_variables": null,
+        "metadata": {},
+        "object": "letter",
+        "perforated_page": null,
+        "return_envelope": false,
+        "send_date": "2019-08-08",
+        "template_id": "tmpl_a",
+        "template_version_id": "vrsn_a",
+        "thumbnails": [
+          {
+            "large": "https://lob-assets.com/letters/ltr_5ba44b462c79f07c_thumb_large_1.png?version=v1&expires=1568239830&signature=54LUIDKZyItA9pnC87d1pJVAuw8bhKLCsMpNWkB3LgdVWxPxxb_c1IyIWAbSR-dyOYEOlDBCc40J4Kns-O_mAg",
+            "medium": "https://lob-assets.com/letters/ltr_5ba44b462c79f07c_thumb_medium_1.png?version=v1&expires=1568239830&signature=H7354Qpcm9S4aXbrMsBe6QJ6lSNi9IWPgMJtLWLi4Kyx9tHF8Mp9YEc_IL9x89Jfw4-yRzKDXA410X4W0PssBQ",
+            "small": "https://lob-assets.com/letters/ltr_5ba44b462c79f07c_thumb_small_1.png?version=v1&expires=1568239830&signature=xZUmE8rq8wSECHPEb9c37cUDZBzGUO3XK5LsIPZhI6dOXgm6zJEn8_7tKuZ3JWBmvNJNXdTl_ufkNu4avjQUDw"
+          }
+        ],
+        "to": {
+          "address_city": "SUMMERSIDE",
+          "address_country": "CANADA",
+          "address_line1": "370 WATER ST",
+          "address_line2": "",
+          "address_state": "PRINCE EDWARD ISLAND",
+          "address_zip": "C1N 1C4",
+          "company": "Lob",
+          "date_created": "2019-09-20T00:14:00.361Z",
+          "date_modified": "2019-09-20T00:14:00.361Z",
+          "description": "Harry - Office",
+          "email": "harry@lob.com",
+          "id": "adr_asdi2y3riuasasoi",
+          "metadata": {},
+          "name": "Harry Zhang",
+          "object": "address",
+          "phone": "5555555555",
+          "recipient_moved": false
+        },
+        "tracking_events": [
+          {
+            "date_created": "2019-10-08T19:41:00Z",
+            "date_modified": "2019-10-08T19:41:00Z",
+            "details": {
+              "action_required": false,
+              "description": "Package has been delivered.",
+              "event": "delivered",
+              "notes": "Delivered, Front Desk/Reception/Mail Room"
+            },
+            "id": "evnt_9e84094c9368cfb",
+            "location": "33408",
+            "name": "Delivered",
+            "object": "tracking_event",
+            "time": "2019-10-08T19:41:00Z",
+            "type": "certified"
+          }
+        ],
+        "tracking_number": "92071902358909000011275538",
+        "url": "https://lob-assets.com/letters/ltr_5ba44b462c79f07c.pdf?version=v1&expires=1568239830&signature=Ob-DUPLJLM4scWQeCDNadPJ4j33MZw16pykOxwv2us-bA7utTYi6oZ8WrEtBYDBBo09XkapR3gdJf0NEr90xAA",
+        "use_type": "marketing"
+      }
+    ],
+    "next_url": "https://api.lob.com/v1/letters?limit=2&after=eyJkYXRlT2Zmc2V0IjoiMjAxOS0wOC0wOFQxNzowODoxMi4yMjRaIiwiaWRPZmZzZXQiOiJsdHJfZGE4MjY3YzZhNjU0NWNkNiJ9",
+    "object": "list",
+    "previous_url": null
+  },
+  "GET /letters/{ltr_id}": {
+    "address_placement": "top_first_page",
+    "cards": [
+      {
+        "account_id": "fa9ea650fc7b31a89f92",
+        "auto_reorder": false,
+        "available_quantity": 10000,
+        "back_original_url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+        "countries": null,
+        "date_created": "2017-08-05T15:54:53.346Z",
+        "date_modified": "2017-08-05T15:54:53.346Z",
+        "description": null,
+        "front_original_url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+        "id": "card_c51ae96f5cebf3e",
+        "mode": "test",
+        "object": "card",
+        "orientation": "horizontal",
+        "pending_quantity": 0,
+        "raw_url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+        "reorder_quantity": null,
+        "size": "2.125x3.375",
+        "status": "rendered",
+        "threshold_amount": 0,
+        "thumbnails": [
+          {
+            "large": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_large_1.png?version=v1&expires=1636910992&signature=FKSzymA13j-CQ0uk20cGHZTzT3vimzNBYrgp-xifLFg4mMdo1BZALR5O0aF_jVhsX614hKP35ONdYl47TQxXAw",
+            "medium": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_medium_1.png?version=v1&expires=1636910992&signature=VgL_2Ckm_kxKiWGgWtdNoy9HHOn8dGYSVOn7UqyCbwdbVlUtx28TRN4Bo8Iru3n0keKp9He0YhKT1ILotznMDA",
+            "small": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_small_1.png?version=v1&expires=1636910992&signature=mrv8JDvpZK4I8WUGH0tPdtK-My5oes0Ltj_gL7BDw96SpCTTeZFHkz81SzclyFP9dQRtlsvAsjcuGcTBvCvOCg"
+          },
+          {
+            "large": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_large_2.png?version=v1&expires=1636910992&signature=r0OFUhh315ZwN0raMZdIwJd2oCIEYsz0BABaMxIuO1PKTD0ckGWrhcGdzk2dlWQ6vSvp0CUQ5k1RXGqkIIqkDw",
+            "medium": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_medium_2.png?version=v1&expires=1636910992&signature=zxK7VKGiTvz5Ywrkaydd0v3GcYf58R7A08J4tNfI7-aiNODDcTF3l0MqY13n9Pyc8RXSdD0XVBY-OpbA1VM-Ag",
+            "small": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_small_2.png?version=v1&expires=1636910992&signature=IWsmPa_ULlv2yyqjX564d_YfHHY_M7i9YxDnw-WXDr2jtOFcArmRZQbnHeE9g_rYxnddJbgosuv8-c2utiu7Cg"
+          }
+        ],
+        "url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e.pdf?version=v1&expires=1636910992&signature=mnsDH2DAxdkN9VibdlLMxJC86sME5WYDqkNtmvGwdNsAaUWfbnv0rJhJ1mR8Ol4uxQq61j5wYZ0r3s-lBkQfDA"
+      }
+    ],
+    "carrier": "USPS",
+    "color": true,
+    "custom_envelope": null,
+    "date_created": "2017-09-05T15:54:53.346Z",
+    "date_modified": "2017-09-05T15:54:53.346Z",
+    "description": "Demo Letter",
+    "double_sided": true,
+    "expected_delivery_date": "2017-09-12",
+    "extra_service": null,
+    "from": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": null,
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": null,
+      "date_created": "2017-09-05T15:54:53.264Z",
+      "date_modified": "2017-09-05T15:54:53.264Z",
+      "deleted": true,
+      "description": null,
+      "email": null,
+      "id": "adr_b8fb5acf3a2b55db",
+      "metadata": {},
+      "name": "LEORE AVIDAR",
+      "object": "address",
+      "phone": null
+    },
+    "fsc": false,
+    "id": "ltr_4868c3b754655f90",
+    "mail_type": "usps_first_class",
+    "merge_variables": {
+      "name": "Harry"
+    },
+    "metadata": {},
+    "object": "letter",
+    "perforated_page": null,
+    "return_envelope": false,
+    "send_date": "2017-09-05T15:54:53.346Z",
+    "sla": "2",
+    "thumbnails": [
+      {
+        "large": "https://lob-assets.com/letters/ltr_4868c3b754655f90_thumb_large_1.png?expires=1540372221&signature=gsKvxXgrm4v4iZD3bOibK7jApNkEMdW",
+        "medium": "https://lob-assets.com/letters/ltr_4868c3b754655f90_thumb_medium_1.png?expires=1540372221&signature=bAzL8sv935PY09FWSkpDpWKkyvGSWYF",
+        "small": "https://lob-assets.com/letters/ltr_4868c3b754655f90_thumb_small_1.png?expires=1540372221&signature=a5fRBJ22ZA78Vgpg34M9UfmHWTS3eha"
+      }
+    ],
+    "to": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": null,
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": null,
+      "date_created": "2017-09-05T15:54:53.264Z",
+      "date_modified": "2017-09-05T15:54:53.264Z",
+      "deleted": true,
+      "description": null,
+      "email": null,
+      "id": "adr_d3489cd64c791ab5",
+      "metadata": {},
+      "name": "HARRY ZHANG",
+      "object": "address",
+      "phone": null
+    },
+    "tracking_events": [],
+    "tracking_number": null,
+    "url": "https://lob-assets.com/letters/ltr_4868c3b754655f90.pdf?expires=1540372221&signature=8r94fse8uam7wGWmW5baxXulU88X2CA",
+    "use_type": "marketing"
+  },
+  "GET /postcards": {
+    "count": 2,
+    "data": [
+      {
+        "back_template_id": null,
+        "back_template_version_id": null,
+        "carrier": "USPS",
+        "date_created": "2021-03-24T22:51:42.838Z",
+        "date_modified": "2021-03-24T22:51:42.838Z",
+        "description": null,
+        "front_template_id": null,
+        "front_template_version_id": null,
+        "fsc": false,
+        "id": "psc_208e45e48d271294",
+        "metadata": {},
+        "object": "postcard",
+        "send_date": "2021-03-24T22:51:42.838Z",
+        "to": {
+          "address_city": "SAN FRANCISCO",
+          "address_country": "UNITED STATES",
+          "address_line1": "210 KING ST STE 6100",
+          "address_line2": null,
+          "address_state": "CA",
+          "address_zip": "94107-1741",
+          "company": null,
+          "date_created": "2018-12-08T03:01:07.651Z",
+          "date_modified": "2018-12-08T03:01:07.651Z",
+          "description": null,
+          "email": null,
+          "id": "adr_210a8d4b0b76d77b",
+          "metadata": {},
+          "name": "LEORE AVIDAR",
+          "object": "address",
+          "phone": null
+        },
+        "url": "https://lob-assets.com/postcards/psc_208e45e48d271294.pdf?version=v1&expires=1619218302&signature=NfHHLBSr5tOHA_Z4kij4dKqZG8f3vMDtwvuFVeeF9pV_lylcjLsVVODhNCE5hR6-2slUr6t9WMNsi429Pj7_DA",
+        "use_type": "marketing"
+      }
+    ],
+    "next_url": null,
+    "object": "list",
+    "previous_url": null
+  },
+  "GET /postcards/{psc_id}": {
+    "back_template_id": null,
+    "carrier": "USPS",
+    "date_created": "2021-03-24T22:51:42.838Z",
+    "date_modified": "2021-03-24T22:51:42.838Z",
+    "description": null,
+    "front_template_id": null,
+    "fsc": false,
+    "id": "psc_208e45e48d271294",
+    "metadata": {},
+    "object": "postcard",
+    "send_date": "2021-03-24T22:51:42.838Z",
+    "sla": "2",
+    "to": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": null,
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": "LOB",
+      "date_created": "2018-12-08T03:01:07.651Z",
+      "date_modified": "2018-12-08T03:01:07.651Z",
+      "description": null,
+      "email": null,
+      "id": "adr_210a8d4b0b76d77b",
+      "metadata": {},
+      "name": null,
+      "object": "address",
+      "phone": null
+    },
+    "url": "https://lob-assets.com/postcards/psc_208e45e48d271294.pdf?version=v1&expires=1619218302&signature=NfHHLBSr5tOHA_Z4kij4dKqZG8f3vMDtwvuFVeeF9pV_lylcjLsVVODhNCE5hR6-2slUr6t9WMNsi429Pj7_DA",
+    "use_type": "marketing"
+  },
+  "GET /qr_code_analytics": {
+    "count": 2,
+    "data": [
+      {
+        "date_created": "2019-07-27T23:49:01.511Z",
+        "number_of_scans": 2,
+        "resource_id": "ltr_d5a5a89da9106f8",
+        "scans": [
+          {
+            "ip_location": "127.0.0.1",
+            "scan_date": "2022-07-27T23:49:01.511Z"
+          },
+          {
+            "ip_location": "127.0.0.1",
+            "scan_date": "2022-07-29T23:45:00.436Z"
+          }
+        ]
+      }
+    ],
+    "object": "list",
+    "scanned_count": 2,
+    "total_count": 2
+  },
+  "GET /resource_proofs/{res_prf_id}": {
+    "date_created": "2017-11-07T22:56:10.962Z",
+    "date_modified": "2017-11-07T22:56:10.962Z",
+    "errors": [],
+    "id": "res_prf_example123",
+    "object": "resource_proof",
+    "resource_type": "postcard",
+    "status": "completed",
+    "template_id": null,
+    "thumbnails": [
+      {
+        "large": "https://lob-assets.com/resource-proofs/res_prf_example123_thumb_large_1.png",
+        "medium": "https://lob-assets.com/resource-proofs/res_prf_example123_thumb_medium_1.png",
+        "small": "https://lob-assets.com/resource-proofs/res_prf_example123_thumb_small_1.png"
+      }
+    ],
+    "url": "https://lob-assets.com/resource-proofs/res_prf_example123.pdf"
+  },
+  "GET /self_mailers": {
+    "count": 2,
+    "data": [
+      {
+        "carrier": "USPS",
+        "date_created": "2021-03-16T18:40:40.504Z",
+        "date_modified": "2021-03-16T18:41:06.691Z",
+        "deleted": true,
+        "description": "April Campaign",
+        "expected_delivery_date": "2021-03-24",
+        "from": {
+          "address_city": "SAN FRANCISCO",
+          "address_country": "UNITED STATES",
+          "address_line1": "210 KING ST STE 6100",
+          "address_line2": null,
+          "address_state": "CA",
+          "address_zip": "94107-1741",
+          "company": "LOB",
+          "date_created": "2018-12-08T03:01:07.651Z",
+          "date_modified": "2018-12-08T03:01:07.651Z",
+          "description": null,
+          "email": null,
+          "id": "adr_210a8d4b0b76d77b",
+          "metadata": {},
+          "name": null,
+          "object": "address",
+          "phone": null
+        },
+        "fsc": false,
+        "id": "sfm_7239rhwqkrfaskas",
+        "inside_template_id": "tmpl_a3cb937f26d7eec",
+        "inside_template_version_id": "vrsn_bfdf70893b00a85",
+        "mail_type": "usps_first_class",
+        "merge_variables": {
+          "name": null
+        },
+        "metadata": {},
+        "object": "self_mailer",
+        "outside_template_id": "tmpl_a3cb937f26d7eec",
+        "outside_template_version_id": "vrsn_bfdf70893b00a85",
+        "send_date": "2021-03-16T18:45:40.493Z",
+        "size": "6x18_bifold",
+        "thumbnails": [
+          {
+            "large": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf_thumb_large_1.png?version=v1&expires=1618781264&signature=g2jifhCselPqIj8au6lsbJMNFN8ZX3aM6GkLoAXiHBCS8X5mF9nhVbmO0odpnmwNlV1CWIp-MXVsZkC3NmxqBQ",
+            "medium": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf_thumb_medium_1.png?version=v1&expires=1618781264&signature=b9pynuawVpU_vrhnT_mTpksdE-FLF_ZjdIBOFR_ltIzEGlx-VKD4VvZrqP98lG2D8V7UKQ7SdRr2nUAk4LxvCg",
+            "small": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf_thumb_small_1.png?version=v1&expires=1618781264&signature=A7q5HbRO53sUYYnwGlmP5mTS6ylLE7kS2mYhfcEOdexjyqG7UseK0MD26DppE4Q0aE4u2msDVMxd5ukjMerYCg"
+          },
+          {
+            "large": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf_thumb_large_2.png?version=v1&expires=1618781264&signature=NieHDnoQ7STZUvofHrFt7S987CzIkUJWpaSgpVQPZw-C3_wwTPsIrvxYdXEuFrr6ciTUcxRBFPlE0lurmMkyCA",
+            "medium": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf_thumb_medium_2.png?version=v1&expires=1618781264&signature=xEAX7bURyc8fSphacuo5yb7iVIpT8Xvq05KgMaNQS4r3aCpx0z1p42wbPmW758B5Ae0li1YDYvVyzS7qJIoWAw",
+            "small": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf_thumb_small_2.png?version=v1&expires=1618781264&signature=biJY4-ZbNNRydPYg3cZkq7wxjILbPBK_nIVyoyQsg5X5q4jlsa-2fzeMa48V9jprUetsC6WEuYvasHosRfG_DQ"
+          }
+        ],
+        "to": {
+          "address_city": "SUMMERSIDE",
+          "address_country": "CANADA",
+          "address_line1": "370 WATER ST",
+          "address_line2": "",
+          "address_state": "PRINCE EDWARD ISLAND",
+          "address_zip": "C1N 1C4",
+          "company": "Lob",
+          "date_created": "2019-09-20T00:14:00.361Z",
+          "date_modified": "2019-09-20T00:14:00.361Z",
+          "description": "Harry - Office",
+          "email": "harry@lob.com",
+          "id": "adr_asdi2y3riuasasoi",
+          "metadata": {},
+          "name": "Harry Zhang",
+          "object": "address",
+          "phone": "5555555555",
+          "recipient_moved": false
+        },
+        "tracking_events": [],
+        "url": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf.pdf?version=v1&expires=1618781264&signature=YP_bCwrgVA2lz1Gr1YVCJN1f-WspUGsH0aJp2ihjfLXU7lDUV12_xRv4uPch0mfWeOOxEqpyP8hGpgvjmQKNAw",
+        "use_type": "marketing"
+      }
+    ],
+    "next_url": null,
+    "object": "list",
+    "previous_url": null
+  },
+  "GET /self_mailers/{sfm_id}": {
+    "carrier": "USPS",
+    "date_created": "2021-03-16T18:40:40.504Z",
+    "date_modified": "2021-03-16T18:40:40.504Z",
+    "description": "April Campaign",
+    "expected_delivery_date": "2021-03-24",
+    "from": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": null,
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": null,
+      "date_created": "2017-09-05T17:47:53.767Z",
+      "date_modified": "2017-09-05T17:47:53.767Z",
+      "deleted": true,
+      "description": null,
+      "email": null,
+      "id": "adr_210a8d4b0b76d77b",
+      "metadata": {},
+      "name": "LEORE AVIDAR",
+      "object": "address",
+      "phone": null
+    },
+    "fsc": false,
+    "id": "sfm_8ffbe811dea49dcf",
+    "inside_template_id": "tmpl_a3cb937f26d7eec",
+    "inside_template_version_id": "vrsn_bfdf70893b00a85",
+    "mail_type": "usps_first_class",
+    "merge_variables": {
+      "name": null
+    },
+    "metadata": {},
+    "object": "self_mailer",
+    "outside_template_id": "tmpl_a3cb937f26d7eec",
+    "outside_template_version_id": "vrsn_bfdf70893b00a85",
+    "send_date": "2021-03-16T18:45:40.493Z",
+    "size": "6x18_bifold",
+    "sla": "2",
+    "thumbnails": [
+      {
+        "large": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf_thumb_large_1.png?version=v1&expires=1618512040&signature=kBrm00xkyCkJNJRHxH8HshFaebtOxnzjVWOs1VVmGMuw8H6OBNcMAMxt9s49K0jlpHoh3Nr9uSncEZMQaaNjAg",
+        "medium": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf_thumb_medium_1.png?version=v1&expires=1618512040&signature=ryxN7bsXGtw_GRFSP3Cs3A3IYjxZi3cW9BHDCNgMt6p3nobVmsc_iFHt2e-S7ndAXhhN7nP-MQVov3bt3r37BQ",
+        "small": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf_thumb_small_1.png?version=v1&expires=1618512040&signature=-bipeUHP-hAMcCBSrWM0ZH1VwRdSPNVGGZN9hAZKr6Lh4ly6uxvratVd5LXJCK_zOEMYk_mTWASt0ge7OY6SDA"
+      },
+      {
+        "large": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf_thumb_large_2.png?version=v1&expires=1618512040&signature=cICc7HEm1xG_eyM4a_wtvPk2FqoLRmtgGa29kJisWnMIYBL0OkyzG4ZCYGMhp-5cZpJlSpXfTgGKh_Qmeo1TDw",
+        "medium": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf_thumb_medium_2.png?version=v1&expires=1618512040&signature=Ue1lw5CMj7KRx6cMQL8xPeazaHCdJzWcACd1w3acuYPnWkVIpSt62OIO7hAtpAQK9xm1dhhlFj0rqRZMdRMMBA",
+        "small": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf_thumb_small_2.png?version=v1&expires=1618512040&signature=3gTgU7Fd3KoT_vNlQnTGptRps5ZgnkhSnPrAwk7L98higIzSwfKoLvuu_DIpMM48dHbxckKT9waR8euJ4KSDBQ"
+      }
+    ],
+    "to": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": null,
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": null,
+      "date_created": "2017-09-05T17:47:53.767Z",
+      "date_modified": "2017-09-05T17:47:53.767Z",
+      "deleted": true,
+      "description": null,
+      "email": null,
+      "id": "adr_bae820679f3f536b",
+      "metadata": {},
+      "name": "HARRY ZHANG",
+      "object": "address",
+      "phone": null
+    },
+    "tracking_events": [],
+    "url": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf.pdf?version=v1&expires=1618512040&signature=qvyCqXI1ndBvc4AjvG8FlirqLXEcfmYo4sDrRtabaXMOsX88to9G3K49uIk_aqevvZXe8HoRYD_nWydbQHqaCA",
+    "use_type": "marketing"
+  },
+  "GET /snap_packs": {
+    "count": 2,
+    "data": [
+      {
+        "carrier": "USPS",
+        "color": false,
+        "date_created": "2021-03-16T18:40:40.504Z",
+        "date_modified": "2021-03-16T18:40:40.504Z",
+        "description": "April Campaign",
+        "expected_delivery_date": "2021-03-24",
+        "from": {
+          "address_city": "SAN FRANCISCO",
+          "address_country": "UNITED STATES",
+          "address_line1": "210 KING ST STE 6100",
+          "address_line2": null,
+          "address_state": "CA",
+          "address_zip": "94107-1741",
+          "company": null,
+          "date_created": "2017-09-05T17:47:53.767Z",
+          "date_modified": "2017-09-05T17:47:53.767Z",
+          "deleted": true,
+          "description": null,
+          "email": null,
+          "id": "adr_210a8d4b0b76d77b",
+          "metadata": {},
+          "name": "LEORE AVIDAR",
+          "object": "address",
+          "phone": null
+        },
+        "fsc": false,
+        "id": "ord_0d6a16a3fff6318ac8f8008dc1",
+        "inside_template_id": "tmpl_a3cb937f26d7eec",
+        "inside_template_version_id": "vrsn_bfdf70893b00a85",
+        "mail_type": "usps_first_class",
+        "merge_variables": {
+          "name": null
+        },
+        "object": "snap_pack",
+        "outside_template_id": "tmpl_a3cb937f26d7eec",
+        "outside_template_version_id": "vrsn_bfdf70893b00a85",
+        "send_date": "2021-03-16T18:45:40.493Z",
+        "size": "8.5x11",
+        "thumbnails": [
+          {
+            "large": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_large_1.png?version=v1&expires=1618512040&signature=kBrm00xkyCkJNJRHxH8HshFaebtOxnzjVWOs1VVmGMuw8H6OBNcMAMxt9s49K0jlpHoh3Nr9uSncEZMQaaNjAg",
+            "medium": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_medium_1.png?version=v1&expires=1618512040&signature=ryxN7bsXGtw_GRFSP3Cs3A3IYjxZi3cW9BHDCNgMt6p3nobVmsc_iFHt2e-S7ndAXhhN7nP-MQVov3bt3r37BQ",
+            "small": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_small_1.png?version=v1&expires=1618512040&signature=-bipeUHP-hAMcCBSrWM0ZH1VwRdSPNVGGZN9hAZKr6Lh4ly6uxvratVd5LXJCK_zOEMYk_mTWASt0ge7OY6SDA"
+          },
+          {
+            "large": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_large_2.png?version=v1&expires=1618512040&signature=cICc7HEm1xG_eyM4a_wtvPk2FqoLRmtgGa29kJisWnMIYBL0OkyzG4ZCYGMhp-5cZpJlSpXfTgGKh_Qmeo1TDw",
+            "medium": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_medium_2.png?version=v1&expires=1618512040&signature=Ue1lw5CMj7KRx6cMQL8xPeazaHCdJzWcACd1w3acuYPnWkVIpSt62OIO7hAtpAQK9xm1dhhlFj0rqRZMdRMMBA",
+            "small": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_small_2.png?version=v1&expires=1618512040&signature=3gTgU7Fd3KoT_vNlQnTGptRps5ZgnkhSnPrAwk7L98higIzSwfKoLvuu_DIpMM48dHbxckKT9waR8euJ4KSDBQ"
+          }
+        ],
+        "to": {
+          "address_city": "SAN FRANCISCO",
+          "address_country": "UNITED STATES",
+          "address_line1": "210 KING ST STE 6100",
+          "address_line2": null,
+          "address_state": "CA",
+          "address_zip": "94107-1741",
+          "company": null,
+          "date_created": "2017-09-05T17:47:53.767Z",
+          "date_modified": "2017-09-05T17:47:53.767Z",
+          "deleted": true,
+          "description": null,
+          "email": null,
+          "id": "adr_bae820679f3f536b",
+          "metadata": {},
+          "name": "HARRY ZHANG",
+          "object": "address",
+          "phone": null
+        },
+        "tracking_events": [],
+        "url": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d.pdf?version=v1&expires=1618512040&signature=qvyCqXI1ndBvc4AjvG8FlirqLXEcfmYo4sDrRtabaXMOsX88to9G3K49uIk_aqevvZXe8HoRYD_nWydbQHqaCA",
+        "use_type": "marketing"
+      }
+    ],
+    "next_url": null,
+    "object": "list",
+    "previous_url": null
+  },
+  "GET /snap_packs/{snap_pack_id}": {
+    "carrier": "USPS",
+    "color": false,
+    "date_created": "2021-03-16T18:40:40.504Z",
+    "date_modified": "2021-03-16T18:40:40.504Z",
+    "description": "April Campaign",
+    "expected_delivery_date": "2021-03-24",
+    "from": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": null,
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": null,
+      "date_created": "2017-09-05T17:47:53.767Z",
+      "date_modified": "2017-09-05T17:47:53.767Z",
+      "deleted": true,
+      "description": null,
+      "email": null,
+      "id": "adr_210a8d4b0b76d77b",
+      "metadata": {},
+      "name": "LEORE AVIDAR",
+      "object": "address",
+      "phone": null
+    },
+    "fsc": false,
+    "id": "ord_0d6a16a3fff6318ac8f8008dc1",
+    "inside_template_id": "tmpl_a3cb937f26d7eec",
+    "inside_template_version_id": "vrsn_bfdf70893b00a85",
+    "mail_type": "usps_first_class",
+    "merge_variables": {
+      "name": null
+    },
+    "object": "snap_pack",
+    "outside_template_id": "tmpl_a3cb937f26d7eec",
+    "outside_template_version_id": "vrsn_bfdf70893b00a85",
+    "send_date": "2021-03-16T18:45:40.493Z",
+    "size": "8.5x11",
+    "sla": "2",
+    "thumbnails": [
+      {
+        "large": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_large_1.png?version=v1&expires=1618512040&signature=kBrm00xkyCkJNJRHxH8HshFaebtOxnzjVWOs1VVmGMuw8H6OBNcMAMxt9s49K0jlpHoh3Nr9uSncEZMQaaNjAg",
+        "medium": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_medium_1.png?version=v1&expires=1618512040&signature=ryxN7bsXGtw_GRFSP3Cs3A3IYjxZi3cW9BHDCNgMt6p3nobVmsc_iFHt2e-S7ndAXhhN7nP-MQVov3bt3r37BQ",
+        "small": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_small_1.png?version=v1&expires=1618512040&signature=-bipeUHP-hAMcCBSrWM0ZH1VwRdSPNVGGZN9hAZKr6Lh4ly6uxvratVd5LXJCK_zOEMYk_mTWASt0ge7OY6SDA"
+      },
+      {
+        "large": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_large_2.png?version=v1&expires=1618512040&signature=cICc7HEm1xG_eyM4a_wtvPk2FqoLRmtgGa29kJisWnMIYBL0OkyzG4ZCYGMhp-5cZpJlSpXfTgGKh_Qmeo1TDw",
+        "medium": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_medium_2.png?version=v1&expires=1618512040&signature=Ue1lw5CMj7KRx6cMQL8xPeazaHCdJzWcACd1w3acuYPnWkVIpSt62OIO7hAtpAQK9xm1dhhlFj0rqRZMdRMMBA",
+        "small": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_small_2.png?version=v1&expires=1618512040&signature=3gTgU7Fd3KoT_vNlQnTGptRps5ZgnkhSnPrAwk7L98higIzSwfKoLvuu_DIpMM48dHbxckKT9waR8euJ4KSDBQ"
+      }
+    ],
+    "to": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": null,
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": null,
+      "date_created": "2017-09-05T17:47:53.767Z",
+      "date_modified": "2017-09-05T17:47:53.767Z",
+      "deleted": true,
+      "description": null,
+      "email": null,
+      "id": "adr_bae820679f3f536b",
+      "metadata": {},
+      "name": "HARRY ZHANG",
+      "object": "address",
+      "phone": null
+    },
+    "tracking_events": [],
+    "url": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d.pdf?version=v1&expires=1618512040&signature=qvyCqXI1ndBvc4AjvG8FlirqLXEcfmYo4sDrRtabaXMOsX88to9G3K49uIk_aqevvZXe8HoRYD_nWydbQHqaCA",
+    "use_type": "marketing"
+  },
+  "GET /templates": {
+    "count": 2,
+    "data": [
+      {
+        "date_created": "2019-07-27T23:49:01.511Z",
+        "date_modified": "2019-07-27T23:49:01.511Z",
+        "description": "Test Template",
+        "id": "tmpl_d5a5a89da9106f8",
+        "metadata": {},
+        "object": "template",
+        "published_version": {
+          "date_created": "2019-07-27T23:49:01.512Z",
+          "date_modified": "2019-07-27T23:49:01.512Z",
+          "description": "Test Template",
+          "engine": "handlebars",
+          "html": "HTML for ",
+          "id": "vrsn_232a02fb8224791",
+          "object": "version",
+          "suggest_json_editor": false
+        },
+        "versions": [
+          {
+            "date_created": "2019-07-27T23:49:01.512Z",
+            "date_modified": "2019-07-27T23:49:01.512Z",
+            "description": "Test Template",
+            "engine": "legacy",
+            "html": "HTML for ",
+            "id": "vrsn_232a02fb8224791",
+            "object": "version",
+            "suggest_json_editor": true
+          }
+        ]
+      }
+    ],
+    "next_url": "https://api.lob.com/v1/templates?limit=2&after=eyJkYXRlT2Zmc2V0IjoiMjAxOS0wMy0yOVQxMDoyMjozNC42NDJaIiwiaWRPZmZzZXQiOiJ0bXBsXzU5YjIxNTBhZTEyMDg4NyJ9",
+    "object": "list",
+    "previous_url": null
+  },
+  "GET /templates/{tmpl_id}": {
+    "date_created": "2017-11-07T22:56:10.962Z",
+    "date_modified": "2017-11-07T22:56:10.962Z",
+    "description": "Test Template",
+    "id": "tmpl_c94e83ca2cd5121",
+    "metadata": {},
+    "object": "template",
+    "published_version": {
+      "date_created": "2017-11-07T22:56:10.962Z",
+      "date_modified": "2017-11-07T22:56:10.962Z",
+      "description": "Test Template",
+      "engine": "handlebars",
+      "html": "<html>HTML for {{name}}</html>",
+      "id": "vrsn_362184d96d9b0c9",
+      "object": "version",
+      "suggest_json_editor": false
+    },
+    "versions": [
+      {
+        "date_created": "2017-11-07T22:56:10.962Z",
+        "date_modified": "2017-11-07T22:56:10.962Z",
+        "description": "Test Template",
+        "engine": "legacy",
+        "html": "<html>HTML for {{name}}</html>",
+        "id": "vrsn_362184d96d9b0c9",
+        "object": "version",
+        "suggest_json_editor": true
+      }
+    ]
+  },
+  "GET /templates/{tmpl_id}/versions": {
+    "count": 2,
+    "data": [
+      {
+        "date_created": "2017-11-09T05:09:03.665Z",
+        "date_modified": "2018-05-22T22:01:10.479Z",
+        "description": "Second Version",
+        "html": "Second HTML for ",
+        "id": "vrsn_4d6ff5d868bf630",
+        "object": "version"
+      }
+    ],
+    "object": "list"
+  },
+  "GET /templates/{tmpl_id}/versions/{vrsn_id}": {
+    "date_created": "2017-11-09T04:49:38.016Z",
+    "date_modified": "2017-11-09T04:49:38.016Z",
+    "description": "Second Version",
+    "html": "<html>Second HTML for {{name}}</html>",
+    "id": "vrsn_534e339882d2282",
+    "object": "version"
+  },
+  "GET /uploads": [
+    {
+      "accountId": "fa9ea650fc7b31a89f92",
+      "bytesProcessed": 17268,
+      "campaignId": "cmp_1933ad629bae1408",
+      "dateCreated": "2017-09-05T17:47:53.767Z",
+      "dateModified": "2017-09-05T17:47:53.767Z",
+      "failedMailpieces": 5,
+      "failuresUrl": "https://www.example.com",
+      "id": "upl_71be866e430b11e9",
+      "mergeVariableColumnMapping": {
+        "gift_code": "code"
+      },
+      "metadata": {
+        "columns": ["recipient_name", "zip_code"]
+      },
+      "mode": "test",
+      "optionalAddressColumnMapping": {
+        "address_country": "country",
+        "address_line2": "secondary_line",
+        "company": "company"
+      },
+      "originalFilename": "my_audience.csv",
+      "requiredAddressColumnMapping": {
+        "address_city": "city",
+        "address_line1": "primary_line",
+        "address_state": "state",
+        "address_zip": "zip_code",
+        "name": "recipient_name"
+      },
+      "state": "Draft",
+      "totalMailpieces": 100,
+      "validatedMailpieces": 95
+    }
+  ],
+  "GET /uploads/{upl_id}": {
+    "accountId": "fa9ea650fc7b31a89f92",
+    "bytesProcessed": 17628,
+    "campaignId": "cmp_1933ad629bae1408",
+    "dateCreated": "2017-09-05T17:47:53.767Z",
+    "dateModified": "2017-09-05T17:47:53.767Z",
+    "failedMailpieces": 5,
+    "failuresUrl": "http://www.example.com",
+    "id": "upl_71be866e430b11e9",
+    "mergeVariableColumnMapping": null,
+    "metadata": {
+      "columns": []
+    },
+    "mode": "live",
+    "optionalAddressColumnMapping": {
+      "address_country": null,
+      "address_line2": null,
+      "company": null
+    },
+    "originalFilename": "my_audience.csv",
+    "requiredAddressColumnMapping": {
+      "address_city": null,
+      "address_line1": null,
+      "address_state": null,
+      "address_zip": null,
+      "name": null
+    },
+    "state": "Draft",
+    "totalMailpieces": 100,
+    "validatedMailpieces": 95
+  },
+  "GET /uploads/{upl_id}/exports/{ex_id}": {
+    "dateCreated": "2021-07-06T22:51:42.838Z",
+    "dateModified": "2022-07-06T22:51:42.838Z",
+    "deleted": false,
+    "id": "ex_6a94fe68fd151e0f8",
+    "s3Url": null,
+    "state": "in_progress",
+    "type": "failures",
+    "uploadId": "upl_71be866e430b11e9"
+  },
+  "GET /uploads/{upl_id}/report": {
+    "dateCreated": "2021-07-06T22:51:42.838Z",
+    "dateModified": "2022-07-06T22:51:42.838Z",
+    "deleted": false,
+    "id": "ex_6a94fe68fd151e0f8",
+    "s3Url": null,
+    "state": "in_progress",
+    "type": "failures",
+    "uploadId": "upl_71be866e430b11e9"
+  },
+  "PATCH /buckslips/{buckslip_id}": {
+    "account_id": "fa9ea650fc7b31a89f92",
+    "allocated_quantity": 0,
+    "auto_reorder": false,
+    "available_quantity": 0,
+    "back_original_url": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+    "buckslip_orders": [],
+    "date_created": "2021-03-24T22:51:42.838Z",
+    "date_modified": "2021-03-24T22:51:42.838Z",
+    "description": "Test buckslip",
+    "finish": "gloss",
+    "front_original_url": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+    "id": "bck_7a6d73c5c8457fc",
+    "mode": "test",
+    "object": "buckslip",
+    "onhand_quantity": 0,
+    "pending_quantity": 0,
+    "projected_quantity": 0,
+    "raw_url": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+    "reorder_quantity": null,
+    "send_date": "2021-03-24T22:51:42.838Z",
+    "size": "8.75x3.755",
+    "status": "rendered",
+    "stock": "text",
+    "threshold_amount": 0,
+    "thumbnails": [
+      {
+        "large": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_large_1.png?version=v1&expires=1636910992&signature=FKSzymA13j-CQ0uk20cGHZTzT3vimzNBYrgp-xifLFg4mMdo1BZALR5O0aF_jVhsX614hKP35ONdYl47TQxXAw",
+        "medium": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_medium_1.png?version=v1&expires=1636910992&signature=VgL_2Ckm_kxKiWGgWtdNoy9HHOn8dGYSVOn7UqyCbwdbVlUtx28TRN4Bo8Iru3n0keKp9He0YhKT1ILotznMDA",
+        "small": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_small_1.png?version=v1&expires=1636910992&signature=mrv8JDvpZK4I8WUGH0tPdtK-My5oes0Ltj_gL7BDw96SpCTTeZFHkz81SzclyFP9dQRtlsvAsjcuGcTBvCvOCg"
+      },
+      {
+        "large": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_large_2.png?version=v1&expires=1636910992&signature=r0OFUhh315ZwN0raMZdIwJd2oCIEYsz0BABaMxIuO1PKTD0ckGWrhcGdzk2dlWQ6vSvp0CUQ5k1RXGqkIIqkDw",
+        "medium": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_medium_2.png?version=v1&expires=1636910992&signature=zxK7VKGiTvz5Ywrkaydd0v3GcYf58R7A08J4tNfI7-aiNODDcTF3l0MqY13n9Pyc8RXSdD0XVBY-OpbA1VM-Ag",
+        "small": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_small_2.png?version=v1&expires=1636910992&signature=IWsmPa_ULlv2yyqjX564d_YfHHY_M7i9YxDnw-WXDr2jtOFcArmRZQbnHeE9g_rYxnddJbgosuv8-c2utiu7Cg"
+      }
+    ],
+    "url": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e.pdf?version=v1&expires=1636910992&signature=mnsDH2DAxdkN9VibdlLMxJC86sME5WYDqkNtmvGwdNsAaUWfbnv0rJhJ1mR8Ol4uxQq61j5wYZ0r3s-lBkQfDA",
+    "weight": "80#"
+  },
+  "PATCH /campaigns/{cmp_id}": {
+    "auto_cancel_if_ncoa": false,
+    "billing_group_id": "bg_fe3079dcdd80e5ae",
+    "cancel_window_campaign_minutes": 60,
+    "creatives": [],
+    "date_created": "2017-09-05T17:47:53.767Z",
+    "date_modified": "2017-09-05T17:47:53.767Z",
+    "deleted": false,
+    "description": "My Campaign's description",
+    "id": "cmp_e05ee61ff80764b",
+    "is_draft": true,
+    "metadata": {},
+    "name": "My Campaign",
+    "object": "campaign",
+    "schedule_type": "immediate",
+    "uploads": [],
+    "use_type": "marketing"
+  },
+  "PATCH /creatives/{crv_id}": {
+    "campaigns": [],
+    "date_created": "2017-09-05T17:47:53.767Z",
+    "date_modified": "2017-09-05T17:47:53.767Z",
+    "description": "Our 4x6 postcard creative",
+    "details": {},
+    "from": "adr_210a8d4b0b76d77b",
+    "id": "crv_2a3b096c409b32c",
+    "metadata": {},
+    "object": "creative",
+    "resource_type": "postcard",
+    "template_preview_urls": {},
+    "template_previews": []
+  },
+  "PATCH /informed_delivery_campaigns/{usps_campaign_id}": {
+    "account_id": "xxxxxxxxxxxxxxxxxxxx",
+    "brand_name": "Lob",
+    "campaign_code": "1a1a1a1a-9657-423b-b3c7-2+Code",
+    "date_created": "2024-08-30T23:30:02.980Z",
+    "date_modified": "2024-08-30T23:30:05.027Z",
+    "deleted": false,
+    "end_date": "2024-10-15T00:00:00.000Z",
+    "end_serial": 3183506,
+    "id": "infd_234g5324g324g23",
+    "lob_campaign_id": null,
+    "mode": "live",
+    "object": "informed_delivery_campaign",
+    "quantity": 20,
+    "representative_image_s3_link": null,
+    "ride_along_image_s3_link": "https://lob-assets.com/informed-delivery/infd_234g5324g324g23_ride_along.jpg",
+    "ride_along_url": "https://www.lob.com",
+    "service_request_number": null,
+    "start_date": "2024-08-31T00:00:00.000Z",
+    "start_serial": 3183487,
+    "status": "approved",
+    "usps_campaign_id": "1234567890",
+    "usps_title": "Campaign: 1a1a1a1a-9657-423b-b3c7-2"
+  },
+  "PATCH /resource_proofs/{res_prf_id}": {
+    "date_created": "2017-11-07T22:56:10.962Z",
+    "date_modified": "2017-11-07T22:56:10.962Z",
+    "errors": [],
+    "id": "res_prf_example123",
+    "object": "resource_proof",
+    "resource_type": "postcard",
+    "status": "completed",
+    "template_id": null,
+    "thumbnails": [
+      {
+        "large": "https://lob-assets.com/resource-proofs/res_prf_example123_thumb_large_1.png",
+        "medium": "https://lob-assets.com/resource-proofs/res_prf_example123_thumb_medium_1.png",
+        "small": "https://lob-assets.com/resource-proofs/res_prf_example123_thumb_small_1.png"
+      }
+    ],
+    "url": "https://lob-assets.com/resource-proofs/res_prf_example123.pdf"
+  },
+  "PATCH /uploads/{upl_id}": {
+    "accountId": "fa9ea650fc7b31a89f92",
+    "bytesProcessed": 17628,
+    "campaignId": "cmp_1933ad629bae1408",
+    "dateCreated": "2017-09-05T17:47:53.767Z",
+    "dateModified": "2017-09-05T17:47:53.767Z",
+    "failedMailpieces": 5,
+    "failuresUrl": "http://www.example.com",
+    "id": "upl_71be866e430b11e9",
+    "mergeVariableColumnMapping": null,
+    "metadata": {
+      "columns": []
+    },
+    "mode": "live",
+    "optionalAddressColumnMapping": {
+      "address_country": null,
+      "address_line2": null,
+      "company": null
+    },
+    "originalFilename": "my_audience.csv",
+    "requiredAddressColumnMapping": {
+      "address_city": null,
+      "address_line1": null,
+      "address_state": null,
+      "address_zip": null,
+      "name": null
+    },
+    "state": "Draft",
+    "totalMailpieces": 100,
+    "validatedMailpieces": 95
+  },
+  "POST /addresses": {
+    "address_city": "SAN FRANCISCO",
+    "address_country": "UNITED STATES",
+    "address_line1": "210 KING ST STE 6100",
+    "address_state": "CA",
+    "address_zip": "94107",
+    "company": "LOB",
+    "date_created": "2017-09-05T17:47:53.767Z",
+    "date_modified": "2017-09-05T17:47:53.767Z",
+    "description": "Harry - Office",
+    "email": "harry@lob.com",
+    "id": "adr_d3489cd64c791ab5",
+    "metadata": {},
+    "name": "HARRY ZHANG",
+    "object": "address",
+    "phone": "5555555555"
+  },
+  "POST /bank_accounts": {
+    "account_number": "123456789",
+    "account_type": "company",
+    "bank_city": "Columbus",
+    "bank_name": "J.P. MORGAN CHASE BANK, N.A.,",
+    "bank_state": "OH",
+    "bank_zip": "43240",
+    "check_template": "jpm",
+    "date_created": "2015-11-06T19:24:24.440Z",
+    "date_modified": "2015-11-06T19:24:24.440Z",
+    "description": "Test Bank Account",
+    "fractional_routing_number": "25-3/440",
+    "id": "bank_8cad8df5354d33f",
+    "metadata": {},
+    "microdeposit_type": null,
+    "object": "bank_account",
+    "routing_number": "322271627",
+    "signatory": "John Doe",
+    "signature_url": "https://lob-assets.com/letters/asd_asdfghjklqwertyu.pdf?version=45&expires=1234567890&signature=a",
+    "verified": true
+  },
+  "POST /bank_accounts/{bank_id}/verify": {
+    "account_number": "123456789",
+    "account_type": "company",
+    "bank_city": "Columbus",
+    "bank_name": "J.P. MORGAN CHASE BANK, N.A.,",
+    "bank_state": "OH",
+    "bank_zip": "43240",
+    "check_template": "jpm",
+    "date_created": "2015-11-06T19:24:24.440Z",
+    "date_modified": "2015-11-06T19:24:24.440Z",
+    "description": "Test Bank Account",
+    "fractional_routing_number": "25-3/440",
+    "id": "bank_8cad8df5354d33f",
+    "metadata": {},
+    "microdeposit_type": null,
+    "object": "bank_account",
+    "routing_number": "322271627",
+    "signatory": "John Doe",
+    "signature_url": "https://lob-assets.com/letters/asd_asdfghjklqwertyu.pdf?version=45&expires=1234567890&signature=a",
+    "verified": true
+  },
+  "POST /billing_groups": {
+    "date_created": "2017-11-07T22:56:10.962Z",
+    "date_modified": "2017-11-07T22:56:10.962Z",
+    "description": "Usage group used for the Marketing Dept resource sends",
+    "id": "bg_c94e83ca2cd5121",
+    "name": "Marketing Dept",
+    "object": "billing_group"
+  },
+  "POST /billing_groups/{bg_id}": {
+    "date_created": "2017-11-07T22:56:10.962Z",
+    "date_modified": "2017-11-07T22:56:10.962Z",
+    "description": "Usage group used for the Marketing Dept resource sends",
+    "id": "bg_c94e83ca2cd5121",
+    "name": "Marketing Dept",
+    "object": "billing_group"
+  },
+  "POST /booklets": {
+    "carrier": "USPS",
+    "date_created": "2021-03-16T18:40:40.504Z",
+    "date_modified": "2021-03-16T18:40:40.504Z",
+    "description": "April Campaign",
+    "expected_delivery_date": "2021-03-24",
+    "from": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": null,
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": null,
+      "date_created": "2017-09-05T15:54:53.264Z",
+      "date_modified": "2017-09-05T15:54:53.264Z",
+      "deleted": true,
+      "description": null,
+      "email": null,
+      "id": "adr_b8fb5acf3a2b55db",
+      "metadata": {},
+      "name": "LEORE AVIDAR",
+      "object": "address",
+      "phone": null
+    },
+    "fsc": false,
+    "id": "ord_0d6a16a3fff6318ac8f8008dc1",
+    "mail_type": "usps_first_class",
+    "merge_variables": {
+      "name": "Harry"
+    },
+    "metadata": {},
+    "object": "booklet",
+    "pages": 8,
+    "send_date": "2021-03-16T18:45:40.493Z",
+    "size": "8.375x5.375",
+    "sla": "2",
+    "source_material": "60# Gloss Text",
+    "thumbnails": [
+      {
+        "large": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_large_1.png?version=v1&expires=1618512040&signature=kBrm00xkyCkJNJRHxH8HshFaebtOxnzjVWOs1VVmGMuw8H6OBNcMAMxt9s49K0jlpHoh3Nr9uSncEZMQaaNjAg",
+        "medium": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_medium_1.png?version=v1&expires=1618512040&signature=ryxN7bsXGtw_GRFSP3Cs3A3IYjxZi3cW9BHDCNgMt6p3nobVmsc_iFHt2e-S7ndAXhhN7nP-MQVov3bt3r37BQ",
+        "small": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_small_1.png?version=v1&expires=1618512040&signature=-bipeUHP-hAMcCBSrWM0ZH1VwRdSPNVGGZN9hAZKr6Lh4ly6uxvratVd5LXJCK_zOEMYk_mTWASt0ge7OY6SDA"
+      }
+    ],
+    "to": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": null,
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": null,
+      "date_created": "2017-09-05T15:54:53.264Z",
+      "date_modified": "2017-09-05T15:54:53.264Z",
+      "deleted": true,
+      "description": null,
+      "email": null,
+      "id": "adr_d3489cd64c791ab5",
+      "metadata": {},
+      "name": "HARRY ZHANG",
+      "object": "address",
+      "phone": null
+    },
+    "tracking_events": [],
+    "tracking_number": null,
+    "url": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d.pdf?version=v1&expires=1618512040&signature=qvyCqXI1ndBvc4AjvG8FlirqLXEcfmYo4sDrRtabaXMOsX88to9G3K49uIk_aqevvZXe8HoRYD_nWydbQHqaCA",
+    "use_type": "marketing"
+  },
+  "POST /buckslips": {
+    "account_id": "fa9ea650fc7b31a89f92",
+    "allocated_quantity": 0,
+    "auto_reorder": false,
+    "available_quantity": 0,
+    "back_original_url": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+    "buckslip_orders": [],
+    "date_created": "2021-03-24T22:51:42.838Z",
+    "date_modified": "2021-03-24T22:51:42.838Z",
+    "description": "Test buckslip",
+    "finish": "gloss",
+    "front_original_url": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+    "id": "bck_7a6d73c5c8457fc",
+    "mode": "test",
+    "object": "buckslip",
+    "onhand_quantity": 0,
+    "pending_quantity": 0,
+    "projected_quantity": 0,
+    "raw_url": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+    "reorder_quantity": null,
+    "send_date": "2021-03-24T22:51:42.838Z",
+    "size": "8.75x3.755",
+    "status": "rendered",
+    "stock": "text",
+    "threshold_amount": 0,
+    "thumbnails": [
+      {
+        "large": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_large_1.png?version=v1&expires=1636910992&signature=FKSzymA13j-CQ0uk20cGHZTzT3vimzNBYrgp-xifLFg4mMdo1BZALR5O0aF_jVhsX614hKP35ONdYl47TQxXAw",
+        "medium": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_medium_1.png?version=v1&expires=1636910992&signature=VgL_2Ckm_kxKiWGgWtdNoy9HHOn8dGYSVOn7UqyCbwdbVlUtx28TRN4Bo8Iru3n0keKp9He0YhKT1ILotznMDA",
+        "small": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_small_1.png?version=v1&expires=1636910992&signature=mrv8JDvpZK4I8WUGH0tPdtK-My5oes0Ltj_gL7BDw96SpCTTeZFHkz81SzclyFP9dQRtlsvAsjcuGcTBvCvOCg"
+      },
+      {
+        "large": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_large_2.png?version=v1&expires=1636910992&signature=r0OFUhh315ZwN0raMZdIwJd2oCIEYsz0BABaMxIuO1PKTD0ckGWrhcGdzk2dlWQ6vSvp0CUQ5k1RXGqkIIqkDw",
+        "medium": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_medium_2.png?version=v1&expires=1636910992&signature=zxK7VKGiTvz5Ywrkaydd0v3GcYf58R7A08J4tNfI7-aiNODDcTF3l0MqY13n9Pyc8RXSdD0XVBY-OpbA1VM-Ag",
+        "small": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e_thumb_small_2.png?version=v1&expires=1636910992&signature=IWsmPa_ULlv2yyqjX564d_YfHHY_M7i9YxDnw-WXDr2jtOFcArmRZQbnHeE9g_rYxnddJbgosuv8-c2utiu7Cg"
+      }
+    ],
+    "url": "https://lob-assets.com/buckslips/bck_c51ae96f5cebf3e.pdf?version=v1&expires=1636910992&signature=mnsDH2DAxdkN9VibdlLMxJC86sME5WYDqkNtmvGwdNsAaUWfbnv0rJhJ1mR8Ol4uxQq61j5wYZ0r3s-lBkQfDA",
+    "weight": "80#"
+  },
+  "POST /buckslips/{buckslip_id}/orders": {
+    "availability_date": "2021-10-12T21:41:48.326Z",
+    "buckslip_id": "bck_6afffd19045076c",
+    "cancelled_reason": "No longer needed",
+    "date_created": "2021-10-07T21:03:18.871Z",
+    "date_modified": "2021-10-16T01:00:30.144Z",
+    "expected_availability_date": "2021-11-04T21:03:18.871Z",
+    "id": "bo_e0f8a0562a06bea7f",
+    "object": "buckslip_order",
+    "quantity_ordered": 10000,
+    "status": "available",
+    "unit_price": 0.75
+  },
+  "POST /bulk/intl_verifications": {
+    "addresses": [
+      {
+        "components": {
+          "city": "SUMMERSIDE",
+          "postal_code": "C1N 1C4",
+          "primary_number": "370",
+          "state": "PE",
+          "street_name": "WATER ST"
+        },
+        "country": "CA",
+        "coverage": "SUBBUILDING",
+        "deliverability": "deliverable",
+        "id": "intl_ver_c7cb63d68f8d6",
+        "last_line": "SUMMERSIDE PE C1N 1C4",
+        "object": "intl_verification",
+        "primary_line": "370 WATER ST",
+        "recipient": null,
+        "secondary_line": "",
+        "status": "LV4"
+      }
+    ],
+    "errors": false
+  },
+  "POST /bulk/us_verifications": {
+    "addresses": [
+      {
+        "components": {
+          "address_type": "commercial",
+          "carrier_route": "C032",
+          "carrier_route_type": "city_delivery",
+          "city": "SAN FRANCISCO",
+          "county": "SAN FRANCISCO",
+          "county_fips": "06075",
+          "default_building_address": false,
+          "delivery_point_barcode": "941071728506",
+          "extra_secondary_designator": "",
+          "extra_secondary_number": "",
+          "latitude": 37.77597542841264,
+          "longitude": -122.3929557343685,
+          "pmb_designator": "",
+          "pmb_number": "",
+          "po_box_only_flag": "N",
+          "primary_number": "210",
+          "record_type": "street",
+          "secondary_designator": "",
+          "secondary_number": "",
+          "state": "CA",
+          "street_name": "KING",
+          "street_postdirection": "",
+          "street_predirection": "",
+          "street_suffix": "ST",
+          "zip_code": "94107",
+          "zip_code_plus_4": "1702",
+          "zip_code_type": "standard"
+        },
+        "deliverability": "deliverable",
+        "deliverability_analysis": {
+          "dpv_active": "Y",
+          "dpv_cmra": "N",
+          "dpv_confirmation": "Y",
+          "dpv_door_not_accessible": "N",
+          "dpv_footnotes": ["AA", "BB"],
+          "dpv_inactive_reason": "",
+          "dpv_no_secure_location": "N",
+          "dpv_non_delivery_day_flag": "N",
+          "dpv_non_delivery_day_values": "",
+          "dpv_throwback": "N",
+          "dpv_vacant": "N",
+          "ews_match": false,
+          "lacs_indicator": "",
+          "lacs_return_code": "",
+          "suite_return_code": ""
+        },
+        "id": "us_ver_c7cb63d68f8d6",
+        "last_line": "SAN FRANCISCO CA 94107-1702",
+        "lob_confidence_score": {
+          "level": "high",
+          "score": 100
+        },
+        "object": "us_verification",
+        "primary_line": "210 KING ST",
+        "recipient": "LOB.COM",
+        "secondary_line": "",
+        "urbanization": "",
+        "valid_address": true
+      }
+    ],
+    "errors": false
+  },
+  "POST /campaigns": {
+    "auto_cancel_if_ncoa": false,
+    "billing_group_id": "bg_fe3079dcdd80e5ae",
+    "cancel_window_campaign_minutes": 60,
+    "creatives": [],
+    "date_created": "2017-09-05T17:47:53.767Z",
+    "date_modified": "2017-09-05T17:47:53.767Z",
+    "deleted": false,
+    "description": "My Campaign's description",
+    "id": "cmp_e05ee61ff80764b",
+    "is_draft": true,
+    "metadata": {},
+    "name": "My Campaign",
+    "object": "campaign",
+    "schedule_type": "immediate",
+    "uploads": [],
+    "use_type": "marketing"
+  },
+  "POST /campaigns/{cmp_id}/send": {
+    "auto_cancel_if_ncoa": false,
+    "billing_group_id": "bg_fe3079dcdd80e5ae",
+    "cancel_window_campaign_minutes": 60,
+    "creatives": [],
+    "date_created": "2017-09-05T17:47:53.767Z",
+    "date_modified": "2017-09-05T17:47:53.767Z",
+    "deleted": false,
+    "description": "My Campaign's description",
+    "id": "cmp_e05ee61ff80764b",
+    "is_draft": true,
+    "metadata": {},
+    "name": "My Campaign",
+    "object": "campaign",
+    "schedule_type": "immediate",
+    "uploads": [],
+    "use_type": "marketing"
+  },
+  "POST /cards": {
+    "account_id": "fa9ea650fc7b31a89f92",
+    "auto_reorder": false,
+    "available_quantity": 10000,
+    "back_original_url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+    "countries": null,
+    "date_created": "2021-03-24T22:51:42.838Z",
+    "date_modified": "2021-03-24T22:51:42.838Z",
+    "description": "Test card",
+    "front_original_url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+    "id": "card_7a6d73c5c8457fc",
+    "mode": "test",
+    "object": "card",
+    "orientation": "horizontal",
+    "pending_quantity": 0,
+    "raw_url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+    "reorder_quantity": null,
+    "send_date": "2021-03-24T22:51:42.838Z",
+    "size": "2.125x3.375",
+    "status": "rendered",
+    "threshold_amount": 0,
+    "thumbnails": [
+      {
+        "large": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_large_1.png?version=v1&expires=1636910992&signature=FKSzymA13j-CQ0uk20cGHZTzT3vimzNBYrgp-xifLFg4mMdo1BZALR5O0aF_jVhsX614hKP35ONdYl47TQxXAw",
+        "medium": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_medium_1.png?version=v1&expires=1636910992&signature=VgL_2Ckm_kxKiWGgWtdNoy9HHOn8dGYSVOn7UqyCbwdbVlUtx28TRN4Bo8Iru3n0keKp9He0YhKT1ILotznMDA",
+        "small": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_small_1.png?version=v1&expires=1636910992&signature=mrv8JDvpZK4I8WUGH0tPdtK-My5oes0Ltj_gL7BDw96SpCTTeZFHkz81SzclyFP9dQRtlsvAsjcuGcTBvCvOCg"
+      },
+      {
+        "large": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_large_2.png?version=v1&expires=1636910992&signature=r0OFUhh315ZwN0raMZdIwJd2oCIEYsz0BABaMxIuO1PKTD0ckGWrhcGdzk2dlWQ6vSvp0CUQ5k1RXGqkIIqkDw",
+        "medium": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_medium_2.png?version=v1&expires=1636910992&signature=zxK7VKGiTvz5Ywrkaydd0v3GcYf58R7A08J4tNfI7-aiNODDcTF3l0MqY13n9Pyc8RXSdD0XVBY-OpbA1VM-Ag",
+        "small": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_small_2.png?version=v1&expires=1636910992&signature=IWsmPa_ULlv2yyqjX564d_YfHHY_M7i9YxDnw-WXDr2jtOFcArmRZQbnHeE9g_rYxnddJbgosuv8-c2utiu7Cg"
+      }
+    ],
+    "url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e.pdf?version=v1&expires=1636910992&signature=mnsDH2DAxdkN9VibdlLMxJC86sME5WYDqkNtmvGwdNsAaUWfbnv0rJhJ1mR8Ol4uxQq61j5wYZ0r3s-lBkQfDA"
+  },
+  "POST /cards/{card_id}": {
+    "account_id": "fa9ea650fc7b31a89f92",
+    "auto_reorder": false,
+    "available_quantity": 10000,
+    "back_original_url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+    "countries": null,
+    "date_created": "2021-03-24T22:51:42.838Z",
+    "date_modified": "2021-03-24T22:51:42.838Z",
+    "description": "Test card",
+    "front_original_url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+    "id": "card_7a6d73c5c8457fc",
+    "mode": "test",
+    "object": "card",
+    "orientation": "horizontal",
+    "pending_quantity": 0,
+    "raw_url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+    "reorder_quantity": null,
+    "send_date": "2021-03-24T22:51:42.838Z",
+    "size": "2.125x3.375",
+    "status": "rendered",
+    "threshold_amount": 0,
+    "thumbnails": [
+      {
+        "large": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_large_1.png?version=v1&expires=1636910992&signature=FKSzymA13j-CQ0uk20cGHZTzT3vimzNBYrgp-xifLFg4mMdo1BZALR5O0aF_jVhsX614hKP35ONdYl47TQxXAw",
+        "medium": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_medium_1.png?version=v1&expires=1636910992&signature=VgL_2Ckm_kxKiWGgWtdNoy9HHOn8dGYSVOn7UqyCbwdbVlUtx28TRN4Bo8Iru3n0keKp9He0YhKT1ILotznMDA",
+        "small": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_small_1.png?version=v1&expires=1636910992&signature=mrv8JDvpZK4I8WUGH0tPdtK-My5oes0Ltj_gL7BDw96SpCTTeZFHkz81SzclyFP9dQRtlsvAsjcuGcTBvCvOCg"
+      },
+      {
+        "large": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_large_2.png?version=v1&expires=1636910992&signature=r0OFUhh315ZwN0raMZdIwJd2oCIEYsz0BABaMxIuO1PKTD0ckGWrhcGdzk2dlWQ6vSvp0CUQ5k1RXGqkIIqkDw",
+        "medium": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_medium_2.png?version=v1&expires=1636910992&signature=zxK7VKGiTvz5Ywrkaydd0v3GcYf58R7A08J4tNfI7-aiNODDcTF3l0MqY13n9Pyc8RXSdD0XVBY-OpbA1VM-Ag",
+        "small": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_small_2.png?version=v1&expires=1636910992&signature=IWsmPa_ULlv2yyqjX564d_YfHHY_M7i9YxDnw-WXDr2jtOFcArmRZQbnHeE9g_rYxnddJbgosuv8-c2utiu7Cg"
+      }
+    ],
+    "url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e.pdf?version=v1&expires=1636910992&signature=mnsDH2DAxdkN9VibdlLMxJC86sME5WYDqkNtmvGwdNsAaUWfbnv0rJhJ1mR8Ol4uxQq61j5wYZ0r3s-lBkQfDA"
+  },
+  "POST /cards/{card_id}/orders": {
+    "availability_date": "2021-10-12T21:41:48.326Z",
+    "cancelled_reason": "No longer needed",
+    "card_id": "card_6afffd19045076c",
+    "date_created": "2021-10-07T21:03:18.871Z",
+    "date_modified": "2021-10-16T01:00:30.144Z",
+    "expected_availability_date": "2021-11-04T21:03:18.871Z",
+    "id": "co_e0f8a0562a06bea7f",
+    "inventory": 9500,
+    "object": "card_order",
+    "quantity_ordered": 10000,
+    "status": "available",
+    "unit_price": 0.75
+  },
+  "POST /checks": {
+    "amount": 22.5,
+    "attachment_template_id": "tmpl_a",
+    "attachment_template_version_id": "vrsn_a",
+    "bank_account": {
+      "account_number": "123456789",
+      "account_type": "company",
+      "bank_name": "J.P. MORGAN CHASE BANK, N.A.",
+      "date_created": "2015-11-06T19:24:24.440Z",
+      "date_modified": "2015-11-06T19:41:28.312Z",
+      "description": "Test Bank Account",
+      "id": "bank_8cad8df5354d33f",
+      "metadata": {},
+      "object": "bank_account",
+      "routing_number": "322271627",
+      "signatory": "John Doe",
+      "signature_url": "https://lob-assets.com/bank-accounts/asd_asdfghjkqwertyui.pdf?expires=1234567890&signature=aksdf",
+      "verified": true
+    },
+    "carrier": "USPS",
+    "check_bottom_template_id": "tmpl_a",
+    "check_bottom_template_version_id": "vrsn_a",
+    "check_number": 10062,
+    "date_created": "2017-09-05T17:47:53.896Z",
+    "date_modified": "2017-09-05T17:47:53.896Z",
+    "deleted": true,
+    "description": "Demo Check",
+    "expected_delivery_date": "2017-09-12",
+    "from": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "date_created": "2017-09-05T17:47:53.767Z",
+      "date_modified": "2017-09-05T17:47:53.767Z",
+      "id": "adr_b8fb5acf3a2b55db",
+      "metadata": {},
+      "name": "LEORE AVIDAR",
+      "object": "address"
+    },
+    "id": "chk_534f10783683daa0",
+    "mail_type": "usps_first_class",
+    "memo": "rent",
+    "merge_variables": {
+      "name": "Harry"
+    },
+    "message": "pancakes are good",
+    "metadata": {},
+    "object": "check",
+    "send_date": "2017-09-05T17:47:53.896Z",
+    "sla": "2",
+    "thumbnails": [
+      {
+        "large": "https://lob-assets.com/checks/chk_534f10783683daa0_thumb_large_1.png?expires=1540372221&signature=04nLEwE9d2qgQJNgJYWSOgPnU0FZbEv",
+        "medium": "https://lob-assets.com/checks/chk_534f10783683daa0_thumb_medium_1.png?expires=1540372221&signature=tmIOq6aAyKgzAECp7STj1rvJuMS5Svd",
+        "small": "https://lob-assets.com/checks/chk_534f10783683daa0_thumb_small_1.png?expires=1540372221&signature=ShhPpH74wYkNiAj7Il9B6q8ZKkzlGd4"
+      }
+    ],
+    "to": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": "",
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": "LOB",
+      "date_created": "2018-12-08T03:08:43.446Z",
+      "date_modified": "2018-12-08T03:08:43.446Z",
+      "description": "Harry - Office",
+      "email": "harry@lob.com",
+      "id": "adr_bae820679f3f536b",
+      "metadata": {},
+      "name": "HARRY ZHANG",
+      "object": "address",
+      "phone": "5555555555",
+      "recipient_moved": false
+    },
+    "tracking_events": [],
+    "url": "https://lob-assets.com/checks/chk_534f10783683daa0.pdf?expires=1540372221&signature=Ty3IV2bGPEoQfrdraYHlNYTaarnHLXb",
+    "use_type": "operational"
+  },
+  "POST /creatives": {
+    "campaigns": [],
+    "date_created": "2017-09-05T17:47:53.767Z",
+    "date_modified": "2017-09-05T17:47:53.767Z",
+    "description": "Our 4x6 postcard creative",
+    "details": {},
+    "from": "adr_210a8d4b0b76d77b",
+    "id": "crv_2a3b096c409b32c",
+    "metadata": {},
+    "object": "creative",
+    "resource_type": "postcard",
+    "template_preview_urls": {},
+    "template_previews": []
+  },
+  "POST /identity_validation": {
+    "confidence": "high",
+    "id": "id_validation_8a013f3e",
+    "last_line": "SAN FRANCISCO CA 94107-1728",
+    "object": "id_validation",
+    "primary_line": "210 KING ST.",
+    "recipient": "LARRY LOBSTER",
+    "score": 100,
+    "secondary_line": "",
+    "urbanization": ""
+  },
+  "POST /informed_delivery_campaigns": {
+    "account_id": "xxxxxxxxxxxxxxxxxxxx",
+    "brand_name": "Lob",
+    "campaign_code": "1a1a1a1a-9657-423b-b3c7-2+Code",
+    "date_created": "2024-08-30T23:30:02.980Z",
+    "date_modified": "2024-08-30T23:30:05.027Z",
+    "deleted": false,
+    "end_date": "2024-10-15T00:00:00.000Z",
+    "end_serial": 3183506,
+    "id": "infd_234g5324g324g23",
+    "lob_campaign_id": null,
+    "mode": "live",
+    "object": "informed_delivery_campaign",
+    "quantity": 20,
+    "representative_image_s3_link": null,
+    "ride_along_image_s3_link": "https://lob-assets.com/informed-delivery/infd_234g5324g324g23_ride_along.jpg",
+    "ride_along_url": "https://www.lob.com",
+    "service_request_number": null,
+    "start_date": "2024-08-31T00:00:00.000Z",
+    "start_serial": 3183487,
+    "status": "approved",
+    "usps_campaign_id": "1234567890",
+    "usps_title": "Campaign: 1a1a1a1a-9657-423b-b3c7-2"
+  },
+  "POST /intl_verifications": {
+    "components": {
+      "city": "SUMMERSIDE",
+      "postal_code": "C1N 1C4",
+      "primary_number": "370",
+      "state": "PE",
+      "street_name": "WATER ST"
+    },
+    "country": "CA",
+    "coverage": "SUBBUILDING",
+    "deliverability": "deliverable",
+    "id": "intl_ver_c7cb63d68f8d6",
+    "last_line": "SUMMERSIDE PE C1N 1C4",
+    "object": "intl_verification",
+    "primary_line": "370 WATER ST",
+    "recipient": null,
+    "secondary_line": "",
+    "status": "LV4"
+  },
+  "POST /letters": {
+    "address_placement": "top_first_page",
+    "cards": [
+      {
+        "account_id": "fa9ea650fc7b31a89f92",
+        "auto_reorder": false,
+        "available_quantity": 10000,
+        "back_original_url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+        "countries": null,
+        "date_created": "2017-08-05T15:54:53.346Z",
+        "date_modified": "2017-08-05T15:54:53.346Z",
+        "description": null,
+        "front_original_url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+        "id": "card_c51ae96f5cebf3e",
+        "mode": "test",
+        "object": "card",
+        "orientation": "horizontal",
+        "pending_quantity": 0,
+        "raw_url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_raw.pdf?version=v1&expires=1636910992&signature=-bZo31FMAp2vmNaZKyXn_Qa4APqwtNinw76FrQ7uyQejFZw6VBQQYfoiQ642iXh0H2K5i2aOo8_BAkt3UJdVDw",
+        "reorder_quantity": null,
+        "size": "2.125x3.375",
+        "status": "rendered",
+        "threshold_amount": 0,
+        "thumbnails": [
+          {
+            "large": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_large_1.png?version=v1&expires=1636910992&signature=FKSzymA13j-CQ0uk20cGHZTzT3vimzNBYrgp-xifLFg4mMdo1BZALR5O0aF_jVhsX614hKP35ONdYl47TQxXAw",
+            "medium": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_medium_1.png?version=v1&expires=1636910992&signature=VgL_2Ckm_kxKiWGgWtdNoy9HHOn8dGYSVOn7UqyCbwdbVlUtx28TRN4Bo8Iru3n0keKp9He0YhKT1ILotznMDA",
+            "small": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_small_1.png?version=v1&expires=1636910992&signature=mrv8JDvpZK4I8WUGH0tPdtK-My5oes0Ltj_gL7BDw96SpCTTeZFHkz81SzclyFP9dQRtlsvAsjcuGcTBvCvOCg"
+          },
+          {
+            "large": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_large_2.png?version=v1&expires=1636910992&signature=r0OFUhh315ZwN0raMZdIwJd2oCIEYsz0BABaMxIuO1PKTD0ckGWrhcGdzk2dlWQ6vSvp0CUQ5k1RXGqkIIqkDw",
+            "medium": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_medium_2.png?version=v1&expires=1636910992&signature=zxK7VKGiTvz5Ywrkaydd0v3GcYf58R7A08J4tNfI7-aiNODDcTF3l0MqY13n9Pyc8RXSdD0XVBY-OpbA1VM-Ag",
+            "small": "https://lob-assets.com/cards/card_c51ae96f5cebf3e_thumb_small_2.png?version=v1&expires=1636910992&signature=IWsmPa_ULlv2yyqjX564d_YfHHY_M7i9YxDnw-WXDr2jtOFcArmRZQbnHeE9g_rYxnddJbgosuv8-c2utiu7Cg"
+          }
+        ],
+        "url": "https://lob-assets.com/cards/card_c51ae96f5cebf3e.pdf?version=v1&expires=1636910992&signature=mnsDH2DAxdkN9VibdlLMxJC86sME5WYDqkNtmvGwdNsAaUWfbnv0rJhJ1mR8Ol4uxQq61j5wYZ0r3s-lBkQfDA"
+      }
+    ],
+    "carrier": "USPS",
+    "color": true,
+    "custom_envelope": null,
+    "date_created": "2017-09-05T15:54:53.346Z",
+    "date_modified": "2017-09-05T15:54:53.346Z",
+    "description": "Demo Letter",
+    "double_sided": true,
+    "expected_delivery_date": "2017-09-12",
+    "extra_service": null,
+    "from": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": null,
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": null,
+      "date_created": "2017-09-05T15:54:53.264Z",
+      "date_modified": "2017-09-05T15:54:53.264Z",
+      "deleted": true,
+      "description": null,
+      "email": null,
+      "id": "adr_b8fb5acf3a2b55db",
+      "metadata": {},
+      "name": "LEORE AVIDAR",
+      "object": "address",
+      "phone": null
+    },
+    "fsc": false,
+    "id": "ltr_4868c3b754655f90",
+    "mail_type": "usps_first_class",
+    "merge_variables": {
+      "name": "Harry"
+    },
+    "metadata": {},
+    "object": "letter",
+    "perforated_page": null,
+    "return_envelope": false,
+    "send_date": "2017-09-05T15:54:53.346Z",
+    "sla": "2",
+    "thumbnails": [
+      {
+        "large": "https://lob-assets.com/letters/ltr_4868c3b754655f90_thumb_large_1.png?expires=1540372221&signature=gsKvxXgrm4v4iZD3bOibK7jApNkEMdW",
+        "medium": "https://lob-assets.com/letters/ltr_4868c3b754655f90_thumb_medium_1.png?expires=1540372221&signature=bAzL8sv935PY09FWSkpDpWKkyvGSWYF",
+        "small": "https://lob-assets.com/letters/ltr_4868c3b754655f90_thumb_small_1.png?expires=1540372221&signature=a5fRBJ22ZA78Vgpg34M9UfmHWTS3eha"
+      }
+    ],
+    "to": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": null,
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": null,
+      "date_created": "2017-09-05T15:54:53.264Z",
+      "date_modified": "2017-09-05T15:54:53.264Z",
+      "deleted": true,
+      "description": null,
+      "email": null,
+      "id": "adr_d3489cd64c791ab5",
+      "metadata": {},
+      "name": "HARRY ZHANG",
+      "object": "address",
+      "phone": null
+    },
+    "tracking_events": [],
+    "tracking_number": null,
+    "url": "https://lob-assets.com/letters/ltr_4868c3b754655f90.pdf?expires=1540372221&signature=8r94fse8uam7wGWmW5baxXulU88X2CA",
+    "use_type": "marketing"
+  },
+  "POST /postcards": {
+    "back_template_id": null,
+    "carrier": "USPS",
+    "date_created": "2021-03-24T22:51:42.838Z",
+    "date_modified": "2021-03-24T22:51:42.838Z",
+    "description": null,
+    "front_template_id": null,
+    "fsc": false,
+    "id": "psc_208e45e48d271294",
+    "metadata": {},
+    "object": "postcard",
+    "send_date": "2021-03-24T22:51:42.838Z",
+    "sla": "2",
+    "to": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": null,
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": "LOB",
+      "date_created": "2018-12-08T03:01:07.651Z",
+      "date_modified": "2018-12-08T03:01:07.651Z",
+      "description": null,
+      "email": null,
+      "id": "adr_210a8d4b0b76d77b",
+      "metadata": {},
+      "name": null,
+      "object": "address",
+      "phone": null
+    },
+    "url": "https://lob-assets.com/postcards/psc_208e45e48d271294.pdf?version=v1&expires=1619218302&signature=NfHHLBSr5tOHA_Z4kij4dKqZG8f3vMDtwvuFVeeF9pV_lylcjLsVVODhNCE5hR6-2slUr6t9WMNsi429Pj7_DA",
+    "use_type": "marketing"
+  },
+  "POST /resource_proofs": {
+    "date_created": "2017-11-07T22:56:10.962Z",
+    "date_modified": "2017-11-07T22:56:10.962Z",
+    "errors": [],
+    "id": "res_prf_example123",
+    "object": "resource_proof",
+    "resource_type": "postcard",
+    "status": "completed",
+    "template_id": null,
+    "thumbnails": [
+      {
+        "large": "https://lob-assets.com/resource-proofs/res_prf_example123_thumb_large_1.png",
+        "medium": "https://lob-assets.com/resource-proofs/res_prf_example123_thumb_medium_1.png",
+        "small": "https://lob-assets.com/resource-proofs/res_prf_example123_thumb_small_1.png"
+      }
+    ],
+    "url": "https://lob-assets.com/resource-proofs/res_prf_example123.pdf"
+  },
+  "POST /self_mailers": {
+    "carrier": "USPS",
+    "date_created": "2021-03-16T18:40:40.504Z",
+    "date_modified": "2021-03-16T18:40:40.504Z",
+    "description": "April Campaign",
+    "expected_delivery_date": "2021-03-24",
+    "from": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": null,
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": null,
+      "date_created": "2017-09-05T17:47:53.767Z",
+      "date_modified": "2017-09-05T17:47:53.767Z",
+      "deleted": true,
+      "description": null,
+      "email": null,
+      "id": "adr_210a8d4b0b76d77b",
+      "metadata": {},
+      "name": "LEORE AVIDAR",
+      "object": "address",
+      "phone": null
+    },
+    "fsc": false,
+    "id": "sfm_8ffbe811dea49dcf",
+    "inside_template_id": "tmpl_a3cb937f26d7eec",
+    "inside_template_version_id": "vrsn_bfdf70893b00a85",
+    "mail_type": "usps_first_class",
+    "merge_variables": {
+      "name": null
+    },
+    "metadata": {},
+    "object": "self_mailer",
+    "outside_template_id": "tmpl_a3cb937f26d7eec",
+    "outside_template_version_id": "vrsn_bfdf70893b00a85",
+    "send_date": "2021-03-16T18:45:40.493Z",
+    "size": "6x18_bifold",
+    "sla": "2",
+    "thumbnails": [
+      {
+        "large": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf_thumb_large_1.png?version=v1&expires=1618512040&signature=kBrm00xkyCkJNJRHxH8HshFaebtOxnzjVWOs1VVmGMuw8H6OBNcMAMxt9s49K0jlpHoh3Nr9uSncEZMQaaNjAg",
+        "medium": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf_thumb_medium_1.png?version=v1&expires=1618512040&signature=ryxN7bsXGtw_GRFSP3Cs3A3IYjxZi3cW9BHDCNgMt6p3nobVmsc_iFHt2e-S7ndAXhhN7nP-MQVov3bt3r37BQ",
+        "small": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf_thumb_small_1.png?version=v1&expires=1618512040&signature=-bipeUHP-hAMcCBSrWM0ZH1VwRdSPNVGGZN9hAZKr6Lh4ly6uxvratVd5LXJCK_zOEMYk_mTWASt0ge7OY6SDA"
+      },
+      {
+        "large": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf_thumb_large_2.png?version=v1&expires=1618512040&signature=cICc7HEm1xG_eyM4a_wtvPk2FqoLRmtgGa29kJisWnMIYBL0OkyzG4ZCYGMhp-5cZpJlSpXfTgGKh_Qmeo1TDw",
+        "medium": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf_thumb_medium_2.png?version=v1&expires=1618512040&signature=Ue1lw5CMj7KRx6cMQL8xPeazaHCdJzWcACd1w3acuYPnWkVIpSt62OIO7hAtpAQK9xm1dhhlFj0rqRZMdRMMBA",
+        "small": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf_thumb_small_2.png?version=v1&expires=1618512040&signature=3gTgU7Fd3KoT_vNlQnTGptRps5ZgnkhSnPrAwk7L98higIzSwfKoLvuu_DIpMM48dHbxckKT9waR8euJ4KSDBQ"
+      }
+    ],
+    "to": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": null,
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": null,
+      "date_created": "2017-09-05T17:47:53.767Z",
+      "date_modified": "2017-09-05T17:47:53.767Z",
+      "deleted": true,
+      "description": null,
+      "email": null,
+      "id": "adr_bae820679f3f536b",
+      "metadata": {},
+      "name": "HARRY ZHANG",
+      "object": "address",
+      "phone": null
+    },
+    "tracking_events": [],
+    "url": "https://lob-assets.com/self-mailers/sfm_8ffbe811dea49dcf.pdf?version=v1&expires=1618512040&signature=qvyCqXI1ndBvc4AjvG8FlirqLXEcfmYo4sDrRtabaXMOsX88to9G3K49uIk_aqevvZXe8HoRYD_nWydbQHqaCA",
+    "use_type": "marketing"
+  },
+  "POST /snap_packs": {
+    "carrier": "USPS",
+    "color": false,
+    "date_created": "2021-03-16T18:40:40.504Z",
+    "date_modified": "2021-03-16T18:40:40.504Z",
+    "description": "April Campaign",
+    "expected_delivery_date": "2021-03-24",
+    "from": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": null,
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": null,
+      "date_created": "2017-09-05T17:47:53.767Z",
+      "date_modified": "2017-09-05T17:47:53.767Z",
+      "deleted": true,
+      "description": null,
+      "email": null,
+      "id": "adr_210a8d4b0b76d77b",
+      "metadata": {},
+      "name": "LEORE AVIDAR",
+      "object": "address",
+      "phone": null
+    },
+    "fsc": false,
+    "id": "ord_0d6a16a3fff6318ac8f8008dc1",
+    "inside_template_id": "tmpl_a3cb937f26d7eec",
+    "inside_template_version_id": "vrsn_bfdf70893b00a85",
+    "mail_type": "usps_first_class",
+    "merge_variables": {
+      "name": null
+    },
+    "object": "snap_pack",
+    "outside_template_id": "tmpl_a3cb937f26d7eec",
+    "outside_template_version_id": "vrsn_bfdf70893b00a85",
+    "send_date": "2021-03-16T18:45:40.493Z",
+    "size": "8.5x11",
+    "sla": "2",
+    "thumbnails": [
+      {
+        "large": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_large_1.png?version=v1&expires=1618512040&signature=kBrm00xkyCkJNJRHxH8HshFaebtOxnzjVWOs1VVmGMuw8H6OBNcMAMxt9s49K0jlpHoh3Nr9uSncEZMQaaNjAg",
+        "medium": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_medium_1.png?version=v1&expires=1618512040&signature=ryxN7bsXGtw_GRFSP3Cs3A3IYjxZi3cW9BHDCNgMt6p3nobVmsc_iFHt2e-S7ndAXhhN7nP-MQVov3bt3r37BQ",
+        "small": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_small_1.png?version=v1&expires=1618512040&signature=-bipeUHP-hAMcCBSrWM0ZH1VwRdSPNVGGZN9hAZKr6Lh4ly6uxvratVd5LXJCK_zOEMYk_mTWASt0ge7OY6SDA"
+      },
+      {
+        "large": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_large_2.png?version=v1&expires=1618512040&signature=cICc7HEm1xG_eyM4a_wtvPk2FqoLRmtgGa29kJisWnMIYBL0OkyzG4ZCYGMhp-5cZpJlSpXfTgGKh_Qmeo1TDw",
+        "medium": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_medium_2.png?version=v1&expires=1618512040&signature=Ue1lw5CMj7KRx6cMQL8xPeazaHCdJzWcACd1w3acuYPnWkVIpSt62OIO7hAtpAQK9xm1dhhlFj0rqRZMdRMMBA",
+        "small": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d_thumb_small_2.png?version=v1&expires=1618512040&signature=3gTgU7Fd3KoT_vNlQnTGptRps5ZgnkhSnPrAwk7L98higIzSwfKoLvuu_DIpMM48dHbxckKT9waR8euJ4KSDBQ"
+      }
+    ],
+    "to": {
+      "address_city": "SAN FRANCISCO",
+      "address_country": "UNITED STATES",
+      "address_line1": "210 KING ST STE 6100",
+      "address_line2": null,
+      "address_state": "CA",
+      "address_zip": "94107-1741",
+      "company": null,
+      "date_created": "2017-09-05T17:47:53.767Z",
+      "date_modified": "2017-09-05T17:47:53.767Z",
+      "deleted": true,
+      "description": null,
+      "email": null,
+      "id": "adr_bae820679f3f536b",
+      "metadata": {},
+      "name": "HARRY ZHANG",
+      "object": "address",
+      "phone": null
+    },
+    "tracking_events": [],
+    "url": "https://lob-assets.com/order-creatives/ord_0d6a16a3fff6318ac8f8008dc1_comp_a20fd48ba4efda76ee827400d.pdf?version=v1&expires=1618512040&signature=qvyCqXI1ndBvc4AjvG8FlirqLXEcfmYo4sDrRtabaXMOsX88to9G3K49uIk_aqevvZXe8HoRYD_nWydbQHqaCA",
+    "use_type": "marketing"
+  },
+  "POST /templates": {
+    "date_created": "2017-11-07T22:56:10.962Z",
+    "date_modified": "2017-11-07T22:56:10.962Z",
+    "description": "Test Template",
+    "id": "tmpl_c94e83ca2cd5121",
+    "metadata": {},
+    "object": "template",
+    "published_version": {
+      "date_created": "2017-11-07T22:56:10.962Z",
+      "date_modified": "2017-11-07T22:56:10.962Z",
+      "description": "Test Template",
+      "engine": "handlebars",
+      "html": "<html>HTML for {{name}}</html>",
+      "id": "vrsn_362184d96d9b0c9",
+      "object": "version",
+      "suggest_json_editor": false
+    },
+    "versions": [
+      {
+        "date_created": "2017-11-07T22:56:10.962Z",
+        "date_modified": "2017-11-07T22:56:10.962Z",
+        "description": "Test Template",
+        "engine": "legacy",
+        "html": "<html>HTML for {{name}}</html>",
+        "id": "vrsn_362184d96d9b0c9",
+        "object": "version",
+        "suggest_json_editor": true
+      }
+    ]
+  },
+  "POST /templates/{tmpl_id}": {
+    "date_created": "2017-11-07T22:56:10.962Z",
+    "date_modified": "2017-11-07T22:56:10.962Z",
+    "description": "Test Template",
+    "id": "tmpl_c94e83ca2cd5121",
+    "metadata": {},
+    "object": "template",
+    "published_version": {
+      "date_created": "2017-11-07T22:56:10.962Z",
+      "date_modified": "2017-11-07T22:56:10.962Z",
+      "description": "Test Template",
+      "engine": "handlebars",
+      "html": "<html>HTML for {{name}}</html>",
+      "id": "vrsn_362184d96d9b0c9",
+      "object": "version",
+      "suggest_json_editor": false
+    },
+    "versions": [
+      {
+        "date_created": "2017-11-07T22:56:10.962Z",
+        "date_modified": "2017-11-07T22:56:10.962Z",
+        "description": "Test Template",
+        "engine": "legacy",
+        "html": "<html>HTML for {{name}}</html>",
+        "id": "vrsn_362184d96d9b0c9",
+        "object": "version",
+        "suggest_json_editor": true
+      }
+    ]
+  },
+  "POST /templates/{tmpl_id}/versions": {
+    "date_created": "2017-11-09T04:49:38.016Z",
+    "date_modified": "2017-11-09T04:49:38.016Z",
+    "description": "Second Version",
+    "html": "<html>Second HTML for {{name}}</html>",
+    "id": "vrsn_534e339882d2282",
+    "object": "version"
+  },
+  "POST /templates/{tmpl_id}/versions/{vrsn_id}": {
+    "date_created": "2017-11-09T04:49:38.016Z",
+    "date_modified": "2017-11-09T04:49:38.016Z",
+    "description": "Second Version",
+    "html": "<html>Second HTML for {{name}}</html>",
+    "id": "vrsn_534e339882d2282",
+    "object": "version"
+  },
+  "POST /uploads": {
+    "accountId": "fa9ea650fc7b31a89f92",
+    "bytesProcessed": 17628,
+    "campaignId": "cmp_1933ad629bae1408",
+    "dateCreated": "2017-09-05T17:47:53.767Z",
+    "dateModified": "2017-09-05T17:47:53.767Z",
+    "failedMailpieces": 5,
+    "failuresUrl": "http://www.example.com",
+    "id": "upl_71be866e430b11e9",
+    "mergeVariableColumnMapping": null,
+    "metadata": {
+      "columns": []
+    },
+    "mode": "live",
+    "optionalAddressColumnMapping": {
+      "address_country": null,
+      "address_line2": null,
+      "company": null
+    },
+    "originalFilename": "my_audience.csv",
+    "requiredAddressColumnMapping": {
+      "address_city": null,
+      "address_line1": null,
+      "address_state": null,
+      "address_zip": null,
+      "name": null
+    },
+    "state": "Draft",
+    "totalMailpieces": 100,
+    "validatedMailpieces": 95
+  },
+  "POST /us_autocompletions": {
+    "id": "us_auto_a3ac97bcfbb2460ab20c",
+    "object": "us_autocompletion",
+    "suggestions": [
+      {
+        "city": "SAN FRANCISCO",
+        "primary_line": "185 BAYSIDE VILLAGE PL",
+        "state": "CA",
+        "zip_code": "94107"
+      },
+      {
+        "city": "SAN FRANCISCO",
+        "primary_line": "185 BRANNAN ST",
+        "state": "CA",
+        "zip_code": "94107"
+      },
+      {
+        "city": "SAN FRANCISCO",
+        "primary_line": "185 BONIFACIO ST",
+        "state": "CA",
+        "zip_code": "94107"
+      },
+      {
+        "city": "SAN FRANCISCO",
+        "primary_line": "185 BLAIR TER",
+        "state": "CA",
+        "zip_code": "94107"
+      },
+      {
+        "city": "SAN FRANCISCO",
+        "primary_line": "185 BLUXOME ST",
+        "state": "CA",
+        "zip_code": "94107"
+      },
+      {
+        "city": "SAN FRANCISCO",
+        "primary_line": "210 KING ST",
+        "state": "CA",
+        "zip_code": "94107"
+      },
+      {
+        "city": "SAN FRANCISCO",
+        "primary_line": "185 BRYANT ST",
+        "state": "CA",
+        "zip_code": "94107"
+      }
+    ]
+  },
+  "POST /us_reverse_geocode_lookups": {
+    "addresses": [
+      {
+        "components": {
+          "zip_code": "94107",
+          "zip_code_plus_4": "1702"
+        },
+        "location_analysis": {
+          "distance": 1.32,
+          "latitude": 37.78271,
+          "longitude": -122.416202
+        }
+      },
+      {
+        "components": {
+          "zip_code": "94107",
+          "zip_code_plus_4": "1702"
+        },
+        "location_analysis": {
+          "distance": 1.33,
+          "latitude": 37.782917,
+          "longitude": -122.416131
+        }
+      }
+    ],
+    "id": "us_reverse_geocode_8a013f3e"
+  },
+  "POST /us_verifications": {
+    "components": {
+      "address_type": "commercial",
+      "carrier_route": "C032",
+      "carrier_route_type": "city_delivery",
+      "city": "SAN FRANCISCO",
+      "county": "SAN FRANCISCO",
+      "county_fips": "06075",
+      "default_building_address": false,
+      "delivery_point_barcode": "941071702108",
+      "extra_secondary_designator": "",
+      "extra_secondary_number": "",
+      "latitude": 37.77597542841264,
+      "longitude": -122.3929557343685,
+      "pmb_designator": "",
+      "pmb_number": "",
+      "po_box_only_flag": "N",
+      "primary_number": "210",
+      "record_type": "street",
+      "secondary_designator": "",
+      "secondary_number": "",
+      "state": "CA",
+      "street_name": "KING",
+      "street_postdirection": "",
+      "street_predirection": "",
+      "street_suffix": "ST",
+      "zip_code": "94107",
+      "zip_code_plus_4": "1702",
+      "zip_code_type": "standard"
+    },
+    "deliverability": "deliverable",
+    "deliverability_analysis": {
+      "dpv_active": "Y",
+      "dpv_cmra": "N",
+      "dpv_confirmation": "Y",
+      "dpv_door_not_accessible": "N",
+      "dpv_footnotes": ["AA", "BB"],
+      "dpv_inactive_reason": "",
+      "dpv_no_secure_location": "N",
+      "dpv_non_delivery_day_flag": "N",
+      "dpv_non_delivery_day_values": "",
+      "dpv_throwback": "N",
+      "dpv_vacant": "N",
+      "ews_match": false,
+      "lacs_indicator": "",
+      "lacs_return_code": "",
+      "suite_return_code": ""
+    },
+    "id": "us_ver_c7cb63d68f8d6",
+    "last_line": "SAN FRANCISCO CA 94107-1702",
+    "lob_confidence_score": {
+      "level": "high",
+      "score": 100
+    },
+    "object": "us_verification",
+    "primary_line": "210 KING ST",
+    "recipient": "LOB.COM",
+    "secondary_line": "",
+    "urbanization": "",
+    "valid_address": true
+  },
+  "POST /us_zip_lookups": {
+    "cities": [
+      {
+        "city": "SAN FRANCISCO",
+        "county": "SAN FRANCISCO",
+        "county_fips": "06075",
+        "preferred": true,
+        "state": "CA"
+      }
+    ],
+    "id": "us_zip_c7cb63d68f8d6",
+    "object": "us_zip_lookup",
+    "zip_code": "94107",
+    "zip_code_type": "standard"
+  }
+}

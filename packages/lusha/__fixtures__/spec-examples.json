@@ -1,0 +1,2990 @@
+{
+  "responses": {
+    "searchContacts": [
+      {
+        "requestId": "6e4b1192-9440-42c4-9a3e-793ddef6d73c",
+        "results": [
+          {
+            "clientReferenceId": "my-ref-1",
+            "id": "4415824633",
+            "firstName": "Alex",
+            "lastName": "Example",
+            "jobTitle": {
+              "title": "Vice President of Partnerships",
+              "departments": ["Business Development"],
+              "seniority": "Vice President"
+            },
+            "company": {
+              "id": "16303253",
+              "name": "Lusha",
+              "domain": "www.lusha.com",
+              "industry": "Technology, Information & Media"
+            },
+            "location": {
+              "country": "Israel",
+              "city": "Tel Aviv"
+            },
+            "socialLinks": {
+              "linkedin": "https://www.linkedin.com/in/alex-example-1001"
+            },
+            "has": [
+              "firstName",
+              "lastName",
+              "jobTitle",
+              "location",
+              "socialLinks",
+              "emails"
+            ],
+            "canReveal": [
+              {
+                "field": "emails",
+                "credits": 1
+              }
+            ]
+          },
+          {
+            "clientReferenceId": "my-ref-2",
+            "id": "4415824679",
+            "firstName": "Sam",
+            "lastName": "Example",
+            "jobTitle": {
+              "title": "Chief Architect",
+              "departments": ["Engineering & Technical"],
+              "seniority": "C-Suite"
+            },
+            "company": {
+              "id": "16303253",
+              "name": "Lusha",
+              "domain": "www.lusha.com",
+              "industry": "Technology, Information & Media"
+            },
+            "location": {
+              "country": "Israel",
+              "city": "Tel Aviv"
+            },
+            "socialLinks": {
+              "linkedin": "https://www.linkedin.com/in/sam-example-1002"
+            },
+            "has": [
+              "firstName",
+              "lastName",
+              "jobTitle",
+              "location",
+              "socialLinks",
+              "emails"
+            ],
+            "canReveal": [
+              {
+                "field": "emails",
+                "credits": 1
+              }
+            ]
+          },
+          {
+            "clientReferenceId": "my-ref-3",
+            "id": "4415824664",
+            "firstName": "Robin",
+            "lastName": "Example",
+            "jobTitle": {
+              "title": "Global Partner Program Manager",
+              "departments": ["Business Development"],
+              "seniority": "Manager"
+            },
+            "company": {
+              "id": "16303253",
+              "name": "Lusha",
+              "domain": "www.lusha.com",
+              "industry": "Technology, Information & Media"
+            },
+            "location": {
+              "country": "Israel",
+              "city": "Tel Aviv"
+            },
+            "socialLinks": {
+              "linkedin": "https://www.linkedin.com/in/robin-example-1003"
+            },
+            "has": [
+              "firstName",
+              "lastName",
+              "jobTitle",
+              "location",
+              "socialLinks",
+              "emails"
+            ],
+            "canReveal": [
+              {
+                "field": "emails",
+                "credits": 1
+              }
+            ]
+          },
+          {
+            "clientReferenceId": "my-ref-4",
+            "error": {
+              "code": "NOT_FOUND",
+              "message": "Contact not found"
+            }
+          }
+        ],
+        "billing": {
+          "creditsCharged": 1,
+          "resultsReturned": 3
+        }
+      }
+    ],
+    "enrichContacts": [
+      {
+        "requestId": "71581363-f73d-46e1-9115-ecbd771b964b",
+        "results": [
+          {
+            "id": "4389064654",
+            "firstName": "Dana",
+            "lastName": "Example",
+            "fullName": "Dana Example",
+            "jobTitle": {
+              "title": "Technical Product Manager",
+              "departments": ["Product"],
+              "seniority": "Manager"
+            },
+            "location": {
+              "country": "Israel",
+              "countryIso2": "IL",
+              "city": "Tel Aviv",
+              "continent": "Asia",
+              "coordinates": [34.78057098388672, 32.08087921142578],
+              "isEuContact": false
+            },
+            "tags": [],
+            "emails": [
+              {
+                "email": "dana.e@example.com",
+                "type": "work",
+                "confidence": "A+",
+                "updateDate": "2026-04-23"
+              }
+            ],
+            "phones": [],
+            "company": {
+              "id": "16303253",
+              "name": "Lusha",
+              "domain": "www.lusha.com",
+              "industry": "Technology, Information & Media"
+            },
+            "socialLinks": {
+              "linkedin": "https://www.linkedin.com/in/dana-example-1004"
+            },
+            "previousEmployment": [],
+            "updateDate": "2026-04-23"
+          }
+        ],
+        "billing": {
+          "creditsCharged": 2,
+          "resultsReturned": 2
+        }
+      },
+      {
+        "requestId": "c3d4e5f6-a7b8-9012-cdef-345678901234",
+        "results": [
+          {
+            "id": "v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345",
+            "firstName": "John",
+            "lastName": "Doe",
+            "emails": [
+              {
+                "email": "john.doe@example.com",
+                "type": "work",
+                "confidence": "A+",
+                "dataSource": "lusha"
+              }
+            ]
+          }
+        ],
+        "billing": {
+          "creditsCharged": 1,
+          "resultsReturned": 1
+        },
+        "status": "partial",
+        "statusDescription": "Some requested data points are still being retrieved.",
+        "job": {
+          "id": "wf_3f2b9c1e-4a7d-4f3b-9c2e-1d6a5b8c7e90",
+          "status": "processing",
+          "expiresAt": "2026-01-15T10:30:00Z",
+          "retryAfter": 5
+        }
+      }
+    ],
+    "searchAndEnrichContacts": [
+      {
+        "requestId": "211ee5da-3c0d-4621-9fa5-140e393a3ced",
+        "results": [
+          {
+            "clientReferenceId": "my-ref-1",
+            "id": "4389064704",
+            "firstName": "Alex",
+            "lastName": "Example",
+            "fullName": "Alex Example",
+            "emails": [
+              {
+                "email": "alex.example@example.com",
+                "type": "work",
+                "confidence": "A+",
+                "updateDate": "2026-04-23"
+              }
+            ],
+            "phones": [],
+            "tags": [],
+            "previousEmployment": [],
+            "updateDate": "2026-04-23"
+          }
+        ],
+        "billing": {
+          "creditsCharged": 2,
+          "resultsReturned": 2
+        }
+      }
+    ],
+    "searchCompanies": [
+      {
+        "requestId": "abd4a213-d33b-4565-b9b6-55c19c65cc47",
+        "results": [
+          {
+            "clientReferenceId": "comp-ref-1",
+            "id": "16303253",
+            "name": "Lusha",
+            "domain": "www.lusha.com",
+            "employeeCount": {
+              "exact": 364,
+              "min": 201,
+              "max": 500
+            },
+            "industry": "Technology, Information & Media",
+            "location": {
+              "city": "Boston",
+              "state": "Massachusetts",
+              "country": "United States",
+              "countryIso2": "US",
+              "continent": "North America"
+            },
+            "socialLinks": {
+              "linkedin": "https://www.linkedin.com/company/lushadata"
+            },
+            "has": [
+              "alternativeName",
+              "alternativeDomains",
+              "description",
+              "companyType",
+              "yearFounded",
+              "subIndustry",
+              "specialities",
+              "sicCodes",
+              "naicsCodes",
+              "additionalLocations",
+              "linkedinFollowers",
+              "funding",
+              "popularityTier",
+              "logoUrl",
+              "employeesByDepartment",
+              "employeesByLocation",
+              "employeesBySeniority",
+              "competitors",
+              "businessModel",
+              "emails",
+              "keywords",
+              "socialLinks"
+            ],
+            "canReveal": [
+              {
+                "field": "employeesByDepartment",
+                "credits": 1
+              },
+              {
+                "field": "employeesByLocation",
+                "credits": 1
+              },
+              {
+                "field": "employeesBySeniority",
+                "credits": 1
+              },
+              {
+                "field": "competitors",
+                "credits": 1
+              }
+            ]
+          },
+          {
+            "clientReferenceId": "comp-ref-2",
+            "id": "12790225",
+            "name": "Salesforce",
+            "domain": "www.salesforce.com",
+            "employeeCount": {
+              "exact": 88711,
+              "min": 100001,
+              "max": 10000000
+            },
+            "industry": "Technology, Information & Media",
+            "location": {
+              "city": "San Francisco",
+              "state": "California",
+              "country": "United States",
+              "countryIso2": "US",
+              "continent": "North America"
+            },
+            "socialLinks": {
+              "linkedin": "https://www.linkedin.com/company/salesforce"
+            },
+            "has": [
+              "alternativeName",
+              "alternativeDomains",
+              "description",
+              "companyType",
+              "subIndustry",
+              "sicCodes",
+              "naicsCodes",
+              "additionalLocations",
+              "linkedinFollowers",
+              "revenueRange",
+              "popularityTier",
+              "logoUrl",
+              "employeesByDepartment",
+              "employeesByLocation",
+              "employeesBySeniority",
+              "competitors",
+              "phones",
+              "emails",
+              "socialLinks"
+            ],
+            "canReveal": [
+              {
+                "field": "employeesByDepartment",
+                "credits": 1
+              },
+              {
+                "field": "employeesByLocation",
+                "credits": 1
+              },
+              {
+                "field": "employeesBySeniority",
+                "credits": 1
+              },
+              {
+                "field": "competitors",
+                "credits": 1
+              }
+            ]
+          }
+        ],
+        "billing": {
+          "creditsCharged": 1,
+          "resultsReturned": 3
+        }
+      }
+    ],
+    "enrichCompanies": [
+      {
+        "requestId": "5e8f5993-a0a3-4510-bc90-7b4506272c68",
+        "results": [
+          {
+            "id": "16303253",
+            "name": "Lusha",
+            "alternativeName": "lusha",
+            "domain": "www.lusha.com",
+            "alternativeDomains": ["lusha.com"],
+            "description": "Lusha is the leader in Sales Streaming – a new sales paradigm that streams top leads straight to salespeople and handles all the outreach, so they can escape the lead grind and just sell.",
+            "companyType": "Private Company",
+            "yearFounded": 2016,
+            "employeeCount": {
+              "exact": 364,
+              "min": 201,
+              "max": 500
+            },
+            "industry": "Technology, Information & Media",
+            "subIndustry": "Software Development",
+            "specialities": [
+              "data accuracy",
+              "data enrichment",
+              "lead discovery",
+              "lead generation",
+              "prospecting",
+              "sales enablement",
+              "sales intelligence",
+              "software development"
+            ],
+            "sicCodes": [
+              {
+                "code": 7371,
+                "description": "Custom computer programming services"
+              }
+            ],
+            "naicsCodes": [
+              {
+                "code": 541511,
+                "description": "Custom Computer Programming Services"
+              }
+            ],
+            "location": {
+              "city": "Boston",
+              "state": "Massachusetts",
+              "country": "United States",
+              "countryIso2": "US",
+              "continent": "North America",
+              "zipCode": "02199"
+            },
+            "additionalLocations": [
+              {
+                "city": "New York City",
+                "state": "New York",
+                "country": "United States",
+                "countryIso2": "US",
+                "continent": "North America"
+              }
+            ],
+            "socialLinks": {
+              "linkedin": "https://www.linkedin.com/company/lushadata",
+              "facebook": "https://www.facebook.com/lusha",
+              "x": "https://x.com/lusha",
+              "instagram": ["https://www.instagram.com/lusha"],
+              "youtube": ["https://www.youtube.com/c/lushadata"],
+              "tiktok": ["https://www.tiktok.com/@lusha"]
+            },
+            "linkedinFollowers": 64339,
+            "funding": {
+              "rounds": [
+                {
+                  "currency": "USD",
+                  "roundAmount": 205000000,
+                  "roundType": "Private Equity Round",
+                  "roundDate": "Nov 10, 2021"
+                },
+                {
+                  "currency": "USD",
+                  "roundAmount": 40000000,
+                  "roundType": "Private Equity Round",
+                  "roundDate": "Feb 10, 2021"
+                }
+              ],
+              "totalRounds": 2,
+              "totalRoundsAmount": 245000000,
+              "currency": "USD",
+              "isIpo": false,
+              "lastRoundType": "Private Equity Round",
+              "lastRoundAmount": 205000000,
+              "lastRoundDate": "Nov 10, 2021"
+            },
+            "technologies": ["amazon", "google analytics"],
+            "popularityTier": 1,
+            "logoUrl": "https://logo.lusha.co/brightdata/year=2024/month=05/day=03/j_lvq47h0g13te1b3wpu.e7b0795e7affc9953dadd43e6fce99a2c5260043.file_lvq4cfwv17kcb9m4ej.logo_cached.jpg",
+            "employeesByDepartment": [
+              {
+                "department": "Business Development",
+                "count": 14
+              },
+              {
+                "department": "Consulting",
+                "count": 10
+              },
+              {
+                "department": "Customer Service",
+                "count": 28
+              },
+              {
+                "department": "Engineering & Technical",
+                "count": 95
+              },
+              {
+                "department": "Finance",
+                "count": 14
+              },
+              {
+                "department": "General Management",
+                "count": 41
+              },
+              {
+                "department": "Human Resources",
+                "count": 16
+              },
+              {
+                "department": "Information Technology",
+                "count": 13
+              },
+              {
+                "department": "Legal",
+                "count": 7
+              },
+              {
+                "department": "Marketing",
+                "count": 31
+              },
+              {
+                "department": "Operations",
+                "count": 22
+              },
+              {
+                "department": "Other",
+                "count": 35
+              },
+              {
+                "department": "Product",
+                "count": 38
+              },
+              {
+                "department": "Research & Analytics",
+                "count": 42
+              },
+              {
+                "department": "Sales",
+                "count": 72
+              }
+            ],
+            "employeesByLocation": [
+              {
+                "country": "Israel",
+                "state": null,
+                "count": 301
+              },
+              {
+                "country": "United States",
+                "state": null,
+                "count": 45
+              },
+              {
+                "country": "United States",
+                "state": "Massachusetts",
+                "count": 30
+              },
+              {
+                "country": "Brazil",
+                "state": null,
+                "count": 22
+              },
+              {
+                "country": "France",
+                "state": null,
+                "count": 10
+              }
+            ],
+            "employeesBySeniority": [
+              {
+                "seniority": "C-Suite",
+                "count": 12
+              },
+              {
+                "seniority": "Director",
+                "count": 35
+              },
+              {
+                "seniority": "Founder",
+                "count": 33
+              },
+              {
+                "seniority": "Intern",
+                "count": 1
+              },
+              {
+                "seniority": "Manager",
+                "count": 141
+              },
+              {
+                "seniority": "Non-Manager",
+                "count": 163
+              },
+              {
+                "seniority": "Partner",
+                "count": 6
+              },
+              {
+                "seniority": "Senior",
+                "count": 59
+              },
+              {
+                "seniority": "Vice President",
+                "count": 9
+              }
+            ],
+            "competitors": [
+              {
+                "id": "2497917",
+                "name": "Clearbit",
+                "domain": "clearbit.com"
+              },
+              {
+                "id": "9781263",
+                "name": "Hunter.io",
+                "domain": "hunter.io"
+              },
+              {
+                "id": "40857684",
+                "name": "MCJ Solutions Inc",
+                "domain": "zoominfo.com"
+              },
+              {
+                "id": "157961346",
+                "name": "PMc",
+                "domain": "apollo.io"
+              }
+            ],
+            "businessModel": ["B2B"],
+            "emails": [
+              {
+                "email": "Support@Lusha.com"
+              }
+            ],
+            "keywords": [
+              "contact information",
+              "data accuracy",
+              "data enrichment",
+              "lead discovery",
+              "lead generation",
+              "prospecting",
+              "sales cadence",
+              "sales enablement",
+              "sales intelligence",
+              "sales playlist",
+              "sales streaming",
+              "software development"
+            ],
+            "openJobs": {
+              "total": 47,
+              "byDepartment": [
+                {
+                  "department": "Engineering & Technical",
+                  "count": 21
+                },
+                {
+                  "department": "Sales",
+                  "count": 9
+                }
+              ]
+            },
+            "directParent": null,
+            "ultimateParent": null
+          },
+          {
+            "id": "12790225",
+            "name": "Salesforce",
+            "alternativeName": "salesforce",
+            "domain": "www.salesforce.com",
+            "alternativeDomains": ["salesforce.com"],
+            "description": "We're the #1 AI CRM-where humans with agents drive customer success together with AI, data, and Customer 360 apps on one platform.",
+            "companyType": "Public Company",
+            "employeeCount": {
+              "exact": 88711,
+              "min": 100001,
+              "max": 10000000
+            },
+            "industry": "Technology, Information & Media",
+            "subIndustry": "Software Development",
+            "sicCodes": [
+              {
+                "code": 7371,
+                "description": "Custom computer programming services"
+              }
+            ],
+            "naicsCodes": [
+              {
+                "code": 541511,
+                "description": "Custom Computer Programming Services"
+              }
+            ],
+            "location": {
+              "city": "San Francisco",
+              "state": "California",
+              "country": "United States",
+              "countryIso2": "US",
+              "continent": "North America",
+              "zipCode": "94105"
+            },
+            "additionalLocations": [
+              {
+                "country": "United States",
+                "countryIso2": "US",
+                "continent": "North America"
+              },
+              {
+                "city": "Chicago",
+                "state": "Illinois",
+                "country": "United States",
+                "countryIso2": "US",
+                "continent": "North America"
+              },
+              {
+                "city": "London",
+                "country": "United Kingdom",
+                "countryIso2": "GB",
+                "continent": "Europe"
+              },
+              {
+                "city": "Tel Aviv",
+                "country": "Israel",
+                "countryIso2": "IL",
+                "continent": "Asia"
+              }
+            ],
+            "socialLinks": {
+              "linkedin": "https://www.linkedin.com/company/salesforce"
+            },
+            "linkedinFollowers": 6417067,
+            "revenueRange": {
+              "min": 10000000000,
+              "max": 100000000000
+            },
+            "technologies": ["amazon", "paypal", "google analytics"],
+            "popularityTier": 1,
+            "logoUrl": "https://logo.lusha.co/brightdata/year=2024/month=05/day=20/j_lwej8xik12ncr6ge4u.9e1ec373903019beff129694cb926761f065e9af.file_lwejc8mispkz3m1ng.logo_cached.jpg",
+            "employeesByDepartment": [
+              {
+                "department": "Business Development",
+                "count": 2820
+              },
+              {
+                "department": "Consulting",
+                "count": 4963
+              },
+              {
+                "department": "Engineering & Technical",
+                "count": 29167
+              },
+              {
+                "department": "Finance",
+                "count": 2126
+              },
+              {
+                "department": "Marketing",
+                "count": 4793
+              },
+              {
+                "department": "Operations",
+                "count": 6117
+              },
+              {
+                "department": "Sales",
+                "count": 22316
+              }
+            ],
+            "employeesByLocation": [
+              {
+                "country": "United States",
+                "state": null,
+                "count": 46090
+              },
+              {
+                "country": "United States",
+                "state": "California",
+                "count": 9928
+              },
+              {
+                "country": "India",
+                "state": null,
+                "count": 18527
+              },
+              {
+                "country": "United Kingdom",
+                "state": null,
+                "count": 3682
+              },
+              {
+                "country": "Ireland",
+                "state": null,
+                "count": 3226
+              }
+            ],
+            "employeesBySeniority": [
+              {
+                "seniority": "C-Suite",
+                "count": 1039
+              },
+              {
+                "seniority": "Director",
+                "count": 11538
+              },
+              {
+                "seniority": "Manager",
+                "count": 18836
+              },
+              {
+                "seniority": "Non-Manager",
+                "count": 49493
+              },
+              {
+                "seniority": "Senior",
+                "count": 20509
+              },
+              {
+                "seniority": "Vice President",
+                "count": 3104
+              }
+            ],
+            "competitors": [
+              {
+                "id": "4269625",
+                "name": "iGroup Vietnam - Solutions for Enterprise",
+                "domain": "monday.com"
+              },
+              {
+                "id": "7237482",
+                "name": "Pipedrive",
+                "domain": "pipedrive.com"
+              },
+              {
+                "id": "9740086",
+                "name": "Microsoft",
+                "domain": "microsoft.com"
+              },
+              {
+                "id": "156097472",
+                "name": "Hub Spot",
+                "domain": "hubspot.com"
+              }
+            ],
+            "phones": [
+              {
+                "number": "+1 800-420-7332"
+              }
+            ],
+            "emails": [
+              {
+                "email": "datasubjectrequest@salesforce.com"
+              }
+            ],
+            "directParent": null,
+            "ultimateParent": null
+          },
+          {
+            "id": "18654301",
+            "name": "4D",
+            "domain": "4d.com",
+            "companyType": "Subsidiary",
+            "directParent": {
+              "lushaCompanyId": "v1.XyZw...",
+              "name": "Volaris Group",
+              "domain": "volarisgroup.com"
+            },
+            "ultimateParent": {
+              "lushaCompanyId": "v1.QrSt...",
+              "name": "Constellation Software Inc.",
+              "domain": "csisoftware.com",
+              "hqCountry": "Canada"
+            }
+          }
+        ],
+        "billing": {
+          "creditsCharged": 14,
+          "resultsReturned": 3
+        }
+      }
+    ],
+    "searchAndEnrichCompanies": [
+      {
+        "requestId": "21fe0733-65d6-436a-8d0c-2c9ac6f263f8",
+        "results": [
+          {
+            "clientReferenceId": "comp-ref-1",
+            "id": "16303253",
+            "name": "Lusha",
+            "alternativeName": "lusha",
+            "domain": "www.lusha.com",
+            "alternativeDomains": ["lusha.com"],
+            "description": "Lusha is the leader in Sales Streaming – a new sales paradigm that streams top leads straight to salespeople and handles all the outreach, so they can escape the lead grind and just sell.",
+            "companyType": "Private Company",
+            "yearFounded": 2016,
+            "employeeCount": {
+              "exact": 364,
+              "min": 201,
+              "max": 500
+            },
+            "industry": "Technology, Information & Media",
+            "subIndustry": "Software Development",
+            "specialities": [
+              "data accuracy",
+              "data enrichment",
+              "lead discovery",
+              "lead generation",
+              "prospecting",
+              "sales enablement",
+              "sales intelligence",
+              "software development"
+            ],
+            "sicCodes": [
+              {
+                "code": 7371,
+                "description": "Custom computer programming services"
+              }
+            ],
+            "naicsCodes": [
+              {
+                "code": 541511,
+                "description": "Custom Computer Programming Services"
+              }
+            ],
+            "location": {
+              "city": "Boston",
+              "state": "Massachusetts",
+              "country": "United States",
+              "countryIso2": "US",
+              "continent": "North America",
+              "zipCode": "02199"
+            },
+            "additionalLocations": [
+              {
+                "city": "New York City",
+                "state": "New York",
+                "country": "United States",
+                "countryIso2": "US",
+                "continent": "North America"
+              }
+            ],
+            "socialLinks": {
+              "linkedin": "https://www.linkedin.com/company/lushadata"
+            },
+            "linkedinFollowers": 64339,
+            "funding": {
+              "rounds": [
+                {
+                  "currency": "USD",
+                  "roundAmount": 205000000,
+                  "roundType": "Private Equity Round",
+                  "roundDate": "Nov 10, 2021"
+                },
+                {
+                  "currency": "USD",
+                  "roundAmount": 40000000,
+                  "roundType": "Private Equity Round",
+                  "roundDate": "Feb 10, 2021"
+                }
+              ],
+              "totalRounds": 2,
+              "totalRoundsAmount": 245000000,
+              "currency": "USD",
+              "isIpo": false,
+              "lastRoundType": "Private Equity Round",
+              "lastRoundAmount": 205000000,
+              "lastRoundDate": "Nov 10, 2021"
+            },
+            "technologies": ["amazon", "google analytics"],
+            "popularityTier": 1,
+            "logoUrl": "https://logo.lusha.co/brightdata/year=2024/month=05/day=03/j_lvq47h0g13te1b3wpu.e7b0795e7affc9953dadd43e6fce99a2c5260043.file_lvq4cfwv17kcb9m4ej.logo_cached.jpg",
+            "businessModel": ["B2B"],
+            "emails": [
+              {
+                "email": "Support@Lusha.com"
+              }
+            ],
+            "keywords": [
+              "contact information",
+              "data accuracy",
+              "data enrichment",
+              "lead discovery",
+              "lead generation",
+              "prospecting",
+              "sales enablement",
+              "sales intelligence",
+              "software development"
+            ]
+          },
+          {
+            "clientReferenceId": "comp-ref-2",
+            "id": "12790225",
+            "name": "Salesforce",
+            "alternativeName": "salesforce",
+            "domain": "www.salesforce.com",
+            "alternativeDomains": ["salesforce.com"],
+            "description": "We're the #1 AI CRM-where humans with agents drive customer success together with AI, data, and Customer 360 apps on one platform.",
+            "companyType": "Public Company",
+            "employeeCount": {
+              "exact": 88711,
+              "min": 100001,
+              "max": 10000000
+            },
+            "industry": "Technology, Information & Media",
+            "subIndustry": "Software Development",
+            "sicCodes": [
+              {
+                "code": 7371,
+                "description": "Custom computer programming services"
+              }
+            ],
+            "naicsCodes": [
+              {
+                "code": 541511,
+                "description": "Custom Computer Programming Services"
+              }
+            ],
+            "location": {
+              "city": "San Francisco",
+              "state": "California",
+              "country": "United States",
+              "countryIso2": "US",
+              "continent": "North America",
+              "zipCode": "94105"
+            },
+            "additionalLocations": [
+              {
+                "country": "United States",
+                "countryIso2": "US",
+                "continent": "North America"
+              },
+              {
+                "city": "Chicago",
+                "state": "Illinois",
+                "country": "United States",
+                "countryIso2": "US",
+                "continent": "North America"
+              },
+              {
+                "city": "London",
+                "country": "United Kingdom",
+                "countryIso2": "GB",
+                "continent": "Europe"
+              },
+              {
+                "city": "Tel Aviv",
+                "country": "Israel",
+                "countryIso2": "IL",
+                "continent": "Asia"
+              }
+            ],
+            "socialLinks": {
+              "linkedin": "https://www.linkedin.com/company/salesforce"
+            },
+            "linkedinFollowers": 6417067,
+            "revenueRange": {
+              "min": 10000000000,
+              "max": 100000000000
+            },
+            "technologies": ["amazon", "paypal", "google analytics"],
+            "popularityTier": 1,
+            "logoUrl": "https://logo.lusha.co/brightdata/year=2024/month=05/day=20/j_lwej8xik12ncr6ge4u.9e1ec373903019beff129694cb926761f065e9af.file_lwejc8mispkz3m1ng.logo_cached.jpg",
+            "phones": [
+              {
+                "number": "+1 800-420-7332"
+              }
+            ],
+            "emails": [
+              {
+                "email": "datasubjectrequest@salesforce.com"
+              }
+            ],
+            "directParent": null,
+            "ultimateParent": null
+          },
+          {
+            "clientReferenceId": "comp-ref-3",
+            "id": "18654301",
+            "name": "4D",
+            "domain": "4d.com",
+            "companyType": "Subsidiary",
+            "directParent": {
+              "lushaCompanyId": "v1.XyZw...",
+              "name": "Volaris Group",
+              "domain": "volarisgroup.com"
+            },
+            "ultimateParent": {
+              "lushaCompanyId": "v1.QrSt...",
+              "name": "Constellation Software Inc.",
+              "domain": "csisoftware.com",
+              "hqCountry": "Canada"
+            }
+          }
+        ],
+        "billing": {
+          "creditsCharged": 5,
+          "resultsReturned": 3
+        }
+      }
+    ],
+    "person.prospectContacts": [
+      {
+        "requestId": "fa828378-7a8e-4e5d-9f72-0270e7f7ab51",
+        "pagination": {
+          "page": 0,
+          "size": 50,
+          "total": 670550,
+          "totalGuaranteed": true,
+          "totalDescription": "Exact contact count (up to 2 per company)"
+        },
+        "results": [
+          {
+            "id": "670138733",
+            "firstName": "Taylor",
+            "lastName": "Example"
+          }
+        ],
+        "tableWrite": {
+          "tableId": "482910",
+          "added": 48,
+          "alreadyPresent": 2,
+          "columnsCreated": [],
+          "rowsProcessed": 50,
+          "rowsCharged": 48,
+          "rowsAlreadyPaidInTable": 2
+        },
+        "billing": {
+          "creditsCharged": 2,
+          "resultsReturned": 50
+        }
+      }
+    ],
+    "company.prospectCompanies": [
+      {
+        "requestId": "f6a7b8c9-d0e1-2345-fabc-678901234567",
+        "results": [
+          {
+            "id": "16303253",
+            "name": "Lusha",
+            "domain": "lusha.com"
+          }
+        ],
+        "pagination": {
+          "page": 0,
+          "size": 25,
+          "total": 87
+        },
+        "tableWrite": {
+          "tableId": "583021",
+          "added": 1,
+          "alreadyPresent": 0,
+          "columnsCreated": [],
+          "rowsProcessed": 1,
+          "rowsCharged": 1,
+          "rowsAlreadyPaidInTable": 0
+        },
+        "billing": {
+          "creditsCharged": 1,
+          "resultsReturned": 1
+        }
+      }
+    ],
+    "person.getContactLookalikes": [
+      {
+        "dedupeSessionId": "58adaa77-7a6e-4c9b-8c2d-820a6538e613",
+        "results": [
+          {
+            "id": "9659196",
+            "firstName": "Sarah",
+            "lastName": "Johnson"
+          }
+        ],
+        "meta": {
+          "returned": 1,
+          "hasMore": true
+        },
+        "billing": {
+          "creditsCharged": 3,
+          "resultsReturned": 1
+        }
+      }
+    ],
+    "company.getCompanyLookalikes": [
+      {
+        "dedupeSessionId": "58adaa77-7a6e-4c9b-8c2d-820a6538e613",
+        "results": [
+          {
+            "id": "12345",
+            "name": "Marriott International",
+            "domain": "marriott.com"
+          }
+        ],
+        "meta": {
+          "returned": 1,
+          "hasMore": true
+        },
+        "billing": {
+          "creditsCharged": 3,
+          "resultsReturned": 1
+        }
+      }
+    ],
+    "person.getContactRecommendations": [
+      {
+        "requestId": "145fc2e1-bd6c-4618-a0c7-e1c7fa4eb6a7",
+        "userRecommendationsId": "1b403dbc-34fc-5dcc-8a4c-aea3db5b6288",
+        "results": [
+          {
+            "id": "v1.aBcDeFgHiJkLmNoPqRsTuV",
+            "firstName": "Jane",
+            "lastName": "Doe",
+            "jobTitle": {
+              "title": "Senior DevOps Engineer",
+              "departments": ["Engineering & Technical"],
+              "seniority": "Senior"
+            },
+            "company": {
+              "id": "v1.zYxWvUtSrQpOnMlKjIhG",
+              "name": "Example Corp",
+              "domain": "example.com",
+              "industry": "Technology, Information & Media"
+            },
+            "location": {
+              "country": "United Kingdom"
+            },
+            "socialLinks": {
+              "linkedin": "https://www.linkedin.com/in/jane-doe-example"
+            },
+            "has": [
+              "firstName",
+              "lastName",
+              "jobTitle",
+              "location",
+              "socialLinks",
+              "emails",
+              "phones"
+            ],
+            "canReveal": [
+              {
+                "field": "emails",
+                "credits": 1
+              },
+              {
+                "field": "phones",
+                "credits": 5
+              }
+            ],
+            "signalTypes": ["promotion", "surgeInHiring"],
+            "recommendation": {
+              "leadScore": 0.95,
+              "icpFitScore": 0.84,
+              "signalScore": 0.64,
+              "targetIcp": [
+                {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "name": "Lusha Calculated Target Profile"
+                }
+              ]
+            }
+          }
+        ],
+        "pagination": {
+          "page": 0,
+          "size": 25,
+          "total": 603
+        },
+        "billing": {
+          "creditsCharged": 1,
+          "resultsReturned": 1
+        }
+      }
+    ],
+    "company.getCompanyRecommendations": [
+      {
+        "requestId": "8d0a6c1e-2f4b-4a51-9c3e-5b7f0e9d2a14",
+        "userRecommendationsId": "1b403dbc-34fc-5dcc-8a4c-aea3db5b6288",
+        "results": [
+          {
+            "id": "v1.qRsTuVwXyZaBcDeFgHiJ",
+            "name": "Example Analytics",
+            "domain": "example-analytics.com",
+            "employeeCount": {
+              "exact": 1250,
+              "min": 1001,
+              "max": 5000
+            },
+            "industry": "Technology, Information & Media",
+            "location": {
+              "city": "Austin",
+              "state": "Texas",
+              "stateCode": "TX",
+              "country": "United States",
+              "countryIso2": "US",
+              "continent": "North America"
+            },
+            "socialLinks": {
+              "linkedin": "https://www.linkedin.com/company/example-analytics"
+            },
+            "has": [
+              "description",
+              "yearFounded",
+              "funding",
+              "monthlyWebsiteTraffic"
+            ],
+            "canReveal": [
+              {
+                "field": "monthlyWebsiteTraffic",
+                "credits": 1
+              }
+            ],
+            "signalTypes": ["surgeInHiring", "headcountIncrease3m"],
+            "recommendation": {
+              "leadScore": 1,
+              "icpFitScore": 0.95,
+              "signalScore": 0.88,
+              "targetIcp": [
+                {
+                  "id": "00000000-0000-0000-0000-000000000000",
+                  "name": "Lusha Calculated Target Profile"
+                }
+              ],
+              "intentTopics": ["Data Analytics"]
+            }
+          }
+        ],
+        "pagination": {
+          "page": 0,
+          "size": 25,
+          "total": 905
+        },
+        "billing": {
+          "creditsCharged": 1,
+          "resultsReturned": 1
+        }
+      }
+    ],
+    "person.getContactRecommendationFilters": [
+      {
+        "availableSignals": [
+          "promotion",
+          "companyChange",
+          "surgeInHiring",
+          "websiteTrafficIncrease",
+          "itSpendIncrease",
+          "headcountIncrease1m",
+          "headcountIncrease3m",
+          "headcountIncrease6m",
+          "headcountIncrease12m"
+        ],
+        "availableTargetIcps": [
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "name": "Lusha Calculated Target Profile"
+          }
+        ]
+      }
+    ],
+    "company.getCompanyRecommendationFilters": [
+      {
+        "availableSignals": [
+          "surgeInHiring",
+          "websiteTrafficIncrease",
+          "itSpendIncrease",
+          "headcountIncrease1m",
+          "headcountIncrease3m",
+          "headcountIncrease6m",
+          "headcountIncrease12m"
+        ],
+        "availableTargetIcps": [
+          {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "name": "Lusha Calculated Target Profile"
+          }
+        ]
+      }
+    ],
+    "person.getBuyingGroup": [
+      {
+        "requestId": "951d46da-24f9-4608-84bf-5e70a10bf851",
+        "results": [
+          {
+            "companyId": "v1.ocoj3UrkPqHcR8yAEosYFTuVXTH282LP",
+            "contacts": [
+              {
+                "id": "v1.VdKU4HkaDb7CE4CEImoUcm7bxUGUUz-aOQ",
+                "firstName": "Casey",
+                "lastName": "Example",
+                "jobTitle": {
+                  "title": "RF/Analog IC Design Engineer",
+                  "departments": ["Engineering & Technical"],
+                  "seniority": "Non-Manager"
+                },
+                "company": {
+                  "id": "v1.ocoj3UrkPqHcR8yAEosYFTuVXTH282LP",
+                  "name": "Intel",
+                  "domain": "www.intel.com"
+                },
+                "location": {
+                  "country": "United States",
+                  "state": "Arizona",
+                  "city": "Chandler"
+                },
+                "socialLinks": {
+                  "linkedin": "https://www.linkedin.com/in/casey-example-1005"
+                },
+                "has": [
+                  "firstName",
+                  "lastName",
+                  "jobTitle",
+                  "company",
+                  "location",
+                  "socialLinks",
+                  "phones",
+                  "previousEmployment",
+                  "jobStartDate"
+                ],
+                "canReveal": [
+                  {
+                    "field": "phones",
+                    "credits": 5
+                  }
+                ],
+                "roles": ["potential_champion"],
+                "score": 0.8872673511505127
+              }
+            ]
+          }
+        ],
+        "pagination": {
+          "page": 0,
+          "size": 100,
+          "total": 1
+        },
+        "billing": {
+          "creditsCharged": 1,
+          "resultsReturned": 1
+        }
+      }
+    ],
+    "contactTables.create": [],
+    "contactTables.list": [],
+    "contactTables.getColumnCatalog": [
+      {
+        "data": [
+          {
+            "category": "Contact details",
+            "displayName": "Job title",
+            "columnKey": "jobTitle",
+            "type": "string"
+          },
+          {
+            "category": "Contact details",
+            "displayName": "Seniority",
+            "columnKey": "seniority",
+            "type": "string"
+          },
+          {
+            "category": "Company",
+            "displayName": "Company size",
+            "columnKey": "companyEmployeeCount",
+            "type": "number"
+          },
+          {
+            "category": "Company",
+            "displayName": "Location",
+            "columnKey": "location",
+            "type": "object"
+          }
+        ],
+        "billing": {
+          "creditsCharged": 0,
+          "resultsReturned": 22
+        }
+      }
+    ],
+    "contactTables.get": [],
+    "contactTables.update": [],
+    "contactTables.delete": [],
+    "contactTables.listEntities": [],
+    "contactTables.addEntities": [],
+    "contactTables.removeEntities": [],
+    "contactTables.listColumns": [],
+    "contactTables.addColumns": [
+      {
+        "data": {
+          "columns": [
+            {
+              "status": "added",
+              "columnId": "d674a3ee-5c1b-4f2a-9e3d-8b7a6c5d4e3f",
+              "name": "First name",
+              "runStatus": "processing"
+            }
+          ],
+          "added": 1,
+          "failed": 0
+        },
+        "billing": {
+          "creditsCharged": 0,
+          "lowBalance": false
+        }
+      }
+    ],
+    "contactTables.removeColumn": [],
+    "contactTables.runColumn": [],
+    "companyTables.create": [],
+    "companyTables.list": [],
+    "companyTables.getColumnCatalog": [
+      {
+        "data": [
+          {
+            "category": "Firmographics",
+            "displayName": "Industry",
+            "columnKey": "industry",
+            "type": "string"
+          },
+          {
+            "category": "Firmographics",
+            "displayName": "Year founded",
+            "columnKey": "yearFounded",
+            "type": "number"
+          },
+          {
+            "category": "Firmographics",
+            "displayName": "Employees by department",
+            "columnKey": "employeesByDepartment",
+            "type": "object"
+          },
+          {
+            "category": "Funding",
+            "displayName": "Total funding amount",
+            "columnKey": "totalFundingAmount",
+            "type": "number"
+          }
+        ],
+        "billing": {
+          "creditsCharged": 0,
+          "resultsReturned": 46
+        }
+      }
+    ],
+    "companyTables.get": [],
+    "companyTables.update": [],
+    "companyTables.delete": [],
+    "companyTables.listEntities": [],
+    "companyTables.addEntities": [],
+    "companyTables.removeEntities": [],
+    "companyTables.removeColumn": [],
+    "companyTables.runColumn": [],
+    "person.getContactSignals": [
+      {
+        "results": [
+          {
+            "id": "115889",
+            "companyChange": [
+              {
+                "id": "115889",
+                "signalDate": "2025-02-01",
+                "previousCompany": "ZoomInfo",
+                "newCompany": "Lusha"
+              }
+            ],
+            "promotion": []
+          }
+        ],
+        "startDate": "2025-01-01",
+        "endDate": "2025-03-01",
+        "billing": {
+          "creditsCharged": 1,
+          "resultsReturned": 1
+        }
+      }
+    ],
+    "company.getCompanySignals": [
+      {
+        "results": [
+          {
+            "id": "15789512",
+            "companyName": "UIC Inc",
+            "domain": "uicinc.com",
+            "intentScoreIncrease": [
+              {
+                "id": "2139910966",
+                "signalDate": "2026-09-28",
+                "topic": "Air Cargo",
+                "category": "Other",
+                "score": 65,
+                "previousScore": 60,
+                "changeRatePercent": 8
+              }
+            ],
+            "intentScoreDecrease": [
+              {
+                "id": "2139504101",
+                "signalDate": "2026-09-28",
+                "topic": "Cloud HR Platform",
+                "category": "HR Tech",
+                "score": 61,
+                "previousScore": 83,
+                "changeRatePercent": -27
+              }
+            ],
+            "intentTopicRemoved": [
+              {
+                "id": "2139471579",
+                "signalDate": "2026-09-28",
+                "topic": "Employee Onboarding Software",
+                "category": "HR Tech",
+                "score": null,
+                "previousScore": null,
+                "changeRatePercent": null
+              }
+            ]
+          },
+          {
+            "id": "99999999",
+            "error": {
+              "code": "NOT_FOUND",
+              "message": "Company not found"
+            }
+          }
+        ],
+        "billing": {
+          "creditsCharged": 3,
+          "resultsReturned": 1
+        }
+      }
+    ],
+    "person.getContactSignalTypes": [
+      {
+        "signalTypes": ["allSignals", "promotion", "companyChange"]
+      }
+    ],
+    "company.getCompanySignalTypes": [
+      {
+        "signalTypes": [
+          "allSignals",
+          "linkedinActivityIntent",
+          "newIntentTopic",
+          "intentScoreIncrease",
+          "intentScoreDecrease",
+          "intentTopicRemoved",
+          "websiteTrafficDecrease",
+          "websiteTrafficIncrease",
+          "itSpendIncrease",
+          "itSpendDecrease",
+          "linkedinFollowersIncrease",
+          "linkedinFollowersDecrease",
+          "surgeInHiring",
+          "headcountIncrease1m",
+          "headcountIncrease3m",
+          "headcountIncrease6m",
+          "headcountIncrease12m",
+          "headcountDecrease1m",
+          "headcountDecrease3m",
+          "headcountDecrease6m",
+          "headcountDecrease12m",
+          "surgeInHiringByDepartment",
+          "surgeInHiringByLocation",
+          "riskNews",
+          "commercialActivityNews",
+          "corporateStrategyNews",
+          "financialEventsNews",
+          "peopleNews",
+          "marketIntelligenceNews",
+          "productActivityNews"
+        ]
+      }
+    ],
+    "company.getCompanySignalFilters": [
+      {
+        "availableFilters": [
+          {
+            "filterType": "newsEventTypes",
+            "requiresQuery": false
+          },
+          {
+            "filterType": "hiringByDepartments",
+            "requiresQuery": false
+          },
+          {
+            "filterType": "hiringByLocations",
+            "requiresQuery": true
+          },
+          {
+            "filterType": "intentCategories",
+            "requiresQuery": false
+          },
+          {
+            "filterType": "intentTopics",
+            "requiresQuery": true
+          }
+        ]
+      }
+    ],
+    "company.getCompanySignalFilterValues": [
+      {
+        "values": ["Cloud HR Platform"]
+      }
+    ],
+    "company.getCompanySignalScores": [
+      {
+        "requestId": "5d6f13d2-f6b0-4e55-85d5-04e17f932c1a",
+        "results": [
+          {
+            "clientReferenceId": "ref-1",
+            "id": "v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345",
+            "name": "Acme Corp",
+            "domain": "www.acmecorp.io",
+            "signalScore": 42,
+            "signalTypes": ["hiringSignalIncrease", "websiteVisit"],
+            "noActiveSignals": false
+          },
+          {
+            "clientReferenceId": "ref-2",
+            "id": "v1.6789ZyXwVuTsRqPoNmLkJiHgFeDcBa01",
+            "name": "Microsoft",
+            "domain": "www.microsoft.com",
+            "signalScore": 0,
+            "signalTypes": [],
+            "noActiveSignals": true
+          },
+          {
+            "clientReferenceId": "ref-3",
+            "domain": "nope-xyz.com",
+            "error": {
+              "code": "NOT_FOUND",
+              "message": "Company not found"
+            }
+          }
+        ],
+        "billing": {
+          "creditsCharged": 2,
+          "resultsReturned": 2
+        }
+      }
+    ],
+    "person.getContactSignalScores": [
+      {
+        "requestId": "5d6f13d2-f6b0-4e55-85d5-04e17f932c1a",
+        "results": [
+          {
+            "clientReferenceId": "ref-1",
+            "id": "v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345",
+            "fullName": "Jane Doe",
+            "company": {
+              "id": "v1.6789ZyXwVuTsRqPoNmLkJiHgFeDcBa01",
+              "name": "Acme Corp",
+              "domain": "acme.com"
+            },
+            "signalScore": 30,
+            "signalTypes": ["promotion"],
+            "noActiveSignals": false
+          },
+          {
+            "clientReferenceId": "ref-2",
+            "error": {
+              "code": "NOT_FOUND",
+              "message": "Contact not found"
+            }
+          }
+        ],
+        "billing": {
+          "creditsCharged": 1,
+          "resultsReturned": 1
+        }
+      }
+    ],
+    "icp.listProfiles": [
+      {
+        "profiles": [
+          {
+            "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+            "name": "Mid-market SaaS",
+            "status": "active",
+            "access": "private",
+            "canEdit": true,
+            "isOwner": true,
+            "createdAt": "2026-09-01T10:00:00.000Z",
+            "updatedAt": "2026-09-02T10:00:00.000Z"
+          }
+        ],
+        "billing": {
+          "creditsCharged": 0,
+          "resultsReturned": 1,
+          "lowBalance": false
+        }
+      }
+    ],
+    "company.getCompanyIcpFitScores": [
+      {
+        "requestId": "5d6f13d2-f6b0-4e55-85d5-04e17f932c1a",
+        "results": [
+          {
+            "clientReferenceId": "ref-1",
+            "id": "v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345",
+            "name": "Acme Corp",
+            "domain": "acmecorp.io",
+            "icpFitScore": 0.92,
+            "topProfile": {
+              "id": "3fbaaaa7-700f-4419-a0c6-56f9f3fca391",
+              "name": "Mid-market SaaS"
+            },
+            "profileScores": [
+              {
+                "id": "3fbaaaa7-700f-4419-a0c6-56f9f3fca391",
+                "name": "Mid-market SaaS",
+                "score": 0.92
+              },
+              {
+                "id": "a49d9e05-eb62-4c00-8186-e74ba237a0ad",
+                "name": "Enterprise",
+                "score": 0.1
+              }
+            ]
+          },
+          {
+            "clientReferenceId": "ref-2",
+            "id": "v1.6789ZyXwVuTsRqPoNmLkJiHgFeDcBa01",
+            "name": "Microsoft",
+            "domain": "microsoft.com",
+            "icpFitScore": 0,
+            "topProfile": {
+              "id": "3fbaaaa7-700f-4419-a0c6-56f9f3fca391",
+              "name": "Mid-market SaaS"
+            },
+            "profileScores": [
+              {
+                "id": "3fbaaaa7-700f-4419-a0c6-56f9f3fca391",
+                "name": "Mid-market SaaS",
+                "score": 0
+              },
+              {
+                "id": "a49d9e05-eb62-4c00-8186-e74ba237a0ad",
+                "name": "Enterprise",
+                "score": 0
+              }
+            ]
+          },
+          {
+            "clientReferenceId": "ref-3",
+            "name": "Apple",
+            "error": {
+              "code": "NOT_FOUND",
+              "message": "Company not found"
+            }
+          }
+        ],
+        "billing": {
+          "creditsCharged": 2,
+          "resultsReturned": 2,
+          "lowBalance": false
+        }
+      }
+    ],
+    "person.getContactIcpFitScores": [
+      {
+        "requestId": "5d6f13d2-f6b0-4e55-85d5-04e17f932c1a",
+        "results": [
+          {
+            "clientReferenceId": "ref-1",
+            "id": "v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345",
+            "fullName": "John Doe",
+            "company": {
+              "id": "v1.ZyXwVuTsRqPoNmLkJiHgFeDcBa987654",
+              "name": "Acme Corp",
+              "domain": "acmecorp.io"
+            },
+            "icpFitScore": 0.66,
+            "topProfile": {
+              "id": "3fbaaaa7-700f-4419-a0c6-56f9f3fca391",
+              "name": "Mid-market SaaS"
+            }
+          },
+          {
+            "clientReferenceId": "ref-2",
+            "id": "v1.QwErTyUiOpAsDfGhJkLzXcVbNm123456",
+            "fullName": "Jane Roe",
+            "error": {
+              "code": "NO_SCORE",
+              "message": "No ICP fit score available"
+            }
+          },
+          {
+            "clientReferenceId": "ref-3",
+            "error": {
+              "code": "NOT_FOUND",
+              "message": "Contact not found"
+            }
+          }
+        ],
+        "billing": {
+          "creditsCharged": 1,
+          "resultsReturned": 1,
+          "lowBalance": false
+        }
+      }
+    ],
+    "company.getWebsiteVisits": [
+      {
+        "requestId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "results": [
+          {
+            "id": "v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345",
+            "name": "Lusha",
+            "domain": "www.lusha.com",
+            "industry": "Software Development",
+            "employeeCount": {
+              "min": 201,
+              "max": 500
+            },
+            "location": {
+              "city": "Tel Aviv",
+              "country": "Israel",
+              "countryIso2": "IL"
+            },
+            "socialLinks": {
+              "linkedin": "https://www.linkedin.com/company/lusha"
+            },
+            "has": ["competitors", "socialLinks"],
+            "canReveal": [
+              {
+                "field": "competitors",
+                "credits": 1
+              }
+            ],
+            "score": 87,
+            "scoreBand": "hot",
+            "totalSessions": 12,
+            "uniqueVisitors": 5,
+            "avgSessionMinutes": 4.2,
+            "daysVisited": 8,
+            "highIntentPageviews": 10,
+            "daysSinceLastVisit": 6,
+            "lastVisit": "2026-03-20",
+            "visitorCountry": "US"
+          }
+        ],
+        "pagination": {
+          "size": 25,
+          "page": 0,
+          "total": 142
+        },
+        "billing": {
+          "creditsCharged": 0,
+          "resultsReturned": 1
+        }
+      }
+    ],
+    "person.getContactFilterTypes": [
+      {
+        "availableFilters": [
+          {
+            "filterType": "locations",
+            "requiresQuery": true
+          },
+          {
+            "filterType": "departments",
+            "requiresQuery": false
+          },
+          {
+            "filterType": "seniority",
+            "requiresQuery": false
+          },
+          {
+            "filterType": "countries",
+            "requiresQuery": false
+          },
+          {
+            "filterType": "existingDataPoints",
+            "requiresQuery": false
+          }
+        ],
+        "filters": [
+          {
+            "path": "filters.contacts.include.jobTitles",
+            "type": "string[]",
+            "description": "Array of job titles to search for",
+            "valueSource": "lookup",
+            "lookup": {
+              "filterType": "jobTitles",
+              "url": "/v3/contacts/prospecting/filters/jobTitles",
+              "requiresQuery": true
+            }
+          }
+        ],
+        "generatedAt": "2026-10-30T12:49:10.978Z"
+      }
+    ],
+    "person.getContactFilterValues": [],
+    "company.getCompanyFilterTypes": [
+      {
+        "availableFilters": [
+          {
+            "filterType": "names",
+            "requiresQuery": true
+          },
+          {
+            "filterType": "technologies",
+            "requiresQuery": true
+          },
+          {
+            "filterType": "industriesLabels",
+            "requiresQuery": false
+          },
+          {
+            "filterType": "sizes",
+            "requiresQuery": false
+          },
+          {
+            "filterType": "revenues",
+            "requiresQuery": false
+          }
+        ],
+        "filters": [
+          {
+            "path": "filters.companies.include.names",
+            "type": "string[]",
+            "description": "Company names",
+            "valueSource": "lookup",
+            "lookup": {
+              "filterType": "names",
+              "url": "/v3/companies/prospecting/filters/names",
+              "requiresQuery": true
+            }
+          }
+        ],
+        "generatedAt": "2026-10-30T12:49:10.978Z"
+      }
+    ],
+    "company.getCompanyFilterValues": [],
+    "subscriptions.create": [
+      {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "results": [
+          {
+            "index": 0,
+            "success": true,
+            "subscription": {
+              "id": "507f1f77bcf86cd799439011",
+              "entityType": "contact",
+              "entityId": "123",
+              "signalTypes": ["promotion", "companyChange"],
+              "url": "https://example.com/webhooks/lusha",
+              "name": "Contact 123",
+              "isActive": true,
+              "createdAt": "2026-02-02T10:00:00.000Z",
+              "updatedAt": "2026-02-02T10:00:00.000Z"
+            }
+          }
+        ]
+      },
+      {
+        "total": 3,
+        "successful": 2,
+        "failed": 1,
+        "results": [
+          {
+            "index": 0,
+            "success": true,
+            "subscription": {
+              "id": "507f1f77bcf86cd799439011",
+              "entityType": "contact",
+              "entityId": "123",
+              "signalTypes": ["promotion", "companyChange"],
+              "url": "https://example.com/webhooks/lusha",
+              "name": "Contact 123",
+              "isActive": true,
+              "createdAt": "2026-02-02T10:00:00.000Z",
+              "updatedAt": "2026-02-02T10:00:00.000Z"
+            }
+          },
+          {
+            "index": 1,
+            "success": false,
+            "error": {
+              "code": "DUPLICATE_SUBSCRIPTION",
+              "message": "Subscription already exists for entity type 'contact' with entity ID '456'"
+            }
+          }
+        ]
+      }
+    ],
+    "subscriptions.list": [
+      {
+        "data": [
+          {
+            "id": "507f1f77bcf86cd799439011",
+            "entityType": "contact",
+            "entityId": "123456",
+            "signalTypes": ["promotion", "companyChange"],
+            "url": "https://example.com/webhook",
+            "name": "My Contact Webhook",
+            "isActive": true,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          }
+        ],
+        "pagination": {
+          "total": 25,
+          "limit": 10,
+          "offset": 0,
+          "hasMore": true
+        }
+      }
+    ],
+    "subscriptions.get": [],
+    "subscriptions.update": [],
+    "subscriptions.test": [
+      {
+        "subscriptionId": "507f1f77bcf86cd799439011",
+        "subscriptionName": "My Test Webhook",
+        "url": "https://example.com/webhook",
+        "mode": "full",
+        "flowCheck": {
+          "success": true,
+          "statusCode": 200,
+          "durationMs": 150
+        },
+        "testPayload": {
+          "entityType": "contact",
+          "signalType": "promotion",
+          "data": {}
+        },
+        "isSuccess": true,
+        "timestamp": "2024-01-01T00:00:00.000Z"
+      }
+    ],
+    "subscriptions.delete": [
+      {
+        "total": 3,
+        "successful": 3,
+        "failed": 0,
+        "results": [
+          {
+            "index": 0,
+            "success": true,
+            "subscription": {
+              "id": "sub-123",
+              "entityType": "contact",
+              "entityId": "123",
+              "name": "Contact Webhook"
+            }
+          }
+        ]
+      },
+      {
+        "total": 3,
+        "successful": 2,
+        "failed": 1,
+        "results": [
+          {
+            "index": 0,
+            "success": true,
+            "subscription": {
+              "id": "sub-123",
+              "entityType": "contact",
+              "entityId": "123",
+              "name": "Contact Webhook"
+            }
+          },
+          {
+            "index": 1,
+            "success": false,
+            "error": {
+              "code": "NOT_FOUND",
+              "message": "Subscription with id 'sub-456' not found"
+            }
+          }
+        ]
+      }
+    ],
+    "auditLogs.list": [
+      {
+        "data": [
+          {
+            "id": "log-123",
+            "subscriptionId": "sub-123",
+            "payloadId": "payload-456",
+            "status": "success",
+            "statusCode": 200,
+            "url": "https://example.com/webhook",
+            "deliveredAt": "2024-01-01T00:00:00.000Z",
+            "durationMs": 150,
+            "error": null
+          }
+        ],
+        "pagination": {
+          "total": 100,
+          "limit": 50,
+          "offset": 0,
+          "hasMore": true
+        }
+      }
+    ],
+    "auditLogs.getStats": [
+      {
+        "total": 1000,
+        "success": 950,
+        "failed": 45,
+        "permanentFailure": 5,
+        "totalCreditsConsumed": 950,
+        "successRate": "95.00%"
+      }
+    ],
+    "subscriptions.createOptOut": [],
+    "getAccountUsage": [
+      {
+        "credits": {
+          "total": 10000,
+          "used": 1500,
+          "remaining": 8500
+        },
+        "rateLimits": {
+          "daily": {
+            "limit": 5000,
+            "used": 120,
+            "remaining": 4880,
+            "resetsAt": "2026-03-31T00:00:00.000Z"
+          }
+        },
+        "plan": {
+          "category": "professional",
+          "renewalType": "annual",
+          "startDate": "2026-01-01T00:00:00.000Z",
+          "endDate": "2027-01-01T00:00:00.000Z"
+        },
+        "pricing": {
+          "revealEmail": {
+            "credits": 1,
+            "perQuantity": 1
+          },
+          "revealPhone": {
+            "credits": 5,
+            "perQuantity": 1
+          }
+        }
+      }
+    ],
+    "conversations.search": [
+      {
+        "requestId": "3f1a9c2e-7b4d-4a8e-9f10-2c5d6e7a8b90",
+        "conversations": [
+          {
+            "id": "8f2c9b1e-4a7d-4f3b-9c2e-1d6a5b8c7e90",
+            "title": "Acme <> Lusha - Quarterly review",
+            "date": "2026-03-12",
+            "startTime": "2026-03-12T14:00:00Z",
+            "durationSeconds": 1830,
+            "durationFormatted": "30m 30s",
+            "meetingType": "discovery",
+            "isExternal": true,
+            "company": {
+              "name": "Acme Inc",
+              "domain": "acme.com"
+            },
+            "participants": [
+              {
+                "name": "Jane Doe",
+                "email": "jane@acme.com",
+                "role": "VP Sales",
+                "isInternal": false
+              },
+              {
+                "name": "Sam Rep",
+                "email": "sam@example.com",
+                "role": "AE",
+                "isInternal": true
+              }
+            ],
+            "topicLabels": ["pricing", "security"],
+            "summary": {
+              "text": "The team walked through the pricing tiers.",
+              "keyHighlights": ["Budget confirmed for Q3"],
+              "actionItems": [
+                {
+                  "text": "Send the revised pricing sheet",
+                  "owner": "Sam Rep",
+                  "dueDate": "2026-03-19"
+                }
+              ],
+              "nextSteps": ["Schedule a technical deep dive"],
+              "risks": [
+                {
+                  "text": "Budget approval is still pending",
+                  "severity": "high"
+                }
+              ],
+              "objections": [
+                {
+                  "text": "Price is above the current spend",
+                  "severity": null
+                }
+              ],
+              "competition": [
+                {
+                  "name": "Competitor Inc",
+                  "context": "Mentioned as incumbent",
+                  "sentiment": "negative"
+                }
+              ]
+            },
+            "coaching": {
+              "overallScore": 68,
+              "likelihoodOfSale": 45,
+              "sections": [
+                {
+                  "section": "discovery",
+                  "score": 72,
+                  "whatHappened": "The rep opened with a clear agenda.",
+                  "whatToKeep": ["Strong discovery questions"],
+                  "whatToImprove": ["Confirm the decision process earlier"]
+                }
+              ],
+              "notes": "Focus on quantifying impact."
+            },
+            "chapters": [
+              {
+                "index": 0,
+                "title": "Introductions",
+                "startTime": "00:00:00",
+                "endTime": "00:04:12",
+                "summary": "Participants introduced themselves."
+              }
+            ]
+          }
+        ],
+        "page": {
+          "page": 1,
+          "pageSize": 25,
+          "totalItems": 137,
+          "totalPages": 6
+        },
+        "billing": {
+          "creditsCharged": 1,
+          "resultsReturned": 1
+        }
+      }
+    ],
+    "conversations.getTranscript": [
+      {
+        "requestId": "3f1a9c2e-7b4d-4a8e-9f10-2c5d6e7a8b90",
+        "conversationId": "8f2c9b1e-4a7d-4f3b-9c2e-1d6a5b8c7e90",
+        "segments": [
+          {
+            "speaker": "Jane Doe",
+            "side": "external",
+            "text": "We need to understand the pricing tiers before we commit.",
+            "startTime": "00:12:04",
+            "endTime": "00:12:19"
+          },
+          {
+            "speaker": "Sam Rep",
+            "side": "internal",
+            "text": "Happy to walk you through them.",
+            "startTime": "00:12:20",
+            "endTime": "00:12:26"
+          }
+        ],
+        "billing": {
+          "creditsCharged": 1,
+          "resultsReturned": 1
+        }
+      }
+    ],
+    "getContactsEnrichJob": [
+      {
+        "jobId": "wf_3f2b9c1e-4a7d-4f3b-9c2e-1d6a5b8c7e90",
+        "status": "processing",
+        "requestId": "c3d4e5f6-a7b8-9012-cdef-345678901234",
+        "expiresAt": "2026-01-15T10:30:00Z",
+        "retryAfter": 5,
+        "covers": [
+          {
+            "contactId": "v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345",
+            "dataPoints": ["phone"]
+          }
+        ]
+      },
+      {
+        "jobId": "wf_3f2b9c1e-4a7d-4f3b-9c2e-1d6a5b8c7e90",
+        "status": "complete",
+        "requestId": "c3d4e5f6-a7b8-9012-cdef-345678901234",
+        "expiresAt": "2026-01-15T10:30:00Z",
+        "contacts": [
+          {
+            "id": "v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345",
+            "firstName": "John",
+            "lastName": "Doe",
+            "phones": [
+              {
+                "number": "+14155551234",
+                "type": "mobile",
+                "doNotCall": false,
+                "dataSource": "wiza",
+                "credits": 8
+              }
+            ]
+          }
+        ],
+        "creditsCharged": 8
+      }
+    ]
+  },
+  "requests": {
+    "person.prospectContacts": [
+      {
+        "pagination": {
+          "page": 0,
+          "size": 100
+        },
+        "filters": {
+          "contacts": {
+            "include": {
+              "departments": ["Sales"],
+              "locations": [
+                {
+                  "country": "United States"
+                }
+              ],
+              "existingDataPoints": ["work_email"]
+            }
+          },
+          "companies": {
+            "include": {
+              "locations": [
+                {
+                  "country": "United States"
+                }
+              ],
+              "foundedYear": [
+                {
+                  "min": 2000
+                }
+              ],
+              "businessModel": ["B2B"],
+              "companyType": ["Public Company"],
+              "linkedinUrls": ["https://www.linkedin.com/company/google"],
+              "keywords": ["fintech"]
+            },
+            "exclude": {
+              "domains": ["competitor.com"],
+              "companyType": ["Self Employed"]
+            }
+          }
+        },
+        "tableId": "482910",
+        "options": {
+          "includePartialProfiles": true,
+          "excludeDnc": false,
+          "maxContactsPerCompany": 2
+        }
+      }
+    ],
+    "company.prospectCompanies": [
+      {
+        "pagination": {
+          "page": 0,
+          "size": 25
+        },
+        "filters": {
+          "companies": {
+            "include": {
+              "sizes": [
+                {
+                  "min": 1,
+                  "max": 1000
+                }
+              ],
+              "revenues": [
+                {
+                  "min": 10000000
+                }
+              ],
+              "locations": [
+                {
+                  "country": "United States"
+                }
+              ],
+              "technologies": ["React", "Node.js"],
+              "technologiesCondition": "or",
+              "mainIndustriesIds": [1, 5],
+              "foundedYear": [
+                {
+                  "min": 1990,
+                  "max": 2020
+                }
+              ],
+              "businessModel": ["B2B", "B2G"],
+              "companyType": ["Public Company", "Private Company"],
+              "linkedinUrls": ["https://www.linkedin.com/company/microsoft"],
+              "keywords": ["cloud", "artificial intelligence"],
+              "signals": {
+                "types": ["headcountIncrease3m", "surgeInHiring"],
+                "startDate": "2025-01-01"
+              }
+            },
+            "exclude": {
+              "domains": ["competitor.com"],
+              "businessModel": ["B2C"],
+              "companyType": ["Non Profit"],
+              "keywords": ["staffing"]
+            }
+          }
+        },
+        "tableId": "583021",
+        "options": {
+          "includePartialProfiles": false
+        }
+      }
+    ],
+    "person.getContactLookalikes": [
+      {
+        "seeds": {
+          "linkedinUrls": [
+            "https://www.linkedin.com/in/alex-example-1001",
+            "https://www.linkedin.com/in/sam-example-1002"
+          ],
+          "emails": ["robin.example@example.com", "morgan.example@example.com"],
+          "ids": ["1234", "4567"]
+        },
+        "exclude": {
+          "emails": ["existing@customer.com"]
+        },
+        "limit": 25
+      },
+      {
+        "dedupeSessionId": "58adaa77-7a6e-4c9b-8c2d-820a6538e613",
+        "seeds": {
+          "linkedinUrls": [
+            "https://www.linkedin.com/in/alex-example-1001",
+            "https://www.linkedin.com/in/sam-example-1002"
+          ],
+          "emails": ["robin.example@example.com", "morgan.example@example.com"],
+          "ids": ["1234", "4567"]
+        },
+        "limit": 25
+      }
+    ],
+    "company.getCompanyLookalikes": [
+      {
+        "seeds": {
+          "domains": ["sap.com", "oracle.com", "workday.com", "servicenow.com"],
+          "linkedinUrls": [
+            "https://www.linkedin.com/company/google",
+            "https://www.linkedin.com/company/microsoft"
+          ]
+        },
+        "exclude": {
+          "domains": ["existingcustomer.com"]
+        },
+        "limit": 100
+      },
+      {
+        "dedupeSessionId": "58adaa77-7a6e-4c9b-8c2d-820a6538e613",
+        "seeds": {
+          "domains": ["sap.com", "oracle.com", "workday.com", "servicenow.com"],
+          "linkedinUrls": [
+            "https://www.linkedin.com/company/google",
+            "https://www.linkedin.com/company/microsoft"
+          ]
+        },
+        "limit": 100
+      }
+    ],
+    "person.getContactRecommendations": [
+      {},
+      {
+        "pagination": {
+          "page": 0,
+          "size": 25
+        },
+        "sort": [
+          {
+            "by": "leadScore",
+            "order": "desc"
+          }
+        ],
+        "filters": {
+          "targetIcp": ["00000000-0000-0000-0000-000000000000"],
+          "signals": ["promotion", "companyChange"],
+          "leadScore": {
+            "min": 0.7
+          },
+          "icpFitScore": {
+            "min": 0.5,
+            "max": 1
+          }
+        }
+      }
+    ],
+    "company.getCompanyRecommendations": [
+      {},
+      {
+        "pagination": {
+          "page": 0,
+          "size": 25
+        },
+        "sort": [
+          {
+            "by": "leadScore",
+            "order": "desc"
+          }
+        ],
+        "filters": {
+          "targetIcp": ["00000000-0000-0000-0000-000000000000"],
+          "signals": ["surgeInHiring", "headcountIncrease3m"],
+          "leadScore": {
+            "min": 0.7
+          }
+        }
+      }
+    ],
+    "person.getBuyingGroup": [
+      {
+        "companies": [
+          {
+            "clientReferenceId": "comp-ref-1",
+            "domain": "acme.com"
+          },
+          {
+            "clientReferenceId": "comp-ref-2",
+            "id": "v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345"
+          }
+        ],
+        "personas": ["decision_maker", "potential_champion"],
+        "contactsLimit": 20
+      }
+    ],
+    "contactTables.create": [
+      {
+        "name": "VP Sales US Tech Q2",
+        "visibility": "private",
+        "owner": {
+          "email": "user@example.com"
+        },
+        "ids": ["10042851", "10042852"]
+      }
+    ],
+    "contactTables.list": [
+      {
+        "owner": {
+          "email": "user@example.com"
+        },
+        "page": 0,
+        "size": 10,
+        "status": "active"
+      }
+    ],
+    "contactTables.update": [
+      {
+        "name": "postman-renamed",
+        "visibility": "shared",
+        "owner": {
+          "email": "user@example.com"
+        }
+      }
+    ],
+    "contactTables.addEntities": [
+      {
+        "entityIds": ["10042854", "10042855", "10042856"],
+        "companyIds": ["16303253", "16303253", "12790225"],
+        "owner": {
+          "email": "user@example.com"
+        }
+      }
+    ],
+    "contactTables.removeEntities": [
+      {
+        "entityIds": ["10042851", "10042852"],
+        "owner": {
+          "email": "user@example.com"
+        }
+      }
+    ],
+    "contactTables.addColumns": [
+      {
+        "columns": [
+          {
+            "columnKey": "jobTitle"
+          },
+          {
+            "columnKey": "seniority"
+          },
+          {
+            "columnKey": "workEmail"
+          }
+        ],
+        "owner": {
+          "email": "user@example.com"
+        }
+      },
+      {
+        "columnKey": "jobTitle",
+        "owner": {
+          "email": "user@example.com"
+        }
+      }
+    ],
+    "contactTables.runColumn": [
+      {
+        "runScope": "specific",
+        "entityIds": ["10042851", "10042852"],
+        "owner": {
+          "email": "user@example.com"
+        }
+      }
+    ],
+    "companyTables.create": [
+      {
+        "name": "postman-companies",
+        "visibility": "private",
+        "owner": {
+          "email": "user@example.com"
+        }
+      }
+    ],
+    "companyTables.list": [
+      {
+        "owner": {
+          "email": "user@example.com"
+        },
+        "page": 0,
+        "size": 10,
+        "status": "active"
+      }
+    ],
+    "companyTables.update": [
+      {
+        "name": "postman-renamed",
+        "visibility": "shared",
+        "owner": {
+          "email": "user@example.com"
+        }
+      }
+    ],
+    "companyTables.addEntities": [
+      {
+        "entityIds": ["30058211", "30058212"],
+        "owner": {
+          "email": "user@example.com"
+        }
+      }
+    ],
+    "companyTables.removeEntities": [
+      {
+        "entityIds": ["10117615"],
+        "owner": {
+          "email": "user@example.com"
+        }
+      }
+    ],
+    "companyTables.runColumn": [
+      {
+        "runScope": "missing",
+        "owner": {
+          "email": "user@example.com"
+        }
+      }
+    ],
+    "person.getContactSignals": [
+      {
+        "ids": ["4389064624", "4389064654"],
+        "signalTypes": ["allSignals"],
+        "startDate": "2025-01-01"
+      }
+    ],
+    "company.getCompanySignals": [
+      {
+        "ids": ["16303253"],
+        "signalTypes": ["allSignals"],
+        "startDate": "2025-01-01",
+        "maxResultsPerSignal": 10
+      },
+      {
+        "ids": ["15789512"],
+        "signalTypes": [
+          "newIntentTopic",
+          "intentScoreIncrease",
+          "intentScoreDecrease",
+          "intentTopicRemoved"
+        ],
+        "startDate": "2026-09-01",
+        "maxResultsPerSignal": 10,
+        "filters": {
+          "include": {
+            "intentTopics": [
+              "Air Cargo",
+              "Cloud HR Platform",
+              "Employee Onboarding Software"
+            ]
+          }
+        }
+      }
+    ],
+    "company.getCompanySignalScores": [
+      {
+        "companies": [
+          {
+            "clientReferenceId": "ref-1",
+            "id": "v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345"
+          },
+          {
+            "clientReferenceId": "ref-2",
+            "domain": "www.microsoft.com"
+          },
+          {
+            "clientReferenceId": "ref-3",
+            "name": "Apple"
+          }
+        ]
+      }
+    ],
+    "person.getContactSignalScores": [
+      {
+        "contacts": [
+          {
+            "clientReferenceId": "ref-1",
+            "id": "v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345"
+          },
+          {
+            "clientReferenceId": "ref-2",
+            "linkedinUrl": "https://linkedin.com/in/johndoe"
+          },
+          {
+            "clientReferenceId": "ref-3",
+            "firstName": "Jane",
+            "lastName": "Doe",
+            "companyDomain": "acme.com"
+          }
+        ]
+      }
+    ],
+    "company.getCompanyIcpFitScores": [
+      {
+        "targetProfileIds": [
+          "3fbaaaa7-700f-4419-a0c6-56f9f3fca391",
+          "a49d9e05-eb62-4c00-8186-e74ba237a0ad"
+        ],
+        "companies": [
+          {
+            "clientReferenceId": "ref-1",
+            "id": "v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345"
+          },
+          {
+            "clientReferenceId": "ref-2",
+            "domain": "www.microsoft.com"
+          },
+          {
+            "clientReferenceId": "ref-3",
+            "name": "Apple"
+          }
+        ]
+      }
+    ],
+    "person.getContactIcpFitScores": [
+      {
+        "targetProfileIds": ["3fbaaaa7-700f-4419-a0c6-56f9f3fca391"],
+        "contacts": [
+          {
+            "clientReferenceId": "ref-1",
+            "id": "v1.AbCdEfGhIjKlMnOpQrStUvWxYz012345"
+          },
+          {
+            "clientReferenceId": "ref-2",
+            "linkedinUrl": "https://linkedin.com/in/johndoe"
+          },
+          {
+            "clientReferenceId": "ref-3",
+            "firstName": "Jane",
+            "lastName": "Doe",
+            "companyDomain": "acme.com"
+          }
+        ]
+      }
+    ],
+    "company.getWebsiteVisits": [
+      {
+        "domains": ["lusha.com", "google.com"],
+        "startDate": "2026-01-01",
+        "endDate": "2026-03-18",
+        "pagination": {
+          "size": 25,
+          "page": 0
+        },
+        "sort": {
+          "by": "score",
+          "order": "desc"
+        },
+        "filters": {
+          "scoreBands": ["hot", "warm"],
+          "score": {
+            "min": 50
+          }
+        }
+      }
+    ],
+    "subscriptions.create": [
+      {
+        "defaults": {
+          "entityType": "contact",
+          "signalTypes": ["promotion", "companyChange"],
+          "url": "https://example.com/webhooks/lusha"
+        },
+        "subscriptions": [
+          {
+            "entityId": "123456",
+            "name": "My Test Webhook"
+          }
+        ]
+      },
+      {
+        "defaults": {
+          "entityType": "contact",
+          "signalTypes": ["promotion", "companyChange"],
+          "url": "https://example.com/webhooks/lusha"
+        },
+        "subscriptions": [
+          {
+            "entityId": "123",
+            "name": "Contact 123"
+          },
+          {
+            "entityId": "456",
+            "name": "Contact 456"
+          },
+          {
+            "entityId": "789",
+            "name": "Contact 789"
+          }
+        ]
+      },
+      {
+        "defaults": {
+          "signalTypes": ["promotion", "itSpendIncrease"],
+          "url": "https://example.com/webhooks/lusha"
+        },
+        "subscriptions": [
+          {
+            "entityType": "contact",
+            "entityId": "123"
+          },
+          {
+            "entityType": "company",
+            "entityId": "456"
+          }
+        ]
+      }
+    ],
+    "subscriptions.update": [
+      {
+        "isActive": false
+      },
+      {
+        "signalTypes": ["promotion", "companyChange"]
+      },
+      {
+        "regenerateSecret": true
+      },
+      {
+        "url": "https://new-domain.com/webhooks/lusha"
+      }
+    ],
+    "subscriptions.delete": [
+      {
+        "ids": ["sub-123"]
+      },
+      {
+        "ids": ["sub-123", "sub-456", "sub-789"]
+      }
+    ],
+    "subscriptions.createOptOut": [
+      {
+        "entityType": "contact",
+        "url": "https://example.com/webhook",
+        "name": "Account opt-out webhook"
+      }
+    ],
+    "conversations.search": [
+      {
+        "query": "pricing objection",
+        "page": 1,
+        "pageSize": 25
+      },
+      {
+        "dateFrom": "2026-01-01",
+        "dateTo": "2026-03-31",
+        "companyDomains": ["acme.com"],
+        "contactNames": ["Jane Doe"],
+        "meetingTitles": ["Quarterly review"],
+        "page": 1,
+        "pageSize": 25
+      }
+    ]
+  }
+}

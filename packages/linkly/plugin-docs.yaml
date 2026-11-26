@@ -1,0 +1,114 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: Linkly
+description: Link tracking and URL shortening with Linkly - create, bulk-update, trash and restore tracked short links, read click analytics and raw click exports, manage custom domains and webhooks, and report conversions.
+domain: linklyhq.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key in Linkly under Settings, API Keys at app.linklyhq.com. The key is
+  available on every plan, including the free one. Every workspace-scoped call takes a
+  `workspace_id` input; `workspaces.listWorkspaces` lists the IDs your key can reach, and
+  `auth.test` checks the key.
+
+  Things to know before you send:
+
+  - **Create and update share one endpoint.** `links.create` POSTs a new link; `links.update`
+    is the same call with the link's `id`, updating it in place. `links.bulkUpsert` does the
+    same for up to 1000 links and answers 200 even when some fail, so read each item's
+    `status`.
+  - **Deleting a link is soft.** `links.delete` and `links.deleteMany` move links to the trash
+    and their short URLs stop redirecting straight away. `links.restore` takes them back out;
+    a restored link whose back-half is already taken on the domain is reported under
+    `conflicts`.
+  - **Deleting a domain is not.** `domains.delete` removes a custom domain, and every link on
+    it stops working.
+  - **`links.list` paging.** The API defaults to 1000 rows per page, the largest page it
+    serves; `page_number` and `total_pages` in the answer tell you where you are. `filter`
+    narrows by exact domain, slug or UTM value.
+  - **Analytics has its own allowance.** `clicks.getTimeSeries`, `clicks.getCounters`,
+    `clicks.export` and `links.export` count against the workspace's analytics allowance
+    (100 requests a month on the free plan) and a limit of 50 requests an hour. When a paid
+    workspace runs out, Linkly adds a billed API pack to its subscription automatically;
+    free and Starter workspaces get a 429 instead. Pivot mode
+    (`clicks.getTimeSeries` with `pivot: 'link_id'`) returns every link in one call.
+  - **Rate limits.** The link API allows 20 requests a second. Core retries a 429 three times
+    with backoff; Linkly sends no `Retry-After` header.
+  - **Webhooks.** Linkly POSTs `click`, `link.created`, `link.updated` and `link.deleted`
+    events to the URLs you register with `webhooks.subscribe` (whole workspace) or
+    `webhooks.subscribeToLink` (one link). Branch on the body's `event` field; only click
+    events carry a `click` object. Deliveries arrive at that URL, not to this plugin.
+    `workspaces.update` with `webhooks` replaces the whole list.
+  - **Conversions.** `conversions.create` attributes a lead or sale to the link through the
+    `linkly_cid` your landing page captured. Without it the event is discarded and the
+    answer says `attributed: false`. Pass `event_id` so a repeat is not counted twice.
+  - **Outside the OpenAPI spec.** `auth.test`, `workspaces.update` and `clicks.export` are
+    routes Linkly's own MCP server uses but its OpenAPI document leaves out.
+examples:
+  read:
+    path: links.list
+    title: List links in a workspace
+    args:
+      workspace_id: 42
+      page_size: 50
+  write:
+    path: links.create
+    title: Create a tracked short link
+    args:
+      workspace_id: 42
+      url: https://www.example.com/summer-sale
+      name: Summer sale
+      utm_source: newsletter
+apiExamples:
+  workspaces.listWorkspaces: {}
+  links.list:
+    call: "{ workspace_id: 42, page_size: 50 }"
+  links.get:
+    call: "{ id: 41657524, workspace_id: 42 }"
+  links.create:
+    call: "{ workspace_id: 42, url: 'https://www.example.com/summer-sale', name: 'Summer sale', utm_source: 'newsletter' }"
+  links.update:
+    call: "{ id: 41657524, workspace_id: 42, enabled: false }"
+  links.delete:
+    call: "{ workspace_id: 42, id: 41657524 }"
+  links.restore:
+    call: "{ workspace_id: 42, ids: [30, 31] }"
+  links.export:
+    call: "{ workspace_id: 42 }"
+  clicks.getTimeSeries:
+    call: "{ workspace_id: 42, start: '2026-06-01', end: '2026-06-30' }"
+  clicks.getCounters:
+    call: "{ workspace_id: 42, counter: 'country', start: '2026-06-01', end: '2026-06-30' }"
+  domains.list:
+    call: "{ workspace_id: 42 }"
+  webhooks.list:
+    call: "{ workspace_id: 42 }"
+  webhooks.subscribe:
+    call: "{ workspace_id: 42, url: 'https://hooks.example.com/linkly' }"
+  webhooks.unsubscribe:
+    call: "{ workspace_id: 42, hook_id: 'https://hooks.example.com/linkly' }"
+  auth.test: {}
+  workspaces.update:
+    call: "{ workspace_id: 42, name: 'Marketing EU' }"
+  links.getDetails:
+    call: "{ id: 41657524 }"
+  links.bulkUpsert:
+    call: "{ links: [{ workspace_id: 42, url: 'https://www.example.com/a', name: 'A' }, { workspace_id: 42, id: 41657524, enabled: false }] }"
+  links.deleteMany:
+    call: "{ workspace_id: 42, ids: [30, 31] }"
+  clicks.export:
+    call: "{ workspace_id: 42, start: '2026-06-01', end: '2026-06-30' }"
+  domains.create:
+    call: "{ workspace_id: 42, name: 'go.example.com' }"
+  domains.delete:
+    call: "{ workspace_id: 42, domain_id: 7 }"
+  domains.updateFavicon:
+    call: "{ workspace_id: 42, domain_id: 7, favicon_url: 'https://www.example.com/favicon.ico' }"
+  webhooks.listForLink:
+    call: "{ link_id: 41657524 }"
+  webhooks.subscribeToLink:
+    call: "{ link_id: 41657524, url: 'https://hooks.example.com/linkly' }"
+  webhooks.unsubscribeFromLink:
+    call: "{ link_id: 41657524, hook_id: 'https://hooks.example.com/linkly' }"
+  conversions.list:
+    call: "{ workspace_id: 42, since: '2026-07-01', limit: 100 }"
+  conversions.create:
+    call: "{ workspace_id: 42, event_name: 'purchase', event_type: 'sale', linkly_cid: '01KYPGEEPJSPR3S564QRBDGA1W', event_id: 'order-1234', amount_cents: 4999, currency: 'USD' }"

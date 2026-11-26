@@ -42,19 +42,47 @@ function joinUrl(baseUrl: string, path: string): string {
 	return `${stripTrailingSlashes(baseUrl)}/${stripLeadingSlashes(path)}`;
 }
 
-// The runtime envelope is exactly ManagementApiError's serialized shape
+// The SDK's envelope is exactly ManagementApiError's serialized shape
 // (`{ error: code, message, ...extra }`), so reconstructing that same class
 // keeps client and server on one error type instead of a parallel hierarchy.
+//
+// The runtime in front of the SDK answers its own refusals (a missing key, an
+// unknown path, a project slug asked for an instance route) as
+// `{ code, hop, message }`, so `code` stands in for `error` there.
+//
+// The id worth quoting rides in a header: Request-Id from hub, and
+// x-corsair-trace-id on the runtime's own refusals. It lands in `extra`.
 export function mapCloudError(
 	status: number,
 	body: unknown,
+	headers?: Headers,
 ): ManagementApiError {
+	const requestId =
+		headers?.get('request-id')?.trim() ||
+		headers?.get('x-corsair-trace-id')?.trim() ||
+		undefined;
+	const withId = (extra: Record<string, unknown>) =>
+		requestId ? { ...extra, requestId } : extra;
 	const envelope = (body ?? {}) as CloudErrorEnvelope;
 	const { error, message, ...extra } = envelope;
-	if (typeof error !== 'string') {
-		return new ManagementApiError(status, 'internal_error', 'Internal error');
+	if (typeof error === 'string') {
+		return new ManagementApiError(status, error, message, withId(extra));
 	}
-	return new ManagementApiError(status, error, message, extra);
+	const { code, ...rest } = extra;
+	if (typeof code === 'string') {
+		return new ManagementApiError(
+			status,
+			code,
+			typeof message === 'string' ? message : undefined,
+			withId(rest),
+		);
+	}
+	return new ManagementApiError(
+		status,
+		'internal_error',
+		'Internal error',
+		withId({}),
+	);
 }
 
 const CLOUD_TIMEOUT = Symbol('cloudRequestTimeout');
@@ -122,7 +150,7 @@ export async function cloudRequest<T>(
 		parsed = undefined;
 	}
 
-	if (!res.ok) throw mapCloudError(res.status, parsed);
+	if (!res.ok) throw mapCloudError(res.status, parsed, res.headers);
 	if (parsed === undefined) {
 		throw new ManagementApiError(
 			res.status,

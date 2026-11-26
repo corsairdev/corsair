@@ -1,0 +1,150 @@
+---
+title: "Lusha plugin"
+sidebarTitle: "Overview"
+description: "B2B contact and company data with Lusha - search, enrich and prospect contacts and companies, find lookalikes, recommendations and buying groups, read signals, signal and ICP fit scores and website visits, manage contact and company tables and signal webhooks, search call conversations and read account credit usage."
+---
+
+Use **Lusha** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Create an API key at https://dashboard.lusha.com/api/manage-api-keys (sign up at https://auth.lusha.com/signup first). The plugin sends it in Lusha's `api_key` header; a different spelling is rejected.
+
+The plugin covers Lusha's whole public V3 API (68 operations): search, enrich and search-and-enrich, prospecting with filters, lookalikes, recommendations, buying groups, contact and company signals, signal scores, ICP fit scores, website visits, contact and company tables, webhook subscriptions and their audit logs, call conversations, and account usage. The two operations that return the account's webhook signing secret are left out: set the secret in Lusha and store it in Corsair as the webhook signature.
+
+Things to know before you call:
+
+- **Most reads cost credits.** Searches, enrichment, prospecting, lookalikes, recommendations, buying groups, signals, scores, website visits, table exports and conversation exports charge credits from your account pool per result, per revealed field or per row; each operation's description says how. They only spend credits, so they are marked `read`, like the free reads. Operations that start a paid job or charge as they add data (`contactTables.runColumn`, `companyTables.runColumn`, `companyTables.addEntities`, `subscriptions.create`) and operations that can't be undone (deletes and removes) are marked `destructive`, so Corsair asks before running them. Filter lists, signal types, table setup, subscription reads, audit logs, `account.getAccountUsage` and the job poll are free. When the account runs out, Lusha answers HTTP 402 `Insufficient credits for this operation`; the plugin does not retry it. Lusha's free plan includes a small monthly credit allowance; useful volume needs a paid plan.
+- **Search first, enrich second.** `person.searchContacts` and `company.searchCompanies` match records by email, LinkedIn URL, name plus company, or domain, and return previews that say which data points exist (`has`) and what revealing them costs (`canReveal`). `person.enrichContacts` and `company.enrichCompanies` take ids from those previews and return the full records with emails or phones (contacts) and premium firmographics (companies).
+- **Enrichment can continue in the background.** A contact enrich call may answer with `status: 'partial'` and a `job`; poll `jobs.getContactsEnrichJob` with that job id until it reports `complete` (its `contacts` merge into the ones you already have, by `id`), `expired` or `failed`. The poll is free.
+- **Rate limits are per account.** The default window is 25 requests per second, `account.getAccountUsage` is capped at 5 requests per minute and the webhook API at 100 per minute. A 429 is retried three times with backoff (Lusha sends no `Retry-After` header), except one with `x-daily-requests-left: 0`: the daily request quota is used up, so it fails at once. A 5xx or dropped connection is retried only on free reads, because a charged call may already have run.
+- **Ids are Lusha's own strings** (for example `4389064654`), returned as `id` on every search result.
+- **Webhooks.** `subscriptions.create` subscribes contacts or companies to signals (each delivered signal is charged); `subscriptions.createOptOut` sends contact opt-outs. Point them at your Corsair webhook URL. Deliveries arrive as `signals.received` and `optOuts.received`, are checked against `X-Lusha-Signature` (HMAC-SHA256 of `timestamp.body` with the account webhook secret) and answered with the `{ received, timestamp, webhookId }` acknowledgement Lusha requires. An opt-out lists the emails and phone numbers you must remove from your own systems.
+
+**What you get:**
+
+- 68 typed API operations
+- 2 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/lusha better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/lusha better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/lusha better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/lusha better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { lusha } from '@corsair-dev/lusha';
+
+export const corsair = createCorsair({
+	plugins: [
+		lusha(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Lusha API key before the first call: `pnpm corsair setup --plugin=lusha --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+lusha()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'lusha',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read remaining credits and plan limits**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.lusha.api.account.getAccountUsage({});
+```
+
+
+**`companyTables.addEntities`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.lusha.api.companyTables.addEntities({});
+```
+
+
+See the full list on the [API](/plugins/lusha/api) page.
+
+## Webhooks
+
+This plugin registers **2** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/lusha/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/lusha/api">
+    Every `lusha.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/lusha/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

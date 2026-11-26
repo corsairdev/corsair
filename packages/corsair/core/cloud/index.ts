@@ -274,10 +274,12 @@ async function fetchInstanceMap(
  */
 export type CorsairCloudManage = CloudProjectPlane & {
 	/** @deprecated Tenants belong to an instance. Use
-	 *  `withInstance(key).tenants`. Still answers from the runtime. */
+	 *  `withInstance(key).tenants`. Answers from the project's only instance,
+	 *  and throws when the project has none or several. */
 	tenants: CorsairManageNamespace['tenants'];
-	/** @deprecated Use `withInstance(key).access`. Still answers from the
-	 *  runtime. */
+	/** @deprecated Permission records belong to an instance. Use
+	 *  `withInstance(key).permissions`. Answers from the project's only
+	 *  instance, and throws when the project has none or several. */
 	permissions: CorsairManageNamespace['permissions'];
 };
 
@@ -304,6 +306,9 @@ export type CorsairCloudInstanceHandle<Registry = CorsairCloudRegistry> =
 		}): Promise<unknown>;
 		/** @deprecated Use `connect.createSession`. */
 		createConnectLink(input: CreateCloudConnectLinkInput): Promise<ConnectLink>;
+		/** A permission record (an approval request) on this instance, by id or
+		 *  by its approval token. The management API has no route for these. */
+		permissions: CorsairManageNamespace['permissions'];
 	};
 
 export type CorsairCloudInstance<Registry = CorsairCloudRegistry> = {
@@ -393,12 +398,42 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 		);
 	}
 
-	// The runtime still answers the two deprecated members; dropping them would
-	// have broken callers silently.
-	const runtimeProject = buildCloudManagement(transport);
+	// The project URL serves only the instance listing: everything under
+	// /<slug>/api/corsair answers 404 there. These two deprecated members
+	// predate instances, so they answer from the project's only instance. With
+	// several, picking one would read that instance's tenants as the whole
+	// project's, so they refuse and name withInstance instead.
+	async function soleInstanceUrl(
+		member: 'tenants' | 'permissions',
+	): Promise<string> {
+		const first = resolveInstances();
+		let instances = await first;
+		// Listed once more before refusing, as instanceUrl does for a missing
+		// key: the project may have gained or lost an instance since.
+		if (instances.size !== 1) instances = await resolveInstances(first);
+		const [only] = instances.values();
+		if (instances.size === 1 && only) return only;
+		const hint =
+			member === 'tenants'
+				? 'Tenants belong to an instance: use corsair.withInstance(key).tenants.'
+				: 'Permission records belong to an instance: use corsair.withInstance(key).permissions.';
+		const count =
+			instances.size === 0
+				? 'has no instances, so there is nothing to answer'
+				: `has ${instances.size} instances (${[...instances.keys()].join(', ')}), so there is no one place to answer`;
+		throw new Error(
+			`corsairCloud.manage.${member}: this project ${count}. ${hint}`,
+		);
+	}
+	const soleInstance =
+		(member: 'tenants' | 'permissions') =>
+		async (): Promise<CloudTransport> => ({
+			...transport,
+			baseUrl: await soleInstanceUrl(member),
+		});
 	const deprecated = {
-		tenants: runtimeProject.tenants,
-		permissions: runtimeProject.permissions,
+		tenants: buildCloudManagement(soleInstance('tenants')).tenants,
+		permissions: buildCloudManagement(soleInstance('permissions')).permissions,
 	} as Pick<CorsairCloudManage, 'tenants' | 'permissions'>;
 
 	return {
@@ -432,6 +467,7 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 				connectionStatus: runtime.connectionStatus,
 				disconnect: runtime.disconnect,
 				createConnectLink: runtime.connect.createLink,
+				permissions: runtime.permissions,
 			};
 			// Spreading the stand-in would copy its zero own keys and lose the guard.
 			return v1

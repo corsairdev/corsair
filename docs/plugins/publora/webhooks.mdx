@@ -1,0 +1,348 @@
+---
+title: "Publora webhooks"
+sidebarTitle: "Webhooks"
+description: "Publora incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Publora plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/publora/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `posts`
+  - `demoted` (`posts.demoted`)
+  - `failed` (`posts.failed`)
+  - `published` (`posts.published`)
+  - `scheduled` (`posts.scheduled`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Posts
+
+### Demoted
+
+`posts.demoted`
+
+A scheduled post went back to draft
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `string` | No | — |
+| `event` | `post.demoted` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  postGroupId: string,
+  reason?: string | null,
+  changeType?: string | null,
+  mediaFileId?: string | null,
+  errorCode?: string | null,
+  demotedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  version?: string,
+  event: post.demoted,
+  timestamp: string,
+  data: {
+    postGroupId: string,
+    reason?: string | null,
+    changeType?: string | null,
+    mediaFileId?: string | null,
+    errorCode?: string | null,
+    demotedAt?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+publora({
+    webhookHooks: {
+        posts: {
+            demoted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Failed
+
+`posts.failed`
+
+A post could not be published on one network
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `string` | No | — |
+| `event` | `post.failed` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  postId?: string | null,
+  postGroupId: string,
+  platform?: string | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null,
+  failedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  version?: string,
+  event: post.failed,
+  timestamp: string,
+  data: {
+    postId?: string | null,
+    postGroupId: string,
+    platform?: string | null,
+    error?: {
+      code?: string | null,
+      message?: string | null
+    } | null,
+    failedAt?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+publora({
+    webhookHooks: {
+        posts: {
+            failed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Published
+
+`posts.published`
+
+A post went live on one network (one event per network copy)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `string` | No | — |
+| `event` | `post.published` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  postId: string,
+  postGroupId: string,
+  platform: string,
+  platformId?: string | null,
+  postedId?: string | null,
+  permalink?: string | null,
+  publishedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  version?: string,
+  event: post.published,
+  timestamp: string,
+  data: {
+    postId: string,
+    postGroupId: string,
+    platform: string,
+    platformId?: string | null,
+    postedId?: string | null,
+    permalink?: string | null,
+    publishedAt?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+publora({
+    webhookHooks: {
+        posts: {
+            published: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Scheduled
+
+`posts.scheduled`
+
+A post was given a publish time
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `string` | No | — |
+| `event` | `post.scheduled` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  postGroupId: string,
+  scheduledTime?: string | null,
+  platforms?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  version?: string,
+  event: post.scheduled,
+  timestamp: string,
+  data: {
+    postGroupId: string,
+    scheduledTime?: string | null,
+    platforms?: string[] | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+publora({
+    webhookHooks: {
+        posts: {
+            scheduled: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

@@ -1,0 +1,4583 @@
+{
+  "id": "loops",
+  "displayName": "Loops",
+  "description": "Email platform for software companies with Loops - manage contacts, properties, lists and suppressions, send events and transactional email, build campaigns, workflows, email messages, themes, components and footers, read metrics, and receive signed webhooks.",
+  "npmPackageName": "@corsair-dev/loops",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 82,
+    "webhooks": 17,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "loops.api.apikey.verifyConnection",
+      "shortPath": "apikey.verifyConnection",
+      "description": "Verify the API key and return the team name it belongs to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "teamName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.audienceSegments.create",
+      "shortPath": "audienceSegments.create",
+      "description": "Create a new audience segment.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name of the audience segment. Must be unique within the team."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "An optional description of the audience segment."
+          },
+          {
+            "key": "filter",
+            "optional": false,
+            "type": "{ match: all | any, conditions: ({ type: property, key: string, operator: any | contains | notContains | equals | notEquals | greaterThan | lessThan | isTrue | isFalse | empty | notEmpty | dateEmpty | dateNotEmpty | after | before | between, value?: string | number | { from: string, to: string } } | { type: optIn, status: accepted | pending | rejected | null } | { type: activity, action: sent | opened | clicked, negate: boolean, target: campaign | workflow | workflowEmail, id: string })[] }",
+            "description": "A tree of audience conditions combined with `match`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ match?: string | null, conditions?: ({ type?: string | null, key?: string | null, operator?: string | null, value?: string | number | { from?: string | null, to?: string | null } | null } | { type?: string | null, status?: string | null | null } | { type?: string | null, action?: string | null, negate?: boolean | null, target?: string | null, id?: string | null })[] | null } | null | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.audienceSegments.get",
+      "shortPath": "audienceSegments.get",
+      "description": "Retrieve a single audience segment by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audienceSegmentId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the audience segment."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ match?: string | null, conditions?: ({ type?: string | null, key?: string | null, operator?: string | null, value?: string | number | { from?: string | null, to?: string | null } | null } | { type?: string | null, status?: string | null | null } | { type?: string | null, action?: string | null, negate?: boolean | null, target?: string | null, id?: string | null })[] | null } | null | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.audienceSegments.list",
+      "shortPath": "audienceSegments.list",
+      "description": "Retrieve a paginated list of audience segments, most recently created first.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "How many results to return in each request. Must be between 10 and 50. Default is 20."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ totalResults?: number | null, returnedResults?: number | null, perPage?: number | null, totalPages?: number | null, nextCursor?: string | null | null, nextPage?: string | null | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, description?: string | null | null, createdAt?: string | null, updatedAt?: string | null, filter?: { match?: string | null, conditions?: ({ type?: string | null, key?: string | null, operator?: string | null, value?: string | number | { from?: string | null, to?: string | null } | null } | { type?: string | null, status?: string | null | null } | { type?: string | null, action?: string | null, negate?: boolean | null, target?: string | null, id?: string | null })[] | null } | null | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.campaignGroups.create",
+      "shortPath": "campaignGroups.create",
+      "description": "Create a new campaign group.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The group name. Cannot be the reserved name \"Unsorted\"."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "An optional description for the group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.campaignGroups.get",
+      "shortPath": "campaignGroups.get",
+      "description": "Retrieve a single campaign group by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the campaign group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.campaignGroups.list",
+      "shortPath": "campaignGroups.list",
+      "description": "Retrieve a paginated list of campaign groups, most recently created first.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "How many results to return in each request. Must be between 10 and 50. Default is 20."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ totalResults?: number | null, returnedResults?: number | null, perPage?: number | null, totalPages?: number | null, nextCursor?: string | null | null, nextPage?: string | null | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, description?: string | null, createdAt?: string | null, updatedAt?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.campaignGroups.update",
+      "shortPath": "campaignGroups.update",
+      "description": "Update a campaign group's name or description. At least one field must be provided. The reserved \"Unsorted\" group cannot be edited.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the campaign group."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "The group name. Cannot be the reserved name \"Unsorted\"."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "A description for the group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.campaigns.create",
+      "shortPath": "campaigns.create",
+      "description": "Create a new draft campaign. An empty email message is created automatically and its `emailMessageId` is returned. Use the `/email-messages/{emailMessageId}` endpoint to set subject, sender, preview text, and LMX content. Passing scheduling { method: \"now\" } sends the campaign to its whole audience right away.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign name."
+          },
+          {
+            "key": "campaignGroupId",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of the group to add this campaign to. Defaults to the team's Unsorted group when omitted."
+          },
+          {
+            "key": "mailingListId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The ID of the mailing list to send to."
+          },
+          {
+            "key": "audienceSegmentId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The ID of an audience segment. Setting this without also providing `audienceFilter` clears any existing `audienceFilter`. If both are provided, the filter is applied on top of the segment's filter."
+          },
+          {
+            "key": "audienceFilter",
+            "optional": true,
+            "type": "{ match: all | any, conditions: ({ type: property, key: string, operator: any | contains | notContains | equals | notEquals | greaterThan | lessThan | isTrue | isFalse | empty | notEmpty | dateEmpty | dateNotEmpty | after | before | between, value?: string | number | { from: string, to: string } } | { type: optIn, status: accepted | pending | rejected | null } | { type: activity, action: sent | opened | clicked, negate: boolean, target: campaign | workflow | workflowEmail, id: string })[] } | null",
+            "description": "A tree of audience conditions combined with `match`. Setting this without also providing `audienceSegmentId` clears any existing `audienceSegmentId`. When both are provided, this filter is applied on top of the segment's filter."
+          },
+          {
+            "key": "scheduling",
+            "optional": true,
+            "type": "{ method: now | schedule, timestamp?: string }",
+            "description": "When the campaign should send. `timestamp` is required and must be in the future when `method` is `schedule`, and must be omitted when `method` is `now`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "emailMessageId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "emailMessageContentRevisionId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "campaignGroupId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "mailingListId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "audienceSegmentId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "audienceFilter",
+            "optional": true,
+            "type": "{ match?: string | null, conditions?: ({ type?: string | null, key?: string | null, operator?: string | null, value?: string | number | { from?: string | null, to?: string | null } | null } | { type?: string | null, status?: string | null | null } | { type?: string | null, action?: string | null, negate?: boolean | null, target?: string | null, id?: string | null })[] | null } | null | null"
+          },
+          {
+            "key": "scheduling",
+            "optional": true,
+            "type": "{ method?: string | null, timestamp?: string | null | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.campaigns.get",
+      "shortPath": "campaigns.get",
+      "description": "Retrieve a single campaign by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the campaign."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "emailMessageId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "campaignGroupId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "mailingListId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "audienceSegmentId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "audienceFilter",
+            "optional": true,
+            "type": "{ match?: string | null, conditions?: ({ type?: string | null, key?: string | null, operator?: string | null, value?: string | number | { from?: string | null, to?: string | null } | null } | { type?: string | null, status?: string | null | null } | { type?: string | null, action?: string | null, negate?: boolean | null, target?: string | null, id?: string | null })[] | null } | null | null"
+          },
+          {
+            "key": "scheduling",
+            "optional": true,
+            "type": "{ method?: string | null, timestamp?: string | null | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.campaigns.getMetrics",
+      "shortPath": "campaigns.getMetrics",
+      "description": "Retrieve all-time email engagement metrics for a campaign.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the campaign."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sends",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "opens",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "clicks",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unsubscribes",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "spamReports",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hardBounces",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "softBounces",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "Retrieve a paginated list of campaigns.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "How many results to return in each request. Must be between 10 and 50. Default is 20."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response."
+          },
+          {
+            "key": "campaignGroupId",
+            "optional": true,
+            "type": "string",
+            "description": "Only return campaigns in this campaign group. An ID that matches no group returns an empty list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ totalResults?: number | null, returnedResults?: number | null, perPage?: number | null, totalPages?: number | null, nextCursor?: string | null | null, nextPage?: string | null | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, url?: string | null, name?: string | null, status?: string | null, createdAt?: string | null, updatedAt?: string | null, emailMessageId?: string | null | null, campaignGroupId?: string | null | null, mailingListId?: string | null | null, audienceSegmentId?: string | null | null, audienceFilter?: { match?: string | null, conditions?: ({ type?: string | null, key?: string | null, operator?: string | null, value?: string | number | { from?: string | null, to?: string | null } | null } | { type?: string | null, status?: string | null | null } | { type?: string | null, action?: string | null, negate?: boolean | null, target?: string | null, id?: string | null })[] | null } | null | null, scheduling?: { method?: string | null, timestamp?: string | null | null } | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.campaigns.update",
+      "shortPath": "campaigns.update",
+      "description": "Update a draft campaign's name, group, audience (mailing list, segment, or filter), or scheduling. At least one field must be provided. Once a campaign has been sent, only its `name` and `campaignGroupId` can be updated. Passing scheduling { method: \"now\" } on a draft sends it to its whole audience right away.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the campaign."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "The updated campaign name."
+          },
+          {
+            "key": "campaignGroupId",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of the group to move this campaign to."
+          },
+          {
+            "key": "mailingListId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The ID of the mailing list to send to."
+          },
+          {
+            "key": "audienceSegmentId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The ID of an audience segment. Setting this without also providing `audienceFilter` clears any existing `audienceFilter`. If both are provided, the filter is applied on top of the segment's filter."
+          },
+          {
+            "key": "audienceFilter",
+            "optional": true,
+            "type": "{ match: all | any, conditions: ({ type: property, key: string, operator: any | contains | notContains | equals | notEquals | greaterThan | lessThan | isTrue | isFalse | empty | notEmpty | dateEmpty | dateNotEmpty | after | before | between, value?: string | number | { from: string, to: string } } | { type: optIn, status: accepted | pending | rejected | null } | { type: activity, action: sent | opened | clicked, negate: boolean, target: campaign | workflow | workflowEmail, id: string })[] } | null",
+            "description": "A tree of audience conditions combined with `match`. Setting this without also providing `audienceSegmentId` clears any existing `audienceSegmentId`. When both are provided, this filter is applied on top of the segment's filter."
+          },
+          {
+            "key": "scheduling",
+            "optional": true,
+            "type": "{ method: now | schedule, timestamp?: string }",
+            "description": "When the campaign should send. `timestamp` is required and must be in the future when `method` is `schedule`, and must be omitted when `method` is `now`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "emailMessageId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "campaignGroupId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "mailingListId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "audienceSegmentId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "audienceFilter",
+            "optional": true,
+            "type": "{ match?: string | null, conditions?: ({ type?: string | null, key?: string | null, operator?: string | null, value?: string | number | { from?: string | null, to?: string | null } | null } | { type?: string | null, status?: string | null | null } | { type?: string | null, action?: string | null, negate?: boolean | null, target?: string | null, id?: string | null })[] | null } | null | null"
+          },
+          {
+            "key": "scheduling",
+            "optional": true,
+            "type": "{ method?: string | null, timestamp?: string | null | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.components.create",
+      "shortPath": "components.create",
+      "description": "Create a new email component from an LMX body.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The component name."
+          },
+          {
+            "key": "lmx",
+            "optional": false,
+            "type": "string",
+            "description": "The component body as an LMX string."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lmx",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.components.get",
+      "shortPath": "components.get",
+      "description": "Retrieve a single component by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "componentId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the component."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lmx",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.components.list",
+      "shortPath": "components.list",
+      "description": "Retrieve a paginated list of email components.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "How many results to return in each request. Must be between 10 and 50. Default is 20."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ totalResults?: number | null, returnedResults?: number | null, perPage?: number | null, totalPages?: number | null, nextCursor?: string | null | null, nextPage?: string | null | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, lmx?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.components.update",
+      "shortPath": "components.update",
+      "description": "Update a component's name and/or body. When the `lmx` body changes, the update cascades to every email using this component, and `affectedEmailCount` reports how many were affected.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "componentId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the component."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lmx",
+            "optional": true,
+            "type": "string",
+            "description": "The component body as an LMX string."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, name?: string | null, lmx?: string | null } & { affectedEmailCount?: number | null }"
+      }
+    },
+    {
+      "path": "loops.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact with fixed and custom properties; answers 409 when the email or userId already exists",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "userGroup",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mailingLists",
+            "optional": true,
+            "type": "Record<string, boolean>"
+          },
+          {
+            "key": "customProperties",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.contacts.createProperty",
+      "shortPath": "contacts.createProperty",
+      "description": "Create a custom contact property.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name of the property. This should be in camelCase, like `planName` or `importDate`."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string | number | boolean | date",
+            "description": "The type of property."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Permanently delete a contact by email or userId; the contact and its subscriptions cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.contacts.find",
+      "shortPath": "contacts.find",
+      "description": "Find contacts by email or user ID; answers an empty array when none match",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, email: string, firstName?: string | null, lastName?: string | null, source?: string | null, subscribed?: boolean | null, userGroup?: string | null, userId?: string | null, mailingLists?: Record<string, boolean>, optInStatus?: string | null }[]"
+      }
+    },
+    {
+      "path": "loops.api.contacts.getSuppression",
+      "shortPath": "contacts.getSuppression",
+      "description": "Read whether a contact is suppressed from emails and the quota left for removing suppressions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{ id: string, email: string, userId?: string | null }"
+          },
+          {
+            "key": "isSuppressed",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "removalQuota",
+            "optional": false,
+            "type": "{ limit: number, remaining: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.contacts.listProperties",
+      "shortPath": "contacts.listProperties",
+      "description": "List the contact property definitions, all of them or only the custom ones",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list",
+            "optional": true,
+            "type": "all | custom"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ key: string, label: string, type: string }[]"
+      }
+    },
+    {
+      "path": "loops.api.contacts.removeSuppression",
+      "shortPath": "contacts.removeSuppression",
+      "description": "Remove a suppressed contact from the suppression list by `email` or `userId`. Include only one query parameter. Uses one of a small rolling 30-day removal quota; the address can receive email again.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Email address"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "removalQuota",
+            "optional": true,
+            "type": "{ limit?: number | null, remaining?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update a contact found by email or userId, creating it when no match exists (upsert)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subscribed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "userGroup",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mailingLists",
+            "optional": true,
+            "type": "Record<string, boolean>"
+          },
+          {
+            "key": "customProperties",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.dedicatedSendingIps.list",
+      "shortPath": "dedicatedSendingIps.list",
+      "description": "Retrieve a list of Loops' dedicated sending IP addresses. This endpoint is provided for the rare instances where you may need to whitelist our sending IPs.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[]"
+      }
+    },
+    {
+      "path": "loops.api.emailMessages.get",
+      "shortPath": "emailMessages.get",
+      "description": "Retrieve an email message, including its compiled LMX content.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailMessageId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the email message."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transactionalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previewText",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fromName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fromEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "replyToEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ccEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bccEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "languageCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "emailFormat",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lmx",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "footerId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "contentRevisionId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contactPropertiesFallbacks",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "eventPropertiesFallbacks",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "dataVariablesFallbacks",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ rule?: string | null, severity?: string | null, message?: string | null, path?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.emailMessages.render",
+      "shortPath": "emailMessages.render",
+      "description": "Render the HTML of an email message the way its preview email is rendered. Nothing is sent.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailMessageId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the email message."
+          },
+          {
+            "key": "contactProperties",
+            "optional": true,
+            "type": "{}",
+            "description": "Contact property values to render. Accepted for campaign and workflow emails."
+          },
+          {
+            "key": "eventProperties",
+            "optional": true,
+            "type": "{}",
+            "description": "Event property values to render. Accepted for workflow emails only."
+          },
+          {
+            "key": "dataVariables",
+            "optional": true,
+            "type": "{}",
+            "description": "Transactional data variables to render. Accepted for transactional emails only."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.emailMessages.runGuardian",
+      "shortPath": "emailMessages.runGuardian",
+      "description": "Validate an email message's content against Guardian rules and return any errors and warnings. Errors must be resolved before the email can be published, warnings are advisory.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailMessageId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the email message."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "{ rule?: string | null, title?: string | null, description?: string | null, items?: { label?: string | null, codeName?: string | null }[] | null }[] | null"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ rule?: string | null, title?: string | null, description?: string | null, items?: { label?: string | null, codeName?: string | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.emailMessages.sendPreview",
+      "shortPath": "emailMessages.sendPreview",
+      "description": "Send a test preview of an email message to one or more addresses. Sends real preview emails to every listed address.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailMessageId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the email message."
+          },
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]",
+            "description": "One or more addresses to send the preview to."
+          },
+          {
+            "key": "contactProperties",
+            "optional": true,
+            "type": "{}",
+            "description": "Contact property values to render. Accepted for campaign and workflow previews."
+          },
+          {
+            "key": "eventProperties",
+            "optional": true,
+            "type": "{}",
+            "description": "Event property values to render. Accepted for workflow previews only."
+          },
+          {
+            "key": "dataVariables",
+            "optional": true,
+            "type": "{}",
+            "description": "Transactional data variables to render. Accepted for transactional previews only."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.emailMessages.update",
+      "shortPath": "emailMessages.update",
+      "description": "Update fields on an email message (subject, preview text, sender, LMX content). A campaign must be in draft status. You can only edit the draft email message of a transactional email. A workflow must not be sending.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailMessageId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the email message."
+          },
+          {
+            "key": "expectedRevisionId",
+            "optional": true,
+            "type": "string",
+            "description": "The `contentRevisionId` you last fetched, or the `emailMessageContentRevisionId` you received when creating the campaign."
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previewText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fromName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fromEmail",
+            "optional": true,
+            "type": "string",
+            "description": "The email sender email address, without the team's sending domain."
+          },
+          {
+            "key": "replyToEmail",
+            "optional": true,
+            "type": "string",
+            "description": "Reply-to email. Must be empty or a valid email address."
+          },
+          {
+            "key": "ccEmail",
+            "optional": true,
+            "type": "string",
+            "description": "CC email address. Requires the team to have CC/BCC enabled. Not supported for campaign emails."
+          },
+          {
+            "key": "bccEmail",
+            "optional": true,
+            "type": "string",
+            "description": "BCC email address. Requires the team to have CC/BCC enabled. Not supported for campaign emails."
+          },
+          {
+            "key": "languageCode",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 639-1 language code for the email, e.g. `en` or `fr`."
+          },
+          {
+            "key": "emailFormat",
+            "optional": true,
+            "type": "styled | plain",
+            "description": "The rendering format of the email."
+          },
+          {
+            "key": "footerId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Apply a specific footer to this email message. Use `null` for the system default footer. Omit it to keep the current footer. Only for teams with footers enabled, and only for campaign and workflow emails. Transactional emails and critical notices have no footer."
+          },
+          {
+            "key": "lmx",
+            "optional": true,
+            "type": "string",
+            "description": "The email body serialized as LMX. Styles must be embedded in the LMX `<Style />` tag."
+          },
+          {
+            "key": "contactPropertiesFallbacks",
+            "optional": true,
+            "type": "{}",
+            "description": "Fallback values for contact properties, keyed by property name. Per-key merge: a string value sets the fallback, a null value deletes it, and keys omitted from the map are left unchanged."
+          },
+          {
+            "key": "eventPropertiesFallbacks",
+            "optional": true,
+            "type": "{}",
+            "description": "Fallback values for event properties, keyed by property name. Per-key merge: a string value sets the fallback, a null value deletes it, and keys omitted from the map are left unchanged."
+          },
+          {
+            "key": "dataVariablesFallbacks",
+            "optional": true,
+            "type": "{}",
+            "description": "Fallback values for data variables, keyed by variable name. Per-key merge: a string value sets the fallback, a null value deletes it, and keys omitted from the map are left unchanged."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "transactionalId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "previewText",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fromName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fromEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "replyToEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ccEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "bccEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "languageCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "emailFormat",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lmx",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "footerId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "contentRevisionId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contactPropertiesFallbacks",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "eventPropertiesFallbacks",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "dataVariablesFallbacks",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ rule?: string | null, severity?: string | null, message?: string | null, path?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.eventPatterns.get",
+      "shortPath": "eventPatterns.get",
+      "description": "Retrieve event pattern details for a workflow event trigger.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventPatternId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the event pattern."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "eventName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "eventProperties",
+            "optional": true,
+            "type": "{ name?: string | null, type?: string | null }[] | null"
+          },
+          {
+            "key": "incomingWebhookPlatform",
+            "optional": true,
+            "type": "string | null | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.eventPatterns.getByName",
+      "shortPath": "eventPatterns.getByName",
+      "description": "Retrieve event pattern details by event name for a workflow event trigger. Event names are case-sensitive, so `PaymentReceived` and `paymentReceived` are different events.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventName",
+            "optional": false,
+            "type": "string",
+            "description": "The exact event name. Event names are case-sensitive. Pass the name as it is (e.g. `Trial started`); the plugin URL-encodes it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "eventName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "eventProperties",
+            "optional": true,
+            "type": "{ name?: string | null, type?: string | null }[] | null"
+          },
+          {
+            "key": "incomingWebhookPlatform",
+            "optional": true,
+            "type": "string | null | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.eventPatterns.list",
+      "shortPath": "eventPatterns.list",
+      "description": "Retrieve a paginated list of event patterns available to workflow event trigger nodes.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "How many results to return in each request. Must be between 10 and 50. Default is 20."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ totalResults?: number | null, returnedResults?: number | null, perPage?: number | null, totalPages?: number | null, nextCursor?: string | null | null, nextPage?: string | null | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, eventName?: string | null, incomingWebhookPlatform?: string | null | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.events.send",
+      "shortPath": "events.send",
+      "description": "Send an event for a contact; this can trigger workflows that email real people",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "eventProperties",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "mailingLists",
+            "optional": true,
+            "type": "Record<string, boolean>"
+          },
+          {
+            "key": "customProperties",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.footers.create",
+      "shortPath": "footers.create",
+      "description": "Create a footer with one variant. The variant starts with an unpublished draft that has the company name, company address and unsubscribe link. Emails cannot use the footer until you publish the variant.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "The name of the footer. Default is \"Custom footer\" if omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isDefault",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "placement",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "variants",
+            "optional": true,
+            "type": "{ id?: string | null, footerId?: string | null, contentRevisionId?: string | null, publishedAt?: string | null | null, createdAt?: string | null, draftLmx?: string | null, publishedLmx?: string | null | null, updatedAt?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.footers.delete",
+      "shortPath": "footers.delete",
+      "description": "Delete a footer and its variants. You cannot delete the team's default footer or a footer that emails use.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "footerId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the footer."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.footers.get",
+      "shortPath": "footers.get",
+      "description": "Retrieve a single footer by ID, with the content of each variant.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "footerId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the footer."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isDefault",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "placement",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "variants",
+            "optional": true,
+            "type": "{ id?: string | null, footerId?: string | null, contentRevisionId?: string | null, publishedAt?: string | null | null, createdAt?: string | null, draftLmx?: string | null, publishedLmx?: string | null | null, updatedAt?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.footers.getVariant",
+      "shortPath": "footers.getVariant",
+      "description": "Retrieve a footer variant's draft and published content as LMX.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "footerId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the footer."
+          },
+          {
+            "key": "variantId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the footer variant."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "footerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contentRevisionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "publishedAt",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "draftLmx",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "publishedLmx",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.footers.list",
+      "shortPath": "footers.list",
+      "description": "Retrieve a paginated list of footers, most recently created first.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "How many results to return in each request. Must be between 10 and 50. Default is 20."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ totalResults?: number | null, returnedResults?: number | null, perPage?: number | null, totalPages?: number | null, nextCursor?: string | null | null, nextPage?: string | null | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, isDefault?: boolean | null, placement?: string | null, createdAt?: string | null, updatedAt?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.footers.publishVariant",
+      "shortPath": "footers.publishVariant",
+      "description": "Publish the variant's draft LMX content, to replace the current published LMX content. Emails that use the footer will immediately use the newly published content.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "footerId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the footer."
+          },
+          {
+            "key": "variantId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the footer variant."
+          },
+          {
+            "key": "expectedRevisionId",
+            "optional": false,
+            "type": "string",
+            "description": "The `contentRevisionId` you last fetched."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "footerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contentRevisionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "publishedAt",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "draftLmx",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "publishedLmx",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.footers.setDefault",
+      "shortPath": "footers.setDefault",
+      "description": "Make a published footer the team's default footer. New campaign and workflow emails use the default footer. `existingEmails` picks which existing emails switch to it. With `none`, only new emails use it.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "footerId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the footer."
+          },
+          {
+            "key": "existingEmails",
+            "optional": false,
+            "type": "previousDefault | all | none",
+            "description": "Which existing campaign and workflow emails switch to this footer: the ones that use the previous default footer (`previousDefault`), all of them (`all`), or none (`none`). With `none`, existing emails keep their footer and only new emails use this footer."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, name?: string | null, isDefault?: boolean | null, placement?: string | null, createdAt?: string | null, updatedAt?: string | null, variants?: { id?: string | null, footerId?: string | null, contentRevisionId?: string | null, publishedAt?: string | null | null, createdAt?: string | null, draftLmx?: string | null, publishedLmx?: string | null | null, updatedAt?: string | null }[] | null } & { updatedEmailCount?: number | null }"
+      }
+    },
+    {
+      "path": "loops.api.footers.update",
+      "shortPath": "footers.update",
+      "description": "Update a footer's name or placement. Changes apply at once, also to running workflows. Emails already sent don't change. To change the default footer, use `POST /v1/footers/{footerId}/set-default`.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "footerId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the footer."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "The new name of the footer."
+          },
+          {
+            "key": "placement",
+            "optional": true,
+            "type": "inside | below",
+            "description": "Whether the footer is rendered inside the email body (`inside`) or below it (`below`)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isDefault",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "placement",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "variants",
+            "optional": true,
+            "type": "{ id?: string | null, footerId?: string | null, contentRevisionId?: string | null, publishedAt?: string | null | null, createdAt?: string | null, draftLmx?: string | null, publishedLmx?: string | null | null, updatedAt?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.footers.updateVariant",
+      "shortPath": "footers.updateVariant",
+      "description": "Update a footer variant's LMX content. Emails keep the variant's published content until you publish the updated variant.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "footerId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the footer."
+          },
+          {
+            "key": "variantId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the footer variant."
+          },
+          {
+            "key": "expectedRevisionId",
+            "optional": false,
+            "type": "string",
+            "description": "The `contentRevisionId` you last fetched."
+          },
+          {
+            "key": "lmx",
+            "optional": false,
+            "type": "string",
+            "description": "The new draft content as LMX. Footer LMX can use `{system.company_name}`, `{system.company_address}`, `{system.mailing_list_name}`, `{system.unsubscribe_link}` and `{contact.email}`. It cannot use `<Style />`, components, other contact properties, event properties or data variables."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "footerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "contentRevisionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "publishedAt",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "draftLmx",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "publishedLmx",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.lists.list",
+      "shortPath": "lists.list",
+      "description": "List every mailing list in the team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, description?: string | null, isPublic: boolean }[]"
+      }
+    },
+    {
+      "path": "loops.api.themes.create",
+      "shortPath": "themes.create",
+      "description": "Create a new email theme for use across Loops emails.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The theme name."
+          },
+          {
+            "key": "styles",
+            "optional": true,
+            "type": "{ backgroundColor?: string, backgroundXPadding?: number, backgroundYPadding?: number, bodyColor?: string, bodyXPadding?: number, bodyYPadding?: number, bodyFontFamily?: string, bodyFontCategory?: string, borderColor?: string, borderWidth?: number, borderRadius?: number, buttonBodyColor?: string, buttonBodyXPadding?: number, buttonBodyYPadding?: number, buttonBorderColor?: string, buttonBorderWidth?: number, buttonBorderRadius?: number, buttonTextColor?: string, buttonTextFormat?: number, buttonTextFontSize?: number, dividerColor?: string, dividerBorderWidth?: number, textBaseColor?: string, textBaseFontSize?: number, textBaseLineHeight?: number, textBaseLetterSpacing?: number, textLinkColor?: string, heading1Color?: string, heading1FontSize?: number, heading1LineHeight?: number, heading1LetterSpacing?: number, heading2Color?: string, heading2FontSize?: number, heading2LineHeight?: number, heading2LetterSpacing?: number, heading3Color?: string, heading3FontSize?: number, heading3LineHeight?: number, heading3LetterSpacing?: number }",
+            "description": "Flat map of style attributes, matching the attribute names accepted by the LMX `<Style />` tag."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "styles",
+            "optional": true,
+            "type": "{ backgroundColor?: string | null, backgroundXPadding?: number | null, backgroundYPadding?: number | null, bodyColor?: string | null, bodyXPadding?: number | null, bodyYPadding?: number | null, bodyFontFamily?: string | null, bodyFontCategory?: string | null, borderColor?: string | null, borderWidth?: number | null, borderRadius?: number | null, buttonBodyColor?: string | null, buttonBodyXPadding?: number | null, buttonBodyYPadding?: number | null, buttonBorderColor?: string | null, buttonBorderWidth?: number | null, buttonBorderRadius?: number | null, buttonTextColor?: string | null, buttonTextFormat?: number | null, buttonTextFontSize?: number | null, dividerColor?: string | null, dividerBorderWidth?: number | null, textBaseColor?: string | null, textBaseFontSize?: number | null, textBaseLineHeight?: number | null, textBaseLetterSpacing?: number | null, textLinkColor?: string | null, heading1Color?: string | null, heading1FontSize?: number | null, heading1LineHeight?: number | null, heading1LetterSpacing?: number | null, heading2Color?: string | null, heading2FontSize?: number | null, heading2LineHeight?: number | null, heading2LetterSpacing?: number | null, heading3Color?: string | null, heading3FontSize?: number | null, heading3LineHeight?: number | null, heading3LetterSpacing?: number | null } | null"
+          },
+          {
+            "key": "isDefault",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.themes.get",
+      "shortPath": "themes.get",
+      "description": "Retrieve a single theme by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "themeId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the theme."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "styles",
+            "optional": true,
+            "type": "{ backgroundColor?: string | null, backgroundXPadding?: number | null, backgroundYPadding?: number | null, bodyColor?: string | null, bodyXPadding?: number | null, bodyYPadding?: number | null, bodyFontFamily?: string | null, bodyFontCategory?: string | null, borderColor?: string | null, borderWidth?: number | null, borderRadius?: number | null, buttonBodyColor?: string | null, buttonBodyXPadding?: number | null, buttonBodyYPadding?: number | null, buttonBorderColor?: string | null, buttonBorderWidth?: number | null, buttonBorderRadius?: number | null, buttonTextColor?: string | null, buttonTextFormat?: number | null, buttonTextFontSize?: number | null, dividerColor?: string | null, dividerBorderWidth?: number | null, textBaseColor?: string | null, textBaseFontSize?: number | null, textBaseLineHeight?: number | null, textBaseLetterSpacing?: number | null, textLinkColor?: string | null, heading1Color?: string | null, heading1FontSize?: number | null, heading1LineHeight?: number | null, heading1LetterSpacing?: number | null, heading2Color?: string | null, heading2FontSize?: number | null, heading2LineHeight?: number | null, heading2LetterSpacing?: number | null, heading3Color?: string | null, heading3FontSize?: number | null, heading3LineHeight?: number | null, heading3LetterSpacing?: number | null } | null"
+          },
+          {
+            "key": "isDefault",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.themes.list",
+      "shortPath": "themes.list",
+      "description": "Retrieve a paginated list of email themes, most recently created first.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "How many results to return in each request. Must be between 10 and 50. Default is 20."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ totalResults?: number | null, returnedResults?: number | null, perPage?: number | null, totalPages?: number | null, nextCursor?: string | null | null, nextPage?: string | null | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, styles?: { backgroundColor?: string | null, backgroundXPadding?: number | null, backgroundYPadding?: number | null, bodyColor?: string | null, bodyXPadding?: number | null, bodyYPadding?: number | null, bodyFontFamily?: string | null, bodyFontCategory?: string | null, borderColor?: string | null, borderWidth?: number | null, borderRadius?: number | null, buttonBodyColor?: string | null, buttonBodyXPadding?: number | null, buttonBodyYPadding?: number | null, buttonBorderColor?: string | null, buttonBorderWidth?: number | null, buttonBorderRadius?: number | null, buttonTextColor?: string | null, buttonTextFormat?: number | null, buttonTextFontSize?: number | null, dividerColor?: string | null, dividerBorderWidth?: number | null, textBaseColor?: string | null, textBaseFontSize?: number | null, textBaseLineHeight?: number | null, textBaseLetterSpacing?: number | null, textLinkColor?: string | null, heading1Color?: string | null, heading1FontSize?: number | null, heading1LineHeight?: number | null, heading1LetterSpacing?: number | null, heading2Color?: string | null, heading2FontSize?: number | null, heading2LineHeight?: number | null, heading2LetterSpacing?: number | null, heading3Color?: string | null, heading3FontSize?: number | null, heading3LineHeight?: number | null, heading3LetterSpacing?: number | null } | null, isDefault?: boolean | null, createdAt?: string | null, updatedAt?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.themes.update",
+      "shortPath": "themes.update",
+      "description": "Update a theme's name and/or styles. When `styles` change, the update cascades to every email using this theme, and `affectedEmailCount` in the response reports how many emails were affected.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "themeId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the theme."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "styles",
+            "optional": true,
+            "type": "{ backgroundColor?: string, backgroundXPadding?: number, backgroundYPadding?: number, bodyColor?: string, bodyXPadding?: number, bodyYPadding?: number, bodyFontFamily?: string, bodyFontCategory?: string, borderColor?: string, borderWidth?: number, borderRadius?: number, buttonBodyColor?: string, buttonBodyXPadding?: number, buttonBodyYPadding?: number, buttonBorderColor?: string, buttonBorderWidth?: number, buttonBorderRadius?: number, buttonTextColor?: string, buttonTextFormat?: number, buttonTextFontSize?: number, dividerColor?: string, dividerBorderWidth?: number, textBaseColor?: string, textBaseFontSize?: number, textBaseLineHeight?: number, textBaseLetterSpacing?: number, textLinkColor?: string, heading1Color?: string, heading1FontSize?: number, heading1LineHeight?: number, heading1LetterSpacing?: number, heading2Color?: string, heading2FontSize?: number, heading2LineHeight?: number, heading2LetterSpacing?: number, heading3Color?: string, heading3FontSize?: number, heading3LineHeight?: number, heading3LetterSpacing?: number }",
+            "description": "Flat map of style attributes, matching the attribute names accepted by the LMX `<Style />` tag."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, name?: string | null, styles?: { backgroundColor?: string | null, backgroundXPadding?: number | null, backgroundYPadding?: number | null, bodyColor?: string | null, bodyXPadding?: number | null, bodyYPadding?: number | null, bodyFontFamily?: string | null, bodyFontCategory?: string | null, borderColor?: string | null, borderWidth?: number | null, borderRadius?: number | null, buttonBodyColor?: string | null, buttonBodyXPadding?: number | null, buttonBodyYPadding?: number | null, buttonBorderColor?: string | null, buttonBorderWidth?: number | null, buttonBorderRadius?: number | null, buttonTextColor?: string | null, buttonTextFormat?: number | null, buttonTextFontSize?: number | null, dividerColor?: string | null, dividerBorderWidth?: number | null, textBaseColor?: string | null, textBaseFontSize?: number | null, textBaseLineHeight?: number | null, textBaseLetterSpacing?: number | null, textLinkColor?: string | null, heading1Color?: string | null, heading1FontSize?: number | null, heading1LineHeight?: number | null, heading1LetterSpacing?: number | null, heading2Color?: string | null, heading2FontSize?: number | null, heading2LineHeight?: number | null, heading2LetterSpacing?: number | null, heading3Color?: string | null, heading3FontSize?: number | null, heading3LineHeight?: number | null, heading3LetterSpacing?: number | null } | null, isDefault?: boolean | null, createdAt?: string | null, updatedAt?: string | null } & { affectedEmailCount?: number | null }"
+      }
+    },
+    {
+      "path": "loops.api.transactional.list",
+      "shortPath": "transactional.list",
+      "description": "Get a list of published transactional emails.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "How many results to return in each request. Must be between 10 and 50. Default is 20."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "A cursor, to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ totalResults?: number | null, returnedResults?: number | null, perPage?: number | null, totalPages?: number | null, nextCursor?: string | null | null, nextPage?: string | null | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, lastUpdated?: string | null, dataVariables?: any[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.transactional.send",
+      "shortPath": "transactional.send",
+      "description": "Send a published transactional email to a real inbox; pass an idempotencyKey (max 100 chars) to make a retry within 24 hours return 409 instead of a duplicate",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "transactionalId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "addToAudience",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "dataVariables",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "attachments",
+            "optional": true,
+            "type": "{ filename: string, contentType: string, data: string }[]"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.transactionalEmails.create",
+      "shortPath": "transactionalEmails.create",
+      "description": "Create a new transactional email. An empty draft email message is created automatically and its `draftEmailMessageId` is returned.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name of the transactional email."
+          },
+          {
+            "key": "transactionalGroupId",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of the group to add this transactional email to. Defaults to the team's Unsorted group when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "draftEmailMessageId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "draftEmailMessageContentRevisionId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "publishedEmailMessageId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "transactionalGroupId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dataVariables",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.transactionalEmails.ensureDraft",
+      "shortPath": "transactionalEmails.ensureDraft",
+      "description": "Ensure the transactional email has a draft email message. If a draft already exists it is returned unchanged; otherwise a new empty draft is created (seeded from the most recent published version when present).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionalId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the transactional email."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "draftEmailMessageId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "draftEmailMessageContentRevisionId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "publishedEmailMessageId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "transactionalGroupId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dataVariables",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.transactionalEmails.get",
+      "shortPath": "transactionalEmails.get",
+      "description": "Retrieve a single transactional email by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionalId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the transactional email."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "draftEmailMessageId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "publishedEmailMessageId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "transactionalGroupId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dataVariables",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.transactionalEmails.getMetrics",
+      "shortPath": "transactionalEmails.getMetrics",
+      "description": "Retrieve all-time delivery metrics for a transactional email, totalled across every published version.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionalId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the transactional email."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sends",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "deliveries",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "spamReports",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hardBounces",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "softBounces",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.transactionalEmails.list",
+      "shortPath": "transactionalEmails.list",
+      "description": "Retrieve a paginated list of transactional emails, most recently created first.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "How many results to return in each request. Must be between 10 and 50. Default is 20."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response."
+          },
+          {
+            "key": "transactionalGroupId",
+            "optional": true,
+            "type": "string",
+            "description": "Only return transactional emails in this transactional group. An ID that matches no group returns an empty list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ totalResults?: number | null, returnedResults?: number | null, perPage?: number | null, totalPages?: number | null, nextCursor?: string | null | null, nextPage?: string | null | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, url?: string | null, name?: string | null, draftEmailMessageId?: string | null | null, publishedEmailMessageId?: string | null | null, transactionalGroupId?: string | null | null, createdAt?: string | null, updatedAt?: string | null, dataVariables?: string[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.transactionalEmails.publish",
+      "shortPath": "transactionalEmails.publish",
+      "description": "Publish the transactional email's current draft email message. The draft becomes the published version and the draft is cleared.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionalId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the transactional email."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "draftEmailMessageId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "publishedEmailMessageId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "transactionalGroupId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dataVariables",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.transactionalEmails.update",
+      "shortPath": "transactionalEmails.update",
+      "description": "Update a transactional email's name or group. At least one field must be provided.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionalId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the transactional email."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "transactionalGroupId",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of the group to move this transactional email to."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "draftEmailMessageId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "publishedEmailMessageId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "transactionalGroupId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "dataVariables",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.transactionalGroups.create",
+      "shortPath": "transactionalGroups.create",
+      "description": "Create a new transactional group.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The group name. Cannot be the reserved name \"Unsorted\"."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "An optional description for the group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.transactionalGroups.get",
+      "shortPath": "transactionalGroups.get",
+      "description": "Retrieve a single transactional group by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionalGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the transactional group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.transactionalGroups.list",
+      "shortPath": "transactionalGroups.list",
+      "description": "Retrieve a paginated list of transactional groups, most recently created first.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "How many results to return in each request. Must be between 10 and 50. Default is 20."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ totalResults?: number | null, returnedResults?: number | null, perPage?: number | null, totalPages?: number | null, nextCursor?: string | null | null, nextPage?: string | null | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, description?: string | null, createdAt?: string | null, updatedAt?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.transactionalGroups.update",
+      "shortPath": "transactionalGroups.update",
+      "description": "Update a transactional group's name or description. At least one field must be provided. The reserved \"Unsorted\" group cannot be edited.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transactionalGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the transactional group."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "The group name. Cannot be the reserved name \"Unsorted\"."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "A description for the group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.uploads.complete",
+      "shortPath": "uploads.complete",
+      "description": "Finalize an image upload after the file has been uploaded to the pre-signed URL. Returns the public URL of the uploaded image asset.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailAssetId",
+            "optional": false,
+            "type": "string",
+            "description": "The `emailAssetId` returned when the upload was created via `POST /v1/uploads`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailAssetId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "finalUrl",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.uploads.create",
+      "shortPath": "uploads.create",
+      "description": "Request a pre-signed URL to upload an image asset. Upload the file with an HTTP `PUT` to the returned `presignedUrl` (sending the same `Content-Type` and `Content-Length`), then call `/uploads/{emailAssetId}/complete` to finalize the asset. Answers a presigned URL; PUT the file bytes there yourself, then call uploads.complete.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "The MIME type of the file to upload. Supported types are `image/jpeg`, `image/png`, `image/gif` and `image/webp`."
+          },
+          {
+            "key": "contentLength",
+            "optional": false,
+            "type": "number",
+            "description": "The size of the file in bytes. Must be a positive integer no greater than 4,000,000 bytes."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emailAssetId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "presignedUrl",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.workflowGroups.create",
+      "shortPath": "workflowGroups.create",
+      "description": "Create a new workflow group.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The group name. Cannot be the reserved name \"Unsorted\"."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "An optional description for the group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.workflowGroups.get",
+      "shortPath": "workflowGroups.get",
+      "description": "Retrieve a single workflow group by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the workflow group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.workflowGroups.list",
+      "shortPath": "workflowGroups.list",
+      "description": "Retrieve a paginated list of workflow groups, most recently created first.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "How many results to return in each request. Must be between 10 and 50. Default is 20."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ totalResults?: number | null, returnedResults?: number | null, perPage?: number | null, totalPages?: number | null, nextCursor?: string | null | null, nextPage?: string | null | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, description?: string | null, createdAt?: string | null, updatedAt?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.workflowGroups.update",
+      "shortPath": "workflowGroups.update",
+      "description": "Update a workflow group's name or description. At least one field must be provided. The reserved \"Unsorted\" group cannot be edited.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the workflow group."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "The group name. Cannot be the reserved name \"Unsorted\"."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "A description for the group."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.workflowNodes.addBranch",
+      "shortPath": "workflowNodes.addBranch",
+      "description": "Add a branch and a child node under an existing Branch or Experiment node. Returns the created child node plus the latest workflow. - Adding a branch to a `BranchNode` creates one `AudienceFilter` child node.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the workflow."
+          },
+          {
+            "key": "nodeId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the BranchNode or ExperimentBranchNode that should receive one new child."
+          },
+          {
+            "key": "expectedRevisionId",
+            "optional": false,
+            "type": "string | null",
+            "description": "The workflow revision token returned by the latest workflow read or mutation. Older workflows may return `null` before their first revision-aware mutation; pass `null` back as `expectedRevisionId` in that case. If the token is stale, the API returns a `409 Conflict` error."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "node",
+            "optional": true,
+            "type": "{ id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, eventName?: string | null, eventProperties?: { name?: string | null, type?: string | null }[] | null, reEligible?: boolean | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, contactPropertyQuery?: { key?: string | null, is?: { value?: string | number | boolean | null, operator?: string | null } | null, was?: { value?: string | number | boolean | null, operator?: string | null } | null } | null | null, reEligible?: boolean | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, mailingListId?: string | null | null, reEligible?: boolean | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, audienceFilter?: { match?: string | null, conditions?: ({ type?: string | null, key?: string | null, operator?: string | null, value?: string | number | { from?: string | null, to?: string | null } | null } | { type?: string | null, status?: string | null | null } | { type?: string | null, action?: string | null, negate?: boolean | null, target?: string | null, id?: string | null })[] | null } | null | null, audienceSegmentId?: string | null, appliesDownstream?: boolean | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, amount?: number | null, unit?: string | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, emailMessageId?: string | null, subject?: string | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, samplingRate?: number | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, isControl?: boolean | null } & { workflowRevisionId?: string | null } | null"
+          },
+          {
+            "key": "workflow",
+            "optional": true,
+            "type": "{ id?: string | null, url?: string | null, workflowRevisionId?: string | null | null, status?: string | null, name?: string | null, description?: string | null, workflowGroupId?: string | null, mailingListId?: string | null | null, rootNodeId?: string | null, nodes?: {} | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.workflowNodes.create",
+      "shortPath": "workflowNodes.create",
+      "description": "Create a new default workflow node and return it with the latest workflow.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "inline",
+        "type": "{ workflowId: string } & ({ expectedRevisionId: string | null, insertMode: between, nodeTypeName: AudienceFilter | BranchNode | ExperimentBranchNode | TimerAction | SendEmailAction | VariantNode, fromNodeId: string, toNodeId: string } | { expectedRevisionId: string | null, insertMode: before, nodeTypeName: AudienceFilter | BranchNode | ExperimentBranchNode | TimerAction | SendEmailAction | VariantNode, toNodeId?: string, beforeNodeId?: string } & ({ toNodeId: string } | { beforeNodeId: string }) | { expectedRevisionId: string | null, insertMode: after, nodeTypeName: AudienceFilter | BranchNode | ExperimentBranchNode | TimerAction | SendEmailAction | VariantNode, fromNodeId: string })"
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "node",
+            "optional": true,
+            "type": "({ id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, eventName?: string | null, eventProperties?: { name?: string | null, type?: string | null }[] | null, reEligible?: boolean | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, contactPropertyQuery?: { key?: string | null, is?: { value?: string | number | boolean | null, operator?: string | null } | null, was?: { value?: string | number | boolean | null, operator?: string | null } | null } | null | null, reEligible?: boolean | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, mailingListId?: string | null | null, reEligible?: boolean | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, audienceFilter?: { match?: string | null, conditions?: ({ type?: string | null, key?: string | null, operator?: string | null, value?: string | number | { from?: string | null, to?: string | null } | null } | { type?: string | null, status?: string | null | null } | { type?: string | null, action?: string | null, negate?: boolean | null, target?: string | null, id?: string | null })[] | null } | null | null, audienceSegmentId?: string | null, appliesDownstream?: boolean | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, amount?: number | null, unit?: string | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, emailMessageId?: string | null, subject?: string | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, samplingRate?: number | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, isControl?: boolean | null } & { workflowRevisionId?: string | null }) & { createdChildNodes?: ({ id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, eventName?: string | null, eventProperties?: { name?: string | null, type?: string | null }[] | null, reEligible?: boolean | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, contactPropertyQuery?: { key?: string | null, is?: { value?: string | number | boolean | null, operator?: string | null } | null, was?: { value?: string | number | boolean | null, operator?: string | null } | null } | null | null, reEligible?: boolean | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, mailingListId?: string | null | null, reEligible?: boolean | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, audienceFilter?: { match?: string | null, conditions?: ({ type?: string | null, key?: string | null, operator?: string | null, value?: string | number | { from?: string | null, to?: string | null } | null } | { type?: string | null, status?: string | null | null } | { type?: string | null, action?: string | null, negate?: boolean | null, target?: string | null, id?: string | null })[] | null } | null | null, audienceSegmentId?: string | null, appliesDownstream?: boolean | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, amount?: number | null, unit?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, emailMessageId?: string | null, subject?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, samplingRate?: number | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, isControl?: boolean | null })[] | null } | null"
+          },
+          {
+            "key": "workflow",
+            "optional": true,
+            "type": "{ id?: string | null, url?: string | null, workflowRevisionId?: string | null | null, status?: string | null, name?: string | null, description?: string | null, workflowGroupId?: string | null, mailingListId?: string | null | null, rootNodeId?: string | null, nodes?: {} | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.workflowNodes.delete",
+      "shortPath": "workflowNodes.delete",
+      "description": "Delete a single workflow node. If contacts are queued at the node, Loops returns with `\"status\": \"queuedContactsFound\"` instead of deleting. Retry with `queuedContactPolicy: \"discard\"` to delete the node and discard those queued contacts.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the workflow."
+          },
+          {
+            "key": "nodeId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the workflow node."
+          },
+          {
+            "key": "expectedRevisionId",
+            "optional": false,
+            "type": "string | null",
+            "description": "The workflow revision token returned by the latest workflow read or mutation. Older workflows may return `null` before their first revision-aware mutation; pass `null` back as `expectedRevisionId` in that case. If the token is stale, the API returns a `409 Conflict` error."
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean",
+            "description": "If `true`, the request will be validated but the workflow will not be modified."
+          },
+          {
+            "key": "queuedContactPolicy",
+            "optional": true,
+            "type": "fail | discard",
+            "description": "`fail` returns queued-contact impact instead of mutating. `discard` confirms that matching queued contacts should be discarded. Defaults to `fail` when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ status?: string | null, nodeIds?: string[] | null, queuedContactCount?: number | null } | { status?: string | null, nodeIds?: string[] | null, workflowRevisionId?: string | null, queuedContactCount?: number | null, workflow?: { id?: string | null, url?: string | null, workflowRevisionId?: string | null | null, status?: string | null, name?: string | null, description?: string | null, workflowGroupId?: string | null, mailingListId?: string | null | null, rootNodeId?: string | null, nodes?: {} | null } | null }"
+      }
+    },
+    {
+      "path": "loops.api.workflowNodes.deleteRecursive",
+      "shortPath": "workflowNodes.deleteRecursive",
+      "description": "Delete a node and its downstream subtree. If contacts are queued at any node that would be deleted, Loops returns with `\"status\": \"queuedContactsFound\"` instead of deleting.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the workflow."
+          },
+          {
+            "key": "nodeId",
+            "optional": false,
+            "type": "string",
+            "description": "The root node ID of the subtree to delete."
+          },
+          {
+            "key": "expectedRevisionId",
+            "optional": false,
+            "type": "string | null",
+            "description": "The workflow revision token returned by the latest workflow read or mutation. Older workflows may return `null` before their first revision-aware mutation; pass `null` back as `expectedRevisionId` in that case. If the token is stale, the API returns a `409 Conflict` error."
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean",
+            "description": "If `true`, the request will be validated but the workflow will not be modified."
+          },
+          {
+            "key": "queuedContactPolicy",
+            "optional": true,
+            "type": "fail | discard",
+            "description": "`fail` returns queued-contact impact instead of mutating. `discard` confirms that matching queued contacts should be discarded. Defaults to `fail` when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ status?: string | null, nodeIds?: string[] | null, queuedContactCount?: number | null } | { status?: string | null, nodeIds?: string[] | null, workflowRevisionId?: string | null, queuedContactCount?: number | null, workflow?: { id?: string | null, url?: string | null, workflowRevisionId?: string | null | null, status?: string | null, name?: string | null, description?: string | null, workflowGroupId?: string | null, mailingListId?: string | null | null, rootNodeId?: string | null, nodes?: {} | null } | null }"
+      }
+    },
+    {
+      "path": "loops.api.workflowNodes.get",
+      "shortPath": "workflowNodes.get",
+      "description": "Retrieve detailed data for a single workflow node.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the workflow."
+          },
+          {
+            "key": "nodeId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the workflow node."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "({ id?: string | null, workflowId?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } | { id?: string | null, workflowId?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, eventName?: string | null, eventProperties?: { name?: string | null, type?: string | null }[] | null, reEligible?: boolean | null } | { id?: string | null, workflowId?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, contactPropertyQuery?: { key?: string | null, is?: { value?: string | number | boolean | null, operator?: string | null } | null, was?: { value?: string | number | boolean | null, operator?: string | null } | null } | null | null, reEligible?: boolean | null } | { id?: string | null, workflowId?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, mailingListId?: string | null | null, reEligible?: boolean | null } | { id?: string | null, workflowId?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } | { id?: string | null, workflowId?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, audienceFilter?: { match?: string | null, conditions?: ({ type?: string | null, key?: string | null, operator?: string | null, value?: string | number | { from?: string | null, to?: string | null } | null } | { type?: string | null, status?: string | null | null } | { type?: string | null, action?: string | null, negate?: boolean | null, target?: string | null, id?: string | null })[] | null } | null | null, audienceSegmentId?: string | null, appliesDownstream?: boolean | null } | { id?: string | null, workflowId?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, amount?: number | null, unit?: string | null } | { id?: string | null, workflowId?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, emailMessageId?: string | null, subject?: string | null } | { id?: string | null, workflowId?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } | { id?: string | null, workflowId?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } | { id?: string | null, workflowId?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, samplingRate?: number | null } | { id?: string | null, workflowId?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, isControl?: boolean | null }) & { workflowRevisionId?: string | null | null }"
+      }
+    },
+    {
+      "path": "loops.api.workflowNodes.getMetrics",
+      "shortPath": "workflowNodes.getMetrics",
+      "description": "Retrieve all-time email engagement metrics for a workflow `SendEmailAction` node. Nodes of any other type return a `400` response. A `SendEmailAction` node with an email that has not sent anything yet reports every counter as `0`.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the workflow."
+          },
+          {
+            "key": "nodeId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the `SendEmailAction` node."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sends",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "opens",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "clicks",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "unsubscribes",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "spamReports",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hardBounces",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "softBounces",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.workflowNodes.reroute",
+      "shortPath": "workflowNodes.reroute",
+      "description": "Reroute the source node's existing connection to another valid target node. Returns the updated source node and the latest workflow.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the workflow."
+          },
+          {
+            "key": "nodeId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the source workflow node whose outgoing connection should be moved."
+          },
+          {
+            "key": "expectedRevisionId",
+            "optional": false,
+            "type": "string | null",
+            "description": "The workflow revision token returned by the latest workflow read or mutation. Older workflows may return `null` before their first revision-aware mutation; pass `null` back as `expectedRevisionId` in that case. If the token is stale, the API returns a `409 Conflict` error."
+          },
+          {
+            "key": "newTargetNodeId",
+            "optional": false,
+            "type": "string",
+            "description": "The valid workflow node that should receive the connection from the source node."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "({ id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, eventName?: string | null, eventProperties?: { name?: string | null, type?: string | null }[] | null, reEligible?: boolean | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, contactPropertyQuery?: { key?: string | null, is?: { value?: string | number | boolean | null, operator?: string | null } | null, was?: { value?: string | number | boolean | null, operator?: string | null } | null } | null | null, reEligible?: boolean | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, mailingListId?: string | null | null, reEligible?: boolean | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, audienceFilter?: { match?: string | null, conditions?: ({ type?: string | null, key?: string | null, operator?: string | null, value?: string | number | { from?: string | null, to?: string | null } | null } | { type?: string | null, status?: string | null | null } | { type?: string | null, action?: string | null, negate?: boolean | null, target?: string | null, id?: string | null })[] | null } | null | null, audienceSegmentId?: string | null, appliesDownstream?: boolean | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, amount?: number | null, unit?: string | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, emailMessageId?: string | null, subject?: string | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, samplingRate?: number | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, isControl?: boolean | null } & { workflowRevisionId?: string | null }) & { workflow?: { id?: string | null, url?: string | null, workflowRevisionId?: string | null | null, status?: string | null, name?: string | null, description?: string | null, workflowGroupId?: string | null, mailingListId?: string | null | null, rootNodeId?: string | null, nodes?: {} | null } | null }"
+      }
+    },
+    {
+      "path": "loops.api.workflowNodes.update",
+      "shortPath": "workflowNodes.update",
+      "description": "Update workflow-node-owned fields for a single node. To update a node, the workflow's `state` must not be `Sending`. Shared resources such as email messages and audience segments should be updated through their own APIs.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the workflow."
+          },
+          {
+            "key": "nodeId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the workflow node."
+          },
+          {
+            "key": "expectedRevisionId",
+            "optional": false,
+            "type": "string | null",
+            "description": "The workflow revision token returned by the latest workflow read or mutation. Older workflows may return `null` before their first revision-aware mutation; pass `null` back as `expectedRevisionId` in that case. If the token is stale, the API returns a `409 Conflict` error."
+          },
+          {
+            "key": "payload",
+            "optional": false,
+            "type": "{ typeName: SignupTrigger } | { typeName?: EventTrigger, eventPatternId?: string | null, eventName?: string | null, reEligible?: boolean } | { typeName?: ContactPropertyTrigger, contactPropertyQuery?: { key: string, is: { value: string | number | boolean, operator: any | contains | not_contains | empty | not_empty | equal | not_equal | greater_than | less_than | true | false | numeric_equal | numeric_not_equal | after | before | between }, was: { value: string | number | boolean, operator: any | contains | not_contains | empty | not_empty | equal | not_equal | greater_than | less_than | true | false | numeric_equal | numeric_not_equal | after | before | between } }, reEligible?: boolean } | { typeName?: AddToListTrigger, reEligible?: boolean } | { audienceSegmentId?: string | null, audienceFilter?: { match: all | any, conditions: ({ type: property, key: string, operator: any | contains | notContains | equals | notEquals | greaterThan | lessThan | isTrue | isFalse | empty | notEmpty | dateEmpty | dateNotEmpty | after | before | between, value?: string | number | { from: string, to: string } } | { type: optIn, status: accepted | pending | rejected | null } | { type: activity, action: sent | opened | clicked, negate: boolean, target: campaign | workflow | workflowEmail, id: string })[] } | null, appliesDownstream?: boolean } | { amount?: number, unit?: m | h | d } | { samplingRate?: number } | { isControl?: boolean }",
+            "description": "Node-type-specific fields to update. The allowed fields depend on the existing node type. Trigger node updates may include `typeName` when changing one trigger node type to another trigger node type."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "({ id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, eventName?: string | null, eventProperties?: { name?: string | null, type?: string | null }[] | null, reEligible?: boolean | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, contactPropertyQuery?: { key?: string | null, is?: { value?: string | number | boolean | null, operator?: string | null } | null, was?: { value?: string | number | boolean | null, operator?: string | null } | null } | null | null, reEligible?: boolean | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, mailingListId?: string | null | null, reEligible?: boolean | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, audienceFilter?: { match?: string | null, conditions?: ({ type?: string | null, key?: string | null, operator?: string | null, value?: string | number | { from?: string | null, to?: string | null } | null } | { type?: string | null, status?: string | null | null } | { type?: string | null, action?: string | null, negate?: boolean | null, target?: string | null, id?: string | null })[] | null } | null | null, audienceSegmentId?: string | null, appliesDownstream?: boolean | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, amount?: number | null, unit?: string | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, emailMessageId?: string | null, subject?: string | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, samplingRate?: number | null } & { workflowRevisionId?: string | null } | { id?: string | null, typeName?: string | null, nextNodeIds?: string[] | null, isControl?: boolean | null } & { workflowRevisionId?: string | null }) & { workflow?: { id?: string | null, url?: string | null, workflowRevisionId?: string | null | null, status?: string | null, name?: string | null, description?: string | null, workflowGroupId?: string | null, mailingListId?: string | null | null, rootNodeId?: string | null, nodes?: {} | null } | null }"
+      }
+    },
+    {
+      "path": "loops.api.workflows.changeMailingList",
+      "shortPath": "workflows.changeMailingList",
+      "description": "Dry run or apply a workflow mailing list change. If queued contacts would be removed from the workflow due to the change of mailing list, Loops returns with `\"status\": \"queuedContactsFound\"` instead of applying the change.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the workflow."
+          },
+          {
+            "key": "expectedRevisionId",
+            "optional": false,
+            "type": "string | null",
+            "description": "The workflow revision token returned by the latest workflow read or mutation. Older workflows may return `null` before their first revision-aware mutation; pass `null` back as `expectedRevisionId` in that case. If the token is stale, the API returns a `409 Conflict` error."
+          },
+          {
+            "key": "mailingListId",
+            "optional": false,
+            "type": "string | null",
+            "description": "The mailing list to use for the workflow. When assigning a mailing list, queued contacts excluded by the new list can return `queuedContactsFound`; retry with `queuedContactPolicy: \"discard\"` to apply the change and discard those contacts. Use `null` to clear the workflow mailing list; clearing does not discard queued contacts."
+          },
+          {
+            "key": "dryRun",
+            "optional": true,
+            "type": "boolean",
+            "description": "If `true`, the request will be validated but the workflow will not be modified."
+          },
+          {
+            "key": "queuedContactPolicy",
+            "optional": true,
+            "type": "fail | discard",
+            "description": "`fail` returns queued-contact impact instead of mutating. `discard` confirms that matching queued contacts should be discarded. Defaults to `fail` when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ status?: string | null, mailingListId?: string | null | null, queuedContactCount?: number | null } | { status?: string | null, mailingListId?: string | null | null, workflowRevisionId?: string | null, queuedContactCount?: number | null, workflow?: { id?: string | null, url?: string | null, workflowRevisionId?: string | null | null, status?: string | null, name?: string | null, description?: string | null, workflowGroupId?: string | null, mailingListId?: string | null | null, rootNodeId?: string | null, nodes?: {} | null } | null }"
+      }
+    },
+    {
+      "path": "loops.api.workflows.create",
+      "shortPath": "workflows.create",
+      "description": "Create a draft workflow with a blank trigger and exit node. When `workflowGroupId` is omitted, the workflow is added to the team's Unsorted group.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The name of the workflow."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "The description of the workflow."
+          },
+          {
+            "key": "mailingListId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The ID of a mailing list the workflow sends to. After creation, the mailing list can be changed with the `/v1/workflows/{workflowId}/mailing-list` endpoint."
+          },
+          {
+            "key": "workflowGroupId",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of the workflow group to create this workflow in. Defaults to the team's Unsorted group when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workflowRevisionId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workflowGroupId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mailingListId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "rootNodeId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nodes",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.workflows.delete",
+      "shortPath": "workflows.delete",
+      "description": "Delete a workflow. Successful deletion returns `204 No Content`. If the workflow is currently sending or has queued contacts, Loops returns `409 Conflict` with a message instead of deleting.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the workflow."
+          },
+          {
+            "key": "expectedRevisionId",
+            "optional": false,
+            "type": "string | null",
+            "description": "The workflow revision token returned by the latest workflow read or mutation. Older workflows may return `null` before their first revision-aware mutation; pass `null` back as `expectedRevisionId` in that case. If the token is stale, the API returns a `409 Conflict` error."
+          },
+          {
+            "key": "confirmDelete",
+            "optional": true,
+            "type": "boolean",
+            "description": "Set to `true` after a confirmation-required `409 Conflict` response to confirm deleting a sending workflow or a workflow with queued contacts."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.workflows.get",
+      "shortPath": "workflows.get",
+      "description": "Retrieve a workflow graph with node type names, connections, and selected display fields.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the workflow."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workflowRevisionId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workflowGroupId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mailingListId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "rootNodeId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nodes",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.workflows.list",
+      "shortPath": "workflows.list",
+      "description": "Retrieve a paginated list of workflows.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "How many results to return in each request. Must be between 10 and 50. Default is 20."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response."
+          },
+          {
+            "key": "workflowGroupId",
+            "optional": true,
+            "type": "string",
+            "description": "Only return workflows in this workflow group. An ID that matches no group returns an empty list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ totalResults?: number | null, returnedResults?: number | null, perPage?: number | null, totalPages?: number | null, nextCursor?: string | null | null, nextPage?: string | null | null } | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, url?: string | null, name?: string | null, workflowGroupId?: string | null, createdAt?: string | null, updatedAt?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loops.api.workflows.update",
+      "shortPath": "workflows.update",
+      "description": "Update a workflow's name, description, or group. At least one field must be provided. To change the workflow's mailing list, use the `POST /v1/workflows/{workflowId}/mailing-list` endpoint instead.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "workflowId",
+            "optional": false,
+            "type": "string",
+            "description": "The ID of the workflow."
+          },
+          {
+            "key": "expectedRevisionId",
+            "optional": false,
+            "type": "string | null",
+            "description": "The workflow revision token returned by the latest workflow read or mutation. Older workflows may return `null` before their first revision-aware mutation; pass `null` back as `expectedRevisionId` in that case. If the token is stale, the API returns a `409 Conflict` error."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "The updated workflow name."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "The updated workflow description."
+          },
+          {
+            "key": "workflowGroupId",
+            "optional": true,
+            "type": "string",
+            "description": "The ID of the workflow group to move this workflow into."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workflowRevisionId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "workflowGroupId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mailingListId",
+            "optional": true,
+            "type": "string | null | null"
+          },
+          {
+            "key": "rootNodeId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "nodes",
+            "optional": true,
+            "type": "{} | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "loops.webhooks.campaign.emailSent",
+      "shortPath": "campaign.emailSent",
+      "description": "Campaign email sent. Sent when a campaign email is sent to a contact. This event fires for every campaign send (for example, sending to 1,000 contacts produces 1,000 events).",
+      "payload": {
+        "kind": "inline",
+        "type": "{ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { eventName?: string | null, campaignId?: string | null, campaignName?: string | null, email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, mailingLists?: { id?: string | null, name?: string | null, description?: string | null | null, isPublic?: boolean | null }[] | null }"
+      },
+      "responseType": "{ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { eventName?: string | null, campaignId?: string | null, campaignName?: string | null, email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, mailingLists?: { id?: string | null, name?: string | null, description?: string | null | null, isPublic?: boolean | null }[] | null }",
+      "usageExample": "loops({\n    webhookHooks: {\n        campaign: {\n            emailSent: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "loops.webhooks.contact.created",
+      "shortPath": "contact.created",
+      "description": "Contact created. Sent when a new contact is created in your audience. Contains a `contactIdentity` object and a full `contact` object with all of the new contact's properties (including custom properties).",
+      "payload": {
+        "kind": "inline",
+        "type": "{ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { eventName?: string | null, contact?: { id?: string | null, email?: string | null, firstName?: string | null | null, lastName?: string | null | null, source?: string | null, subscribed?: boolean | null, userGroup?: string | null, userId?: string | null | null, notes?: string | null | null, mailingLists?: {} | null, optInStatus?: string | null | null } | null }"
+      },
+      "responseType": "{ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { eventName?: string | null, contact?: { id?: string | null, email?: string | null, firstName?: string | null | null, lastName?: string | null | null, source?: string | null, subscribed?: boolean | null, userGroup?: string | null, userId?: string | null | null, notes?: string | null | null, mailingLists?: {} | null, optInStatus?: string | null | null } | null }",
+      "usageExample": "loops({\n    webhookHooks: {\n        contact: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "loops.webhooks.contact.deleted",
+      "shortPath": "contact.deleted",
+      "description": "Contact deleted. Sent when a contact is deleted from your audience. Contains a `contactIdentity` object.",
+      "payload": {
+        "kind": "inline",
+        "type": "{ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { eventName?: string | null }"
+      },
+      "responseType": "{ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { eventName?: string | null }",
+      "usageExample": "loops({\n    webhookHooks: {\n        contact: {\n            deleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "loops.webhooks.contact.mailingListSubscribed",
+      "shortPath": "contact.mailingListSubscribed",
+      "description": "Contact subscribed to mailing list. Sent when a contact is subscribed to a mailing list. Contains `contactIdentity` and `mailingList` objects.",
+      "payload": {
+        "kind": "inline",
+        "type": "{ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { eventName?: string | null, mailingList?: { id?: string | null, name?: string | null, description?: string | null | null, isPublic?: boolean | null } | null }"
+      },
+      "responseType": "{ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { eventName?: string | null, mailingList?: { id?: string | null, name?: string | null, description?: string | null | null, isPublic?: boolean | null } | null }",
+      "usageExample": "loops({\n    webhookHooks: {\n        contact: {\n            mailingListSubscribed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "loops.webhooks.contact.mailingListUnsubscribed",
+      "shortPath": "contact.mailingListUnsubscribed",
+      "description": "Contact unsubscribed from mailing list. Sent when a contact is unsubscribed from a mailing list. This is not the same as a contact unsubscribing from your audience (see `contact.unsubscribed`).",
+      "payload": {
+        "kind": "inline",
+        "type": "{ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { eventName?: string | null, mailingList?: { id?: string | null, name?: string | null, description?: string | null | null, isPublic?: boolean | null } | null }"
+      },
+      "responseType": "{ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { eventName?: string | null, mailingList?: { id?: string | null, name?: string | null, description?: string | null | null, isPublic?: boolean | null } | null }",
+      "usageExample": "loops({\n    webhookHooks: {\n        contact: {\n            mailingListUnsubscribed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "loops.webhooks.contact.unsubscribed",
+      "shortPath": "contact.unsubscribed",
+      "description": "Contact unsubscribed. Sent when a contact is unsubscribed from your audience, or when a contact is deleted from your audience (alongside `contact.deleted`).",
+      "payload": {
+        "kind": "inline",
+        "type": "{ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { eventName?: string | null }"
+      },
+      "responseType": "{ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { eventName?: string | null }",
+      "usageExample": "loops({\n    webhookHooks: {\n        contact: {\n            unsubscribed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "loops.webhooks.email.clicked",
+      "shortPath": "email.clicked",
+      "description": "Email clicked. Sent when a link in a campaign or workflow email is clicked. Not available for transactional emails because link clicks are not tracked for transactional emails.",
+      "payload": {
+        "kind": "inline",
+        "type": "({ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, sourceType?: string | null, campaignId?: string | null, loopId?: string | null }) & { eventName?: string | null }"
+      },
+      "responseType": "({ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, sourceType?: string | null, campaignId?: string | null, loopId?: string | null }) & { eventName?: string | null }",
+      "usageExample": "loops({\n    webhookHooks: {\n        email: {\n            clicked: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "loops.webhooks.email.delivered",
+      "shortPath": "email.delivered",
+      "description": "Email delivered. Sent when an email is delivered to its recipient.",
+      "payload": {
+        "kind": "inline",
+        "type": "({ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, sourceType?: string | null, campaignId?: string | null, loopId?: string | null, transactionalId?: string | null }) & { eventName?: string | null }"
+      },
+      "responseType": "({ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, sourceType?: string | null, campaignId?: string | null, loopId?: string | null, transactionalId?: string | null }) & { eventName?: string | null }",
+      "usageExample": "loops({\n    webhookHooks: {\n        email: {\n            delivered: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "loops.webhooks.email.hardBounced",
+      "shortPath": "email.hardBounced",
+      "description": "Email hard bounced. Sent when an email hard bounces. Hard bounces are persistent delivery failures (for example, a mailbox that does not exist); the email will not be delivered.",
+      "payload": {
+        "kind": "inline",
+        "type": "({ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, sourceType?: string | null, campaignId?: string | null, loopId?: string | null, transactionalId?: string | null }) & { eventName?: string | null }"
+      },
+      "responseType": "({ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, sourceType?: string | null, campaignId?: string | null, loopId?: string | null, transactionalId?: string | null }) & { eventName?: string | null }",
+      "usageExample": "loops({\n    webhookHooks: {\n        email: {\n            hardBounced: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "loops.webhooks.email.opened",
+      "shortPath": "email.opened",
+      "description": "Email opened. Sent when a campaign or workflow email is opened. Not available for transactional emails because email opens are not tracked for transactional emails.",
+      "payload": {
+        "kind": "inline",
+        "type": "({ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, sourceType?: string | null, campaignId?: string | null, loopId?: string | null }) & { eventName?: string | null }"
+      },
+      "responseType": "({ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, sourceType?: string | null, campaignId?: string | null, loopId?: string | null }) & { eventName?: string | null }",
+      "usageExample": "loops({\n    webhookHooks: {\n        email: {\n            opened: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "loops.webhooks.email.resubscribed",
+      "shortPath": "email.resubscribed",
+      "description": "Email resubscribed. Sent when a recipient resubscribes to marketing email from an email's preference center (\"Unsubscribe\" link). Not available for transactional emails because unsubscribe links are not included for transactional emails.",
+      "payload": {
+        "kind": "inline",
+        "type": "({ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, sourceType?: string | null, campaignId?: string | null, loopId?: string | null }) & { eventName?: string | null }"
+      },
+      "responseType": "({ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, sourceType?: string | null, campaignId?: string | null, loopId?: string | null }) & { eventName?: string | null }",
+      "usageExample": "loops({\n    webhookHooks: {\n        email: {\n            resubscribed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "loops.webhooks.email.softBounced",
+      "shortPath": "email.softBounced",
+      "description": "Email soft bounced. Sent when an email soft bounces. Soft bounces are temporary delivery failures (for example, a connection timing out). Soft bounces are retried multiple times and the email may still be delivered.",
+      "payload": {
+        "kind": "inline",
+        "type": "({ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, sourceType?: string | null, campaignId?: string | null, loopId?: string | null, transactionalId?: string | null }) & { eventName?: string | null }"
+      },
+      "responseType": "({ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, sourceType?: string | null, campaignId?: string | null, loopId?: string | null, transactionalId?: string | null }) & { eventName?: string | null }",
+      "usageExample": "loops({\n    webhookHooks: {\n        email: {\n            softBounced: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "loops.webhooks.email.spamReported",
+      "shortPath": "email.spamReported",
+      "description": "Email spam reported. Sent when a recipient reports your email as spam. Contains `sourceType` and the related `campaignId`, `loopId` (workflow ID), or `transactionalId`, plus `contactIdentity` and `email` objects.",
+      "payload": {
+        "kind": "inline",
+        "type": "({ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, sourceType?: string | null, campaignId?: string | null, loopId?: string | null, transactionalId?: string | null }) & { eventName?: string | null }"
+      },
+      "responseType": "({ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, sourceType?: string | null, campaignId?: string | null, loopId?: string | null, transactionalId?: string | null }) & { eventName?: string | null }",
+      "usageExample": "loops({\n    webhookHooks: {\n        email: {\n            spamReported: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "loops.webhooks.email.unsubscribed",
+      "shortPath": "email.unsubscribed",
+      "description": "Email unsubscribed. Sent when a recipient unsubscribes from marketing email or a mailing list using an email's \"Unsubscribe\" link.",
+      "payload": {
+        "kind": "inline",
+        "type": "({ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, sourceType?: string | null, campaignId?: string | null, loopId?: string | null }) & { eventName?: string | null }"
+      },
+      "responseType": "({ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, sourceType?: string | null, campaignId?: string | null, loopId?: string | null }) & { eventName?: string | null }",
+      "usageExample": "loops({\n    webhookHooks: {\n        email: {\n            unsubscribed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "loops.webhooks.loop.emailSent",
+      "shortPath": "loop.emailSent",
+      "description": "Loop email sent. Sent when a workflow email is sent to a contact. This event keeps its `loop` naming for compatibility (Loops was renamed to Workflows on May 6, 2026).",
+      "payload": {
+        "kind": "inline",
+        "type": "{ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { eventName?: string | null, loopId?: string | null, loopName?: string | null, email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, mailingLists?: { id?: string | null, name?: string | null, description?: string | null | null, isPublic?: boolean | null }[] | null }"
+      },
+      "responseType": "{ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { eventName?: string | null, loopId?: string | null, loopName?: string | null, email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null, mailingLists?: { id?: string | null, name?: string | null, description?: string | null | null, isPublic?: boolean | null }[] | null }",
+      "usageExample": "loops({\n    webhookHooks: {\n        loop: {\n            emailSent: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "loops.webhooks.testing.testEvent",
+      "shortPath": "testing.testEvent",
+      "description": "Test event. Test event that can be triggered from the Webhooks settings page in Loops. Use this to verify that your endpoint is working and that your signature verification code is correct.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "eventTime",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "webhookSchemaVersion",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "responseType": "{ eventName?: string | null, eventTime?: number | null, message?: string | null, webhookSchemaVersion?: string | null }",
+      "usageExample": "loops({\n    webhookHooks: {\n        testing: {\n            testEvent: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "loops.webhooks.transactional.emailSent",
+      "shortPath": "transactional.emailSent",
+      "description": "Transactional email sent. Sent when a transactional email is sent to a contact. Contains a `transactionalId` value plus `contactIdentity` and `email` objects.",
+      "payload": {
+        "kind": "inline",
+        "type": "{ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { eventName?: string | null, transactionalId?: string | null, transactionalName?: string | null, email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null }"
+      },
+      "responseType": "{ eventName?: string | null, eventTime?: number | null, webhookSchemaVersion?: string | null, contactIdentity?: { id?: string | null, email?: string | null, userId?: string | null | null } | null } & { eventName?: string | null, transactionalId?: string | null, transactionalName?: string | null, email?: { id?: string | null, emailMessageId?: string | null, subject?: string | null } | null }",
+      "usageExample": "loops({\n    webhookHooks: {\n        transactional: {\n            emailSent: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

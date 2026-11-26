@@ -47,6 +47,15 @@
             ]
           },
           {
+            "group": "Management API",
+            "pages": [
+              "v1/overview",
+              "v1/quickstart",
+              "v1/authentication",
+              "v1/errors"
+            ]
+          },
+          {
             "group": "Frameworks",
             "pages": [
               {
@@ -3547,11 +3556,35 @@
                 ]
               },
               {
+                "group": "Linkhut",
+                "pages": [
+                  "plugins/linkhut/overview",
+                  "plugins/linkhut/api",
+                  "plugins/linkhut/database"
+                ]
+              },
+              {
+                "group": "Linkly",
+                "pages": [
+                  "plugins/linkly/overview",
+                  "plugins/linkly/api",
+                  "plugins/linkly/database"
+                ]
+              },
+              {
                 "group": "Linkup",
                 "pages": [
                   "plugins/linkup/overview",
                   "plugins/linkup/api",
                   "plugins/linkup/database"
+                ]
+              },
+              {
+                "group": "Listclean",
+                "pages": [
+                  "plugins/listclean/overview",
+                  "plugins/listclean/api",
+                  "plugins/listclean/database"
                 ]
               },
               {
@@ -3579,6 +3612,14 @@
                 ]
               },
               {
+                "group": "Lob",
+                "pages": [
+                  "plugins/lob/overview",
+                  "plugins/lob/api",
+                  "plugins/lob/database"
+                ]
+              },
+              {
                 "group": "Logo.dev",
                 "pages": [
                   "plugins/logodev/overview",
@@ -3587,11 +3628,37 @@
                 ]
               },
               {
+                "group": "Loomio",
+                "pages": [
+                  "plugins/loomio/overview",
+                  "plugins/loomio/api",
+                  "plugins/loomio/database"
+                ]
+              },
+              {
+                "group": "Loops",
+                "pages": [
+                  "plugins/loops/overview",
+                  "plugins/loops/api",
+                  "plugins/loops/database",
+                  "plugins/loops/webhooks"
+                ]
+              },
+              {
                 "group": "Loyverse",
                 "pages": [
                   "plugins/loyverse/overview",
                   "plugins/loyverse/api",
                   "plugins/loyverse/database"
+                ]
+              },
+              {
+                "group": "Lusha",
+                "pages": [
+                  "plugins/lusha/overview",
+                  "plugins/lusha/api",
+                  "plugins/lusha/database",
+                  "plugins/lusha/webhooks"
                 ]
               },
               {
@@ -3847,6 +3914,14 @@
                 ]
               },
               {
+                "group": "Moneybird",
+                "pages": [
+                  "plugins/moneybird/overview",
+                  "plugins/moneybird/api",
+                  "plugins/moneybird/database"
+                ]
+              },
+              {
                 "group": "MoonClerk",
                 "pages": [
                   "plugins/moonclerk/overview",
@@ -3868,6 +3943,14 @@
                   "plugins/mopinion/overview",
                   "plugins/mopinion/api",
                   "plugins/mopinion/database"
+                ]
+              },
+              {
+                "group": "More Trees",
+                "pages": [
+                  "plugins/moretrees/overview",
+                  "plugins/moretrees/api",
+                  "plugins/moretrees/database"
                 ]
               },
               {
@@ -4629,6 +4712,15 @@
                   "plugins/proofly/overview",
                   "plugins/proofly/api",
                   "plugins/proofly/database"
+                ]
+              },
+              {
+                "group": "Publora",
+                "pages": [
+                  "plugins/publora/overview",
+                  "plugins/publora/api",
+                  "plugins/publora/database",
+                  "plugins/publora/webhooks"
                 ]
               },
               {
@@ -6637,6 +6729,10 @@
     {
       "source": "/getting-started/quick-start",
       "destination": "/quick-start"
+    },
+    {
+      "source": "/v1",
+      "destination": "/v1/overview"
     },
     {
       "source": "/",

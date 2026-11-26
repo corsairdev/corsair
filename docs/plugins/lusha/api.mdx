@@ -1,0 +1,6574 @@
+---
+title: "Lusha API reference"
+sidebarTitle: "API"
+description: "API reference for the Lusha plugin in Corsair: every `lusha.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getAccountUsage
+
+`account.getAccountUsage`
+
+Read the account credit balance, rate-limit windows, plan and per-action pricing map. Free, but Lusha caps it at 5 requests per minute.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.account.getAccountUsage({});
+```
+
+**Input:** _empty object_
+
+Free. Returns `credits` (`total`, `used`, `remaining`), `rateLimits` for the daily, hourly and minute windows (a window may be null), `plan` and a `pricing` map of action name to `{ credits, perQuantity }`. Lusha caps this endpoint at 5 requests per minute.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credits` | `object \| null` | No | — |
+| `rateLimits` | `object \| null` | No | — |
+| `plan` | `object \| null` | No | — |
+| `pricing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="credits full type">
+
+```ts
+{
+  total?: number | null,
+  used?: number | null,
+  remaining?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="rateLimits full type">
+
+```ts
+{
+  daily?: {
+    limit?: number | null,
+    used?: number | null,
+    remaining?: number | null,
+    resetsAt?: string | null
+  } | null,
+  hourly?: {
+    limit?: number | null,
+    used?: number | null,
+    remaining?: number | null,
+    resetsAt?: string | null
+  } | null,
+  minute?: {
+    limit?: number | null,
+    used?: number | null,
+    remaining?: number | null,
+    resetsAt?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="plan full type">
+
+```ts
+{
+  category?: string | null,
+  renewalType?: string | null,
+  startDate?: string | null,
+  endDate?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="pricing full type">
+
+```ts
+Record<string, {
+  credits?: number | null,
+  perQuantity?: number | null
+}> | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Audit Logs
+
+### getStats
+
+`auditLogs.getStats`
+
+Get Audit Log Statistics. Get delivery statistics for your account.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.auditLogs.getStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `string` | No | Filter statistics by subscription ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number \| null` | No | — |
+| `success` | `number \| null` | No | — |
+| `failed` | `number \| null` | No | — |
+| `permanentFailure` | `number \| null` | No | — |
+| `totalCreditsConsumed` | `number \| null` | No | — |
+| `successRate` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`auditLogs.list`
+
+Get Audit Logs. Retrieve webhook delivery logs for your account.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.auditLogs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `string` | No | Filter by subscription ID |
+| `status` | `success \| failed \| permanent_failure` | No | Filter by delivery status |
+| `limit` | `number` | No | Maximum number of results (1-100) |
+| `offset` | `number` | No | Number of results to skip |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number | null,
+  subscriptionId?: string | number | null,
+  payloadId?: string | number | null,
+  status?: string | null,
+  statusCode?: number | null,
+  url?: string | null,
+  deliveredAt?: string | null,
+  durationMs?: number | null,
+  error?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  total?: number | null,
+  limit?: number | null,
+  offset?: number | null,
+  hasMore?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Company
+
+### enrichCompanies
+
+`company.enrichCompanies`
+
+Reveal full firmographics for up to 100 company ids, including premium fields named in reveal (each charged separately per result). Omitting reveal returns base firmographics only. Charges credits per result via reveal_company.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.company.enrichCompanies({ ids: ['16303253'], reveal: ['employeesByDepartment', 'competitors'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | 1 to 100 ids from a search result. |
+| `reveal` | `(employeesByDepartment \| employeesByLocation \| employeesBySeniority \| competitors \| estimatedAnnualItSpend \| monthlyWebsiteTraffic \| openJobsTotal \| openJobsByDepartment \| openJobsByLocation \| openJobsBySeniority \| directParent \| ultimateParent)[]` | No | Premium fields to reveal, each charged separately per result: employeesByDepartment, employeesByLocation, employeesBySeniority, competitors, estimatedAnnualItSpend, monthlyWebsiteTraffic, openJobsTotal, openJobsByDepartment, openJobsByLocation, openJobsBySeniority, directParent, ultimateParent. Omitting reveal returns base firmographics only. |
+| `tableId` | `string` | No | Also add these companies to this table and fill its columns. |
+
+Takes `ids` and optional `reveal` tokens (employeesByDepartment, employeesByLocation, employeesBySeniority, competitors, estimatedAnnualItSpend, monthlyWebsiteTraffic, openJobsTotal, openJobsByDepartment, openJobsByLocation, openJobsBySeniority, directParent, ultimateParent). Omitting `reveal` returns base firmographics only. Each reveal field is charged separately per result.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+| `tableWrite` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  clientReferenceId?: string | null,
+  id?: string | null,
+  name?: string | null,
+  alternativeName?: string | null,
+  domain?: string | null,
+  alternativeDomains?: string[] | null,
+  emailDomain?: string | null,
+  homepageUrl?: string | null,
+  description?: string | null,
+  additionalDescriptions?: string[] | null,
+  companyOffering?: string | null,
+  companyType?: string | null,
+  yearFounded?: number | null,
+  employeeCount?: {
+    exact?: number | null,
+    min?: number | null,
+    max?: number | null
+  } | null,
+  industry?: string | null,
+  subIndustry?: string | null,
+  additionalIndustries?: {
+    industry?: string | null,
+    subIndustry?: string | null
+  }[] | null,
+  specialities?: string[] | null,
+  sicCodes?: {
+    code?: number | null,
+    description?: string | null
+  }[] | null,
+  naicsCodes?: {
+    code?: number | null,
+    description?: string | null
+  }[] | null,
+  location?: {
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null,
+    state?: string | null,
+    stateCode?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    coordinates?: number[] | null,
+    isEuContact?: boolean | null
+  } | null,
+  additionalLocations?: {
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null,
+    state?: string | null,
+    stateCode?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    coordinates?: number[] | null,
+    isEuContact?: boolean | null
+  }[] | null,
+  socialLinks?: {
+    linkedin?: string | null,
+    xUrl?: string | null,
+    x?: string | null,
+    facebook?: string | null,
+    instagram?: string[] | null,
+    youtube?: string[] | null,
+    tiktok?: string[] | null,
+    crunchbase?: string[] | null
+  } | null,
+  linkedinFollowers?: number | null,
+  funding?: {
+    rounds?: Record<string, any>[] | null,
+    totalRounds?: number | null,
+    totalRoundsAmount?: number | null,
+    currency?: string | null,
+    isIpo?: boolean | null,
+    lastRoundType?: string | null,
+    lastRoundAmount?: number | null,
+    lastRoundDate?: string | null
+  } | null,
+  revenueRange?: {
+    exact?: number | null,
+    min?: number | null,
+    max?: number | null
+  } | null,
+  technologies?: string[] | null,
+  popularityTier?: number | null,
+  logoUrl?: string | null,
+  businessModel?: string[] | null,
+  phones?: {
+    number?: string | null,
+    type?: string | null,
+    doNotCall?: boolean | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  emails?: {
+    email?: string | null,
+    type?: string | null,
+    confidence?: string | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  keywords?: string[] | null,
+  openJobs?: {
+    total?: number | null,
+    byDepartment?: {
+      department?: string | null,
+      count?: number | null
+    }[] | null,
+    byLocation?: {
+      location?: string | null,
+      count?: number | null
+    }[] | null,
+    bySeniority?: {
+      seniority?: string | null,
+      count?: number | null
+    }[] | null
+  } | null,
+  estimatedAnnualItSpend?: {
+    value?: number | null,
+    currency?: string | null,
+    valueUsd?: number | null
+  } | null,
+  monthlyWebsiteTraffic?: {
+    visits?: number | null,
+    momChangePercent?: number | null,
+    month?: string | null
+  } | null,
+  employeesByDepartment?: {
+    department?: string | null,
+    count?: number | null
+  }[] | null,
+  employeesByLocation?: {
+    country?: string | null,
+    state?: string | null,
+    count?: number | null
+  }[] | null,
+  employeesBySeniority?: {
+    seniority?: string | null,
+    count?: number | null
+  }[] | null,
+  competitors?: {
+    id?: string | null,
+    name?: string | null,
+    domain?: string | null
+  }[] | null,
+  keyContacts?: {
+    fullName?: string | null,
+    jobTitle?: {
+      title?: string | null,
+      departments?: string[] | null,
+      seniority?: string | null,
+      startDate?: string | null
+    } | null,
+    profileUrl?: string | null,
+    status?: string | null
+  }[] | null,
+  directParent?: {
+    lushaCompanyId?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    hqCountry?: string | null
+  } | null,
+  ultimateParent?: {
+    lushaCompanyId?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    hqCountry?: string | null
+  } | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="tableWrite full type">
+
+```ts
+{
+  tableId?: string | null,
+  added?: number | null,
+  alreadyPresent?: number | null,
+  columnsCreated?: number | any[] | null,
+  rowsProcessed?: number | null,
+  rowsCharged?: number | null,
+  rowsAlreadyPaidInTable?: number | null,
+  creditsCharged?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCompanyFilterTypes
+
+`company.getCompanyFilterTypes`
+
+Get Company Filter Types (Discovery). Returns all available filter types for company prospecting and whether each requires a search query.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.company.getCompanyFilterTypes({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `availableFilters` | `object[] \| null` | No | — |
+| `filters` | `object[] \| null` | No | — |
+| `generatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="availableFilters full type">
+
+```ts
+{
+  filterType?: string | null,
+  requiresQuery?: boolean | null,
+  supportsQuery?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="filters full type">
+
+```ts
+{
+  path?: string | null,
+  type?: string | null,
+  description?: string | null,
+  valueSource?: string | null,
+  values?: string[] | null,
+  lookup?: {
+    filterType?: string | null,
+    url?: string | null,
+    requiresQuery?: boolean | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCompanyFilterValues
+
+`company.getCompanyFilterValues`
+
+Get Company Filter Values. Returns valid values for a single company filter type.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.company.getCompanyFilterValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filterType` | `names \| sizes \| revenues \| locations \| sics \| naics \| industriesLabels \| technologies` | Yes | — |
+| `query` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `values` | `any \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `truncated` | `boolean \| null` | No | — |
+
+
+
+---
+
+### getCompanyIcpFitScores
+
+`company.getCompanyIcpFitScores`
+
+Score Companies by ICP Fit. Score how well each company fits 1-3 of your Target Profiles, from '0' to '1'. Billing: 1 credit per scored company, regardless of how many profiles it's scored against. A score of '0' is charged. Error rows ('NOT_FOUND' / 'NO_SCORE') are never charged.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.company.getCompanyIcpFitScores({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `targetProfileIds` | `string[]` | Yes | 1-3 Target Profile IDs to score against. Each must be an 'active' profile you own or that is shared with your account - get them from [List Target Profiles](#operation/listIcpProfiles). |
+| `companies` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="companies full type">
+
+```ts
+{
+  clientReferenceId?: string,
+  id?: string,
+  domain?: string,
+  name?: string,
+  email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| number \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  clientReferenceId?: string | number | null,
+  id?: string | number | null,
+  name?: string | null,
+  domain?: string | null,
+  icpFitScore?: number | null,
+  topProfile?: {
+    id?: string | number | null,
+    name?: string | null
+  } | null,
+  profileScores?: {
+    id?: string | number | null,
+    name?: string | null,
+    score?: number | null
+  }[] | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCompanyLookalikes
+
+`company.getCompanyLookalikes`
+
+Company Lookalikes. Find companies similar to a set of seed companies using AI-powered recommendations. Billing: Charged per result via the 'lookalikeCompany' action.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.company.getCompanyLookalikes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dedupeSessionId` | `string` | No | — |
+| `seeds` | `object` | Yes | **Required. Minimum 5, maximum 100 seed companies in total**, counted across all identifier types combined ('domains' + 'linkedinUrls'). Fewer than 5 total seeds is rejected with '400'. |
+| `exclude` | `object` | No | Optional. Companies to always filter out of the results (for example, existing customers or competitors). Omit the field entirely if you have nothing to exclude. |
+| `limit` | `number` | No | — |
+| `tableId` | `string` | No | Optional. If provided, results are also persisted to this table. See the Tables API. |
+
+<AccordionGroup>
+<Accordion title="seeds full type">
+
+```ts
+{
+  domains?: string[],
+  linkedinUrls?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="exclude full type">
+
+```ts
+{
+  domains?: string[],
+  linkedinUrls?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dedupeSessionId` | `string \| number \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+| `tableWrite` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  domain?: string | null,
+  employeeCount?: {
+    exact?: number | null
+  } | null,
+  industry?: string | null,
+  location?: {
+    country?: string | null,
+    state?: string | null,
+    city?: string | null
+  } | null,
+  socialLinks?: {
+    linkedin?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  returned?: number | null,
+  hasMore?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="tableWrite full type">
+
+```ts
+{
+  tableId?: string | number | null,
+  added?: number | null,
+  alreadyPresent?: number | null,
+  columnsCreated?: number | any[] | null,
+  rowsProcessed?: number | null,
+  rowsCharged?: number | null,
+  rowsAlreadyPaidInTable?: number | null,
+  creditsCharged?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCompanyRecommendationFilters
+
+`company.getCompanyRecommendationFilters`
+
+Company Recommendation Filters. Lists the Target Profiles and signal types that currently appear in your company recommendations. Billing: Free.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.company.getCompanyRecommendationFilters({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `availableSignals` | `string[] \| null` | No | — |
+| `availableTargetIcps` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="availableTargetIcps full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCompanyRecommendations
+
+`company.getCompanyRecommendations`
+
+Company Recommendations. Returns the recommended companies for the calling user, ranked by Lusha against your Target Profiles and recent signals. Billing: Charged per result without an 'error', via the 'companyRecommendationsReveal' action.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.company.getCompanyRecommendations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+| `sort` | `object[]` | No | Sort keys, applied in order. Up to 4 entries, all with the same 'order'. Defaults to 'leadScore' descending. |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  size: number
+}
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+  by: leadScore | signalScore | icpFitScore | targetIcp,
+  order?: asc | desc
+}[]
+```
+</Accordion>
+
+<Accordion title="filters full type">
+
+```ts
+{
+  targetIcp?: string[],
+  signals?: string[],
+  leadScore?: {
+    min?: number,
+    max?: number
+  },
+  signalScore?: {
+    min?: number,
+    max?: number
+  },
+  icpFitScore?: {
+    min?: number,
+    max?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| number \| null` | No | — |
+| `userRecommendationsId` | `string \| number \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+| `pagination` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+| `recommendationListIds` | `string[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  clientReferenceId?: string | number | null,
+  id?: string | number | null,
+  name?: string | null,
+  domain?: string | null,
+  employeeCount?: {
+    exact?: number | null,
+    min?: number | null,
+    max?: number | null
+  } | null,
+  industry?: string | null,
+  location?: {
+    city?: string | null,
+    state?: string | null,
+    stateCode?: string | null,
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null
+  } | null,
+  socialLinks?: {
+    linkedin?: string | null
+  } | null,
+  has?: string[] | null,
+  canReveal?: {
+    field?: string | null,
+    credits?: number | null
+  }[] | null,
+  signalTypes?: string[] | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null,
+  recommendation?: {
+    leadScore?: number | null,
+    icpFitScore?: number | null,
+    signalScore?: number | null,
+    targetIcp?: {
+      id?: string | number | null,
+      name?: string | null
+    }[] | null,
+    intentTopics?: string[] | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  size?: number | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCompanySignalFilters
+
+`company.getCompanySignalFilters`
+
+Get Company Signal Filters (Discovery). Returns all available filter types for company signals and whether each requires a search query.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.company.getCompanySignalFilters({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `availableFilters` | `object[] \| null` | No | — |
+| `filters` | `object[] \| null` | No | — |
+| `generatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="availableFilters full type">
+
+```ts
+{
+  filterType?: string | null,
+  requiresQuery?: boolean | null,
+  supportsQuery?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="filters full type">
+
+```ts
+{
+  path?: string | null,
+  type?: string | null,
+  description?: string | null,
+  valueSource?: string | null,
+  values?: string[] | null,
+  lookup?: {
+    filterType?: string | null,
+    url?: string | null,
+    requiresQuery?: boolean | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCompanySignalFilterValues
+
+`company.getCompanySignalFilterValues`
+
+Get Company Signal Filter Values. Returns valid values for a single company signal filter type. Billing: Free.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.company.getCompanySignalFilterValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filterType` | `newsEventTypes \| hiringByDepartments \| hiringByLocations \| intentCategories \| intentTopics` | Yes | — |
+| `query` | `string` | No | Text to match values against. Required for 'hiringByLocations' and 'intentTopics'. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `values` | `any \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `truncated` | `boolean \| null` | No | — |
+
+
+
+---
+
+### getCompanySignals
+
+`company.getCompanySignals`
+
+Company Signals. Retrieve signal events for a list of companies - hiring activity, headcount changes, web traffic, IT spend, news, and intent. Billing: Charged per matched signal per result via the 'showSignalsCompany' action. Intent signals are charged the same way as every other company signal - no matches, no charge.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.company.getCompanySignals({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+| `signalTypes` | `(allSignals \| linkedinActivityIntent \| newIntentTopic \| intentScoreIncrease \| intentScoreDecrease \| intentTopicRemoved \| websiteTrafficDecrease \| websiteTrafficIncrease \| itSpendIncrease \| itSpendDecrease \| linkedinFollowersIncrease \| linkedinFollowersDecrease \| surgeInHiring \| headcountIncrease1m \| headcountIncrease3m \| headcountIncrease6m \| headcountIncrease12m \| headcountDecrease1m \| headcountDecrease3m \| headcountDecrease6m \| headcountDecrease12m \| surgeInHiringByDepartment \| surgeInHiringByLocation \| riskNews \| commercialActivityNews \| corporateStrategyNews \| financialEventsNews \| peopleNews \| marketIntelligenceNews \| productActivityNews)[]` | Yes | Signal types to retrieve. 'allSignals' returns every company signal type except the four intent types ('newIntentTopic', 'intentScoreIncrease', 'intentScoreDecrease', 'intentTopicRemoved') - name those explicitly to get... |
+| `startDate` | `string` | No | For linkedinActivityIntent, results are limited to a trailing 90-day window regardless of the value passed (legal requirement). Other signal types are unaffected. |
+| `maxResultsPerSignal` | `number` | No | For linkedinActivityIntent, results are capped at 50 per company regardless of the value passed. Other signal types use the requested value as-is (1-100). |
+| `tableId` | `string` | No | Optional. If provided, these companies are also added to this table (if not already present) and the Signals column is populated. See the Tables API. |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  include?: {
+    intentCategories?: string[],
+    intentTopics?: string[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | — |
+| `startDate` | `string \| null` | No | — |
+| `endDate` | `string \| null` | No | — |
+| `tableWrite` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+| `requestId` | `string \| number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | number | null,
+  companyName?: string | null,
+  domain?: string | null,
+  linkedinActivityIntent?: {
+    companyId?: string | number | null,
+    activityPublicationDate?: string | null,
+    signalCategory?: string | null,
+    intentTopics?: {
+      topic?: string | null,
+      category?: string | null
+    }[] | null,
+    author?: {
+      id?: string | number | null,
+      fullName?: string | null,
+      linkedinUrl?: string | null
+    } | null,
+    contactsMentioned?: {
+      id?: string | number | null,
+      fullName?: string | null,
+      linkedinUrl?: string | null
+    }[] | null,
+    companiesMentioned?: {
+      id?: string | number | null,
+      name?: string | null,
+      linkedinUrl?: string | null
+    }[] | null,
+    activityUrl?: string | null,
+    activitySummary?: string | null,
+    activityLikes?: number | null,
+    activityComments?: number | null,
+    activityShares?: number | null,
+    activityType?: string | null
+  }[] | null,
+  newIntentTopic?: {
+    id?: string | number | null,
+    signalDate?: string | null,
+    topic?: string | null,
+    category?: string | null,
+    score?: number | null,
+    previousScore?: number | null,
+    changeRatePercent?: number | null
+  }[] | null,
+  intentScoreIncrease?: {
+    id?: string | number | null,
+    signalDate?: string | null,
+    topic?: string | null,
+    category?: string | null,
+    score?: number | null,
+    previousScore?: number | null,
+    changeRatePercent?: number | null
+  }[] | null,
+  intentScoreDecrease?: {
+    id?: string | number | null,
+    signalDate?: string | null,
+    topic?: string | null,
+    category?: string | null,
+    score?: number | null,
+    previousScore?: number | null,
+    changeRatePercent?: number | null
+  }[] | null,
+  intentTopicRemoved?: {
+    id?: string | number | null,
+    signalDate?: string | null,
+    topic?: string | null,
+    category?: string | null,
+    score?: number | null,
+    previousScore?: number | null,
+    changeRatePercent?: number | null
+  }[] | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="tableWrite full type">
+
+```ts
+{
+  tableId?: string | number | null,
+  added?: number | null,
+  alreadyPresent?: number | null,
+  columnsCreated?: number | any[] | null,
+  rowsProcessed?: number | null,
+  rowsCharged?: number | null,
+  rowsAlreadyPaidInTable?: number | null,
+  creditsCharged?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCompanySignalScores
+
+`company.getCompanySignalScores`
+
+Score Companies by Signal Activity. Score companies by their active buying signals. Billing: 1 credit is charged per scored row via 'signal_score_company_reveal'. This action is currently limited-availability - while it isn't yet seeded on an account's pricebook, the endpoint stays free ('billing.creditsCharged' is '0').
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.company.getCompanySignalScores({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companies` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="companies full type">
+
+```ts
+{
+  clientReferenceId?: string,
+  id?: string,
+  domain?: string,
+  name?: string,
+  email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| number \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  clientReferenceId?: string | number | null,
+  id?: string | number | null,
+  name?: string | null,
+  domain?: string | null,
+  signalScore?: number | null,
+  signalTypes?: string[] | null,
+  noActiveSignals?: boolean | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCompanySignalTypes
+
+`company.getCompanySignalTypes`
+
+Get Company Signal Types. Returns the full list of supported signal types for companies.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.company.getCompanySignalTypes({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signalTypes` | `string[] \| null` | No | — |
+
+
+
+---
+
+### getWebsiteVisits
+
+`company.getWebsiteVisits`
+
+Get Website Visitors. Returns companies ranked by website-visit signals for your tracked domains and date range. Billing: not documented; the response reports any credits charged in billing.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.company.getWebsiteVisits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domains` | `string[]` | Yes | Domains configured for tracking in the Lusha dashboard. |
+| `startDate` | `string` | Yes | Window start date (YYYY-MM-DD). |
+| `endDate` | `string` | Yes | Window end date (YYYY-MM-DD). Range must be ≤ 3 months. |
+| `pagination` | `object` | Yes | — |
+| `sort` | `object` | No | — |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  size: number,
+  page: number
+}
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+  by?: string,
+  order?: asc | desc
+}
+```
+</Accordion>
+
+<Accordion title="filters full type">
+
+```ts
+{
+  scoreBands?: (cold | warm | hot)[],
+  visitorCountries?: {
+    include?: string[],
+    exclude?: string[]
+  },
+  score?: {
+    min?: number,
+    max?: number
+  },
+  totalSessions?: {
+    min?: number,
+    max?: number
+  },
+  avgSessionMinutes?: {
+    min?: number,
+    max?: number
+  },
+  uniqueVisitors?: {
+    min?: number,
+    max?: number
+  },
+  daysVisited?: {
+    min?: number,
+    max?: number
+  },
+  highIntentPageviews?: {
+    min?: number,
+    max?: number
+  },
+  daysSinceLastVisit?: {
+    min?: number,
+    max?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| number \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+| `pagination` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  clientReferenceId?: string | number | null,
+  id?: string | number | null,
+  name?: string | null,
+  domain?: string | null,
+  employeeCount?: {
+    exact?: number | null,
+    min?: number | null,
+    max?: number | null
+  } | null,
+  industry?: string | null,
+  location?: {
+    city?: string | null,
+    state?: string | null,
+    stateCode?: string | null,
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null
+  } | null,
+  socialLinks?: {
+    linkedin?: string | null
+  } | null,
+  has?: string[] | null,
+  canReveal?: {
+    field?: string | null,
+    credits?: number | null
+  }[] | null,
+  signalTypes?: string[] | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null,
+  score?: number | null,
+  scoreBand?: string | null,
+  totalSessions?: number | null,
+  uniqueVisitors?: number | null,
+  avgSessionMinutes?: number | null,
+  daysVisited?: number | null,
+  highIntentPageviews?: number | null,
+  daysSinceLastVisit?: number | null,
+  lastVisit?: string | null,
+  visitorCountry?: string | null,
+  siteId?: string | number | null,
+  trackedDomain?: string | null,
+  visitorCountries?: string[] | null,
+  highIntentPages?: {
+    label?: string | null,
+    url?: string | null,
+    views?: number | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  size?: number | null,
+  page?: number | null,
+  total?: number | null,
+  hasMore?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### prospectCompanies
+
+`company.prospectCompanies`
+
+Prospecting Companies. Search for companies that match your target market using rich filter criteria. Billing: Charged per result via 'api_search'. If signals are requested, an additional charge applies per matched signal per result.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.company.prospectCompanies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | Yes | — |
+| `filters` | `object` | Yes | 'filters.contacts' cannot be combined with company 'searchText', 'signals', or 'technologies' on the same request - doing so returns '400' (contact filters are never silently ignored). |
+| `tableId` | `string` | No | Optional. If provided, results are also persisted to this table. See the Tables API. |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  size: number
+}
+```
+</Accordion>
+
+<Accordion title="filters full type">
+
+```ts
+{
+  companies: {
+    include: {
+      names?: string[],
+      domains?: string[],
+      ids?: string[],
+      searchText?: string,
+      locations?: {
+        city?: string,
+        state?: string,
+        country?: string,
+        continent?: string,
+        countryGrouping?: string,
+        region?: string,
+        countryIso2?: string
+      }[],
+      sizes?: {
+        min?: number,
+        max?: number
+      }[],
+      revenues?: {
+        min?: number,
+        max?: number
+      }[],
+      technologies?: string[],
+      technologiesCondition?: or | and,
+      mainIndustriesIds?: number[],
+      subIndustriesIds?: number[],
+      sicCodes?: string[],
+      naicsCodes?: string[],
+      signals?: {
+        types?: string[],
+        startDate?: string,
+        filterByLocation?: {
+          country?: string,
+          state?: string,
+          startDate?: string
+        }[],
+        filterByDepartment?: {
+          department: string,
+          startDate?: string
+        }[],
+        filterByIntentCategory?: string[]
+      },
+      foundedYear?: {
+        min?: number,
+        max?: number
+      }[],
+      businessModel?: (B2B | B2C | B2G)[],
+      companyType?: (Government | Private Company | Public Company | Educational | Non Profit | Self Employed)[],
+      linkedinUrls?: string[],
+      keywords?: string[],
+      specialities?: string[],
+      exactSpecialities?: string[],
+      exactKeywords?: string[],
+      keywordsSearchFields?: string[],
+      previousCompanyDomains?: string[],
+      previousCompanyNames?: string[],
+      geographicDetails?: {
+        country?: string,
+        zipcode?: string,
+        distance?: number
+      }[],
+      locationsZipcodes?: {
+        countryIso2?: string,
+        zipcode?: string
+      }[],
+      headquarterZipcodes?: {
+        countryIso2?: string,
+        zipcode?: string
+      }[]
+    },
+    exclude?: {
+      names?: string[],
+      domains?: string[],
+      ids?: string[],
+      searchText?: string,
+      locations?: {
+        city?: string,
+        state?: string,
+        country?: string,
+        continent?: string,
+        countryGrouping?: string,
+        region?: string,
+        countryIso2?: string
+      }[],
+      sizes?: {
+        min?: number,
+        max?: number
+      }[],
+      revenues?: {
+        min?: number,
+        max?: number
+      }[],
+      technologies?: string[],
+      technologiesCondition?: or | and,
+      mainIndustriesIds?: number[],
+      subIndustriesIds?: number[],
+      sicCodes?: string[],
+      naicsCodes?: string[],
+      signals?: {
+        types?: string[],
+        startDate?: string,
+        filterByLocation?: {
+          country?: string,
+          state?: string,
+          startDate?: string
+        }[],
+        filterByDepartment?: {
+          department: string,
+          startDate?: string
+        }[],
+        filterByIntentCategory?: string[]
+      },
+      foundedYear?: {
+        min?: number,
+        max?: number
+      }[],
+      businessModel?: (B2B | B2C | B2G)[],
+      companyType?: (Government | Private Company | Public Company | Educational | Non Profit | Self Employed)[],
+      linkedinUrls?: string[],
+      keywords?: string[],
+      specialities?: string[],
+      exactSpecialities?: string[],
+      exactKeywords?: string[],
+      keywordsSearchFields?: string[],
+      previousCompanyDomains?: string[],
+      previousCompanyNames?: string[],
+      geographicDetails?: {
+        country?: string,
+        zipcode?: string,
+        distance?: number
+      }[],
+      locationsZipcodes?: {
+        countryIso2?: string,
+        zipcode?: string
+      }[],
+      headquarterZipcodes?: {
+        countryIso2?: string,
+        zipcode?: string
+      }[]
+    }
+  },
+  contacts?: {
+    include?: {
+      jobTitles?: string[],
+      departments?: string[],
+      seniorityIds?: number[],
+      skills?: string[],
+      locations?: {
+        city?: string,
+        state?: string,
+        country?: string,
+        continent?: string,
+        countryGrouping?: string,
+        region?: string,
+        countryIso2?: string
+      }[],
+      existingDataPoints?: string[]
+    },
+    exclude?: {
+      jobTitles?: string[],
+      departments?: string[],
+      seniorityIds?: number[],
+      skills?: string[],
+      locations?: {
+        city?: string,
+        state?: string,
+        country?: string,
+        continent?: string,
+        countryGrouping?: string,
+        region?: string,
+        countryIso2?: string
+      }[],
+      existingDataPoints?: string[]
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  includePartialProfiles?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| number \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+| `pagination` | `object \| null` | No | — |
+| `tableWrite` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  clientReferenceId?: string | number | null,
+  id?: string | number | null,
+  name?: string | null,
+  domain?: string | null,
+  employeeCount?: {
+    exact?: number | null,
+    min?: number | null,
+    max?: number | null
+  } | null,
+  industry?: string | null,
+  location?: {
+    city?: string | null,
+    state?: string | null,
+    stateCode?: string | null,
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null
+  } | null,
+  socialLinks?: {
+    linkedin?: string | null
+  } | null,
+  has?: string[] | null,
+  canReveal?: {
+    field?: string | null,
+    credits?: number | null
+  }[] | null,
+  signalTypes?: string[] | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  size?: number | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="tableWrite full type">
+
+```ts
+{
+  tableId?: string | number | null,
+  added?: number | null,
+  alreadyPresent?: number | null,
+  columnsCreated?: number | any[] | null,
+  rowsProcessed?: number | null,
+  rowsCharged?: number | null,
+  rowsAlreadyPaidInTable?: number | null,
+  creditsCharged?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchAndEnrichCompanies
+
+`company.searchAndEnrichCompanies`
+
+Search up to 100 companies by id, name or domain and return their full firmographics in one call. Charges credits per result and per reveal field.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.company.searchAndEnrichCompanies({ companies: [{ domain: 'lusha.com' }], reveal: ['directParent', 'ultimateParent'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companies` | `object[]` | Yes | 1 to 100 companies, each identified by id, name or domain. |
+| `reveal` | `(employeesByDepartment \| employeesByLocation \| employeesBySeniority \| competitors \| estimatedAnnualItSpend \| monthlyWebsiteTraffic \| openJobsTotal \| openJobsByDepartment \| openJobsByLocation \| openJobsBySeniority \| directParent \| ultimateParent)[]` | No | Premium fields to reveal, each charged separately per result: employeesByDepartment, employeesByLocation, employeesBySeniority, competitors, estimatedAnnualItSpend, monthlyWebsiteTraffic, openJobsTotal, openJobsByDepartment, openJobsByLocation, openJobsBySeniority, directParent, ultimateParent. Omitting reveal returns base firmographics only. |
+| `options` | `object` | No | — |
+
+Combines both steps: `companies` search entries plus `reveal` tokens. Metered per result and per reveal field.
+
+<AccordionGroup>
+<Accordion title="companies full type">
+
+```ts
+{
+  clientReferenceId?: string,
+  id?: string,
+  name?: string,
+  domain?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  includePartialProfiles?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  clientReferenceId?: string | null,
+  id?: string | null,
+  name?: string | null,
+  alternativeName?: string | null,
+  domain?: string | null,
+  alternativeDomains?: string[] | null,
+  emailDomain?: string | null,
+  homepageUrl?: string | null,
+  description?: string | null,
+  additionalDescriptions?: string[] | null,
+  companyOffering?: string | null,
+  companyType?: string | null,
+  yearFounded?: number | null,
+  employeeCount?: {
+    exact?: number | null,
+    min?: number | null,
+    max?: number | null
+  } | null,
+  industry?: string | null,
+  subIndustry?: string | null,
+  additionalIndustries?: {
+    industry?: string | null,
+    subIndustry?: string | null
+  }[] | null,
+  specialities?: string[] | null,
+  sicCodes?: {
+    code?: number | null,
+    description?: string | null
+  }[] | null,
+  naicsCodes?: {
+    code?: number | null,
+    description?: string | null
+  }[] | null,
+  location?: {
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null,
+    state?: string | null,
+    stateCode?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    coordinates?: number[] | null,
+    isEuContact?: boolean | null
+  } | null,
+  additionalLocations?: {
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null,
+    state?: string | null,
+    stateCode?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    coordinates?: number[] | null,
+    isEuContact?: boolean | null
+  }[] | null,
+  socialLinks?: {
+    linkedin?: string | null,
+    xUrl?: string | null,
+    x?: string | null,
+    facebook?: string | null,
+    instagram?: string[] | null,
+    youtube?: string[] | null,
+    tiktok?: string[] | null,
+    crunchbase?: string[] | null
+  } | null,
+  linkedinFollowers?: number | null,
+  funding?: {
+    rounds?: Record<string, any>[] | null,
+    totalRounds?: number | null,
+    totalRoundsAmount?: number | null,
+    currency?: string | null,
+    isIpo?: boolean | null,
+    lastRoundType?: string | null,
+    lastRoundAmount?: number | null,
+    lastRoundDate?: string | null
+  } | null,
+  revenueRange?: {
+    exact?: number | null,
+    min?: number | null,
+    max?: number | null
+  } | null,
+  technologies?: string[] | null,
+  popularityTier?: number | null,
+  logoUrl?: string | null,
+  businessModel?: string[] | null,
+  phones?: {
+    number?: string | null,
+    type?: string | null,
+    doNotCall?: boolean | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  emails?: {
+    email?: string | null,
+    type?: string | null,
+    confidence?: string | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  keywords?: string[] | null,
+  openJobs?: {
+    total?: number | null,
+    byDepartment?: {
+      department?: string | null,
+      count?: number | null
+    }[] | null,
+    byLocation?: {
+      location?: string | null,
+      count?: number | null
+    }[] | null,
+    bySeniority?: {
+      seniority?: string | null,
+      count?: number | null
+    }[] | null
+  } | null,
+  estimatedAnnualItSpend?: {
+    value?: number | null,
+    currency?: string | null,
+    valueUsd?: number | null
+  } | null,
+  monthlyWebsiteTraffic?: {
+    visits?: number | null,
+    momChangePercent?: number | null,
+    month?: string | null
+  } | null,
+  employeesByDepartment?: {
+    department?: string | null,
+    count?: number | null
+  }[] | null,
+  employeesByLocation?: {
+    country?: string | null,
+    state?: string | null,
+    count?: number | null
+  }[] | null,
+  employeesBySeniority?: {
+    seniority?: string | null,
+    count?: number | null
+  }[] | null,
+  competitors?: {
+    id?: string | null,
+    name?: string | null,
+    domain?: string | null
+  }[] | null,
+  keyContacts?: {
+    fullName?: string | null,
+    jobTitle?: {
+      title?: string | null,
+      departments?: string[] | null,
+      seniority?: string | null,
+      startDate?: string | null
+    } | null,
+    profileUrl?: string | null,
+    status?: string | null
+  }[] | null,
+  directParent?: {
+    lushaCompanyId?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    hqCountry?: string | null
+  } | null,
+  ultimateParent?: {
+    lushaCompanyId?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    hqCountry?: string | null
+  } | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchCompanies
+
+`company.searchCompanies`
+
+Look up up to 100 companies by id, name or domain and get firmographic previews. Charges credits per matched result.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.company.searchCompanies({ companies: [{ domain: 'lusha.com' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companies` | `object[]` | Yes | 1 to 100 companies, each identified by id, name or domain. |
+| `options` | `object` | No | — |
+| `signals` | `object` | No | — |
+
+Takes `companies` (1 to 100 entries, each with `id`, `name` or `domain`) and optional company `signals`. Returns firmographic previews plus `billing`. Metered per result.
+
+<AccordionGroup>
+<Accordion title="companies full type">
+
+```ts
+{
+  clientReferenceId?: string,
+  id?: string,
+  name?: string,
+  domain?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  includePartialProfiles?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="signals full type">
+
+```ts
+{
+  types: (allSignals | linkedinActivityIntent | websiteTrafficDecrease | websiteTrafficIncrease | itSpendIncrease | itSpendDecrease | linkedinFollowersIncrease | linkedinFollowersDecrease | surgeInHiring | headcountIncrease1m | headcountIncrease3m | headcountIncrease6m | headcountIncrease12m | headcountDecrease1m | headcountDecrease3m | headcountDecrease6m | headcountDecrease12m | surgeInHiringByDepartment | surgeInHiringByLocation | riskNews | commercialActivityNews | corporateStrategyNews | financialEventsNews | peopleNews | marketIntelligenceNews | productActivityNews | newJobPost | newIntentTopic | intentScoreIncrease | intentScoreDecrease | intentTopicRemoved)[],
+  startDate?: string,
+  maxResultsPerSignal?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  clientReferenceId?: string | null,
+  id?: string | null,
+  name?: string | null,
+  domain?: string | null,
+  employeeCount?: {
+    exact?: number | null,
+    min?: number | null,
+    max?: number | null
+  } | null,
+  industry?: string | null,
+  location?: {
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null,
+    state?: string | null,
+    stateCode?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    coordinates?: number[] | null,
+    isEuContact?: boolean | null
+  } | null,
+  socialLinks?: {
+    linkedin?: string | null,
+    xUrl?: string | null,
+    x?: string | null,
+    facebook?: string | null,
+    instagram?: string[] | null,
+    youtube?: string[] | null,
+    tiktok?: string[] | null,
+    crunchbase?: string[] | null
+  } | null,
+  has?: string[] | null,
+  canReveal?: {
+    field?: string | null,
+    credits?: number | null
+  }[] | null,
+  signalTypes?: string[] | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Company Tables
+
+### addEntities
+
+`companyTables.addEntities`
+
+Add Entities to Companies Table. Add up to 500 company IDs to an existing table. Billing: Charges 'reveal_company' per newly-added company, deduped via row-count delta - duplicates and already-present companies aren't charged again.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lusha.api.companyTables.addEntities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableId` | `string` | Yes | The table's ID. |
+| `entityIds` | `string[]` | Yes | Lusha IDs as strings - 'personId' for contacts, 'lushaCompanyId' for companies. Accepts either the encrypted token ('v&#123;N&#125;.…', as returned by Search/Enrich/Get Entities) or the legacy numeric ID. |
+| `companyIds` | `string[]` | No | Contacts tables only. One 'lushaCompanyId' per contact (encrypted token or numeric), index-aligned with 'entityIds', to help pair company-level enrichment to the right company for each contact. |
+| `owner` | `object` | Yes | Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'. |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  added?: number | null,
+  alreadyPresent?: number | null,
+  invalidIds?: string[] | null,
+  addedBy?: {
+    surface?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`companyTables.create`
+
+Create Companies Table. Create a new, empty companies table, optionally seeded with an initial list of company IDs. Billing: Free.
+
+**Risk:** `write`
+
+```ts
+await corsair.lusha.api.companyTables.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Table name, up to 250 characters. Allowed: letters in any language, digits, spaces, and '- _ . , ' & ( ) / # + : ! ? @'. |
+| `visibility` | `private \| shared` | No | — |
+| `owner` | `object` | Yes | Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'. |
+| `ids` | `string[]` | No | Optional initial entity IDs to seed the table with. |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tableId?: string | number | null,
+  name?: string | null,
+  entityType?: string | null,
+  visibility?: string | null,
+  status?: string | null,
+  owner?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null
+  } | null,
+  createdBy?: {
+    surface?: string | null,
+    createdByUserId?: number | null
+  } | null,
+  workspaceUrl?: string | null,
+  entityCount?: number | null,
+  isProcessing?: boolean | null,
+  columns?: {
+    columnId?: string | number | null,
+    name?: string | null,
+    type?: string | null,
+    key?: string | null,
+    isDefault?: boolean | null,
+    addedAt?: string | null,
+    updatedAt?: string | null,
+    rowsNotRun?: number | null,
+    rowsProcessing?: number | null,
+    rowsSuccess?: number | null,
+    rowsNoData?: number | null,
+    rowsFailed?: number | null
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`companyTables.delete`
+
+Delete Companies Table. Permanently delete a table and all its data. Billing: Free.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lusha.api.companyTables.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableId` | `string` | Yes | The table's ID. |
+| `ownerEmail` | `string` | No | Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tableId?: string | number | null,
+  status?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`companyTables.get`
+
+Get Companies Table. Get a table's metadata and current processing status. Billing: Free.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.companyTables.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableId` | `string` | Yes | The table's ID. |
+| `ownerEmail` | `string` | No | Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tableId?: string | number | null,
+  name?: string | null,
+  entityType?: string | null,
+  visibility?: string | null,
+  status?: string | null,
+  owner?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null
+  } | null,
+  createdBy?: {
+    surface?: string | null,
+    createdByUserId?: number | null
+  } | null,
+  workspaceUrl?: string | null,
+  entityCount?: number | null,
+  isProcessing?: boolean | null,
+  columns?: {
+    columnId?: string | number | null,
+    name?: string | null,
+    type?: string | null,
+    key?: string | null,
+    isDefault?: boolean | null,
+    addedAt?: string | null,
+    updatedAt?: string | null,
+    rowsNotRun?: number | null,
+    rowsProcessing?: number | null,
+    rowsSuccess?: number | null,
+    rowsNoData?: number | null,
+    rowsFailed?: number | null
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getColumnCatalog
+
+`companyTables.getColumnCatalog`
+
+Get Companies Column Catalog. List every Lusha data column that can be added to a companies table - 46 columns. Billing: Free - no credits charged.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.companyTables.getColumnCatalog({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  category?: string | null,
+  displayName?: string | null,
+  columnKey?: string | null,
+  type?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`companyTables.list`
+
+List Companies Tables. List companies tables owned by the given user, plus any tables shared with the account. Billing: Free.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.companyTables.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `object` | Yes | Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'. |
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `name` | `string` | No | Optional filter - matches tables whose name contains this text. |
+| `status` | `active \| archived` | No | 'deleted' is not a filterable status. |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `pagination` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tableId?: string | number | null,
+  name?: string | null,
+  entityType?: string | null,
+  visibility?: string | null,
+  status?: string | null,
+  owner?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null
+  } | null,
+  createdBy?: {
+    surface?: string | null,
+    createdByUserId?: number | null
+  } | null,
+  workspaceUrl?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  size?: number | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEntities
+
+`companyTables.listEntities`
+
+Get Companies Table Entities. Read a page of rows in the table, with all column values and per-cell status. Billing: Charged per row returned via 'export_api'.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.companyTables.listEntities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableId` | `string` | Yes | The table's ID. |
+| `ownerEmail` | `string` | No | Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body. |
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `pagination` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number | null,
+  columns?: {
+    id?: string | number | null,
+    name?: string | null,
+    type?: string | null,
+    sourceType?: string | null,
+    value?: any | null,
+    status?: string | null
+  }[] | null,
+  createdAt?: string | null,
+  rowCreatedAt?: string | null,
+  type?: string | null,
+  tableContactId?: string | number | null,
+  dateAddedToList?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  fullName?: string | null,
+  job?: {
+    title?: string | null,
+    seniority?: string | null,
+    departments?: string[] | null
+  } | null,
+  location?: {
+    city?: string | null,
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null
+  } | null,
+  socialLinks?: {
+    linkedin?: string | null
+  } | null,
+  datapoints?: {
+    emails?: {
+      datapointId?: string | number | null,
+      value?: string | null,
+      type?: string | null,
+      confidence?: string | null,
+      dataSource?: string | null,
+      isMasked?: boolean | null,
+      isManuallyAdded?: boolean | null,
+      isCorrectFeedback?: boolean | null
+    }[] | null,
+    phones?: {
+      datapointId?: string | number | null,
+      value?: string | null,
+      type?: string | null,
+      confidence?: string | null,
+      dataSource?: string | null,
+      isMasked?: boolean | null,
+      isManuallyAdded?: boolean | null,
+      isCorrectFeedback?: boolean | null
+    }[] | null
+  } | null,
+  isFullDNC?: boolean | null,
+  tags?: any[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  size?: number | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeColumn
+
+`companyTables.removeColumn`
+
+Remove Column from Companies Table. Remove a column and delete all of its cell data across the table. Billing: Free.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lusha.api.companyTables.removeColumn({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableId` | `string` | Yes | The table's ID. |
+| `columnId` | `string` | Yes | The column's ID. |
+| `ownerEmail` | `string` | No | Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableId` | `string \| number \| null` | No | — |
+| `columnId` | `string \| number \| null` | No | — |
+| `removed` | `boolean \| null` | No | — |
+
+
+
+---
+
+### removeEntities
+
+`companyTables.removeEntities`
+
+Remove Entities from Companies Table. Remove specific company IDs from a table. Billing: Free.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lusha.api.companyTables.removeEntities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableId` | `string` | Yes | The table's ID. |
+| `entityIds` | `string[]` | Yes | Accepts either the encrypted token ('v&#123;N&#125;.…', as returned by Get Entities) or the legacy numeric ID. Unresolved IDs are echoed back in 'invalidIds' in the exact form you sent them. |
+| `owner` | `object` | Yes | Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'. |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  removed?: number | null,
+  invalidIds?: string[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runColumn
+
+`companyTables.runColumn`
+
+Run Column on Companies Table. Populate or refresh a column's data for some or all rows in the table. Billing: Charged per row processed, per the column's credit tier. Company enrichment charges once per company per table - re-runs on an already-paid company in the same table are free.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lusha.api.companyTables.runColumn({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableId` | `string` | Yes | The table's ID. |
+| `columnId` | `string` | Yes | The column's ID. |
+| `runScope` | `all \| missing \| specific` | Yes | Controls which rows a column operation applies to. 'all' re-runs every row, including already-processed ones. 'missing' only runs rows that don't have a value for this column yet. 'specific' requires 'entityIds'. |
+| `entityIds` | `string[]` | No | Required when 'runScope' is 'specific'. |
+| `owner` | `object` | Yes | Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'. |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  columnId?: string | number | null,
+  runScope?: string | null,
+  status?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`companyTables.update`
+
+Update Companies Table. Rename a table, change its visibility, or reassign its owner. Billing: Free.
+
+**Risk:** `write`
+
+```ts
+await corsair.lusha.api.companyTables.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableId` | `string` | Yes | The table's ID. |
+| `name` | `string` | No | New name, up to 250 characters. Allowed: letters in any language, digits, spaces, and '- _ . , ' & ( ) / # + : ! ? @'. |
+| `visibility` | `private \| shared` | No | — |
+| `archived` | `boolean` | No | Set 'true' to archive the table (hides it from default List Tables results), 'false' to restore it. |
+| `owner` | `object` | Yes | Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'. |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tableId?: string | number | null,
+  name?: string | null,
+  entityType?: string | null,
+  visibility?: string | null,
+  status?: string | null,
+  owner?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null
+  } | null,
+  createdBy?: {
+    surface?: string | null,
+    createdByUserId?: number | null
+  } | null,
+  workspaceUrl?: string | null,
+  entityCount?: number | null,
+  isProcessing?: boolean | null,
+  columns?: {
+    columnId?: string | number | null,
+    name?: string | null,
+    type?: string | null,
+    key?: string | null,
+    isDefault?: boolean | null,
+    addedAt?: string | null,
+    updatedAt?: string | null,
+    rowsNotRun?: number | null,
+    rowsProcessing?: number | null,
+    rowsSuccess?: number | null,
+    rowsNoData?: number | null,
+    rowsFailed?: number | null
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contact Tables
+
+### addColumns
+
+`contactTables.addColumns`
+
+Add Columns to Contacts Table. Add up to 10 Lusha columns to a table in one call. Billing: Free today - credits aren't charged for adding columns yet.
+
+**Risk:** `write`
+
+```ts
+await corsair.lusha.api.contactTables.addColumns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableId` | `string` | Yes | The table's ID. |
+| `columns` | `object[]` | No | Up to 10 Lusha columns to add in one call. |
+| `columnKey` | `string` | No | Shorthand for adding exactly one column. |
+| `owner` | `object` | No | Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'. |
+
+<AccordionGroup>
+<Accordion title="columns full type">
+
+```ts
+{
+  columnKey: string
+}[]
+```
+</Accordion>
+
+<Accordion title="owner full type">
+
+```ts
+{
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  columns?: {
+    status?: string | null,
+    columnId?: string | number | null,
+    name?: string | null,
+    runStatus?: string | null,
+    error?: {
+      code?: string | null,
+      message?: string | null
+    } | null
+  }[] | null,
+  added?: number | null,
+  failed?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addEntities
+
+`contactTables.addEntities`
+
+Add Entities to Contacts Table. Add up to 500 contact IDs to an existing table. Billing: Free.
+
+**Risk:** `write`
+
+```ts
+await corsair.lusha.api.contactTables.addEntities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableId` | `string` | Yes | The table's ID. |
+| `entityIds` | `string[]` | Yes | Lusha IDs as strings - 'personId' for contacts, 'lushaCompanyId' for companies. Accepts either the encrypted token ('v&#123;N&#125;.…', as returned by Search/Enrich/Get Entities) or the legacy numeric ID. |
+| `companyIds` | `string[]` | No | Contacts tables only. One 'lushaCompanyId' per contact (encrypted token or numeric), index-aligned with 'entityIds', to help pair company-level enrichment to the right company for each contact. |
+| `owner` | `object` | Yes | Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'. |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  added?: number | null,
+  alreadyPresent?: number | null,
+  invalidIds?: string[] | null,
+  addedBy?: {
+    surface?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`contactTables.create`
+
+Create Contacts Table. Create a new, empty contacts table, optionally seeded with an initial list of contact IDs. Billing: Free.
+
+**Risk:** `write`
+
+```ts
+await corsair.lusha.api.contactTables.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Table name, up to 250 characters. Allowed: letters in any language, digits, spaces, and '- _ . , ' & ( ) / # + : ! ? @'. |
+| `visibility` | `private \| shared` | No | — |
+| `owner` | `object` | Yes | Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'. |
+| `ids` | `string[]` | No | Optional initial entity IDs to seed the table with. |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tableId?: string | number | null,
+  name?: string | null,
+  entityType?: string | null,
+  visibility?: string | null,
+  status?: string | null,
+  owner?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null
+  } | null,
+  createdBy?: {
+    surface?: string | null,
+    createdByUserId?: number | null
+  } | null,
+  workspaceUrl?: string | null,
+  entityCount?: number | null,
+  isProcessing?: boolean | null,
+  columns?: {
+    columnId?: string | number | null,
+    name?: string | null,
+    type?: string | null,
+    key?: string | null,
+    isDefault?: boolean | null,
+    addedAt?: string | null,
+    updatedAt?: string | null,
+    rowsNotRun?: number | null,
+    rowsProcessing?: number | null,
+    rowsSuccess?: number | null,
+    rowsNoData?: number | null,
+    rowsFailed?: number | null
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`contactTables.delete`
+
+Delete Contacts Table. Permanently delete a table and all its data. Billing: Free.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lusha.api.contactTables.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableId` | `string` | Yes | The table's ID. |
+| `ownerEmail` | `string` | No | Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tableId?: string | number | null,
+  status?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`contactTables.get`
+
+Get Contacts Table. Get a table's metadata and current processing status. Billing: Free.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.contactTables.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableId` | `string` | Yes | The table's ID. |
+| `ownerEmail` | `string` | No | Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tableId?: string | number | null,
+  name?: string | null,
+  entityType?: string | null,
+  visibility?: string | null,
+  status?: string | null,
+  owner?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null
+  } | null,
+  createdBy?: {
+    surface?: string | null,
+    createdByUserId?: number | null
+  } | null,
+  workspaceUrl?: string | null,
+  entityCount?: number | null,
+  isProcessing?: boolean | null,
+  columns?: {
+    columnId?: string | number | null,
+    name?: string | null,
+    type?: string | null,
+    key?: string | null,
+    isDefault?: boolean | null,
+    addedAt?: string | null,
+    updatedAt?: string | null,
+    rowsNotRun?: number | null,
+    rowsProcessing?: number | null,
+    rowsSuccess?: number | null,
+    rowsNoData?: number | null,
+    rowsFailed?: number | null
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getColumnCatalog
+
+`contactTables.getColumnCatalog`
+
+Get Contacts Column Catalog. List every Lusha data column that can be added to a contacts table - 22 columns. Billing: Free - no credits charged.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.contactTables.getColumnCatalog({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  category?: string | null,
+  displayName?: string | null,
+  columnKey?: string | null,
+  type?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contactTables.list`
+
+List Contacts Tables. List contacts tables owned by the given user, plus any tables shared with the account. Billing: Free.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.contactTables.list({ owner: { email: 'user@example.com' }, page: 0, size: 10, status: 'active' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `object` | Yes | Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'. |
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `name` | `string` | No | Optional filter - matches tables whose name contains this text. |
+| `status` | `active \| archived` | No | 'deleted' is not a filterable status. |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `pagination` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tableId?: string | number | null,
+  name?: string | null,
+  entityType?: string | null,
+  visibility?: string | null,
+  status?: string | null,
+  owner?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null
+  } | null,
+  createdBy?: {
+    surface?: string | null,
+    createdByUserId?: number | null
+  } | null,
+  workspaceUrl?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  size?: number | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listColumns
+
+`contactTables.listColumns`
+
+List Contacts Table Columns. List the columns on a table, with type and aggregated per-cell status counts. Billing: Free.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.contactTables.listColumns({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableId` | `string` | Yes | The table's ID. |
+| `ownerEmail` | `string` | No | Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  columnId?: string | number | null,
+  name?: string | null,
+  type?: string | null,
+  key?: string | null,
+  isDefault?: boolean | null,
+  addedAt?: string | null,
+  updatedAt?: string | null,
+  rowsNotRun?: number | null,
+  rowsProcessing?: number | null,
+  rowsSuccess?: number | null,
+  rowsNoData?: number | null,
+  rowsFailed?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEntities
+
+`contactTables.listEntities`
+
+Get Contacts Table Entities. Read a page of rows in the table, with all column values and per-cell status. Billing: Charged per row returned via 'export_api'.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.contactTables.listEntities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableId` | `string` | Yes | The table's ID. |
+| `ownerEmail` | `string` | No | Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body. |
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `pagination` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number | null,
+  columns?: {
+    id?: string | number | null,
+    name?: string | null,
+    type?: string | null,
+    sourceType?: string | null,
+    value?: any | null,
+    status?: string | null
+  }[] | null,
+  createdAt?: string | null,
+  rowCreatedAt?: string | null,
+  type?: string | null,
+  tableContactId?: string | number | null,
+  dateAddedToList?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  fullName?: string | null,
+  job?: {
+    title?: string | null,
+    seniority?: string | null,
+    departments?: string[] | null
+  } | null,
+  location?: {
+    city?: string | null,
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null
+  } | null,
+  socialLinks?: {
+    linkedin?: string | null
+  } | null,
+  datapoints?: {
+    emails?: {
+      datapointId?: string | number | null,
+      value?: string | null,
+      type?: string | null,
+      confidence?: string | null,
+      dataSource?: string | null,
+      isMasked?: boolean | null,
+      isManuallyAdded?: boolean | null,
+      isCorrectFeedback?: boolean | null
+    }[] | null,
+    phones?: {
+      datapointId?: string | number | null,
+      value?: string | null,
+      type?: string | null,
+      confidence?: string | null,
+      dataSource?: string | null,
+      isMasked?: boolean | null,
+      isManuallyAdded?: boolean | null,
+      isCorrectFeedback?: boolean | null
+    }[] | null
+  } | null,
+  isFullDNC?: boolean | null,
+  tags?: any[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  size?: number | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeColumn
+
+`contactTables.removeColumn`
+
+Remove Column from Contacts Table. Remove a column and delete all of its cell data across the table. Billing: Free.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lusha.api.contactTables.removeColumn({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableId` | `string` | Yes | The table's ID. |
+| `columnId` | `string` | Yes | The column's ID. |
+| `ownerEmail` | `string` | No | Email of the user making the request. Used to scope ownership/visibility checks on GET/DELETE calls, which cannot carry a body. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  columnId?: string | number | null,
+  removed?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeEntities
+
+`contactTables.removeEntities`
+
+Remove Entities from Contacts Table. Remove specific contact IDs from a table. Billing: Free.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lusha.api.contactTables.removeEntities({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableId` | `string` | Yes | The table's ID. |
+| `entityIds` | `string[]` | Yes | Accepts either the encrypted token ('v&#123;N&#125;.…', as returned by Get Entities) or the legacy numeric ID. Unresolved IDs are echoed back in 'invalidIds' in the exact form you sent them. |
+| `owner` | `object` | Yes | Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'. |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  removed?: number | null,
+  invalidIds?: string[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runColumn
+
+`contactTables.runColumn`
+
+Run Column on Contacts Table. Populate or refresh a column's data for some or all rows in the table. Billing: Charged per row processed, per the column's credit tier. Re-running with 'all' charges again for rows that already have data.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lusha.api.contactTables.runColumn({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableId` | `string` | Yes | The table's ID. |
+| `columnId` | `string` | Yes | The column's ID. |
+| `runScope` | `all \| missing \| specific` | Yes | Controls which rows a column operation applies to. 'all' re-runs every row, including already-processed ones. 'missing' only runs rows that don't have a value for this column yet. 'specific' requires 'entityIds'. |
+| `entityIds` | `string[]` | No | Required when 'runScope' is 'specific'. |
+| `owner` | `object` | Yes | Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'. |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  columnId?: string | number | null,
+  runScope?: string | null,
+  status?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contactTables.update`
+
+Update Contacts Table. Rename a table, change its visibility, or reassign its owner. Billing: Free.
+
+**Risk:** `write`
+
+```ts
+await corsair.lusha.api.contactTables.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableId` | `string` | Yes | The table's ID. |
+| `name` | `string` | No | New name, up to 250 characters. Allowed: letters in any language, digits, spaces, and '- _ . , ' & ( ) / # + : ! ? @'. |
+| `visibility` | `private \| shared` | No | — |
+| `archived` | `boolean` | No | Set 'true' to archive the table (hides it from default List Tables results), 'false' to restore it. |
+| `owner` | `object` | Yes | Identifies the user acting on the table, and resolves to a user on your account. Required on every table-route call when authenticating with an API key (there is no signed-in user) - omitting it returns '400'. |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tableId?: string | number | null,
+  name?: string | null,
+  entityType?: string | null,
+  visibility?: string | null,
+  status?: string | null,
+  owner?: {
+    id?: number | null,
+    email?: string | null,
+    name?: string | null
+  } | null,
+  createdBy?: {
+    surface?: string | null,
+    createdByUserId?: number | null
+  } | null,
+  workspaceUrl?: string | null,
+  entityCount?: number | null,
+  isProcessing?: boolean | null,
+  columns?: {
+    columnId?: string | number | null,
+    name?: string | null,
+    type?: string | null,
+    key?: string | null,
+    isDefault?: boolean | null,
+    addedAt?: string | null,
+    updatedAt?: string | null,
+    rowsNotRun?: number | null,
+    rowsProcessing?: number | null,
+    rowsSuccess?: number | null,
+    rowsNoData?: number | null,
+    rowsFailed?: number | null
+  }[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Conversations
+
+### getTranscript
+
+`conversations.getTranscript`
+
+Get Conversation Transcript. Returns the speaker-attributed, timestamped transcript of a single conversation. Billing: 1 credit per successful request via 'ci_transcript_analysis', including repeat requests for the same conversation. A '404' is never charged. While 'ci_transcript_analysis' isn't seeded on your account's pricebook, the endpoint stays free.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.conversations.getTranscript({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `string` | Yes | Conversation identifier returned by Search Conversations. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| number \| null` | No | — |
+| `conversationId` | `string \| number \| null` | No | — |
+| `segments` | `object[] \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="segments full type">
+
+```ts
+{
+  speaker?: string | null,
+  side?: string | null,
+  text?: string | null,
+  startTime?: string | null,
+  endTime?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`conversations.search`
+
+Search Conversations. Search the sales conversations recorded by Lusha Conversations for your account. Billing: 1 credit per block of up to 25 conversations returned (1–25 = 1, 26–50 = 2, 51–75 = 3, 76–100 = 4), via 'ci_meeting_data_export'. Charged on results returned, not the page size requested. A request that returns nothing is free.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.conversations.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | Free-text search over transcript content. When present, the structural filters below are ignored. |
+| `conversationIds` | `string[]` | No | Return only these conversations. IDs that don't exist, are still processing, or belong to another account are omitted from the response rather than erroring. |
+| `dateFrom` | `string` | No | Earliest meeting date, inclusive (YYYY-MM-DD). |
+| `dateTo` | `string` | No | Latest meeting date, inclusive (YYYY-MM-DD). |
+| `contactNames` | `string[]` | No | Partial, case-insensitive match on participant names. Multiple values are ORed. |
+| `companyDomains` | `string[]` | No | Company domains of the external participants (e.g. acme.com). Matches on domain, not display name. Multiple values are ORed. |
+| `meetingTitles` | `string[]` | No | Partial, case-insensitive match on the meeting title. Multiple values are ORed. |
+| `page` | `number` | No | Page number, starting at 1. |
+| `pageSize` | `number` | No | Conversations per page. Values above 100 are rejected with 400 (not silently clamped). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| number \| null` | No | — |
+| `conversations` | `object[] \| null` | No | — |
+| `page` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="conversations full type">
+
+```ts
+{
+  id?: string | number | null,
+  title?: string | null,
+  date?: string | null,
+  startTime?: string | null,
+  durationSeconds?: number | null,
+  durationFormatted?: string | null,
+  meetingType?: string | null,
+  isExternal?: boolean | null,
+  company?: {
+    name?: string | null,
+    domain?: string | null
+  } | null,
+  participants?: {
+    name?: string | null,
+    email?: string | null,
+    role?: string | null,
+    isInternal?: boolean | null
+  }[] | null,
+  topicLabels?: string[] | null,
+  summary?: {
+    text?: string | null,
+    keyHighlights?: string[] | null,
+    actionItems?: {
+      text?: string | null,
+      owner?: string | null,
+      dueDate?: string | null
+    }[] | null,
+    nextSteps?: string[] | null,
+    risks?: {
+      text?: string | null,
+      severity?: string | null
+    }[] | null,
+    objections?: {
+      text?: string | null,
+      severity?: string | null
+    }[] | null,
+    competition?: {
+      name?: string | null,
+      context?: string | null,
+      sentiment?: string | null
+    }[] | null
+  } | null,
+  coaching?: {
+    overallScore?: number | null,
+    likelihoodOfSale?: number | null,
+    sections?: {
+      section?: string | null,
+      score?: number | null,
+      whatHappened?: string | null,
+      whatToKeep?: string[] | null,
+      whatToImprove?: string[] | null
+    }[] | null,
+    notes?: string | null
+  } | null,
+  chapters?: {
+    index?: number | null,
+    title?: string | null,
+    startTime?: string | null,
+    endTime?: string | null,
+    summary?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  page?: number | null,
+  pageSize?: number | null,
+  totalItems?: number | null,
+  totalPages?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Icp
+
+### listProfiles
+
+`icp.listProfiles`
+
+List Target Profiles. Returns the Target Profiles (ICPs) you can see: your own, plus any an admin has shared with the account. Billing: Free (0 credits).
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.icp.listProfiles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `active \| disabled` | No | Return only profiles with this status. |
+| `access` | `private \| shared` | No | Return only private profiles, or only profiles shared with the account. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profiles` | `object[] \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="profiles full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  status?: string | null,
+  access?: string | null,
+  canEdit?: boolean | null,
+  isOwner?: boolean | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Jobs
+
+### getContactsEnrichJob
+
+`jobs.getContactsEnrichJob`
+
+Where a partial contacts enrich job stands: processing (poll again after retryAfter seconds), complete (contacts to merge by id plus creditsCharged), or the terminal expired and failed. Free.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.jobs.getContactsEnrichJob({ jobId: 'wf_3f2b9c1e-4a7d-4f3b-9c2e-1d6a5b8c7e90' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | The job id from a partial enrichContacts response. |
+
+Free. Takes the `jobId` from a partial enrich response. `processing` carries `retryAfter` (seconds) and `covers`; `complete` carries `contacts` and `creditsCharged`; `expired` and `failed` (with `reason`) are terminal and keep what enrich already returned.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string \| null` | No | — |
+| `status` | `processing \| complete \| expired \| failed` | Yes | — |
+| `requestId` | `string \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+| `retryAfter` | `number \| null` | No | — |
+| `covers` | `object[] \| null` | No | — |
+| `contacts` | `object[] \| null` | No | — |
+| `creditsCharged` | `number \| null` | No | — |
+| `reason` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="covers full type">
+
+```ts
+{
+  contactId?: string | null,
+  refId?: string | null,
+  dataPoints?: string[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="contacts full type">
+
+```ts
+{
+  clientReferenceId?: string | null,
+  id?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  fullName?: string | null,
+  jobTitle?: {
+    title?: string | null,
+    departments?: string[] | null,
+    seniority?: string | null,
+    startDate?: string | null
+  } | null,
+  location?: {
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null,
+    state?: string | null,
+    stateCode?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    coordinates?: number[] | null,
+    isEuContact?: boolean | null
+  } | null,
+  tags?: {
+    id?: string | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  emails?: {
+    email?: string | null,
+    type?: string | null,
+    confidence?: string | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  phones?: {
+    number?: string | null,
+    type?: string | null,
+    doNotCall?: boolean | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  company?: {
+    id?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    industry?: string | null
+  } | null,
+  socialLinks?: {
+    linkedin?: string | null,
+    xUrl?: string | null
+  } | null,
+  previousEmployment?: Record<string, any>[] | null,
+  linkedinFollowers?: number | null,
+  linkedinConnections?: number | null,
+  partialProfile?: boolean | null,
+  updateDate?: string | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null,
+  missingDataPoints?: {
+    type?: string | null,
+    status?: string | null,
+    description?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Person
+
+### enrichContacts
+
+`person.enrichContacts`
+
+Reveal emails and phone numbers for up to 100 contact ids from search results. Charges credits per revealed data point; a data point already revealed for the account is free to re-enrich (canReveal.credits is 0 in search). May answer status partial with a job; follow it with jobs.getContactsEnrichJob until it reports complete, expired or failed.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.person.enrichContacts({ ids: ['4389064654'], reveal: ['emails', 'phones'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | 1 to 100 ids from a search result. |
+| `reveal` | `(emails \| phones)[]` | No | Data points to reveal, each charged per result: emails, phones. |
+| `waterfallEnabled` | `boolean` | No | Allow the Data Waterfall to fall through to your enabled third-party providers when Lusha has no match. Defaults to true when the waterfall is enabled on your account; false means Lusha data only. |
+| `tableId` | `string` | No | Also add these contacts to this table and fill its columns. |
+
+Takes `ids` (1 to 100 from search results), optional `reveal` (`emails`, `phones`), `waterfallEnabled` and `tableId`. Returns enriched contacts with `emails` and `phones` arrays, plus `billing`. May answer `status: 'partial'` with a `job`: poll `jobs.getContactsEnrichJob` until it reports `complete`, `expired` or `failed`, and merge its `contacts` into the results by `id`. Charged per revealed data point; a data point is billed once, so re-enriching data already revealed for the account is free.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+| `tableWrite` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+| `status` | `completed \| partial \| halted \| OUT_OF_CREDITS \| PARTIAL_OUT_OF_CREDITS \| null` | No | — |
+| `statusDescription` | `string \| null` | No | — |
+| `statusReason` | `WATERFALL_NOT_CONFIGURED \| WATERFALL_NOT_IN_PLAN \| WATERFALL_DISABLED \| null` | No | — |
+| `job` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  clientReferenceId?: string | null,
+  id?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  fullName?: string | null,
+  jobTitle?: {
+    title?: string | null,
+    departments?: string[] | null,
+    seniority?: string | null,
+    startDate?: string | null
+  } | null,
+  location?: {
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null,
+    state?: string | null,
+    stateCode?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    coordinates?: number[] | null,
+    isEuContact?: boolean | null
+  } | null,
+  tags?: {
+    id?: string | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  emails?: {
+    email?: string | null,
+    type?: string | null,
+    confidence?: string | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  phones?: {
+    number?: string | null,
+    type?: string | null,
+    doNotCall?: boolean | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  company?: {
+    id?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    industry?: string | null
+  } | null,
+  socialLinks?: {
+    linkedin?: string | null,
+    xUrl?: string | null
+  } | null,
+  previousEmployment?: Record<string, any>[] | null,
+  linkedinFollowers?: number | null,
+  linkedinConnections?: number | null,
+  partialProfile?: boolean | null,
+  updateDate?: string | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null,
+  missingDataPoints?: {
+    type?: string | null,
+    status?: string | null,
+    description?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="tableWrite full type">
+
+```ts
+{
+  tableId?: string | null,
+  added?: number | null,
+  alreadyPresent?: number | null,
+  columnsCreated?: number | any[] | null,
+  rowsProcessed?: number | null,
+  rowsCharged?: number | null,
+  rowsAlreadyPaidInTable?: number | null,
+  creditsCharged?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="job full type">
+
+```ts
+{
+  id?: string | null,
+  status?: processing | null,
+  expiresAt?: string | null,
+  retryAfter?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBuyingGroup
+
+`person.getBuyingGroup`
+
+Get Buying Group Contacts. Identify the buying group within a set of target companies. Billing: 1 credit per contact record returned, via the 'buyingGroupContact' action. Credits are charged per record, not per person - if the same person appears at more than one company in the request, each record is charged.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.person.getBuyingGroup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companies` | `object[]` | Yes | — |
+| `personas` | `(decision_maker \| potential_champion \| end_user)[]` | No | Filter results to specific persona roles. Omit to return all three. |
+| `contactsLimit` | `number` | No | Maximum number of contacts returned per company. |
+| `pagination` | `object` | No | Optional. If omitted, defaults to page 0, size 100. |
+
+<AccordionGroup>
+<Accordion title="companies full type">
+
+```ts
+{
+  clientReferenceId?: string,
+  domain?: string,
+  id?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number,
+  size?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| number \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+| `pagination` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  clientReferenceId?: string | number | null,
+  companyId?: string | number | null,
+  contacts?: {
+    id?: string | number | null,
+    firstName?: string | null,
+    lastName?: string | null,
+    jobTitle?: {
+      title?: string | null,
+      departments?: string[] | null,
+      seniority?: string | null
+    } | null,
+    company?: {
+      id?: string | number | null,
+      name?: string | null,
+      domain?: string | null
+    } | null,
+    location?: {
+      country?: string | null,
+      state?: string | null,
+      city?: string | null
+    } | null,
+    socialLinks?: {
+      linkedin?: string | null
+    } | null,
+    has?: string[] | null,
+    canReveal?: {
+      field?: string | null,
+      credits?: number | null,
+      source?: string | null,
+      availability?: string | null,
+      vendors?: string[] | null
+    }[] | null,
+    roles?: string[] | null,
+    score?: number | null,
+    error?: {
+      code?: string | null,
+      message?: string | null
+    } | null
+  }[] | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  size?: number | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContactFilterTypes
+
+`person.getContactFilterTypes`
+
+Get Contact Filter Types (Discovery). Returns all available filter types for contact prospecting and whether each requires a search query.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.person.getContactFilterTypes({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `availableFilters` | `object[] \| null` | No | — |
+| `filters` | `object[] \| null` | No | — |
+| `generatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="availableFilters full type">
+
+```ts
+{
+  filterType?: string | null,
+  requiresQuery?: boolean | null,
+  supportsQuery?: boolean | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="filters full type">
+
+```ts
+{
+  path?: string | null,
+  type?: string | null,
+  description?: string | null,
+  valueSource?: string | null,
+  values?: string[] | null,
+  lookup?: {
+    filterType?: string | null,
+    url?: string | null,
+    requiresQuery?: boolean | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContactFilterValues
+
+`person.getContactFilterValues`
+
+Get Contact Filter Values. Returns valid values for a single contact filter type.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.person.getContactFilterValues({ filterType: 'departments' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filterType` | `departments \| seniority \| existingDataPoints \| countries \| locations` | Yes | — |
+| `query` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `values` | `any \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `truncated` | `boolean \| null` | No | — |
+
+
+
+---
+
+### getContactIcpFitScores
+
+`person.getContactIcpFitScores`
+
+Score Contacts by ICP Fit. Score how well each contact fits 1-3 of your Target Profiles, from '0' to '1'. Billing: 1 credit per scored contact, regardless of how many profiles it's scored against. A score of '0' is charged. Error rows ('NOT_FOUND' / 'NO_SCORE') are never charged.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.person.getContactIcpFitScores({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `targetProfileIds` | `string[]` | Yes | 1-3 Target Profile IDs to score against. Each must be an 'active' profile you own or that is shared with your account - get them from [List Target Profiles](#operation/listIcpProfiles). |
+| `contacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  clientReferenceId?: string,
+  id?: string,
+  linkedinUrl?: string,
+  email?: string,
+  firstName?: string,
+  lastName?: string,
+  companyName?: string,
+  companyDomain?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| number \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  clientReferenceId?: string | number | null,
+  id?: string | number | null,
+  fullName?: string | null,
+  company?: {
+    id?: string | number | null,
+    name?: string | null,
+    domain?: string | null
+  } | null,
+  icpFitScore?: number | null,
+  topProfile?: {
+    id?: string | number | null,
+    name?: string | null
+  } | null,
+  profileScores?: {
+    id?: string | number | null,
+    name?: string | null,
+    score?: number | null
+  }[] | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContactLookalikes
+
+`person.getContactLookalikes`
+
+Contact Lookalikes. Find contacts similar to a set of seed contacts using AI-powered recommendations. Billing: Charged per result via the 'lookalikeContact' action.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.person.getContactLookalikes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dedupeSessionId` | `string` | No | — |
+| `seeds` | `object` | Yes | **Required. Minimum 5, maximum 100 seed contacts in total**, counted across all identifier types combined ('linkedinUrls' + 'emails' + 'ids' + 'contactIds' + 'contacts'). Fewer than 5 total seeds is rejected with '400'. |
+| `exclude` | `object` | No | Optional. Contacts to always filter out of the results (for example, existing customers). Omit the field entirely if you have nothing to exclude. |
+| `limit` | `number` | No | — |
+| `tableId` | `string` | No | Optional. If provided, results are also persisted to this table. See the Tables API. |
+
+<AccordionGroup>
+<Accordion title="seeds full type">
+
+```ts
+{
+  linkedinUrls?: string[],
+  contacts?: {
+    firstName: string,
+    lastName: string,
+    companyDomain?: string,
+    companyName?: string
+  }[],
+  emails?: string[],
+  ids?: string[],
+  contactIds?: number[]
+}
+```
+</Accordion>
+
+<Accordion title="exclude full type">
+
+```ts
+{
+  linkedinUrls?: string[],
+  contacts?: {
+    firstName: string,
+    lastName: string,
+    companyDomain?: string,
+    companyName?: string
+  }[],
+  emails?: string[],
+  ids?: string[],
+  contactIds?: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dedupeSessionId` | `string \| number \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+| `meta` | `object \| null` | No | — |
+| `tableWrite` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | number | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  socialLinks?: {
+    linkedin?: string | null
+  } | null,
+  company?: {
+    id?: string | number | null,
+    name?: string | null,
+    domain?: string | null
+  } | null,
+  jobTitle?: {
+    title?: string | null,
+    departments?: string[] | null,
+    seniority?: string | null
+  } | null,
+  location?: {
+    country?: string | null,
+    state?: string | null,
+    city?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  returned?: number | null,
+  hasMore?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="tableWrite full type">
+
+```ts
+{
+  tableId?: string | number | null,
+  added?: number | null,
+  alreadyPresent?: number | null,
+  columnsCreated?: number | any[] | null,
+  rowsProcessed?: number | null,
+  rowsCharged?: number | null,
+  rowsAlreadyPaidInTable?: number | null,
+  creditsCharged?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContactRecommendationFilters
+
+`person.getContactRecommendationFilters`
+
+Contact Recommendation Filters. Lists the Target Profiles and signal types that currently appear in your contact recommendations. Billing: Free.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.person.getContactRecommendationFilters({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `availableSignals` | `string[] \| null` | No | — |
+| `availableTargetIcps` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="availableTargetIcps full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContactRecommendations
+
+`person.getContactRecommendations`
+
+Contact Recommendations. Returns the recommended contacts for the calling user, ranked by Lusha against your Target Profiles and recent signals. Billing: Charged per result without an 'error', via the 'contactRecommendationsReveal' action. Results with an 'error' (e.g. 'COMPLIANCE_RESTRICTED') keep their scores but carry no personal data and are not charged.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.person.getContactRecommendations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | No | — |
+| `sort` | `object[]` | No | Sort keys, applied in order. Up to 4 entries, all with the same 'order'. Defaults to 'leadScore' descending. |
+| `filters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  size: number
+}
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+  by: leadScore | signalScore | icpFitScore | targetIcp,
+  order?: asc | desc
+}[]
+```
+</Accordion>
+
+<Accordion title="filters full type">
+
+```ts
+{
+  targetIcp?: string[],
+  signals?: string[],
+  leadScore?: {
+    min?: number,
+    max?: number
+  },
+  signalScore?: {
+    min?: number,
+    max?: number
+  },
+  icpFitScore?: {
+    min?: number,
+    max?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| number \| null` | No | — |
+| `userRecommendationsId` | `string \| number \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+| `pagination` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+| `recommendationListIds` | `string[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  clientReferenceId?: string | number | null,
+  id?: string | number | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  jobTitle?: {
+    title?: string | null,
+    departments?: string[] | null,
+    seniority?: string | null
+  } | null,
+  company?: {
+    id?: string | number | null,
+    name?: string | null,
+    domain?: string | null,
+    industry?: string | null
+  } | null,
+  location?: {
+    country?: string | null,
+    state?: string | null,
+    city?: string | null
+  } | null,
+  socialLinks?: {
+    linkedin?: string | null
+  } | null,
+  has?: string[] | null,
+  canReveal?: {
+    field?: string | null,
+    credits?: number | null,
+    source?: string | null,
+    availability?: string | null,
+    vendors?: string[] | null
+  }[] | null,
+  signalTypes?: string[] | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null,
+  recommendation?: {
+    leadScore?: number | null,
+    icpFitScore?: number | null,
+    signalScore?: number | null,
+    targetIcp?: {
+      id?: string | number | null,
+      name?: string | null
+    }[] | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  size?: number | null,
+  total?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContactSignals
+
+`person.getContactSignals`
+
+Contact Signals. Retrieve signal events for a list of contacts - job changes and promotions. Billing: Charged per matched signal per result via the 'showSignalsContact' action.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.person.getContactSignals({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | — |
+| `signalTypes` | `(allSignals \| promotion \| companyChange)[]` | Yes | — |
+| `startDate` | `string` | No | — |
+| `maxResultsPerSignal` | `number` | No | — |
+| `tableId` | `string` | No | Optional. If provided, these contacts are also added to this table (if not already present) and the Signals column is populated. See the Tables API. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | — |
+| `startDate` | `string \| null` | No | — |
+| `endDate` | `string \| null` | No | — |
+| `tableWrite` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+| `requestId` | `string \| number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | number | null,
+  companyChange?: Record<string, any>[] | null,
+  promotion?: Record<string, any>[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="tableWrite full type">
+
+```ts
+{
+  tableId?: string | number | null,
+  added?: number | null,
+  alreadyPresent?: number | null,
+  columnsCreated?: number | any[] | null,
+  rowsProcessed?: number | null,
+  rowsCharged?: number | null,
+  rowsAlreadyPaidInTable?: number | null,
+  creditsCharged?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContactSignalScores
+
+`person.getContactSignalScores`
+
+Score Contacts by Signal Activity. Score contacts by their active buying signals. Billing: 1 credit is charged per scored row via 'signal_score_contact_reveal'. This action is currently limited-availability - while it isn't yet seeded on an account's pricebook, the endpoint stays free ('billing.creditsCharged' is '0').
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.person.getContactSignalScores({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  clientReferenceId?: string,
+  id?: string,
+  linkedinUrl?: string,
+  email?: string,
+  firstName?: string,
+  lastName?: string,
+  companyName?: string,
+  companyDomain?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| number \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  clientReferenceId?: string | number | null,
+  id?: string | number | null,
+  fullName?: string | null,
+  company?: {
+    id?: string | number | null,
+    name?: string | null,
+    domain?: string | null
+  } | null,
+  signalScore?: number | null,
+  signalTypes?: string[] | null,
+  noActiveSignals?: boolean | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null,
+  contactSignalTypes?: string[] | null,
+  companySignalTypes?: string[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContactSignalTypes
+
+`person.getContactSignalTypes`
+
+Get Contact Signal Types. Returns the full list of supported signal types for contacts.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.person.getContactSignalTypes({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `signalTypes` | `string[] \| null` | No | — |
+
+
+
+---
+
+### prospectContacts
+
+`person.prospectContacts`
+
+Prospecting Contacts. Search for contacts that match your Ideal Customer Profile using rich filter criteria. Billing: Charged per result via 'api_search'. If signals are requested, an additional charge applies per matched signal per result.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.person.prospectContacts({ pagination: { page: 0, size: 25 }, filters: { contacts: { include: { departments: ['Sales'], locations: [{ country: 'United States' }] } } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | Yes | — |
+| `filters` | `object` | Yes | — |
+| `tableId` | `string` | No | Optional. If provided, results are also persisted to this table. See the Tables API. |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number,
+  size: number
+}
+```
+</Accordion>
+
+<Accordion title="filters full type">
+
+```ts
+{
+  contacts?: {
+    include?: {
+      names?: string[],
+      jobTitles?: string[],
+      jobTitlesExactMatch?: string[],
+      normalizedJobTitles?: string[],
+      searchText?: string,
+      countries?: string[],
+      locations?: {
+        city?: string,
+        state?: string,
+        country?: string,
+        continent?: string,
+        countryGrouping?: string,
+        region?: string,
+        countryIso2?: string
+      }[],
+      seniorityIds?: number[],
+      departments?: string[],
+      linkedinUrls?: string[],
+      existingDataPoints?: string[],
+      signals?: {
+        types?: (allSignals | promotion | companyChange)[],
+        startDate?: string
+      },
+      emails?: string[],
+      previousEmails?: string[],
+      previousJobTitle?: string[],
+      skills?: string[],
+      certifications?: string[],
+      awards?: string[],
+      ids?: string[],
+      existingDataPointsCondition?: or | and,
+      jobChangedAfterDate?: string,
+      jobChangedLastViewDate?: string,
+      education?: {
+        degrees?: string[],
+        fieldsOfStudy?: string[],
+        schools?: string[],
+        startYearGte?: number,
+        graduationYearLte?: number
+      },
+      score?: {
+        minScore?: number,
+        maxScore?: number
+      },
+      geographicDetails?: {
+        country?: string,
+        zipcode?: string,
+        distance?: number
+      }[]
+    },
+    exclude?: {
+      names?: string[],
+      jobTitles?: string[],
+      jobTitlesExactMatch?: string[],
+      normalizedJobTitles?: string[],
+      searchText?: string,
+      countries?: string[],
+      locations?: {
+        city?: string,
+        state?: string,
+        country?: string,
+        continent?: string,
+        countryGrouping?: string,
+        region?: string,
+        countryIso2?: string
+      }[],
+      seniorityIds?: number[],
+      departments?: string[],
+      linkedinUrls?: string[],
+      existingDataPoints?: string[],
+      signals?: {
+        types?: (allSignals | promotion | companyChange)[],
+        startDate?: string
+      },
+      emails?: string[],
+      previousEmails?: string[],
+      previousJobTitle?: string[],
+      skills?: string[],
+      certifications?: string[],
+      awards?: string[],
+      ids?: string[],
+      existingDataPointsCondition?: or | and,
+      jobChangedAfterDate?: string,
+      jobChangedLastViewDate?: string,
+      education?: {
+        degrees?: string[],
+        fieldsOfStudy?: string[],
+        schools?: string[],
+        startYearGte?: number,
+        graduationYearLte?: number
+      },
+      score?: {
+        minScore?: number,
+        maxScore?: number
+      },
+      geographicDetails?: {
+        country?: string,
+        zipcode?: string,
+        distance?: number
+      }[]
+    }
+  },
+  companies?: {
+    include?: {
+      names?: string[],
+      domains?: string[],
+      ids?: string[],
+      locations?: {
+        city?: string,
+        state?: string,
+        country?: string,
+        continent?: string,
+        countryGrouping?: string,
+        region?: string,
+        countryIso2?: string
+      }[],
+      sizes?: {
+        min?: number,
+        max?: number
+      }[],
+      revenues?: {
+        min?: number,
+        max?: number
+      }[],
+      technologies?: string[],
+      technologiesCondition?: or | and,
+      industriesLabels?: string[],
+      mainIndustriesIds?: number[],
+      subIndustriesIds?: number[],
+      sicCodes?: string[],
+      naicsCodes?: string[],
+      funding?: {
+        isIpo?: boolean,
+        ranges?: {
+          coverage?: last_funding | any_round | total_funds | last_round,
+          min?: number,
+          max?: number
+        }[],
+        date?: {
+          coverage?: last_funding | any_round | total_funds | last_round,
+          date?: string
+        },
+        rounds?: {
+          coverage?: last_funding | any_round | total_funds | last_round,
+          round?: pre_seed | seed | series_a | series_b | series_c | series_d | series_e | series_f | series_g | series_h | other
+        }[],
+        names?: {
+          coverage?: last_funding | any_round | total_funds | last_round,
+          name?: angel | venture | private_equity | crowdfunding | grant | debt_financing | other
+        }[],
+        investors?: string[],
+        types?: string[]
+      },
+      foundedYear?: {
+        min?: number,
+        max?: number
+      }[],
+      businessModel?: (B2B | B2C | B2G)[],
+      companyType?: (Government | Private Company | Public Company | Educational | Non Profit | Self Employed)[],
+      linkedinUrls?: string[],
+      keywords?: string[],
+      specialities?: string[],
+      exactSpecialities?: string[],
+      exactKeywords?: string[],
+      keywordsSearchFields?: string[],
+      previousCompanyDomains?: string[],
+      previousCompanyNames?: string[],
+      geographicDetails?: {
+        country?: string,
+        zipcode?: string,
+        distance?: number
+      }[],
+      locationsZipcodes?: {
+        countryIso2?: string,
+        zipcode?: string
+      }[],
+      headquarterZipcodes?: {
+        countryIso2?: string,
+        zipcode?: string
+      }[]
+    },
+    exclude?: {
+      names?: string[],
+      domains?: string[],
+      ids?: string[],
+      locations?: {
+        city?: string,
+        state?: string,
+        country?: string,
+        continent?: string,
+        countryGrouping?: string,
+        region?: string,
+        countryIso2?: string
+      }[],
+      sizes?: {
+        min?: number,
+        max?: number
+      }[],
+      revenues?: {
+        min?: number,
+        max?: number
+      }[],
+      technologies?: string[],
+      technologiesCondition?: or | and,
+      industriesLabels?: string[],
+      mainIndustriesIds?: number[],
+      subIndustriesIds?: number[],
+      sicCodes?: string[],
+      naicsCodes?: string[],
+      funding?: {
+        isIpo?: boolean,
+        ranges?: {
+          coverage?: last_funding | any_round | total_funds | last_round,
+          min?: number,
+          max?: number
+        }[],
+        date?: {
+          coverage?: last_funding | any_round | total_funds | last_round,
+          date?: string
+        },
+        rounds?: {
+          coverage?: last_funding | any_round | total_funds | last_round,
+          round?: pre_seed | seed | series_a | series_b | series_c | series_d | series_e | series_f | series_g | series_h | other
+        }[],
+        names?: {
+          coverage?: last_funding | any_round | total_funds | last_round,
+          name?: angel | venture | private_equity | crowdfunding | grant | debt_financing | other
+        }[],
+        investors?: string[],
+        types?: string[]
+      },
+      foundedYear?: {
+        min?: number,
+        max?: number
+      }[],
+      businessModel?: (B2B | B2C | B2G)[],
+      companyType?: (Government | Private Company | Public Company | Educational | Non Profit | Self Employed)[],
+      linkedinUrls?: string[],
+      keywords?: string[],
+      specialities?: string[],
+      exactSpecialities?: string[],
+      exactKeywords?: string[],
+      keywordsSearchFields?: string[],
+      previousCompanyDomains?: string[],
+      previousCompanyNames?: string[],
+      geographicDetails?: {
+        country?: string,
+        zipcode?: string,
+        distance?: number
+      }[],
+      locationsZipcodes?: {
+        countryIso2?: string,
+        zipcode?: string
+      }[],
+      headquarterZipcodes?: {
+        countryIso2?: string,
+        zipcode?: string
+      }[]
+    }
+  }
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  includePartialProfiles?: boolean,
+  excludeDnc?: boolean,
+  maxContactsPerCompany?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| number \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+| `pagination` | `object \| null` | No | — |
+| `tableWrite` | `object \| null` | No | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  clientReferenceId?: string | number | null,
+  id?: string | number | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  jobTitle?: {
+    title?: string | null,
+    departments?: string[] | null,
+    seniority?: string | null
+  } | null,
+  company?: {
+    id?: string | number | null,
+    name?: string | null,
+    domain?: string | null,
+    industry?: string | null
+  } | null,
+  location?: {
+    country?: string | null,
+    state?: string | null,
+    city?: string | null
+  } | null,
+  socialLinks?: {
+    linkedin?: string | null
+  } | null,
+  has?: string[] | null,
+  canReveal?: {
+    field?: string | null,
+    credits?: number | null,
+    source?: string | null,
+    availability?: string | null,
+    vendors?: string[] | null
+  }[] | null,
+  signalTypes?: string[] | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page?: number | null,
+  size?: number | null,
+  total?: number | null,
+  totalGuaranteed?: boolean | null,
+  totalDescription?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="tableWrite full type">
+
+```ts
+{
+  tableId?: string | number | null,
+  added?: number | null,
+  alreadyPresent?: number | null,
+  columnsCreated?: number | any[] | null,
+  rowsProcessed?: number | null,
+  rowsCharged?: number | null,
+  rowsAlreadyPaidInTable?: number | null,
+  creditsCharged?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchAndEnrichContacts
+
+`person.searchAndEnrichContacts`
+
+Search up to 100 contacts by email, LinkedIn URL or name plus company and return their full enriched records in one call. Charges credits per result and per revealed field.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.person.searchAndEnrichContacts({ contacts: [{ linkedinUrl: 'https://www.linkedin.com/in/someone' }], reveal: ['emails'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | 1 to 100 contacts to look up, each with exactly one identifier. |
+| `reveal` | `(emails \| phones)[]` | No | Data points to reveal, each charged per result: emails, phones. |
+| `options` | `object` | No | — |
+
+Combines both steps: `contacts` search entries plus `reveal`. Returns full contacts in one call. Metered.
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  clientReferenceId?: string,
+  id?: string,
+  linkedinUrl?: string,
+  email?: string,
+  firstName?: string,
+  lastName?: string,
+  companyName?: string,
+  companyDomain?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  includePartialProfiles?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+| `billing` | `object \| null` | No | — |
+| `status` | `completed \| partial \| halted \| OUT_OF_CREDITS \| PARTIAL_OUT_OF_CREDITS \| null` | No | — |
+| `statusDescription` | `string \| null` | No | — |
+| `statusReason` | `WATERFALL_NOT_CONFIGURED \| WATERFALL_NOT_IN_PLAN \| WATERFALL_DISABLED \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  clientReferenceId?: string | null,
+  id?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  fullName?: string | null,
+  jobTitle?: {
+    title?: string | null,
+    departments?: string[] | null,
+    seniority?: string | null,
+    startDate?: string | null
+  } | null,
+  location?: {
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null,
+    state?: string | null,
+    stateCode?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    coordinates?: number[] | null,
+    isEuContact?: boolean | null
+  } | null,
+  tags?: {
+    id?: string | null,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  emails?: {
+    email?: string | null,
+    type?: string | null,
+    confidence?: string | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  phones?: {
+    number?: string | null,
+    type?: string | null,
+    doNotCall?: boolean | null,
+    updateDate?: string | null,
+    dataSource?: string | null,
+    credits?: number | null
+  }[] | null,
+  company?: {
+    id?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    industry?: string | null
+  } | null,
+  socialLinks?: {
+    linkedin?: string | null,
+    xUrl?: string | null
+  } | null,
+  previousEmployment?: Record<string, any>[] | null,
+  linkedinFollowers?: number | null,
+  linkedinConnections?: number | null,
+  partialProfile?: boolean | null,
+  updateDate?: string | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null,
+  missingDataPoints?: {
+    type?: string | null,
+    status?: string | null,
+    description?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchContacts
+
+`person.searchContacts`
+
+Look up up to 100 contacts by id, LinkedIn URL, email, or name plus company, and get previews that say which data points exist and what revealing them costs. Charges credits per matched result.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.person.searchContacts({ contacts: [{ email: 'someone@lusha.com' }, { firstName: 'Orit', lastName: 'Shilvock', companyName: 'Lusha' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | 1 to 100 contacts to look up, each with exactly one identifier. |
+| `options` | `object` | No | — |
+| `signals` | `object` | No | — |
+
+Takes `contacts` (1 to 100 entries, each with exactly one identifier: `id`, `linkedinUrl`, `email`, or `firstName` plus `lastName` with `companyName` or `companyDomain`) and optional `options.includePartialProfiles` and contact `signals`. Returns previews with `has`, `canReveal` (each with its credit cost) and `signalTypes`, plus `billing` with the credits charged. Metered: charged per matched result.
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  clientReferenceId?: string,
+  id?: string,
+  linkedinUrl?: string,
+  email?: string,
+  firstName?: string,
+  lastName?: string,
+  companyName?: string,
+  companyDomain?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  includePartialProfiles?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="signals full type">
+
+```ts
+{
+  types: (allSignals | promotion | companyChange)[],
+  startDate?: string,
+  maxResultsPerSignal?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| null` | No | — |
+| `results` | `object[]` | Yes | — |
+| `billing` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  clientReferenceId?: string | null,
+  id?: string | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  jobTitle?: {
+    title?: string | null,
+    departments?: string[] | null,
+    seniority?: string | null,
+    startDate?: string | null
+  } | null,
+  company?: {
+    id?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    industry?: string | null
+  } | null,
+  location?: {
+    country?: string | null,
+    countryIso2?: string | null,
+    continent?: string | null,
+    state?: string | null,
+    stateCode?: string | null,
+    city?: string | null,
+    zipCode?: string | null,
+    coordinates?: number[] | null,
+    isEuContact?: boolean | null
+  } | null,
+  socialLinks?: {
+    linkedin?: string | null,
+    xUrl?: string | null
+  } | null,
+  has?: string[] | null,
+  canReveal?: {
+    field?: string | null,
+    credits?: number | null,
+    source?: string | null,
+    availability?: string | null,
+    vendors?: string[] | null
+  }[] | null,
+  signalTypes?: string[] | null,
+  error?: {
+    code?: string | null,
+    message?: string | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="billing full type">
+
+```ts
+{
+  creditsCharged?: number | null,
+  resultsReturned?: number | null,
+  lowBalance?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscriptions
+
+### create
+
+`subscriptions.create`
+
+Create Subscription. Creates one or more webhook subscriptions for real-time signal notifications. Billing: Lusha charges credits for each signal it delivers to a subscription. Needs an account webhook secret, set in the Lusha dashboard. The secret is never returned here.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lusha.api.subscriptions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `defaults` | `object` | Yes | — |
+| `name` | `string` | No | Default subscription name prefix |
+| `subscriptions` | `object[]` | Yes | Array of subscriptions to create (max 25) |
+
+<AccordionGroup>
+<Accordion title="defaults full type">
+
+```ts
+{
+  url: string,
+  entityType?: contact | company,
+  signalTypes?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="subscriptions full type">
+
+```ts
+{
+  entityId: string,
+  entityType?: contact | company,
+  signalTypes?: string[],
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number \| null` | No | — |
+| `successful` | `number \| null` | No | — |
+| `failed` | `number \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+(
+  {
+    index?: number | null,
+    success?: boolean | null,
+    subscription?: {
+      id?: string | number | null,
+      entityType?: string | null,
+      entityId?: string | number | null,
+      signalTypes?: string[] | null,
+      url?: string | null,
+      name?: string | null,
+      isActive?: boolean | null,
+      blockReason?: string | null,
+      blockedAt?: string | null,
+      createdAt?: string | null,
+      updatedAt?: string | null
+    } | null
+  } | {
+    index?: number | null,
+    success?: boolean | null,
+    error?: {
+      code?: string | null,
+      message?: string | null
+    } | null
+  }
+)[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createOptOut
+
+`subscriptions.createOptOut`
+
+Create Opt-Out Subscription. Subscribe to real-time notifications when a contact opts out of data processing. Needs an account webhook secret, set in the Lusha dashboard.
+
+**Risk:** `write`
+
+```ts
+await corsair.lusha.api.subscriptions.createOptOut({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entityType` | `contact` | Yes | Entity type for opt-out subscriptions. Currently only 'contact' is supported. |
+| `url` | `string` | Yes | Your webhook endpoint URL (HTTPS required in production) |
+| `name` | `string` | No | Descriptive name for this subscription |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `entityType` | `string \| null` | No | — |
+| `entityId` | `string \| number \| null` | No | — |
+| `signalTypes` | `string[] \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `isActive` | `boolean \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`subscriptions.delete`
+
+Delete Subscriptions. Delete one or more webhook subscriptions. Deletes 1 to 25 subscriptions; this cannot be undone.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lusha.api.subscriptions.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | Array of subscription IDs to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number \| null` | No | — |
+| `successful` | `number \| null` | No | — |
+| `failed` | `number \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+(
+  {
+    index?: number | null,
+    success?: boolean | null,
+    subscription?: {
+      id?: string | number | null,
+      entityType?: string | null,
+      entityId?: string | number | null,
+      name?: string | null
+    } | null
+  } | {
+    index?: number | null,
+    success?: boolean | null,
+    error?: {
+      code?: string | null,
+      message?: string | null
+    } | null
+  }
+)[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`subscriptions.get`
+
+Get Subscription by ID. Returns a single webhook subscription by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.subscriptions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Subscription ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `entityType` | `string \| null` | No | — |
+| `entityId` | `string \| number \| null` | No | — |
+| `signalTypes` | `string[] \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `isActive` | `boolean \| null` | No | — |
+| `blockReason` | `string \| null` | No | — |
+| `blockedAt` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`subscriptions.list`
+
+List Subscriptions. Returns all webhook subscriptions for your account with pagination support.
+
+**Risk:** `read`
+
+```ts
+await corsair.lusha.api.subscriptions.list({ limit: 10, offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Maximum number of results (1-100) |
+| `offset` | `number` | No | Number of results to skip |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number | null,
+  entityType?: string | null,
+  entityId?: string | number | null,
+  signalTypes?: string[] | null,
+  url?: string | null,
+  name?: string | null,
+  isActive?: boolean | null,
+  blockReason?: string | null,
+  blockedAt?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  total?: number | null,
+  limit?: number | null,
+  offset?: number | null,
+  hasMore?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### test
+
+`subscriptions.test`
+
+Test Subscription. Test a webhook subscription by sending a test signal. Billing: test deliveries are free.
+
+**Risk:** `write`
+
+```ts
+await corsair.lusha.api.subscriptions.test({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Subscription ID |
+| `mode` | `direct \| kafka \| full` | No | Test mode |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriptionId` | `string \| number \| null` | No | — |
+| `subscriptionName` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `mode` | `string \| null` | No | — |
+| `flowCheck` | `object \| null` | No | — |
+| `testPayload` | `object \| null` | No | — |
+| `isSuccess` | `boolean \| null` | No | — |
+| `timestamp` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="flowCheck full type">
+
+```ts
+{
+  success?: boolean | null,
+  statusCode?: number | null,
+  durationMs?: number | null,
+  error?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="testPayload full type">
+
+```ts
+{
+  entityType?: string | null,
+  signalType?: string | null,
+  data?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`subscriptions.update`
+
+Update Subscription. Updates an existing webhook subscription. Setting isActive true reactivates a subscription that was disabled after failed deliveries; active subscriptions are charged per delivered signal.
+
+**Risk:** `write`
+
+```ts
+await corsair.lusha.api.subscriptions.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Subscription ID |
+| `signalTypes` | `string[]` | No | New signal types to subscribe to |
+| `url` | `string` | No | New webhook URL |
+| `name` | `string` | No | New subscription name |
+| `isActive` | `boolean` | No | Enable or disable subscription |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `entityType` | `string \| null` | No | — |
+| `entityId` | `string \| number \| null` | No | — |
+| `signalTypes` | `string[] \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `isActive` | `boolean \| null` | No | — |
+| `secret` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+

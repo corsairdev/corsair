@@ -1,0 +1,1537 @@
+---
+title: "Loops webhooks"
+sidebarTitle: "Webhooks"
+description: "Loops incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Loops plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/loops/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `campaign`
+  - `emailSent` (`campaign.emailSent`)
+- `contact`
+  - `created` (`contact.created`)
+  - `deleted` (`contact.deleted`)
+  - `mailingListSubscribed` (`contact.mailingListSubscribed`)
+  - `mailingListUnsubscribed` (`contact.mailingListUnsubscribed`)
+  - `unsubscribed` (`contact.unsubscribed`)
+- `email`
+  - `clicked` (`email.clicked`)
+  - `delivered` (`email.delivered`)
+  - `hardBounced` (`email.hardBounced`)
+  - `opened` (`email.opened`)
+  - `resubscribed` (`email.resubscribed`)
+  - `softBounced` (`email.softBounced`)
+  - `spamReported` (`email.spamReported`)
+  - `unsubscribed` (`email.unsubscribed`)
+- `loop`
+  - `emailSent` (`loop.emailSent`)
+- `testing`
+  - `testEvent` (`testing.testEvent`)
+- `transactional`
+  - `emailSent` (`transactional.emailSent`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Campaign
+
+### Email Sent
+
+`campaign.emailSent`
+
+Campaign email sent. Sent when a campaign email is sent to a contact. This event fires for every campaign send (for example, sending to 1,000 contacts produces 1,000 events).
+
+**Payload:** `object`
+
+<AccordionGroup>
+<Accordion title="Payload full type">
+
+```ts
+{
+  eventName?: string | null,
+  eventTime?: number | null,
+  webhookSchemaVersion?: string | null,
+  contactIdentity?: {
+    id?: string | null,
+    email?: string | null,
+    userId?: string | null | null
+  } | null
+}& {
+  eventName?: string | null,
+  campaignId?: string | null,
+  campaignName?: string | null,
+  email?: {
+    id?: string | null,
+    emailMessageId?: string | null,
+    subject?: string | null
+  } | null,
+  mailingLists?: {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null | null,
+    isPublic?: boolean | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  eventName?: string | null,
+  eventTime?: number | null,
+  webhookSchemaVersion?: string | null,
+  contactIdentity?: {
+    id?: string | null,
+    email?: string | null,
+    userId?: string | null | null
+  } | null
+}& {
+  eventName?: string | null,
+  campaignId?: string | null,
+  campaignName?: string | null,
+  email?: {
+    id?: string | null,
+    emailMessageId?: string | null,
+    subject?: string | null
+  } | null,
+  mailingLists?: {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null | null,
+    isPublic?: boolean | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+loops({
+    webhookHooks: {
+        campaign: {
+            emailSent: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Contact
+
+### Created
+
+`contact.created`
+
+Contact created. Sent when a new contact is created in your audience. Contains a `contactIdentity` object and a full `contact` object with all of the new contact's properties (including custom properties).
+
+**Payload:** `object`
+
+<AccordionGroup>
+<Accordion title="Payload full type">
+
+```ts
+{
+  eventName?: string | null,
+  eventTime?: number | null,
+  webhookSchemaVersion?: string | null,
+  contactIdentity?: {
+    id?: string | null,
+    email?: string | null,
+    userId?: string | null | null
+  } | null
+}& {
+  eventName?: string | null,
+  contact?: {
+    id?: string | null,
+    email?: string | null,
+    firstName?: string | null | null,
+    lastName?: string | null | null,
+    source?: string | null,
+    subscribed?: boolean | null,
+    userGroup?: string | null,
+    userId?: string | null | null,
+    notes?: string | null | null,
+    mailingLists?: {
+    } | null,
+    optInStatus?: string | null | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  eventName?: string | null,
+  eventTime?: number | null,
+  webhookSchemaVersion?: string | null,
+  contactIdentity?: {
+    id?: string | null,
+    email?: string | null,
+    userId?: string | null | null
+  } | null
+}& {
+  eventName?: string | null,
+  contact?: {
+    id?: string | null,
+    email?: string | null,
+    firstName?: string | null | null,
+    lastName?: string | null | null,
+    source?: string | null,
+    subscribed?: boolean | null,
+    userGroup?: string | null,
+    userId?: string | null | null,
+    notes?: string | null | null,
+    mailingLists?: {
+    } | null,
+    optInStatus?: string | null | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+loops({
+    webhookHooks: {
+        contact: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`contact.deleted`
+
+Contact deleted. Sent when a contact is deleted from your audience. Contains a `contactIdentity` object.
+
+**Payload:** `object`
+
+<AccordionGroup>
+<Accordion title="Payload full type">
+
+```ts
+{
+  eventName?: string | null,
+  eventTime?: number | null,
+  webhookSchemaVersion?: string | null,
+  contactIdentity?: {
+    id?: string | null,
+    email?: string | null,
+    userId?: string | null | null
+  } | null
+}& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  eventName?: string | null,
+  eventTime?: number | null,
+  webhookSchemaVersion?: string | null,
+  contactIdentity?: {
+    id?: string | null,
+    email?: string | null,
+    userId?: string | null | null
+  } | null
+}& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+loops({
+    webhookHooks: {
+        contact: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Mailing List Subscribed
+
+`contact.mailingListSubscribed`
+
+Contact subscribed to mailing list. Sent when a contact is subscribed to a mailing list. Contains `contactIdentity` and `mailingList` objects.
+
+**Payload:** `object`
+
+<AccordionGroup>
+<Accordion title="Payload full type">
+
+```ts
+{
+  eventName?: string | null,
+  eventTime?: number | null,
+  webhookSchemaVersion?: string | null,
+  contactIdentity?: {
+    id?: string | null,
+    email?: string | null,
+    userId?: string | null | null
+  } | null
+}& {
+  eventName?: string | null,
+  mailingList?: {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null | null,
+    isPublic?: boolean | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  eventName?: string | null,
+  eventTime?: number | null,
+  webhookSchemaVersion?: string | null,
+  contactIdentity?: {
+    id?: string | null,
+    email?: string | null,
+    userId?: string | null | null
+  } | null
+}& {
+  eventName?: string | null,
+  mailingList?: {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null | null,
+    isPublic?: boolean | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+loops({
+    webhookHooks: {
+        contact: {
+            mailingListSubscribed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Mailing List Unsubscribed
+
+`contact.mailingListUnsubscribed`
+
+Contact unsubscribed from mailing list. Sent when a contact is unsubscribed from a mailing list. This is not the same as a contact unsubscribing from your audience (see `contact.unsubscribed`).
+
+**Payload:** `object`
+
+<AccordionGroup>
+<Accordion title="Payload full type">
+
+```ts
+{
+  eventName?: string | null,
+  eventTime?: number | null,
+  webhookSchemaVersion?: string | null,
+  contactIdentity?: {
+    id?: string | null,
+    email?: string | null,
+    userId?: string | null | null
+  } | null
+}& {
+  eventName?: string | null,
+  mailingList?: {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null | null,
+    isPublic?: boolean | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  eventName?: string | null,
+  eventTime?: number | null,
+  webhookSchemaVersion?: string | null,
+  contactIdentity?: {
+    id?: string | null,
+    email?: string | null,
+    userId?: string | null | null
+  } | null
+}& {
+  eventName?: string | null,
+  mailingList?: {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null | null,
+    isPublic?: boolean | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+loops({
+    webhookHooks: {
+        contact: {
+            mailingListUnsubscribed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Unsubscribed
+
+`contact.unsubscribed`
+
+Contact unsubscribed. Sent when a contact is unsubscribed from your audience, or when a contact is deleted from your audience (alongside `contact.deleted`).
+
+**Payload:** `object`
+
+<AccordionGroup>
+<Accordion title="Payload full type">
+
+```ts
+{
+  eventName?: string | null,
+  eventTime?: number | null,
+  webhookSchemaVersion?: string | null,
+  contactIdentity?: {
+    id?: string | null,
+    email?: string | null,
+    userId?: string | null | null
+  } | null
+}& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  eventName?: string | null,
+  eventTime?: number | null,
+  webhookSchemaVersion?: string | null,
+  contactIdentity?: {
+    id?: string | null,
+    email?: string | null,
+    userId?: string | null | null
+  } | null
+}& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+loops({
+    webhookHooks: {
+        contact: {
+            unsubscribed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Email
+
+### Clicked
+
+`email.clicked`
+
+Email clicked. Sent when a link in a campaign or workflow email is clicked. Not available for transactional emails because link clicks are not tracked for transactional emails.
+
+**Payload:** `object`
+
+<AccordionGroup>
+<Accordion title="Payload full type">
+
+```ts
+(
+  {
+    eventName?: string | null,
+    eventTime?: number | null,
+    webhookSchemaVersion?: string | null,
+    contactIdentity?: {
+      id?: string | null,
+      email?: string | null,
+      userId?: string | null | null
+    } | null
+  }& {
+    email?: {
+      id?: string | null,
+      emailMessageId?: string | null,
+      subject?: string | null
+    } | null,
+    sourceType?: string | null,
+    campaignId?: string | null,
+    loopId?: string | null
+  }
+)& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+(
+  {
+    eventName?: string | null,
+    eventTime?: number | null,
+    webhookSchemaVersion?: string | null,
+    contactIdentity?: {
+      id?: string | null,
+      email?: string | null,
+      userId?: string | null | null
+    } | null
+  }& {
+    email?: {
+      id?: string | null,
+      emailMessageId?: string | null,
+      subject?: string | null
+    } | null,
+    sourceType?: string | null,
+    campaignId?: string | null,
+    loopId?: string | null
+  }
+)& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+loops({
+    webhookHooks: {
+        email: {
+            clicked: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Delivered
+
+`email.delivered`
+
+Email delivered. Sent when an email is delivered to its recipient.
+
+**Payload:** `object`
+
+<AccordionGroup>
+<Accordion title="Payload full type">
+
+```ts
+(
+  {
+    eventName?: string | null,
+    eventTime?: number | null,
+    webhookSchemaVersion?: string | null,
+    contactIdentity?: {
+      id?: string | null,
+      email?: string | null,
+      userId?: string | null | null
+    } | null
+  }& {
+    email?: {
+      id?: string | null,
+      emailMessageId?: string | null,
+      subject?: string | null
+    } | null,
+    sourceType?: string | null,
+    campaignId?: string | null,
+    loopId?: string | null,
+    transactionalId?: string | null
+  }
+)& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+(
+  {
+    eventName?: string | null,
+    eventTime?: number | null,
+    webhookSchemaVersion?: string | null,
+    contactIdentity?: {
+      id?: string | null,
+      email?: string | null,
+      userId?: string | null | null
+    } | null
+  }& {
+    email?: {
+      id?: string | null,
+      emailMessageId?: string | null,
+      subject?: string | null
+    } | null,
+    sourceType?: string | null,
+    campaignId?: string | null,
+    loopId?: string | null,
+    transactionalId?: string | null
+  }
+)& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+loops({
+    webhookHooks: {
+        email: {
+            delivered: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Hard Bounced
+
+`email.hardBounced`
+
+Email hard bounced. Sent when an email hard bounces. Hard bounces are persistent delivery failures (for example, a mailbox that does not exist); the email will not be delivered.
+
+**Payload:** `object`
+
+<AccordionGroup>
+<Accordion title="Payload full type">
+
+```ts
+(
+  {
+    eventName?: string | null,
+    eventTime?: number | null,
+    webhookSchemaVersion?: string | null,
+    contactIdentity?: {
+      id?: string | null,
+      email?: string | null,
+      userId?: string | null | null
+    } | null
+  }& {
+    email?: {
+      id?: string | null,
+      emailMessageId?: string | null,
+      subject?: string | null
+    } | null,
+    sourceType?: string | null,
+    campaignId?: string | null,
+    loopId?: string | null,
+    transactionalId?: string | null
+  }
+)& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+(
+  {
+    eventName?: string | null,
+    eventTime?: number | null,
+    webhookSchemaVersion?: string | null,
+    contactIdentity?: {
+      id?: string | null,
+      email?: string | null,
+      userId?: string | null | null
+    } | null
+  }& {
+    email?: {
+      id?: string | null,
+      emailMessageId?: string | null,
+      subject?: string | null
+    } | null,
+    sourceType?: string | null,
+    campaignId?: string | null,
+    loopId?: string | null,
+    transactionalId?: string | null
+  }
+)& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+loops({
+    webhookHooks: {
+        email: {
+            hardBounced: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Opened
+
+`email.opened`
+
+Email opened. Sent when a campaign or workflow email is opened. Not available for transactional emails because email opens are not tracked for transactional emails.
+
+**Payload:** `object`
+
+<AccordionGroup>
+<Accordion title="Payload full type">
+
+```ts
+(
+  {
+    eventName?: string | null,
+    eventTime?: number | null,
+    webhookSchemaVersion?: string | null,
+    contactIdentity?: {
+      id?: string | null,
+      email?: string | null,
+      userId?: string | null | null
+    } | null
+  }& {
+    email?: {
+      id?: string | null,
+      emailMessageId?: string | null,
+      subject?: string | null
+    } | null,
+    sourceType?: string | null,
+    campaignId?: string | null,
+    loopId?: string | null
+  }
+)& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+(
+  {
+    eventName?: string | null,
+    eventTime?: number | null,
+    webhookSchemaVersion?: string | null,
+    contactIdentity?: {
+      id?: string | null,
+      email?: string | null,
+      userId?: string | null | null
+    } | null
+  }& {
+    email?: {
+      id?: string | null,
+      emailMessageId?: string | null,
+      subject?: string | null
+    } | null,
+    sourceType?: string | null,
+    campaignId?: string | null,
+    loopId?: string | null
+  }
+)& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+loops({
+    webhookHooks: {
+        email: {
+            opened: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Resubscribed
+
+`email.resubscribed`
+
+Email resubscribed. Sent when a recipient resubscribes to marketing email from an email's preference center ("Unsubscribe" link). Not available for transactional emails because unsubscribe links are not included for transactional emails.
+
+**Payload:** `object`
+
+<AccordionGroup>
+<Accordion title="Payload full type">
+
+```ts
+(
+  {
+    eventName?: string | null,
+    eventTime?: number | null,
+    webhookSchemaVersion?: string | null,
+    contactIdentity?: {
+      id?: string | null,
+      email?: string | null,
+      userId?: string | null | null
+    } | null
+  }& {
+    email?: {
+      id?: string | null,
+      emailMessageId?: string | null,
+      subject?: string | null
+    } | null,
+    sourceType?: string | null,
+    campaignId?: string | null,
+    loopId?: string | null
+  }
+)& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+(
+  {
+    eventName?: string | null,
+    eventTime?: number | null,
+    webhookSchemaVersion?: string | null,
+    contactIdentity?: {
+      id?: string | null,
+      email?: string | null,
+      userId?: string | null | null
+    } | null
+  }& {
+    email?: {
+      id?: string | null,
+      emailMessageId?: string | null,
+      subject?: string | null
+    } | null,
+    sourceType?: string | null,
+    campaignId?: string | null,
+    loopId?: string | null
+  }
+)& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+loops({
+    webhookHooks: {
+        email: {
+            resubscribed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Soft Bounced
+
+`email.softBounced`
+
+Email soft bounced. Sent when an email soft bounces. Soft bounces are temporary delivery failures (for example, a connection timing out). Soft bounces are retried multiple times and the email may still be delivered.
+
+**Payload:** `object`
+
+<AccordionGroup>
+<Accordion title="Payload full type">
+
+```ts
+(
+  {
+    eventName?: string | null,
+    eventTime?: number | null,
+    webhookSchemaVersion?: string | null,
+    contactIdentity?: {
+      id?: string | null,
+      email?: string | null,
+      userId?: string | null | null
+    } | null
+  }& {
+    email?: {
+      id?: string | null,
+      emailMessageId?: string | null,
+      subject?: string | null
+    } | null,
+    sourceType?: string | null,
+    campaignId?: string | null,
+    loopId?: string | null,
+    transactionalId?: string | null
+  }
+)& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+(
+  {
+    eventName?: string | null,
+    eventTime?: number | null,
+    webhookSchemaVersion?: string | null,
+    contactIdentity?: {
+      id?: string | null,
+      email?: string | null,
+      userId?: string | null | null
+    } | null
+  }& {
+    email?: {
+      id?: string | null,
+      emailMessageId?: string | null,
+      subject?: string | null
+    } | null,
+    sourceType?: string | null,
+    campaignId?: string | null,
+    loopId?: string | null,
+    transactionalId?: string | null
+  }
+)& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+loops({
+    webhookHooks: {
+        email: {
+            softBounced: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Spam Reported
+
+`email.spamReported`
+
+Email spam reported. Sent when a recipient reports your email as spam. Contains `sourceType` and the related `campaignId`, `loopId` (workflow ID), or `transactionalId`, plus `contactIdentity` and `email` objects.
+
+**Payload:** `object`
+
+<AccordionGroup>
+<Accordion title="Payload full type">
+
+```ts
+(
+  {
+    eventName?: string | null,
+    eventTime?: number | null,
+    webhookSchemaVersion?: string | null,
+    contactIdentity?: {
+      id?: string | null,
+      email?: string | null,
+      userId?: string | null | null
+    } | null
+  }& {
+    email?: {
+      id?: string | null,
+      emailMessageId?: string | null,
+      subject?: string | null
+    } | null,
+    sourceType?: string | null,
+    campaignId?: string | null,
+    loopId?: string | null,
+    transactionalId?: string | null
+  }
+)& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+(
+  {
+    eventName?: string | null,
+    eventTime?: number | null,
+    webhookSchemaVersion?: string | null,
+    contactIdentity?: {
+      id?: string | null,
+      email?: string | null,
+      userId?: string | null | null
+    } | null
+  }& {
+    email?: {
+      id?: string | null,
+      emailMessageId?: string | null,
+      subject?: string | null
+    } | null,
+    sourceType?: string | null,
+    campaignId?: string | null,
+    loopId?: string | null,
+    transactionalId?: string | null
+  }
+)& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+loops({
+    webhookHooks: {
+        email: {
+            spamReported: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Unsubscribed
+
+`email.unsubscribed`
+
+Email unsubscribed. Sent when a recipient unsubscribes from marketing email or a mailing list using an email's "Unsubscribe" link.
+
+**Payload:** `object`
+
+<AccordionGroup>
+<Accordion title="Payload full type">
+
+```ts
+(
+  {
+    eventName?: string | null,
+    eventTime?: number | null,
+    webhookSchemaVersion?: string | null,
+    contactIdentity?: {
+      id?: string | null,
+      email?: string | null,
+      userId?: string | null | null
+    } | null
+  }& {
+    email?: {
+      id?: string | null,
+      emailMessageId?: string | null,
+      subject?: string | null
+    } | null,
+    sourceType?: string | null,
+    campaignId?: string | null,
+    loopId?: string | null
+  }
+)& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+(
+  {
+    eventName?: string | null,
+    eventTime?: number | null,
+    webhookSchemaVersion?: string | null,
+    contactIdentity?: {
+      id?: string | null,
+      email?: string | null,
+      userId?: string | null | null
+    } | null
+  }& {
+    email?: {
+      id?: string | null,
+      emailMessageId?: string | null,
+      subject?: string | null
+    } | null,
+    sourceType?: string | null,
+    campaignId?: string | null,
+    loopId?: string | null
+  }
+)& {
+  eventName?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+loops({
+    webhookHooks: {
+        email: {
+            unsubscribed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Loop
+
+### Email Sent
+
+`loop.emailSent`
+
+Loop email sent. Sent when a workflow email is sent to a contact. This event keeps its `loop` naming for compatibility (Loops was renamed to Workflows on May 6, 2026).
+
+**Payload:** `object`
+
+<AccordionGroup>
+<Accordion title="Payload full type">
+
+```ts
+{
+  eventName?: string | null,
+  eventTime?: number | null,
+  webhookSchemaVersion?: string | null,
+  contactIdentity?: {
+    id?: string | null,
+    email?: string | null,
+    userId?: string | null | null
+  } | null
+}& {
+  eventName?: string | null,
+  loopId?: string | null,
+  loopName?: string | null,
+  email?: {
+    id?: string | null,
+    emailMessageId?: string | null,
+    subject?: string | null
+  } | null,
+  mailingLists?: {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null | null,
+    isPublic?: boolean | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  eventName?: string | null,
+  eventTime?: number | null,
+  webhookSchemaVersion?: string | null,
+  contactIdentity?: {
+    id?: string | null,
+    email?: string | null,
+    userId?: string | null | null
+  } | null
+}& {
+  eventName?: string | null,
+  loopId?: string | null,
+  loopName?: string | null,
+  email?: {
+    id?: string | null,
+    emailMessageId?: string | null,
+    subject?: string | null
+  } | null,
+  mailingLists?: {
+    id?: string | null,
+    name?: string | null,
+    description?: string | null | null,
+    isPublic?: boolean | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+loops({
+    webhookHooks: {
+        loop: {
+            emailSent: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Testing
+
+### Test Event
+
+`testing.testEvent`
+
+Test event. Test event that can be triggered from the Webhooks settings page in Loops. Use this to verify that your endpoint is working and that your signature verification code is correct.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventName` | `string \| null` | No | — |
+| `eventTime` | `number \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `webhookSchemaVersion` | `string \| null` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  eventName?: string | null,
+  eventTime?: number | null,
+  message?: string | null,
+  webhookSchemaVersion?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+loops({
+    webhookHooks: {
+        testing: {
+            testEvent: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Transactional
+
+### Email Sent
+
+`transactional.emailSent`
+
+Transactional email sent. Sent when a transactional email is sent to a contact. Contains a `transactionalId` value plus `contactIdentity` and `email` objects.
+
+**Payload:** `object`
+
+<AccordionGroup>
+<Accordion title="Payload full type">
+
+```ts
+{
+  eventName?: string | null,
+  eventTime?: number | null,
+  webhookSchemaVersion?: string | null,
+  contactIdentity?: {
+    id?: string | null,
+    email?: string | null,
+    userId?: string | null | null
+  } | null
+}& {
+  eventName?: string | null,
+  transactionalId?: string | null,
+  transactionalName?: string | null,
+  email?: {
+    id?: string | null,
+    emailMessageId?: string | null,
+    subject?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  eventName?: string | null,
+  eventTime?: number | null,
+  webhookSchemaVersion?: string | null,
+  contactIdentity?: {
+    id?: string | null,
+    email?: string | null,
+    userId?: string | null | null
+  } | null
+}& {
+  eventName?: string | null,
+  transactionalId?: string | null,
+  transactionalName?: string | null,
+  email?: {
+    id?: string | null,
+    emailMessageId?: string | null,
+    subject?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+loops({
+    webhookHooks: {
+        transactional: {
+            emailSent: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

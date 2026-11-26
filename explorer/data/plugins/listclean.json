@@ -1,0 +1,819 @@
+{
+  "id": "listclean",
+  "displayName": "Listclean",
+  "description": "Email verification with Listclean - verify single addresses or batches of up to 3000, upload CSV files in chunks, poll bulk jobs, download cleaned results as JSON or CSV, read verification logs and analytics, delete lists, and read the credit balance and account profile.",
+  "npmPackageName": "@corsair-dev/listclean",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 16,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "listclean.api.account.getCredits",
+      "shortPath": "account.getCredits",
+      "description": "Read the remaining credit balance; useful before billed calls, which spend one credit per address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credits",
+            "optional": false,
+            "type": "number",
+            "description": "The balance left. A verification spends one credit per address."
+          }
+        ]
+      }
+    },
+    {
+      "path": "listclean.api.account.getProfile",
+      "shortPath": "account.getProfile",
+      "description": "Read the account profile: name, address, phone, company, website, social handles and billing details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "First name of the user."
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null",
+            "description": "Street address."
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null",
+            "description": "City."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null",
+            "description": "Country."
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string | null",
+            "description": "Phone number."
+          },
+          {
+            "key": "skype_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Skype id."
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Company name."
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string | null",
+            "description": "Website."
+          },
+          {
+            "key": "twitter_handle",
+            "optional": true,
+            "type": "string | null",
+            "description": "Twitter handle, e.g. `@example`."
+          },
+          {
+            "key": "linkedin",
+            "optional": true,
+            "type": "string | null",
+            "description": "LinkedIn profile."
+          },
+          {
+            "key": "billing_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Name on invoices."
+          },
+          {
+            "key": "billing_company_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Company on invoices."
+          },
+          {
+            "key": "billing_address",
+            "optional": true,
+            "type": "string | null",
+            "description": "Address on invoices."
+          }
+        ]
+      }
+    },
+    {
+      "path": "listclean.api.account.updateProfile",
+      "shortPath": "account.updateProfile",
+      "description": "Update account profile fields; only the fields given are sent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "First name of the user."
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string",
+            "description": "Street address."
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string",
+            "description": "City."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Country."
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string",
+            "description": "Phone number."
+          },
+          {
+            "key": "skype_id",
+            "optional": true,
+            "type": "string",
+            "description": "Skype id."
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string",
+            "description": "Company name."
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string",
+            "description": "Website."
+          },
+          {
+            "key": "twitter_handle",
+            "optional": true,
+            "type": "string",
+            "description": "Twitter handle, e.g. `@example`."
+          },
+          {
+            "key": "linkedin",
+            "optional": true,
+            "type": "string",
+            "description": "LinkedIn profile."
+          },
+          {
+            "key": "billing_name",
+            "optional": true,
+            "type": "string",
+            "description": "Name on invoices."
+          },
+          {
+            "key": "billing_company_name",
+            "optional": true,
+            "type": "string",
+            "description": "Company on invoices."
+          },
+          {
+            "key": "billing_address",
+            "optional": true,
+            "type": "string",
+            "description": "Address on invoices."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listclean.api.lists.delete",
+      "shortPath": "lists.delete",
+      "description": "Permanently delete a list and its results; there is no undo and the rows cannot be fetched again afterwards",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "number",
+            "description": "The list id, as `startBatchVerification` answered it or `listLists` reported it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listclean.api.lists.getList",
+      "shortPath": "lists.getList",
+      "description": "Read one list, including its SUBMITTED, INPROCESS or COMPLETED status and its analytics once done; this is how a batch job is polled",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "number",
+            "description": "The list id, as `startBatchVerification` answered it or `listLists` reported it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list",
+            "optional": false,
+            "type": "{ list_id: number, filename?: string | null, size_in_bytes?: number | null, request_time?: string | null, status?: SUBMITTED | INPROCESS | COMPLETED | string | null, upload_id?: string | null, size_for_human?: string | null, allow_download?: number | null, analytics?: { summary?: { total?: number | null, duplicate?: number | null, dirty?: { count?: number | string | null, perc?: number | string | null } | null, clean?: { count?: number | string | null, perc?: number | string | null } | null } | null, dirty_summary?: { count?: number | string | null, perc?: number | string | null, dirty_type?: string | null }[] | null, clean_summary?: { count?: number | string | null, perc?: number | string | null, clean_type?: string | null }[] | null } | null, cost?: { rate?: { INR?: number | null, USD?: number | null } | null, cost?: { INR?: number | null, USD?: number | null } | null } | null }",
+            "description": "The one list with this id."
+          }
+        ]
+      }
+    },
+    {
+      "path": "listclean.api.lists.getListResults",
+      "shortPath": "lists.getListResults",
+      "description": "Download one completed list's verified rows as JSON, choosing the clean, dirty or unknown addresses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "number",
+            "description": "The list id, as `startBatchVerification` answered it or `listLists` reported it."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "clean | dirty | unknown",
+            "description": "Which verified rows to download: the clean, dirty or unknown ones."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ datetime?: string | null, email: string, status: clean | dirty | unknown | error | string, remarks?: string | null, disposable?: boolean | null, role_based?: boolean | null, mx_found?: boolean | null, mx_records?: string | null, msp?: string | null, email_user?: string | null, email_domain?: string | null, free_email?: boolean | null, reason_code?: string | null, reason?: string | null, mx?: string | null, attributes?: Record<string, any> | null }[]"
+      }
+    },
+    {
+      "path": "listclean.api.lists.getListResultsCsv",
+      "shortPath": "lists.getListResultsCsv",
+      "description": "Download one completed list's verified rows as the CSV file Listclean builds, choosing the clean, dirty or unknown addresses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "number",
+            "description": "The list id, as `startBatchVerification` answered it or `listLists` reported it."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "clean | dirty | unknown",
+            "description": "Which verified rows to download: the clean, dirty or unknown ones."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "csv",
+            "optional": false,
+            "type": "string",
+            "description": "The CSV file of that type, exactly as Listclean sent it, header row included."
+          }
+        ]
+      }
+    },
+    {
+      "path": "listclean.api.lists.listLists",
+      "shortPath": "lists.listLists",
+      "description": "List the bulk lists with their status, per-list analytics and cost, newest page first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "lists",
+            "optional": false,
+            "type": "{ list_id: number, filename?: string | null, size_in_bytes?: number | null, request_time?: string | null, status?: SUBMITTED | INPROCESS | COMPLETED | string | null, upload_id?: string | null, size_for_human?: string | null, allow_download?: number | null, analytics?: { summary?: { total?: number | null, duplicate?: number | null, dirty?: { count?: number | string | null, perc?: number | string | null } | null, clean?: { count?: number | string | null, perc?: number | string | null } | null } | null, dirty_summary?: { count?: number | string | null, perc?: number | string | null, dirty_type?: string | null }[] | null, clean_summary?: { count?: number | string | null, perc?: number | string | null, clean_type?: string | null }[] | null } | null, cost?: { rate?: { INR?: number | null, USD?: number | null } | null, cost?: { INR?: number | null, USD?: number | null } | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listclean.api.uploads.getUpload",
+      "shortPath": "uploads.getUpload",
+      "description": "Read one upload: its inprocess, success or error status, chunk counts and the request id of the list it became (pass it to lists.getList)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "upload_id",
+            "optional": false,
+            "type": "number",
+            "description": "The upload id `uploads.startUpload` answered."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "inprocess | success | error | string | null",
+            "description": "Upload status: inprocess, success or error (lowercase, unlike the list statuses)."
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "Completion percentage."
+          },
+          {
+            "key": "chunk_details",
+            "optional": true,
+            "type": "{ total_chunk_count?: number | string | false | null, uploaded_chunk_count?: number | string | false | null } | null"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "The list this upload became: pass it as list_id to `lists.getList`. 0 or null while no list exists."
+          }
+        ]
+      }
+    },
+    {
+      "path": "listclean.api.uploads.listUploads",
+      "shortPath": "uploads.listUploads",
+      "description": "List chunked CSV uploads with their id, status, file names and record counts. On 2026-11-26 the live route did not include the account's own new uploads, so keep the upload id startUpload answers and poll getUpload instead.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number | null, upload_id?: number | null, status?: string | null, progress?: number | string | null, entered?: string | null, client_filename?: string | null, filename?: string | null, count?: number | null, total_records?: number | null, stage?: string | null, remarks?: string | null, fast_process?: number | null }[]"
+      }
+    },
+    {
+      "path": "listclean.api.uploads.startUpload",
+      "shortPath": "uploads.startUpload",
+      "description": "Open a chunked CSV upload: name the file, its chunk count and chunk size, the zero-based email column, and optional CSV characters and fast mode. Answers the upload id the chunks go to. Once every chunk is in, the list is verified and spends one credit per address.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the file, shown on the list (e.g. `leads.csv`)."
+          },
+          {
+            "key": "file_type",
+            "optional": false,
+            "type": "string",
+            "description": "The file format. The spec documents `csv`."
+          },
+          {
+            "key": "total_chunk_count",
+            "optional": false,
+            "type": "number",
+            "description": "How many chunks `uploads.uploadChunk` will send."
+          },
+          {
+            "key": "max_chunk_size",
+            "optional": false,
+            "type": "number",
+            "description": "The largest chunk, in bytes before base64 encoding."
+          },
+          {
+            "key": "email_column_index",
+            "optional": false,
+            "type": "number",
+            "description": "Zero-based index of the CSV column holding the email address (0 is the first column). Required by the live API, though the spec omits it."
+          },
+          {
+            "key": "separator_char",
+            "optional": true,
+            "type": "string",
+            "description": "CSV field separator, e.g. `,`."
+          },
+          {
+            "key": "enclosure_char",
+            "optional": true,
+            "type": "string",
+            "description": "CSV field enclosure character, one single-byte character, e.g. `\"`."
+          },
+          {
+            "key": "escape_char",
+            "optional": true,
+            "type": "string",
+            "description": "CSV escape character, at most one single-byte character; an empty string turns escaping off."
+          },
+          {
+            "key": "fast_process",
+            "optional": true,
+            "type": "0 | 1",
+            "description": "1 skips slow checks such as SMTP and uses only cache, DNS and format checks. Defaults to 0 (off)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "upload_id",
+            "optional": false,
+            "type": "number",
+            "description": "Send the chunks to this id, then poll it with `uploads.getUpload`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "listclean.api.uploads.uploadChunk",
+      "shortPath": "uploads.uploadChunk",
+      "description": "Send one base64-encoded chunk of an upload, with its sequence number (counted from 1) and an optional md5 checksum. Answers the chunk counters. The last chunk starts the billed verification. Not replayed after a 5xx or a lost answer.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "upload_id",
+            "optional": false,
+            "type": "number",
+            "description": "The upload id `uploads.startUpload` answered."
+          },
+          {
+            "key": "chunk_sequence_number",
+            "optional": false,
+            "type": "number",
+            "description": "Position of this chunk, counted from 1: the last chunk of a 24-chunk file is 24."
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "The chunk of the file, base64-encoded."
+          },
+          {
+            "key": "md5_checksum",
+            "optional": true,
+            "type": "string",
+            "description": "md5 hash Listclean checks the file against, as hex."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "chunk_details",
+            "optional": true,
+            "type": "{ total_chunk_count?: number | string | false | null, uploaded_chunk_count?: number | string | false | null } | null",
+            "description": "How many chunks the upload expects and how many have arrived."
+          }
+        ]
+      }
+    },
+    {
+      "path": "listclean.api.verify.getAnalytics",
+      "shortPath": "verify.getAnalytics",
+      "description": "Read verification totals, per-date summaries and graph data for a date range, with optional source and status filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string",
+            "description": "Range start."
+          },
+          {
+            "key": "end_date",
+            "optional": false,
+            "type": "string",
+            "description": "Range end. It cannot be in the future."
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "api | file_upload | single_email",
+            "description": "Only this verification source."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "clean | dirty | unknown | error",
+            "description": "Only this verdict."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total_summary",
+            "optional": true,
+            "type": "Record<string, { count?: number | string | null, perc?: number | string | null }> | null"
+          },
+          {
+            "key": "datewise_summary",
+            "optional": true,
+            "type": "Record<string, Record<string, { count?: number | string | null, perc?: number | string | null }>> | null"
+          },
+          {
+            "key": "graph_summary",
+            "optional": true,
+            "type": "Record<string, (string | number)[]> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listclean.api.verify.getVerificationLogs",
+      "shortPath": "verify.getVerificationLogs",
+      "description": "Read past verifications in a date range of up to 30 days, with optional email, source and status filters and offset paging; answers the logs and their total_count",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string",
+            "description": "Range start. The maximum range is 30 days."
+          },
+          {
+            "key": "end_date",
+            "optional": false,
+            "type": "string",
+            "description": "Range end. It cannot be in the future."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Only this address."
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "api | file_upload | single_email",
+            "description": "Only this verification source."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "clean | dirty | unknown | error",
+            "description": "Only this verdict."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based page offset."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size, at most 100. Defaults to 10."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "logs",
+            "optional": false,
+            "type": "{ id?: number | null, entered?: string | null, email?: string | null, status?: clean | dirty | unknown | error | string | null, remarks?: string | null, credits_deducted?: number | null, error_code?: string | null, instance_name?: string | null, source?: string | null, reason_code?: string | null }[]"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listclean.api.verify.startBatchVerification",
+      "shortPath": "verify.startBatchVerification",
+      "description": "Start an async bulk verification of up to 3000 addresses; each one spends a credit when the job runs. Answers the list id to poll with lists.getList and fetch with lists.getListResults. Not replayed after a 5xx or a lost answer, since a repeat would start a second billed job; a 429 is retried by core because Listclean refused it before running.",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "list_id",
+        "status": {
+          "op": "lists.getList",
+          "idArg": "list_id",
+          "statusPath": "list.status",
+          "done": ["COMPLETED"],
+          "failed": []
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]",
+            "description": "Up to 3000 addresses. Each one spends a credit when the job runs."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "Name shown for the list. When omitted, Listclean generates batch_upload-DD-MM-YYYY-HHMMSS-utc.csv."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "number",
+            "description": "The async job id; poll it with `lists.getList`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "listclean.api.verify.verifyEmail",
+      "shortPath": "verify.verifyEmail",
+      "description": "Verify one email address and read back its verdict, MX and mailbox details. Billed: one credit per call, spent even when the answer is lost, so it is not retried after a 5xx or a dropped connection (a 429 is, since Listclean refused it before running).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The address to verify."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "datetime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "clean | dirty | unknown | error | string"
+          },
+          {
+            "key": "remarks",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "disposable",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "role_based",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "mx_found",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "mx_records",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "msp",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email_user",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email_domain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "free_email",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

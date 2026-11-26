@@ -385,6 +385,10 @@
   "linkedin": {
     "from": "https://svgl.app/library/linkedin.svg"
   },
+  "linkhut": {
+    "from": "https://media.brand.dev/79399e87-c0ed-4c13-aae3-28ff66b2d862.svg",
+    "note": "found with the context.dev Brand API for ln.ht"
+  },
   "listennotes": {
     "from": "https://media.brand.dev/9975d235-1065-420a-becc-233f47147318.svg",
     "note": "found with the context.dev Brand API for listennotes.com"
@@ -392,6 +396,10 @@
   "logodev": {
     "from": "https://media.brand.dev/99d0f2c0-1997-40b1-a627-719822039b0c.svg",
     "note": "found with the context.dev Brand API for logo.dev"
+  },
+  "loomio": {
+    "from": "https://media.brand.dev/68b07ed1-5ba3-4e72-9637-c451abe31eef.svg",
+    "note": "found with the context.dev Brand API for loomio.com"
   },
   "loyverse": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/loyverse.svg"

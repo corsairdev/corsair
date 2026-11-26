@@ -427,12 +427,19 @@ export const BaseProviders = [
 	'linear',
 	'linguapop',
 	'linkedin',
+	'linkhut',
+	'linkly',
 	'linkup',
+	'listclean',
 	'listennotes',
 	'litescrape',
 	'livesession',
+	'lob',
 	'logodev',
+	'loomio',
+	'loops',
 	'loyverse',
+	'lusha',
 	'magichour',
 	'mailboxlayer',
 	'mailcheck',
@@ -463,9 +470,11 @@ export const BaseProviders = [
 	'modelry',
 	'monday',
 	'mondaymcp',
+	'moneybird',
 	'moonclerk',
 	'moosend',
 	'mopinion',
+	'moretrees',
 	'moz',
 	'motion',
 	'mrscraper',
@@ -559,6 +568,7 @@ export const BaseProviders = [
 	'prisma',
 	'productboard',
 	'proofly',
+	'publora',
 	'pushbullet',
 	'pushover',
 	'qdrant',
@@ -1216,13 +1226,20 @@ export const ProviderDisplayNames = {
 	linear: 'Linear',
 	linguapop: 'Linguapop',
 	linkedin: 'LinkedIn',
+	linkhut: 'Linkhut',
+	linkly: 'Linkly',
 	linkup: 'Linkup',
+	listclean: 'Listclean',
 	listennotes: 'Listen Notes',
 	litescrape: 'LiteScrape',
 	livesession: 'LiveSession',
+	lob: 'Lob',
 	logodev: 'Logo.dev',
+	loomio: 'Loomio',
+	loops: 'Loops',
 	loyverse: 'Loyverse',
 	magichour: 'Magic Hour',
+	lusha: 'Lusha',
 	mailboxlayer: 'MailboxLayer',
 	mailcheck: 'Mailcheck',
 	mailchimp: 'Mailchimp',
@@ -1252,9 +1269,11 @@ export const ProviderDisplayNames = {
 	modelry: 'Modelry',
 	monday: 'Monday',
 	mondaymcp: 'Monday MCP',
+	moneybird: 'Moneybird',
 	moonclerk: 'MoonClerk',
 	moosend: 'Moosend',
 	mopinion: 'Mopinion',
+	moretrees: 'More Trees',
 	moz: 'Moz',
 	motion: 'Motion',
 	mrscraper: 'MrScraper',
@@ -1348,6 +1367,7 @@ export const ProviderDisplayNames = {
 	prisma: 'Prisma',
 	productboard: 'Productboard',
 	proofly: 'Proofly',
+	publora: 'Publora',
 	pushbullet: 'Pushbullet',
 	pushover: 'Pushover',
 	qdrant: 'Qdrant',
@@ -2012,13 +2032,20 @@ export type AllProviders =
 	| 'linear'
 	| 'linguapop'
 	| 'linkedin'
+	| 'linkhut'
+	| 'linkly'
 	| 'linkup'
+	| 'listclean'
 	| 'listennotes'
 	| 'litescrape'
 	| 'livesession'
+	| 'lob'
 	| 'logodev'
+	| 'loomio'
+	| 'loops'
 	| 'loyverse'
 	| 'magichour'
+	| 'lusha'
 	| 'mailboxlayer'
 	| 'mailcheck'
 	| 'mailchimp'
@@ -2048,9 +2075,11 @@ export type AllProviders =
 	| 'modelry'
 	| 'monday'
 	| 'mondaymcp'
+	| 'moneybird'
 	| 'moonclerk'
 	| 'moosend'
 	| 'mopinion'
+	| 'moretrees'
 	| 'moz'
 	| 'motion'
 	| 'mrscraper'
@@ -2144,6 +2173,7 @@ export type AllProviders =
 	| 'prisma'
 	| 'productboard'
 	| 'proofly'
+	| 'publora'
 	| 'pushbullet'
 	| 'pushover'
 	| 'qdrant'

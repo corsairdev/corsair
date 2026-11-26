@@ -16,10 +16,10 @@ permissions:
 jobs:
   swift:
     name: Swift
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 15
     env:
-      DEVELOPER_DIR: /Applications/Xcode_16.2.app
+      DEVELOPER_DIR: /Applications/Xcode_16.4.app
     steps:
       - uses: actions/checkout@v4
         with:

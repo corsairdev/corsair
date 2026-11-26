@@ -1,0 +1,80 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+displayName: "Listclean"
+description: Email verification with Listclean - verify single addresses or batches of up to 3000, upload CSV files in chunks, poll bulk jobs, download cleaned results as JSON or CSV, read verification logs and analytics, delete lists, and read the credit balance and account profile.
+domain: listclean.xyz
+recommendedAuth: api_key
+overviewNote: |
+  Create an API token at app.listclean.xyz under Integration/API > API tokens, then Add. The token is sent in the `X-Auth-Token` header as a plain value, with no Bearer prefix.
+
+  Things to know before you call:
+
+  - **Every answer is one envelope.** `{ success, error_code, message, data }` where `success` is an integer: `1` on success, `0` on failure, even over a 2xx status. The plugin throws core's `ApiError` on `success: 0` and on non-JSON bodies, so a 404 HTML page never comes back as an empty result. Errors carry no email addresses or profile data: the request body is dropped and addresses are masked.
+  - **Billed calls.** `verify.verifyEmail` spends one credit per call; `verify.startBatchVerification` and a finished chunked upload spend one credit per address when the job runs. These are not retried after a 5xx or a dropped connection, since the credit may already be spent. A 429 is retried (core, three times), because Listclean refused it before running. Check `account.getCredits` first; signup comes with 25 free credits.
+  - **Bulk verification is a job.** `verify.startBatchVerification` answers `list_id`. Poll `lists.getList`, whose `list.status` moves `SUBMITTED`, `INPROCESS`, `COMPLETED`. Listclean documents no failed status for this flow. Once `COMPLETED`, download rows with `lists.getListResults`, choosing `clean`, `dirty` or `unknown`. The rows can lag the `COMPLETED` status by a few seconds, so an empty download right after it is worth one more try.
+  - **Chunked CSV upload.** For a file rather than a list of addresses: `uploads.startUpload` with the file name, chunk count, chunk size and the zero-based `email_column_index` answers `upload_id` (the live API refuses a start without the column, which the spec omits); send each base64 chunk with `uploads.uploadChunk`, numbered from 1; poll `uploads.getUpload` (status `inprocess`, `success` or `error`, lowercase). Its `request_id` is the list to read with `lists.getList`, and the list is verified and billed like a batch. Keep the `upload_id`: on 2026-11-26 `uploads.listUploads` did not show the account's own new uploads.
+  - **Analytics shapes come from the live API.** Listclean's spec leaves `total_summary`, `datewise_summary` and `graph_summary` without inner fields; the plugin types them from the real answers and lets unknown fields through.
+  - **Deletes are permanent.** `lists.delete` cannot be undone and the results cannot be fetched afterwards.
+  - **Webhooks.** Listclean sends none, and the plugin does not receive any.
+examples:
+  read:
+    path: verify.verifyEmail
+    title: Verify one address
+    args:
+      email: test@example.com
+  write:
+    path: verify.startBatchVerification
+    title: Start a batch verification
+    args:
+      emails:
+        - user1@example.com
+        - user2@example.com
+apiExamples:
+  verify.verifyEmail:
+    call: "{ email: 'myselfi.itba@gmail.com' }"
+  verify.startBatchVerification:
+    call: "{ emails: ['user1@example.com', 'user2@example.com'], filename: 'october-leads.csv' }"
+  verify.getVerificationLogs:
+    call: "{ start_date: '2026-11-01', end_date: '2026-11-25', status: 'dirty' }"
+  verify.getAnalytics:
+    call: "{ start_date: '2026-11-01', end_date: '2026-11-25' }"
+  lists.listLists:
+    call: "{}"
+  lists.getList:
+    call: "{ list_id: 159261 }"
+  lists.getListResults:
+    call: "{ list_id: 159261, type: 'clean' }"
+  lists.getListResultsCsv:
+    call: "{ list_id: 159261, type: 'clean' }"
+  lists.delete:
+    call: "{ list_id: 159261 }"
+  uploads.listUploads:
+    call: "{}"
+  uploads.startUpload:
+    call: "{ filename: 'leads.csv', file_type: 'csv', total_chunk_count: 2, max_chunk_size: 64000, email_column_index: 0, separator_char: ',' }"
+  uploads.uploadChunk:
+    call: "{ upload_id: 1327, chunk_sequence_number: 1, content: 'ZW1haWwKdXNlckBleGFtcGxlLmNvbQo=' }"
+  uploads.getUpload:
+    call: "{ upload_id: 1327 }"
+  account.getCredits:
+    call: "{}"
+  account.getProfile:
+    call: "{}"
+  account.updateProfile:
+    call: "{ company_name: 'Example Co', website: 'example.com' }"
+apiNotes:
+  verify.verifyEmail: 'Spends one credit even when the address cannot be resolved. The verdict is documented as clean, dirty, unknown or error (another value is passed through), and remarks explains it. Answers the MX records, the mail service provider and the local and domain parts. Not retried after a 5xx or a dropped connection; a 429 is.'
+  verify.startBatchVerification: 'Takes up to 3000 addresses and answers the list_id of the async job. Not retried after a 5xx or a dropped connection, since a repeat would start a second billed job; a 429 is, because Listclean refused it before running.'
+  verify.getVerificationLogs: 'The range spans at most 30 days and end_date cannot be in the future. Paging is a start offset with a limit of at most 100, 10 by default. Answers { logs, total_count } (the spec says a bare array; the live API sends the object). error_code on a log row is a string, unlike the integer on the envelope.'
+  verify.getAnalytics: 'total_summary maps each status (total, clean, dirty, unknown, error) to { count, perc }; datewise_summary holds one of those per day, keyed YYYYMMDD; graph_summary is parallel arrays (dates, <status>_counts, <status>_percs). Counts can arrive as strings.'
+  lists.listLists: 'Answers total (a string such as "0" on the live API), an opaque cursor and the lists. Listclean documents no way to send the cursor back, so there is no paging input here.'
+  lists.getList: 'The list arrives under list (the spec shows a one-element array, the live API the object; both are read), so the status reads as list.status. This is the poll for a startBatchVerification job. allow_download turns 1 when the results can be fetched.'
+  lists.getListResults: 'Download the verified rows of one type as a JSON array. The live API wraps the rows in a second envelope (data.data.result); the plugin checks both envelopes and returns the rows. Each row has email, status, reason_code, reason, mx, msp and the uploaded columns in attributes. The list must be COMPLETED for rows to exist.'
+  lists.getListResultsCsv: 'The same rows as lists.getListResults, as the CSV file Listclean builds, returned as text in csv.'
+  uploads.listUploads: 'Answers upload rows with their id, status (success or error), file names, total_records and stage. The spec''s example shows upload_id and progress instead; both spellings are read. On 2026-11-26 the live route answered the same ten rows from 2021 and not the account''s own new upload, so track uploads by the id startUpload answers.'
+  uploads.startUpload: 'filename, file_type, total_chunk_count, max_chunk_size and email_column_index (zero-based; 0 is the first column) are required. The spec omits email_column_index, but the live API refuses a start without it. fast_process 1 skips SMTP checks. Answers upload_id. Not retried after a 5xx or a dropped connection.'
+  uploads.uploadChunk: 'content is the base64 of one chunk of the file. Chunks are numbered from 1 (live: chunk 1 of 1 completed an upload). Answers the message and chunk_details (total and uploaded counts, as strings). The last chunk starts the billed verification. Not retried after a 5xx or a dropped connection.'
+  uploads.getUpload: 'Answers the upload row (file names, status inprocess, success or error in lowercase, remarks) with chunk_details and request_id, the list the upload became. Chunk counts arrive as strings, or false before any chunk; request_id is 0 or null while there is no list. total_records reads 100 whatever the file holds.'
+  account.getProfile: 'The profile holds the account owner''s name, phone and address; the plugin logs none of it.'
+  account.updateProfile: 'Send only the fields to change; at least one is required. Answers a message only.'
+  lists.delete: 'Permanent. The answer carries only a message string, which the plugin requires before reporting success.'
+  account.getCredits: 'Free. Answers the remaining balance; a verification spends one credit per address.'
