@@ -98,13 +98,16 @@ export function specEndpoint<K extends LushaSpecKey>(
 	key: K,
 ): CorsairEndpoint<LushaContext, LushaSpecInputs[K], LushaSpecOutputs[K]> {
 	const route: Route = LUSHA_SPEC_ROUTES[key];
-	const input = LushaSpecInputSchemas[key];
-	const output = LushaSpecOutputSchemas[key];
 	const isSubscription = route.op.startsWith('subscriptions.');
+	// The schemas are read per call, so creating the plugin builds none.
 	return (ctx, rawInput) =>
 		call(
 			ctx,
-			{ event: route.op, input, output },
+			{
+				event: route.op,
+				input: LushaSpecInputSchemas[key],
+				output: LushaSpecOutputSchemas[key],
+			},
 			rawInput,
 			(parsed) => buildSpecRequest(route, parsed as Record<string, unknown>),
 			{

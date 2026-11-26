@@ -92,243 +92,483 @@ export const LushaSpecEndpoints = {
 
 export const lushaSpecEndpointSchemas = {
 	'person.prospectContacts': {
-		input: Inputs.personProspectContacts,
-		output: Outputs.personProspectContacts,
+		get input() {
+			return Inputs.personProspectContacts;
+		},
+		get output() {
+			return Outputs.personProspectContacts;
+		},
 	},
 	'company.prospectCompanies': {
-		input: Inputs.companyProspectCompanies,
-		output: Outputs.companyProspectCompanies,
+		get input() {
+			return Inputs.companyProspectCompanies;
+		},
+		get output() {
+			return Outputs.companyProspectCompanies;
+		},
 	},
 	'person.getContactLookalikes': {
-		input: Inputs.personGetContactLookalikes,
-		output: Outputs.personGetContactLookalikes,
+		get input() {
+			return Inputs.personGetContactLookalikes;
+		},
+		get output() {
+			return Outputs.personGetContactLookalikes;
+		},
 	},
 	'company.getCompanyLookalikes': {
-		input: Inputs.companyGetCompanyLookalikes,
-		output: Outputs.companyGetCompanyLookalikes,
+		get input() {
+			return Inputs.companyGetCompanyLookalikes;
+		},
+		get output() {
+			return Outputs.companyGetCompanyLookalikes;
+		},
 	},
 	'person.getContactRecommendations': {
-		input: Inputs.personGetContactRecommendations,
-		output: Outputs.personGetContactRecommendations,
+		get input() {
+			return Inputs.personGetContactRecommendations;
+		},
+		get output() {
+			return Outputs.personGetContactRecommendations;
+		},
 	},
 	'company.getCompanyRecommendations': {
-		input: Inputs.companyGetCompanyRecommendations,
-		output: Outputs.companyGetCompanyRecommendations,
+		get input() {
+			return Inputs.companyGetCompanyRecommendations;
+		},
+		get output() {
+			return Outputs.companyGetCompanyRecommendations;
+		},
 	},
 	'person.getContactRecommendationFilters': {
-		input: Inputs.personGetContactRecommendationFilters,
-		output: Outputs.personGetContactRecommendationFilters,
+		get input() {
+			return Inputs.personGetContactRecommendationFilters;
+		},
+		get output() {
+			return Outputs.personGetContactRecommendationFilters;
+		},
 	},
 	'company.getCompanyRecommendationFilters': {
-		input: Inputs.companyGetCompanyRecommendationFilters,
-		output: Outputs.companyGetCompanyRecommendationFilters,
+		get input() {
+			return Inputs.companyGetCompanyRecommendationFilters;
+		},
+		get output() {
+			return Outputs.companyGetCompanyRecommendationFilters;
+		},
 	},
 	'person.getBuyingGroup': {
-		input: Inputs.personGetBuyingGroup,
-		output: Outputs.personGetBuyingGroup,
+		get input() {
+			return Inputs.personGetBuyingGroup;
+		},
+		get output() {
+			return Outputs.personGetBuyingGroup;
+		},
 	},
 	'contactTables.create': {
-		input: Inputs.contactTablesCreate,
-		output: Outputs.contactTablesCreate,
+		get input() {
+			return Inputs.contactTablesCreate;
+		},
+		get output() {
+			return Outputs.contactTablesCreate;
+		},
 	},
 	'contactTables.list': {
-		input: Inputs.contactTablesList,
-		output: Outputs.contactTablesList,
+		get input() {
+			return Inputs.contactTablesList;
+		},
+		get output() {
+			return Outputs.contactTablesList;
+		},
 	},
 	'contactTables.getColumnCatalog': {
-		input: Inputs.contactTablesGetColumnCatalog,
-		output: Outputs.contactTablesGetColumnCatalog,
+		get input() {
+			return Inputs.contactTablesGetColumnCatalog;
+		},
+		get output() {
+			return Outputs.contactTablesGetColumnCatalog;
+		},
 	},
 	'contactTables.get': {
-		input: Inputs.contactTablesGet,
-		output: Outputs.contactTablesGet,
+		get input() {
+			return Inputs.contactTablesGet;
+		},
+		get output() {
+			return Outputs.contactTablesGet;
+		},
 	},
 	'contactTables.update': {
-		input: Inputs.contactTablesUpdate,
-		output: Outputs.contactTablesUpdate,
+		get input() {
+			return Inputs.contactTablesUpdate;
+		},
+		get output() {
+			return Outputs.contactTablesUpdate;
+		},
 	},
 	'contactTables.delete': {
-		input: Inputs.contactTablesDelete,
-		output: Outputs.contactTablesDelete,
+		get input() {
+			return Inputs.contactTablesDelete;
+		},
+		get output() {
+			return Outputs.contactTablesDelete;
+		},
 	},
 	'contactTables.listEntities': {
-		input: Inputs.contactTablesListEntities,
-		output: Outputs.contactTablesListEntities,
+		get input() {
+			return Inputs.contactTablesListEntities;
+		},
+		get output() {
+			return Outputs.contactTablesListEntities;
+		},
 	},
 	'contactTables.addEntities': {
-		input: Inputs.contactTablesAddEntities,
-		output: Outputs.contactTablesAddEntities,
+		get input() {
+			return Inputs.contactTablesAddEntities;
+		},
+		get output() {
+			return Outputs.contactTablesAddEntities;
+		},
 	},
 	'contactTables.removeEntities': {
-		input: Inputs.contactTablesRemoveEntities,
-		output: Outputs.contactTablesRemoveEntities,
+		get input() {
+			return Inputs.contactTablesRemoveEntities;
+		},
+		get output() {
+			return Outputs.contactTablesRemoveEntities;
+		},
 	},
 	'contactTables.listColumns': {
-		input: Inputs.contactTablesListColumns,
-		output: Outputs.contactTablesListColumns,
+		get input() {
+			return Inputs.contactTablesListColumns;
+		},
+		get output() {
+			return Outputs.contactTablesListColumns;
+		},
 	},
 	'contactTables.addColumns': {
-		input: Inputs.contactTablesAddColumns,
-		output: Outputs.contactTablesAddColumns,
+		get input() {
+			return Inputs.contactTablesAddColumns;
+		},
+		get output() {
+			return Outputs.contactTablesAddColumns;
+		},
 	},
 	'contactTables.removeColumn': {
-		input: Inputs.contactTablesRemoveColumn,
-		output: Outputs.contactTablesRemoveColumn,
+		get input() {
+			return Inputs.contactTablesRemoveColumn;
+		},
+		get output() {
+			return Outputs.contactTablesRemoveColumn;
+		},
 	},
 	'contactTables.runColumn': {
-		input: Inputs.contactTablesRunColumn,
-		output: Outputs.contactTablesRunColumn,
+		get input() {
+			return Inputs.contactTablesRunColumn;
+		},
+		get output() {
+			return Outputs.contactTablesRunColumn;
+		},
 	},
 	'companyTables.create': {
-		input: Inputs.companyTablesCreate,
-		output: Outputs.companyTablesCreate,
+		get input() {
+			return Inputs.companyTablesCreate;
+		},
+		get output() {
+			return Outputs.companyTablesCreate;
+		},
 	},
 	'companyTables.list': {
-		input: Inputs.companyTablesList,
-		output: Outputs.companyTablesList,
+		get input() {
+			return Inputs.companyTablesList;
+		},
+		get output() {
+			return Outputs.companyTablesList;
+		},
 	},
 	'companyTables.getColumnCatalog': {
-		input: Inputs.companyTablesGetColumnCatalog,
-		output: Outputs.companyTablesGetColumnCatalog,
+		get input() {
+			return Inputs.companyTablesGetColumnCatalog;
+		},
+		get output() {
+			return Outputs.companyTablesGetColumnCatalog;
+		},
 	},
 	'companyTables.get': {
-		input: Inputs.companyTablesGet,
-		output: Outputs.companyTablesGet,
+		get input() {
+			return Inputs.companyTablesGet;
+		},
+		get output() {
+			return Outputs.companyTablesGet;
+		},
 	},
 	'companyTables.update': {
-		input: Inputs.companyTablesUpdate,
-		output: Outputs.companyTablesUpdate,
+		get input() {
+			return Inputs.companyTablesUpdate;
+		},
+		get output() {
+			return Outputs.companyTablesUpdate;
+		},
 	},
 	'companyTables.delete': {
-		input: Inputs.companyTablesDelete,
-		output: Outputs.companyTablesDelete,
+		get input() {
+			return Inputs.companyTablesDelete;
+		},
+		get output() {
+			return Outputs.companyTablesDelete;
+		},
 	},
 	'companyTables.listEntities': {
-		input: Inputs.companyTablesListEntities,
-		output: Outputs.companyTablesListEntities,
+		get input() {
+			return Inputs.companyTablesListEntities;
+		},
+		get output() {
+			return Outputs.companyTablesListEntities;
+		},
 	},
 	'companyTables.addEntities': {
-		input: Inputs.companyTablesAddEntities,
-		output: Outputs.companyTablesAddEntities,
+		get input() {
+			return Inputs.companyTablesAddEntities;
+		},
+		get output() {
+			return Outputs.companyTablesAddEntities;
+		},
 	},
 	'companyTables.removeEntities': {
-		input: Inputs.companyTablesRemoveEntities,
-		output: Outputs.companyTablesRemoveEntities,
+		get input() {
+			return Inputs.companyTablesRemoveEntities;
+		},
+		get output() {
+			return Outputs.companyTablesRemoveEntities;
+		},
 	},
 	'companyTables.removeColumn': {
-		input: Inputs.companyTablesRemoveColumn,
-		output: Outputs.companyTablesRemoveColumn,
+		get input() {
+			return Inputs.companyTablesRemoveColumn;
+		},
+		get output() {
+			return Outputs.companyTablesRemoveColumn;
+		},
 	},
 	'companyTables.runColumn': {
-		input: Inputs.companyTablesRunColumn,
-		output: Outputs.companyTablesRunColumn,
+		get input() {
+			return Inputs.companyTablesRunColumn;
+		},
+		get output() {
+			return Outputs.companyTablesRunColumn;
+		},
 	},
 	'person.getContactSignals': {
-		input: Inputs.personGetContactSignals,
-		output: Outputs.personGetContactSignals,
+		get input() {
+			return Inputs.personGetContactSignals;
+		},
+		get output() {
+			return Outputs.personGetContactSignals;
+		},
 	},
 	'company.getCompanySignals': {
-		input: Inputs.companyGetCompanySignals,
-		output: Outputs.companyGetCompanySignals,
+		get input() {
+			return Inputs.companyGetCompanySignals;
+		},
+		get output() {
+			return Outputs.companyGetCompanySignals;
+		},
 	},
 	'person.getContactSignalTypes': {
-		input: Inputs.personGetContactSignalTypes,
-		output: Outputs.personGetContactSignalTypes,
+		get input() {
+			return Inputs.personGetContactSignalTypes;
+		},
+		get output() {
+			return Outputs.personGetContactSignalTypes;
+		},
 	},
 	'company.getCompanySignalTypes': {
-		input: Inputs.companyGetCompanySignalTypes,
-		output: Outputs.companyGetCompanySignalTypes,
+		get input() {
+			return Inputs.companyGetCompanySignalTypes;
+		},
+		get output() {
+			return Outputs.companyGetCompanySignalTypes;
+		},
 	},
 	'company.getCompanySignalFilters': {
-		input: Inputs.companyGetCompanySignalFilters,
-		output: Outputs.companyGetCompanySignalFilters,
+		get input() {
+			return Inputs.companyGetCompanySignalFilters;
+		},
+		get output() {
+			return Outputs.companyGetCompanySignalFilters;
+		},
 	},
 	'company.getCompanySignalFilterValues': {
-		input: Inputs.companyGetCompanySignalFilterValues,
-		output: Outputs.companyGetCompanySignalFilterValues,
+		get input() {
+			return Inputs.companyGetCompanySignalFilterValues;
+		},
+		get output() {
+			return Outputs.companyGetCompanySignalFilterValues;
+		},
 	},
 	'company.getCompanySignalScores': {
-		input: Inputs.companyGetCompanySignalScores,
-		output: Outputs.companyGetCompanySignalScores,
+		get input() {
+			return Inputs.companyGetCompanySignalScores;
+		},
+		get output() {
+			return Outputs.companyGetCompanySignalScores;
+		},
 	},
 	'person.getContactSignalScores': {
-		input: Inputs.personGetContactSignalScores,
-		output: Outputs.personGetContactSignalScores,
+		get input() {
+			return Inputs.personGetContactSignalScores;
+		},
+		get output() {
+			return Outputs.personGetContactSignalScores;
+		},
 	},
 	'icp.listProfiles': {
-		input: Inputs.icpListProfiles,
-		output: Outputs.icpListProfiles,
+		get input() {
+			return Inputs.icpListProfiles;
+		},
+		get output() {
+			return Outputs.icpListProfiles;
+		},
 	},
 	'company.getCompanyIcpFitScores': {
-		input: Inputs.companyGetCompanyIcpFitScores,
-		output: Outputs.companyGetCompanyIcpFitScores,
+		get input() {
+			return Inputs.companyGetCompanyIcpFitScores;
+		},
+		get output() {
+			return Outputs.companyGetCompanyIcpFitScores;
+		},
 	},
 	'person.getContactIcpFitScores': {
-		input: Inputs.personGetContactIcpFitScores,
-		output: Outputs.personGetContactIcpFitScores,
+		get input() {
+			return Inputs.personGetContactIcpFitScores;
+		},
+		get output() {
+			return Outputs.personGetContactIcpFitScores;
+		},
 	},
 	'company.getWebsiteVisits': {
-		input: Inputs.companyGetWebsiteVisits,
-		output: Outputs.companyGetWebsiteVisits,
+		get input() {
+			return Inputs.companyGetWebsiteVisits;
+		},
+		get output() {
+			return Outputs.companyGetWebsiteVisits;
+		},
 	},
 	'person.getContactFilterTypes': {
-		input: Inputs.personGetContactFilterTypes,
-		output: Outputs.personGetContactFilterTypes,
+		get input() {
+			return Inputs.personGetContactFilterTypes;
+		},
+		get output() {
+			return Outputs.personGetContactFilterTypes;
+		},
 	},
 	'person.getContactFilterValues': {
-		input: Inputs.personGetContactFilterValues,
-		output: Outputs.personGetContactFilterValues,
+		get input() {
+			return Inputs.personGetContactFilterValues;
+		},
+		get output() {
+			return Outputs.personGetContactFilterValues;
+		},
 	},
 	'company.getCompanyFilterTypes': {
-		input: Inputs.companyGetCompanyFilterTypes,
-		output: Outputs.companyGetCompanyFilterTypes,
+		get input() {
+			return Inputs.companyGetCompanyFilterTypes;
+		},
+		get output() {
+			return Outputs.companyGetCompanyFilterTypes;
+		},
 	},
 	'company.getCompanyFilterValues': {
-		input: Inputs.companyGetCompanyFilterValues,
-		output: Outputs.companyGetCompanyFilterValues,
+		get input() {
+			return Inputs.companyGetCompanyFilterValues;
+		},
+		get output() {
+			return Outputs.companyGetCompanyFilterValues;
+		},
 	},
 	'subscriptions.create': {
-		input: Inputs.subscriptionsCreate,
-		output: Outputs.subscriptionsCreate,
+		get input() {
+			return Inputs.subscriptionsCreate;
+		},
+		get output() {
+			return Outputs.subscriptionsCreate;
+		},
 	},
 	'subscriptions.list': {
-		input: Inputs.subscriptionsList,
-		output: Outputs.subscriptionsList,
+		get input() {
+			return Inputs.subscriptionsList;
+		},
+		get output() {
+			return Outputs.subscriptionsList;
+		},
 	},
 	'subscriptions.get': {
-		input: Inputs.subscriptionsGet,
-		output: Outputs.subscriptionsGet,
+		get input() {
+			return Inputs.subscriptionsGet;
+		},
+		get output() {
+			return Outputs.subscriptionsGet;
+		},
 	},
 	'subscriptions.update': {
-		input: Inputs.subscriptionsUpdate,
-		output: Outputs.subscriptionsUpdate,
+		get input() {
+			return Inputs.subscriptionsUpdate;
+		},
+		get output() {
+			return Outputs.subscriptionsUpdate;
+		},
 	},
 	'subscriptions.test': {
-		input: Inputs.subscriptionsTest,
-		output: Outputs.subscriptionsTest,
+		get input() {
+			return Inputs.subscriptionsTest;
+		},
+		get output() {
+			return Outputs.subscriptionsTest;
+		},
 	},
 	'subscriptions.delete': {
-		input: Inputs.subscriptionsDelete,
-		output: Outputs.subscriptionsDelete,
+		get input() {
+			return Inputs.subscriptionsDelete;
+		},
+		get output() {
+			return Outputs.subscriptionsDelete;
+		},
 	},
 	'auditLogs.list': {
-		input: Inputs.auditLogsList,
-		output: Outputs.auditLogsList,
+		get input() {
+			return Inputs.auditLogsList;
+		},
+		get output() {
+			return Outputs.auditLogsList;
+		},
 	},
 	'auditLogs.getStats': {
-		input: Inputs.auditLogsGetStats,
-		output: Outputs.auditLogsGetStats,
+		get input() {
+			return Inputs.auditLogsGetStats;
+		},
+		get output() {
+			return Outputs.auditLogsGetStats;
+		},
 	},
 	'subscriptions.createOptOut': {
-		input: Inputs.subscriptionsCreateOptOut,
-		output: Outputs.subscriptionsCreateOptOut,
+		get input() {
+			return Inputs.subscriptionsCreateOptOut;
+		},
+		get output() {
+			return Outputs.subscriptionsCreateOptOut;
+		},
 	},
 	'conversations.search': {
-		input: Inputs.conversationsSearch,
-		output: Outputs.conversationsSearch,
+		get input() {
+			return Inputs.conversationsSearch;
+		},
+		get output() {
+			return Outputs.conversationsSearch;
+		},
 	},
 	'conversations.getTranscript': {
-		input: Inputs.conversationsGetTranscript,
-		output: Outputs.conversationsGetTranscript,
+		get input() {
+			return Inputs.conversationsGetTranscript;
+		},
+		get output() {
+			return Outputs.conversationsGetTranscript;
+		},
 	},
 } as const;
