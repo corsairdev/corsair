@@ -15,7 +15,7 @@ export type ScrapeCreatorsEnvelope = {
 	success?: boolean | null;
 	/** Credits left on the account. Removed under managed pricing (Corsair's account). */
 	credits_remaining?: number | null;
-	/** Credits this call cost (0 for cache hits, empty pages and errors). */
+	/** Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). */
 	credits_charged?: number | null;
 	/** True when `cache_max_age` returned a cached response. */
 	cached?: boolean | null;
@@ -29,10 +29,24 @@ export type AccountApiUsageInput = {
 	/** Filter by HTTP status code */
 	statusCode?: string;
 	/** Page number for pagination (max 100) */
-	page?: string;
+	page?: string | number;
 };
 
-export type AccountApiUsageOutput = ScrapeCreatorsJsonValue[];
+export type AccountApiUsageOutput = Array<{
+	id?: string | number | null;
+	endpoint?: string | number | null;
+	status_code?: number | string | null;
+	duration_ms?: number | string | null;
+	success?: boolean | null;
+	response_time?: string | number | null;
+	request_time?: string | number | null;
+	request_payload?: { [key: string]: ScrapeCreatorsJsonValue } | null;
+	http_method?: string | number | null;
+	created_at?: string | number | null;
+	duration_secs?: number | string | null;
+	credits?: number | string | null;
+	[key: string]: ScrapeCreatorsJsonValue | undefined;
+}>;
 
 /** Get credit balance: `GET /v1/account/credit-balance` */
 export type AccountCreditBalanceInput = Record<string, never>;
@@ -46,7 +60,12 @@ export type AccountCreditBalanceOutput = ScrapeCreatorsEnvelope & {
 /** Get daily usage: `GET /v1/account/get-daily-usage-count` */
 export type AccountDailyUsageCountInput = Record<string, never>;
 
-export type AccountDailyUsageCountOutput = ScrapeCreatorsJsonValue[];
+export type AccountDailyUsageCountOutput = Array<{
+	usage_date?: string | number | null;
+	total_credits?: string | number | null;
+	request_count?: string | number | null;
+	[key: string]: ScrapeCreatorsJsonValue | undefined;
+}>;
 
 /** Get most used routes: `GET /v1/account/get-most-used-routes` */
 export type AccountMostUsedRoutesInput = {
@@ -56,14 +75,19 @@ export type AccountMostUsedRoutesInput = {
 	end_time?: string;
 };
 
-export type AccountMostUsedRoutesOutput = ScrapeCreatorsJsonValue[];
+export type AccountMostUsedRoutesOutput = Array<{
+	base_endpoint?: string | number | null;
+	call_count?: string | number | null;
+	total_credits?: string | number | null;
+	[key: string]: ScrapeCreatorsJsonValue | undefined;
+}>;
 
 /** Amazon Shop page: `GET /v1/amazon/shop` */
 export type AmazonShopInput = {
 	/** URL to Amazon Shop page */
 	url: string;
 	/** Opaque page token returned by a previous response for the same shop URL. Pass it back unchanged and do not infer the response type from its prefix. A page can contain lists, videos, or both. */
-	pageToken?: string;
+	pageToken?: string | number;
 };
 
 export type AmazonShopOutput = ScrapeCreatorsEnvelope & {
@@ -205,7 +229,7 @@ export type CosmosClusterPostsInput = {
 	/** Public Cosmos collection URL. */
 	url: string;
 	/** Pass the previous response cursor unchanged. Stop when it is null; sending the literal string "null" returns an empty terminal page without fetching or charging. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type CosmosClusterPostsOutput = ScrapeCreatorsEnvelope & {
@@ -270,7 +294,7 @@ export type CosmosSearchInput = {
 	/** Search text. */
 	query: string;
 	/** Pass the previous response cursor unchanged. Stop when it is null; sending the literal string "null" returns an empty terminal page without fetching or charging. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type CosmosSearchOutput = ScrapeCreatorsEnvelope & {
@@ -286,7 +310,7 @@ export type CosmosUserClustersInput = {
 	/** Cosmos username without a profile URL. */
 	handle: string;
 	/** Pass the previous response cursor unchanged. Stop when it is null; sending the literal string "null" returns an empty terminal page without fetching or charging. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type CosmosUserClustersOutput = ScrapeCreatorsEnvelope & {
@@ -302,7 +326,7 @@ export type CosmosUserPostsInput = {
 	/** Cosmos username without a profile URL. */
 	handle: string;
 	/** Pass the previous response cursor unchanged. Stop when it is null; sending the literal string "null" returns an empty terminal page without fetching or charging. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type CosmosUserPostsOutput = ScrapeCreatorsEnvelope & {
@@ -472,7 +496,7 @@ export type FacebookAdLibraryCompanyAdsInput = {
 	/** Set to true for a trimmed down version of the response */
 	trim?: boolean;
 	/** Cursor to paginate through results */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type FacebookAdLibraryCompanyAdsOutput = ScrapeCreatorsEnvelope & {
@@ -506,7 +530,7 @@ export type FacebookAdLibrarySearchAdsInput = {
 	/** Set to true for a trimmed down version of the response */
 	trim?: boolean;
 	/** Cursor to paginate through results */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type FacebookAdLibrarySearchAdsOutput = ScrapeCreatorsEnvelope & {
@@ -591,7 +615,7 @@ export type FacebookEventsInput = {
 	/** The time frame to search for. Defaults to all time */
 	time?: 'today' | 'this_week' | 'next_week';
 	/** The cursor to paginate to the next page */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type FacebookEventsOutput = ScrapeCreatorsEnvelope & {
@@ -605,7 +629,7 @@ export type FacebookEventsSearchInput = {
 	/** The query to search for */
 	query: string;
 	/** The cursor to paginate to the next page */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type FacebookEventsSearchOutput = ScrapeCreatorsEnvelope & {
@@ -657,7 +681,7 @@ export type FacebookGroupPostsInput = {
 		| 'CHRONOLOGICAL'
 		| 'CHRONOLOGICAL_LISTINGS';
 	/** The cursor to paginate to the next page */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type FacebookGroupPostsOutput = ScrapeCreatorsEnvelope & {
@@ -753,7 +777,7 @@ export type FacebookMarketplaceSearchInput = {
 	/** Availability filter */
 	availability?: 'available' | 'sold' | 'all';
 	/** Opaque pagination cursor returned from the previous response. Pass it back as-is. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type FacebookMarketplaceSearchOutput = ScrapeCreatorsEnvelope & {
@@ -802,7 +826,7 @@ export type FacebookPostCommentRepliesInput = {
 	/** Pass the comment's complete, fresh expansion_token from /v1/facebook/post/comments with sort=all for unfiltered replies. Do not reuse a token from the Most relevant view. */
 	expansion_token: string;
 	/** The cursor to paginate to the next page */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type FacebookPostCommentRepliesOutput = ScrapeCreatorsEnvelope & {
@@ -821,7 +845,7 @@ export type FacebookPostCommentsInput = {
 	/** Defaults to most_relevant, which can filter comments. Set sort=all to request Facebook's unfiltered view; this does not guarantee every counted comment is available. */
 	sort?: 'most_relevant' | 'all';
 	/** Cursor from the previous response to get more comments. Keep the same sort on every cursor page. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type FacebookPostCommentsOutput = ScrapeCreatorsEnvelope & {
@@ -895,7 +919,7 @@ export type FacebookProfileEventsInput = {
 	/** The URL of the public Facebook page */
 	url: string;
 	/** The cursor to paginate to get more events */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type FacebookProfileEventsOutput = ScrapeCreatorsEnvelope & {
@@ -911,9 +935,9 @@ export type FacebookProfilePhotosInput = {
 	/** Facebook page URL */
 	url: string;
 	/** To paginate through to the next page */
-	next_page_id?: string;
+	next_page_id?: string | number;
 	/** To paginate through to the next page */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type FacebookProfilePhotosOutput = ScrapeCreatorsEnvelope & {
@@ -930,7 +954,7 @@ export type FacebookProfilePostsInput = {
 	/** Facebook profile page id */
 	pageId?: string;
 	/** To paginate through the posts */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type FacebookProfilePostsOutput = ScrapeCreatorsEnvelope & {
@@ -944,9 +968,9 @@ export type FacebookProfileReelsInput = {
 	/** Facebook page URL */
 	url: string;
 	/** To paginate through to the next page */
-	next_page_id?: string;
+	next_page_id?: string | number;
 	/** To paginate through to the next page */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type FacebookProfileReelsOutput = ScrapeCreatorsEnvelope & {
@@ -961,7 +985,7 @@ export type FacebookSearchVideosInput = {
 	/** The keyword or phrase to search for */
 	query: string;
 	/** The opaque cursor returned by the previous response. Keep the query unchanged when paginating. Stop when cursor is null or has_more is false. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type FacebookSearchVideosOutput = ScrapeCreatorsEnvelope & {
@@ -1223,7 +1247,7 @@ export type GoogleCompanyAdsInput = {
 	/** Set to true to get the ad details. Will cost 25 credits. */
 	get_ad_details?: string;
 	/** Leave empty for the first request. For the next page, use the cursor from your previous response and keep the same filters. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type GoogleCompanyAdsOutput = ScrapeCreatorsEnvelope & {
@@ -1260,7 +1284,7 @@ export type InstagramAudioReelsInput = {
 	/** The audio id from the Instagram audio page URL. */
 	audio_id: string;
 	/** Pagination cursor returned by Instagram from the previous response. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type InstagramAudioReelsOutput = ScrapeCreatorsEnvelope & {
@@ -1381,7 +1405,7 @@ export type InstagramPostCommentRepliesInput = {
 	/** The parent comment ID from the Comments endpoint */
 	comment_id: string;
 	/** The cursor to get more replies. Get `cursor` from the previous response. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type InstagramPostCommentRepliesOutput = ScrapeCreatorsEnvelope & {
@@ -1398,7 +1422,7 @@ export type InstagramPostCommentsInput = {
 	/** Set to true to include replies for every returned comment. Costs 15 credits when comments are returned, even if no replies are found; successful pages with no comments cost 0 credits. This is much slower and may time out at 29 seconds. */
 	include_replies?: boolean;
 	/** The cursor to get more comments. Get 'cursor' from previous response. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type InstagramPostCommentsOutput = ScrapeCreatorsEnvelope & {
@@ -1494,7 +1518,7 @@ export type InstagramSearchHashtagInput = {
 	/** Use all to search public posts and reels, or reels to only return reels. Defaults to all. */
 	media_type?: 'all' | 'reels';
 	/** The cursor returned by the previous response. It is the next Google results page number and cannot exceed 11; cursor 12 or greater returns a 400 response. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type InstagramSearchHashtagOutput = ScrapeCreatorsEnvelope & {
@@ -1510,7 +1534,7 @@ export type InstagramSearchPopularInput = {
 	/** The Popular topic to search for. */
 	query: string;
 	/** The opaque cursor returned by the previous response. Use it with the same query to fetch the next page of posts. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type InstagramSearchPopularOutput = ScrapeCreatorsEnvelope & {
@@ -1593,7 +1617,7 @@ export type InstagramUserPostsInput = {
 	/** Set to true to get a trimmed response */
 	trim?: boolean;
 	/** Cursor to get next page of results. */
-	next_max_id?: string;
+	next_max_id?: string | number;
 };
 
 export type InstagramUserPostsOutput = ScrapeCreatorsEnvelope & {
@@ -1618,7 +1642,7 @@ export type InstagramUserReelsInput = {
 	/** Set to true for a trimmed down version of the response */
 	trim?: boolean;
 	/** Max id to get more reels. Get 'max_id' from previous response. */
-	max_id?: string;
+	max_id?: string | number;
 };
 
 export type InstagramUserReelsOutput = ScrapeCreatorsEnvelope & {
@@ -1632,7 +1656,7 @@ export type InstagramUserTaggedPostsInput = {
 	/** Numeric Instagram user ID. */
 	user_id: string;
 	/** Cursor returned by the previous response. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type InstagramUserTaggedPostsOutput = ScrapeCreatorsEnvelope & {
@@ -1704,7 +1728,7 @@ export type KwaiUserPostsInput = {
 	/** Number of posts to return, max 50 */
 	count?: number;
 	/** Cursor from the previous response for the next page */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type KwaiUserPostsOutput = ScrapeCreatorsEnvelope & {
@@ -1895,7 +1919,7 @@ export type LinkedinAdsSearchInput = {
 	/** End date in YYYY-MM-DD format. Must be used with startDate and cannot be today or a future date. */
 	endDate?: string;
 	/** Pagination token to paginate through results */
-	paginationToken?: string;
+	paginationToken?: string | number;
 };
 
 export type LinkedinAdsSearchOutput = ScrapeCreatorsEnvelope & {
@@ -2042,7 +2066,7 @@ export type LinkedinSearchJobsInput = {
 	/** Numeric LinkedIn company ID, not a company name or URL. */
 	company_id?: string;
 	/** Next offset returned by the previous response. Keep the same search and filters; maximum 990. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type LinkedinSearchJobsOutput = ScrapeCreatorsEnvelope & {
@@ -2063,7 +2087,7 @@ export type LinkedinSearchPostsInput = {
 		| 'last-month'
 		| 'last-year';
 	/** The cursor returned from the previous response. The maximum cursor is 11; cursor 12 or greater returns a 400 response. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type LinkedinSearchPostsOutput = ScrapeCreatorsEnvelope & {
@@ -2080,7 +2104,7 @@ export type PinterestBoardInput = {
 	/** Set to true for a trimmed down version of the response. Retains pins[].aggregated_pin_data.aggregated_stats.saves and pins[].pin_join.visual_annotation when Pinterest supplies them; these native save counts and keyword labels are not guaranteed for every pin. Only these nested leaves are retained, not the full aggregated_pin_data or pin_join objects. */
 	trim?: boolean;
 	/** The cursor to get the next page of results */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type PinterestBoardOutput = ScrapeCreatorsEnvelope & {
@@ -2121,7 +2145,7 @@ export type PinterestSearchInput = {
 	/** Set to true for a trimmed down version of the response */
 	trim?: boolean;
 	/** Cursor */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type PinterestSearchOutput = ScrapeCreatorsEnvelope & {
@@ -2203,7 +2227,7 @@ export type RedditPostCommentsInput = {
 	/** Set to true for a trimmed down version of the response */
 	trim?: boolean;
 	/** One opaque cursor returned by the previous response to get more comments or replies. Do not combine multiple cursors. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type RedditPostCommentsOutput = ScrapeCreatorsEnvelope & {
@@ -2248,7 +2272,7 @@ export type RedditSearchInput = {
 	/** Set to true for a trimmed down version of the response */
 	trim?: boolean;
 	/** Used to paginate to next page */
-	after?: string;
+	after?: string | number;
 };
 
 export type RedditSearchOutput = ScrapeCreatorsEnvelope & {
@@ -2270,7 +2294,7 @@ export type RedditSubredditInput = {
 	/** If we have a response in the cache that is this many days old or newer, return the cached response (0 credits, with "cached": true and a "cached_at" timestamp). Otherwise, scrape a live result (1 credit). [See the Caching page for details.](https://docs.scrapecreators.com/caching) */
 	cache_max_age?: '1d' | '3d' | '7d' | '14d' | '30d';
 	/** After to get more posts. Get 'after' from previous response. */
-	after?: string;
+	after?: string | number;
 };
 
 export type RedditSubredditOutput = ScrapeCreatorsEnvelope & {
@@ -2315,7 +2339,7 @@ export type RedditSubredditSearchInput = {
 	/** Timeframe to filter results */
 	timeframe?: 'all' | 'year' | 'month' | 'week' | 'day' | 'hour';
 	/** Cursor to get more results. Get 'cursor' from previous response. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type RedditSubredditSearchOutput = ScrapeCreatorsEnvelope & {
@@ -2333,7 +2357,7 @@ export type RumbleChannelVideosInput = {
 	/** Rumble channel URL. If you'd prefer to use the handle instead, use the handle parameter. */
 	url?: string;
 	/** Cursor from the previous response. This is the next page number, like 2 or 3. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type RumbleChannelVideosOutput = ScrapeCreatorsEnvelope & {
@@ -2349,7 +2373,7 @@ export type RumbleSearchInput = {
 	/** Search query. */
 	query: string;
 	/** Cursor from the previous response. This is the next page number, like 2 or 3. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type RumbleSearchOutput = ScrapeCreatorsEnvelope & {
@@ -2457,7 +2481,7 @@ export type SnapchatSpotlightCommentsInput = {
 	/** Snapchat Spotlight URL. */
 	url: string;
 	/** Pagination cursor from the previous response. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type SnapchatSpotlightCommentsOutput = ScrapeCreatorsEnvelope & {
@@ -2520,7 +2544,7 @@ export type SoundcloudArtistTracksInput = {
 	/** SoundCloud artist tracks URL. If you'd prefer to use the handle instead, you can use the handle parameter instead. */
 	url?: string;
 	/** Cursor to get more tracks. Get 'cursor' from previous response. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type SoundcloudArtistTracksOutput = ScrapeCreatorsEnvelope & {
@@ -2657,7 +2681,7 @@ export type SpotifyPlaylistInput = {
 	/** Spotify playlist URL. If you'd prefer to use the id instead, you can use the id parameter instead. */
 	url?: string;
 	/** Cursor returned by the previous response. Omit it for the first page. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type SpotifyPlaylistOutput = ScrapeCreatorsEnvelope & {
@@ -2813,7 +2837,7 @@ export type TelegramChannelPostsInput = {
 	/** If we have a response in the cache that is this many days old or newer, return the cached response (0 credits, with "cached": true and a "cached_at" timestamp). Otherwise, scrape a live result (1 credit). [See the Caching page for details.](https://docs.scrapecreators.com/caching) */
 	cache_max_age?: '1d' | '3d' | '7d' | '14d' | '30d';
 	/** Numeric cursor returned by the previous page. Omit it for the latest posts. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type TelegramChannelPostsOutput = ScrapeCreatorsEnvelope & {
@@ -3026,7 +3050,7 @@ export type TiktokAdLibrarySearchInput = {
 		| 'SK'
 		| 'TR';
 	/** Opaque cursor returned from the previous response. Repeat the same query or advertiser_name, adv_biz_ids when used, and any explicit start_time, end_time and region filters with every returned cursor. Pass the cursor unchanged; it does not replace the search inputs or filters. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type TiktokAdLibrarySearchOutput = ScrapeCreatorsEnvelope & {
@@ -3046,7 +3070,7 @@ export type TiktokCollectionVideosInput = {
 	/** Public TikTok collection URL */
 	url: string;
 	/** Cursor to get more videos. Use max_cursor from the previous response. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type TiktokCollectionVideosOutput = ScrapeCreatorsEnvelope & {
@@ -3144,7 +3168,7 @@ export type TiktokProfileVideosInput = {
 	/** Set to true for a trimmed down version of the response */
 	trim?: boolean;
 	/** Cursor to get more videos. Get 'max_cursor' from previous response. */
-	max_cursor?: string;
+	max_cursor?: string | number;
 };
 
 export type TiktokProfileVideosOutput = ScrapeCreatorsEnvelope & {
@@ -3301,7 +3325,7 @@ export type TiktokShopProductsInput = {
 		| 'JP'
 		| 'IE';
 	/** Cursor parameter from the previous response to retrieve the next page of products. Omit for the first page. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type TiktokShopProductsOutput = ScrapeCreatorsEnvelope & {
@@ -3462,7 +3486,7 @@ export type TiktokUserShowcaseInput = {
 	/** Region to put the proxy in. Non-US TikTok Shop regions are not reliable right now and may return limited or inconsistent showcase data. Sorry for the inconvenience. */
 	region?: string;
 	/** The cursor to the next page of products */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type TiktokUserShowcaseOutput = ScrapeCreatorsEnvelope & {
@@ -3649,7 +3673,7 @@ export type TruthSocialUserPostsInput = {
 	/** Set to true for a trimmed down version of the response */
 	trim?: boolean;
 	/** Used to paginate to next page */
-	next_max_id?: string;
+	next_max_id?: string | number;
 };
 
 export type TruthSocialUserPostsOutput = ScrapeCreatorsEnvelope & {
@@ -3666,7 +3690,11 @@ export type TwitchClipInput = {
 	cache_max_age?: '1d' | '3d' | '7d' | '14d' | '30d';
 };
 
-export type TwitchClipOutput = ScrapeCreatorsJsonValue[];
+export type TwitchClipOutput = Array<{
+	data?: { [key: string]: ScrapeCreatorsJsonValue } | null;
+	extensions?: { [key: string]: ScrapeCreatorsJsonValue } | null;
+	[key: string]: ScrapeCreatorsJsonValue | undefined;
+}>;
 
 /** Clip Transcript: `GET /v1/twitch/clip/transcript` */
 export type TwitchClipTranscriptInput = {
@@ -3833,7 +3861,7 @@ export type TwitterSearchPostsInput = {
 	/** Keyword or phrase to search for in Google-indexed public X/Twitter posts */
 	query: string;
 	/** Pass the cursor returned by the previous response. Supported page cursors are 1 through 11. A null response cursor means there are no more pages. */
-	cursor?: string;
+	cursor?: string | number;
 };
 
 export type TwitterSearchPostsOutput = ScrapeCreatorsEnvelope & {
@@ -3929,7 +3957,7 @@ export type YoutubeChannelCommunityPostsInput = {
 	/** YouTube channel handle */
 	handle?: string;
 	/** Continuation token to get more community posts. Get 'continuationToken' from previous response. */
-	continuationToken?: string;
+	continuationToken?: string | number;
 };
 
 export type YoutubeChannelCommunityPostsOutput = ScrapeCreatorsEnvelope & {
@@ -3945,7 +3973,7 @@ export type YoutubeChannelLivesInput = {
 	/** YouTube channel handle */
 	handle?: string;
 	/** Continuation token to get more lives. Get 'continuationToken' from previous response. */
-	continuationToken?: string;
+	continuationToken?: string | number;
 };
 
 export type YoutubeChannelLivesOutput = ScrapeCreatorsEnvelope & {
@@ -3961,7 +3989,7 @@ export type YoutubeChannelPlaylistsInput = {
 	/** YouTube channel handle */
 	handle?: string;
 	/** Continuation token to get more playlists. Get 'continuationToken' from previous response. */
-	continuationToken?: string;
+	continuationToken?: string | number;
 };
 
 export type YoutubeChannelPlaylistsOutput = ScrapeCreatorsEnvelope & {
@@ -3977,7 +4005,7 @@ export type YoutubeChannelSearchInput = {
 	/** Keywords to search within this channel. */
 	query: string;
 	/** Token from the previous response. Keep the same handle and query; stop when the token is null. */
-	continuationToken?: string;
+	continuationToken?: string | number;
 };
 
 export type YoutubeChannelSearchOutput = ScrapeCreatorsEnvelope & {
@@ -4000,7 +4028,7 @@ export type YoutubeChannelShortsInput = {
 	/** Sort by newest or popular */
 	sort?: 'newest' | 'popular';
 	/** Continuation token to get more videos. Get 'continuationToken' from previous response. */
-	continuationToken?: string;
+	continuationToken?: string | number;
 };
 
 export type YoutubeChannelShortsOutput = ScrapeCreatorsEnvelope & {
@@ -4025,7 +4053,7 @@ export type YoutubeChannelVideosInput = {
 	/** This will get you the like + comment count and the description. To get the full details of the video, use the /v1/youtube/video endpoint. Honestly, if you use this param, the error rate is higher. We might deprecate this param in the future. */
 	includeExtras?: string;
 	/** Continuation token to get more videos. Get 'continuationToken' from previous response. */
-	continuationToken?: string;
+	continuationToken?: string | number;
 };
 
 export type YoutubeChannelVideosOutput = ScrapeCreatorsEnvelope & {
@@ -4057,7 +4085,7 @@ export type YoutubePlaylistInput = {
 	/** The ID of the YouTube playlist. In the YouTube URL it will be the 'list' parameter. */
 	playlist_id: string;
 	/** Token from the previous response to get the next page. Omit for the first page. Stop when the returned continuationToken is null. */
-	continuationToken?: string;
+	continuationToken?: string | number;
 };
 
 export type YoutubePlaylistOutput = ScrapeCreatorsEnvelope & {
@@ -4086,7 +4114,9 @@ export type YoutubeSearchInput = {
 	/** This will get you the like + comment count and the description. To get the full details of the video, use the /v1/youtube/video endpoint. *This will slow down the response slightly.* */
 	includeExtras?: string;
 	/** Continuation token to get more videos. Get 'continuationToken' from previous response. */
-	continuationToken?: string;
+	continuationToken?: string | number;
+	/** Set to true to search only videos with the paid product placement / sponsorship disclosure. */
+	is_paid_promotions?: boolean;
 };
 
 export type YoutubeSearchOutput = ScrapeCreatorsEnvelope & {
@@ -4107,7 +4137,7 @@ export type YoutubeSearchHashtagInput = {
 	/** Search for all types of content or only shorts */
 	type?: 'all' | 'shorts';
 	/** Continuation token to get more videos. Get 'continuationToken' from previous response. */
-	continuationToken?: string;
+	continuationToken?: string | number;
 };
 
 export type YoutubeSearchHashtagOutput = ScrapeCreatorsEnvelope & {
@@ -4184,7 +4214,7 @@ export type YoutubeVideoOutput = ScrapeCreatorsEnvelope & {
 /** Comment Replies: `GET /v1/youtube/video/comment/replies` */
 export type YoutubeVideoCommentRepliesInput = {
 	/** Continuation token for the comment replies. Use 'repliesContinuationToken' from the Comments endpoint, or 'continuationToken' from a previous replies response to paginate. */
-	continuationToken: string;
+	continuationToken: string | number;
 };
 
 export type YoutubeVideoCommentRepliesOutput = ScrapeCreatorsEnvelope & {
@@ -4200,7 +4230,7 @@ export type YoutubeVideoCommentsInput = {
 	/** Order of comments */
 	order?: 'top' | 'newest';
 	/** Continuation token to get more comments. Get 'continuationToken' from previous response. */
-	continuationToken?: string;
+	continuationToken?: string | number;
 };
 
 export type YoutubeVideoCommentsOutput = ScrapeCreatorsEnvelope & {

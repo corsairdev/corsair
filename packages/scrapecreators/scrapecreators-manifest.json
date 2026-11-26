@@ -27,12 +27,26 @@
           "name": "page",
           "type": "string",
           "required": false,
-          "description": "Page number for pagination (max 100)"
+          "description": "Page number for pagination (max 100)",
+          "acceptsNumber": true
         }
       ],
       "output": {
         "kind": "array",
-        "fields": {}
+        "fields": {
+          "id": "string",
+          "endpoint": "string",
+          "status_code": "number",
+          "duration_ms": "number",
+          "success": "boolean",
+          "response_time": "string",
+          "request_time": "string",
+          "request_payload": "object",
+          "http_method": "string",
+          "created_at": "string",
+          "duration_secs": "number",
+          "credits": "number"
+        }
       }
     },
     {
@@ -65,7 +79,11 @@
       "params": [],
       "output": {
         "kind": "array",
-        "fields": {}
+        "fields": {
+          "usage_date": "string",
+          "total_credits": "string",
+          "request_count": "string"
+        }
       }
     },
     {
@@ -93,7 +111,11 @@
       ],
       "output": {
         "kind": "array",
-        "fields": {}
+        "fields": {
+          "base_endpoint": "string",
+          "call_count": "string",
+          "total_credits": "string"
+        }
       }
     },
     {
@@ -116,7 +138,8 @@
           "name": "pageToken",
           "type": "string",
           "required": false,
-          "description": "Opaque page token returned by a previous response for the same shop URL. Pass it back unchanged and do not infer the response type from its prefix. A page can contain lists, videos, or both."
+          "description": "Opaque page token returned by a previous response for the same shop URL. Pass it back unchanged and do not infer the response type from its prefix. A page can contain lists, videos, or both.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -399,7 +422,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Pass the previous response cursor unchanged. Stop when it is null; sending the literal string \"null\" returns an empty terminal page without fetching or charging."
+          "description": "Pass the previous response cursor unchanged. Stop when it is null; sending the literal string \"null\" returns an empty terminal page without fetching or charging.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -507,7 +531,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Pass the previous response cursor unchanged. Stop when it is null; sending the literal string \"null\" returns an empty terminal page without fetching or charging."
+          "description": "Pass the previous response cursor unchanged. Stop when it is null; sending the literal string \"null\" returns an empty terminal page without fetching or charging.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -540,7 +565,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Pass the previous response cursor unchanged. Stop when it is null; sending the literal string \"null\" returns an empty terminal page without fetching or charging."
+          "description": "Pass the previous response cursor unchanged. Stop when it is null; sending the literal string \"null\" returns an empty terminal page without fetching or charging.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -573,7 +599,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Pass the previous response cursor unchanged. Stop when it is null; sending the literal string \"null\" returns an empty terminal page without fetching or charging."
+          "description": "Pass the previous response cursor unchanged. Stop when it is null; sending the literal string \"null\" returns an empty terminal page without fetching or charging.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -918,7 +945,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Cursor to paginate through results"
+          "description": "Cursor to paginate through results",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -1014,7 +1042,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Cursor to paginate through results"
+          "description": "Cursor to paginate through results",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -1151,7 +1180,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "The cursor to paginate to the next page"
+          "description": "The cursor to paginate to the next page",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -1182,7 +1212,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "The cursor to paginate to the next page"
+          "description": "The cursor to paginate to the next page",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -1278,7 +1309,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "The cursor to paginate to the next page"
+          "description": "The cursor to paginate to the next page",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -1472,7 +1504,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Opaque pagination cursor returned from the previous response. Pass it back as-is."
+          "description": "Opaque pagination cursor returned from the previous response. Pass it back as-is.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -1568,7 +1601,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "The cursor to paginate to the next page"
+          "description": "The cursor to paginate to the next page",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -1613,7 +1647,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Cursor from the previous response to get more comments. Keep the same sort on every cursor page."
+          "description": "Cursor from the previous response to get more comments. Keep the same sort on every cursor page.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -1752,7 +1787,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "The cursor to paginate to get more events"
+          "description": "The cursor to paginate to get more events",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -1785,13 +1821,15 @@
           "name": "next_page_id",
           "type": "string",
           "required": false,
-          "description": "To paginate through to the next page"
+          "description": "To paginate through to the next page",
+          "acceptsNumber": true
         },
         {
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "To paginate through to the next page"
+          "description": "To paginate through to the next page",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -1829,7 +1867,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "To paginate through the posts"
+          "description": "To paginate through the posts",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -1860,13 +1899,15 @@
           "name": "next_page_id",
           "type": "string",
           "required": false,
-          "description": "To paginate through to the next page"
+          "description": "To paginate through to the next page",
+          "acceptsNumber": true
         },
         {
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "To paginate through to the next page"
+          "description": "To paginate through to the next page",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -1898,7 +1939,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "The opaque cursor returned by the previous response. Keep the query unchanged when paginating. Stop when cursor is null or has_more is false."
+          "description": "The opaque cursor returned by the previous response. Keep the query unchanged when paginating. Stop when cursor is null or has_more is false.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -2467,7 +2509,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Leave empty for the first request. For the next page, use the cursor from your previous response and keep the same filters."
+          "description": "Leave empty for the first request. For the next page, use the cursor from your previous response and keep the same filters.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -2548,7 +2591,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Pagination cursor returned by Instagram from the previous response."
+          "description": "Pagination cursor returned by Instagram from the previous response.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -2764,7 +2808,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "The cursor to get more replies. Get `cursor` from the previous response."
+          "description": "The cursor to get more replies. Get `cursor` from the previous response.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -2802,7 +2847,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "The cursor to get more comments. Get 'cursor' from previous response."
+          "description": "The cursor to get more comments. Get 'cursor' from previous response.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -3013,7 +3059,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "The cursor returned by the previous response. It is the next Google results page number and cannot exceed 11; cursor 12 or greater returns a 400 response."
+          "description": "The cursor returned by the previous response. It is the next Google results page number and cannot exceed 11; cursor 12 or greater returns a 400 response.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -3046,7 +3093,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "The opaque cursor returned by the previous response. Use it with the same query to fetch the next page of posts."
+          "description": "The opaque cursor returned by the previous response. Use it with the same query to fetch the next page of posts.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -3214,7 +3262,8 @@
           "name": "next_max_id",
           "type": "string",
           "required": false,
-          "description": "Cursor to get next page of results."
+          "description": "Cursor to get next page of results.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -3272,7 +3321,8 @@
           "name": "max_id",
           "type": "string",
           "required": false,
-          "description": "Max id to get more reels. Get 'max_id' from previous response."
+          "description": "Max id to get more reels. Get 'max_id' from previous response.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -3303,7 +3353,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Cursor returned by the previous response."
+          "description": "Cursor returned by the previous response.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -3464,7 +3515,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Cursor from the previous response for the next page"
+          "description": "Cursor from the previous response for the next page",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -3795,7 +3847,8 @@
           "name": "paginationToken",
           "type": "string",
           "required": false,
-          "description": "Pagination token to paginate through results"
+          "description": "Pagination token to paginate through results",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -4054,7 +4107,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Next offset returned by the previous response. Keep the same search and filters; maximum 990."
+          "description": "Next offset returned by the previous response. Keep the same search and filters; maximum 990.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -4098,7 +4152,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "The cursor returned from the previous response. The maximum cursor is 11; cursor 12 or greater returns a 400 response."
+          "description": "The cursor returned from the previous response. The maximum cursor is 11; cursor 12 or greater returns a 400 response.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -4136,7 +4191,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "The cursor to get the next page of results"
+          "description": "The cursor to get the next page of results",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -4220,7 +4276,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Cursor"
+          "description": "Cursor",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -4371,7 +4428,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "One opaque cursor returned by the previous response to get more comments or replies. Do not combine multiple cursors."
+          "description": "One opaque cursor returned by the previous response to get more comments or replies. Do not combine multiple cursors.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -4474,7 +4532,8 @@
           "name": "after",
           "type": "string",
           "required": false,
-          "description": "Used to paginate to next page"
+          "description": "Used to paginate to next page",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -4532,7 +4591,8 @@
           "name": "after",
           "type": "string",
           "required": false,
-          "description": "After to get more posts. Get 'after' from previous response."
+          "description": "After to get more posts. Get 'after' from previous response.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -4630,7 +4690,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Cursor to get more results. Get 'cursor' from previous response."
+          "description": "Cursor to get more results. Get 'cursor' from previous response.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -4669,7 +4730,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Cursor from the previous response. This is the next page number, like 2 or 3."
+          "description": "Cursor from the previous response. This is the next page number, like 2 or 3.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -4702,7 +4764,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Cursor from the previous response. This is the next page number, like 2 or 3."
+          "description": "Cursor from the previous response. This is the next page number, like 2 or 3.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -4892,7 +4955,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Pagination cursor from the previous response."
+          "description": "Pagination cursor from the previous response.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -4993,7 +5057,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Cursor to get more tracks. Get 'cursor' from previous response."
+          "description": "Cursor to get more tracks. Get 'cursor' from previous response.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -5198,7 +5263,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Cursor returned by the previous response. Omit it for the first page."
+          "description": "Cursor returned by the previous response. Omit it for the first page.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -5462,7 +5528,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Numeric cursor returned by the previous page. Omit it for the latest posts."
+          "description": "Numeric cursor returned by the previous page. Omit it for the latest posts.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -5832,7 +5899,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Opaque cursor returned from the previous response. Repeat the same query or advertiser_name, adv_biz_ids when used, and any explicit start_time, end_time and region filters with every returned cursor. Pass the cursor unchanged; it does not replace the search inputs or filters."
+          "description": "Opaque cursor returned from the previous response. Repeat the same query or advertiser_name, adv_biz_ids when used, and any explicit start_time, end_time and region filters with every returned cursor. Pass the cursor unchanged; it does not replace the search inputs or filters.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -5869,7 +5937,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Cursor to get more videos. Use max_cursor from the previous response."
+          "description": "Cursor to get more videos. Use max_cursor from the previous response.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -6074,7 +6143,8 @@
           "name": "max_cursor",
           "type": "string",
           "required": false,
-          "description": "Cursor to get more videos. Get 'max_cursor' from previous response."
+          "description": "Cursor to get more videos. Get 'max_cursor' from previous response.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -6419,7 +6489,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Cursor parameter from the previous response to retrieve the next page of products. Omit for the first page."
+          "description": "Cursor parameter from the previous response to retrieve the next page of products. Omit for the first page.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -6725,7 +6796,7 @@
       "tag": "TikTok Shop",
       "summary": "User Showcase",
       "shortDescription": "Fetches products featured in a TikTok user's public showcase",
-      "description": "Fetches products featured in a TikTok user's public showcase — the products a creator promotes on their profile. Returns an array of product objects each with title, price, images, and shop details. Use POST request if pagination is cutting off too early. Just send the query params in the body. Gets public user's showcase products",
+      "description": "Fetches products featured in a TikTok user's public showcase — the products a creator promotes on their profile. Returns an array of product objects each with title, price, images, and shop details. Just send the query params in the body. Gets public user's showcase products",
       "params": [
         {
           "name": "handle",
@@ -6743,7 +6814,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "The cursor to the next page of products"
+          "description": "The cursor to the next page of products",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -7086,7 +7158,8 @@
           "name": "next_max_id",
           "type": "string",
           "required": false,
-          "description": "Used to paginate to next page"
+          "description": "Used to paginate to next page",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -7123,7 +7196,10 @@
       ],
       "output": {
         "kind": "array",
-        "fields": {}
+        "fields": {
+          "data": "object",
+          "extensions": "object"
+        }
       }
     },
     {
@@ -7423,7 +7499,8 @@
           "name": "cursor",
           "type": "string",
           "required": false,
-          "description": "Pass the cursor returned by the previous response. Supported page cursors are 1 through 11. A null response cursor means there are no more pages."
+          "description": "Pass the cursor returned by the previous response. Supported page cursors are 1 through 11. A null response cursor means there are no more pages.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -7627,7 +7704,8 @@
           "name": "continuationToken",
           "type": "string",
           "required": false,
-          "description": "Continuation token to get more community posts. Get 'continuationToken' from previous response."
+          "description": "Continuation token to get more community posts. Get 'continuationToken' from previous response.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -7664,7 +7742,8 @@
           "name": "continuationToken",
           "type": "string",
           "required": false,
-          "description": "Continuation token to get more lives. Get 'continuationToken' from previous response."
+          "description": "Continuation token to get more lives. Get 'continuationToken' from previous response.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -7701,7 +7780,8 @@
           "name": "continuationToken",
           "type": "string",
           "required": false,
-          "description": "Continuation token to get more playlists. Get 'continuationToken' from previous response."
+          "description": "Continuation token to get more playlists. Get 'continuationToken' from previous response.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -7738,7 +7818,8 @@
           "name": "continuationToken",
           "type": "string",
           "required": false,
-          "description": "Token from the previous response. Keep the same handle and query; stop when the token is null."
+          "description": "Token from the previous response. Keep the same handle and query; stop when the token is null.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -7787,7 +7868,8 @@
           "name": "continuationToken",
           "type": "string",
           "required": false,
-          "description": "Continuation token to get more videos. Get 'continuationToken' from previous response."
+          "description": "Continuation token to get more videos. Get 'continuationToken' from previous response.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -7842,7 +7924,8 @@
           "name": "continuationToken",
           "type": "string",
           "required": false,
-          "description": "Continuation token to get more videos. Get 'continuationToken' from previous response."
+          "description": "Continuation token to get more videos. Get 'continuationToken' from previous response.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -7904,7 +7987,8 @@
           "name": "continuationToken",
           "type": "string",
           "required": false,
-          "description": "Token from the previous response to get the next page. Omit for the first page. Stop when the returned continuationToken is null."
+          "description": "Token from the previous response to get the next page. Omit for the first page. Stop when the returned continuationToken is null.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -7978,7 +8062,14 @@
           "name": "continuationToken",
           "type": "string",
           "required": false,
-          "description": "Continuation token to get more videos. Get 'continuationToken' from previous response."
+          "description": "Continuation token to get more videos. Get 'continuationToken' from previous response.",
+          "acceptsNumber": true
+        },
+        {
+          "name": "is_paid_promotions",
+          "type": "boolean",
+          "required": false,
+          "description": "Set to true to search only videos with the paid product placement / sponsorship disclosure."
         }
       ],
       "output": {
@@ -8021,7 +8112,8 @@
           "name": "continuationToken",
           "type": "string",
           "required": false,
-          "description": "Continuation token to get more videos. Get 'continuationToken' from previous response."
+          "description": "Continuation token to get more videos. Get 'continuationToken' from previous response.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -8155,7 +8247,8 @@
           "name": "continuationToken",
           "type": "string",
           "required": true,
-          "description": "Continuation token for the comment replies. Use 'repliesContinuationToken' from the Comments endpoint, or 'continuationToken' from a previous replies response to paginate."
+          "description": "Continuation token for the comment replies. Use 'repliesContinuationToken' from the Comments endpoint, or 'continuationToken' from a previous replies response to paginate.",
+          "acceptsNumber": true
         }
       ],
       "output": {
@@ -8193,7 +8286,8 @@
           "name": "continuationToken",
           "type": "string",
           "required": false,
-          "description": "Continuation token to get more comments. Get 'continuationToken' from previous response."
+          "description": "Continuation token to get more comments. Get 'continuationToken' from previous response.",
+          "acceptsNumber": true
         }
       ],
       "output": {

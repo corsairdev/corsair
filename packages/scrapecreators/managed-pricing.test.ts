@@ -140,6 +140,58 @@ describe('scrapecreators on managed pricing', () => {
 		}
 	});
 
+	it("refuses the account routes, which would read Corsair's account", async () => {
+		const net = mockNetwork();
+		const { corsair, testDb } = await createClient();
+		try {
+			await expect(
+				corsair.scrapecreators.api.account.apiUsage({}),
+			).rejects.toThrow(/managed_pricing/);
+			await expect(
+				corsair.scrapecreators.api.account.creditBalance({}),
+			).rejects.toThrow(/managed_pricing/);
+			expect(net.toScrapeCreators()).toHaveLength(0);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it("leaves Corsair's balance out of an error too", async () => {
+		mockNetwork();
+		const original = globalThis.fetch as jest.Mock;
+		const passThrough = original.getMockImplementation();
+		original.mockImplementation(async (input, init) => {
+			const url = String(input instanceof Request ? input.url : input);
+			if (url.startsWith('https://api.scrapecreators.com/')) {
+				return new Response(
+					JSON.stringify({
+						success: false,
+						credits_remaining: 3781,
+						credits_charged: 0,
+						error: 'missing_parameter',
+						errorStatus: 400,
+						message: 'You must provide a handle or user_id',
+					}),
+					{ status: 400, headers: { 'content-type': 'application/json' } },
+				);
+			}
+			return passThrough?.(input, init);
+		});
+		const { corsair, testDb } = await createClient();
+		try {
+			const error = (await corsair.scrapecreators.api.tiktok
+				.profile({})
+				.catch((e: unknown) => e)) as { status?: number; body?: object };
+			expect(error.status).toBe(400);
+			expect(error.body).toEqual(
+				expect.objectContaining({ error: 'missing_parameter' }),
+			);
+			expect(error.body).not.toHaveProperty('credits_remaining');
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
 	it('refuses an explicit key together with managed_pricing', () => {
 		expect(() =>
 			scrapecreators({ authType: 'managed_pricing', key: 'sc_own' }),

@@ -19,6 +19,8 @@ const ParamSchema = z
 		required: z.boolean(),
 		description: z.string(),
 		enum: z.array(z.string()).min(1).optional(),
+		/** A pagination cursor that ScrapeCreators sometimes returns as a number. */
+		acceptsNumber: z.boolean().optional(),
 	})
 	.strict();
 
@@ -46,6 +48,7 @@ const OperationSchema = z
 		output: z
 			.object({
 				kind: z.enum(['object', 'array']),
+				/** Top-level fields, or each row's fields for an `array` response. */
 				fields: z.record(z.string(), OutputFieldKind),
 			})
 			.strict(),

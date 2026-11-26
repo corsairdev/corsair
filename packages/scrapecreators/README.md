@@ -29,9 +29,13 @@ characters. The spec documents responses by example only, so each response
 checks the kind of the top-level fields the example shows (object, list,
 scalar), every field may be missing or `null`, and unknown fields pass through.
 
-Every response reports `credits_charged` (0 for cache hits, empty pages and
-errors). With `authType: 'managed_pricing'` the call runs on Corsair's
-ScrapeCreators account and the response leaves out `credits_remaining`.
+Every data response reports `credits_charged` (0 for cache hits and errors;
+some routes also charge nothing for an empty page). With
+`authType: 'managed_pricing'` the call runs on Corsair's ScrapeCreators account:
+responses and errors leave out `credits_remaining`, and the `account.*`
+operations, which read the account behind the key, are refused. Managed pricing
+works once Hub offers ScrapeCreators; until then, use your own key
+(`authType: 'api_key'`).
 
 Left out: routes the docs still list but the API refuses (Reddit Ad Library,
 TikTok popular songs and videos, Instagram reels by song).

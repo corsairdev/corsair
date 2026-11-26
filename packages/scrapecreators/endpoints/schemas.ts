@@ -23,6 +23,10 @@ function paramSchema(param: ScrapeCreatorsParamDefinition): z.ZodType {
 	if (param.enum) {
 		// A zod enum, so get_schema and the docs show the allowed values.
 		schema = z.enum(param.enum as [string, ...string[]]);
+	} else if (param.acceptsNumber) {
+		// Pagination cursors come back as numbers on some routes (TikTok
+		// max_cursor, Rumble and Spotify cursor); either form is sent as text.
+		schema = z.union([z.string(), z.number()]);
 	} else if (param.type === 'integer') {
 		schema = z.number().int();
 	} else if (param.type === 'number') {
@@ -71,7 +75,7 @@ const envelopeShape = {
 		.number()
 		.nullish()
 		.describe(
-			'Credits this call cost (0 for cache hits, empty pages and errors).',
+			'Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page).',
 		),
 	cached: z
 		.boolean()
@@ -112,8 +116,19 @@ export function getScrapeCreatorsOutputSchema(id: string): z.ZodType {
 	if (!schema) {
 		const operation = scrapeCreatorsOperationFor(id);
 		if (operation.output.kind === 'array') {
-			// `unknown` is necessary because the route answers with a list whose items the spec shows only by example.
-			schema = z.array(z.unknown());
+			const rowShape: Record<string, z.ZodType> = {};
+			for (const [name, kind] of Object.entries(operation.output.fields)) {
+				rowShape[name] = outputFieldSchemas[kind];
+			}
+			// Each row is checked against the example's first row: an object
+			// with those fields (lenient, like the top-level fields). An empty
+			// list is valid.
+			schema = z.array(
+				Object.keys(rowShape).length > 0
+					? z.object(rowShape).passthrough()
+					: // `unknown` is necessary because the example shows no rows to take a shape from.
+						z.unknown(),
+			);
 		} else {
 			const shape: Record<string, z.ZodType> = { ...envelopeShape };
 			for (const [name, kind] of Object.entries(operation.output.fields)) {
@@ -124,6 +139,39 @@ export function getScrapeCreatorsOutputSchema(id: string): z.ZodType {
 		outputSchemaCache.set(id, schema);
 	}
 	return schema;
+}
+
+/**
+ * ScrapeCreators reads enum values case-insensitively (TikTok Ad Library
+ * regions, for one), so a value that matches a listed one in another case is
+ * sent as the listed one (`gb` as `GB`). Done before validation rather than in
+ * the schema, so the schema stays a plain enum for the docs and get_schema.
+ */
+// `unknown` is necessary because the caller's input is unvalidated here.
+export function withCanonicalEnums(id: string, input: unknown): unknown {
+	if (typeof input !== 'object' || input === null || Array.isArray(input)) {
+		return input;
+	}
+	// `unknown` is necessary because the input's fields are unvalidated here.
+	let out: Record<string, unknown> | undefined;
+	for (const param of scrapeCreatorsOperationFor(id).params) {
+		const value = (input as Record<string, unknown>)[param.name];
+		if (
+			!param.enum ||
+			typeof value !== 'string' ||
+			param.enum.includes(value)
+		) {
+			continue;
+		}
+		const match = param.enum.find(
+			(member) => member.toLowerCase() === value.toLowerCase(),
+		);
+		if (match) {
+			out ??= { ...(input as Record<string, unknown>) };
+			out[param.name] = match;
+		}
+	}
+	return out ?? input;
 }
 
 /** `input` and `output` are getters, so a schema is built only when something reads it. */

@@ -50,6 +50,8 @@ export async function makeScrapeCreatorsRequest<T>(
 		method: 'GET' | 'POST';
 		query?: Record<string, string | number | boolean>;
 		body?: Record<string, string | number | boolean>;
+		/** Drop `credits_remaining` from error bodies too (managed pricing: Corsair's account). */
+		hideBalance?: boolean;
 	},
 ): Promise<T> {
 	// keyBuilder already throws AuthMissingError before an empty key reaches
@@ -85,7 +87,7 @@ export async function makeScrapeCreatorsRequest<T>(
 		return parseTextJson(result) as T;
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw withoutRequestData(error);
+			throw withoutRequestData(error, options.hideBalance === true);
 		}
 		throw error;
 	}
@@ -119,8 +121,15 @@ const MAX_MESSAGE_LENGTH = 300;
  * ScrapeCreators' own `message` plus its `error` code
  * (`{"success":false,"error":"missing_parameter","errorStatus":400,"message":"..."}`).
  */
-function withoutRequestData(error: ApiError): ApiError {
-	const body = parseTextJson(error.body);
+function withoutRequestData(error: ApiError, hideBalance: boolean): ApiError {
+	const parsed = parseTextJson(error.body);
+	const body =
+		hideBalance &&
+		typeof parsed === 'object' &&
+		parsed !== null &&
+		!Array.isArray(parsed)
+			? withoutField(parsed as Record<string, unknown>, 'credits_remaining')
+			: parsed;
 	return new ApiError(
 		{
 			...error.request,
@@ -159,4 +168,10 @@ function safeMessage(error: ApiError, body: unknown): string {
 	return typeof fields.error === 'string' && !text.includes(fields.error)
 		? `${text} (${fields.error})`
 		: text;
+}
+
+// `unknown` is necessary because an error body is whatever JSON the API sent; only one field is removed.
+function withoutField(body: Record<string, unknown>, field: string) {
+	const { [field]: _removed, ...rest } = body;
+	return rest;
 }

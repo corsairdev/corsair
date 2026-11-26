@@ -20,7 +20,7 @@ describe('scrapecreators manifest', () => {
 		).toEqual([]);
 	});
 
-	it('covers every route in the spec once', () => {
+	it('has one operation per route, 198 in all', () => {
 		expect(ids).toHaveLength(198);
 		expect(new Set(ids).size).toBe(ids.length);
 		const paths = scrapeCreatorsOperations.map((operation) => operation.path);

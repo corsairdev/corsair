@@ -6,7 +6,7 @@ description: "Public social media data from ScrapeCreators: profiles, posts, vid
 
 Use **ScrapeCreators** through Corsair: one client, typed API calls.
 
-All 198 operations are reads. Most cost 1 ScrapeCreators credit; a few cost more (`tiktok.userAudience` 26, `creators.findSocialProfiles` and `creators.findEmails` up to 10, `download_media` 10, `google.companyAds` with `get_ad_details` 25, long AI transcripts 10 per started minute). Errors, empty pages and `cache_max_age` cache hits cost 0. Every response says what it cost in `credits_charged`; the `account.*` operations are free.
+All 198 operations are reads. Most cost 1 ScrapeCreators credit; a few cost more (`tiktok.userAudience` 26, `creators.findSocialProfiles` and `creators.findEmails` up to 10, `download_media` 10, `google.companyAds` with `get_ad_details` 25, long AI transcripts 10 per started minute). Errors and `cache_max_age` cache hits cost 0, and some routes do not charge for an empty page. Every data response says what it cost in `credits_charged`. The `account.*` operations are free and read the account whose key you pass, so they are not available with managed pricing.
 
 **What you get:**
 

@@ -69,12 +69,16 @@ live('ScrapeCreators live API', () => {
 			const args = docs.apiExamples[id]?.args;
 			expect(args).toBeDefined();
 			const [group, action] = id.split('.') as [string, string];
-			const result = (await api[group]?.[action]?.(args)) as {
-				success?: boolean;
-				credits_charged?: number;
-			};
-			expect(result.success).toBe(true);
-			expect(typeof result.credits_charged).toBe('number');
+			const result = await api[group]?.[action]?.(args);
+			expect(result).toBeDefined();
+			// The account routes answer with a list (usage) or a balance without
+			// the data envelope; every other route carries `credits_charged`.
+			if (Array.isArray(result)) return;
+			const body = result as { success?: boolean; credits_charged?: number };
+			expect(body.success).toBe(true);
+			if (!id.startsWith('account.')) {
+				expect(typeof body.credits_charged).toBe('number');
+			}
 		},
 		3 * 60_000,
 	);

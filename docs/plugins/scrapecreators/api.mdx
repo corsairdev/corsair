@@ -28,11 +28,33 @@ await corsair.scrapecreators.api.account.apiUsage({ page: '1' });
 |------|------|----------|-------------|
 | `endpoint` | `string` | No | Filter by endpoint name (partial match) |
 | `statusCode` | `string` | No | Filter by HTTP status code |
-| `page` | `string` | No | Page number for pagination (max 100) |
+| `page` | `string \| number` | No | Page number for pagination (max 100) |
 
 
 
-**Output:** `any[]`
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number | null,
+  endpoint?: string | number | null,
+  status_code?: string | number | null,
+  duration_ms?: string | number | null,
+  success?: boolean | null,
+  response_time?: string | number | null,
+  request_time?: string | number | null,
+  request_payload?: Record<string, any> | null,
+  http_method?: string | number | null,
+  created_at?: string | number | null,
+  duration_secs?: string | number | null,
+  credits?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -58,7 +80,7 @@ await corsair.scrapecreators.api.account.creditBalance({});
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `creditCount` | `string \| number \| null` | No | — |
@@ -83,7 +105,20 @@ await corsair.scrapecreators.api.account.dailyUsageCount({});
 **Input:** _empty object_
 
 
-**Output:** `any[]`
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  usage_date?: string | number | null,
+  total_credits?: string | number | null,
+  request_count?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -109,7 +144,20 @@ await corsair.scrapecreators.api.account.mostUsedRoutes({});
 
 
 
-**Output:** `any[]`
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  base_endpoint?: string | number | null,
+  call_count?: string | number | null,
+  total_credits?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -133,7 +181,7 @@ await corsair.scrapecreators.api.amazon.shop({ url: 'https://www.amazon.com/shop
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | URL to Amazon Shop page |
-| `pageToken` | `string` | No | Opaque page token returned by a previous response for the same shop URL. Pass it back unchanged and do not infer the response type from its prefix. A page can contain lists, videos, or both. |
+| `pageToken` | `string \| number` | No | Opaque page token returned by a previous response for the same shop URL. Pass it back unchanged and do not infer the response type from its prefix. A page can contain lists, videos, or both. |
 
 
 
@@ -143,7 +191,7 @@ await corsair.scrapecreators.api.amazon.shop({ url: 'https://www.amazon.com/shop
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `avatar` | `string \| number \| null` | No | — |
@@ -171,7 +219,7 @@ Retrieves public Apple Music album details, including title, artist, artwork, re
 **Risk:** `read`
 
 ```ts
-await corsair.scrapecreators.api.appleMusic.album({});
+await corsair.scrapecreators.api.appleMusic.album({ url: 'https://music.apple.com/us/album/lover/1468058165' });
 ```
 
 **Input**
@@ -189,7 +237,7 @@ await corsair.scrapecreators.api.appleMusic.album({});
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `data` | `Record<string, any> \| null` | No | — |
@@ -225,7 +273,7 @@ await corsair.scrapecreators.api.appleMusic.artist({ url: 'https://music.apple.c
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `data` | `Record<string, any> \| null` | No | — |
@@ -261,7 +309,7 @@ await corsair.scrapecreators.api.appleMusic.search({ query: 'coldplay' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `data` | `Record<string, any> \| null` | No | — |
@@ -279,7 +327,7 @@ Retrieves public Apple Music song details by id or URL
 **Risk:** `read`
 
 ```ts
-await corsair.scrapecreators.api.appleMusic.track({});
+await corsair.scrapecreators.api.appleMusic.track({ url: 'https://music.apple.com/us/album/lover/1468058165?i=1468058169' });
 ```
 
 **Input**
@@ -297,7 +345,7 @@ await corsair.scrapecreators.api.appleMusic.track({});
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `data` | `Record<string, any> \| null` | No | — |
@@ -334,7 +382,7 @@ await corsair.scrapecreators.api.bluesky.post({ url: 'https://bsky.app/profile/b
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `post` | `Record<string, any> \| null` | No | — |
@@ -370,7 +418,7 @@ await corsair.scrapecreators.api.bluesky.profile({ handle: 'bsky.app' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `did` | `string \| number \| null` | No | — |
@@ -418,7 +466,7 @@ await corsair.scrapecreators.api.bluesky.userPosts({ handle: 'bsky.app' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `feed` | `any[] \| null` | No | — |
@@ -456,7 +504,7 @@ await corsair.scrapecreators.api.cosmos.cluster({ url: 'https://www.cosmos.so/de
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -491,7 +539,7 @@ await corsair.scrapecreators.api.cosmos.clusterPosts({ url: 'https://www.cosmos.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | Public Cosmos collection URL. |
-| `cursor` | `string` | No | Pass the previous response cursor unchanged. Stop when it is null; sending the literal string "null" returns an empty terminal page without fetching or charging. |
+| `cursor` | `string \| number` | No | Pass the previous response cursor unchanged. Stop when it is null; sending the literal string "null" returns an empty terminal page without fetching or charging. |
 
 
 
@@ -501,7 +549,7 @@ await corsair.scrapecreators.api.cosmos.clusterPosts({ url: 'https://www.cosmos.
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `items` | `any[] \| null` | No | — |
@@ -539,7 +587,7 @@ await corsair.scrapecreators.api.cosmos.post({ url: 'https://www.cosmos.so/e/210
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -587,7 +635,7 @@ await corsair.scrapecreators.api.cosmos.profile({ handle: 'design' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -627,7 +675,7 @@ await corsair.scrapecreators.api.cosmos.search({ query: 'architecture' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | Search text. |
-| `cursor` | `string` | No | Pass the previous response cursor unchanged. Stop when it is null; sending the literal string "null" returns an empty terminal page without fetching or charging. |
+| `cursor` | `string \| number` | No | Pass the previous response cursor unchanged. Stop when it is null; sending the literal string "null" returns an empty terminal page without fetching or charging. |
 
 
 
@@ -637,7 +685,7 @@ await corsair.scrapecreators.api.cosmos.search({ query: 'architecture' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `items` | `any[] \| null` | No | — |
@@ -666,7 +714,7 @@ await corsair.scrapecreators.api.cosmos.userClusters({ handle: 'design' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `handle` | `string` | Yes | Cosmos username without a profile URL. |
-| `cursor` | `string` | No | Pass the previous response cursor unchanged. Stop when it is null; sending the literal string "null" returns an empty terminal page without fetching or charging. |
+| `cursor` | `string \| number` | No | Pass the previous response cursor unchanged. Stop when it is null; sending the literal string "null" returns an empty terminal page without fetching or charging. |
 
 
 
@@ -676,7 +724,7 @@ await corsair.scrapecreators.api.cosmos.userClusters({ handle: 'design' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `items` | `any[] \| null` | No | — |
@@ -705,7 +753,7 @@ await corsair.scrapecreators.api.cosmos.userPosts({ handle: 'design' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `handle` | `string` | Yes | Cosmos username without a profile URL. |
-| `cursor` | `string` | No | Pass the previous response cursor unchanged. Stop when it is null; sending the literal string "null" returns an empty terminal page without fetching or charging. |
+| `cursor` | `string \| number` | No | Pass the previous response cursor unchanged. Stop when it is null; sending the literal string "null" returns an empty terminal page without fetching or charging. |
 
 
 
@@ -715,7 +763,7 @@ await corsair.scrapecreators.api.cosmos.userPosts({ handle: 'design' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `items` | `any[] \| null` | No | — |
@@ -755,7 +803,7 @@ await corsair.scrapecreators.api.creators.detectAgeGender({ url: 'https://www.in
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `ageRange` | `Record<string, any> \| null` | No | — |
@@ -794,7 +842,7 @@ await corsair.scrapecreators.api.creators.findEmails({ platform: 'instagram', ha
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `source` | `Record<string, any> \| null` | No | — |
@@ -852,7 +900,7 @@ await corsair.scrapecreators.api.creators.findSocialProfiles({ platform: 'instag
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `source` | `Record<string, any> \| null` | No | — |
@@ -912,7 +960,7 @@ await corsair.scrapecreators.api.facebook.adLibraryAd({ id: '1550534860016399' }
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `adArchiveID` | `string \| number \| null` | No | — |
@@ -946,7 +994,7 @@ Retrieves a transcript for a Facebook Ad Library video ad by ID or URL
 **Risk:** `read`
 
 ```ts
-await corsair.scrapecreators.api.facebook.adLibraryAdTranscript({});
+await corsair.scrapecreators.api.facebook.adLibraryAdTranscript({ url: 'https://www.facebook.com/ads/library?id=1020359190509080' });
 ```
 
 **Input**
@@ -966,7 +1014,7 @@ await corsair.scrapecreators.api.facebook.adLibraryAdTranscript({});
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `data` | `Record<string, any> \| null` | No | — |
@@ -1001,7 +1049,7 @@ await corsair.scrapecreators.api.facebook.adLibraryCompanyAds({ companyName: 'ni
 | `start_date` | `string` | No | Start date to search for. Format: YYYY-MM-DD |
 | `end_date` | `string` | No | End date to search for. Format: YYYY-MM-DD |
 | `trim` | `boolean` | No | Set to true for a trimmed down version of the response |
-| `cursor` | `string` | No | Cursor to paginate through results |
+| `cursor` | `string \| number` | No | Cursor to paginate through results |
 
 
 
@@ -1011,7 +1059,7 @@ await corsair.scrapecreators.api.facebook.adLibraryCompanyAds({ companyName: 'ni
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `results` | `any[] \| null` | No | — |
@@ -1048,7 +1096,7 @@ await corsair.scrapecreators.api.facebook.adLibrarySearchAds({ query: 'nike', co
 | `start_date` | `string` | No | Impressions start date. Needs to be in YYYY-MM-DD format. |
 | `end_date` | `string` | No | Impressions end date. Needs to be in YYYY-MM-DD format. |
 | `trim` | `boolean` | No | Set to true for a trimmed down version of the response |
-| `cursor` | `string` | No | Cursor to paginate through results |
+| `cursor` | `string \| number` | No | Cursor to paginate through results |
 
 
 
@@ -1058,7 +1106,7 @@ await corsair.scrapecreators.api.facebook.adLibrarySearchAds({ query: 'nike', co
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `searchResults` | `any[] \| null` | No | — |
@@ -1095,7 +1143,7 @@ await corsair.scrapecreators.api.facebook.adLibrarySearchCompanies({ query: 'nik
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `searchResults` | `any[] \| null` | No | — |
@@ -1113,7 +1161,7 @@ Get a specific event by its URL or id
 **Risk:** `read`
 
 ```ts
-await corsair.scrapecreators.api.facebook.eventDetails({});
+await corsair.scrapecreators.api.facebook.eventDetails({ url: 'https://www.facebook.com/events/2255360061870188/' });
 ```
 
 **Input**
@@ -1131,7 +1179,7 @@ await corsair.scrapecreators.api.facebook.eventDetails({});
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -1202,7 +1250,7 @@ await corsair.scrapecreators.api.facebook.events({ url: 'https://www.facebook.co
 |------|------|----------|-------------|
 | `url` | `string` | Yes | The URL of the city's Facebook Events page |
 | `time` | `today \| this_week \| next_week` | No | The time frame to search for. Defaults to all time |
-| `cursor` | `string` | No | The cursor to paginate to the next page |
+| `cursor` | `string \| number` | No | The cursor to paginate to the next page |
 
 
 
@@ -1212,7 +1260,7 @@ await corsair.scrapecreators.api.facebook.events({ url: 'https://www.facebook.co
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `events` | `any[] \| null` | No | — |
@@ -1239,7 +1287,7 @@ await corsair.scrapecreators.api.facebook.eventsSearch({ query: 'NASA' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | The query to search for |
-| `cursor` | `string` | No | The cursor to paginate to the next page |
+| `cursor` | `string \| number` | No | The cursor to paginate to the next page |
 
 
 
@@ -1249,7 +1297,7 @@ await corsair.scrapecreators.api.facebook.eventsSearch({ query: 'NASA' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `events` | `any[] \| null` | No | — |
@@ -1268,7 +1316,7 @@ Fetches the public information shown on a Facebook group's About page, including
 **Risk:** `read`
 
 ```ts
-await corsair.scrapecreators.api.facebook.group({});
+await corsair.scrapecreators.api.facebook.group({ url: 'https://www.facebook.com/groups/366190054572553/about' });
 ```
 
 **Input**
@@ -1286,7 +1334,7 @@ await corsair.scrapecreators.api.facebook.group({});
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -1321,7 +1369,7 @@ Fetches posts from a public Facebook group, limited to 3 posts per page due to A
 **Risk:** `read`
 
 ```ts
-await corsair.scrapecreators.api.facebook.groupPosts({});
+await corsair.scrapecreators.api.facebook.groupPosts({ url: 'https://www.facebook.com/groups/1270525996445602/' });
 ```
 
 **Input**
@@ -1331,7 +1379,7 @@ await corsair.scrapecreators.api.facebook.groupPosts({});
 | `url` | `string` | No | The URL of the group |
 | `group_id` | `string` | No | The ID of the group |
 | `sort_by` | `TOP_POSTS \| RECENT_ACTIVITY \| CHRONOLOGICAL \| CHRONOLOGICAL_LISTINGS` | No | How to sort the posts. Defaults to CHRONOLOGICAL. |
-| `cursor` | `string` | No | The cursor to paginate to the next page |
+| `cursor` | `string \| number` | No | The cursor to paginate to the next page |
 
 
 
@@ -1341,7 +1389,7 @@ await corsair.scrapecreators.api.facebook.groupPosts({});
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `posts` | `any[] \| null` | No | — |
@@ -1360,7 +1408,7 @@ Fetches details for a Facebook Marketplace item by item id or Marketplace item U
 **Risk:** `read`
 
 ```ts
-await corsair.scrapecreators.api.facebook.marketplaceItem({});
+await corsair.scrapecreators.api.facebook.marketplaceItem({ url: 'https://www.facebook.com/marketplace/item/1656586118821988/' });
 ```
 
 **Input**
@@ -1378,7 +1426,7 @@ await corsair.scrapecreators.api.facebook.marketplaceItem({});
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -1437,7 +1485,7 @@ await corsair.scrapecreators.api.facebook.marketplaceLocationSearch({ query: 'Au
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `locations` | `any[] \| null` | No | — |
@@ -1474,7 +1522,7 @@ await corsair.scrapecreators.api.facebook.marketplaceSearch({ lat: 30.2677, lng:
 | `condition` | `new \| used_like_new \| used_good \| used_fair` | No | Condition filter |
 | `date_listed` | `1 \| 7 \| 30 \| all \| last_24_hours \| last_7_days \| last_30_days` | No | Facebook Marketplace date filter. Uses the same calendar-day buckets as the UI, so last_24_hours can include listings from the prior calendar day. |
 | `availability` | `available \| sold \| all` | No | Availability filter |
-| `cursor` | `string` | No | Opaque pagination cursor returned from the previous response. Pass it back as-is. |
+| `cursor` | `string \| number` | No | Opaque pagination cursor returned from the previous response. Pass it back as-is. |
 
 
 
@@ -1484,7 +1532,7 @@ await corsair.scrapecreators.api.facebook.marketplaceSearch({ lat: 30.2677, lng:
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `listings` | `any[] \| null` | No | — |
@@ -1524,7 +1572,7 @@ await corsair.scrapecreators.api.facebook.post({ url: 'https://www.facebook.com/
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `post_id` | `string \| number \| null` | No | — |
@@ -1557,7 +1605,7 @@ Get the replies to a comment with cursor-based pagination
 **Risk:** `read`
 
 ```ts
-await corsair.scrapecreators.api.facebook.postCommentReplies({ feedback_id: 'ZmVlZGJhY2s6MzM3MzYxMzI5OTQ4Nzc1NV8xOTI5NTk0OTE3Njg3MTcz', expansion_token: 'MjoxNzc4NjM1MDM3OgF_JaMa3kMP9RIWC....' });
+await corsair.scrapecreators.api.facebook.postCommentReplies({ feedback_id: 'FEEDBACK_ID_FROM_facebook.postComments', expansion_token: 'EXPANSION_TOKEN_FROM_facebook.postComments' });
 ```
 
 **Input**
@@ -1566,7 +1614,7 @@ await corsair.scrapecreators.api.facebook.postCommentReplies({ feedback_id: 'ZmV
 |------|------|----------|-------------|
 | `feedback_id` | `string` | Yes | The *feedback_id* of the comment. Be careful, this is not the comment id. You can get the feedback_id from the /v1/facebook/post/comments endpoint. |
 | `expansion_token` | `string` | Yes | Pass the comment's complete, fresh expansion_token from /v1/facebook/post/comments with sort=all for unfiltered replies. Do not reuse a token from the Most relevant view. |
-| `cursor` | `string` | No | The cursor to paginate to the next page |
+| `cursor` | `string \| number` | No | The cursor to paginate to the next page |
 
 
 
@@ -1576,7 +1624,7 @@ await corsair.scrapecreators.api.facebook.postCommentReplies({ feedback_id: 'ZmV
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `replies` | `any[] \| null` | No | — |
@@ -1606,7 +1654,7 @@ await corsair.scrapecreators.api.facebook.postComments({ url: 'https://www.faceb
 | `url` | `string` | No | Facebook post URL (or reel URL) |
 | `feedback_id` | `string` | No | Using feedback_id (instead of url) will *really* speed up the request. You can get the feedback_id when you make a request to /v1/facebook/post. |
 | `sort` | `most_relevant \| all` | No | Defaults to most_relevant, which can filter comments. Set sort=all to request Facebook's unfiltered view; this does not guarantee every counted comment is available. |
-| `cursor` | `string` | No | Cursor from the previous response to get more comments. Keep the same sort on every cursor page. |
+| `cursor` | `string \| number` | No | Cursor from the previous response to get more comments. Keep the same sort on every cursor page. |
 
 
 
@@ -1616,7 +1664,7 @@ await corsair.scrapecreators.api.facebook.postComments({ url: 'https://www.faceb
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `comments` | `any[] \| null` | No | — |
@@ -1655,7 +1703,7 @@ await corsair.scrapecreators.api.facebook.postTranscript({ url: 'https://www.fac
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `transcript` | `string \| number \| null` | No | — |
@@ -1693,7 +1741,7 @@ await corsair.scrapecreators.api.facebook.profile({ url: 'https://www.facebook.c
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `adLibrary` | `Record<string, any> \| null` | No | — |
@@ -1746,7 +1794,7 @@ await corsair.scrapecreators.api.facebook.profileEvents({ url: 'https://www.face
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | The URL of the public Facebook page |
-| `cursor` | `string` | No | The cursor to paginate to get more events |
+| `cursor` | `string \| number` | No | The cursor to paginate to get more events |
 
 
 
@@ -1756,7 +1804,7 @@ await corsair.scrapecreators.api.facebook.profileEvents({ url: 'https://www.face
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `events` | `any[] \| null` | No | — |
@@ -1785,8 +1833,8 @@ await corsair.scrapecreators.api.facebook.profilePhotos({ url: 'https://www.face
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | Facebook page URL |
-| `next_page_id` | `string` | No | To paginate through to the next page |
-| `cursor` | `string` | No | To paginate through to the next page |
+| `next_page_id` | `string \| number` | No | To paginate through to the next page |
+| `cursor` | `string \| number` | No | To paginate through to the next page |
 
 
 
@@ -1796,7 +1844,7 @@ await corsair.scrapecreators.api.facebook.profilePhotos({ url: 'https://www.face
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `photos` | `any[] \| null` | No | — |
@@ -1825,7 +1873,7 @@ await corsair.scrapecreators.api.facebook.profilePosts({ url: 'https://www.faceb
 |------|------|----------|-------------|
 | `url` | `string` | No | Facebook profile URL |
 | `pageId` | `string` | No | Facebook profile page id |
-| `cursor` | `string` | No | To paginate through the posts |
+| `cursor` | `string \| number` | No | To paginate through the posts |
 
 
 
@@ -1835,7 +1883,7 @@ await corsair.scrapecreators.api.facebook.profilePosts({ url: 'https://www.faceb
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `posts` | `any[] \| null` | No | — |
@@ -1862,8 +1910,8 @@ await corsair.scrapecreators.api.facebook.profileReels({ url: 'https://www.faceb
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | Facebook page URL |
-| `next_page_id` | `string` | No | To paginate through to the next page |
-| `cursor` | `string` | No | To paginate through to the next page |
+| `next_page_id` | `string \| number` | No | To paginate through to the next page |
+| `cursor` | `string \| number` | No | To paginate through to the next page |
 
 
 
@@ -1873,7 +1921,7 @@ await corsair.scrapecreators.api.facebook.profileReels({ url: 'https://www.faceb
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `reels` | `any[] \| null` | No | — |
@@ -1901,7 +1949,7 @@ await corsair.scrapecreators.api.facebook.searchVideos({ query: 'nasa artemis' }
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | The keyword or phrase to search for |
-| `cursor` | `string` | No | The opaque cursor returned by the previous response. Keep the query unchanged when paginating. Stop when cursor is null or has_more is false. |
+| `cursor` | `string \| number` | No | The opaque cursor returned by the previous response. Keep the query unchanged when paginating. Stop when cursor is null or has_more is false. |
 
 
 
@@ -1911,7 +1959,7 @@ await corsair.scrapecreators.api.facebook.searchVideos({ query: 'nasa artemis' }
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `query` | `string \| number \| null` | No | — |
@@ -1951,7 +1999,7 @@ await corsair.scrapecreators.api.github.repository({ url: 'https://github.com/op
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `repository` | `Record<string, any> \| null` | No | — |
@@ -1987,7 +2035,7 @@ await corsair.scrapecreators.api.github.trendingDevelopers({ language: 'typescri
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `since` | `string \| number \| null` | No | — |
@@ -2026,7 +2074,7 @@ await corsair.scrapecreators.api.github.trendingRepositories({ language: 'typesc
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `since` | `string \| number \| null` | No | — |
@@ -2065,7 +2113,7 @@ await corsair.scrapecreators.api.github.user({ handle: 'openai' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -2122,7 +2170,7 @@ await corsair.scrapecreators.api.github.userActivity({ handle: 'torvalds' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `username` | `string \| number \| null` | No | — |
@@ -2165,7 +2213,7 @@ await corsair.scrapecreators.api.github.userContributions({ handle: 'torvalds' }
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `contributions` | `Record<string, any> \| null` | No | — |
@@ -2202,7 +2250,7 @@ await corsair.scrapecreators.api.github.userFollowers({ handle: 'torvalds' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `followers` | `any[] \| null` | No | — |
@@ -2240,7 +2288,7 @@ await corsair.scrapecreators.api.github.userFollowing({ handle: 'torvalds' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `following` | `any[] \| null` | No | — |
@@ -2279,7 +2327,7 @@ await corsair.scrapecreators.api.github.userPullRequests({ handle: 'torvalds' })
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `pull_requests` | `any[] \| null` | No | — |
@@ -2321,7 +2369,7 @@ await corsair.scrapecreators.api.github.userRepositories({ handle: 'openai' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `repositories` | `any[] \| null` | No | — |
@@ -2360,7 +2408,7 @@ await corsair.scrapecreators.api.google.ad({ url: 'https://adstransparency.googl
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `advertiserId` | `string \| number \| null` | No | — |
@@ -2407,7 +2455,7 @@ await corsair.scrapecreators.api.google.adLibrarySearchAdvertisers({ query: 'nik
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `advertisers` | `any[] \| null` | No | — |
@@ -2442,7 +2490,7 @@ await corsair.scrapecreators.api.google.companyAds({ domain: 'nike.com' });
 | `platform` | `google_maps \| google_play \| google_search \| google_shopping \| youtube` | No | Platform to search for. |
 | `format` | `text \| image \| video` | No | Ad format to search for. |
 | `get_ad_details` | `string` | No | Set to true to get the ad details. Will cost 25 credits. |
-| `cursor` | `string` | No | Leave empty for the first request. For the next page, use the cursor from your previous response and keep the same filters. |
+| `cursor` | `string \| number` | No | Leave empty for the first request. For the next page, use the cursor from your previous response and keep the same filters. |
 
 
 
@@ -2452,7 +2500,7 @@ await corsair.scrapecreators.api.google.companyAds({ domain: 'nike.com' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `ads` | `any[] \| null` | No | — |
@@ -2492,7 +2540,7 @@ await corsair.scrapecreators.api.google.search({ query: 'nasa artemis ii' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `results` | `any[] \| null` | No | — |
@@ -2520,7 +2568,7 @@ await corsair.scrapecreators.api.instagram.audioReels({ audio_id: '1392969992841
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `audio_id` | `string` | Yes | The audio id from the Instagram audio page URL. |
-| `cursor` | `string` | No | Pagination cursor returned by Instagram from the previous response. |
+| `cursor` | `string \| number` | No | Pagination cursor returned by Instagram from the previous response. |
 
 
 
@@ -2530,7 +2578,7 @@ await corsair.scrapecreators.api.instagram.audioReels({ audio_id: '1392969992841
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `reels` | `any[] \| null` | No | — |
@@ -2568,7 +2616,7 @@ await corsair.scrapecreators.api.instagram.basicProfile({ userId: '528817151' })
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `friendship_status` | `any` | No | — |
@@ -2660,7 +2708,7 @@ await corsair.scrapecreators.api.instagram.mediaTranscript({ url: 'https://www.i
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `transcripts` | `any[] \| null` | No | — |
@@ -2700,7 +2748,7 @@ await corsair.scrapecreators.api.instagram.post({ url: 'https://www.instagram.co
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `data` | `Record<string, any> \| null` | No | — |
@@ -2727,7 +2775,7 @@ await corsair.scrapecreators.api.instagram.postCommentReplies({ url: 'https://ww
 |------|------|----------|-------------|
 | `url` | `string` | Yes | The Instagram post or reel URL |
 | `comment_id` | `string` | Yes | The parent comment ID from the Comments endpoint |
-| `cursor` | `string` | No | The cursor to get more replies. Get `cursor` from the previous response. |
+| `cursor` | `string \| number` | No | The cursor to get more replies. Get `cursor` from the previous response. |
 
 
 
@@ -2737,7 +2785,7 @@ await corsair.scrapecreators.api.instagram.postCommentReplies({ url: 'https://ww
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `comments` | `any[] \| null` | No | — |
@@ -2766,7 +2814,7 @@ await corsair.scrapecreators.api.instagram.postComments({ url: 'https://www.inst
 |------|------|----------|-------------|
 | `url` | `string` | Yes | The URL of the post or reel to get comments from |
 | `include_replies` | `boolean` | No | Set to true to include replies for every returned comment. Costs 15 credits when comments are returned, even if no replies are found; successful pages with no comments cost 0 credits. This is much slower and may time out at 29 seconds. |
-| `cursor` | `string` | No | The cursor to get more comments. Get 'cursor' from previous response. |
+| `cursor` | `string \| number` | No | The cursor to get more comments. Get 'cursor' from previous response. |
 
 
 
@@ -2776,7 +2824,7 @@ await corsair.scrapecreators.api.instagram.postComments({ url: 'https://www.inst
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `comment_count` | `any` | No | — |
@@ -2816,7 +2864,7 @@ await corsair.scrapecreators.api.instagram.profile({ handle: 'nasa', trim: true 
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `data` | `Record<string, any> \| null` | No | — |
@@ -2852,7 +2900,7 @@ await corsair.scrapecreators.api.instagram.profilePostCount({ handle: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `handle` | `string \| number \| null` | No | — |
@@ -2891,7 +2939,7 @@ await corsair.scrapecreators.api.instagram.reelsSearch({ query: 'rocket launch' 
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `reels` | `any[] \| null` | No | — |
@@ -2921,7 +2969,7 @@ await corsair.scrapecreators.api.instagram.reelsTrending({});
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `reels` | `any[] \| null` | No | — |
@@ -2956,7 +3004,7 @@ await corsair.scrapecreators.api.instagram.search({ query: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `query` | `string \| number \| null` | No | — |
@@ -2990,7 +3038,7 @@ await corsair.scrapecreators.api.instagram.searchHashtag({ hashtag: 'space' });
 | `hashtag` | `string` | Yes | The hashtag to search for. Include or omit the #. |
 | `date_posted` | `last-hour \| last-day \| last-week \| last-month \| last-year` | No | Only return Google-indexed posts found in this relative window. |
 | `media_type` | `all \| reels` | No | Use all to search public posts and reels, or reels to only return reels. Defaults to all. |
-| `cursor` | `string` | No | The cursor returned by the previous response. It is the next Google results page number and cannot exceed 11; cursor 12 or greater returns a 400 response. |
+| `cursor` | `string \| number` | No | The cursor returned by the previous response. It is the next Google results page number and cannot exceed 11; cursor 12 or greater returns a 400 response. |
 
 
 
@@ -3000,7 +3048,7 @@ await corsair.scrapecreators.api.instagram.searchHashtag({ hashtag: 'space' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `hashtag` | `string \| number \| null` | No | — |
@@ -3029,7 +3077,7 @@ await corsair.scrapecreators.api.instagram.searchPopular({ query: 'rocket launch
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | The Popular topic to search for. |
-| `cursor` | `string` | No | The opaque cursor returned by the previous response. Use it with the same query to fetch the next page of posts. |
+| `cursor` | `string \| number` | No | The opaque cursor returned by the previous response. Use it with the same query to fetch the next page of posts. |
 
 
 
@@ -3039,7 +3087,7 @@ await corsair.scrapecreators.api.instagram.searchPopular({ query: 'rocket launch
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `query` | `string \| number \| null` | No | — |
@@ -3081,7 +3129,7 @@ await corsair.scrapecreators.api.instagram.searchProfiles({ query: 'space agency
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `query` | `string \| number \| null` | No | — |
@@ -3118,7 +3166,7 @@ await corsair.scrapecreators.api.instagram.userEmbed({ handle: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `html` | `string \| number \| null` | No | — |
@@ -3153,7 +3201,7 @@ await corsair.scrapecreators.api.instagram.userHighlightDetail({ id: '1814596602
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `can_reshare` | `boolean \| null` | No | — |
@@ -3198,7 +3246,7 @@ await corsair.scrapecreators.api.instagram.userHighlights({ handle: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `highlights` | `any[] \| null` | No | — |
@@ -3227,7 +3275,7 @@ await corsair.scrapecreators.api.instagram.userPosts({ handle: 'nasa', trim: tru
 | `region` | `string` | No | Two-letter country code (ASCII letters, case-insensitive), for example TH. When set, lookup attempts target only that country; Instagram may still not return the requested content. Omit it to keep the usual behavior. Keep the same region on subsequent pages. |
 | `require_play_counts` | `boolean` | No | Only the literal query value 'true' enables this check. It requires play_count on each returned video post; a real 0 is valid. It does not require ig_play_count or view counts, or counts on photos. If a required play_count is missing or null, the request returns an error without charging credits instead of a paid partial success. With the default false, counts remain best-effort: usable posts are still billable even with missing play counts. Retrying does not guarantee that Instagram will return the missing counts. [Why counts can be missing](https://scrapecreators.com/blog/instagram-play-counts-missing). |
 | `trim` | `boolean` | No | Set to true to get a trimmed response |
-| `next_max_id` | `string` | No | Cursor to get next page of results. |
+| `next_max_id` | `string \| number` | No | Cursor to get next page of results. |
 
 
 
@@ -3237,7 +3285,7 @@ await corsair.scrapecreators.api.instagram.userPosts({ handle: 'nasa', trim: tru
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `items` | `any[] \| null` | No | — |
@@ -3271,7 +3319,7 @@ await corsair.scrapecreators.api.instagram.userReels({ user_id: '528817151', tri
 | `region` | `string` | No | Two-letter country code (ASCII letters, case-insensitive), for example TH. When set, lookup attempts target only that country; Instagram may still not return the requested content. Omit it to keep the usual behavior. Keep the same region on subsequent pages. |
 | `require_play_counts` | `boolean` | No | Only the literal query value 'true' enables this check. It requires a numeric, nonnegative play_count on every returned Reel, in both full responses (items[].media.play_count) and trim=true responses (items[].play_count); a real 0 is valid. A missing, null, nonnumeric or negative play_count returns HTTP 503 without charging credits instead of a paid partial success. It does not require ig_play_count or view counts. With the default false, counts remain best-effort: usable reels are still billable even with missing play counts. This checks presence and numeric validity; it does not guarantee count accuracy or agreement with Instagram Insights. Retrying does not guarantee that Instagram will return the missing counts. [Why counts can be missing](https://scrapecreators.com/blog/instagram-play-counts-missing). |
 | `trim` | `boolean` | No | Set to true for a trimmed down version of the response |
-| `max_id` | `string` | No | Max id to get more reels. Get 'max_id' from previous response. |
+| `max_id` | `string \| number` | No | Max id to get more reels. Get 'max_id' from previous response. |
 
 
 
@@ -3281,7 +3329,7 @@ await corsair.scrapecreators.api.instagram.userReels({ user_id: '528817151', tri
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `items` | `any[] \| null` | No | — |
@@ -3308,7 +3356,7 @@ await corsair.scrapecreators.api.instagram.userTaggedPosts({ user_id: '528817151
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_id` | `string` | Yes | Numeric Instagram user ID. |
-| `cursor` | `string` | No | Cursor returned by the previous response. |
+| `cursor` | `string \| number` | No | Cursor returned by the previous response. |
 
 
 
@@ -3318,7 +3366,7 @@ await corsair.scrapecreators.api.instagram.userTaggedPosts({ user_id: '528817151
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `posts` | `any[] \| null` | No | — |
@@ -3357,7 +3405,7 @@ await corsair.scrapecreators.api.kick.clip({ url: 'https://kick.com/xqc/clips/cl
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `clip` | `Record<string, any> \| null` | No | — |
@@ -3394,7 +3442,7 @@ await corsair.scrapecreators.api.kick.clipTranscript({ url: 'https://kick.com/fu
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -3417,7 +3465,7 @@ Fetches public Kwai post details including caption, media URLs, cover images, co
 **Risk:** `read`
 
 ```ts
-await corsair.scrapecreators.api.kwai.post({});
+await corsair.scrapecreators.api.kwai.post({ url: 'https://www.kwai.com/@KwaiBrasilOficial/photo/5193363430624671876' });
 ```
 
 **Input**
@@ -3434,7 +3482,7 @@ await corsair.scrapecreators.api.kwai.post({});
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `data` | `Record<string, any> \| null` | No | — |
@@ -3452,7 +3500,7 @@ Fetches public Kwai profile data including username, bio, avatar, verification s
 **Risk:** `read`
 
 ```ts
-await corsair.scrapecreators.api.kwai.profile({});
+await corsair.scrapecreators.api.kwai.profile({ url: 'https://www.kwai.com/@KwaiBrasilOficial' });
 ```
 
 **Input**
@@ -3470,7 +3518,7 @@ await corsair.scrapecreators.api.kwai.profile({});
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `data` | `Record<string, any> \| null` | No | — |
@@ -3498,7 +3546,7 @@ await corsair.scrapecreators.api.kwai.userPosts({ handle: 'kwai' });
 | `handle` | `string` | No | Kwai profile handle. Use this or url. |
 | `url` | `string` | No | Kwai profile URL. Use this or handle. |
 | `count` | `number` | No | Number of posts to return, max 50 |
-| `cursor` | `string` | No | Cursor from the previous response for the next page |
+| `cursor` | `string \| number` | No | Cursor from the previous response for the next page |
 
 
 
@@ -3508,7 +3556,7 @@ await corsair.scrapecreators.api.kwai.userPosts({ handle: 'kwai' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `data` | `Record<string, any> \| null` | No | — |
@@ -3545,7 +3593,7 @@ await corsair.scrapecreators.api.linkedin.ad({ url: 'https://www.linkedin.com/ad
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -3607,7 +3655,7 @@ await corsair.scrapecreators.api.linkedin.adsSearch({ company: 'openai' });
 | `countries` | `string` | No | Comma separated list of countries. Example: US,CA,MX |
 | `startDate` | `string` | No | Start date in YYYY-MM-DD format. Must be used with endDate and cannot be earlier than the date one year ago. |
 | `endDate` | `string` | No | End date in YYYY-MM-DD format. Must be used with startDate and cannot be today or a future date. |
-| `paginationToken` | `string` | No | Pagination token to paginate through results |
+| `paginationToken` | `string \| number` | No | Pagination token to paginate through results |
 
 
 
@@ -3617,7 +3665,7 @@ await corsair.scrapecreators.api.linkedin.adsSearch({ company: 'openai' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `ads` | `any[] \| null` | No | — |
@@ -3655,7 +3703,7 @@ await corsair.scrapecreators.api.linkedin.company({ url: 'https://www.linkedin.c
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -3709,7 +3757,7 @@ await corsair.scrapecreators.api.linkedin.companyPosts({ url: 'https://www.linke
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `posts` | `any[] \| null` | No | — |
@@ -3744,7 +3792,7 @@ await corsair.scrapecreators.api.linkedin.job({ url: 'https://www.linkedin.com/j
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -3791,7 +3839,7 @@ await corsair.scrapecreators.api.linkedin.post({ url: 'https://www.linkedin.com/
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `activityUrn` | `any` | No | — |
@@ -3837,7 +3885,7 @@ await corsair.scrapecreators.api.linkedin.postTranscript({ url: 'https://www.lin
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `url` | `string \| number \| null` | No | — |
@@ -3874,7 +3922,7 @@ await corsair.scrapecreators.api.linkedin.profile({ url: 'https://www.linkedin.c
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `name` | `string \| number \| null` | No | — |
@@ -3917,7 +3965,7 @@ await corsair.scrapecreators.api.linkedin.searchJobs({ query: 'openai research e
 | `location` | `string` | No | City, region or country. Omit to use LinkedIn’s default location. |
 | `date_posted` | `last-24-hours \| last-week` | No | Jobs posted in the last 24 hours or week. Omit for any time. |
 | `company_id` | `string` | No | Numeric LinkedIn company ID, not a company name or URL. |
-| `cursor` | `string` | No | Next offset returned by the previous response. Keep the same search and filters; maximum 990. |
+| `cursor` | `string \| number` | No | Next offset returned by the previous response. Keep the same search and filters; maximum 990. |
 
 
 
@@ -3927,7 +3975,7 @@ await corsair.scrapecreators.api.linkedin.searchJobs({ query: 'openai research e
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `jobs` | `any[] \| null` | No | — |
@@ -3955,7 +4003,7 @@ await corsair.scrapecreators.api.linkedin.searchPosts({ query: 'openai' });
 |------|------|----------|-------------|
 | `query` | `string` | Yes | Keyword or phrase to search for in public LinkedIn posts |
 | `date_posted` | `last-hour \| last-day \| last-week \| last-month \| last-year` | No | Date posted filter based on Google-indexed results |
-| `cursor` | `string` | No | The cursor returned from the previous response. The maximum cursor is 11; cursor 12 or greater returns a 400 response. |
+| `cursor` | `string \| number` | No | The cursor returned from the previous response. The maximum cursor is 11; cursor 12 or greater returns a 400 response. |
 
 
 
@@ -3965,7 +4013,7 @@ await corsair.scrapecreators.api.linkedin.searchPosts({ query: 'openai' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `query` | `string \| number \| null` | No | — |
@@ -4005,7 +4053,7 @@ await corsair.scrapecreators.api.linkInBio.komi({ url: 'https://kimkardashian.ko
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -4056,7 +4104,7 @@ await corsair.scrapecreators.api.linkInBio.linkbio({ url: 'https://lnk.bio/msjen
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `handle` | `string \| number \| null` | No | — |
@@ -4101,7 +4149,7 @@ await corsair.scrapecreators.api.linkInBio.linkme({ url: 'https://link.me/danucd
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `profile` | `Record<string, any> \| null` | No | — |
@@ -4137,7 +4185,7 @@ await corsair.scrapecreators.api.linkInBio.linktree({ url: 'https://linktr.ee/li
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -4187,7 +4235,7 @@ await corsair.scrapecreators.api.linkInBio.pillar({ url: 'https://pillar.io/ange
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -4239,7 +4287,7 @@ await corsair.scrapecreators.api.pinterest.board({ url: 'https://www.pinterest.c
 |------|------|----------|-------------|
 | `url` | `string` | Yes | The URL of the board to get |
 | `trim` | `boolean` | No | Set to true for a trimmed down version of the response. Retains pins[].aggregated_pin_data.aggregated_stats.saves and pins[].pin_join.visual_annotation when Pinterest supplies them; these native save counts and keyword labels are not guaranteed for every pin. Only these nested leaves are retained, not the full aggregated_pin_data or pin_join objects. |
-| `cursor` | `string` | No | The cursor to get the next page of results |
+| `cursor` | `string \| number` | No | The cursor to get the next page of results |
 
 
 
@@ -4249,7 +4297,7 @@ await corsair.scrapecreators.api.pinterest.board({ url: 'https://www.pinterest.c
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `pins` | `any[] \| null` | No | — |
@@ -4287,7 +4335,7 @@ await corsair.scrapecreators.api.pinterest.pin({ url: 'https://www.pinterest.com
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `entityId` | `string \| number \| null` | No | — |
@@ -4324,7 +4372,7 @@ await corsair.scrapecreators.api.pinterest.search({ query: 'rocket launch', trim
 |------|------|----------|-------------|
 | `query` | `string` | Yes | Search query |
 | `trim` | `boolean` | No | Set to true for a trimmed down version of the response |
-| `cursor` | `string` | No | Cursor |
+| `cursor` | `string \| number` | No | Cursor |
 
 
 
@@ -4334,7 +4382,7 @@ await corsair.scrapecreators.api.pinterest.search({ query: 'rocket launch', trim
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `pins` | `any[] \| null` | No | — |
@@ -4370,7 +4418,7 @@ await corsair.scrapecreators.api.pinterest.topic({ url: 'https://www.pinterest.c
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -4411,7 +4459,7 @@ await corsair.scrapecreators.api.pinterest.userBoards({ handle: 'pinterest', tri
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `boards` | `any[] \| null` | No | — |
@@ -4449,7 +4497,7 @@ await corsair.scrapecreators.api.reddit.post({ url: 'https://www.reddit.com/r/na
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -4500,7 +4548,7 @@ await corsair.scrapecreators.api.reddit.postComments({ url: 'https://www.reddit.
 | `url` | `string` | Yes | Reddit post URL |
 | `sort` | `confidence \| top \| new \| old \| controversial \| qa` | No | Comment sort for the first page: confidence (Best), top, new, old, controversial, or qa (Q&A). Use confidence, not best, for Best. Best is the recommended starting point for collecting more comments; browser checks found substantially more top-level comments with Best and Top than with the default, New, or Old on the tested post. This is not a guarantee for every post. Reddit can return different subsets for each sort. For broader coverage, start separate confidence, new, and old runs and deduplicate by comment ID. Follow each run's returned cursors unchanged; a cursor retains its sort, so changing sort does not change an existing cursor chain. Paginate nested replies separately. No sort guarantees every comment or the displayed total. If omitted, the post URL's supported sort is used when present; otherwise Reddit chooses its default. Supported by both GET query parameters and POST JSON-body parameters. |
 | `trim` | `boolean` | No | Set to true for a trimmed down version of the response |
-| `cursor` | `string` | No | One opaque cursor returned by the previous response to get more comments or replies. Do not combine multiple cursors. |
+| `cursor` | `string \| number` | No | One opaque cursor returned by the previous response to get more comments or replies. Do not combine multiple cursors. |
 
 
 
@@ -4510,7 +4558,7 @@ await corsair.scrapecreators.api.reddit.postComments({ url: 'https://www.reddit.
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `comments` | `any[] \| null` | No | — |
@@ -4549,7 +4597,7 @@ await corsair.scrapecreators.api.reddit.postTranscript({ url: 'https://www.reddi
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `url` | `string \| number \| null` | No | — |
@@ -4586,7 +4634,7 @@ await corsair.scrapecreators.api.reddit.search({ query: 'artemis ii', trim: true
 | `sort` | `relevance \| new \| top \| comment_count` | No | Sort by. Comment search supports relevance, new, and top; comment_count is for post search only. |
 | `timeframe` | `all \| day \| week \| month \| year` | No | Post search timeframe |
 | `trim` | `boolean` | No | Set to true for a trimmed down version of the response |
-| `after` | `string` | No | Used to paginate to next page |
+| `after` | `string \| number` | No | Used to paginate to next page |
 
 
 
@@ -4596,7 +4644,7 @@ await corsair.scrapecreators.api.reddit.search({ query: 'artemis ii', trim: true
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `posts` | `any[] \| null` | No | — |
@@ -4627,7 +4675,7 @@ await corsair.scrapecreators.api.reddit.subreddit({ subreddit: 'nasa', trim: tru
 | `sort` | `best \| hot \| new \| top \| rising` | No | Sort order |
 | `trim` | `boolean` | No | Set to true for a trimmed down version of the response |
 | `cache_max_age` | `1d \| 3d \| 7d \| 14d \| 30d` | No | If we have a response in the cache that is this many days old or newer, return the cached response (0 credits, with "cached": true and a "cached_at" timestamp). Otherwise, scrape a live result (1 credit). [See the Caching page for details.](https://docs.scrapecreators.com/caching) |
-| `after` | `string` | No | After to get more posts. Get 'after' from previous response. |
+| `after` | `string \| number` | No | After to get more posts. Get 'after' from previous response. |
 
 
 
@@ -4637,7 +4685,7 @@ await corsair.scrapecreators.api.reddit.subreddit({ subreddit: 'nasa', trim: tru
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `posts` | `any[] \| null` | No | — |
@@ -4675,7 +4723,7 @@ await corsair.scrapecreators.api.reddit.subredditDetails({ subreddit: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `subreddit_id` | `string \| number \| null` | No | — |
@@ -4714,7 +4762,7 @@ await corsair.scrapecreators.api.reddit.subredditSearch({ subreddit: 'nasa', que
 | `query` | `string` | No | Search query to find matching content |
 | `sort` | `relevance \| hot \| top \| new \| comments` | No | Sort order. For posts/media: relevance, hot, top, new, comments. For comments: relevance, top, new |
 | `timeframe` | `all \| year \| month \| week \| day \| hour` | No | Timeframe to filter results |
-| `cursor` | `string` | No | Cursor to get more results. Get 'cursor' from previous response. |
+| `cursor` | `string \| number` | No | Cursor to get more results. Get 'cursor' from previous response. |
 
 
 
@@ -4724,7 +4772,7 @@ await corsair.scrapecreators.api.reddit.subredditSearch({ subreddit: 'nasa', que
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `posts` | `any[] \| null` | No | — |
@@ -4756,7 +4804,7 @@ await corsair.scrapecreators.api.rumble.channelVideos({ handle: 'NASA' });
 |------|------|----------|-------------|
 | `handle` | `string` | No | Rumble channel handle. If you'd prefer to use the URL instead, use the url parameter. |
 | `url` | `string` | No | Rumble channel URL. If you'd prefer to use the handle instead, use the handle parameter. |
-| `cursor` | `string` | No | Cursor from the previous response. This is the next page number, like 2 or 3. |
+| `cursor` | `string \| number` | No | Cursor from the previous response. This is the next page number, like 2 or 3. |
 
 
 
@@ -4766,7 +4814,7 @@ await corsair.scrapecreators.api.rumble.channelVideos({ handle: 'NASA' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `channel` | `Record<string, any> \| null` | No | — |
@@ -4795,7 +4843,7 @@ await corsair.scrapecreators.api.rumble.search({ query: 'nasa' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | Search query. |
-| `cursor` | `string` | No | Cursor from the previous response. This is the next page number, like 2 or 3. |
+| `cursor` | `string \| number` | No | Cursor from the previous response. This is the next page number, like 2 or 3. |
 
 
 
@@ -4805,7 +4853,7 @@ await corsair.scrapecreators.api.rumble.search({ query: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `query` | `string \| number \| null` | No | — |
@@ -4846,7 +4894,7 @@ await corsair.scrapecreators.api.rumble.video({ url: 'https://rumble.com/v7iusr0
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -4901,7 +4949,7 @@ await corsair.scrapecreators.api.rumble.videoComments({ url: 'https://rumble.com
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -4940,7 +4988,7 @@ await corsair.scrapecreators.api.rumble.videoTranscript({ url: 'https://rumble.c
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -4980,7 +5028,7 @@ await corsair.scrapecreators.api.snapchat.profile({ handle: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `userProfile` | `Record<string, any> \| null` | No | — |
@@ -5019,7 +5067,7 @@ await corsair.scrapecreators.api.snapchat.spotlight({ url: 'https://www.snapchat
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `spotlight` | `Record<string, any> \| null` | No | — |
@@ -5048,7 +5096,7 @@ await corsair.scrapecreators.api.snapchat.spotlightComments({ url: 'https://www.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | Snapchat Spotlight URL. |
-| `cursor` | `string` | No | Pagination cursor from the previous response. |
+| `cursor` | `string \| number` | No | Pagination cursor from the previous response. |
 
 
 
@@ -5058,7 +5106,7 @@ await corsair.scrapecreators.api.snapchat.spotlightComments({ url: 'https://www.
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `snapId` | `string \| number \| null` | No | — |
@@ -5099,7 +5147,7 @@ await corsair.scrapecreators.api.soundcloud.artist({ handle: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `avatar_url` | `string \| number \| null` | No | — |
@@ -5158,7 +5206,7 @@ await corsair.scrapecreators.api.soundcloud.artistTracks({ handle: 'nasa' });
 |------|------|----------|-------------|
 | `handle` | `string` | No | SoundCloud artist handle. If you'd prefer to use the URL instead, you can use the url parameter instead. |
 | `url` | `string` | No | SoundCloud artist tracks URL. If you'd prefer to use the handle instead, you can use the handle parameter instead. |
-| `cursor` | `string` | No | Cursor to get more tracks. Get 'cursor' from previous response. |
+| `cursor` | `string \| number` | No | Cursor to get more tracks. Get 'cursor' from previous response. |
 
 
 
@@ -5168,7 +5216,7 @@ await corsair.scrapecreators.api.soundcloud.artistTracks({ handle: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `tracks` | `any[] \| null` | No | — |
@@ -5204,7 +5252,7 @@ await corsair.scrapecreators.api.soundcloud.track({ url: 'https://soundcloud.com
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `artwork_url` | `string \| number \| null` | No | — |
@@ -5288,7 +5336,7 @@ await corsair.scrapecreators.api.spotify.album({ url: 'https://open.spotify.com/
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `popularity` | `string \| number \| null` | No | — |
@@ -5346,7 +5394,7 @@ await corsair.scrapecreators.api.spotify.artist({ url: 'https://open.spotify.com
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `__typename` | `string \| number \| null` | No | — |
@@ -5389,7 +5437,7 @@ await corsair.scrapecreators.api.spotify.playlist({ url: 'https://open.spotify.c
 |------|------|----------|-------------|
 | `id` | `string` | No | Spotify playlist id. If you'd prefer to use the URL instead, you can use the url parameter instead. |
 | `url` | `string` | No | Spotify playlist URL. If you'd prefer to use the id instead, you can use the id parameter instead. |
-| `cursor` | `string` | No | Cursor returned by the previous response. Omit it for the first page. |
+| `cursor` | `string \| number` | No | Cursor returned by the previous response. Omit it for the first page. |
 
 
 
@@ -5399,7 +5447,7 @@ await corsair.scrapecreators.api.spotify.playlist({ url: 'https://open.spotify.c
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -5445,7 +5493,7 @@ await corsair.scrapecreators.api.spotify.podcast({ url: 'https://open.spotify.co
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -5506,7 +5554,7 @@ await corsair.scrapecreators.api.spotify.podcastEpisodes({ url: 'https://open.sp
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -5545,7 +5593,7 @@ await corsair.scrapecreators.api.spotify.search({ query: 'houston we have a podc
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `albumsV2` | `any[] \| null` | No | — |
@@ -5590,7 +5638,7 @@ await corsair.scrapecreators.api.spotify.track({ url: 'https://open.spotify.com/
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `popularity` | `string \| number \| null` | No | — |
@@ -5644,7 +5692,7 @@ await corsair.scrapecreators.api.telegram.channel({ handle: 'telegram' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `handle` | `string \| number \| null` | No | — |
@@ -5684,7 +5732,7 @@ await corsair.scrapecreators.api.telegram.channelPosts({ handle: 'telegram' });
 |------|------|----------|-------------|
 | `handle` | `string` | Yes | Public Telegram handle, @handle, or t.me channel URL. |
 | `cache_max_age` | `1d \| 3d \| 7d \| 14d \| 30d` | No | If we have a response in the cache that is this many days old or newer, return the cached response (0 credits, with "cached": true and a "cached_at" timestamp). Otherwise, scrape a live result (1 credit). [See the Caching page for details.](https://docs.scrapecreators.com/caching) |
-| `cursor` | `string` | No | Numeric cursor returned by the previous page. Omit it for the latest posts. |
+| `cursor` | `string \| number` | No | Numeric cursor returned by the previous page. Omit it for the latest posts. |
 
 
 
@@ -5694,7 +5742,7 @@ await corsair.scrapecreators.api.telegram.channelPosts({ handle: 'telegram' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `channel` | `Record<string, any> \| null` | No | — |
@@ -5733,7 +5781,7 @@ await corsair.scrapecreators.api.telegram.post({ url: 'https://t.me/telegram/441
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -5785,7 +5833,7 @@ await corsair.scrapecreators.api.threads.post({ url: 'https://www.threads.com/@n
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `post` | `Record<string, any> \| null` | No | — |
@@ -5824,7 +5872,7 @@ await corsair.scrapecreators.api.threads.profile({ handle: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `pk` | `string \| number \| null` | No | — |
@@ -5881,7 +5929,7 @@ await corsair.scrapecreators.api.threads.search({ query: 'artemis', trim: true }
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `posts` | `any[] \| null` | No | — |
@@ -5916,7 +5964,7 @@ await corsair.scrapecreators.api.threads.searchUsers({ query: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `users` | `any[] \| null` | No | — |
@@ -5952,7 +6000,7 @@ await corsair.scrapecreators.api.threads.userPosts({ handle: 'nasa', trim: true 
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `posts` | `any[] \| null` | No | — |
@@ -5989,7 +6037,7 @@ await corsair.scrapecreators.api.tiktok.adLibraryAd({ ad_id: '1881490645213233' 
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `ad_title` | `string \| number \| null` | No | — |
@@ -6046,7 +6094,7 @@ await corsair.scrapecreators.api.tiktok.adLibrarySearch({ query: 'nike' });
 | `start_time` | `number` | No | Inclusive lower bound for the ad's last shown date; end_time is the inclusive upper bound. Supply start_time and end_time together as positive base-10 safe integers, no greater than 9007199254740991, in Unix seconds (preferred) or milliseconds. Values greater than 9999999999 are interpreted as milliseconds, divided by 1000 and rounded down to seconds. start_time must be less than or equal to end_time after normalization; equal bounds are accepted. If both are omitted, the last-shown date window defaults to the rolling 30 days ending at the time of each request. A missing companion, empty value, sign, fraction, scientific notation, whitespace, date string, unsafe integer or reversed interval returns 400 bad_request. |
 | `end_time` | `number` | No | Inclusive upper bound for the ad's last shown date; start_time is the inclusive lower bound. Supply start_time and end_time together as positive base-10 safe integers, no greater than 9007199254740991, in Unix seconds (preferred) or milliseconds. Values greater than 9999999999 are interpreted as milliseconds, divided by 1000 and rounded down to seconds. start_time must be less than or equal to end_time after normalization; equal bounds are accepted. If both are omitted, the last-shown date window defaults to the rolling 30 days ending at the time of each request. A missing companion, empty value, sign, fraction, scientific notation, whitespace, date string, unsafe integer or reversed interval returns 400 bad_request. |
 | `region` | `all \| AT \| BE \| BG \| BR \| CH \| CY \| CZ \| DE \| DK \| EE \| ES \| FI \| FR \| GB \| GR \| HR \| HU \| IE \| IS \| IT \| LI \| LT \| LU \| LV \| MT \| NL \| NO \| PL \| PT \| RO \| SE \| SI \| SK \| TR` | No | Filter by the ad's targeting/delivery country, not the advertiser's registration country. Omitted region defaults to all supported countries, not every country worldwide. Values are case-insensitive; choose all or one of the listed country codes. US is not supported. Empty values, unsupported countries and multiple countries return 400 bad_request. |
-| `cursor` | `string` | No | Opaque cursor returned from the previous response. Repeat the same query or advertiser_name, adv_biz_ids when used, and any explicit start_time, end_time and region filters with every returned cursor. Pass the cursor unchanged; it does not replace the search inputs or filters. |
+| `cursor` | `string \| number` | No | Opaque cursor returned from the previous response. Repeat the same query or advertiser_name, adv_biz_ids when used, and any explicit start_time, end_time and region filters with every returned cursor. Pass the cursor unchanged; it does not replace the search inputs or filters. |
 
 
 
@@ -6056,7 +6104,7 @@ await corsair.scrapecreators.api.tiktok.adLibrarySearch({ query: 'nike' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `source` | `string \| number \| null` | No | — |
@@ -6089,7 +6137,7 @@ await corsair.scrapecreators.api.tiktok.collectionVideos({ url: 'https://www.tik
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | Yes | Public TikTok collection URL |
-| `cursor` | `string` | No | Cursor to get more videos. Use max_cursor from the previous response. |
+| `cursor` | `string \| number` | No | Cursor to get more videos. Use max_cursor from the previous response. |
 
 
 
@@ -6099,7 +6147,7 @@ await corsair.scrapecreators.api.tiktok.collectionVideos({ url: 'https://www.tik
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `collection_id` | `string \| number \| null` | No | — |
@@ -6140,7 +6188,7 @@ await corsair.scrapecreators.api.tiktok.live({ room_id: '7523685855395842871', u
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `room_id` | `string \| number \| null` | No | — |
@@ -6182,7 +6230,7 @@ await corsair.scrapecreators.api.tiktok.product({ url: 'https://www.tiktok.com/s
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `categories` | `any[] \| null` | No | — |
@@ -6226,7 +6274,7 @@ await corsair.scrapecreators.api.tiktok.profile({ handle: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `user` | `Record<string, any> \| null` | No | — |
@@ -6263,7 +6311,7 @@ await corsair.scrapecreators.api.tiktok.profileRegion({ handle: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `credits` | `string \| number \| null` | No | — |
@@ -6297,7 +6345,7 @@ await corsair.scrapecreators.api.tiktok.profileVideos({ handle: 'nasa', trim: tr
 | `region` | `string` | No | Country code passed to the profile-feed source. Defaults to US. If a profile should have videos but returns none, try another relevant two-letter country code. Changing this value does not guarantee that region-restricted posts will appear. |
 | `include_pinned` | `boolean` | No | Whether to include pinned posts. Defaults to true. Set to false to exclude posts marked as pinned, including with trim=true. Keep this value unchanged while paginating. Filtering can produce shorter or empty pages; follow has_more and max_cursor. Successful pages still cost 1 credit, including empty results. |
 | `trim` | `boolean` | No | Set to true for a trimmed down version of the response |
-| `max_cursor` | `string` | No | Cursor to get more videos. Get 'max_cursor' from previous response. |
+| `max_cursor` | `string \| number` | No | Cursor to get more videos. Get 'max_cursor' from previous response. |
 
 
 
@@ -6307,7 +6355,7 @@ await corsair.scrapecreators.api.tiktok.profileVideos({ handle: 'nasa', trim: tr
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `aweme_list` | `any[] \| null` | No | — |
@@ -6346,7 +6394,7 @@ await corsair.scrapecreators.api.tiktok.searchHashtag({ hashtag: 'space', trim: 
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `aweme_list` | `any[] \| null` | No | — |
@@ -6387,7 +6435,7 @@ await corsair.scrapecreators.api.tiktok.searchKeyword({ query: 'artemis launch',
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `search_item_list` | `any[] \| null` | No | — |
@@ -6424,7 +6472,7 @@ await corsair.scrapecreators.api.tiktok.searchSuggestions({ query: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `suggestions` | `any[] \| null` | No | — |
@@ -6464,7 +6512,7 @@ await corsair.scrapecreators.api.tiktok.searchTop({ query: 'nasa', trim: true })
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `items` | `any[] \| null` | No | — |
@@ -6502,7 +6550,7 @@ await corsair.scrapecreators.api.tiktok.searchUsers({ query: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `users` | `any[] \| null` | No | — |
@@ -6521,7 +6569,7 @@ Fetches customer reviews for a TikTok Shop product by URL or product_id
 **Risk:** `read`
 
 ```ts
-await corsair.scrapecreators.api.tiktok.shopProductReviews({});
+await corsair.scrapecreators.api.tiktok.shopProductReviews({ url: 'https://www.tiktok.com/shop/pdp/cat-nail-clipper-by-potaroma-adjustable-sizes-built-in-file-safe-for-kittens-cats/1731578642912612516' });
 ```
 
 **Input**
@@ -6541,7 +6589,7 @@ await corsair.scrapecreators.api.tiktok.shopProductReviews({});
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `has_more` | `boolean \| null` | No | — |
@@ -6572,7 +6620,7 @@ await corsair.scrapecreators.api.tiktok.shopProducts({ url: 'https://www.tiktok.
 | `url` | `string` | Yes | The TikTok Shop store URL. |
 | `sort_by` | `top \| new_releases` | No | Sort products by best-selling items (`top`) or newest products (`new_releases`). Defaults to `top`. |
 | `region` | `US \| GB \| DE \| FR \| IT \| ID \| MY \| MX \| PH \| SG \| ES \| TH \| VN \| BR \| JP \| IE` | No | Region to get shop products from. Defaults to US if not provided. Non-US regions are not reliable right now and may return `not_found` or limited catalog data even when the shop appears in search. Sorry for the inconvenience. |
-| `cursor` | `string` | No | Cursor parameter from the previous response to retrieve the next page of products. Omit for the first page. |
+| `cursor` | `string \| number` | No | Cursor parameter from the previous response to retrieve the next page of products. Omit for the first page. |
 
 
 
@@ -6582,7 +6630,7 @@ await corsair.scrapecreators.api.tiktok.shopProducts({ url: 'https://www.tiktok.
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `shopInfo` | `Record<string, any> \| null` | No | — |
@@ -6622,7 +6670,7 @@ await corsair.scrapecreators.api.tiktok.shopSearch({ query: 'running shoes' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `query` | `string \| number \| null` | No | — |
@@ -6659,7 +6707,7 @@ await corsair.scrapecreators.api.tiktok.song({ clipId: '7665075815390645006' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `music_info` | `Record<string, any> \| null` | No | — |
@@ -6700,7 +6748,7 @@ await corsair.scrapecreators.api.tiktok.songVideos({ clipId: '766507581539064500
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `aweme_list` | `any[] \| null` | No | — |
@@ -6744,7 +6792,7 @@ await corsair.scrapecreators.api.tiktok.trendingFeed({ region: 'US', trim: true 
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `aweme_list` | `any[] \| null` | No | — |
@@ -6779,7 +6827,7 @@ await corsair.scrapecreators.api.tiktok.userAudience({ handle: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `audienceLocations` | `any[] \| null` | No | — |
@@ -6817,7 +6865,7 @@ await corsair.scrapecreators.api.tiktok.userFollowers({ handle: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `followers` | `any[] \| null` | No | — |
@@ -6856,7 +6904,7 @@ await corsair.scrapecreators.api.tiktok.userFollowing({ handle: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `followings` | `any[] \| null` | No | — |
@@ -6893,7 +6941,7 @@ await corsair.scrapecreators.api.tiktok.userLive({ handle: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `is_live` | `boolean \| null` | No | — |
@@ -6922,7 +6970,7 @@ await corsair.scrapecreators.api.tiktok.userShowcase({ handle: 'nasa' });
 |------|------|----------|-------------|
 | `handle` | `string` | Yes | The handle of the user |
 | `region` | `string` | No | Region to put the proxy in. Non-US TikTok Shop regions are not reliable right now and may return limited or inconsistent showcase data. Sorry for the inconvenience. |
-| `cursor` | `string` | No | The cursor to the next page of products |
+| `cursor` | `string \| number` | No | The cursor to the next page of products |
 
 
 
@@ -6932,7 +6980,7 @@ await corsair.scrapecreators.api.tiktok.userShowcase({ handle: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `products` | `any[] \| null` | No | — |
@@ -6973,7 +7021,7 @@ await corsair.scrapecreators.api.tiktok.video({ url: 'https://www.tiktok.com/@na
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `aweme_detail` | `Record<string, any> \| null` | No | — |
@@ -7011,7 +7059,7 @@ await corsair.scrapecreators.api.tiktok.videoCommentReplies({ url: 'https://www.
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `comments` | `any[] \| null` | No | — |
@@ -7055,7 +7103,7 @@ await corsair.scrapecreators.api.tiktok.videoComments({ url: 'https://www.tiktok
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `comments` | `any[] \| null` | No | — |
@@ -7095,7 +7143,7 @@ await corsair.scrapecreators.api.tiktok.videoTranscript({ url: 'https://www.tikt
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -7136,7 +7184,7 @@ await corsair.scrapecreators.api.truthSocial.post({ url: 'https://truthsocial.co
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `text` | `string \| number \| null` | No | — |
@@ -7203,7 +7251,7 @@ await corsair.scrapecreators.api.truthSocial.profile({ handle: 'realDonaldTrump'
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -7263,7 +7311,7 @@ await corsair.scrapecreators.api.truthSocial.userPosts({ handle: 'realDonaldTrum
 | `handle` | `string` | No | Truth Social username |
 | `user_id` | `string` | No | Truth Social user id. Use this for faster response times. Trumps is 107780257626128497. It is the 'id' field in the profile endpoint. |
 | `trim` | `boolean` | No | Set to true for a trimmed down version of the response |
-| `next_max_id` | `string` | No | Used to paginate to next page |
+| `next_max_id` | `string \| number` | No | Used to paginate to next page |
 
 
 
@@ -7273,7 +7321,7 @@ await corsair.scrapecreators.api.truthSocial.userPosts({ handle: 'realDonaldTrum
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `posts` | `any[] \| null` | No | — |
@@ -7306,7 +7354,19 @@ await corsair.scrapecreators.api.twitch.clip({ url: 'https://www.twitch.tv/stary
 
 
 
-**Output:** `any[]`
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data?: Record<string, any> | null,
+  extensions?: Record<string, any> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -7339,7 +7399,7 @@ await corsair.scrapecreators.api.twitch.clipTranscript({ url: 'https://clips.twi
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -7378,7 +7438,7 @@ await corsair.scrapecreators.api.twitch.profile({ handle: 'twitch' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -7427,7 +7487,7 @@ await corsair.scrapecreators.api.twitch.userSchedule({ handle: 'twitch' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -7471,7 +7531,7 @@ await corsair.scrapecreators.api.twitch.userVideos({ handle: 'twitch' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -7525,7 +7585,7 @@ await corsair.scrapecreators.api.twitter.community({ url: 'https://x.com/i/commu
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `__typename` | `string \| number \| null` | No | — |
@@ -7573,7 +7633,7 @@ await corsair.scrapecreators.api.twitter.communityTweets({ url: 'https://x.com/i
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `tweets` | `any[] \| null` | No | — |
@@ -7609,7 +7669,7 @@ await corsair.scrapecreators.api.twitter.profile({ handle: 'NASA' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `__typename` | `string \| number \| null` | No | — |
@@ -7650,7 +7710,7 @@ await corsair.scrapecreators.api.twitter.searchPosts({ query: 'artemis nasa' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `query` | `string` | Yes | Keyword or phrase to search for in Google-indexed public X/Twitter posts |
-| `cursor` | `string` | No | Pass the cursor returned by the previous response. Supported page cursors are 1 through 11. A null response cursor means there are no more pages. |
+| `cursor` | `string \| number` | No | Pass the cursor returned by the previous response. Supported page cursors are 1 through 11. A null response cursor means there are no more pages. |
 
 
 
@@ -7660,7 +7720,7 @@ await corsair.scrapecreators.api.twitter.searchPosts({ query: 'artemis nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `query` | `string \| number \| null` | No | — |
@@ -7699,7 +7759,7 @@ await corsair.scrapecreators.api.twitter.tweet({ url: 'https://x.com/NASA/status
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `rest_id` | `string \| number \| null` | No | — |
@@ -7739,7 +7799,7 @@ await corsair.scrapecreators.api.twitter.tweetTranscript({ url: 'https://x.com/N
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `transcript` | `string \| number \| null` | No | — |
@@ -7775,7 +7835,7 @@ await corsair.scrapecreators.api.twitter.userTweets({ handle: 'NASA', trim: true
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `tweets` | `any[] \| null` | No | — |
@@ -7815,7 +7875,7 @@ await corsair.scrapecreators.api.youtube.channel({ handle: 'NASA' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `channelId` | `string \| number \| null` | No | — |
@@ -7858,7 +7918,7 @@ await corsair.scrapecreators.api.youtube.channelCommunityPosts({ handle: 'NASA' 
 |------|------|----------|-------------|
 | `channelId` | `string` | No | YouTube channel ID |
 | `handle` | `string` | No | YouTube channel handle |
-| `continuationToken` | `string` | No | Continuation token to get more community posts. Get 'continuationToken' from previous response. |
+| `continuationToken` | `string \| number` | No | Continuation token to get more community posts. Get 'continuationToken' from previous response. |
 
 
 
@@ -7868,7 +7928,7 @@ await corsair.scrapecreators.api.youtube.channelCommunityPosts({ handle: 'NASA' 
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `posts` | `any[] \| null` | No | — |
@@ -7896,7 +7956,7 @@ await corsair.scrapecreators.api.youtube.channelLives({ handle: 'NASA' });
 |------|------|----------|-------------|
 | `channelId` | `string` | No | YouTube channel ID |
 | `handle` | `string` | No | YouTube channel handle |
-| `continuationToken` | `string` | No | Continuation token to get more lives. Get 'continuationToken' from previous response. |
+| `continuationToken` | `string \| number` | No | Continuation token to get more lives. Get 'continuationToken' from previous response. |
 
 
 
@@ -7906,7 +7966,7 @@ await corsair.scrapecreators.api.youtube.channelLives({ handle: 'NASA' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `lives` | `any[] \| null` | No | — |
@@ -7934,7 +7994,7 @@ await corsair.scrapecreators.api.youtube.channelPlaylists({ handle: 'NASA' });
 |------|------|----------|-------------|
 | `channelId` | `string` | No | YouTube channel ID |
 | `handle` | `string` | No | YouTube channel handle |
-| `continuationToken` | `string` | No | Continuation token to get more playlists. Get 'continuationToken' from previous response. |
+| `continuationToken` | `string \| number` | No | Continuation token to get more playlists. Get 'continuationToken' from previous response. |
 
 
 
@@ -7944,7 +8004,7 @@ await corsair.scrapecreators.api.youtube.channelPlaylists({ handle: 'NASA' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `playlists` | `any[] \| null` | No | — |
@@ -7972,7 +8032,7 @@ await corsair.scrapecreators.api.youtube.channelSearch({ handle: 'NASA', query: 
 |------|------|----------|-------------|
 | `handle` | `string` | Yes | YouTube channel handle, with or without @. |
 | `query` | `string` | Yes | Keywords to search within this channel. |
-| `continuationToken` | `string` | No | Token from the previous response. Keep the same handle and query; stop when the token is null. |
+| `continuationToken` | `string \| number` | No | Token from the previous response. Keep the same handle and query; stop when the token is null. |
 
 
 
@@ -7982,7 +8042,7 @@ await corsair.scrapecreators.api.youtube.channelSearch({ handle: 'NASA', query: 
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `videos` | `any[] \| null` | No | — |
@@ -8016,7 +8076,7 @@ await corsair.scrapecreators.api.youtube.channelShorts({ handle: 'NASA' });
 | `handle` | `string` | No | Can pass channelId or handle |
 | `channelId` | `string` | No | Can pass channelId or handle |
 | `sort` | `newest \| popular` | No | Sort by newest or popular |
-| `continuationToken` | `string` | No | Continuation token to get more videos. Get 'continuationToken' from previous response. |
+| `continuationToken` | `string \| number` | No | Continuation token to get more videos. Get 'continuationToken' from previous response. |
 
 
 
@@ -8026,7 +8086,7 @@ await corsair.scrapecreators.api.youtube.channelShorts({ handle: 'NASA' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `videos` | `any[] \| null` | No | — |
@@ -8061,7 +8121,7 @@ await corsair.scrapecreators.api.youtube.channelVideos({ handle: 'NASA' });
 | `handle` | `string` | No | YouTube channel handle |
 | `sort` | `latest \| popular` | No | Sort by latest or popular |
 | `includeExtras` | `string` | No | This will get you the like + comment count and the description. To get the full details of the video, use the /v1/youtube/video endpoint. Honestly, if you use this param, the error rate is higher. We might deprecate this param in the future. |
-| `continuationToken` | `string` | No | Continuation token to get more videos. Get 'continuationToken' from previous response. |
+| `continuationToken` | `string \| number` | No | Continuation token to get more videos. Get 'continuationToken' from previous response. |
 
 
 
@@ -8071,7 +8131,7 @@ await corsair.scrapecreators.api.youtube.channelVideos({ handle: 'NASA' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `videos` | `any[] \| null` | No | — |
@@ -8107,7 +8167,7 @@ await corsair.scrapecreators.api.youtube.communityPost({ url: 'https://www.youtu
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -8140,7 +8200,7 @@ await corsair.scrapecreators.api.youtube.playlist({ playlist_id: 'PLF98rxtslw6s'
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `playlist_id` | `string` | Yes | The ID of the YouTube playlist. In the YouTube URL it will be the 'list' parameter. |
-| `continuationToken` | `string` | No | Token from the previous response to get the next page. Omit for the first page. Stop when the returned continuationToken is null. |
+| `continuationToken` | `string \| number` | No | Token from the previous response to get the next page. Omit for the first page. Stop when the returned continuationToken is null. |
 
 
 
@@ -8150,7 +8210,7 @@ await corsair.scrapecreators.api.youtube.playlist({ playlist_id: 'PLF98rxtslw6s'
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `title` | `string \| number \| null` | No | — |
@@ -8186,7 +8246,8 @@ await corsair.scrapecreators.api.youtube.search({ query: 'artemis ii' });
 | `duration` | `under_3_min \| between_3_and_20_min \| over_20_min` | No | Duration of the video. Only applies to videos (not shorts). |
 | `region` | `string` | No | 2 letter country code of the country to put the proxy in. |
 | `includeExtras` | `string` | No | This will get you the like + comment count and the description. To get the full details of the video, use the /v1/youtube/video endpoint. *This will slow down the response slightly.* |
-| `continuationToken` | `string` | No | Continuation token to get more videos. Get 'continuationToken' from previous response. |
+| `continuationToken` | `string \| number` | No | Continuation token to get more videos. Get 'continuationToken' from previous response. |
+| `is_paid_promotions` | `boolean` | No | Set to true to search only videos with the paid product placement / sponsorship disclosure. |
 
 
 
@@ -8196,7 +8257,7 @@ await corsair.scrapecreators.api.youtube.search({ query: 'artemis ii' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `videos` | `any[] \| null` | No | — |
@@ -8229,7 +8290,7 @@ await corsair.scrapecreators.api.youtube.searchHashtag({ hashtag: 'space' });
 |------|------|----------|-------------|
 | `hashtag` | `string` | Yes | Hashtag to search for |
 | `type` | `all \| shorts` | No | Search for all types of content or only shorts |
-| `continuationToken` | `string` | No | Continuation token to get more videos. Get 'continuationToken' from previous response. |
+| `continuationToken` | `string \| number` | No | Continuation token to get more videos. Get 'continuationToken' from previous response. |
 
 
 
@@ -8239,7 +8300,7 @@ await corsair.scrapecreators.api.youtube.searchHashtag({ hashtag: 'space' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `videos` | `any[] \| null` | No | — |
@@ -8275,7 +8336,7 @@ await corsair.scrapecreators.api.youtube.searchTypeahead({ query: 'nasa' });
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `data` | `Record<string, any> \| null` | No | — |
@@ -8305,7 +8366,7 @@ await corsair.scrapecreators.api.youtube.shortsTrending({});
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `shorts` | `any[] \| null` | No | — |
@@ -8342,7 +8403,7 @@ await corsair.scrapecreators.api.youtube.video({ url: 'https://www.youtube.com/w
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `id` | `string \| number \| null` | No | — |
@@ -8391,14 +8452,14 @@ Fetches replies to a specific comment on a YouTube video, including each reply's
 **Risk:** `read`
 
 ```ts
-await corsair.scrapecreators.api.youtube.videoCommentReplies({ continuationToken: 'Eg0SC2RRdzR3OVdnWGNRGAYygwEaUBIa...' });
+await corsair.scrapecreators.api.youtube.videoCommentReplies({ continuationToken: 'REPLIES_CONTINUATION_TOKEN_FROM_youtube.videoComments' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `continuationToken` | `string` | Yes | Continuation token for the comment replies. Use 'repliesContinuationToken' from the Comments endpoint, or 'continuationToken' from a previous replies response to paginate. |
+| `continuationToken` | `string \| number` | Yes | Continuation token for the comment replies. Use 'repliesContinuationToken' from the Comments endpoint, or 'continuationToken' from a previous replies response to paginate. |
 
 
 
@@ -8408,7 +8469,7 @@ await corsair.scrapecreators.api.youtube.videoCommentReplies({ continuationToken
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `comments` | `any[] \| null` | No | — |
@@ -8436,7 +8497,7 @@ await corsair.scrapecreators.api.youtube.videoComments({ url: 'https://www.youtu
 |------|------|----------|-------------|
 | `url` | `string` | Yes | YouTube video URL |
 | `order` | `top \| newest` | No | Order of comments |
-| `continuationToken` | `string` | No | Continuation token to get more comments. Get 'continuationToken' from previous response. |
+| `continuationToken` | `string \| number` | No | Continuation token to get more comments. Get 'continuationToken' from previous response. |
 
 
 
@@ -8446,7 +8507,7 @@ await corsair.scrapecreators.api.youtube.videoComments({ url: 'https://www.youtu
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `comments` | `any[] \| null` | No | — |
@@ -8483,7 +8544,7 @@ await corsair.scrapecreators.api.youtube.videoSponsors({ url: 'https://www.youtu
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `video` | `Record<string, any> \| null` | No | — |
@@ -8523,7 +8584,7 @@ await corsair.scrapecreators.api.youtube.videoTranscript({ url: 'https://www.you
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
 | `credits_remaining` | `number \| null` | No | Credits left on the account. Removed under managed pricing (Corsair's account). |
-| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits, empty pages and errors). |
+| `credits_charged` | `number \| null` | No | Credits this call cost (0 for cache hits and errors; some routes also charge 0 for an empty page). |
 | `cached` | `boolean \| null` | No | True when `cache_max_age` returned a cached response. |
 | `cached_at` | `string \| null` | No | — |
 | `videoId` | `string \| number \| null` | No | — |

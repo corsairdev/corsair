@@ -11,6 +11,7 @@ import {
 	getScrapeCreatorsInputSchema,
 	getScrapeCreatorsOutputSchema,
 	scrapeCreatorsOperationFor,
+	withCanonicalEnums,
 } from './schemas';
 
 export type ScrapeCreatorsOperationEndpoint<
@@ -35,8 +36,19 @@ export function createScrapeCreatorsOperation<
 >(id: Id): ScrapeCreatorsOperationEndpoint<Id> {
 	return async (ctx, input) => {
 		const operation = scrapeCreatorsOperationFor(id);
+		const managed = ctx.options.authType === 'managed_pricing';
+		// The account routes read the account the key belongs to: under managed
+		// pricing that is Corsair's shared account, whose balance and request
+		// history (other tenants' handles and URLs) aren't the caller's.
+		if (managed && id.startsWith('account.')) {
+			throw new Error(
+				`scrapecreators: ${id} reads the ScrapeCreators account behind the key, so it isn't available with authType 'managed_pricing'. Use your own key (authType 'api_key') to read your account.`,
+			);
+		}
 		// Send what was validated, not the caller's object.
-		const parsedInput = getScrapeCreatorsInputSchema(id).parse(input ?? {});
+		const parsedInput = getScrapeCreatorsInputSchema(id).parse(
+			withCanonicalEnums(id, input ?? {}),
+		);
 
 		const query: Record<string, string | number | boolean> = {};
 		for (const [name, value] of Object.entries(parsedInput)) {
@@ -58,7 +70,9 @@ export function createScrapeCreatorsOperation<
 		const response = await makeScrapeCreatorsRequest<unknown>(
 			operation.path,
 			ctx.key,
-			usePost ? { method: 'POST', body: query } : { method: 'GET', query },
+			usePost
+				? { method: 'POST', body: query, hideBalance: managed }
+				: { method: 'GET', query, hideBalance: managed },
 		);
 
 		// The output schema is built from the documented response; a body that
@@ -69,7 +83,7 @@ export function createScrapeCreatorsOperation<
 		// its balance isn't the caller's to see. `credits_charged` stays, it is
 		// what Hub meters the call by.
 		const result =
-			ctx.options.authType === 'managed_pricing' &&
+			managed &&
 			typeof parsed === 'object' &&
 			parsed !== null &&
 			!Array.isArray(parsed)

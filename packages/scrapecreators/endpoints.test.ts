@@ -234,6 +234,57 @@ describe('scrapecreators requests', () => {
 		expect(routes).toHaveLength(1);
 	});
 
+	it('takes a cursor back as the number the previous page returned', async () => {
+		const sent = mockFetch();
+		await client().tiktok.profileVideos({
+			handle: 'nasa',
+			max_cursor: 1738435195000,
+		});
+		await client().rumble.channelVideos({ handle: 'NASA', cursor: 2 });
+		expect(sent[0]?.url.searchParams.get('max_cursor')).toBe('1738435195000');
+		expect(sent[1]?.url.searchParams.get('cursor')).toBe('2');
+	});
+
+	it('sends an enum value given in another case as the listed one', async () => {
+		const sent = mockFetch();
+		await client().tiktok.adLibrarySearch({
+			query: 'shoes',
+			// @ts-expect-error the type lists the canonical upper-case codes
+			region: 'gb',
+		});
+		expect(sent[0]?.url.searchParams.get('region')).toBe('GB');
+	});
+
+	it('sends the paid-promotions filter the docs describe for YouTube search', async () => {
+		const sent = mockFetch();
+		await client().youtube.search({
+			query: 'running shoes',
+			is_paid_promotions: true,
+		});
+		expect(sent[0]?.url.searchParams.get('is_paid_promotions')).toBe('true');
+	});
+
+	it('checks the rows of a list response', async () => {
+		mockFetch(() => ({ body: [false] }));
+		await expect(client().account.dailyUsageCount({})).rejects.toThrow();
+	});
+
+	it('accepts usage rows with counts as strings, and an empty list', async () => {
+		mockFetch(() => ({
+			body: [
+				{
+					usage_date: '2026-11-26T16:00:00.000Z',
+					total_credits: '47',
+					request_count: '47',
+				},
+			],
+		}));
+		await expect(client().account.dailyUsageCount({})).resolves.toHaveLength(1);
+		jest.restoreAllMocks();
+		mockFetch(() => ({ body: [] }));
+		await expect(client().account.dailyUsageCount({})).resolves.toEqual([]);
+	});
+
 	it('keeps fields the example did not show', async () => {
 		mockFetch(() => ({
 			body: { success: true, credits_charged: 1, user: {}, newField: 'x' },

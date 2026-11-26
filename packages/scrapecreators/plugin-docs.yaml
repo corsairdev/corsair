@@ -2,7 +2,7 @@ displayName: ScrapeCreators
 description: "Public social media data from ScrapeCreators: profiles, posts, videos, comments, transcripts, search and ad libraries across TikTok, Instagram, YouTube, X, Reddit, LinkedIn, Facebook, Threads, Bluesky, Pinterest, Snapchat, Twitch, Kick, Truth Social, Telegram, Spotify, Apple Music, SoundCloud, GitHub, Google and link-in-bio pages."
 domain: scrapecreators.com
 recommendedAuth: api_key
-overviewNote: "All 198 operations are reads. Most cost 1 ScrapeCreators credit; a few cost more (`tiktok.userAudience` 26, `creators.findSocialProfiles` and `creators.findEmails` up to 10, `download_media` 10, `google.companyAds` with `get_ad_details` 25, long AI transcripts 10 per started minute). Errors, empty pages and `cache_max_age` cache hits cost 0. Every response says what it cost in `credits_charged`; the `account.*` operations are free."
+overviewNote: "All 198 operations are reads. Most cost 1 ScrapeCreators credit; a few cost more (`tiktok.userAudience` 26, `creators.findSocialProfiles` and `creators.findEmails` up to 10, `download_media` 10, `google.companyAds` with `get_ad_details` 25, long AI transcripts 10 per started minute). Errors and `cache_max_age` cache hits cost 0, and some routes do not charge for an empty page. Every data response says what it cost in `credits_charged`. The `account.*` operations are free and read the account whose key you pass, so they are not available with managed pricing."
 examples:
   read:
     path: tiktok.profile
@@ -24,13 +24,13 @@ apiExamples:
   amazon.shop:
     args: {"url": "https://www.amazon.com/shop/sydneydelrey"}
   appleMusic.album:
-    args: {}
+    args: {"url": "https://music.apple.com/us/album/lover/1468058165"}
   appleMusic.artist:
     args: {"url": "https://music.apple.com/us/artist/coldplay/471744"}
   appleMusic.search:
     args: {"query": "coldplay"}
   appleMusic.track:
-    args: {}
+    args: {"url": "https://music.apple.com/us/album/lover/1468058165?i=1468058169"}
   bluesky.post:
     args: {"url": "https://bsky.app/profile/bsky.app/post/3l6oveex3ii2l"}
   bluesky.profile:
@@ -60,7 +60,7 @@ apiExamples:
   facebook.adLibraryAd:
     args: {"id": "1550534860016399"}
   facebook.adLibraryAdTranscript:
-    args: {}
+    args: {"url": "https://www.facebook.com/ads/library?id=1020359190509080"}
   facebook.adLibraryCompanyAds:
     args: {"companyName": "nike", "country": "US"}
   facebook.adLibrarySearchAds:
@@ -68,17 +68,17 @@ apiExamples:
   facebook.adLibrarySearchCompanies:
     args: {"query": "nike"}
   facebook.eventDetails:
-    args: {}
+    args: {"url": "https://www.facebook.com/events/2255360061870188/"}
   facebook.events:
     args: {"url": "https://www.facebook.com/events/explore/saint-petersburg-florida/111326725552547"}
   facebook.eventsSearch:
     args: {"query": "NASA"}
   facebook.group:
-    args: {}
+    args: {"url": "https://www.facebook.com/groups/366190054572553/about"}
   facebook.groupPosts:
-    args: {}
+    args: {"url": "https://www.facebook.com/groups/1270525996445602/"}
   facebook.marketplaceItem:
-    args: {}
+    args: {"url": "https://www.facebook.com/marketplace/item/1656586118821988/"}
   facebook.marketplaceLocationSearch:
     args: {"query": "Austin"}
   facebook.marketplaceSearch:
@@ -86,7 +86,7 @@ apiExamples:
   facebook.post:
     args: {"url": "https://www.facebook.com/NASA/posts/pfbid0p1m9WeaS3AhspVA64kvq2YKiPijxMyVKfYZrxnwqCpUh4Q7rGtYCBPoYDPuDWX9Tl"}
   facebook.postCommentReplies:
-    args: {"feedback_id": "ZmVlZGJhY2s6MzM3MzYxMzI5OTQ4Nzc1NV8xOTI5NTk0OTE3Njg3MTcz", "expansion_token": "MjoxNzc4NjM1MDM3OgF_JaMa3kMP9RIWC...."}
+    args: {"feedback_id": "FEEDBACK_ID_FROM_facebook.postComments", "expansion_token": "EXPANSION_TOKEN_FROM_facebook.postComments"}
   facebook.postComments:
     args: {"url": "https://www.facebook.com/NASA/posts/pfbid0p1m9WeaS3AhspVA64kvq2YKiPijxMyVKfYZrxnwqCpUh4Q7rGtYCBPoYDPuDWX9Tl"}
   facebook.postTranscript:
@@ -176,9 +176,9 @@ apiExamples:
   kick.clipTranscript:
     args: {"url": "https://kick.com/fuzzyzvr/clips/clip_01M35J4DGERS1WE12H82WW0JBB"}
   kwai.post:
-    args: {}
+    args: {"url": "https://www.kwai.com/@KwaiBrasilOficial/photo/5193363430624671876"}
   kwai.profile:
-    args: {}
+    args: {"url": "https://www.kwai.com/@KwaiBrasilOficial"}
   kwai.userPosts:
     args: {"handle": "kwai"}
   linkInBio.komi:
@@ -314,7 +314,7 @@ apiExamples:
   tiktok.searchUsers:
     args: {"query": "nasa"}
   tiktok.shopProductReviews:
-    args: {}
+    args: {"url": "https://www.tiktok.com/shop/pdp/cat-nail-clipper-by-potaroma-adjustable-sizes-built-in-file-safe-for-kittens-cats/1731578642912612516"}
   tiktok.shopProducts:
     args: {"url": "https://www.tiktok.com/shop/store/goli-nutrition/7495794203056835079"}
   tiktok.shopSearch:
@@ -402,7 +402,7 @@ apiExamples:
   youtube.video:
     args: {"url": "https://www.youtube.com/watch?v=_eeZQw9PBc0"}
   youtube.videoCommentReplies:
-    args: {"continuationToken": "Eg0SC2RRdzR3OVdnWGNRGAYygwEaUBIa..."}
+    args: {"continuationToken": "REPLIES_CONTINUATION_TOKEN_FROM_youtube.videoComments"}
   youtube.videoComments:
     args: {"url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}
   youtube.videoSponsors:
