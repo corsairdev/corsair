@@ -2,6 +2,7 @@ import { inspect } from 'node:util';
 import { ApiError } from 'corsair/http';
 import {
 	describeLoomioError,
+	dottedSegment,
 	makeLoomioRequest,
 	normalizeLoomioBaseUrl,
 	readLoomioErrorDetail,
@@ -74,6 +75,47 @@ describe('makeLoomioRequest', () => {
 
 		expect(sentRequest().url).toBe(
 			'https://loomio.example.org/api/server0/users',
+		);
+	});
+
+	it('refuses a Server API call without a self-hosted origin before any request', async () => {
+		await expect(
+			makeLoomioRequest(
+				{ key: 'server-key' },
+				{ api: 'server', method: 'GET', path: '/users' },
+			),
+		).rejects.toThrow(/base_url/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('keeps search text and identity uids out of error URLs', async () => {
+		respond(BAD_KEY_BODY, 403);
+		const searchError = await failure(
+			makeLoomioRequest(KEY, {
+				method: 'GET',
+				path: '/search',
+				query: { query: 'salary of ada@private.example' },
+			}),
+		);
+		respond(NOT_FOUND_BODY, 404);
+		const identityError = await failure(
+			makeLoomioRequest(
+				{ key: 'server-key', baseUrl: 'https://loomio.example.org' },
+				{
+					api: 'server',
+					method: 'POST',
+					path: `/users/identity/saml/${dottedSegment('ada@private.example')}/deactivate`,
+				},
+			),
+		);
+
+		for (const error of [searchError, identityError]) {
+			const printed = `${error.message} ${JSON.stringify(error)} ${inspect(error)}`;
+			expect(printed).not.toContain('private');
+			expect(printed).not.toContain('salary');
+		}
+		expect(identityError.request.url).toBe(
+			'/users/identity/saml/[REDACTED]/deactivate',
 		);
 	});
 
@@ -284,5 +326,12 @@ describe('segment', () => {
 	it('url-encodes keys and handles', () => {
 		expect(segment('a b/c')).toBe('a%20b%2Fc');
 		expect(segment(12)).toBe('12');
+	});
+});
+
+describe('dottedSegment', () => {
+	it('encodes dots so Rails does not read them as a format suffix', () => {
+		expect(dottedSegment('ada@example.org')).toBe('ada%40example%2Eorg');
+		expect(dottedSegment('a/b c')).toBe('a%2Fb%20c');
 	});
 });

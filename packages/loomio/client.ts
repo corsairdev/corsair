@@ -121,6 +121,20 @@ export function describeLoomioError(
 }
 
 /**
+ * A failed URL without its query string (search text, filters) and with the
+ * external uid of Server API identity routes replaced, since a uid is often
+ * an email address. The route shape stays for debugging.
+ */
+export function redactErrorUrl(url: string): string {
+	if (!url) return url;
+	const withoutQuery = url.split(/[?#]/, 1)[0] ?? url;
+	return withoutQuery.replace(
+		/(\/users\/identity\/[^/]+\/)[^/]+/,
+		'$1[REDACTED]',
+	);
+}
+
+/**
  * Core keeps the sent body on `ApiError.request`. Loomio bodies carry
  * discussion and comment text, recipient and member email addresses, so the
  * error is rebuilt without the body and headers (the key rides in the
@@ -140,12 +154,12 @@ export function withoutRequestData(
 	return new ApiError(
 		{
 			method: error.request.method,
-			url: error.request.url,
+			url: redactErrorUrl(error.request.url),
 			path: error.request.path,
 			body: error.request.body === undefined ? undefined : '[REDACTED]',
 		},
 		{
-			url: error.url,
+			url: redactErrorUrl(error.url),
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
@@ -165,6 +179,16 @@ export function segment(value: string | number): string {
 	return encodeURIComponent(String(value));
 }
 
+/**
+ * A path segment for a value that may hold dots, such as an identity uid
+ * (`ada@example.org`). Rails reads a trailing `.org` as the response format
+ * and drops it from the param, so dots go out as `%2E`; the router matches
+ * the encoded form and decodes it into the param.
+ */
+export function dottedSegment(value: string | number): string {
+	return segment(value).replace(/\./g, '%2E');
+}
+
 // unknown: callers parse the body with the endpoint's zod output schema.
 export async function makeLoomioRequest(
 	connection: { key: string; baseUrl?: string },
@@ -177,6 +201,14 @@ export async function makeLoomioRequest(
 		resourceScoped = false,
 	}: LoomioRequest,
 ): Promise<unknown> {
+	// The Server API exists only on self-hosted installs. Without an explicit
+	// origin the install's SERVER_API_KEY would go to www.loomio.com, so fail
+	// before any request.
+	if (api === 'server' && !connection.baseUrl) {
+		throw new Error(
+			'Loomio server.* operations need the self-hosted install origin: set the account base_url or the baseUrl option',
+		);
+	}
 	const origin = connection.baseUrl
 		? normalizeLoomioBaseUrl(connection.baseUrl)
 		: LOOMIO_DEFAULT_BASE_URL;

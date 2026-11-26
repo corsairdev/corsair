@@ -746,6 +746,17 @@ describe('Server API (self-hosted)', () => {
 		},
 	);
 
+	it('encodes dots in identity uids so Rails keeps the whole uid', async () => {
+		respond({ user: serverUser });
+		await invoke(
+			Server.usersGetByIdentity,
+			{ identity_type: 'oauth', uid: 'ada@example.org' },
+			SELF,
+		);
+		const [url] = fetchMock.mock.calls.at(-1) as [string];
+		expect(url).toBe(`${SERVER}/users/identity/oauth/ada%40example%2Eorg`);
+	});
+
 	it('updates a user by identity', async () => {
 		respond({ user: serverUser });
 		await invoke(

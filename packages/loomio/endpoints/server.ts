@@ -1,5 +1,5 @@
 import type { LoomioEndpoints } from '..';
-import { segment } from '../client';
+import { dottedSegment, segment } from '../client';
 import { call, withPaging } from './call';
 import {
 	LoomioEndpointInputSchemas as Inputs,
@@ -11,7 +11,7 @@ import {
 // (not the User API's compound records). Logs carry ids only, never emails.
 
 const identityPath = (p: { identity_type: string; uid: string }) =>
-	`/users/identity/${segment(p.identity_type)}/${segment(p.uid)}`;
+	`/users/identity/${dottedSegment(p.identity_type)}/${dottedSegment(p.uid)}`;
 
 export const groupsList: LoomioEndpoints['serverGroupsList'] = (ctx, input) =>
 	call(
