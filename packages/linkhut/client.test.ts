@@ -326,6 +326,50 @@ describe('linkhutRequestGap', () => {
 		jest.useRealTimers();
 	});
 
+	it("puts core's 429 retry through the gap, behind a request that took the next slot", async () => {
+		jest.useFakeTimers();
+		linkhutRequestGap.minIntervalMs = LINKHUT_MIN_INTERVAL_MS;
+		const fetchMock = mockFetchResponse({ body: { update_time: 'x' } });
+		const sentAt: number[] = [];
+		fetchMock.mockImplementation(async () => {
+			sentAt.push(Date.now());
+			const first = sentAt.length === 1;
+			return new Response(
+				JSON.stringify(first ? unauthenticated : { update_time: 'x' }),
+				{
+					status: first ? 429 : 200,
+					headers: { 'content-type': 'application/json' },
+				},
+			);
+		});
+		const start = Date.now();
+
+		// A is answered 429 and core sleeps 1 s before retrying it. B queues
+		// at the same moment and takes the slot at 1 s, so A's retry owes
+		// another full interval.
+		const a = makeLinkhutRequest(API_KEY, {
+			method: 'GET',
+			path: '/v1/posts/update',
+			replayable: true,
+		});
+		const b = makeLinkhutRequest(API_KEY, {
+			method: 'GET',
+			path: '/v1/posts/recent',
+			replayable: true,
+		});
+		await jest.advanceTimersByTimeAsync(3 * LINKHUT_MIN_INTERVAL_MS);
+		await Promise.all([a, b]);
+		jest.useRealTimers();
+
+		expect(fetchMock).toHaveBeenCalledTimes(3);
+		// A at 0, B at 1 s, A's retry at 2 s.
+		expect(sentAt.map((t) => t - start)).toEqual([
+			0,
+			LINKHUT_MIN_INTERVAL_MS,
+			2 * LINKHUT_MIN_INTERVAL_MS,
+		]);
+	});
+
 	it('sends two requests back to back when the gap is off', async () => {
 		const fetchMock = mockFetchResponse({ body: { update_time: 'x' } });
 

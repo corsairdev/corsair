@@ -112,8 +112,8 @@ export const linkhutRequestGap = { minIntervalMs: LINKHUT_MIN_INTERVAL_MS };
 let turn: Promise<void> = Promise.resolve();
 let lastSentAt: number | undefined;
 
-// Each request takes the queue in turn, so two parallel calls get two slots a
-// full interval apart instead of passing the same check together.
+// Each HTTP attempt takes the queue in turn, so two parallel calls get two
+// slots a full interval apart instead of passing the same check together.
 function waitForSlot(): Promise<void> {
 	if (linkhutRequestGap.minIntervalMs <= 0) {
 		// Turning the gap off also clears the slot it keeps, so the next call
@@ -158,7 +158,8 @@ export type LinkhutRequest = {
  * Sends one GET to `https://api.ln.ht` with the token as
  * `Authorization: Bearer <key>`. An `undefined` query value is not sent.
  * Resolves with the parsed JSON body. A 429 is retried by core (three times,
- * honouring Retry-After). Rejects with core's `ApiError` when linkhut
+ * honouring Retry-After), and every attempt, retries included, waits for its
+ * slot in the one-second gap. Rejects with core's `ApiError` when linkhut
  * answered, and with a plain `Error` carrying a fixed message when no
  * response arrived; `linkhutRequestFacts(error)` tells the two apart.
  */
@@ -167,7 +168,6 @@ export async function makeLinkhutRequest(
 	{ method, path, query, replayable }: LinkhutRequest,
 ): Promise<unknown /* unknown: raw response body, typed by each endpoint's output schema */> {
 	const token = normaliseLinkhutKey(apiKey);
-	await waitForSlot();
 
 	const config: OpenAPIConfig = {
 		BASE: LINKHUT_API_BASE,
@@ -175,11 +175,17 @@ export async function makeLinkhutRequest(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: token,
+		// Core resolves HEADERS right before it sends each attempt, its own
+		// 429 retries included, so waiting for the slot here keeps every
+		// attempt in the gap and records its send time.
 		// The docs ask libraries for an identifiable User-Agent, because
 		// default identifiers "tend to get banned from time to time".
-		HEADERS: {
-			Accept: 'application/json',
-			'User-Agent': 'Corsair Linkhut integration',
+		HEADERS: async () => {
+			await waitForSlot();
+			return {
+				Accept: 'application/json',
+				'User-Agent': 'Corsair Linkhut integration',
+			};
 		},
 	};
 
