@@ -1,0 +1,779 @@
+---
+title: Errors
+description: One error shape on every route, and what each error code means.
+---
+
+Every error comes back in this body:
+
+```json
+{
+  "error": {
+    "type": "invalid_request_error",
+    "code": "invalid_request",
+    "message": "permission must be readonly, readwrite or admin",
+    "retryable": false,
+    "param": "permission",
+    "doc_url": "https://docs.corsair.dev/v1/errors#invalid_request",
+    "request_id": "req_6dd8536a-222f-4d63-a45b-a4d3559a695d"
+  }
+}
+```
+
+- `type` is the broad family: `authentication_error`, `permission_error`,
+  `invalid_request_error`, `not_found`, `conflict`, `rate_limit_error` or
+  `api_error`.
+- `code` is the specific cause and the field to branch on. It's stable, and
+  `doc_url` points at its entry on this page.
+- `message` is a sentence for a person. Don't parse it.
+- `retryable` says whether sending the same request again can succeed.
+- `param` names the field at fault, when one field was. It's absent otherwise.
+- `request_id` matches the `Request-Id` response header. Quote it when you
+  report a problem.
+
+## Retrying safely
+
+`retryable` is `true` for every `429` and `5xx`, and for
+[`idempotency_in_flight`](#idempotency_in_flight). It's `false` for every other
+`4xx`: those need a different request. On a `429`, wait for `Retry-After`
+seconds. Otherwise back off exponentially.
+
+A retry is safe even on the routes that mint credentials, as long as you send
+the same `Idempotency-Key` (see [Conventions](/v1/overview#conventions) for the
+routes):
+
+- Corsair stores the first response for that key, for 24 hours or until a
+  credential in it expires, whichever comes first. The key is scoped to your
+  project.
+- A retry inside that window gets the stored status and body back, with an
+  `Idempotent-Replay: true` header.
+- A `4xx` from the route is stored and replayed like a success. A `5xx` isn't
+  stored, so a retry with the same key runs the request again.
+- Corsair checks the project key and the rate limit before it looks at the
+  `Idempotency-Key`, so a `401` or a `429` is never stored. After a `429`, wait
+  for `Retry-After` and send the same key again. The limited request never ran.
+- A replay counts toward the mint limit like any other request.
+- `POST /keys/rotate` can't be replayed once it has succeeded, because the
+  retry's old key gets the `401` first. See
+  [If the response is lost](/v1/authentication#if-the-response-is-lost).
+- A connect session's URL expires sooner than 24 hours. Once it has, a retry
+  with its key creates a new session.
+- The same key with a different method, path or body returns
+  [`idempotency_key_reuse`](#idempotency_key_reuse).
+- A key can be up to 255 characters. A longer one is a `400`.
+
+## In the SDK
+
+The TypeScript SDK throws a `CloudApiError` for any error response. It extends
+`ManagementApiError`, so one `catch` covers the management API and the runtime.
+
+```ts
+import { CloudApiError, corsairCloud } from 'corsair';
+
+const corsair = corsairCloud({ apiKey: process.env.CORSAIR_CLOUD_KEY! });
+
+try {
+  await corsair.manage.mcp.links.mint({
+    admin: { instance: 'nope', tenant: 'usr_8841' },
+  });
+} catch (err) {
+  if (err instanceof CloudApiError) {
+    err.status;    // 400
+    err.code;      // 'invalid_request'
+    err.message;   // "no instance 'nope' in this project"
+    err.param;     // 'admin'
+    err.retryable; // false
+    err.docUrl;    // 'https://docs.corsair.dev/v1/errors#invalid_request'
+    err.requestId; // 'req_…'
+  }
+}
+```
+
+The SDK doesn't retry for you. When a request never gets an answer, from a
+network failure or the 30-second default timeout, it throws `CloudApiError` with
+`status: 0` and [`request_failed`](#request_failed). If the status arrived but
+the body didn't, the error keeps that status.
+
+## Codes on every route
+
+These come from the management API itself, on any route.
+
+| Code | Status | Retryable |
+|------|--------|-----------|
+| [`invalid_request`](#invalid_request) | 400 | no |
+| [`unauthorized`](#unauthorized) | 401 | no |
+| [`project_mismatch`](#project_mismatch) | 403 | no |
+| [`resource_missing`](#resource_missing) | 404 | no |
+| [`method_not_allowed`](#method_not_allowed) | 405 | no |
+| [`resource_conflict`](#resource_conflict) | 409 | no |
+| [`idempotency_key_reuse`](#idempotency_key_reuse) | 409 | no |
+| [`idempotency_in_flight`](#idempotency_in_flight) | 409 | yes |
+| [`rate_limit_exceeded`](#rate_limit_exceeded) | 429 | yes |
+| [`internal_error`](#internal_error) | 500 | yes |
+| [`delivery_failed`](#delivery_failed) | 502 | yes |
+| [`database_unavailable`](#database_unavailable) | 503 | yes |
+
+### invalid_request
+
+Status `400`, type `invalid_request_error`.
+
+A body field or query parameter failed validation: it's missing, the wrong
+type, out of range, or a ref in the wrong shape. `param` names it. Some causes
+you'll meet:
+
+- A mint names an instance or tenant the project doesn't have:
+  `no instance 'nope' in this project`.
+- A mint names a tenant with no access line on that instance:
+  `No access for prod:usr_8841`. Create it with `PUT /access/prod:usr_8841`
+  first.
+- `limit` isn't a positive integer, or `starting_after` names an id that isn't
+  in the list.
+- An `Idempotency-Key` is longer than 255 characters.
+
+Skill upload links use it for an upload they can't read. Fix the request;
+sending it again unchanged gets the same answer.
+
+### unauthorized
+
+Status `401`, type `authentication_error`.
+
+The `Authorization: Bearer` header is missing or malformed, or the key doesn't
+verify. Corsair checks the key before it looks at the path, so this comes back
+for every route. On a Files link or a skill upload link, it means the link's
+token is invalid or has expired: ask for a new link.
+
+### project_mismatch
+
+Status `403`, type `permission_error`.
+
+The key is valid, but this action is refused for this project. Examples are an
+account that no longer has access to the project, an action only the
+organization's owner can take, and setting up a provider that only the
+workspace admin can set up. A path slug that doesn't match the key doesn't
+return this. It returns [`resource_missing`](#resource_missing).
+
+### resource_missing
+
+Status `404`, type `not_found`.
+
+No such route, resource or project for this key. A slug in the path that
+doesn't match the key also lands here, with `param: "project_slug"`, so a key
+can't find out which other projects exist.
+
+A `404` on something you expect to exist is usually a typo in a ref. Refs are
+positional: `instance:tenant` for `/tenants` and `/access`,
+`instance:integration` for `/integrations` and `/webhooks`, and
+`instance:integration:tenant` for `/connections`.
+
+### method_not_allowed
+
+Status `405`, type `invalid_request_error`.
+
+The path exists, but not with this method. For example, access lines take `PUT`,
+not `PATCH`.
+
+### resource_conflict
+
+Status `409`, type `conflict`.
+
+The write contradicts what's already there. Some causes:
+
+- `POST /tenants` for a tenant that already exists on the instance.
+- Minting a link on an instance that hasn't been applied:
+  `Instance 'prod' has not been applied. POST /instances/prod/apply first.`
+- Applying an instance that holds no integrations.
+- A link `path` or a box handle that's already taken.
+
+### idempotency_key_reuse
+
+Status `409`, type `conflict`.
+
+This `Idempotency-Key` was already used, inside its window, for a request with a
+different method, path or body. Sending it again gets the same error. Use a new
+key for a new request.
+
+### idempotency_in_flight
+
+Status `409`, type `conflict`. Retryable.
+
+An earlier request with this `Idempotency-Key` hasn't finished. Retry shortly
+with the same key to get its result. You should rarely see this, because a
+duplicate normally waits for the first request and then replays its answer.
+
+### rate_limit_exceeded
+
+Status `429`, type `rate_limit_error`. Retryable.
+
+The project went over its per-minute limit for this class of request: 1000
+reads, 120 writes or 60 mints. Wait for the `Retry-After` header, in seconds.
+See [Rate limits](/v1/authentication#rate-limits).
+
+The pg plugin (`POST /oss/pg`) has its own limits and returns this code too.
+Its error adds `retry_after` and `limit: { max, window_seconds }`.
+
+### internal_error
+
+Status `500`, type `api_error`. Retryable.
+
+Something failed on Corsair's side. The message is generic on purpose. Retry
+with backoff, and quote `request_id` if it keeps happening. A minting write that
+fails this way stores nothing, so a retry with the same `Idempotency-Key` runs
+again.
+
+The SDK also uses this code for an error response that has no error body, such
+as a gateway failure.
+
+### delivery_failed
+
+Status `502`, type `api_error`. Retryable.
+
+From `POST /webhooks/{ref}/deliveries/{id}/retry`. Corsair understood the
+request and re-sent the stored event, but delivering it to your instance
+failed. `message` carries the reason.
+
+### database_unavailable
+
+Status `503`, type `api_error`. Retryable.
+
+Corsair couldn't reach its database, so nothing was applied. Retry with
+backoff.
+
+### request_failed
+
+Raised by the TypeScript SDK, not sent by Corsair. The request didn't get a
+usable answer: the network failed, the request timed out, or the response body
+couldn't be read. `retryable` depends on how much of the response arrived.
+
+- Nothing arrived. `status` is `0`. `retryable` is `true` for `GET`, `PUT` and
+  `DELETE`, and for any request that carried an `Idempotency-Key`. It's `false`
+  for a `POST` or `PATCH` without one, because Corsair may have applied it.
+- The status arrived, but the body couldn't be read. `status` is that status.
+  `retryable` is `true` for `GET`, `PUT` and `DELETE`. For a `POST` or `PATCH`
+  it follows the status, as on any other error: `true` for `429` and `5xx`,
+  `false` otherwise, with or without an `Idempotency-Key`.
+
+So a mint whose `201` arrived without its body reports `retryable: false`. It's
+still safe to repeat with the same `Idempotency-Key`, and Corsair replays the
+stored response with the new credential in it. `POST /keys/rotate` is the
+exception, because the old key no longer works. See
+[If the response is lost](/v1/authentication#if-the-response-is-lost).
+
+## Skills, files and plugin codes
+
+These come from the routes that work inside a project's workspace rather than on
+its configuration:
+
+- Skills: the `/skills` routes, skill upload links, and skill imports from the
+  dashboard.
+- Files: the `/v1/files/…` upload, download and zip links, and the Files
+  plugin.
+- The open-source plugins behind `POST /oss/{plugin}`: CRM, PM (issues), pg
+  (Postgres databases), Files, Items, the assistant, and the workspace sharing
+  they rely on.
+
+The `message` on these is written for a person and usually says what to change.
+Several areas share a code, so the list is alphabetical. `retryable` follows the
+status: `true` for `429` and `5xx`, `false` for the rest.
+
+### address_refused
+
+`502`, pg. The database URL points at a host that isn't a public address. The
+SQL broker only connects to public hosts.
+
+### already_invited
+
+`409`, workspaces. That person already has an invite.
+
+### already_related
+
+`409`, PM. Those issues already have that relation.
+
+### already_set
+
+`409`, PM. The team already has a rule for that event. Update the rule instead.
+
+### already_shared
+
+`409`, assistant. That chat is already in Shared.
+
+### ambiguous
+
+`400` or `409`. In Files, `old_text` appears more than once in the file:
+include more of the surrounding text, or pass `replace_all: true`. In a CRM
+import, a row's emails or LinkedIn belong to different people already in the
+CRM.
+
+### archived_attribute
+
+`400`, CRM. The attribute is archived, so it can't take a value.
+
+### auth_failed
+
+`502`, pg. The database refused the stored credentials. The workspace owner can
+test or rotate the URL in the dashboard.
+
+### bad_access
+
+`400`, pg. `access` must be `none`, `read` or `write`.
+
+### bad_content_table
+
+`500`, workspaces. An internal lookup named a table Corsair doesn't know. It's
+a bug on Corsair's side, and retrying won't help. Report it with the
+`request_id`.
+
+### bad_description
+
+`400`, pg. A database description must be text, under 500 characters.
+
+### bad_name
+
+`400`, pg. A database name is a lowercase letter, then letters, digits or
+underscores, up to 63 characters.
+
+### bad_read_only
+
+`400`, pg. `read_only` must be `true` or `false`.
+
+### bad_record
+
+`400`, Items. A record id isn't one of this workspace's records.
+
+### bad_request
+
+`400`. In pg, `sql` is missing or too long, or `params` isn't a list of
+strings, numbers, booleans, null or arrays of those. In Items, the agent must be
+`claude`, `cursor` or `codex`.
+
+### bad_response
+
+`502`, CRM. A people lookup didn't return a list.
+
+### bad_seal
+
+`400`, pg. The value isn't a sealed database URL.
+
+### bad_target
+
+`400`, workspaces. Choose an existing workspace or a new one.
+
+### bad_url
+
+`400` or `502`. In Items, `resultUrl` must be an http or https link under 500
+characters. In pg, the stored database URL isn't usable: it must be a postgres
+URL with a user, one host and a valid port.
+
+### binary_file
+
+`400`, Skills. A file in the skill, or its `SKILL.md`, isn't text. Skills carry
+text files only.
+
+### broker_unavailable
+
+`502`, pg. The SQL broker didn't answer. Try again shortly.
+
+### changed
+
+`409`, Files. The file changed or was deleted while you were saving or deleting
+it. Read it again and retry.
+
+### claimed
+
+`409`, Items. Another agent has claimed this item.
+
+### conflict
+
+`409`, plugins. The write collided with an existing row: a value already on the
+record, an object slug that's taken, or another write at the same moment. If it
+was a race, read again and retry.
+
+### connect_failed
+
+`502`, pg. The SQL broker couldn't reach the database.
+
+### credentials_unreadable
+
+`500`, pg. The stored database credentials couldn't be opened. The workspace
+owner needs to set the URL again; retrying won't help.
+
+### database_not_found
+
+`502`, pg. The database named in the URL doesn't exist on that server.
+
+### email_failed
+
+`502`, workspaces. The invite email didn't send. Try again.
+
+### empty_file
+
+`400`, Files. The upload or the new content was empty. To remove a file, use
+`files.delete`.
+
+### exists
+
+`409`, pg. A database with that name already exists, or it's already set up.
+Rotate its URL from the dashboard, or remove it first.
+
+### fetch_refused
+
+`400`, `413` or `502`, Files. Corsair wouldn't fetch the URL you gave it, or the
+fetch failed: only public `https` addresses are fetched, the file was over the
+size limit, the server answered with an error, or it redirected too many times.
+
+### forbidden
+
+`403`, assistant and skill sharing. Only the person who started a chat or shared
+a skill, or the workspace owner, can delete it. Also returned when someone in
+that space has already shared the skill.
+
+### internal
+
+`500`, PM. The issue, label or project wasn't created. Try again.
+
+### invalid_agent
+
+`400`, Items. Say which agent is claiming the item or reporting on it.
+
+### invalid_email
+
+`400`, workspaces. That isn't an email address.
+
+### invalid_field
+
+`400`, CRM, PM, Files and Slack channel settings. A field is missing, the wrong
+type, or not allowed here. The message names the field. This is the most common
+plugin code.
+
+### invalid_folder
+
+`400`, Files. A folder is a path like `contracts/2026`, at most 8 levels deep.
+
+### invalid_handle
+
+`400`, workspaces. Enter a lug URL or an email address.
+
+### invalid_id
+
+`400`, Items and assistant. Pass the item's or the chat's id.
+
+### invalid_name
+
+`400`. A skill name is lowercase letters, digits and hyphens, starts with a
+letter or digit, is at most 64 characters, and isn't a reserved name. In
+workspaces, a name is at most 48 characters. Sharing a skill needs the skill's
+name.
+
+### invalid_skill
+
+`400`, Skills. A file path in the skill isn't valid, or the folder being
+imported isn't a skill.
+
+### invalid_status
+
+`400`, Items. Status is `done`, `blocked` or `needs_input`.
+
+### invalid_title
+
+`400`, Items and assistant. A title is required.
+
+### invalid_url
+
+`400`, Files. `url` must be an `https` address.
+
+### key_taken
+
+`409`, PM. That team key is already in use, or issues from another team still
+use it.
+
+### library_full
+
+`400`, Skills. The library is at its 64 MB limit, counting saved versions.
+Delete a skill to make room.
+
+### limit_reached
+
+`400`, Skills. The project holds its maximum of 100 skills. Delete one first.
+
+### missing_description
+
+`400`, Skills. A skill needs a one-line description.
+
+### multiple_matches
+
+`409`, CRM. The value you matched on fits more than one record.
+
+### name_taken
+
+`409`. A skill with that name exists: pass another name, or overwrite it. When
+sharing, someone in the space already shared a skill with that name. In PM, the
+team already has a state with that name.
+
+### no_file
+
+`400`, Files. The upload had no file. Send it as a `file` form field, or as the
+raw body with `?name=`.
+
+### no_handle
+
+`400`, workspaces. Claim a lug URL before starting a workspace, moving a link
+or answering an invite.
+
+### no_link
+
+`400`, workspaces. Choose a link to join with.
+
+### no_model
+
+`503`, Items. Drafting isn't available right now.
+
+### no_state
+
+`400`, PM. The team has no workflow states.
+
+### no_team
+
+`400`, PM. The workspace has no team.
+
+### no_text_layer
+
+`415`, Files. The file has no text Corsair can read, such as a scan, or it's too
+large to read here. Call `files.reparse` to read it.
+
+### no_workspace
+
+`400` or `500`, workspaces. Start the workspace before inviting someone (`400`),
+or the workspace couldn't be started (`500`).
+
+### not_claimed
+
+`409`, Items. Claim the item before reporting on it.
+
+### not_configured
+
+`503`. The plugin (the assistant, Loops, pg or skills) isn't available on this
+deployment yet.
+
+### not_connected
+
+`403` or `409`. The link's profile isn't connected to a workspace (`403`), or
+Items aren't ready for this link yet (`409`). Files opens its workspace on the
+first call, so you won't see this from Files.
+
+### not_failed
+
+`409`, Files. The file isn't waiting on a read to start or retry.
+
+### not_found
+
+`404`, plugins, Skills and Files. A row the plugin looked up isn't in this
+workspace: a record, object, issue, file, database, item or skill. A Files
+download link returns it when the file is gone. The configuration routes use
+[`resource_missing`](#resource_missing) instead.
+
+### not_movable
+
+`400`, assistant. Only a chat can move to Shared.
+
+### not_owner
+
+`403`, Files. Only the link that added this file can change it.
+
+### not_read_yet
+
+`409`, Files. The file hasn't been read yet. Its owner can start that with
+`files.reparse`.
+
+### not_supported
+
+`501`, Items. Items are served by Corsair's hub, not by the plugin directly.
+
+### not_text
+
+`415`, Files. The file isn't text, so text operations don't apply. Get a link
+with `files.url` and hand it to an app that reads that type.
+
+### not_unique
+
+`409`, CRM. The attribute already has repeated values, so it can't be made
+unique.
+
+### not_yours
+
+`403`, Files. Only the link that added this file can change it.
+
+### one_file
+
+`400`, Files. A replace link takes exactly one file.
+
+### owner
+
+`400`, workspaces and pg. The owner can't leave their own workspace or lose
+write access to a database.
+
+### owner_only
+
+`403`, pg and PM. Only the workspace owner can do this.
+
+### parent_loop
+
+`400`, PM. An issue can't be its own parent, or the parent of an issue above it.
+
+### pending
+
+`409`, pg. The database isn't set up yet. The owner needs to open the setup link
+from `dbs.create`.
+
+### query_error
+
+`400`, pg. Postgres rejected the statement. The message carries Postgres's error
+and its SQLSTATE.
+
+### rate_limited
+
+`429`, Skills and Files. Too many uploads in 10 minutes, too many GitHub
+requests from one skill library, or the server is busy. Try again in a minute.
+
+### read_only
+
+`400`, pg. `query.sql` is read-only. Use `query.exec` to change data.
+
+### read_only_credentials
+
+`400`, pg. The credentials saved for this database can't write, so `query.exec`
+can't change data. The owner can save credentials that can write.
+
+### read_only_db
+
+`403`, pg. The database is marked read-only in Hub, so `query.exec` is off for
+it.
+
+### read_only_grant
+
+`403`, pg. You have read access to this database. Use `query.sql`, or ask the
+owner for write access.
+
+### reading_failed
+
+`422`, Files. Reading the file failed. The message says why.
+
+### rejected
+
+`400`, `409` or `500`, plugins. The database refused the write because of a
+constraint, for example an option that a value still uses. `500` means the
+attribute wasn't saved.
+
+### running
+
+`409`, assistant. Wait for the answer to finish, then move the chat.
+
+### same_workspace
+
+`400`, workspaces. The link already files into that workspace.
+
+### self
+
+`400`, workspaces. That's your own box or workspace. Connect one of your
+profiles instead.
+
+### stale
+
+`400`, Skills. The skill changed since you opened it. Reload it and save again.
+
+### state_in_use
+
+`409`, PM. Move issues out of this state first.
+
+### still_reading
+
+`409`, Files. The file is still being read. Try again in a minute.
+
+### storage_failed
+
+`502`, Files. Corsair couldn't reach file storage. Try again.
+
+### system_object
+
+`400`, CRM. A standard object can't be deleted.
+
+### target_in_use
+
+`409`, CRM. A value still points at that target.
+
+### team_in_use
+
+`409`, PM. Move or delete this team's issues first.
+
+### text_not_found
+
+`409`, Files. `old_text` isn't in the file. Read it with `files.read_text` and
+copy the text exactly, spaces and line breaks included.
+
+### timeout
+
+`400`, pg. The database didn't answer in time, or the statement ran past its
+time limit.
+
+### tls_failed
+
+`502`, pg. Corsair couldn't set up a verified TLS connection to the database.
+
+### tls_required
+
+`502`, pg. The database URL allows an unencrypted connection. It must require
+TLS.
+
+### too_large
+
+`400` or `413`, Files and Skills. A file is over 25 MB, a zip would be too big,
+a skill file is over its limit, or a repo is too large to read whole (paste the
+folder's URL instead).
+
+### too_many_files
+
+`400` or `413`, Files and Skills. An upload takes up to 20 files at a time, a
+zip has a file limit, and a skill carries at most 200 files.
+
+### unavailable
+
+`503`, Skills and Files. Uploads or file storage aren't set up on this server,
+the workspace isn't ready yet, or the project has no key to sign an upload link
+with. Try again in a minute.
+
+### unique_conflict
+
+`409`, CRM. That unique value is already on a record.
+
+### unknown_box
+
+`404`, workspaces. There's no box at that address.
+
+### unknown_op
+
+`400`, Items. No such operation.
+
+### unknown_operation
+
+`404`, plugins. The plugin has no operation by that name. `GET /oss/{plugin}`
+lists its operations.
+
+### unknown_tenant
+
+`404`, workspaces. That profile isn't on this box, or that link isn't yours.
+
+### workspace_exists
+
+`409`, workspaces. You already have a workspace of your own, or this box already
+has one by that name. Move the link into the existing one.
+
+### wrong_object
+
+`400`, CRM. The record isn't on the list's parent object, or the attribute can't
+point at that object.
+
+### wrong_project
+
+`400`, PM. `projectMilestoneId` must be a milestone of the issue's project.
+
+### wrong_team
+
+`400`, PM. The state, cycle or labels belong to a different team than the
+issue.
