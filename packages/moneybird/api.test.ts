@@ -181,16 +181,21 @@ describeIfKey('moneybird live', () => {
 		await expect(api().reports.profitLoss({})).resolves.toBeDefined();
 	});
 
-	it.each(NO_ARGUMENT_READS)('reads %s with no arguments', async (id) => {
-		// `unknown` because the path walks the generated API object by name.
-		let fn: unknown = api();
-		for (const part of id.split('.')) {
-			fn = (fn as Record<string, unknown>)[part];
-		}
-		await expect(
-			(fn as (input: object) => Promise<unknown>)({}),
-		).resolves.toBeDefined();
-	});
+	it.each(NO_ARGUMENT_READS)(
+		'reads %s with no arguments',
+		async (id) => {
+			// `unknown` because the path walks the generated API object by name.
+			let fn: unknown = api();
+			for (const part of id.split('.')) {
+				fn = (fn as Record<string, unknown>)[part];
+			}
+			await expect(
+				(fn as (input: object) => Promise<unknown>)({}),
+			).resolves.toBeDefined();
+			// reports.assets has taken 76 s to over 120 s on a sandbox administration.
+		},
+		300_000,
+	);
 
 	it('reads events of one record type', async () => {
 		const out = await api().events.list({ entity_type: 'SalesInvoice' });
