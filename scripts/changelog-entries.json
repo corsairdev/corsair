@@ -12852,5 +12852,11 @@
         "title": "WithTenant connectLinks option to skip minting connect links"
       }
     ]
+  },
+  {
+    "date": "2026-11-26",
+    "package": "cloud",
+    "version": "0.2.34",
+    "changes": []
   }
 ]
