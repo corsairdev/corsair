@@ -318,6 +318,15 @@ describe('Listclean client', () => {
 		);
 	});
 
+	it('masks an address with a quoted local part', () => {
+		expect(withoutAddresses('Could not verify "alice"@example.com')).toBe(
+			'Could not verify [email]',
+		);
+		expect(withoutAddresses('bad "alice smith"@example.com.')).toBe(
+			'bad [email]',
+		);
+	});
+
 	it('drops undefined query keys instead of sending them', async () => {
 		mockFetch(ok([]));
 

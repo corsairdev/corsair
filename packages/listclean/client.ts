@@ -40,9 +40,15 @@ export function readEnvelope(body: unknown): {
 	};
 }
 
-/** Replaces anything shaped like an email address, so a message never carries one. */
+/**
+ * Replaces anything shaped like an email address, so a message never carries
+ * one. A quoted local part (`"alice smith"@example.com`) counts as well.
+ */
 export function withoutAddresses(text: string): string {
-	return text.replace(/[^\s@"'<>()]+@[^\s@"'<>()]+/g, '[email]');
+	return text.replace(
+		/(?:"[^"\r\n]*"|[^\s@"'<>()]+)@[^\s@"'<>()]+/g,
+		'[email]',
+	);
 }
 
 /** The message Listclean sent, with the status and its error code in front. */
