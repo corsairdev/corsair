@@ -72,7 +72,7 @@ export const getVerificationLogs: ListcleanEndpoints['verifyGetVerificationLogs'
 			}),
 			{
 				shape: envelopeData,
-				log: (_, result) => ({ count: result.length }),
+				log: (_, result) => ({ count: result.logs.length }),
 			},
 		);
 

@@ -72,7 +72,7 @@ describe('Listclean request shapes', () => {
 	});
 
 	it('verify.getVerificationLogs sends the range and filters as query parameters', async () => {
-		mockFetch(ok([]));
+		mockFetch(ok({ logs: [], total_count: 0 }));
 
 		await endpoints.verify.getVerificationLogs(makeCtx(), {
 			start_date: '2026-11-01',
@@ -88,7 +88,7 @@ describe('Listclean request shapes', () => {
 	});
 
 	it('verify.getVerificationLogs omits every unset filter rather than sending null', async () => {
-		mockFetch(ok([]));
+		mockFetch(ok({ logs: [], total_count: 0 }));
 
 		await endpoints.verify.getVerificationLogs(makeCtx(), {
 			start_date: '2026-11-01',

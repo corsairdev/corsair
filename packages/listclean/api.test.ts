@@ -71,7 +71,7 @@ describeIfKey('Listclean live smoke', () => {
 				end_date: '2026-11-25',
 				limit: 10,
 			});
-			expect(Array.isArray(result)).toBe(true);
+			expect(Array.isArray(result.logs)).toBe(true);
 		} finally {
 			testDb.cleanup();
 		}
@@ -84,8 +84,6 @@ describeIfKey('Listclean live smoke', () => {
 				start_date: '2026-11-24',
 				end_date: '2026-11-25',
 			});
-			// The inner shapes are undocumented; the parse only asserts the
-			// three keys exist as the spec declares.
 			expect('total_summary' in result).toBe(true);
 			expect('datewise_summary' in result).toBe(true);
 			expect('graph_summary' in result).toBe(true);

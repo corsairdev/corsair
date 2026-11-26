@@ -202,7 +202,7 @@ const listcleanEndpointMeta = {
 	'verify.getVerificationLogs': {
 		riskLevel: 'read',
 		description:
-			'Read past verifications in a date range of up to 30 days, with optional email, source and status filters and offset paging',
+			'Read past verifications in a date range of up to 30 days, with optional email, source and status filters and offset paging; answers the logs and their total_count',
 	},
 	'verify.getAnalytics': {
 		riskLevel: 'read',
@@ -237,7 +237,8 @@ const listcleanEndpointMeta = {
 	},
 	'uploads.listUploads': {
 		riskLevel: 'read',
-		description: 'List the chunked CSV uploads with their status and progress',
+		description:
+			'List the chunked CSV uploads with their id, status, file names and record counts',
 	},
 	'uploads.startUpload': {
 		riskLevel: 'write',

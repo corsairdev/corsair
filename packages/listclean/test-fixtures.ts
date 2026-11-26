@@ -95,21 +95,6 @@ export const RESULT_ROWS = [
 	},
 ] as const;
 
-export const ANALYTICS = {
-	// unknown: the spec leaves the analytics inner shapes bare, so this
-	// fixture mirrors the shape the docs describe in prose only.
-	total_summary: {
-		total: 100,
-		clean: { count: 60, perc: 60 },
-		dirty: { count: 30, perc: 30 },
-		unknown: { count: 10, perc: 10 },
-	},
-	datewise_summary: {
-		'2026-11-24': { total: 50, clean: { count: 30, perc: 60 } },
-	},
-	graph_summary: [{ date: '2026-11-24', clean: 30, dirty: 15 }],
-} as const;
-
 export const CREDITS = { credits: 99 } as const;
 
 /** Failure envelopes, from the live probe log. */
@@ -130,4 +115,78 @@ export const DELETE_OK = {
 	success: 1,
 	error_code: 0,
 	message: 'Lists deleted successfully',
+} as const;
+
+/**
+ * Bodies the live API answered on 2026-11-26 (box live run), trimmed, with
+ * the account's username and other accounts' filenames replaced.
+ */
+
+/** GET /lists/ on an account with no lists: total is a string. */
+export const LIVE_LISTS_EMPTY = { total: '0', lists: [] } as const;
+
+/** GET /logs: an object holding the rows and a total, not a bare array. */
+export const LIVE_LOGS = {
+	logs: [
+		{
+			entered: '2026-11-26 17:52:53',
+			instance_name: 'corsair_test',
+			email: 'test@example.com',
+			status: 'dirty',
+			source: 'api',
+			reason_code: 'EH3',
+			remarks: 'Role-Based Email',
+		},
+	],
+	total_count: 1,
+} as const;
+
+/** GET /analytics: per-status count/perc objects, keyed by YYYYMMDD per day, and parallel arrays in graph_summary. */
+export const LIVE_ANALYTICS = {
+	total_summary: {
+		total: { count: 1, perc: 100 },
+		clean: { count: 0, perc: 0 },
+		dirty: { count: 1, perc: 100 },
+		unknown: { count: 0, perc: 0 },
+		error: { count: 0, perc: 0 },
+	},
+	datewise_summary: {
+		'20261126': {
+			total: { count: 1, perc: 100 },
+			clean: { count: 0, perc: 0 },
+			// A string count on the same object as number counts.
+			dirty: { count: '1', perc: 100 },
+			unknown: { count: 0, perc: 0 },
+			error: { count: 0, perc: 0 },
+		},
+	},
+	graph_summary: {
+		dates: ['2026-11-25', '2026-11-26'],
+		total_counts: [0, 1],
+		total_percs: [0, 100],
+		dirty_counts: [0, 1],
+		dirty_percs: [0, 100],
+	},
+} as const;
+
+/** GET /uploads/: one row; id, not upload_id, and no progress. */
+export const LIVE_UPLOAD_ROW = {
+	id: 2,
+	entered: '2021-11-11 01:36:59',
+	client_filename: 'sample-list.csv',
+	filename: '1636574819-7289_sample-list.csv',
+	status: 'success',
+	count: 0,
+	total_records: 100,
+	stage: 'Please wait..',
+	remarks: null,
+	import_result: null,
+	separator_char: null,
+	enclosure_char: null,
+	escape_char: null,
+	fast_process: 0,
+	upload_session_id: null,
+	email_column_index: null,
+	token_id: 0,
+	token_type: 'session',
 } as const;

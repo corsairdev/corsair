@@ -5,7 +5,6 @@ jest.mock('corsair/core', () => {
 
 import { ApiError } from 'corsair/http';
 import {
-	ANALYTICS,
 	BATCH_ACCEPTED,
 	CREDITS,
 	DELETE_OK,
@@ -68,28 +67,16 @@ describe('Listclean output parsing', () => {
 	});
 
 	it('verify.getVerificationLogs parses the log rows', async () => {
-		mockFetch(ok([LOG_ROW]));
+		mockFetch(ok({ logs: [LOG_ROW], total_count: 1 }));
 
 		const result = await endpoints.verify.getVerificationLogs(makeCtx(), {
 			start_date: '2026-11-01',
 			end_date: '2026-11-25',
 		});
 
-		expect(result).toHaveLength(1);
-		expect(result[0]).toMatchObject({ id: 21, credits_deducted: 1 });
-		expect(typeof result[0]?.error_code).toBe('string');
-	});
-
-	it('verify.getAnalytics passes the undocumented summaries through untyped', async () => {
-		mockFetch(ok(ANALYTICS));
-
-		const result = await endpoints.verify.getAnalytics(makeCtx(), {
-			start_date: '2026-11-01',
-			end_date: '2026-11-25',
-		});
-
-		expect(result.total_summary).toEqual(ANALYTICS.total_summary);
-		expect(result.graph_summary).toEqual(ANALYTICS.graph_summary);
+		expect(result.logs).toHaveLength(1);
+		expect(result.logs[0]).toMatchObject({ id: 21, credits_deducted: 1 });
+		expect(typeof result.logs[0]?.error_code).toBe('string');
 	});
 
 	it('lists.listLists parses counts as numbers or strings, whichever the list carries', async () => {

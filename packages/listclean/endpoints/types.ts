@@ -96,6 +96,10 @@ const LogSchema = z
 		credits_deducted: z.number().int().nullish(),
 		// A string here, unlike the integer error_code on the envelope.
 		error_code: z.string().nullish(),
+		// Sent by the live API (2026-11-26), absent from the spec.
+		instance_name: z.string().nullish(),
+		source: z.string().nullish(),
+		reason_code: z.string().nullish(),
 	})
 	.loose();
 
@@ -324,7 +328,14 @@ export type GetVerificationLogsInput = z.infer<
 	typeof GetVerificationLogsInputSchema
 >;
 
-const GetVerificationLogsResponseSchema = z.array(LogSchema);
+// The spec types the data as a bare array; the live API answers
+// { logs, total_count } (2026-11-26).
+const GetVerificationLogsResponseSchema = z
+	.object({
+		logs: z.array(LogSchema),
+		total_count: CountValueSchema.nullish(),
+	})
+	.loose();
 
 export type GetVerificationLogsResponse = z.infer<
 	typeof GetVerificationLogsResponseSchema
@@ -347,13 +358,18 @@ export type GetAnalyticsInput = z.infer<typeof GetAnalyticsInputSchema>;
 
 const GetAnalyticsResponseSchema = z
 	.object({
-		// unknown: the spec leaves all three summary shapes bare ("Aggregate
-		// counts and percentages by verification status"), and no public sample
-		// shows their inner fields, so they pass through as Listclean sends
-		// them rather than being invented here.
-		total_summary: z.record(z.string(), z.unknown()).nullish(),
-		datewise_summary: z.record(z.string(), z.unknown()).nullish(),
-		graph_summary: z.array(z.record(z.string(), z.unknown())).nullish(),
+		// The spec leaves all three shapes bare; these are what the live API
+		// answered (2026-11-26). total_summary maps a status (total, clean,
+		// dirty, unknown, error) to { count, perc }.
+		total_summary: z.record(z.string(), CountPercentSchema).nullish(),
+		// One total_summary per day, keyed YYYYMMDD.
+		datewise_summary: z
+			.record(z.string(), z.record(z.string(), CountPercentSchema))
+			.nullish(),
+		// Parallel arrays: dates, then <status>_counts and <status>_percs.
+		graph_summary: z
+			.record(z.string(), z.array(z.union([z.string(), z.number()])))
+			.nullish(),
 	})
 	.loose();
 
@@ -367,10 +383,11 @@ export type ListListsInput = z.infer<typeof ListListsInputSchema>;
 
 const ListListsResponseSchema = z
 	.object({
-		total: z.number().int().nullish(),
+		// The live API sends total as a string ("0"); the spec says integer.
+		total: CountValueSchema.nullish(),
 		// Opaque page token; Listclean documents no way to send it back, so it
 		// is surfaced for callers that want to watch it.
-		cursor: z.number().int().nullish(),
+		cursor: CountValueSchema.nullish(),
 		lists: z.array(ListSchema),
 	})
 	.loose();
@@ -468,13 +485,25 @@ const ListUploadsInputSchema = z.object({});
 
 export type ListUploadsInput = z.infer<typeof ListUploadsInputSchema>;
 
+// The spec's example rows carry upload_id and progress; the live API
+// (2026-11-26) answers id, a lowercase status and the file's details, with
+// no progress. Both spellings are read.
 const ListUploadsResponseSchema = z.array(
 	z
 		.object({
-			upload_id: z.number().int(),
-			// "COMPLETED" in the spec example: free text, not an enum.
+			id: z.number().int().nullish(),
+			upload_id: z.number().int().nullish(),
+			// "COMPLETED" in the spec example, "success"/"error" live: free text.
 			status: z.string().nullish(),
 			progress: ProgressSchema.nullish(),
+			entered: z.string().nullish(),
+			client_filename: z.string().nullish(),
+			filename: z.string().nullish(),
+			count: z.number().int().nullish(),
+			total_records: z.number().int().nullish(),
+			stage: z.string().nullish(),
+			remarks: z.string().nullish(),
+			fast_process: z.number().int().nullish(),
 		})
 		.loose(),
 );
