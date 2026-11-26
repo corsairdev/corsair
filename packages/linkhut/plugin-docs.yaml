@@ -1,5 +1,5 @@
 displayName: Linkhut
-description: Save, find and organise bookmarks and tags on linkhut - add, read and delete bookmarks, page through all of them, count them per day, get tag suggestions and rename or delete tags.
+description: Save, find and organise bookmarks and tags on linkhut - add, update, read and delete bookmarks, page through all of them, check what changed, count them per day, get tag suggestions and rename or delete tags.
 domain: ln.ht
 recommendedAuth: api_key
 overviewNote: |
@@ -16,18 +16,25 @@ overviewNote: |
     network failure or a 5xx.
   - **Writes can fail at HTTP 200.** A write answers `{ "result_code": "done" }`.
     The documented failure is `{ "result_code": "something went wrong" }`, which
-    can arrive with a 200 status. The plugin raises it as a `LinkhutAPIError`
-    instead of returning it, so a failed write never looks like a success.
-  - **`posts.add` is an upsert keyed by url.** Existing bookmarks are replaced by
-    default; pass `replace: 'no'` to leave one unchanged. A retried add converges,
-    so the plugin allows the retry.
+    arrives with a 200 status. The plugin raises it as core's `ApiError` (status
+    200, the body attached) instead of returning it, so a failed write never
+    looks like a success.
+  - **`posts.add` creates; `replace: 'yes'` updates.** Without `replace`, adding
+    a url that is already saved fails. With `replace: 'yes'` the saved bookmark
+    is rewritten: every field you leave out is reset (`extended` and `tags`
+    empty, public, read), and `dt` is ignored. Only an update is retried after
+    a 5xx or a dropped connection; a create may already have landed.
   - **Etiquette.** The docs ask for at least one second between requests and an
     identifiable User-Agent; the plugin does both. A 500 or an HTTP 999 means you
-    were throttled. The plugin retries reads with backoff; without a `Retry-After`
-    header the first wait is one second.
+    were throttled. The plugin retries reads with backoff, starting at one
+    second. A 429 is retried by core three times, honouring `Retry-After`.
   - **Paging.** `posts.all` pages by offset: it takes `start` and `results`
     (default 1000, maximum 100000) and `fromdt`/`todt` bounds, and the plugin
     derives `nextStart`, null on the last page. `posts.recent` has no offset.
+    `posts.allHashes` lists every bookmark as a URL MD5 and a change signature,
+    so a sync can fetch only what changed (by `hashes` in `posts.get`).
+  - **No notes.** linkhut implements the Pinboard posts and tags methods only;
+    Pinboard's notes and user routes do not exist on ln.ht.
   - **Webhooks.** The plugin does not receive webhooks; linkhut sends none.
 examples:
   read:
@@ -47,11 +54,12 @@ examples:
 apiExamples:
   posts.lastUpdated: {}
   posts.get:
-    call: "{ dt: '2020-12-24T00:00:00Z', meta: 'yes' }"
+    call: "{ dt: '2020-12-24', meta: 'yes' }"
   posts.recent:
     call: "{ tag: 'oss', count: 20 }"
   posts.all:
     call: "{ start: 0, results: 1000, fromdt: '2020-01-01T00:00:00Z' }"
+  posts.allHashes: {}
   posts.dates:
     call: "{ tag: 'oss' }"
   posts.suggest:
@@ -66,14 +74,15 @@ apiExamples:
   tags.delete:
     call: "{ tag: 'old' }"
 apiNotes:
-  posts.lastUpdated: 'Answers `{ update_time }`, the UTC time of the last bookmark change. The field can be missing for an account with no bookmarks.'
-  posts.get: 'The bookmarks of one day: `dt` defaults to the most recent day that has one. `tag` filters, `url` fetches one bookmark regardless of date, `hashes` takes URL MD5 values, and `meta: yes` adds the change signature. `shared` and `toread` arrive as the strings `yes`/`no`.'
+  posts.lastUpdated: 'Answers `{ update_time }`, the UTC time a bookmark was last added or changed: 1970-01-01T00:00:00Z for an account with no bookmarks.'
+  posts.get: '`url` fetches one bookmark regardless of date (`posts: []` when it is not saved); else `hashes` takes URL MD5 values; else `dt` (a day, CCYY-MM-DD) lists that day, filtered by `tag`; with no argument at all, the most recent day that has a bookmark. A `tag` or `meta` alone searches every day. `meta: yes` adds the change signature. `shared` and `toread` arrive as the strings `yes`/`no`, and `others` counts the other users who saved the url.'
   posts.recent: 'Up to `count` recent bookmarks, default 15, maximum 100, with an optional `tag` filter. There is no offset, so this is the first page only.'
   posts.all: 'A bare array of bookmarks, not wrapped in an object. `start` is the offset, `results` the page size (default 1000, maximum 100000), and `fromdt`/`todt` bound the saved time. The plugin adds `nextStart`, the next offset while the page came back full and null on the last page.'
+  posts.allHashes: 'Answers `{ hashes }`, one `{ url, meta }` pair per bookmark: the URL MD5 (the post `hash`) and the change signature that `meta: yes` returns elsewhere. Compare it with a stored copy, then fetch the changed ones with `posts.get` and `hashes`.'
   posts.dates: 'Answers `{ dates }`, a map from UTC day to the number of bookmarks saved on it, with an optional `tag` filter.'
   posts.suggest: 'Popular and recommended tags for a url, merged into `{ popular, recommended }` lists whatever order linkhut answers with.'
-  posts.add: 'Saves a bookmark, upserting by url: an existing bookmark for the same url is replaced unless `replace: no`. `description` is required, `tags` is sent comma delimited, `shared: no` makes the bookmark private and `toread: yes` marks it unread.'
-  posts.delete: 'Deletes the bookmark for a url. There is no undo in the API, and the plugin never replays the call after a network failure or a 5xx.'
+  posts.add: 'Creates a bookmark, and fails (`result_code` other than `done`, raised as an error) when the url is already saved. `replace: yes` updates the saved bookmark instead and fails when there is none; it rewrites every field, so pass the ones to keep. `description` is required, `tags` is sent comma delimited, `shared: no` makes the bookmark private and `toread: yes` marks it unread.'
+  posts.delete: 'Deletes the bookmark for a url; a url that is not saved fails. There is no undo in the API, and the plugin never replays the call after a network failure or a 5xx.'
   tags.get: 'A flat map from tag name to the number of bookmarks that carry it.'
-  tags.rename: 'Renames `old` to `new` on every bookmark that carries the tag.'
-  tags.delete: 'Removes a tag from every bookmark. The bookmarks stay; the tag cannot be restored, and the plugin never replays the call after a failure.'
+  tags.rename: 'Renames `old` to `new` on every bookmark that carries the tag. Answers `done` even when no bookmark had it.'
+  tags.delete: 'Removes a tag from every bookmark. The bookmarks stay; the tag cannot be restored, and the plugin never replays the call after a failure. Answers `done` even when no bookmark had it.'

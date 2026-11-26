@@ -1,7 +1,7 @@
 ---
 title: "Linkhut plugin"
 sidebarTitle: "Overview"
-description: "Save, find and organise bookmarks and tags on linkhut - add, read and delete bookmarks, page through all of them, count them per day, get tag suggestions and rename or delete tags."
+description: "Save, find and organise bookmarks and tags on linkhut - add, update, read and delete bookmarks, page through all of them, check what changed, count them per day, get tag suggestions and rename or delete tags."
 ---
 
 Use **Linkhut** through Corsair: one client, typed API calls.
@@ -19,23 +19,30 @@ Things to know before you call:
   network failure or a 5xx.
 - **Writes can fail at HTTP 200.** A write answers `{ "result_code": "done" }`.
   The documented failure is `{ "result_code": "something went wrong" }`, which
-  can arrive with a 200 status. The plugin raises it as a `LinkhutAPIError`
-  instead of returning it, so a failed write never looks like a success.
-- **`posts.add` is an upsert keyed by url.** Existing bookmarks are replaced by
-  default; pass `replace: 'no'` to leave one unchanged. A retried add converges,
-  so the plugin allows the retry.
+  arrives with a 200 status. The plugin raises it as core's `ApiError` (status
+  200, the body attached) instead of returning it, so a failed write never
+  looks like a success.
+- **`posts.add` creates; `replace: 'yes'` updates.** Without `replace`, adding
+  a url that is already saved fails. With `replace: 'yes'` the saved bookmark
+  is rewritten: every field you leave out is reset (`extended` and `tags`
+  empty, public, read), and `dt` is ignored. Only an update is retried after
+  a 5xx or a dropped connection; a create may already have landed.
 - **Etiquette.** The docs ask for at least one second between requests and an
   identifiable User-Agent; the plugin does both. A 500 or an HTTP 999 means you
-  were throttled. The plugin retries reads with backoff; without a `Retry-After`
-  header the first wait is one second.
+  were throttled. The plugin retries reads with backoff, starting at one
+  second. A 429 is retried by core three times, honouring `Retry-After`.
 - **Paging.** `posts.all` pages by offset: it takes `start` and `results`
   (default 1000, maximum 100000) and `fromdt`/`todt` bounds, and the plugin
   derives `nextStart`, null on the last page. `posts.recent` has no offset.
+  `posts.allHashes` lists every bookmark as a URL MD5 and a change signature,
+  so a sync can fetch only what changed (by `hashes` in `posts.get`).
+- **No notes.** linkhut implements the Pinboard posts and tags methods only;
+  Pinboard's notes and user routes do not exist on ln.ht.
 - **Webhooks.** The plugin does not receive webhooks; linkhut sends none.
 
 **What you get:**
 
-- 11 typed API operations
+- 12 typed API operations
 
 ## Setup
 

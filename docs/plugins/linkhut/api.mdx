@@ -14,7 +14,7 @@ description: "API reference for the Linkhut plugin in Corsair: every `linkhut.ap
 
 `posts.add`
 
-Save a bookmark. A bookmark that already exists for the url is replaced, unless `replace` is 'no'
+Save a new bookmark; fails when the url is already saved. With `replace: 'yes'`, rewrite the saved bookmark for the url instead (omitted fields are cleared)
 
 **Risk:** `write`
 
@@ -31,11 +31,11 @@ await corsair.linkhut.api.posts.add({ url: 'https://sourcehut.org/', description
 | `extended` | `string` | No | Notes for the bookmark. |
 | `tags` | `string[]` | No | Sent comma delimited, as the API asks. A post in a response lists its tags space delimited. |
 | `dt` | `string` | No | The creation time to record for the bookmark. |
-| `replace` | `no` | No | Set to 'no' to leave an existing bookmark for this url unchanged; omitted, the bookmark is replaced |
-| `shared` | `no` | No | 'no' makes the bookmark private |
-| `toread` | `yes` | No | 'yes' marks the bookmark as unread |
+| `replace` | `yes \| no` | No | 'yes' updates the bookmark already saved for this url and fails when there is none; every field is rewritten, so an omitted `extended` or `tags` becomes empty, `shared` becomes yes and `toread` no, and `dt` is ignored. Omitted or 'no', a new bookmark is created and the call fails when the url is already saved. |
+| `shared` | `yes \| no` | No | 'no' makes the bookmark private. Omitted counts as 'yes' (public). |
+| `toread` | `yes \| no` | No | 'yes' marks the bookmark as unread. Omitted counts as 'no'. |
 
-Saves a bookmark, upserting by url: an existing bookmark for the same url is replaced unless `replace: no`. `description` is required, `tags` is sent comma delimited, `shared: no` makes the bookmark private and `toread: yes` marks it unread.
+Creates a bookmark, and fails (`result_code` other than `done`, raised as an error) when the url is already saved. `replace: yes` updates the saved bookmark instead and fails when there is none; it rewrites every field, so pass the ones to keep. `description` is required, `tags` is sent comma delimited, `shared: no` makes the bookmark private and `toread: yes` marks it unread.
 
 
 
@@ -95,10 +95,50 @@ A bare array of bookmarks, not wrapped in an object. `start` is the offset, `res
   hash: string,
   href: string,
   meta?: string | null,
+  others?: number | null,
   shared: yes | no,
   tags: string,
   time: string,
   toread: yes | no
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### allHashes
+
+`posts.allHashes`
+
+List every bookmark as a URL MD5 and a change signature, to find what changed without downloading all bookmarks
+
+**Risk:** `read`
+
+```ts
+await corsair.linkhut.api.posts.allHashes({});
+```
+
+**Input:** _empty object_
+
+Answers `{ hashes }`, one `{ url, meta }` pair per bookmark: the URL MD5 (the post `hash`) and the change signature that `meta: yes` returns elsewhere. Compare it with a stored copy, then fetch the changed ones with `posts.get` and `hashes`.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hashes` | `object[]` | Yes | One entry per bookmark, newest first. |
+
+<AccordionGroup>
+<Accordion title="hashes full type">
+
+```ts
+{
+  url: string,
+  meta: string
 }[]
 ```
 </Accordion>
@@ -158,7 +198,7 @@ await corsair.linkhut.api.posts.delete({ url: 'https://sourcehut.org/' });
 |------|------|----------|-------------|
 | `url` | `string` | Yes | The URL of the bookmark to delete. |
 
-Deletes the bookmark for a url. There is no undo in the API, and the plugin never replays the call after a network failure or a 5xx.
+Deletes the bookmark for a url; a url that is not saved fails. There is no undo in the API, and the plugin never replays the call after a network failure or a 5xx.
 
 
 
@@ -176,25 +216,25 @@ Deletes the bookmark for a url. There is no undo in the API, and the plugin neve
 
 `posts.get`
 
-Get the bookmarks of one day, the ones with a tag on that day, or the one bookmark for a url or a hash
+Get the bookmarks of one day, the bookmarks with a tag, the bookmark for a url (empty when it is not saved) or the bookmarks for URL MD5 hashes
 
 **Risk:** `read`
 
 ```ts
-await corsair.linkhut.api.posts.get({ dt: '2020-12-24T00:00:00Z', meta: 'yes' });
+await corsair.linkhut.api.posts.get({ dt: '2020-12-24', meta: 'yes' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `tag` | `string` | No | One tag, or several separated by spaces. |
-| `dt` | `string` | No | The day to list. Omitted, the most recent day that has a bookmark. |
+| `tag` | `string` | No | One tag, or several separated by spaces or commas. Without `dt`, `url` or `hashes`, a tag searches every day. |
+| `dt` | `string` | No | The day to list, CCYY-MM-DD (a full CCYY-MM-DDThh:mm:ssZ time is cut to its day; linkhut reads only a day). With no argument at all, the most recent day that has a bookmark. |
 | `url` | `string` | No | The one bookmark to look up. |
 | `hashes` | `string[]` | No | URL MD5 values. Several are joined with a space on the wire, which is what the `+` in the docs decodes to. |
 | `meta` | `yes` | No | Set to 'yes' to add the change-detection signature to each post. |
 
-The bookmarks of one day: `dt` defaults to the most recent day that has one. `tag` filters, `url` fetches one bookmark regardless of date, `hashes` takes URL MD5 values, and `meta: yes` adds the change signature. `shared` and `toread` arrive as the strings `yes`/`no`.
+`url` fetches one bookmark regardless of date (`posts: []` when it is not saved); else `hashes` takes URL MD5 values; else `dt` (a day, CCYY-MM-DD) lists that day, filtered by `tag`; with no argument at all, the most recent day that has a bookmark. A `tag` or `meta` alone searches every day. `meta: yes` adds the change signature. `shared` and `toread` arrive as the strings `yes`/`no`, and `others` counts the other users who saved the url.
 
 
 
@@ -214,6 +254,7 @@ The bookmarks of one day: `dt` defaults to the most recent day that has one. `ta
   hash: string,
   href: string,
   meta?: string | null,
+  others?: number | null,
   shared: yes | no,
   tags: string,
   time: string,
@@ -241,14 +282,14 @@ await corsair.linkhut.api.posts.lastUpdated({});
 
 **Input:** _empty object_
 
-Answers `{ update_time }`, the UTC time of the last bookmark change. The field can be missing for an account with no bookmarks.
+Answers `{ update_time }`, the UTC time a bookmark was last added or changed: 1970-01-01T00:00:00Z for an account with no bookmarks.
 
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `update_time` | `string \| null` | No | Time of the last bookmark change, UTC. Missing or null for an account with no bookmarks (from the docs, not seen live). |
+| `update_time` | `string \| null` | No | Time of the last bookmark added or changed, UTC. 1970-01-01T00:00:00Z for an account with no bookmarks. |
 
 
 
@@ -293,6 +334,7 @@ Up to `count` recent bookmarks, default 15, maximum 100, with an optional `tag` 
   hash: string,
   href: string,
   meta?: string | null,
+  others?: number | null,
   shared: yes | no,
   tags: string,
   time: string,
@@ -359,7 +401,7 @@ await corsair.linkhut.api.tags.delete({ tag: 'old' });
 |------|------|----------|-------------|
 | `tag` | `string` | Yes | The tag to delete from every bookmark. |
 
-Removes a tag from every bookmark. The bookmarks stay; the tag cannot be restored, and the plugin never replays the call after a failure.
+Removes a tag from every bookmark. The bookmarks stay; the tag cannot be restored, and the plugin never replays the call after a failure. Answers `done` even when no bookmark had it.
 
 
 
@@ -414,7 +456,7 @@ await corsair.linkhut.api.tags.rename({ old: 'oss', new: 'open-source' });
 | `old` | `string` | Yes | The tag to rename. |
 | `new` | `string` | Yes | The name it takes on every bookmark. |
 
-Renames `old` to `new` on every bookmark that carries the tag.
+Renames `old` to `new` on every bookmark that carries the tag. Answers `done` even when no bookmark had it.
 
 
 
