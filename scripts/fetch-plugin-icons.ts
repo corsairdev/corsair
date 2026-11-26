@@ -163,6 +163,12 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	// moceanapi.com has no root favicon (twenty-icons and Google both miss);
 	// the site's own 128px favicon.
 	mocean: 'https://moceanapi.com/images/favicon.png',
+	// moretrees.eco serves only a 32px favicon; the platform's 180px
+	// apple-touch icon is the same m:t mark.
+	moretrees: 'https://platform.moretrees.eco/images/apple-touch-icon.png',
+	// The domain lookup gave publora.com's 32px favicon; its 180px apple-touch
+	// icon is the same origami bird on a transparent background.
+	publora: 'https://publora.com/apple-touch-icon.png',
 	// interzoid.com serves no favicon (twenty-icons and Google both miss);
 	// its GitHub organisation logo is square.
 	interzoid: 'https://github.com/interzoid.png?size=256',
