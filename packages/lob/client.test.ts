@@ -302,6 +302,17 @@ describe('describeLobError', () => {
 		).toBe('Lob 403: Not authorized.');
 	});
 
+	it('reads the gateway envelope whose error field is a string', () => {
+		// Seen on a keyless probe of /v1/links, /v1/booklets and /v1/snap_packs.
+		expect(
+			describeLobError(
+				401,
+				{ statusCode: 401, error: 'Unauthorized', message: 'Invalid user' },
+				'x',
+			),
+		).toBe('Lob 401: Invalid user');
+	});
+
 	it('falls back when the body has no error text', () => {
 		expect(describeLobError(503, '<html>down</html>', 'Unavailable')).toBe(
 			'Lob 503: Unavailable',
