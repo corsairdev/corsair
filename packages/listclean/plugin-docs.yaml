@@ -1,6 +1,6 @@
 # Display copy for the docs, the catalog, corsair.dev and Hub.
 displayName: "Listclean"
-description: Email verification with Listclean - verify single addresses or batches of up to 3000, poll bulk jobs, download cleaned results, read verification logs and analytics, delete lists and check the credit balance.
+description: Email verification with Listclean - verify single addresses or batches of up to 3000, upload CSV files in chunks, poll bulk jobs, download cleaned results as JSON or CSV, read verification logs and analytics, delete lists, and read the credit balance and account profile.
 domain: listclean.xyz
 recommendedAuth: api_key
 overviewNote: |
@@ -8,12 +8,12 @@ overviewNote: |
 
   Things to know before you call:
 
-  - **Every answer is one envelope.** `{ success, error_code, message, data }` where `success` is an integer: `1` on success, `0` on failure, even over a 2xx status. The plugin throws on `success: 0` and on non-JSON bodies, so a 404 HTML page never comes back as an empty result.
-  - **Billed calls.** `verify.verifyEmail` spends one credit per call, and `verify.startBatchVerification` spends one credit per address when the job runs. Both carry `replayable: false`, so a lost answer or a 5xx is never retried and may have already been charged. Check `account.getCredits` first; signup comes with 25 free credits.
+  - **Every answer is one envelope.** `{ success, error_code, message, data }` where `success` is an integer: `1` on success, `0` on failure, even over a 2xx status. The plugin throws core's `ApiError` on `success: 0` and on non-JSON bodies, so a 404 HTML page never comes back as an empty result. Errors carry no email addresses or profile data: the request body is dropped and addresses are masked.
+  - **Billed calls.** `verify.verifyEmail` spends one credit per call; `verify.startBatchVerification` and a finished chunked upload spend one credit per address when the job runs. These are not retried after a 5xx or a dropped connection, since the credit may already be spent. A 429 is retried (core, three times), because Listclean refused it before running. Check `account.getCredits` first; signup comes with 25 free credits.
   - **Bulk verification is a job.** `verify.startBatchVerification` answers `list_id`. Poll `lists.getList`, whose `list.status` moves `SUBMITTED`, `INPROCESS`, `COMPLETED`. Listclean documents no failed status for this flow. Once `COMPLETED`, download rows with `lists.getListResults`, choosing `clean`, `dirty` or `unknown`.
+  - **Chunked CSV upload.** For a file rather than a list of addresses: `uploads.startUpload` with the file name, chunk count and chunk size answers `upload_id`; send each base64 chunk with `uploads.uploadChunk`; poll `uploads.getUpload` (status `inprocess`, `success` or `error`, lowercase). Its `request_id` is the list to read with `lists.getList`.
   - **Analytics shapes are undocumented.** Listclean's spec leaves `total_summary`, `datewise_summary` and `graph_summary` without inner fields, so those come back exactly as the API sends them rather than typed.
   - **Deletes are permanent.** `lists.delete` cannot be undone and the results cannot be fetched afterwards.
-  - **Deferred for a later release.** The chunked CSV upload flow (`/uploads/`) and the account profile read/update are not in this plugin, and neither is the CSV download, which the JSON download covers.
   - **Webhooks.** Listclean sends none, and the plugin does not receive any.
 examples:
   read:
@@ -43,17 +43,38 @@ apiExamples:
     call: "{ list_id: 159261 }"
   lists.getListResults:
     call: "{ list_id: 159261, type: 'clean' }"
+  lists.getListResultsCsv:
+    call: "{ list_id: 159261, type: 'clean' }"
   lists.delete:
     call: "{ list_id: 159261 }"
+  uploads.listUploads:
+    call: "{}"
+  uploads.startUpload:
+    call: "{ filename: 'leads.csv', file_type: 'csv', total_chunk_count: 2, max_chunk_size: 64000, separator_char: ',' }"
+  uploads.uploadChunk:
+    call: "{ upload_id: 1327, chunk_sequence_number: 1, content: 'ZW1haWwKdXNlckBleGFtcGxlLmNvbQo=' }"
+  uploads.getUpload:
+    call: "{ upload_id: 1327 }"
   account.getCredits:
     call: "{}"
+  account.getProfile:
+    call: "{}"
+  account.updateProfile:
+    call: "{ company_name: 'Example Co', website: 'example.com' }"
 apiNotes:
-  verify.verifyEmail: 'Spends one credit even when the address cannot be resolved. The verdict is one of clean, dirty, unknown or error, and remarks explains it. Answers the MX records, the mail service provider and the local and domain parts.'
-  verify.startBatchVerification: 'Takes up to 3000 addresses and answers the list_id of the async job. Never retried by the plugin: a repeat would start a second billed job.'
+  verify.verifyEmail: 'Spends one credit even when the address cannot be resolved. The verdict is documented as clean, dirty, unknown or error (another value is passed through), and remarks explains it. Answers the MX records, the mail service provider and the local and domain parts. Not retried after a 5xx or a dropped connection; a 429 is.'
+  verify.startBatchVerification: 'Takes up to 3000 addresses and answers the list_id of the async job. Not retried after a 5xx or a dropped connection, since a repeat would start a second billed job; a 429 is, because Listclean refused it before running.'
   verify.getVerificationLogs: 'The range spans at most 30 days and end_date cannot be in the future. Paging is a start offset with a limit of at most 100, 10 by default. error_code on a log row is a string, unlike the integer on the envelope.'
   verify.getAnalytics: 'Listclean documents no inner fields for total_summary, datewise_summary or graph_summary, so they are passed through untyped.'
   lists.listLists: 'Answers total, an opaque cursor integer and the lists. Listclean documents no way to send the cursor back, so there is no paging input here.'
   lists.getList: 'Listclean answers an array holding the one list; the plugin unwraps it, so the status reads as list.status. This is the poll for a startBatchVerification job.'
   lists.getListResults: 'Download the verified rows of one type as a JSON array. This route answers a bare JSON stream, not the envelope. The list must be COMPLETED for rows to exist.'
+  lists.getListResultsCsv: 'The same rows as lists.getListResults, as the CSV file Listclean builds, returned as text in csv.'
+  uploads.listUploads: 'Answers upload_id, status and progress for each upload. progress is a string such as "100%" here and a number on uploads.getUpload.'
+  uploads.startUpload: 'filename, file_type, total_chunk_count and max_chunk_size are required. fast_process 1 skips SMTP checks. Answers upload_id. Not retried after a 5xx or a dropped connection.'
+  uploads.uploadChunk: 'content is the base64 of one chunk of the file. The spec does not say whether chunk numbers start at 0 or 1; its example sends 24 of 24. The last chunk starts the billed verification. Not retried after a 5xx or a dropped connection.'
+  uploads.getUpload: 'status is inprocess, success or error (lowercase, unlike list statuses). request_id is the list the upload became.'
+  account.getProfile: 'The profile holds the account owner''s name, phone and address; the plugin logs none of it.'
+  account.updateProfile: 'Send only the fields to change; at least one is required. Answers a message only.'
   lists.delete: 'Permanent. The answer carries only a message string, which the plugin requires before reporting success.'
   account.getCredits: 'Free. Answers the remaining balance; a verification spends one credit per address.'

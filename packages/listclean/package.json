@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/listclean",
   "version": "0.1.0",
-  "description": "Email verification with Listclean - verify single addresses or batches of up to 3000, read verification logs and analytics, manage result lists, download cleaned results and check the credit balance.",
+  "description": "Email verification with Listclean - verify single addresses or batches of up to 3000, upload CSV files in chunks, read verification logs and analytics, manage result lists, download cleaned results as JSON or CSV, and read credits and the account profile.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

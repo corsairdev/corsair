@@ -1,7 +1,7 @@
 ---
 title: "Listclean plugin"
 sidebarTitle: "Overview"
-description: "Email verification with Listclean - verify single addresses or batches of up to 3000, poll bulk jobs, download cleaned results, read verification logs and analytics, delete lists and check the credit balance."
+description: "Email verification with Listclean - verify single addresses or batches of up to 3000, upload CSV files in chunks, poll bulk jobs, download cleaned results as JSON or CSV, read verification logs and analytics, delete lists, and read the credit balance and account profile."
 ---
 
 Use **Listclean** through Corsair: one client, typed API calls.
@@ -10,17 +10,17 @@ Create an API token at app.listclean.xyz under Integration/API &gt; API tokens, 
 
 Things to know before you call:
 
-- **Every answer is one envelope.** `{ success, error_code, message, data }` where `success` is an integer: `1` on success, `0` on failure, even over a 2xx status. The plugin throws on `success: 0` and on non-JSON bodies, so a 404 HTML page never comes back as an empty result.
-- **Billed calls.** `verify.verifyEmail` spends one credit per call, and `verify.startBatchVerification` spends one credit per address when the job runs. Both carry `replayable: false`, so a lost answer or a 5xx is never retried and may have already been charged. Check `account.getCredits` first; signup comes with 25 free credits.
+- **Every answer is one envelope.** `{ success, error_code, message, data }` where `success` is an integer: `1` on success, `0` on failure, even over a 2xx status. The plugin throws core's `ApiError` on `success: 0` and on non-JSON bodies, so a 404 HTML page never comes back as an empty result. Errors carry no email addresses or profile data: the request body is dropped and addresses are masked.
+- **Billed calls.** `verify.verifyEmail` spends one credit per call; `verify.startBatchVerification` and a finished chunked upload spend one credit per address when the job runs. These are not retried after a 5xx or a dropped connection, since the credit may already be spent. A 429 is retried (core, three times), because Listclean refused it before running. Check `account.getCredits` first; signup comes with 25 free credits.
 - **Bulk verification is a job.** `verify.startBatchVerification` answers `list_id`. Poll `lists.getList`, whose `list.status` moves `SUBMITTED`, `INPROCESS`, `COMPLETED`. Listclean documents no failed status for this flow. Once `COMPLETED`, download rows with `lists.getListResults`, choosing `clean`, `dirty` or `unknown`.
+- **Chunked CSV upload.** For a file rather than a list of addresses: `uploads.startUpload` with the file name, chunk count and chunk size answers `upload_id`; send each base64 chunk with `uploads.uploadChunk`; poll `uploads.getUpload` (status `inprocess`, `success` or `error`, lowercase). Its `request_id` is the list to read with `lists.getList`.
 - **Analytics shapes are undocumented.** Listclean's spec leaves `total_summary`, `datewise_summary` and `graph_summary` without inner fields, so those come back exactly as the API sends them rather than typed.
 - **Deletes are permanent.** `lists.delete` cannot be undone and the results cannot be fetched afterwards.
-- **Deferred for a later release.** The chunked CSV upload flow (`/uploads/`) and the account profile read/update are not in this plugin, and neither is the CSV download, which the JSON download covers.
 - **Webhooks.** Listclean sends none, and the plugin does not receive any.
 
 **What you get:**
 
-- 9 typed API operations
+- 16 typed API operations
 
 ## Setup
 

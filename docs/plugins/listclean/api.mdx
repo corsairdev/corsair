@@ -37,6 +37,89 @@ Free. Answers the remaining balance; a verification spends one credit per addres
 
 ---
 
+### getProfile
+
+`account.getProfile`
+
+Read the account profile: name, address, phone, company, website, social handles and billing details
+
+**Risk:** `read`
+
+```ts
+await corsair.listclean.api.account.getProfile({});
+```
+
+**Input:** _empty object_
+
+The profile holds the account owner's name, phone and address; the plugin logs none of it.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | First name of the user. |
+| `address` | `string \| null` | No | Street address. |
+| `city` | `string \| null` | No | City. |
+| `country` | `string \| null` | No | Country. |
+| `phone_number` | `string \| null` | No | Phone number. |
+| `skype_id` | `string \| null` | No | Skype id. |
+| `company_name` | `string \| null` | No | Company name. |
+| `website` | `string \| null` | No | Website. |
+| `twitter_handle` | `string \| null` | No | Twitter handle, e.g. `@example`. |
+| `linkedin` | `string \| null` | No | LinkedIn profile. |
+| `billing_name` | `string \| null` | No | Name on invoices. |
+| `billing_company_name` | `string \| null` | No | Company on invoices. |
+| `billing_address` | `string \| null` | No | Address on invoices. |
+
+
+
+---
+
+### updateProfile
+
+`account.updateProfile`
+
+Update account profile fields; only the fields given are sent
+
+**Risk:** `write`
+
+```ts
+await corsair.listclean.api.account.updateProfile({ company_name: 'Example Co', website: 'example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | First name of the user. |
+| `address` | `string` | No | Street address. |
+| `city` | `string` | No | City. |
+| `country` | `string` | No | Country. |
+| `phone_number` | `string` | No | Phone number. |
+| `skype_id` | `string` | No | Skype id. |
+| `company_name` | `string` | No | Company name. |
+| `website` | `string` | No | Website. |
+| `twitter_handle` | `string` | No | Twitter handle, e.g. `@example`. |
+| `linkedin` | `string` | No | LinkedIn profile. |
+| `billing_name` | `string` | No | Name on invoices. |
+| `billing_company_name` | `string` | No | Company on invoices. |
+| `billing_address` | `string` | No | Address on invoices. |
+
+Send only the fields to change; at least one is required. Answers a message only.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
 ## Lists
 
 ### delete
@@ -108,7 +191,7 @@ Listclean answers an array holding the one list; the plugin unwraps it, so the s
   filename?: string | null,
   size_in_bytes?: number | null,
   request_time?: string | null,
-  status?: SUBMITTED | INPROCESS | COMPLETED | null,
+  status?: SUBMITTED | INPROCESS | COMPLETED | string | null,
   upload_id?: string | null,
   analytics?: {
     summary?: {
@@ -185,7 +268,7 @@ Download the verified rows of one type as a JSON array. This route answers a bar
 {
   datetime?: string | null,
   email: string,
-  status: clean | dirty | unknown | error,
+  status: clean | dirty | unknown | error | string,
   remarks?: string | null,
   disposable?: boolean | null,
   role_based?: boolean | null,
@@ -199,6 +282,39 @@ Download the verified rows of one type as a JSON array. This route answers a bar
 ```
 </Accordion>
 </AccordionGroup>
+
+
+---
+
+### getListResultsCsv
+
+`lists.getListResultsCsv`
+
+Download one completed list's verified rows as the CSV file Listclean builds, choosing the clean, dirty or unknown addresses
+
+**Risk:** `read`
+
+```ts
+await corsair.listclean.api.lists.getListResultsCsv({ list_id: 159261, type: 'clean' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `number` | Yes | The list id, as `startBatchVerification` answered it or `listLists` reported it. |
+| `type` | `clean \| dirty \| unknown` | Yes | Which verified rows to download: the clean, dirty or unknown ones. |
+
+The same rows as lists.getListResults, as the CSV file Listclean builds, returned as text in csv.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `csv` | `string` | Yes | The CSV file of that type, exactly as Listclean sent it, header row included. |
+
 
 
 ---
@@ -237,7 +353,7 @@ Answers total, an opaque cursor integer and the lists. Listclean documents no wa
   filename?: string | null,
   size_in_bytes?: number | null,
   request_time?: string | null,
-  status?: SUBMITTED | INPROCESS | COMPLETED | null,
+  status?: SUBMITTED | INPROCESS | COMPLETED | string | null,
   upload_id?: string | null,
   analytics?: {
     summary?: {
@@ -282,6 +398,164 @@ Answers total, an opaque cursor integer and the lists. Listclean documents no wa
 
 ---
 
+## Uploads
+
+### getUpload
+
+`uploads.getUpload`
+
+Read one upload: its inprocess, success or error status, progress, chunk counts and the request id of the list it became
+
+**Risk:** `read`
+
+```ts
+await corsair.listclean.api.uploads.getUpload({ upload_id: 1327 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `upload_id` | `number` | Yes | The upload id `uploads.startUpload` answered. |
+
+status is inprocess, success or error (lowercase, unlike list statuses). request_id is the list the upload became.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `inprocess \| success \| error \| string \| null` | No | Upload status: inprocess, success or error (lowercase, unlike the list statuses). |
+| `progress` | `number \| string \| null` | No | Completion percentage. |
+| `chunk_details` | `object \| null` | No | — |
+| `request_id` | `number \| null` | No | The Listclean request id for this upload; the list it becomes in `lists.listLists`. |
+
+<AccordionGroup>
+<Accordion title="chunk_details full type">
+
+```ts
+{
+  total_chunk_count?: number | string | null,
+  uploaded_chunk_count?: number | string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUploads
+
+`uploads.listUploads`
+
+List the chunked CSV uploads with their status and progress
+
+**Risk:** `read`
+
+```ts
+await corsair.listclean.api.uploads.listUploads({});
+```
+
+**Input:** _empty object_
+
+Answers upload_id, status and progress for each upload. progress is a string such as "100%" here and a number on uploads.getUpload.
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  upload_id: number,
+  status?: string | null,
+  progress?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### startUpload
+
+`uploads.startUpload`
+
+Open a chunked CSV upload: name the file, its chunk count and chunk size, and optional CSV characters and fast mode. Answers the upload id the chunks go to. Once every chunk is in, the list is verified and spends one credit per address.
+
+**Risk:** `write`
+
+```ts
+await corsair.listclean.api.uploads.startUpload({ filename: 'leads.csv', file_type: 'csv', total_chunk_count: 2, max_chunk_size: 64000, separator_char: ',' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filename` | `string` | Yes | Name of the file, shown on the list (e.g. `leads.csv`). |
+| `file_type` | `string` | Yes | The file format. The spec documents `csv`. |
+| `total_chunk_count` | `number` | Yes | How many chunks `uploads.uploadChunk` will send. |
+| `max_chunk_size` | `number` | Yes | The largest chunk, in bytes before base64 encoding. |
+| `separator_char` | `string` | No | CSV field separator, e.g. `,`. |
+| `enclosure_char` | `string` | No | CSV field enclosure character, one single-byte character, e.g. `"`. |
+| `escape_char` | `string` | No | CSV escape character, at most one single-byte character; an empty string turns escaping off. |
+| `fast_process` | `0 \| 1` | No | 1 skips slow checks such as SMTP and uses only cache, DNS and format checks. Defaults to 0 (off). |
+
+filename, file_type, total_chunk_count and max_chunk_size are required. fast_process 1 skips SMTP checks. Answers upload_id. Not retried after a 5xx or a dropped connection.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `upload_id` | `number` | Yes | Send the chunks to this id, then poll it with `uploads.getUpload`. |
+
+
+
+---
+
+### uploadChunk
+
+`uploads.uploadChunk`
+
+Send one base64-encoded chunk of an upload, with its sequence number and an optional md5 checksum. The last chunk starts the billed verification. Not replayed after a 5xx or a lost answer.
+
+**Risk:** `write`
+
+```ts
+await corsair.listclean.api.uploads.uploadChunk({ upload_id: 1327, chunk_sequence_number: 1, content: 'ZW1haWwKdXNlckBleGFtcGxlLmNvbQo=' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `upload_id` | `number` | Yes | The upload id `uploads.startUpload` answered. |
+| `chunk_sequence_number` | `number` | Yes | Position of this chunk. The spec's example sends chunk 24 of 24, so numbering appears to start at 1. |
+| `content` | `string` | Yes | The chunk of the file, base64-encoded. |
+| `md5_checksum` | `string` | No | md5 hash Listclean checks the file against, as hex. |
+
+content is the base64 of one chunk of the file. The spec does not say whether chunk numbers start at 0 or 1; its example sends 24 of 24. The last chunk starts the billed verification. Not retried after a 5xx or a dropped connection.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+
+
+
+---
+
 ## Verify
 
 ### getAnalytics
@@ -313,9 +587,9 @@ Listclean documents no inner fields for total_summary, datewise_summary or graph
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `total_summary` | `Record<string, unknown> \| null` | No | — |
-| `datewise_summary` | `Record<string, unknown> \| null` | No | — |
-| `graph_summary` | `Record<string, unknown>[] \| null` | No | — |
+| `total_summary` | `Record<string, any> \| null` | No | — |
+| `datewise_summary` | `Record<string, any> \| null` | No | — |
+| `graph_summary` | `Record<string, any>[] \| null` | No | — |
 
 
 
@@ -359,7 +633,7 @@ The range spans at most 30 days and end_date cannot be in the future. Paging is 
   id?: number | null,
   entered?: string | null,
   email?: string | null,
-  status?: clean | dirty | unknown | error | null,
+  status?: clean | dirty | unknown | error | string | null,
   remarks?: string | null,
   credits_deducted?: number | null,
   error_code?: string | null
@@ -375,7 +649,7 @@ The range spans at most 30 days and end_date cannot be in the future. Paging is 
 
 `verify.startBatchVerification`
 
-Start an async bulk verification of up to 3000 addresses; each one spends a credit when the job runs. Answers the list id to poll with lists.getList and fetch with lists.getListResults. Not replayed on failure: a repeat would start a second billed job.
+Start an async bulk verification of up to 3000 addresses; each one spends a credit when the job runs. Answers the list id to poll with lists.getList and fetch with lists.getListResults. Not replayed after a 5xx or a lost answer, since a repeat would start a second billed job; a 429 is retried by core because Listclean refused it before running.
 
 **Risk:** `write`
 
@@ -390,7 +664,7 @@ await corsair.listclean.api.verify.startBatchVerification({ emails: ['user1@exam
 | `emails` | `string[]` | Yes | Up to 3000 addresses. Each one spends a credit when the job runs. |
 | `filename` | `string` | No | Name shown for the list. When omitted, Listclean generates batch_upload-DD-MM-YYYY-HHMMSS-utc.csv. |
 
-Takes up to 3000 addresses and answers the list_id of the async job. Never retried by the plugin: a repeat would start a second billed job.
+Takes up to 3000 addresses and answers the list_id of the async job. Not retried after a 5xx or a dropped connection, since a repeat would start a second billed job; a 429 is, because Listclean refused it before running.
 
 
 
@@ -408,7 +682,7 @@ Takes up to 3000 addresses and answers the list_id of the async job. Never retri
 
 `verify.verifyEmail`
 
-Verify one email address and read back its verdict, MX and mailbox details. Billed: this spends one credit per call even when the answer is lost, so it is never retried.
+Verify one email address and read back its verdict, MX and mailbox details. Billed: one credit per call, spent even when the answer is lost, so it is not retried after a 5xx or a dropped connection (a 429 is, since Listclean refused it before running).
 
 **Risk:** `read`
 
@@ -422,7 +696,7 @@ await corsair.listclean.api.verify.verifyEmail({ email: 'myselfi.itba@gmail.com'
 |------|------|----------|-------------|
 | `email` | `string` | Yes | The address to verify. |
 
-Spends one credit even when the address cannot be resolved. The verdict is one of clean, dirty, unknown or error, and remarks explains it. Answers the MX records, the mail service provider and the local and domain parts.
+Spends one credit even when the address cannot be resolved. The verdict is documented as clean, dirty, unknown or error (another value is passed through), and remarks explains it. Answers the MX records, the mail service provider and the local and domain parts. Not retried after a 5xx or a dropped connection; a 429 is.
 
 
 
@@ -432,7 +706,7 @@ Spends one credit even when the address cannot be resolved. The verdict is one o
 |------|------|----------|-------------|
 | `datetime` | `string \| null` | No | — |
 | `email` | `string` | Yes | — |
-| `status` | `clean \| dirty \| unknown \| error` | Yes | — |
+| `status` | `clean \| dirty \| unknown \| error \| string` | Yes | — |
 | `remarks` | `string \| null` | No | — |
 | `disposable` | `boolean \| null` | No | — |
 | `role_based` | `boolean \| null` | No | — |
