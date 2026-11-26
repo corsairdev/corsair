@@ -3,6 +3,7 @@ jest.mock('corsair/core', () => {
 	return { ...actual, logEventFromContext: jest.fn().mockResolvedValue('evt') };
 });
 
+import { ZodError } from 'zod';
 import {
 	clickCounters,
 	clicksPivot,
@@ -19,6 +20,7 @@ import {
 	workspaces,
 } from './test-fixtures';
 import {
+	callsSoFar,
 	endpoints,
 	installFetchMock,
 	jsonResponse,
@@ -382,7 +384,80 @@ describe('Linkly input rejection', () => {
 			endpoints.webhooks.unsubscribe,
 			{ workspace_id: 42 },
 		],
+		[
+			'links.export with csv, which the plugin cannot parse',
+			endpoints.links.export,
+			{ workspace_id: 42, format: 'csv' },
+		],
+		[
+			'clicks.getTimeSeries with tsv',
+			endpoints.clicks.getTimeSeries,
+			{ workspace_id: 42, format: 'tsv' },
+		],
+		[
+			'clicks.getCounters with csv',
+			endpoints.clicks.getCounters,
+			{ workspace_id: 42, counter: 'country', format: 'csv' },
+		],
+		[
+			'links.bulkUpsert with no links',
+			endpoints.links.bulkUpsert,
+			{ links: [] },
+		],
+		[
+			'links.bulkUpsert with 1001 links',
+			endpoints.links.bulkUpsert,
+			{
+				links: Array.from({ length: 1001 }, () => ({
+					workspace_id: 42,
+					url: 'https://www.example.com',
+				})),
+			},
+		],
+		[
+			'links.deleteMany with no ids',
+			endpoints.links.deleteMany,
+			{ workspace_id: 42, ids: [] },
+		],
+		[
+			'domains.create without a name',
+			endpoints.domains.create,
+			{ workspace_id: 42 },
+		],
+		[
+			'domains.updateFavicon with a non-URL',
+			endpoints.domains.updateFavicon,
+			{ workspace_id: 42, domain_id: 7, favicon_url: 'favicon.ico' },
+		],
+		[
+			'webhooks.subscribeToLink with a non-URL',
+			endpoints.webhooks.subscribeToLink,
+			{ link_id: 30, url: 'not a url' },
+		],
+		[
+			'conversions.create without an event name',
+			endpoints.conversions.create,
+			{ workspace_id: 42, event_type: 'sale' },
+		],
+		[
+			'conversions.create with an unknown event type',
+			endpoints.conversions.create,
+			{ workspace_id: 42, event_name: 'purchase', event_type: 'refund' },
+		],
+		[
+			'conversions.list with a limit over 1000',
+			endpoints.conversions.list,
+			{ workspace_id: 42, limit: 5000 },
+		],
+		[
+			'workspaces.update with a webhook that is not a URL',
+			endpoints.workspaces.update,
+			{ workspace_id: 42, webhooks: ['nope'] },
+		],
 	])('rejects %s before calling Linkly', async (_name, endpoint, input) => {
-		await expect(invoke(endpoint, input)).rejects.toThrow();
+		// A ZodError, not the unmocked-fetch error, and no request at all
+		// (CodeRabbit thread on endpoints.test.ts:386).
+		await expect(invoke(endpoint, input)).rejects.toBeInstanceOf(ZodError);
+		expect(callsSoFar()).toBe(0);
 	});
 });

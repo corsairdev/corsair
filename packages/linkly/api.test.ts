@@ -11,9 +11,14 @@ import { LinklyEndpointOutputSchemas as Outputs } from './endpoints/types';
  *   LINKLY_API_KEY=...        a key from app.linklyhq.com, Settings, API Keys
  *   LINKLY_WORKSPACE_ID=...   a workspace the key can reach (listWorkspaces finds them)
  *
- * Read-only: it never creates, updates or deletes anything. The analytics API
- * allows 50 requests per hour per workspace, and these tests make at most
- * eight.
+ * The reads run by default. Analytics calls (clicks, counters, clicks
+ * export) count against the workspace's analytics allowance (100 a month on
+ * the free plan, 50 an hour on any plan); this file makes four.
+ *
+ * LINKLY_LIVE_WRITES=1 also runs a round trip on one throwaway link: create,
+ * update, bulk update, a link webhook subscribe and unsubscribe, trash,
+ * restore, and trash again. It leaves that link in the trash. It never adds
+ * or deletes a domain, changes the workspace, or reports a conversion.
  *
  * Every answer is parsed through its output schema, so a field whose real
  * shape disagrees with the spec fails here rather than for a caller.
@@ -32,6 +37,8 @@ if (missing.length > 0) {
 const describeIfReady = KEY && WORKSPACE_ID > 0 ? describe : describe.skip;
 
 const key = KEY ?? '';
+const WRITES = process.env.LINKLY_LIVE_WRITES === '1';
+const itWrites = WRITES ? it : it.skip;
 
 describeIfReady('live Linkly API', () => {
 	it('lists workspaces', async () => {
@@ -138,5 +145,136 @@ describeIfReady('live Linkly API', () => {
 		for (const entry of result) {
 			expect(typeof entry.id).toBe('string');
 		}
+	});
+	it('accepts the key at POST /api/v1/test', async () => {
+		const body = await makeLinklyRequest(key, {
+			method: 'POST',
+			path: '/api/v1/test',
+		});
+		Outputs.authTest.parse(body);
+	});
+
+	it('reads one link with click counts from get_link', async () => {
+		const page = Outputs.linksList.parse(
+			await makeLinklyRequest(key, {
+				method: 'GET',
+				path: `/api/v1/workspace/${WORKSPACE_ID}/list_links`,
+				query: { page: 1, page_size: 1 },
+			}),
+		);
+		const listed = page.links[0];
+		if (!listed?.id) return;
+
+		const details = Outputs.linksGetDetails.parse(
+			await makeLinklyRequest(key, {
+				method: 'GET',
+				path: `/api/v1/get_link/${listed.id}`,
+			}),
+		);
+		expect(details.link.full_url).toBe(listed.full_url);
+
+		const hooks = Outputs.webhooksListForLink.parse(
+			await makeLinklyRequest(key, {
+				method: 'GET',
+				path: `/api/v1/link/${listed.id}/webhooks`,
+			}),
+		);
+		expect(Array.isArray(hooks)).toBe(true);
+	});
+
+	it('exports raw clicks as json', async () => {
+		const body = await makeLinklyRequest(key, {
+			method: 'GET',
+			path: `/api/v1/workspace/${WORKSPACE_ID}/clicks/export`,
+			query: { format: 'json' },
+		});
+		Outputs.clicksExport.parse(body);
+	});
+
+	it('lists conversions', async () => {
+		const body = await makeLinklyRequest(key, {
+			method: 'GET',
+			path: '/api/v1/conversions',
+			query: { workspace_id: WORKSPACE_ID, limit: 5 },
+		});
+		const result = Outputs.conversionsList.parse(body);
+		expect(typeof result.has_more).toBe('boolean');
+	});
+
+	itWrites('round-trips one throwaway link', async () => {
+		const created = Outputs.linksCreate.parse(
+			await makeLinklyRequest(key, {
+				method: 'POST',
+				path: '/api/v1/link',
+				body: {
+					workspace_id: WORKSPACE_ID,
+					url: 'https://www.example.com/corsair-plugin-test',
+					name: 'corsair-plugin-test',
+				},
+			}),
+		);
+		const id = created.id;
+
+		const updated = Outputs.linksUpdate.parse(
+			await makeLinklyRequest(key, {
+				method: 'POST',
+				path: '/api/v1/link',
+				body: {
+					workspace_id: WORKSPACE_ID,
+					id,
+					note: 'updated by the live suite',
+					metadata: { source: 'corsair-live' },
+				},
+			}),
+		);
+		expect(updated.id).toBe(id);
+
+		const bulk = Outputs.linksBulkUpsert.parse(
+			await makeLinklyRequest(key, {
+				method: 'POST',
+				path: '/api/v1/links',
+				body: [
+					{ workspace_id: WORKSPACE_ID, id, name: 'corsair-plugin-test-bulk' },
+				],
+			}),
+		);
+		expect(bulk[0]?.status).toBe('success');
+
+		const hook = 'https://www.example.com/corsair-linkly-hook';
+		Outputs.webhooksSubscribeToLink.parse(
+			await makeLinklyRequest(key, {
+				method: 'POST',
+				path: `/api/v1/link/${id}/webhooks`,
+				body: { url: hook },
+			}),
+		);
+		Outputs.webhooksUnsubscribeFromLink.parse(
+			await makeLinklyRequest(key, {
+				method: 'DELETE',
+				path: `/api/v1/link/${id}/webhooks/${encodeURIComponent(hook)}`,
+			}),
+		);
+
+		Outputs.linksDelete.parse(
+			await makeLinklyRequest(key, {
+				method: 'DELETE',
+				path: `/api/v1/workspace/${WORKSPACE_ID}/links/${id}`,
+			}),
+		);
+		const restored = Outputs.linksRestore.parse(
+			await makeLinklyRequest(key, {
+				method: 'POST',
+				path: `/api/v1/workspace/${WORKSPACE_ID}/links/restore`,
+				body: { ids: [id] },
+			}),
+		);
+		expect(restored.restored).toBe(1);
+		Outputs.linksDeleteMany.parse(
+			await makeLinklyRequest(key, {
+				method: 'DELETE',
+				path: `/api/v1/workspace/${WORKSPACE_ID}/links`,
+				body: { ids: [id] },
+			}),
+		);
 	});
 });

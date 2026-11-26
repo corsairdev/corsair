@@ -20,37 +20,67 @@ function buildKey(
 }
 
 const operations = [
+	'auth.test',
+	'clicks.export',
 	'clicks.getCounters',
 	'clicks.getTimeSeries',
+	'conversions.create',
+	'conversions.list',
+	'domains.create',
+	'domains.delete',
 	'domains.list',
+	'domains.updateFavicon',
+	'links.bulkUpsert',
 	'links.create',
 	'links.delete',
+	'links.deleteMany',
 	'links.export',
 	'links.get',
+	'links.getDetails',
 	'links.list',
 	'links.restore',
 	'links.update',
 	'webhooks.list',
+	'webhooks.listForLink',
 	'webhooks.subscribe',
+	'webhooks.subscribeToLink',
 	'webhooks.unsubscribe',
+	'webhooks.unsubscribeFromLink',
 	'workspaces.listWorkspaces',
+	'workspaces.update',
 ];
 
+// Metered analytics reads stay read (R8). Deletes to the trash stay
+// destructive: the short URL stops redirecting at once.
 const riskLevels: Record<string, string> = {
+	'auth.test': 'read',
 	'workspaces.listWorkspaces': 'read',
+	'workspaces.update': 'destructive',
 	'links.list': 'read',
 	'links.get': 'read',
+	'links.getDetails': 'read',
 	'links.create': 'write',
 	'links.update': 'write',
+	'links.bulkUpsert': 'write',
 	'links.delete': 'destructive',
+	'links.deleteMany': 'destructive',
 	'links.restore': 'write',
 	'links.export': 'read',
 	'clicks.getTimeSeries': 'read',
 	'clicks.getCounters': 'read',
+	'clicks.export': 'read',
 	'domains.list': 'read',
+	'domains.create': 'write',
+	'domains.delete': 'destructive',
+	'domains.updateFavicon': 'write',
 	'webhooks.list': 'read',
 	'webhooks.subscribe': 'write',
 	'webhooks.unsubscribe': 'write',
+	'webhooks.listForLink': 'read',
+	'webhooks.subscribeToLink': 'write',
+	'webhooks.unsubscribeFromLink': 'write',
+	'conversions.list': 'read',
+	'conversions.create': 'write',
 };
 
 describe('linkly plugin definition', () => {
@@ -65,7 +95,7 @@ describe('linkly plugin definition', () => {
 		).toBe(false);
 	});
 
-	it('exposes exactly the fourteen catalog operations', () => {
+	it('exposes every operation in the Linkly API (28)', () => {
 		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
 			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
 		);
@@ -85,11 +115,11 @@ describe('linkly plugin definition', () => {
 		).toEqual(riskLevels);
 	});
 
-	it('marks the trash delete irreversible and nothing else', () => {
+	it('marks only the domain delete irreversible; trashed links can be restored', () => {
 		const meta = plugin.endpointMeta ?? {};
 		for (const [name, entry] of Object.entries(meta)) {
 			expect((entry as { irreversible?: boolean }).irreversible ?? false).toBe(
-				name === 'links.delete',
+				name === 'domains.delete',
 			);
 		}
 	});
