@@ -36,7 +36,10 @@ if (!API_KEY) {
 
 // unknown: only ctx.key is read; the full CorsairPluginContext needs a
 // database handle the live calls never touch.
-const ctx = { key: API_KEY } as unknown as LobContext;
+const ctx = {
+	key: API_KEY,
+	$getAccountId: async () => 'lob-live-test',
+} as unknown as LobContext;
 const api = lobEndpointsNested;
 
 const TAG = 'corsair-plugin-test';
@@ -56,8 +59,12 @@ async function gated<T>(
 	try {
 		return await run();
 	} catch (error) {
-		const status = (error as { status?: number }).status;
-		if (status === 403 || status === 404) {
+		const { status, message } = error as { status?: number; message?: string };
+		// A fresh test account answers 403 (billing groups, snap packs,
+		// booklets, Informed Delivery, campaign creates), 404 (self mailers)
+		// or 422 `<feature>_not_allowed` (buckslips, cards).
+		const notAllowed = status === 422 && /_not_allowed\b/.test(message ?? '');
+		if (status === 403 || status === 404 || notAllowed) {
 			console.warn(`${label}: ${status}, feature not enabled on this account`);
 			return undefined;
 		}
@@ -68,9 +75,12 @@ async function gated<T>(
 describeIfKey('Lob live API (test key)', () => {
 	jest.setTimeout(60_000);
 
-	it('reads the balance', async () => {
-		const result = await api.account.getBalance(ctx, {});
-		expect(typeof result.balance).toBe('number');
+	it('reads the balance (live keys only: a test key gets 401)', async () => {
+		// Lob answers GET /accounts with 401 invalid_api_key for every test
+		// key, while every other route accepts it.
+		await expect(api.account.getBalance(ctx, {})).rejects.toMatchObject({
+			status: 401,
+		});
 	});
 
 	it('runs the verification family', async () => {
@@ -152,7 +162,7 @@ describeIfKey('Lob live API (test key)', () => {
 		expect((await api.addresses.delete(ctx, { id })).deleted).toBe(true);
 	});
 
-	it('sends, reads and cancels a test postcard, letter and self mailer', async () => {
+	it('sends, reads and cancels a test postcard and letter', async () => {
 		const postcard = await api.postcards.send(ctx, {
 			to: TO,
 			front: '<html style="font-size:36px">corsair-plugin-test</html>',
@@ -175,14 +185,19 @@ describeIfKey('Lob live API (test key)', () => {
 		const ltr = String(letter.id);
 		expect((await api.letters.get(ctx, { id: ltr })).id).toBe(ltr);
 		expect((await api.letters.cancel(ctx, { id: ltr })).deleted).toBe(true);
+	});
 
-		const mailer = await api.selfMailers.send(ctx, {
-			to: TO,
-			inside: '<html>inside</html>',
-			outside: '<html>outside</html>',
-			use_type: 'operational',
-			description: TAG,
-		});
+	it('sends, reads and cancels a test self mailer when self mailers are enabled', async () => {
+		const mailer = await gated('selfMailers.send', () =>
+			api.selfMailers.send(ctx, {
+				to: TO,
+				inside: '<html>inside</html>',
+				outside: '<html>outside</html>',
+				use_type: 'operational',
+				description: TAG,
+			}),
+		);
+		if (!mailer) return;
 		const sfm = String(mailer.id);
 		expect((await api.selfMailers.get(ctx, { id: sfm })).id).toBe(sfm);
 		expect((await api.selfMailers.cancel(ctx, { id: sfm })).deleted).toBe(true);
@@ -218,7 +233,10 @@ describeIfKey('Lob live API (test key)', () => {
 	});
 
 	it('creates and renames a billing group (no delete exists)', async () => {
-		const group = await api.billingGroups.create(ctx, { name: TAG });
+		const group = await gated('billingGroups.create', () =>
+			api.billingGroups.create(ctx, { name: TAG }),
+		);
+		if (!group) return;
 		const bg = String(group.id);
 		await api.billingGroups.get(ctx, { id: bg });
 		await api.billingGroups.update(ctx, { id: bg, description: TAG });
@@ -251,6 +269,27 @@ describeIfKey('Lob live API (test key)', () => {
 			await api.checks.cancel(ctx, { id: chk });
 		} finally {
 			await api.bankAccounts.delete(ctx, { id });
+		}
+	});
+
+	it('round-trips a short link when the URL shortener is enabled', async () => {
+		const link = await gated('links.create', () =>
+			api.links.create(ctx, {
+				redirect_link: 'https://corsair.dev/?ref=corsair-plugin-test',
+				title: TAG,
+			}),
+		);
+		if (!link) return;
+		const id = String(link.id);
+		try {
+			expect((await api.links.get(ctx, { id })).id).toBe(id);
+			await api.links.update(ctx, {
+				id,
+				redirect_link: 'https://corsair.dev/?ref=corsair-plugin-test-2',
+				title: `${TAG} 2`,
+			});
+		} finally {
+			await api.links.delete(ctx, { id });
 		}
 	});
 
