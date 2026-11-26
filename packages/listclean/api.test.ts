@@ -6,7 +6,10 @@
  * By default it only reads: verify.verifyEmail spends one credit, the other
  * calls are free. With LISTCLEAN_LIVE_BILLED=1 it also runs one batch of two
  * example.com addresses (two credits), polls it, downloads both result
- * formats and deletes the list it made. It never updates the profile. Every
+ * formats and deletes the list it made. With LISTCLEAN_LIVE_UPLOAD=1 it
+ * uploads a three-address example.com CSV in two chunks (three credits),
+ * polls the upload and its list, reads the results and deletes the list.
+ * It never updates the profile. Every
  * answer is parsed through its output schema, so a field the real API sends
  * differently than typed fails here rather than in production.
  */
@@ -23,6 +26,8 @@ if (!API_KEY) {
 }
 const BILLED = process.env.LISTCLEAN_LIVE_BILLED === '1';
 const itIfBilled = API_KEY && BILLED ? it : it.skip;
+const UPLOAD = process.env.LISTCLEAN_LIVE_UPLOAD === '1';
+const itIfUpload = API_KEY && UPLOAD ? it : it.skip;
 
 const KEK = process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef';
 
@@ -153,5 +158,72 @@ describeIfKey('Listclean live smoke', () => {
 			}
 		},
 		240_000,
+	);
+
+	itIfUpload(
+		'uploads a CSV in chunks, polls it, reads the list and deletes it',
+		async () => {
+			const { corsair, testDb } = await createClient();
+			try {
+				const api = corsair.listclean.api;
+				const csv = Buffer.from(
+					'email\ncorsair-upload-1@example.com\ncorsair-upload-2@example.com\ncorsair-upload-3@example.com\n',
+				);
+				const half = Math.ceil(csv.length / 2);
+				const chunks = [csv.subarray(0, half), csv.subarray(half)];
+				const { upload_id } = await api.uploads.startUpload({
+					filename: 'corsair-plugin-upload-test.csv',
+					file_type: 'csv',
+					total_chunk_count: chunks.length,
+					max_chunk_size: half,
+					email_column_index: 0,
+					separator_char: ',',
+				});
+				expect(upload_id).toBeGreaterThan(0);
+
+				for (const [index, chunk] of chunks.entries()) {
+					const sent = await api.uploads.uploadChunk({
+						upload_id,
+						chunk_sequence_number: index + 1,
+						content: chunk.toString('base64'),
+					});
+					expect(typeof sent.message).toBe('string');
+					expect(String(sent.chunk_details?.uploaded_chunk_count)).toBe(
+						String(index + 1),
+					);
+				}
+
+				let upload = await api.uploads.getUpload({ upload_id });
+				for (let poll = 0; poll < 24 && upload.status === 'inprocess'; poll++) {
+					await new Promise((done) => setTimeout(done, 5_000));
+					upload = await api.uploads.getUpload({ upload_id });
+				}
+				expect(upload.status).toBe('success');
+				const list_id = upload.request_id;
+				expect(typeof list_id).toBe('number');
+				if (!list_id) throw new Error('the upload became no list');
+
+				let status: string | null | undefined;
+				for (let poll = 0; poll < 36 && status !== 'COMPLETED'; poll++) {
+					status = (await api.lists.getList({ list_id })).list.status;
+					if (status !== 'COMPLETED') {
+						await new Promise((done) => setTimeout(done, 5_000));
+					}
+				}
+				expect(status).toBe('COMPLETED');
+
+				let rows = 0;
+				for (const type of ['clean', 'dirty', 'unknown'] as const) {
+					rows += (await api.lists.getListResults({ list_id, type })).length;
+				}
+				expect(rows).toBe(3);
+
+				const deleted = await api.lists.delete({ list_id });
+				expect(typeof deleted.message).toBe('string');
+			} finally {
+				testDb.cleanup();
+			}
+		},
+		420_000,
 	);
 });
