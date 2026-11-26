@@ -122,6 +122,7 @@ const LocationSchema = z
 		countryIso2: z.string().nullish(),
 		continent: z.string().nullish(),
 		state: z.string().nullish(),
+		stateCode: z.string().nullish(),
 		city: z.string().nullish(),
 		zipCode: z.string().nullish(),
 		// Lusha sends [longitude, latitude] when present.
@@ -136,6 +137,16 @@ const SocialLinksSchema = z
 		xUrl: z.string().nullish(),
 	})
 	.loose();
+
+/** Company profiles: single URLs for LinkedIn, X and Facebook, lists for the rest. */
+const CompanySocialLinksSchema = SocialLinksSchema.extend({
+	x: z.string().nullish(),
+	facebook: z.string().nullish(),
+	instagram: z.array(z.string()).nullish(),
+	youtube: z.array(z.string()).nullish(),
+	tiktok: z.array(z.string()).nullish(),
+	crunchbase: z.array(z.string()).nullish(),
+}).loose();
 
 const ContactCanRevealItemSchema = z
 	.object({
@@ -512,7 +523,7 @@ const CompanyPreviewSchema = z
 		employeeCount: NumberRangeSchema.nullish(),
 		industry: z.string().nullish(),
 		location: LocationSchema.nullish(),
-		socialLinks: SocialLinksSchema.nullish(),
+		socialLinks: CompanySocialLinksSchema.nullish(),
 		has: z.array(z.string()).nullish(),
 		canReveal: z.array(CompanyCanRevealItemSchema).nullish(),
 		signalTypes: z.array(z.string()).nullish(),
@@ -624,6 +635,23 @@ const WebsiteTrafficSchema = z
 	})
 	.loose();
 
+const IndustrySchema = z
+	.object({
+		industry: z.string().nullish(),
+		subIndustry: z.string().nullish(),
+	})
+	.loose();
+
+/** A named person at the company, as the live API lists them (no ids). */
+const KeyContactSchema = z
+	.object({
+		fullName: z.string().nullish(),
+		jobTitle: JobTitleSchema.nullish(),
+		profileUrl: z.string().nullish(),
+		status: z.string().nullish(),
+	})
+	.loose();
+
 const EnrichedCompanySchema = z
 	.object({
 		clientReferenceId: z.string().nullish(),
@@ -632,18 +660,23 @@ const EnrichedCompanySchema = z
 		alternativeName: z.string().nullish(),
 		domain: z.string().nullish(),
 		alternativeDomains: z.array(z.string()).nullish(),
+		emailDomain: z.string().nullish(),
+		homepageUrl: z.string().nullish(),
 		description: z.string().nullish(),
+		additionalDescriptions: z.array(z.string()).nullish(),
+		companyOffering: z.string().nullish(),
 		companyType: z.string().nullish(),
 		yearFounded: z.number().nullish(),
 		employeeCount: NumberRangeSchema.nullish(),
 		industry: z.string().nullish(),
 		subIndustry: z.string().nullish(),
+		additionalIndustries: z.array(IndustrySchema).nullish(),
 		specialities: z.array(z.string()).nullish(),
 		sicCodes: z.array(SicCodeSchema).nullish(),
 		naicsCodes: z.array(SicCodeSchema).nullish(),
 		location: LocationSchema.nullish(),
 		additionalLocations: z.array(LocationSchema).nullish(),
-		socialLinks: SocialLinksSchema.nullish(),
+		socialLinks: CompanySocialLinksSchema.nullish(),
 		linkedinFollowers: z.number().nullish(),
 		funding: CompanyFundingSchema.nullish(),
 		revenueRange: NumberRangeSchema.nullish(),
@@ -670,6 +703,8 @@ const EnrichedCompanySchema = z
 		employeesByLocation: z.array(CountryStateCountSchema).nullish(),
 		employeesBySeniority: z.array(SeniorityCountSchema).nullish(),
 		competitors: z.array(CompetitorSchema).nullish(),
+		// Not in the reference; the live API sends it on every enrich.
+		keyContacts: z.array(KeyContactSchema).nullish(),
 		directParent: ParentCompanySchema.nullish(),
 		ultimateParent: ParentCompanySchema.nullish(),
 		error: ItemErrorSchema.nullish(),

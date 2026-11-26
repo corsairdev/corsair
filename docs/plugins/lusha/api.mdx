@@ -249,7 +249,11 @@ Takes `ids` and optional `reveal` tokens (employeesByDepartment, employeesByLoca
   alternativeName?: string | null,
   domain?: string | null,
   alternativeDomains?: string[] | null,
+  emailDomain?: string | null,
+  homepageUrl?: string | null,
   description?: string | null,
+  additionalDescriptions?: string[] | null,
+  companyOffering?: string | null,
   companyType?: string | null,
   yearFounded?: number | null,
   employeeCount?: {
@@ -259,6 +263,10 @@ Takes `ids` and optional `reveal` tokens (employeesByDepartment, employeesByLoca
   } | null,
   industry?: string | null,
   subIndustry?: string | null,
+  additionalIndustries?: {
+    industry?: string | null,
+    subIndustry?: string | null
+  }[] | null,
   specialities?: string[] | null,
   sicCodes?: {
     code?: number | null,
@@ -273,6 +281,7 @@ Takes `ids` and optional `reveal` tokens (employeesByDepartment, employeesByLoca
     countryIso2?: string | null,
     continent?: string | null,
     state?: string | null,
+    stateCode?: string | null,
     city?: string | null,
     zipCode?: string | null,
     coordinates?: number[] | null,
@@ -283,6 +292,7 @@ Takes `ids` and optional `reveal` tokens (employeesByDepartment, employeesByLoca
     countryIso2?: string | null,
     continent?: string | null,
     state?: string | null,
+    stateCode?: string | null,
     city?: string | null,
     zipCode?: string | null,
     coordinates?: number[] | null,
@@ -290,7 +300,13 @@ Takes `ids` and optional `reveal` tokens (employeesByDepartment, employeesByLoca
   }[] | null,
   socialLinks?: {
     linkedin?: string | null,
-    xUrl?: string | null
+    xUrl?: string | null,
+    x?: string | null,
+    facebook?: string | null,
+    instagram?: string[] | null,
+    youtube?: string[] | null,
+    tiktok?: string[] | null,
+    crunchbase?: string[] | null
   } | null,
   linkedinFollowers?: number | null,
   funding?: {
@@ -371,6 +387,17 @@ Takes `ids` and optional `reveal` tokens (employeesByDepartment, employeesByLoca
     id?: string | null,
     name?: string | null,
     domain?: string | null
+  }[] | null,
+  keyContacts?: {
+    fullName?: string | null,
+    jobTitle?: {
+      title?: string | null,
+      departments?: string[] | null,
+      seniority?: string | null,
+      startDate?: string | null
+    } | null,
+    profileUrl?: string | null,
+    status?: string | null
   }[] | null,
   directParent?: {
     lushaCompanyId?: string | null,
@@ -1845,7 +1872,11 @@ Combines both steps: `companies` search entries plus `reveal` tokens. Metered pe
   alternativeName?: string | null,
   domain?: string | null,
   alternativeDomains?: string[] | null,
+  emailDomain?: string | null,
+  homepageUrl?: string | null,
   description?: string | null,
+  additionalDescriptions?: string[] | null,
+  companyOffering?: string | null,
   companyType?: string | null,
   yearFounded?: number | null,
   employeeCount?: {
@@ -1855,6 +1886,10 @@ Combines both steps: `companies` search entries plus `reveal` tokens. Metered pe
   } | null,
   industry?: string | null,
   subIndustry?: string | null,
+  additionalIndustries?: {
+    industry?: string | null,
+    subIndustry?: string | null
+  }[] | null,
   specialities?: string[] | null,
   sicCodes?: {
     code?: number | null,
@@ -1869,6 +1904,7 @@ Combines both steps: `companies` search entries plus `reveal` tokens. Metered pe
     countryIso2?: string | null,
     continent?: string | null,
     state?: string | null,
+    stateCode?: string | null,
     city?: string | null,
     zipCode?: string | null,
     coordinates?: number[] | null,
@@ -1879,6 +1915,7 @@ Combines both steps: `companies` search entries plus `reveal` tokens. Metered pe
     countryIso2?: string | null,
     continent?: string | null,
     state?: string | null,
+    stateCode?: string | null,
     city?: string | null,
     zipCode?: string | null,
     coordinates?: number[] | null,
@@ -1886,7 +1923,13 @@ Combines both steps: `companies` search entries plus `reveal` tokens. Metered pe
   }[] | null,
   socialLinks?: {
     linkedin?: string | null,
-    xUrl?: string | null
+    xUrl?: string | null,
+    x?: string | null,
+    facebook?: string | null,
+    instagram?: string[] | null,
+    youtube?: string[] | null,
+    tiktok?: string[] | null,
+    crunchbase?: string[] | null
   } | null,
   linkedinFollowers?: number | null,
   funding?: {
@@ -1967,6 +2010,17 @@ Combines both steps: `companies` search entries plus `reveal` tokens. Metered pe
     id?: string | null,
     name?: string | null,
     domain?: string | null
+  }[] | null,
+  keyContacts?: {
+    fullName?: string | null,
+    jobTitle?: {
+      title?: string | null,
+      departments?: string[] | null,
+      seniority?: string | null,
+      startDate?: string | null
+    } | null,
+    profileUrl?: string | null,
+    status?: string | null
   }[] | null,
   directParent?: {
     lushaCompanyId?: string | null,
@@ -2090,6 +2144,7 @@ Takes `companies` (1 to 100 entries, each with `id`, `name` or `domain`) and opt
     countryIso2?: string | null,
     continent?: string | null,
     state?: string | null,
+    stateCode?: string | null,
     city?: string | null,
     zipCode?: string | null,
     coordinates?: number[] | null,
@@ -2097,7 +2152,13 @@ Takes `companies` (1 to 100 entries, each with `id`, `name` or `domain`) and opt
   } | null,
   socialLinks?: {
     linkedin?: string | null,
-    xUrl?: string | null
+    xUrl?: string | null,
+    x?: string | null,
+    facebook?: string | null,
+    instagram?: string[] | null,
+    youtube?: string[] | null,
+    tiktok?: string[] | null,
+    crunchbase?: string[] | null
   } | null,
   has?: string[] | null,
   canReveal?: {
@@ -4324,6 +4385,7 @@ Free. Takes the `jobId` from a partial enrich response. `processing` carries `re
     countryIso2?: string | null,
     continent?: string | null,
     state?: string | null,
+    stateCode?: string | null,
     city?: string | null,
     zipCode?: string | null,
     coordinates?: number[] | null,
@@ -4444,6 +4506,7 @@ Takes `ids` (1 to 100 from search results), optional `reveal` (`emails`, `phones
     countryIso2?: string | null,
     continent?: string | null,
     state?: string | null,
+    stateCode?: string | null,
     city?: string | null,
     zipCode?: string | null,
     coordinates?: number[] | null,
@@ -5892,6 +5955,7 @@ Combines both steps: `contacts` search entries plus `reveal`. Returns full conta
     countryIso2?: string | null,
     continent?: string | null,
     state?: string | null,
+    stateCode?: string | null,
     city?: string | null,
     zipCode?: string | null,
     coordinates?: number[] | null,
@@ -6058,6 +6122,7 @@ Takes `contacts` (1 to 100 entries, each with exactly one identifier: `id`, `lin
     countryIso2?: string | null,
     continent?: string | null,
     state?: string | null,
+    stateCode?: string | null,
     city?: string | null,
     zipCode?: string | null,
     coordinates?: number[] | null,
