@@ -1,0 +1,2266 @@
+{
+  "id": "loomio",
+  "displayName": "Loomio",
+  "description": "Group decision making with Loomio: groups, discussions, comments, polls, threads, memberships, search, participation reports and group webhooks through the User API, plus user and membership admin through the Server API on self-hosted installs.",
+  "npmPackageName": "@corsair-dev/loomio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 47,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "base_url"]
+    }
+  ],
+  "api": [
+    {
+      "path": "loomio.api.comments.create",
+      "shortPath": "comments.create",
+      "description": "Post a comment, or a reply to a comment, on a discussion, in markdown or html",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "discussion_id",
+            "optional": false,
+            "type": "number",
+            "description": "The discussion to comment on (its numeric discussion id)."
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number",
+            "description": "Reply to this comment id. Loomio posts the reply in the parent comment's discussion and ignores `discussion_id`, so pass a parent from the same discussion."
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "The comment text. Required."
+          },
+          {
+            "key": "body_format",
+            "optional": true,
+            "type": "md | html",
+            "description": "Format of `body`; `md` (default) or `html`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "{ id: number, body?: string | null, body_format?: string | null, mentioned_usernames?: string[] | null, topic_id?: number | null, created_at?: string | null, updated_at?: string | null, parent_id?: number | null, parent_type?: string | null, content_locale?: string | null, versions_count?: number | null, author_id?: number | null, discarded_at?: string | null, discarded_by?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.comments.delete",
+      "shortPath": "comments.delete",
+      "description": "Soft-delete a comment: its body is hidden and the API cannot restore it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The comment id to soft-delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "{ id: number, body?: string | null, body_format?: string | null, mentioned_usernames?: string[] | null, topic_id?: number | null, created_at?: string | null, updated_at?: string | null, parent_id?: number | null, parent_type?: string | null, content_locale?: string | null, versions_count?: number | null, author_id?: number | null, discarded_at?: string | null, discarded_by?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.comments.update",
+      "shortPath": "comments.update",
+      "description": "Edit the body of a comment the key user may edit",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The comment id."
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "The new comment text."
+          },
+          {
+            "key": "body_format",
+            "optional": true,
+            "type": "md | html",
+            "description": "Format of `body`; `md` (default) or `html`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "comment",
+            "optional": false,
+            "type": "{ id: number, body?: string | null, body_format?: string | null, mentioned_usernames?: string[] | null, topic_id?: number | null, created_at?: string | null, updated_at?: string | null, parent_id?: number | null, parent_type?: string | null, content_locale?: string | null, versions_count?: number | null, author_id?: number | null, discarded_at?: string | null, discarded_by?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.discussions.create",
+      "shortPath": "discussions.create",
+      "description": "Start a discussion in a group; can notify the whole group and email invitations to recipient addresses",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "The group to start the discussion in."
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "The discussion title. Required."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "The discussion body."
+          },
+          {
+            "key": "description_format",
+            "optional": true,
+            "type": "md | html",
+            "description": "Format of `description`; `md` (default) or `html`."
+          },
+          {
+            "key": "recipient_audience",
+            "optional": true,
+            "type": "string",
+            "description": "Notify an audience in the group about the new discussion."
+          },
+          {
+            "key": "recipient_user_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Notify these user ids about the new discussion."
+          },
+          {
+            "key": "recipient_emails",
+            "optional": true,
+            "type": "string[]",
+            "description": "Invite these email addresses to the group with the discussion."
+          },
+          {
+            "key": "recipient_message",
+            "optional": true,
+            "type": "string",
+            "description": "Message sent to the notified recipients."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "discussion",
+            "optional": false,
+            "type": "{ id: number, key?: string | null, group_id?: number | null, topic_id?: number | null, title?: string | null, content_locale?: string | null, description?: string | null, description_format?: string | null, discussion_template_id?: number | null, created_at?: string | null, updated_at?: string | null, context_changed_at?: string | null, versions_count?: number | null, mentioned_usernames?: string[] | null, discarded_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.discussions.delete",
+      "shortPath": "discussions.delete",
+      "description": "Soft-delete a discussion; it disappears for members and the API cannot restore it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The discussion id to soft-delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "discussion",
+            "optional": false,
+            "type": "{ id: number, key?: string | null, group_id?: number | null, topic_id?: number | null, title?: string | null, content_locale?: string | null, description?: string | null, description_format?: string | null, discussion_template_id?: number | null, created_at?: string | null, updated_at?: string | null, context_changed_at?: string | null, versions_count?: number | null, mentioned_usernames?: string[] | null, discarded_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.discussions.get",
+      "shortPath": "discussions.get",
+      "description": "Read one discussion by numeric id or url key, with its author and thread record",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "The discussion, by numeric id or url key."
+          },
+          {
+            "key": "compact",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations."
+          },
+          {
+            "key": "exclude_types",
+            "optional": true,
+            "type": "string[]",
+            "description": "Singular related record types to omit, e.g. [\"group\", \"reaction\"]. The primary records always stay."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "discussion",
+            "optional": false,
+            "type": "{ id: number, key?: string | null, group_id?: number | null, topic_id?: number | null, title?: string | null, content_locale?: string | null, description?: string | null, description_format?: string | null, discussion_template_id?: number | null, created_at?: string | null, updated_at?: string | null, context_changed_at?: string | null, versions_count?: number | null, mentioned_usernames?: string[] | null, discarded_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.discussions.list",
+      "shortPath": "discussions.list",
+      "description": "List discussions in one group, filtered by open or closed status, ordered by latest activity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "The group whose discussions to list. Required."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "open | closed | all",
+            "description": "Filter: `open`, `closed`, or `all`. Omitted, Loomio returns open and closed discussions (the same as `all`)."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page; Loomio defaults to 50 when omitted."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip for this page; Loomio defaults to 0."
+          },
+          {
+            "key": "compact",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations."
+          },
+          {
+            "key": "exclude_types",
+            "optional": true,
+            "type": "string[]",
+            "description": "Singular related record types to omit, e.g. [\"group\", \"reaction\"]. The primary records always stay."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "discussions",
+            "optional": false,
+            "type": "{ id: number, key?: string | null, group_id?: number | null, topic_id?: number | null, title?: string | null, content_locale?: string | null, description?: string | null, description_format?: string | null, discussion_template_id?: number | null, created_at?: string | null, updated_at?: string | null, context_changed_at?: string | null, versions_count?: number | null, mentioned_usernames?: string[] | null, discarded_at?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ root?: string | null, total?: number | null }"
+          },
+          {
+            "key": "next_offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.discussions.update",
+      "shortPath": "discussions.update",
+      "description": "Edit a discussion title or context; can notify the group and email invitations to recipient addresses",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The discussion id."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "New title."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "New context (body)."
+          },
+          {
+            "key": "description_format",
+            "optional": true,
+            "type": "md | html",
+            "description": "Format of `description`; `md` (default) or `html`."
+          },
+          {
+            "key": "recipient_audience",
+            "optional": true,
+            "type": "string | null",
+            "description": "`group` notifies the whole group; null notifies nobody beyond the listed recipients."
+          },
+          {
+            "key": "recipient_user_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Notify or invite these user ids."
+          },
+          {
+            "key": "recipient_emails",
+            "optional": true,
+            "type": "string[]",
+            "description": "Invite these email addresses; Loomio emails each one."
+          },
+          {
+            "key": "recipient_message",
+            "optional": true,
+            "type": "string",
+            "description": "Message included in the email invitation."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "discussion",
+            "optional": false,
+            "type": "{ id: number, key?: string | null, group_id?: number | null, topic_id?: number | null, title?: string | null, content_locale?: string | null, description?: string | null, description_format?: string | null, discussion_template_id?: number | null, created_at?: string | null, updated_at?: string | null, context_changed_at?: string | null, versions_count?: number | null, mentioned_usernames?: string[] | null, discarded_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.groups.get",
+      "shortPath": "groups.get",
+      "description": "Read one group by numeric id, url key, or handle, with its settings and member counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "The group, by numeric id, url key, or handle."
+          },
+          {
+            "key": "compact",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations."
+          },
+          {
+            "key": "exclude_types",
+            "optional": true,
+            "type": "string[]",
+            "description": "Singular related record types to omit, e.g. [\"group\", \"reaction\"]. The primary records always stay."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group",
+            "optional": false,
+            "type": "{ id: number, key?: string | null, handle?: string | null, name?: string | null, full_name?: string | null, description?: string | null, description_format?: string | null, logo_url?: string | null, created_at?: string | null, creator_id?: number | null, enabled?: boolean | null, parent_id?: number | null, group_privacy?: string | null, membership_granted_upon?: string | null, listed_in_explore?: boolean | null, memberships_count?: number | null, accepted_memberships_count?: number | null, pending_memberships_count?: number | null, admin_memberships_count?: number | null, discussions_count?: number | null, polls_count?: number | null, subgroups_count?: number | null, token?: string | null, members_can_add_members?: boolean | null, members_can_start_discussions?: boolean | null, members_can_edit_discussions?: boolean | null, members_can_edit_comments?: boolean | null, members_can_delete_comments?: boolean | null, members_can_create_subgroups?: boolean | null, members_can_raise_motions?: boolean | null, discarded_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List the groups the key user belongs to, including subgroups, oldest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, capped at 500; Loomio defaults to 50 when omitted."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip for this page; Loomio defaults to 0."
+          },
+          {
+            "key": "compact",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations."
+          },
+          {
+            "key": "exclude_types",
+            "optional": true,
+            "type": "string[]",
+            "description": "Singular related record types to omit, e.g. [\"group\", \"reaction\"]. The primary records always stay."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groups",
+            "optional": false,
+            "type": "{ id: number, key?: string | null, handle?: string | null, name?: string | null, full_name?: string | null, description?: string | null, description_format?: string | null, logo_url?: string | null, created_at?: string | null, creator_id?: number | null, enabled?: boolean | null, parent_id?: number | null, group_privacy?: string | null, membership_granted_upon?: string | null, listed_in_explore?: boolean | null, memberships_count?: number | null, accepted_memberships_count?: number | null, pending_memberships_count?: number | null, admin_memberships_count?: number | null, discussions_count?: number | null, polls_count?: number | null, subgroups_count?: number | null, token?: string | null, members_can_add_members?: boolean | null, members_can_start_discussions?: boolean | null, members_can_edit_discussions?: boolean | null, members_can_edit_comments?: boolean | null, members_can_delete_comments?: boolean | null, members_can_create_subgroups?: boolean | null, members_can_raise_motions?: boolean | null, discarded_at?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ root?: string | null, total?: number | null }"
+          },
+          {
+            "key": "next_offset",
+            "optional": true,
+            "type": "number",
+            "description": "Offset of the next page, derived from `meta.total`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.memberships.list",
+      "shortPath": "memberships.list",
+      "description": "List a group's memberships with related users; emails only for members the key user invited or in groups it administers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "The group whose memberships to list. Required."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page; Loomio defaults to 50 when omitted."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip for this page; Loomio defaults to 0."
+          },
+          {
+            "key": "compact",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations."
+          },
+          {
+            "key": "exclude_types",
+            "optional": true,
+            "type": "string[]",
+            "description": "Singular related record types to omit, e.g. [\"group\", \"reaction\"]. The primary records always stay."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memberships",
+            "optional": false,
+            "type": "{ id: number, group_id?: number | null, user_id?: number | null, inviter_id?: number | null, admin?: boolean | null, delegate?: boolean | null, title?: string | null, created_at?: string | null, accepted_at?: string | null, revoked_at?: string | null, user_email?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ root?: string | null, total?: number | null }"
+          },
+          {
+            "key": "next_offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.memberships.manage",
+      "shortPath": "memberships.manage",
+      "description": "Invite email addresses to a group (Loomio emails them) and optionally remove every member not listed; group admin only",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "The group to manage. The key user must be a group admin."
+          },
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]",
+            "description": "Email addresses to invite; Loomio emails each new address."
+          },
+          {
+            "key": "remove_absent",
+            "optional": true,
+            "type": "boolean",
+            "description": "Remove every current member whose email is not in `emails`. An empty list removes everyone. The plugin first reads the group memberships so an address that differs only in letter case keeps its member."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "added_emails",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "removed_emails",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.polls.create",
+      "shortPath": "polls.create",
+      "description": "Create a poll in a group or on a discussion; can invite the group to vote and email invitations to recipient addresses",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "number",
+            "description": "Start the poll in this group. Provide this or `discussion_id`."
+          },
+          {
+            "key": "discussion_id",
+            "optional": true,
+            "type": "number",
+            "description": "Start the poll on this discussion. Provide this or `group_id`."
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "The poll question. Required."
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "string",
+            "description": "The poll body text."
+          },
+          {
+            "key": "details_format",
+            "optional": true,
+            "type": "md | html",
+            "description": "Format of `details`; `md` (default) or `html`."
+          },
+          {
+            "key": "poll_type",
+            "optional": false,
+            "type": "proposal | poll | count | score | ranked_choice | meeting | dot_vote",
+            "description": "Voting style: proposal, poll, count, score, ranked_choice, meeting, or dot_vote."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "string[]",
+            "description": "Option texts. For a proposal, Loomio uses agree, disagree, abstain, and block when omitted."
+          },
+          {
+            "key": "poll_options_attributes",
+            "optional": true,
+            "type": "{ name: string, meaning?: string, prompt?: string, icon?: string, priority?: number, test_operator?: gte | lte | null, test_percent?: number | null, test_against?: score_percent | voter_percent | null }[]",
+            "description": "Options with per-option settings; an alternative to `options`."
+          },
+          {
+            "key": "closing_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 close time. Omit or send null to keep the poll a draft with voting disabled."
+          },
+          {
+            "key": "specified_voters_only",
+            "optional": true,
+            "type": "boolean",
+            "description": "Restrict voting to invited voters."
+          },
+          {
+            "key": "hide_results",
+            "optional": true,
+            "type": "off | until_vote | until_closed",
+            "description": "Hide results until a vote is cast or until the poll closes."
+          },
+          {
+            "key": "anonymous",
+            "optional": true,
+            "type": "boolean",
+            "description": "Hide voter identities. Needs closing_at (Loomio refuses anonymous drafts). Options freeze after the first ballot."
+          },
+          {
+            "key": "shuffle_options",
+            "optional": true,
+            "type": "boolean",
+            "description": "Show options in random order."
+          },
+          {
+            "key": "stance_reason_required",
+            "optional": true,
+            "type": "disabled | optional | required | required_for_disagree_or_block | required_for_block",
+            "description": "When a reason statement is required with a vote."
+          },
+          {
+            "key": "reason_prompt",
+            "optional": true,
+            "type": "string",
+            "description": "Question shown when a reason is requested."
+          },
+          {
+            "key": "notify_on_closing_soon",
+            "optional": true,
+            "type": "nobody | author | voters_uncast | voters",
+            "description": "Who is reminded before the poll closes."
+          },
+          {
+            "key": "recipient_audience",
+            "optional": true,
+            "type": "string",
+            "description": "Notify an audience in the group about the poll."
+          },
+          {
+            "key": "recipient_user_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Notify these user ids about the poll."
+          },
+          {
+            "key": "recipient_emails",
+            "optional": true,
+            "type": "string[]",
+            "description": "Invite these email addresses to vote."
+          },
+          {
+            "key": "recipient_message",
+            "optional": true,
+            "type": "string",
+            "description": "Message sent to the notified recipients."
+          },
+          {
+            "key": "notify_recipients",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send the invitation notification."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "poll",
+            "optional": false,
+            "type": "{ id: number, key?: string | null, title?: string | null, details?: string | null, details_format?: string | null, poll_type?: string | null, poll_option_names?: string[] | null, closing_at?: string | null, closed_at?: string | null, opening_at?: string | null, opened_at?: string | null, created_at?: string | null, anonymous?: boolean | null, hide_results?: string | null, shuffle_options?: boolean | null, specified_voters_only?: boolean | null, stance_reason_required?: string | null, reason_prompt?: string | null, notify_on_closing_soon?: string | null, notify_on_open?: boolean | null, topic_id?: number | null, group_id?: number | null, author_id?: number | null, discarded_at?: string | null, discarded_by?: number | null, vote_count_cast?: number | null, vote_count_eligible?: number | null, vote_count_uncast?: number | null, participation_pct?: number | null, total_score?: number | string | null, quorum_pct?: number | null, quorum_reached?: boolean | null, quorum_threshold?: number | string | null, quorum_shortfall?: number | string | null, score_min?: number | null, score_max?: number | null, choice_count_min?: number | null, choice_count_max?: number | null, points_per_voter?: number | null, meeting_duration?: number | null, stv_seats?: number | null, stv_method?: string | null, stv_quota?: string | null, chart_type?: string | null, show_none_of_the_above?: boolean | null, weighted_voting?: boolean | null, current_outcome_id?: number | null }",
+            "description": "Poll record. The chosen options arrive in the related `poll_options` array and the current outcome in `outcomes`, matched by `current_outcome_id`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.polls.delete",
+      "shortPath": "polls.delete",
+      "description": "Soft-delete a poll; it disappears for voters and the API cannot restore it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The poll id to soft-delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "poll",
+            "optional": false,
+            "type": "{ id: number, key?: string | null, title?: string | null, details?: string | null, details_format?: string | null, poll_type?: string | null, poll_option_names?: string[] | null, closing_at?: string | null, closed_at?: string | null, opening_at?: string | null, opened_at?: string | null, created_at?: string | null, anonymous?: boolean | null, hide_results?: string | null, shuffle_options?: boolean | null, specified_voters_only?: boolean | null, stance_reason_required?: string | null, reason_prompt?: string | null, notify_on_closing_soon?: string | null, notify_on_open?: boolean | null, topic_id?: number | null, group_id?: number | null, author_id?: number | null, discarded_at?: string | null, discarded_by?: number | null, vote_count_cast?: number | null, vote_count_eligible?: number | null, vote_count_uncast?: number | null, participation_pct?: number | null, total_score?: number | string | null, quorum_pct?: number | null, quorum_reached?: boolean | null, quorum_threshold?: number | string | null, quorum_shortfall?: number | string | null, score_min?: number | null, score_max?: number | null, choice_count_min?: number | null, choice_count_max?: number | null, points_per_voter?: number | null, meeting_duration?: number | null, stv_seats?: number | null, stv_method?: string | null, stv_quota?: string | null, chart_type?: string | null, show_none_of_the_above?: boolean | null, weighted_voting?: boolean | null, current_outcome_id?: number | null }",
+            "description": "Poll record. The chosen options arrive in the related `poll_options` array and the current outcome in `outcomes`, matched by `current_outcome_id`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.polls.get",
+      "shortPath": "polls.get",
+      "description": "Read one poll by numeric id or url key, with vote counts and its options",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number | string",
+            "description": "The poll, by numeric id or url key."
+          },
+          {
+            "key": "compact",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations."
+          },
+          {
+            "key": "exclude_types",
+            "optional": true,
+            "type": "string[]",
+            "description": "Singular related record types to omit, e.g. [\"group\", \"reaction\"]. The primary records always stay."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "poll",
+            "optional": false,
+            "type": "{ id: number, key?: string | null, title?: string | null, details?: string | null, details_format?: string | null, poll_type?: string | null, poll_option_names?: string[] | null, closing_at?: string | null, closed_at?: string | null, opening_at?: string | null, opened_at?: string | null, created_at?: string | null, anonymous?: boolean | null, hide_results?: string | null, shuffle_options?: boolean | null, specified_voters_only?: boolean | null, stance_reason_required?: string | null, reason_prompt?: string | null, notify_on_closing_soon?: string | null, notify_on_open?: boolean | null, topic_id?: number | null, group_id?: number | null, author_id?: number | null, discarded_at?: string | null, discarded_by?: number | null, vote_count_cast?: number | null, vote_count_eligible?: number | null, vote_count_uncast?: number | null, participation_pct?: number | null, total_score?: number | string | null, quorum_pct?: number | null, quorum_reached?: boolean | null, quorum_threshold?: number | string | null, quorum_shortfall?: number | string | null, score_min?: number | null, score_max?: number | null, choice_count_min?: number | null, choice_count_max?: number | null, points_per_voter?: number | null, meeting_duration?: number | null, stv_seats?: number | null, stv_method?: string | null, stv_quota?: string | null, chart_type?: string | null, show_none_of_the_above?: boolean | null, weighted_voting?: boolean | null, current_outcome_id?: number | null }",
+            "description": "Poll record. The chosen options arrive in the related `poll_options` array and the current outcome in `outcomes`, matched by `current_outcome_id`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.polls.list",
+      "shortPath": "polls.list",
+      "description": "List polls in one group, filtered by active or closed status, newest first, with current outcomes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "The group whose polls to list. Required."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | closed | all",
+            "description": "Filter: `active` (default), `closed`, or `all`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page; Loomio defaults to 50 when omitted."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip for this page; Loomio defaults to 0."
+          },
+          {
+            "key": "compact",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations."
+          },
+          {
+            "key": "exclude_types",
+            "optional": true,
+            "type": "string[]",
+            "description": "Singular related record types to omit, e.g. [\"group\", \"reaction\"]. The primary records always stay."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "polls",
+            "optional": false,
+            "type": "{ id: number, key?: string | null, title?: string | null, details?: string | null, details_format?: string | null, poll_type?: string | null, poll_option_names?: string[] | null, closing_at?: string | null, closed_at?: string | null, opening_at?: string | null, opened_at?: string | null, created_at?: string | null, anonymous?: boolean | null, hide_results?: string | null, shuffle_options?: boolean | null, specified_voters_only?: boolean | null, stance_reason_required?: string | null, reason_prompt?: string | null, notify_on_closing_soon?: string | null, notify_on_open?: boolean | null, topic_id?: number | null, group_id?: number | null, author_id?: number | null, discarded_at?: string | null, discarded_by?: number | null, vote_count_cast?: number | null, vote_count_eligible?: number | null, vote_count_uncast?: number | null, participation_pct?: number | null, total_score?: number | string | null, quorum_pct?: number | null, quorum_reached?: boolean | null, quorum_threshold?: number | string | null, quorum_shortfall?: number | string | null, score_min?: number | null, score_max?: number | null, choice_count_min?: number | null, choice_count_max?: number | null, points_per_voter?: number | null, meeting_duration?: number | null, stv_seats?: number | null, stv_method?: string | null, stv_quota?: string | null, chart_type?: string | null, show_none_of_the_above?: boolean | null, weighted_voting?: boolean | null, current_outcome_id?: number | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ root?: string | null, total?: number | null }"
+          },
+          {
+            "key": "next_offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.polls.update",
+      "shortPath": "polls.update",
+      "description": "Edit a poll (title, details, options, closing time); can change existing votes and email invitations",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The poll id."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "New poll title."
+          },
+          {
+            "key": "details",
+            "optional": true,
+            "type": "string",
+            "description": "New poll details."
+          },
+          {
+            "key": "details_format",
+            "optional": true,
+            "type": "md | html",
+            "description": "Format of `details`; `md` (default) or `html`."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "string[]",
+            "description": "Replacement option names; may affect existing votes."
+          },
+          {
+            "key": "poll_options_attributes",
+            "optional": true,
+            "type": "{ name?: string, meaning?: string, prompt?: string, icon?: string, priority?: number, test_operator?: gte | lte | null, test_percent?: number | null, test_against?: score_percent | voter_percent | null, id?: number, _destroy?: boolean }[]",
+            "description": "Edit options by `id`, add ones without an `id`, remove with `id` + `_destroy: true`. Omitted options stay."
+          },
+          {
+            "key": "reason_prompt",
+            "optional": true,
+            "type": "string",
+            "description": "Shared reason prompt."
+          },
+          {
+            "key": "stance_reason_required",
+            "optional": true,
+            "type": "disabled | optional | required | required_for_disagree_or_block | required_for_block",
+            "description": "When a reason is required with a vote."
+          },
+          {
+            "key": "closing_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601 close time; a future time opens voting."
+          },
+          {
+            "key": "recipient_audience",
+            "optional": true,
+            "type": "string | null",
+            "description": "`group` notifies the whole group; null notifies nobody beyond the listed recipients."
+          },
+          {
+            "key": "recipient_user_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Notify or invite these user ids."
+          },
+          {
+            "key": "recipient_emails",
+            "optional": true,
+            "type": "string[]",
+            "description": "Invite these email addresses; Loomio emails each one."
+          },
+          {
+            "key": "recipient_message",
+            "optional": true,
+            "type": "string",
+            "description": "Message included in the email invitation."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "poll",
+            "optional": false,
+            "type": "{ id: number, key?: string | null, title?: string | null, details?: string | null, details_format?: string | null, poll_type?: string | null, poll_option_names?: string[] | null, closing_at?: string | null, closed_at?: string | null, opening_at?: string | null, opened_at?: string | null, created_at?: string | null, anonymous?: boolean | null, hide_results?: string | null, shuffle_options?: boolean | null, specified_voters_only?: boolean | null, stance_reason_required?: string | null, reason_prompt?: string | null, notify_on_closing_soon?: string | null, notify_on_open?: boolean | null, topic_id?: number | null, group_id?: number | null, author_id?: number | null, discarded_at?: string | null, discarded_by?: number | null, vote_count_cast?: number | null, vote_count_eligible?: number | null, vote_count_uncast?: number | null, participation_pct?: number | null, total_score?: number | string | null, quorum_pct?: number | null, quorum_reached?: boolean | null, quorum_threshold?: number | string | null, quorum_shortfall?: number | string | null, score_min?: number | null, score_max?: number | null, choice_count_min?: number | null, choice_count_max?: number | null, points_per_voter?: number | null, meeting_duration?: number | null, stv_seats?: number | null, stv_method?: string | null, stv_quota?: string | null, chart_type?: string | null, show_none_of_the_above?: boolean | null, weighted_voting?: boolean | null, current_outcome_id?: number | null }",
+            "description": "Poll record. The chosen options arrive in the related `poll_options` array and the current outcome in `outcomes`, matched by `current_outcome_id`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.reports.get",
+      "shortPath": "reports.get",
+      "description": "Generate a participation report (overview, per-person, or per-country counts) for the key user's groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "section",
+            "optional": true,
+            "type": "base | users | countries",
+            "description": "Report section; `users` gives per-person activity rows."
+          },
+          {
+            "key": "group_scope",
+            "optional": true,
+            "type": "custom | my",
+            "description": "`my` (all your groups) or `custom` (the `group_ids`)."
+          },
+          {
+            "key": "group_ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Groups to report on when `group_scope` is `custom`."
+          },
+          {
+            "key": "start_month",
+            "optional": true,
+            "type": "string",
+            "description": "First month (YYYY-MM); defaults to 12 months ago."
+          },
+          {
+            "key": "end_month",
+            "optional": true,
+            "type": "string",
+            "description": "Last month (YYYY-MM); defaults to this month."
+          },
+          {
+            "key": "interval",
+            "optional": true,
+            "type": "day | week | month | year",
+            "description": "Interval for the `base` section."
+          },
+          {
+            "key": "member_type",
+            "optional": true,
+            "type": "delegate",
+            "description": "With `section: users`, return only current delegates."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "loomio.api.search.query",
+      "shortPath": "search.query",
+      "description": "Search visible discussions, comments, polls, votes, and outcomes; up to 20 results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "Search text; exact and fuzzy matches."
+          },
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "number",
+            "description": "Restrict to one visible group."
+          },
+          {
+            "key": "org_id",
+            "optional": true,
+            "type": "number",
+            "description": "Restrict to a parent group and its subgroups; 0 for direct discussions."
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "(Discussion | Comment | Poll | Stance | Outcome)[]",
+            "description": "Restrict to these result types."
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "Restrict to topics with this tag."
+          },
+          {
+            "key": "author_id",
+            "optional": true,
+            "type": "number",
+            "description": "Restrict to one author; without `query`, returns that author's recent activity."
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "authored_at_desc",
+            "description": "Order by authoring time, newest first."
+          },
+          {
+            "key": "compact",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations."
+          },
+          {
+            "key": "exclude_types",
+            "optional": true,
+            "type": "string[]",
+            "description": "Singular related record types to omit, e.g. [\"group\", \"reaction\"]. The primary records always stay."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_results",
+            "optional": false,
+            "type": "{ id?: number | string | null, searchable_type?: string | null, searchable_id?: number | null, highlight?: string | null, group_id?: number | null, group_name?: string | null, discussion_key?: string | null, poll_key?: string | null, author_id?: number | null, author_name?: string | null, authored_at?: string | null, tags?: string[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.server.groups.list",
+      "shortPath": "server.groups.list",
+      "description": "Self-hosted Server API: list every group on the install, private ones included (server key)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page; default and maximum 50."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip for this page; Loomio defaults to 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groups",
+            "optional": false,
+            "type": "{ id: number, key?: string | null, name?: string | null, handle?: string | null, parent_id?: number | null, group_privacy?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ total?: number | null }"
+          },
+          {
+            "key": "next_offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.server.memberships.list",
+      "shortPath": "server.memberships.list",
+      "description": "Self-hosted Server API: list a group's memberships and pending invitations with emails (server key)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "The group whose memberships to list. Required."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page; default and maximum 50."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip for this page; Loomio defaults to 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "memberships",
+            "optional": false,
+            "type": "{ id: number, group_id?: number | null, user_id?: number | null, user_email?: string | null, user_name?: string | null, admin?: boolean | null, delegate?: boolean | null, accepted_at?: string | null, pending?: boolean | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ total?: number | null }"
+          },
+          {
+            "key": "next_offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.server.memberships.revoke",
+      "shortPath": "server.memberships.revoke",
+      "description": "Self-hosted Server API: revoke a membership in its group and subgroups (server key)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The membership id to revoke."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.server.memberships.sync",
+      "shortPath": "server.memberships.sync",
+      "description": "Self-hosted Server API: invite emails to a group and optionally revoke everyone not listed (server key)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "The group to sync."
+          },
+          {
+            "key": "emails",
+            "optional": false,
+            "type": "string[]",
+            "description": "Email addresses to invite. New addresses get unverified accounts and invitations."
+          },
+          {
+            "key": "remove_absent",
+            "optional": true,
+            "type": "boolean",
+            "description": "Revoke members (group and subgroups) whose email is not listed. An empty list removes everyone."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "added_emails",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "removed_emails",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.server.memberships.update",
+      "shortPath": "server.memberships.update",
+      "description": "Self-hosted Server API: grant or remove a member's admin and delegate roles (server key)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The membership id."
+          },
+          {
+            "key": "admin",
+            "optional": true,
+            "type": "boolean",
+            "description": "Grant or remove group admin."
+          },
+          {
+            "key": "delegate",
+            "optional": true,
+            "type": "boolean",
+            "description": "Grant or remove delegate."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "membership",
+            "optional": false,
+            "type": "{ id: number, group_id?: number | null, user_id?: number | null, user_email?: string | null, user_name?: string | null, admin?: boolean | null, delegate?: boolean | null, accepted_at?: string | null, pending?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.server.users.create",
+      "shortPath": "server.users.create",
+      "description": "Self-hosted Server API: create an unverified account without sending an invitation (server key)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "Email address. Required."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Display name."
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "Username; must be unique."
+          },
+          {
+            "key": "is_admin",
+            "optional": true,
+            "type": "boolean",
+            "description": "Make the user an instance admin."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, username?: string | null, email?: string | null, is_admin?: boolean | null, active?: boolean | null, deactivated_at?: string | null, identities?: { id: number, identity_type?: string | null, uid?: string | null, email?: string | null, name?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.server.users.deactivate",
+      "shortPath": "server.users.deactivate",
+      "description": "Self-hosted Server API: queue a user deactivation; success means queued, so read the user again and check active is false (server key)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The user id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, username?: string | null, email?: string | null, is_admin?: boolean | null, active?: boolean | null, deactivated_at?: string | null, identities?: { id: number, identity_type?: string | null, uid?: string | null, email?: string | null, name?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.server.users.deactivateByIdentity",
+      "shortPath": "server.users.deactivateByIdentity",
+      "description": "Self-hosted Server API: queue deactivation of a user found by external identity; read again and check active is false (server key)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identity_type",
+            "optional": false,
+            "type": "string",
+            "description": "External identity provider, e.g. `saml` or `oauth`."
+          },
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string",
+            "description": "The user's id at that provider."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, username?: string | null, email?: string | null, is_admin?: boolean | null, active?: boolean | null, deactivated_at?: string | null, identities?: { id: number, identity_type?: string | null, uid?: string | null, email?: string | null, name?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.server.users.delete",
+      "shortPath": "server.users.delete",
+      "description": "Self-hosted Server API: permanently delete a user and their records (server key)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The user id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.server.users.deleteByIdentity",
+      "shortPath": "server.users.deleteByIdentity",
+      "description": "Self-hosted Server API: permanently delete a user found by external identity (server key)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identity_type",
+            "optional": false,
+            "type": "string",
+            "description": "External identity provider, e.g. `saml` or `oauth`."
+          },
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string",
+            "description": "The user's id at that provider."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.server.users.get",
+      "shortPath": "server.users.get",
+      "description": "Self-hosted Server API: read one user account by id (server key)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The user id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, username?: string | null, email?: string | null, is_admin?: boolean | null, active?: boolean | null, deactivated_at?: string | null, identities?: { id: number, identity_type?: string | null, uid?: string | null, email?: string | null, name?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.server.users.getByIdentity",
+      "shortPath": "server.users.getByIdentity",
+      "description": "Self-hosted Server API: find a user by external identity provider and uid (server key)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identity_type",
+            "optional": false,
+            "type": "string",
+            "description": "External identity provider, e.g. `saml` or `oauth`."
+          },
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string",
+            "description": "The user's id at that provider."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, username?: string | null, email?: string | null, is_admin?: boolean | null, active?: boolean | null, deactivated_at?: string | null, identities?: { id: number, identity_type?: string | null, uid?: string | null, email?: string | null, name?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.server.users.list",
+      "shortPath": "server.users.list",
+      "description": "Self-hosted Server API: list every user account with emails and identities (server key)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "is_admin",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only instance admins (true) or only non-admins (false)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, username?: string | null, email?: string | null, is_admin?: boolean | null, active?: boolean | null, deactivated_at?: string | null, identities?: { id: number, identity_type?: string | null, uid?: string | null, email?: string | null, name?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.server.users.reactivate",
+      "shortPath": "server.users.reactivate",
+      "description": "Self-hosted Server API: reactivate a deactivated user (server key)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The user id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, username?: string | null, email?: string | null, is_admin?: boolean | null, active?: boolean | null, deactivated_at?: string | null, identities?: { id: number, identity_type?: string | null, uid?: string | null, email?: string | null, name?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.server.users.reactivateByIdentity",
+      "shortPath": "server.users.reactivateByIdentity",
+      "description": "Self-hosted Server API: reactivate a user found by external identity (server key)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identity_type",
+            "optional": false,
+            "type": "string",
+            "description": "External identity provider, e.g. `saml` or `oauth`."
+          },
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string",
+            "description": "The user's id at that provider."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          },
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, username?: string | null, email?: string | null, is_admin?: boolean | null, active?: boolean | null, deactivated_at?: string | null, identities?: { id: number, identity_type?: string | null, uid?: string | null, email?: string | null, name?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.server.users.redact",
+      "shortPath": "server.users.redact",
+      "description": "Self-hosted Server API: irreversibly remove a user's identifying data, keeping their content (server key)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The user id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.server.users.redactByIdentity",
+      "shortPath": "server.users.redactByIdentity",
+      "description": "Self-hosted Server API: irreversibly redact a user found by external identity (server key)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identity_type",
+            "optional": false,
+            "type": "string",
+            "description": "External identity provider, e.g. `saml` or `oauth`."
+          },
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string",
+            "description": "The user's id at that provider."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.server.users.update",
+      "shortPath": "server.users.update",
+      "description": "Self-hosted Server API: change a user's name, username, email, or admin flag (server key)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The user id."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Display name."
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "Username; must be unique."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Email address."
+          },
+          {
+            "key": "is_admin",
+            "optional": true,
+            "type": "boolean",
+            "description": "Instance admin flag."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, username?: string | null, email?: string | null, is_admin?: boolean | null, active?: boolean | null, deactivated_at?: string | null, identities?: { id: number, identity_type?: string | null, uid?: string | null, email?: string | null, name?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.server.users.updateByIdentity",
+      "shortPath": "server.users.updateByIdentity",
+      "description": "Self-hosted Server API: update a user found by external identity (server key)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identity_type",
+            "optional": false,
+            "type": "string",
+            "description": "External identity provider, e.g. `saml` or `oauth`."
+          },
+          {
+            "key": "uid",
+            "optional": false,
+            "type": "string",
+            "description": "The user's id at that provider."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Display name."
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "Username; must be unique."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Email address."
+          },
+          {
+            "key": "is_admin",
+            "optional": true,
+            "type": "boolean",
+            "description": "Instance admin flag."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, username?: string | null, email?: string | null, is_admin?: boolean | null, active?: boolean | null, deactivated_at?: string | null, identities?: { id: number, identity_type?: string | null, uid?: string | null, email?: string | null, name?: string | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.threads.get",
+      "shortPath": "threads.get",
+      "description": "Read one thread record by topic id, with its discussion or poll in the related arrays",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "topic_id",
+            "optional": false,
+            "type": "number",
+            "description": "The thread id, which is its `topic_id`."
+          },
+          {
+            "key": "compact",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations."
+          },
+          {
+            "key": "exclude_types",
+            "optional": true,
+            "type": "string[]",
+            "description": "Singular related record types to omit, e.g. [\"group\", \"reaction\"]. The primary records always stay."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "thread",
+            "optional": false,
+            "type": "{ id: number, group_id?: number | null, items_count?: number | null, replies_count?: number | null, active_polls_count?: number | null, last_activity_at?: string | null, discarded_at?: string | null, locked_at?: string | boolean | null, locker_id?: number | null, pinned_at?: string | boolean | null, topicable_id?: number | null, topicable_type?: string | null, has_anonymous_polls?: boolean | null, tags?: string[] | null, topic_reader_id?: number | null, last_read_at?: string | boolean | null }",
+            "description": "Thread metadata. The thread title is not on this record; join the related `discussions` (or `polls`) array on `topicable_id`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.threads.items",
+      "shortPath": "threads.items",
+      "description": "Read one thread timeline in sequence order: comments, polls, votes, and outcomes as one event stream",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "topic_id",
+            "optional": false,
+            "type": "number",
+            "description": "The thread id, which is its `topic_id`."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, capped at 500; Loomio defaults to 50 when omitted."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip for this page; Loomio defaults to 0."
+          },
+          {
+            "key": "compact",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations."
+          },
+          {
+            "key": "exclude_types",
+            "optional": true,
+            "type": "string[]",
+            "description": "Singular related record types to omit, e.g. [\"group\", \"reaction\"]. The primary records always stay."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, sequence_id?: number | null, position?: number | null, depth?: number | null, child_count?: number | null, kind?: string | null, topic_id?: number | null, created_at?: string | null, itemable_id?: number | null, itemable_type?: string | null, pinned?: boolean | null, pinned_title?: string | null, parent_id?: number | null, actor_id?: number | null, position_key?: string | null, change_note?: string | null, tags?: string[] | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ root?: string | null, total?: number | null }"
+          },
+          {
+            "key": "next_offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.threads.list",
+      "shortPath": "threads.list",
+      "description": "List the threads the key user can see, ordered by latest activity, across all groups",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page; Loomio defaults to 50 when omitted."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip for this page; Loomio defaults to 0."
+          },
+          {
+            "key": "compact",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations."
+          },
+          {
+            "key": "exclude_types",
+            "optional": true,
+            "type": "string[]",
+            "description": "Singular related record types to omit, e.g. [\"group\", \"reaction\"]. The primary records always stay."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threads",
+            "optional": false,
+            "type": "{ id: number, group_id?: number | null, items_count?: number | null, replies_count?: number | null, active_polls_count?: number | null, last_activity_at?: string | null, discarded_at?: string | null, locked_at?: string | boolean | null, locker_id?: number | null, pinned_at?: string | boolean | null, topicable_id?: number | null, topicable_type?: string | null, has_anonymous_polls?: boolean | null, tags?: string[] | null, topic_reader_id?: number | null, last_read_at?: string | boolean | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ root?: string | null, total?: number | null }"
+          },
+          {
+            "key": "next_offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.threads.markdown",
+      "shortPath": "threads.markdown",
+      "description": "Export one thread as a single markdown document; needs export permission on the thread",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "topic_id",
+            "optional": false,
+            "type": "number",
+            "description": "The thread id, which is its `topic_id`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "markdown",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.webhooks.check",
+      "shortPath": "webhooks.check",
+      "description": "Ask Loomio to send a test message to a webhook destination URL; success does not confirm delivery",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "A group where the key user is an admin."
+          },
+          {
+            "key": "server",
+            "optional": false,
+            "type": "string",
+            "description": "Destination URL that receives the test message."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accepted",
+            "optional": false,
+            "type": "true",
+            "description": "Loomio answered its empty 200. It does not confirm delivery; check the destination."
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create an outgoing webhook or chat integration that posts group events to a URL; group admin only",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "The group; the key user must be a group admin."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Admin-facing name."
+          },
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "webhook | matrix",
+            "description": "`webhook` for an outgoing webhook, `matrix` for Matrix (`server` is then the homeserver URL, with `access_token` and `channel`)."
+          },
+          {
+            "key": "webhook_kind",
+            "optional": true,
+            "type": "markdown | slack | discord | microsoft | webex",
+            "description": "Payload format; `markdown` suits a general endpoint."
+          },
+          {
+            "key": "server",
+            "optional": false,
+            "type": "string",
+            "description": "Destination URL; must be public HTTPS. Treat it as a secret."
+          },
+          {
+            "key": "event_kinds",
+            "optional": true,
+            "type": "(new_discussion | discussion_edited | new_comment | poll_created | poll_edited | poll_closing_soon | poll_expired | poll_closed_by_user | poll_reopened | outcome_created | outcome_updated | outcome_review_due | stance_created | stance_updated)[]",
+            "description": "Events sent automatically."
+          },
+          {
+            "key": "notification_only",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send only the notification headline."
+          },
+          {
+            "key": "access_token",
+            "optional": true,
+            "type": "string",
+            "description": "Matrix only: the bot account access token. A secret; Loomio never returns it."
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string",
+            "description": "Matrix only: the room id to post in, e.g. `!abc123:matrix.org`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chatbot",
+            "optional": false,
+            "type": "{ id: number, group_id?: number | null, name?: string | null, kind?: string | null, webhook_kind?: string | null, server?: string | null, channel?: string | null, event_kinds?: string[] | null, notification_only?: boolean | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook or chat integration; future deliveries stop",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The webhook id to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List a group's outgoing webhooks and chat integrations, with destination URLs; group admin only",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "The group; the key user must be a group admin."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, capped at 500; Loomio defaults to 50 when omitted."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Records to skip for this page; Loomio defaults to 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chatbots",
+            "optional": false,
+            "type": "{ id: number, group_id?: number | null, name?: string | null, kind?: string | null, webhook_kind?: string | null, server?: string | null, channel?: string | null, event_kinds?: string[] | null, notification_only?: boolean | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ root?: string | null, total?: number | null }"
+          },
+          {
+            "key": "next_offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "loomio.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Change a webhook's name, destination, format, or events; group admin only",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The webhook id."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Admin-facing name."
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "webhook | matrix",
+            "description": "`webhook` for an outgoing webhook, `matrix` for Matrix (`server` is then the homeserver URL, with `access_token` and `channel`)."
+          },
+          {
+            "key": "webhook_kind",
+            "optional": true,
+            "type": "markdown | slack | discord | microsoft | webex",
+            "description": "Payload format; `markdown` suits a general endpoint."
+          },
+          {
+            "key": "server",
+            "optional": true,
+            "type": "string",
+            "description": "Destination URL; must be public HTTPS. Treat it as a secret."
+          },
+          {
+            "key": "event_kinds",
+            "optional": true,
+            "type": "(new_discussion | discussion_edited | new_comment | poll_created | poll_edited | poll_closing_soon | poll_expired | poll_closed_by_user | poll_reopened | outcome_created | outcome_updated | outcome_review_due | stance_created | stance_updated)[]",
+            "description": "Events sent automatically."
+          },
+          {
+            "key": "notification_only",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send only the notification headline."
+          },
+          {
+            "key": "access_token",
+            "optional": true,
+            "type": "string",
+            "description": "Matrix only: the bot account access token. A secret; Loomio never returns it."
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "string",
+            "description": "Matrix only: the room id to post in, e.g. `!abc123:matrix.org`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "chatbot",
+            "optional": false,
+            "type": "{ id: number, group_id?: number | null, name?: string | null, kind?: string | null, webhook_kind?: string | null, server?: string | null, channel?: string | null, event_kinds?: string[] | null, notification_only?: boolean | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

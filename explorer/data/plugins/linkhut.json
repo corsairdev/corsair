@@ -1,0 +1,461 @@
+{
+  "id": "linkhut",
+  "displayName": "Linkhut",
+  "description": "Save, find and organise bookmarks and tags on linkhut - add, update, read and delete bookmarks, page through all of them, check what changed, count them per day, get tag suggestions and rename or delete tags.",
+  "npmPackageName": "@corsair-dev/linkhut",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 12,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "linkhut.api.posts.add",
+      "shortPath": "posts.add",
+      "description": "Save a new bookmark; fails when the url is already saved. With `replace: 'yes'`, rewrite the saved bookmark for the url instead (omitted fields are cleared)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The bookmark URL."
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string",
+            "description": "The bookmark title."
+          },
+          {
+            "key": "extended",
+            "optional": true,
+            "type": "string",
+            "description": "Notes for the bookmark."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Sent comma delimited, as the API asks. A post in a response lists its tags space delimited."
+          },
+          {
+            "key": "dt",
+            "optional": true,
+            "type": "string",
+            "description": "The creation time to record for the bookmark."
+          },
+          {
+            "key": "replace",
+            "optional": true,
+            "type": "yes | no",
+            "description": "'yes' updates the bookmark already saved for this url and fails when there is none; every field is rewritten, so an omitted `extended` or `tags` becomes empty, `shared` becomes yes and `toread` no, and `dt` is ignored. Omitted or 'no', a new bookmark is created and the call fails when the url is already saved."
+          },
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "yes | no",
+            "description": "'no' makes the bookmark private. Omitted counts as 'yes' (public)."
+          },
+          {
+            "key": "toread",
+            "optional": true,
+            "type": "yes | no",
+            "description": "'yes' marks the bookmark as unread. Omitted counts as 'no'."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result_code",
+            "optional": false,
+            "type": "done"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkhut.api.posts.all",
+      "shortPath": "posts.all",
+      "description": "List bookmarks by offset, up to 1000 per page. Follow `nextStart` until it is null",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "Only posts with this tag."
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "Offset of the first post to return. Omitted counts as 0."
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "number",
+            "description": "Page size. The API allows up to 100000 and answers 1000 when this is omitted, so 1000 is sent whenever it is unset."
+          },
+          {
+            "key": "fromdt",
+            "optional": true,
+            "type": "string",
+            "description": "Only posts saved at this time or later."
+          },
+          {
+            "key": "todt",
+            "optional": true,
+            "type": "string",
+            "description": "Only posts saved at this time or earlier."
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "yes",
+            "description": "Set to 'yes' to add the change-detection signature to each post."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ description: string, extended: string, hash: string, href: string, meta?: string | null, others?: number | null, shared: yes | no, tags: string, time: string, toread: yes | no }[]"
+          },
+          {
+            "key": "start",
+            "optional": false,
+            "type": "number",
+            "description": "The offset this page was read from."
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "number",
+            "description": "The page size that was requested."
+          },
+          {
+            "key": "nextStart",
+            "optional": true,
+            "type": "number | null",
+            "description": "Offset of the next page while this one is full; null on the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkhut.api.posts.allHashes",
+      "shortPath": "posts.allHashes",
+      "description": "List every bookmark as a URL MD5 and a change signature, to find what changed without downloading all bookmarks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hashes",
+            "optional": false,
+            "type": "{ url: string, meta: string }[]",
+            "description": "One entry per bookmark, newest first."
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkhut.api.posts.dates",
+      "shortPath": "posts.dates",
+      "description": "Count the bookmarks saved on each day",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "Only count posts with this tag."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dates",
+            "optional": false,
+            "type": "Record<string, number>",
+            "description": "Number of posts saved per day, UTC."
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkhut.api.posts.delete",
+      "shortPath": "posts.delete",
+      "description": "Delete the bookmark for a url. This cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL of the bookmark to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result_code",
+            "optional": false,
+            "type": "done"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkhut.api.posts.get",
+      "shortPath": "posts.get",
+      "description": "Get the bookmarks of one day, the bookmarks with a tag, the bookmark for a url (empty when it is not saved) or the bookmarks for URL MD5 hashes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "One tag, or several separated by spaces or commas. Without `dt`, `url` or `hashes`, a tag searches every day."
+          },
+          {
+            "key": "dt",
+            "optional": true,
+            "type": "string",
+            "description": "The day to list, CCYY-MM-DD (a full CCYY-MM-DDThh:mm:ssZ time is cut to its day; linkhut reads only a day). With no argument at all, the most recent day that has a bookmark."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The one bookmark to look up."
+          },
+          {
+            "key": "hashes",
+            "optional": true,
+            "type": "string[]",
+            "description": "URL MD5 values. Several are joined with a space on the wire, which is what the `+` in the docs decodes to."
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "yes",
+            "description": "Set to 'yes' to add the change-detection signature to each post."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ description: string, extended: string, hash: string, href: string, meta?: string | null, others?: number | null, shared: yes | no, tags: string, time: string, toread: yes | no }[]",
+            "description": "The posts of one day."
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkhut.api.posts.lastUpdated",
+      "shortPath": "posts.lastUpdated",
+      "description": "Get the time of the last bookmark change, to tell whether posts.all needs to be read again",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "update_time",
+            "optional": true,
+            "type": "string | null",
+            "description": "Time of the last bookmark added or changed, UTC. 1970-01-01T00:00:00Z for an account with no bookmarks."
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkhut.api.posts.recent",
+      "shortPath": "posts.recent",
+      "description": "List the most recent bookmarks, up to 100, optionally with one tag. There is no offset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "Only posts with this tag."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "How many posts to return. Default 15, maximum 100. Omitted, no count is sent and the default applies."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "posts",
+            "optional": false,
+            "type": "{ description: string, extended: string, hash: string, href: string, meta?: string | null, others?: number | null, shared: yes | no, tags: string, time: string, toread: yes | no }[]",
+            "description": "The most recent posts. There is no offset, so this is the first page only."
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkhut.api.posts.suggest",
+      "shortPath": "posts.suggest",
+      "description": "Get popular and recommended tags for a url",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL to suggest tags for."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "popular",
+            "optional": false,
+            "type": "string[]",
+            "description": "Tags many bookmarks share."
+          },
+          {
+            "key": "recommended",
+            "optional": false,
+            "type": "string[]",
+            "description": "Tags linkhut recommends."
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkhut.api.tags.delete",
+      "shortPath": "tags.delete",
+      "description": "Delete a tag from every bookmark. The bookmarks stay, and the tag cannot be restored",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tag",
+            "optional": false,
+            "type": "string",
+            "description": "The tag to delete from every bookmark."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result_code",
+            "optional": false,
+            "type": "done"
+          }
+        ]
+      }
+    },
+    {
+      "path": "linkhut.api.tags.get",
+      "shortPath": "tags.get",
+      "description": "List every tag with the number of bookmarks that carry it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, number>"
+      }
+    },
+    {
+      "path": "linkhut.api.tags.rename",
+      "shortPath": "tags.rename",
+      "description": "Rename a tag on every bookmark that carries it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "old",
+            "optional": false,
+            "type": "string",
+            "description": "The tag to rename."
+          },
+          {
+            "key": "new",
+            "optional": false,
+            "type": "string",
+            "description": "The name it takes on every bookmark."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result_code",
+            "optional": false,
+            "type": "done"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
