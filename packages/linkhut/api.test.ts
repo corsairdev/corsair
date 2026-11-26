@@ -5,14 +5,15 @@
  *
  * Read-only by default. With LINKHUT_LIVE_WRITES=1 it also runs one round
  * trip on a made-up private bookmark (https://example.com/corsair-linkhut-live-<time>)
- * and a made-up tag: create, a create that must fail, update, read, tag
- * rename and delete, bookmark delete, and a read that must come back empty.
+ * and a made-up tag: create, the reads again with that bookmark saved, a
+ * create that must fail, update, read, tag rename and delete, bookmark
+ * delete, and a read that must come back empty.
  *
  * A personal token is created at https://ln.ht/_/oauth/personal-token and
  * passed as LINKHUT_API_KEY. Every call runs through the bound client, so each
  * answer is parsed by its output schema before an assertion reads it. The
  * client spaces requests one second apart, the interval the etiquette page
- * asks for, and the suite makes nine calls in total.
+ * asks for: the reads make 10 calls, the round trip 15 more.
  */
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
@@ -176,6 +177,21 @@ describeIfWrites('Linkhut live round trip (LINKHUT_LIVE_WRITES=1)', () => {
 					shared: 'no',
 				}),
 			).resolves.toEqual({ result_code: 'done' });
+			// With one bookmark saved, the reads parse a real post, not an empty list.
+			const recent = await api.posts.recent({ count: 1 });
+			expect(recent.posts[0]?.href).toBe(url);
+			expect(recent.posts[0]?.tags).toBe(tag);
+			const page = await api.posts.all({ tag, results: 5 });
+			expect(page.posts.map((post) => post.href)).toEqual([url]);
+			const dates = await api.posts.dates({ tag });
+			const day = Object.keys(dates.dates)[0];
+			expect(day).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+			const onDay = await api.posts.get({ dt: day, tag });
+			expect(onDay.posts.map((post) => post.href)).toEqual([url]);
+			const manifest = await api.posts.allHashes({});
+			expect(manifest.hashes.length).toBeGreaterThan(0);
+			const suggested = await api.posts.suggest({ url });
+			expect(Array.isArray(suggested.recommended)).toBe(true);
 			// A second create for the same url fails with result_code at HTTP 200.
 			await expect(
 				api.posts.add({ url, description: 'again', shared: 'no' }),

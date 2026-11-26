@@ -19,8 +19,8 @@ export const LinkhutPostSchema = z
 	.object({
 		description: z.string(),
 		extended: z.string(),
-		// A "URL MD5" in the docs. No live value has been seen, so it stays a
-		// plain string.
+		// MD5 of the url (checked live on ln.ht, 11-26), the same value as
+		// posts.allHashes `url`. Kept a plain string.
 		hash: z.string(),
 		href: z.string(),
 		// MD5 of the bookmark's update time with `meta: 'yes'`; null without it.
