@@ -20,9 +20,11 @@ plugin options instead of storing it.
 
 - **Repository routes** take `owner` and `repo`. Branches, refs, tags and
 file paths keep their slashes (`feature/login`, `docs/README.md`).
-- **Lists** page with `page` (1-based) and `limit`; Gitea caps a page at
-50 and the plugin sends 50 when `limit` is left out. Paged lists return
-`{ items, next_page }`, with `next_page` set while a page comes back full.
+- **Lists** page with `page` (1-based) and `limit`. Gitea caps a page at
+the instance's MAX_RESPONSE_ITEMS (50 unless an admin changed it); the
+plugin reads that cap once from `settings.api` and sends it when `limit`
+is left out. Paged lists return `{ items, next_page }`, with `next_page`
+set while a page comes back full, so step `page` until it is null.
 - **Files.** `contents.get` returns a file's metadata and base64 content;
 `contents.raw`, `contents.media`, `repos.downloadArchive` and the Actions
 log and artifact downloads return the bytes as a file. Diffs, patches,

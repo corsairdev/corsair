@@ -23,6 +23,43 @@ export const GITEA_DEFAULT_TIMEOUT_MS = 30_000;
  */
 export const GITEA_PAGE_SIZE = 50;
 
+/**
+ * The instance's page cap (MAX_RESPONSE_ITEMS), read once per instance from
+ * GET /settings/api. An admin can set it below 50: a page of `limit` 50 then
+ * comes back with, say, 20 items, and only the real cap tells a full page
+ * from the last one. When the settings can't be read the plugin assumes 50.
+ */
+const pageCaps = new Map<string, Promise<number>>();
+
+export async function giteaPageCap(ctx: GiteaCallContext): Promise<number> {
+	const base = await resolveGiteaInstance(ctx);
+	let cap = pageCaps.get(base);
+	if (!cap) {
+		cap = makeGiteaRequest(ctx, { method: 'GET', path: '/settings/api' })
+			.then((settings) => {
+				const value =
+					typeof settings === 'object' && settings !== null
+						? (settings as { max_response_items?: unknown }).max_response_items
+						: undefined;
+				return typeof value === 'number' && Number.isInteger(value) && value > 0
+					? value
+					: GITEA_PAGE_SIZE;
+			})
+			.catch(() => {
+				// Not cached: a later call tries again.
+				pageCaps.delete(base);
+				return GITEA_PAGE_SIZE;
+			});
+		pageCaps.set(base, cap);
+	}
+	return cap;
+}
+
+/** Forgets the cached page caps (tests). */
+export function clearGiteaPageCaps(): void {
+	pageCaps.clear();
+}
+
 /** Largest file the attachment upload routes send (Gitea's default is 2 MB for issues, configurable). */
 export const GITEA_UPLOAD_MAX_BYTES = 100 * 1024 * 1024;
 

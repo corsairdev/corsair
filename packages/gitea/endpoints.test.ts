@@ -1,5 +1,6 @@
 import { ApiError } from 'corsair/http';
 import {
+	clearGiteaPageCaps,
 	encodeGiteaPathValue,
 	giteaErrorMessage,
 	normalizeInstanceUrl,
@@ -21,6 +22,7 @@ type Captured = {
 };
 
 let calls: Captured[] = [];
+let pageCap = 50;
 
 function reply(
 	status: number,
@@ -29,6 +31,13 @@ function reply(
 	contentType = 'application/json',
 ) {
 	jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
+		// The instance's page cap, read once per instance before a paged list.
+		if (String(input).endsWith('/settings/api')) {
+			return new Response(JSON.stringify({ max_response_items: pageCap }), {
+				status: 200,
+				headers: { 'content-type': 'application/json' },
+			});
+		}
 		const headers: Record<string, string> = {};
 		new Headers(init?.headers).forEach((value, key) => {
 			headers[key] = value;
@@ -94,6 +103,8 @@ const query = (n = 0) => new URL(calls[n]?.url ?? '').searchParams;
 
 beforeEach(() => {
 	calls = [];
+	pageCap = 50;
+	clearGiteaPageCaps();
 });
 
 afterEach(() => {
@@ -351,6 +362,20 @@ describe('responses', () => {
 			limit: 10,
 		})) as { next_page: number | null };
 		expect(last.next_page).toBeNull();
+	});
+
+	it('pages by the instance cap when an admin set it below 50', async () => {
+		pageCap = 20;
+		reply(
+			200,
+			Array.from({ length: 20 }, (_, i) => ({ id: i })),
+		);
+		const out = (await endpointFor('repos.list')(ctx(), { limit: 50 })) as {
+			next_page: number | null;
+		};
+		expect(out.next_page).toBe(2);
+		await endpointFor('repos.list')(ctx(), {});
+		expect(query(1).get('limit')).toBe('20');
 	});
 
 	it('reads Go’s null for an empty list as an empty list', async () => {
