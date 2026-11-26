@@ -3619,6 +3619,15 @@
                 ]
               },
               {
+                "group": "Loops",
+                "pages": [
+                  "plugins/loops/overview",
+                  "plugins/loops/api",
+                  "plugins/loops/database",
+                  "plugins/loops/webhooks"
+                ]
+              },
+              {
                 "group": "Loyverse",
                 "pages": [
                   "plugins/loyverse/overview",

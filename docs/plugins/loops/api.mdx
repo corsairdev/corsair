@@ -1,0 +1,5322 @@
+---
+title: "Loops API reference"
+sidebarTitle: "API"
+description: "API reference for the Loops plugin in Corsair: every `loops.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Apikey
+
+### verifyConnection
+
+`apikey.verifyConnection`
+
+Verify the API key and return the team name it belongs to
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.apikey.verifyConnection({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `teamName` | `string` | Yes | — |
+
+
+
+---
+
+## Audience Segments
+
+### create
+
+`audienceSegments.create`
+
+Create a new audience segment.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.audienceSegments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name of the audience segment. Must be unique within the team. |
+| `description` | `string` | No | An optional description of the audience segment. |
+| `filter` | `object` | Yes | A tree of audience conditions combined with `match`. |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  match: all | any,
+  conditions: (
+    {
+      type: property,
+      key: string,
+      operator: any | contains | notContains | equals | notEquals | greaterThan | lessThan | isTrue | isFalse | empty | notEmpty | dateEmpty | dateNotEmpty | after | before | between,
+      value?: string | number | {
+        from: string,
+        to: string
+      }
+    } | {
+      type: optIn,
+      status: accepted | pending | rejected | null
+    } | {
+      type: activity,
+      action: sent | opened | clicked,
+      negate: boolean,
+      target: campaign | workflow | workflowEmail,
+      id: string
+    }
+  )[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `filter` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  match?: string | null,
+  conditions?: (
+    {
+      type?: string | null,
+      key?: string | null,
+      operator?: string | null,
+      value?: string | number | {
+        from?: string | null,
+        to?: string | null
+      } | null
+    } | {
+      type?: string | null,
+      status?: string | null | null
+    } | {
+      type?: string | null,
+      action?: string | null,
+      negate?: boolean | null,
+      target?: string | null,
+      id?: string | null
+    }
+  )[] | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`audienceSegments.get`
+
+Retrieve a single audience segment by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.audienceSegments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audienceSegmentId` | `string` | Yes | The ID of the audience segment. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `filter` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  match?: string | null,
+  conditions?: (
+    {
+      type?: string | null,
+      key?: string | null,
+      operator?: string | null,
+      value?: string | number | {
+        from?: string | null,
+        to?: string | null
+      } | null
+    } | {
+      type?: string | null,
+      status?: string | null | null
+    } | {
+      type?: string | null,
+      action?: string | null,
+      negate?: boolean | null,
+      target?: string | null,
+      id?: string | null
+    }
+  )[] | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`audienceSegments.list`
+
+Retrieve a paginated list of audience segments, most recently created first.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.audienceSegments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `perPage` | `number` | No | How many results to return in each request. Must be between 10 and 50. Default is 20. |
+| `cursor` | `string` | No | A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  totalResults?: number | null,
+  returnedResults?: number | null,
+  perPage?: number | null,
+  totalPages?: number | null,
+  nextCursor?: string | null | null,
+  nextPage?: string | null | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  description?: string | null | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  filter?: {
+    match?: string | null,
+    conditions?: (
+      {
+        type?: string | null,
+        key?: string | null,
+        operator?: string | null,
+        value?: string | number | {
+          from?: string | null,
+          to?: string | null
+        } | null
+      } | {
+        type?: string | null,
+        status?: string | null | null
+      } | {
+        type?: string | null,
+        action?: string | null,
+        negate?: boolean | null,
+        target?: string | null,
+        id?: string | null
+      }
+    )[] | null
+  } | null | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Campaign Groups
+
+### create
+
+`campaignGroups.create`
+
+Create a new campaign group.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.campaignGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The group name. Cannot be the reserved name "Unsorted". |
+| `description` | `string` | No | An optional description for the group. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`campaignGroups.get`
+
+Retrieve a single campaign group by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.campaignGroups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignGroupId` | `string` | Yes | The ID of the campaign group. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`campaignGroups.list`
+
+Retrieve a paginated list of campaign groups, most recently created first.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.campaignGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `perPage` | `number` | No | How many results to return in each request. Must be between 10 and 50. Default is 20. |
+| `cursor` | `string` | No | A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  totalResults?: number | null,
+  returnedResults?: number | null,
+  perPage?: number | null,
+  totalPages?: number | null,
+  nextCursor?: string | null | null,
+  nextPage?: string | null | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`campaignGroups.update`
+
+Update a campaign group's name or description. At least one field must be provided. The reserved "Unsorted" group cannot be edited.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.campaignGroups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignGroupId` | `string` | Yes | The ID of the campaign group. |
+| `name` | `string` | No | The group name. Cannot be the reserved name "Unsorted". |
+| `description` | `string` | No | A description for the group. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+## Campaigns
+
+### create
+
+`campaigns.create`
+
+Create a new draft campaign. An empty email message is created automatically and its `emailMessageId` is returned. Use the `/email-messages/{emailMessageId}` endpoint to set subject, sender, preview text, and LMX content. Passing scheduling &#123; method: "now" &#125; sends the campaign to its whole audience right away.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loops.api.campaigns.create({ name: 'Spring announcement', mailingListId: 'clm2k8j4h6g0f8d6s4a2b0z8' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The campaign name. |
+| `campaignGroupId` | `string` | No | The ID of the group to add this campaign to. Defaults to the team's Unsorted group when omitted. |
+| `mailingListId` | `string \| null` | No | The ID of the mailing list to send to. |
+| `audienceSegmentId` | `string \| null` | No | The ID of an audience segment. Setting this without also providing `audienceFilter` clears any existing `audienceFilter`. If both are provided, the filter is applied on top of the segment's filter. |
+| `audienceFilter` | `object \| null` | No | A tree of audience conditions combined with `match`. Setting this without also providing `audienceSegmentId` clears any existing `audienceSegmentId`. When both are provided, this filter is applied on top of the segment's filter. |
+| `scheduling` | `object` | No | When the campaign should send. `timestamp` is required and must be in the future when `method` is `schedule`, and must be omitted when `method` is `now`. |
+
+Creates a draft and its empty email message (emailMessageId); set subject and content with emailMessages.update. scheduling &#123; method: now &#125; sends at once.
+
+<AccordionGroup>
+<Accordion title="audienceFilter full type">
+
+```ts
+{
+  match: all | any,
+  conditions: (
+    {
+      type: property,
+      key: string,
+      operator: any | contains | notContains | equals | notEquals | greaterThan | lessThan | isTrue | isFalse | empty | notEmpty | dateEmpty | dateNotEmpty | after | before | between,
+      value?: string | number | {
+        from: string,
+        to: string
+      }
+    } | {
+      type: optIn,
+      status: accepted | pending | rejected | null
+    } | {
+      type: activity,
+      action: sent | opened | clicked,
+      negate: boolean,
+      target: campaign | workflow | workflowEmail,
+      id: string
+    }
+  )[]
+} | null
+```
+</Accordion>
+
+<Accordion title="scheduling full type">
+
+```ts
+{
+  method: now | schedule,
+  timestamp?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `emailMessageId` | `string \| null \| null` | No | — |
+| `emailMessageContentRevisionId` | `string \| null \| null` | No | — |
+| `campaignGroupId` | `string \| null \| null` | No | — |
+| `mailingListId` | `string \| null \| null` | No | — |
+| `audienceSegmentId` | `string \| null \| null` | No | — |
+| `audienceFilter` | `object \| null` | No | — |
+| `scheduling` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="audienceFilter full type">
+
+```ts
+{
+  match?: string | null,
+  conditions?: (
+    {
+      type?: string | null,
+      key?: string | null,
+      operator?: string | null,
+      value?: string | number | {
+        from?: string | null,
+        to?: string | null
+      } | null
+    } | {
+      type?: string | null,
+      status?: string | null | null
+    } | {
+      type?: string | null,
+      action?: string | null,
+      negate?: boolean | null,
+      target?: string | null,
+      id?: string | null
+    }
+  )[] | null
+} | null | null
+```
+</Accordion>
+
+<Accordion title="scheduling full type">
+
+```ts
+{
+  method?: string | null,
+  timestamp?: string | null | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`campaigns.get`
+
+Retrieve a single campaign by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.campaigns.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | The ID of the campaign. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `emailMessageId` | `string \| null \| null` | No | — |
+| `campaignGroupId` | `string \| null \| null` | No | — |
+| `mailingListId` | `string \| null \| null` | No | — |
+| `audienceSegmentId` | `string \| null \| null` | No | — |
+| `audienceFilter` | `object \| null` | No | — |
+| `scheduling` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="audienceFilter full type">
+
+```ts
+{
+  match?: string | null,
+  conditions?: (
+    {
+      type?: string | null,
+      key?: string | null,
+      operator?: string | null,
+      value?: string | number | {
+        from?: string | null,
+        to?: string | null
+      } | null
+    } | {
+      type?: string | null,
+      status?: string | null | null
+    } | {
+      type?: string | null,
+      action?: string | null,
+      negate?: boolean | null,
+      target?: string | null,
+      id?: string | null
+    }
+  )[] | null
+} | null | null
+```
+</Accordion>
+
+<Accordion title="scheduling full type">
+
+```ts
+{
+  method?: string | null,
+  timestamp?: string | null | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMetrics
+
+`campaigns.getMetrics`
+
+Retrieve all-time email engagement metrics for a campaign.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.campaigns.getMetrics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | The ID of the campaign. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sends` | `number \| null` | No | — |
+| `opens` | `number \| null` | No | — |
+| `clicks` | `number \| null` | No | — |
+| `unsubscribes` | `number \| null` | No | — |
+| `spamReports` | `number \| null` | No | — |
+| `hardBounces` | `number \| null` | No | — |
+| `softBounces` | `number \| null` | No | — |
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+Retrieve a paginated list of campaigns.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.campaigns.list({ perPage: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `perPage` | `number` | No | How many results to return in each request. Must be between 10 and 50. Default is 20. |
+| `cursor` | `string` | No | A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response. |
+| `campaignGroupId` | `string` | No | Only return campaigns in this campaign group. An ID that matches no group returns an empty list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  totalResults?: number | null,
+  returnedResults?: number | null,
+  perPage?: number | null,
+  totalPages?: number | null,
+  nextCursor?: string | null | null,
+  nextPage?: string | null | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  url?: string | null,
+  name?: string | null,
+  status?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  emailMessageId?: string | null | null,
+  campaignGroupId?: string | null | null,
+  mailingListId?: string | null | null,
+  audienceSegmentId?: string | null | null,
+  audienceFilter?: {
+    match?: string | null,
+    conditions?: (
+      {
+        type?: string | null,
+        key?: string | null,
+        operator?: string | null,
+        value?: string | number | {
+          from?: string | null,
+          to?: string | null
+        } | null
+      } | {
+        type?: string | null,
+        status?: string | null | null
+      } | {
+        type?: string | null,
+        action?: string | null,
+        negate?: boolean | null,
+        target?: string | null,
+        id?: string | null
+      }
+    )[] | null
+  } | null | null,
+  scheduling?: {
+    method?: string | null,
+    timestamp?: string | null | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`campaigns.update`
+
+Update a draft campaign's name, group, audience (mailing list, segment, or filter), or scheduling. At least one field must be provided. Once a campaign has been sent, only its `name` and `campaignGroupId` can be updated. Passing scheduling &#123; method: "now" &#125; on a draft sends it to its whole audience right away.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loops.api.campaigns.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | The ID of the campaign. |
+| `name` | `string` | No | The updated campaign name. |
+| `campaignGroupId` | `string` | No | The ID of the group to move this campaign to. |
+| `mailingListId` | `string \| null` | No | The ID of the mailing list to send to. |
+| `audienceSegmentId` | `string \| null` | No | The ID of an audience segment. Setting this without also providing `audienceFilter` clears any existing `audienceFilter`. If both are provided, the filter is applied on top of the segment's filter. |
+| `audienceFilter` | `object \| null` | No | A tree of audience conditions combined with `match`. Setting this without also providing `audienceSegmentId` clears any existing `audienceSegmentId`. When both are provided, this filter is applied on top of the segment's filter. |
+| `scheduling` | `object` | No | When the campaign should send. `timestamp` is required and must be in the future when `method` is `schedule`, and must be omitted when `method` is `now`. |
+
+<AccordionGroup>
+<Accordion title="audienceFilter full type">
+
+```ts
+{
+  match: all | any,
+  conditions: (
+    {
+      type: property,
+      key: string,
+      operator: any | contains | notContains | equals | notEquals | greaterThan | lessThan | isTrue | isFalse | empty | notEmpty | dateEmpty | dateNotEmpty | after | before | between,
+      value?: string | number | {
+        from: string,
+        to: string
+      }
+    } | {
+      type: optIn,
+      status: accepted | pending | rejected | null
+    } | {
+      type: activity,
+      action: sent | opened | clicked,
+      negate: boolean,
+      target: campaign | workflow | workflowEmail,
+      id: string
+    }
+  )[]
+} | null
+```
+</Accordion>
+
+<Accordion title="scheduling full type">
+
+```ts
+{
+  method: now | schedule,
+  timestamp?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `emailMessageId` | `string \| null \| null` | No | — |
+| `campaignGroupId` | `string \| null \| null` | No | — |
+| `mailingListId` | `string \| null \| null` | No | — |
+| `audienceSegmentId` | `string \| null \| null` | No | — |
+| `audienceFilter` | `object \| null` | No | — |
+| `scheduling` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="audienceFilter full type">
+
+```ts
+{
+  match?: string | null,
+  conditions?: (
+    {
+      type?: string | null,
+      key?: string | null,
+      operator?: string | null,
+      value?: string | number | {
+        from?: string | null,
+        to?: string | null
+      } | null
+    } | {
+      type?: string | null,
+      status?: string | null | null
+    } | {
+      type?: string | null,
+      action?: string | null,
+      negate?: boolean | null,
+      target?: string | null,
+      id?: string | null
+    }
+  )[] | null
+} | null | null
+```
+</Accordion>
+
+<Accordion title="scheduling full type">
+
+```ts
+{
+  method?: string | null,
+  timestamp?: string | null | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Components
+
+### create
+
+`components.create`
+
+Create a new email component from an LMX body.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.components.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The component name. |
+| `lmx` | `string` | Yes | The component body as an LMX string. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `lmx` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`components.get`
+
+Retrieve a single component by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.components.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `componentId` | `string` | Yes | The ID of the component. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `lmx` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`components.list`
+
+Retrieve a paginated list of email components.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.components.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `perPage` | `number` | No | How many results to return in each request. Must be between 10 and 50. Default is 20. |
+| `cursor` | `string` | No | A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  totalResults?: number | null,
+  returnedResults?: number | null,
+  perPage?: number | null,
+  totalPages?: number | null,
+  nextCursor?: string | null | null,
+  nextPage?: string | null | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  lmx?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`components.update`
+
+Update a component's name and/or body. When the `lmx` body changes, the update cascades to every email using this component, and `affectedEmailCount` reports how many were affected.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.components.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `componentId` | `string` | Yes | The ID of the component. |
+| `name` | `string` | No | — |
+| `lmx` | `string` | No | The component body as an LMX string. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  lmx?: string | null
+}& {
+  affectedEmailCount?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact with fixed and custom properties; answers 409 when the email or userId already exists
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.contacts.create({ email: 'jordan@acme-logistics.com', firstName: 'Jordan', customProperties: { planName: 'Pro' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `source` | `string` | No | — |
+| `subscribed` | `boolean` | No | — |
+| `userGroup` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `mailingLists` | `Record<string, boolean>` | No | — |
+| `customProperties` | `Record<string, string \| number \| boolean>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### createProperty
+
+`contacts.createProperty`
+
+Create a custom contact property.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.contacts.createProperty({ name: 'planName', type: 'string' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name of the property. This should be in camelCase, like `planName` or `importDate`. |
+| `type` | `string \| number \| boolean \| date` | Yes | The type of property. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Permanently delete a contact by email or userId; the contact and its subscriptions cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.loops.api.contacts.delete({ userId: 'usr_7f8e9d0c1b2a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `userId` | `string` | No | — |
+
+Permanent. Loops answers 404 when the contact does not exist.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `message` | `string` | Yes | — |
+
+
+
+---
+
+### find
+
+`contacts.find`
+
+Find contacts by email or user ID; answers an empty array when none match
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.contacts.find({ email: 'alex@company.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `userId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  firstName?: string | null,
+  lastName?: string | null,
+  source?: string | null,
+  subscribed?: boolean | null,
+  userGroup?: string | null,
+  userId?: string | null,
+  mailingLists?: Record<string, boolean>,
+  optInStatus?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSuppression
+
+`contacts.getSuppression`
+
+Read whether a contact is suppressed from emails and the quota left for removing suppressions
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.contacts.getSuppression({ email: 'alex@company.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `userId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | — |
+| `isSuppressed` | `boolean` | Yes | — |
+| `removalQuota` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  userId?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="removalQuota full type">
+
+```ts
+{
+  limit: number,
+  remaining: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listProperties
+
+`contacts.listProperties`
+
+List the contact property definitions, all of them or only the custom ones
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.contacts.listProperties({ list: 'custom' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list` | `all \| custom` | No | — |
+
+Pass list: 'all' or list: 'custom'; the answer is a bare array, not a paginated envelope.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  key: string,
+  label: string,
+  type: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### removeSuppression
+
+`contacts.removeSuppression`
+
+Remove a suppressed contact from the suppression list by `email` or `userId`. Include only one query parameter. Uses one of a small rolling 30-day removal quota; the address can receive email again.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.loops.api.contacts.removeSuppression({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | Email address |
+| `userId` | `string` | No | — |
+
+Uses one of a small rolling 30-day removal quota (see contacts.getSuppression).
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `removalQuota` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="removalQuota full type">
+
+```ts
+{
+  limit?: number | null,
+  remaining?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update a contact found by email or userId, creating it when no match exists (upsert)
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.contacts.update({ userId: 'usr_7f8e9d0c1b2a', lastName: 'Rivera' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `source` | `string` | No | — |
+| `subscribed` | `boolean` | No | — |
+| `userGroup` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `mailingLists` | `Record<string, boolean>` | No | — |
+| `customProperties` | `Record<string, string \| number \| boolean>` | No | — |
+
+Updates by email or userId and upserts when no match exists, so a typo in the selector silently creates a new contact.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Dedicated Sending Ips
+
+### list
+
+`dedicatedSendingIps.list`
+
+Retrieve a list of Loops' dedicated sending IP addresses. This endpoint is provided for the rare instances where you may need to whitelist our sending IPs.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.dedicatedSendingIps.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `string[]`
+
+
+---
+
+## Email Messages
+
+### get
+
+`emailMessages.get`
+
+Retrieve an email message, including its compiled LMX content.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.emailMessages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailMessageId` | `string` | Yes | The ID of the email message. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `campaignId` | `string \| null` | No | — |
+| `transactionalId` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `previewText` | `string \| null` | No | — |
+| `fromName` | `string \| null` | No | — |
+| `fromEmail` | `string \| null` | No | — |
+| `replyToEmail` | `string \| null` | No | — |
+| `ccEmail` | `string \| null` | No | — |
+| `bccEmail` | `string \| null` | No | — |
+| `languageCode` | `string \| null` | No | — |
+| `emailFormat` | `string \| null` | No | — |
+| `lmx` | `string \| null` | No | — |
+| `footerId` | `string \| null \| null` | No | — |
+| `contentRevisionId` | `string \| null \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `contactPropertiesFallbacks` | `object \| null` | No | — |
+| `eventPropertiesFallbacks` | `object \| null` | No | — |
+| `dataVariablesFallbacks` | `object \| null` | No | — |
+| `warnings` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="contactPropertiesFallbacks full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="eventPropertiesFallbacks full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="dataVariablesFallbacks full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  rule?: string | null,
+  severity?: string | null,
+  message?: string | null,
+  path?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### render
+
+`emailMessages.render`
+
+Render the HTML of an email message the way its preview email is rendered. Nothing is sent.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.emailMessages.render({ emailMessageId: 'cle5f7g9h1i3j5k7l9m1n3p5', contactProperties: { firstName: 'Alex' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailMessageId` | `string` | Yes | The ID of the email message. |
+| `contactProperties` | `object` | No | Contact property values to render. Accepted for campaign and workflow emails. |
+| `eventProperties` | `object` | No | Event property values to render. Accepted for workflow emails only. |
+| `dataVariables` | `object` | No | Transactional data variables to render. Accepted for transactional emails only. |
+
+<AccordionGroup>
+<Accordion title="contactProperties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="eventProperties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="dataVariables full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `html` | `string \| null` | No | — |
+
+
+
+---
+
+### runGuardian
+
+`emailMessages.runGuardian`
+
+Validate an email message's content against Guardian rules and return any errors and warnings. Errors must be resolved before the email can be published, warnings are advisory.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.emailMessages.runGuardian({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailMessageId` | `string` | Yes | The ID of the email message. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `errors` | `object[] \| null` | No | — |
+| `warnings` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  rule?: string | null,
+  title?: string | null,
+  description?: string | null,
+  items?: {
+    label?: string | null,
+    codeName?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  rule?: string | null,
+  title?: string | null,
+  description?: string | null,
+  items?: {
+    label?: string | null,
+    codeName?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendPreview
+
+`emailMessages.sendPreview`
+
+Send a test preview of an email message to one or more addresses. Sends real preview emails to every listed address.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loops.api.emailMessages.sendPreview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailMessageId` | `string` | Yes | The ID of the email message. |
+| `emails` | `string[]` | Yes | One or more addresses to send the preview to. |
+| `contactProperties` | `object` | No | Contact property values to render. Accepted for campaign and workflow previews. |
+| `eventProperties` | `object` | No | Event property values to render. Accepted for workflow previews only. |
+| `dataVariables` | `object` | No | Transactional data variables to render. Accepted for transactional previews only. |
+
+Sends real preview emails to every address in emails. Campaign previews take contactProperties, workflow previews also eventProperties, transactional previews dataVariables.
+
+<AccordionGroup>
+<Accordion title="contactProperties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="eventProperties full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="dataVariables full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+
+
+
+---
+
+### update
+
+`emailMessages.update`
+
+Update fields on an email message (subject, preview text, sender, LMX content). A campaign must be in draft status. You can only edit the draft email message of a transactional email. A workflow must not be sending.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.emailMessages.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailMessageId` | `string` | Yes | The ID of the email message. |
+| `expectedRevisionId` | `string` | No | The `contentRevisionId` you last fetched, or the `emailMessageContentRevisionId` you received when creating the campaign. |
+| `subject` | `string` | No | — |
+| `previewText` | `string` | No | — |
+| `fromName` | `string` | No | — |
+| `fromEmail` | `string` | No | The email sender email address, without the team's sending domain. |
+| `replyToEmail` | `string` | No | Reply-to email. Must be empty or a valid email address. |
+| `ccEmail` | `string` | No | CC email address. Requires the team to have CC/BCC enabled. Not supported for campaign emails. |
+| `bccEmail` | `string` | No | BCC email address. Requires the team to have CC/BCC enabled. Not supported for campaign emails. |
+| `languageCode` | `string` | No | ISO 639-1 language code for the email, e.g. `en` or `fr`. |
+| `emailFormat` | `styled \| plain` | No | The rendering format of the email. |
+| `footerId` | `string \| null` | No | Apply a specific footer to this email message. Use `null` for the system default footer. Omit it to keep the current footer. Only for teams with footers enabled, and only for campaign and workflow emails. Transactional emails and critical notices have no footer. |
+| `lmx` | `string` | No | The email body serialized as LMX. Styles must be embedded in the LMX `<Style />` tag. |
+| `contactPropertiesFallbacks` | `object` | No | Fallback values for contact properties, keyed by property name. Per-key merge: a string value sets the fallback, a null value deletes it, and keys omitted from the map are left unchanged. |
+| `eventPropertiesFallbacks` | `object` | No | Fallback values for event properties, keyed by property name. Per-key merge: a string value sets the fallback, a null value deletes it, and keys omitted from the map are left unchanged. |
+| `dataVariablesFallbacks` | `object` | No | Fallback values for data variables, keyed by variable name. Per-key merge: a string value sets the fallback, a null value deletes it, and keys omitted from the map are left unchanged. |
+
+<AccordionGroup>
+<Accordion title="contactPropertiesFallbacks full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="eventPropertiesFallbacks full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="dataVariablesFallbacks full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `campaignId` | `string \| null` | No | — |
+| `transactionalId` | `string \| null` | No | — |
+| `subject` | `string \| null` | No | — |
+| `previewText` | `string \| null` | No | — |
+| `fromName` | `string \| null` | No | — |
+| `fromEmail` | `string \| null` | No | — |
+| `replyToEmail` | `string \| null` | No | — |
+| `ccEmail` | `string \| null` | No | — |
+| `bccEmail` | `string \| null` | No | — |
+| `languageCode` | `string \| null` | No | — |
+| `emailFormat` | `string \| null` | No | — |
+| `lmx` | `string \| null` | No | — |
+| `footerId` | `string \| null \| null` | No | — |
+| `contentRevisionId` | `string \| null \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `contactPropertiesFallbacks` | `object \| null` | No | — |
+| `eventPropertiesFallbacks` | `object \| null` | No | — |
+| `dataVariablesFallbacks` | `object \| null` | No | — |
+| `warnings` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="contactPropertiesFallbacks full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="eventPropertiesFallbacks full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="dataVariablesFallbacks full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="warnings full type">
+
+```ts
+{
+  rule?: string | null,
+  severity?: string | null,
+  message?: string | null,
+  path?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Event Patterns
+
+### get
+
+`eventPatterns.get`
+
+Retrieve event pattern details for a workflow event trigger.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.eventPatterns.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventPatternId` | `string` | Yes | The ID of the event pattern. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `eventName` | `string \| null` | No | — |
+| `eventProperties` | `object[] \| null` | No | — |
+| `incomingWebhookPlatform` | `string \| null \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="eventProperties full type">
+
+```ts
+{
+  name?: string | null,
+  type?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getByName
+
+`eventPatterns.getByName`
+
+Retrieve event pattern details by event name for a workflow event trigger. Event names are case-sensitive, so `PaymentReceived` and `paymentReceived` are different events.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.eventPatterns.getByName({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventName` | `string` | Yes | The exact event name. Event names are case-sensitive. Pass the name as it is (e.g. `Trial started`); the plugin URL-encodes it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `eventName` | `string \| null` | No | — |
+| `eventProperties` | `object[] \| null` | No | — |
+| `incomingWebhookPlatform` | `string \| null \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="eventProperties full type">
+
+```ts
+{
+  name?: string | null,
+  type?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`eventPatterns.list`
+
+Retrieve a paginated list of event patterns available to workflow event trigger nodes.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.eventPatterns.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `perPage` | `number` | No | How many results to return in each request. Must be between 10 and 50. Default is 20. |
+| `cursor` | `string` | No | A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  totalResults?: number | null,
+  returnedResults?: number | null,
+  perPage?: number | null,
+  totalPages?: number | null,
+  nextCursor?: string | null | null,
+  nextPage?: string | null | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  eventName?: string | null,
+  incomingWebhookPlatform?: string | null | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Events
+
+### send
+
+`events.send`
+
+Send an event for a contact; this can trigger workflows that email real people
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loops.api.events.send({ eventName: 'signup', email: 'alex@company.com', eventProperties: { plan: 'pro' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventName` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `eventProperties` | `Record<string, any>` | No | — |
+| `mailingLists` | `Record<string, boolean>` | No | — |
+| `customProperties` | `Record<string, string \| number \| boolean>` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+Needs eventName and one of email or userId. Fires any workflow that listens for the event, which can send email to the contact.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+## Footers
+
+### create
+
+`footers.create`
+
+Create a footer with one variant. The variant starts with an unpublished draft that has the company name, company address and unsubscribe link. Emails cannot use the footer until you publish the variant.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.footers.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | The name of the footer. Default is "Custom footer" if omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `isDefault` | `boolean \| null` | No | — |
+| `placement` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `variants` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="variants full type">
+
+```ts
+{
+  id?: string | null,
+  footerId?: string | null,
+  contentRevisionId?: string | null,
+  publishedAt?: string | null | null,
+  createdAt?: string | null,
+  draftLmx?: string | null,
+  publishedLmx?: string | null | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`footers.delete`
+
+Delete a footer and its variants. You cannot delete the team's default footer or a footer that emails use.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.loops.api.footers.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `footerId` | `string` | Yes | The ID of the footer. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`footers.get`
+
+Retrieve a single footer by ID, with the content of each variant.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.footers.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `footerId` | `string` | Yes | The ID of the footer. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `isDefault` | `boolean \| null` | No | — |
+| `placement` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `variants` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="variants full type">
+
+```ts
+{
+  id?: string | null,
+  footerId?: string | null,
+  contentRevisionId?: string | null,
+  publishedAt?: string | null | null,
+  createdAt?: string | null,
+  draftLmx?: string | null,
+  publishedLmx?: string | null | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getVariant
+
+`footers.getVariant`
+
+Retrieve a footer variant's draft and published content as LMX.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.footers.getVariant({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `footerId` | `string` | Yes | The ID of the footer. |
+| `variantId` | `string` | Yes | The ID of the footer variant. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `footerId` | `string \| null` | No | — |
+| `contentRevisionId` | `string \| null` | No | — |
+| `publishedAt` | `string \| null \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `draftLmx` | `string \| null` | No | — |
+| `publishedLmx` | `string \| null \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`footers.list`
+
+Retrieve a paginated list of footers, most recently created first.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.footers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `perPage` | `number` | No | How many results to return in each request. Must be between 10 and 50. Default is 20. |
+| `cursor` | `string` | No | A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  totalResults?: number | null,
+  returnedResults?: number | null,
+  perPage?: number | null,
+  totalPages?: number | null,
+  nextCursor?: string | null | null,
+  nextPage?: string | null | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  isDefault?: boolean | null,
+  placement?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publishVariant
+
+`footers.publishVariant`
+
+Publish the variant's draft LMX content, to replace the current published LMX content. Emails that use the footer will immediately use the newly published content.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loops.api.footers.publishVariant({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `footerId` | `string` | Yes | The ID of the footer. |
+| `variantId` | `string` | Yes | The ID of the footer variant. |
+| `expectedRevisionId` | `string` | Yes | The `contentRevisionId` you last fetched. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `footerId` | `string \| null` | No | — |
+| `contentRevisionId` | `string \| null` | No | — |
+| `publishedAt` | `string \| null \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `draftLmx` | `string \| null` | No | — |
+| `publishedLmx` | `string \| null \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### setDefault
+
+`footers.setDefault`
+
+Make a published footer the team's default footer. New campaign and workflow emails use the default footer. `existingEmails` picks which existing emails switch to it. With `none`, only new emails use it.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.footers.setDefault({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `footerId` | `string` | Yes | The ID of the footer. |
+| `existingEmails` | `previousDefault \| all \| none` | Yes | Which existing campaign and workflow emails switch to this footer: the ones that use the previous default footer (`previousDefault`), all of them (`all`), or none (`none`). With `none`, existing emails keep their footer and only new emails use this footer. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  isDefault?: boolean | null,
+  placement?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  variants?: {
+    id?: string | null,
+    footerId?: string | null,
+    contentRevisionId?: string | null,
+    publishedAt?: string | null | null,
+    createdAt?: string | null,
+    draftLmx?: string | null,
+    publishedLmx?: string | null | null,
+    updatedAt?: string | null
+  }[] | null
+}& {
+  updatedEmailCount?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`footers.update`
+
+Update a footer's name or placement. Changes apply at once, also to running workflows. Emails already sent don't change. To change the default footer, use `POST /v1/footers/{footerId}/set-default`.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.footers.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `footerId` | `string` | Yes | The ID of the footer. |
+| `name` | `string` | No | The new name of the footer. |
+| `placement` | `inside \| below` | No | Whether the footer is rendered inside the email body (`inside`) or below it (`below`). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `isDefault` | `boolean \| null` | No | — |
+| `placement` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `variants` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="variants full type">
+
+```ts
+{
+  id?: string | null,
+  footerId?: string | null,
+  contentRevisionId?: string | null,
+  publishedAt?: string | null | null,
+  createdAt?: string | null,
+  draftLmx?: string | null,
+  publishedLmx?: string | null | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateVariant
+
+`footers.updateVariant`
+
+Update a footer variant's LMX content. Emails keep the variant's published content until you publish the updated variant.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.footers.updateVariant({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `footerId` | `string` | Yes | The ID of the footer. |
+| `variantId` | `string` | Yes | The ID of the footer variant. |
+| `expectedRevisionId` | `string` | Yes | The `contentRevisionId` you last fetched. |
+| `lmx` | `string` | Yes | The new draft content as LMX. Footer LMX can use `{system.company_name}`, `{system.company_address}`, `{system.mailing_list_name}`, `{system.unsubscribe_link}` and `{contact.email}`. It cannot use `<Style />`, components, other contact properties, event properties or data variables. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `footerId` | `string \| null` | No | — |
+| `contentRevisionId` | `string \| null` | No | — |
+| `publishedAt` | `string \| null \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `draftLmx` | `string \| null` | No | — |
+| `publishedLmx` | `string \| null \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+## Lists
+
+### list
+
+`lists.list`
+
+List every mailing list in the team
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.lists.list({});
+```
+
+**Input:** _empty object_
+
+The answer is a bare array. There is no pagination on this endpoint.
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  isPublic: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Themes
+
+### create
+
+`themes.create`
+
+Create a new email theme for use across Loops emails.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.themes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The theme name. |
+| `styles` | `object` | No | Flat map of style attributes, matching the attribute names accepted by the LMX `<Style />` tag. |
+
+<AccordionGroup>
+<Accordion title="styles full type">
+
+```ts
+{
+  backgroundColor?: string,
+  backgroundXPadding?: number,
+  backgroundYPadding?: number,
+  bodyColor?: string,
+  bodyXPadding?: number,
+  bodyYPadding?: number,
+  bodyFontFamily?: string,
+  bodyFontCategory?: string,
+  borderColor?: string,
+  borderWidth?: number,
+  borderRadius?: number,
+  buttonBodyColor?: string,
+  buttonBodyXPadding?: number,
+  buttonBodyYPadding?: number,
+  buttonBorderColor?: string,
+  buttonBorderWidth?: number,
+  buttonBorderRadius?: number,
+  buttonTextColor?: string,
+  buttonTextFormat?: number,
+  buttonTextFontSize?: number,
+  dividerColor?: string,
+  dividerBorderWidth?: number,
+  textBaseColor?: string,
+  textBaseFontSize?: number,
+  textBaseLineHeight?: number,
+  textBaseLetterSpacing?: number,
+  textLinkColor?: string,
+  heading1Color?: string,
+  heading1FontSize?: number,
+  heading1LineHeight?: number,
+  heading1LetterSpacing?: number,
+  heading2Color?: string,
+  heading2FontSize?: number,
+  heading2LineHeight?: number,
+  heading2LetterSpacing?: number,
+  heading3Color?: string,
+  heading3FontSize?: number,
+  heading3LineHeight?: number,
+  heading3LetterSpacing?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `styles` | `object \| null` | No | — |
+| `isDefault` | `boolean \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="styles full type">
+
+```ts
+{
+  backgroundColor?: string | null,
+  backgroundXPadding?: number | null,
+  backgroundYPadding?: number | null,
+  bodyColor?: string | null,
+  bodyXPadding?: number | null,
+  bodyYPadding?: number | null,
+  bodyFontFamily?: string | null,
+  bodyFontCategory?: string | null,
+  borderColor?: string | null,
+  borderWidth?: number | null,
+  borderRadius?: number | null,
+  buttonBodyColor?: string | null,
+  buttonBodyXPadding?: number | null,
+  buttonBodyYPadding?: number | null,
+  buttonBorderColor?: string | null,
+  buttonBorderWidth?: number | null,
+  buttonBorderRadius?: number | null,
+  buttonTextColor?: string | null,
+  buttonTextFormat?: number | null,
+  buttonTextFontSize?: number | null,
+  dividerColor?: string | null,
+  dividerBorderWidth?: number | null,
+  textBaseColor?: string | null,
+  textBaseFontSize?: number | null,
+  textBaseLineHeight?: number | null,
+  textBaseLetterSpacing?: number | null,
+  textLinkColor?: string | null,
+  heading1Color?: string | null,
+  heading1FontSize?: number | null,
+  heading1LineHeight?: number | null,
+  heading1LetterSpacing?: number | null,
+  heading2Color?: string | null,
+  heading2FontSize?: number | null,
+  heading2LineHeight?: number | null,
+  heading2LetterSpacing?: number | null,
+  heading3Color?: string | null,
+  heading3FontSize?: number | null,
+  heading3LineHeight?: number | null,
+  heading3LetterSpacing?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`themes.get`
+
+Retrieve a single theme by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.themes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `themeId` | `string` | Yes | The ID of the theme. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `styles` | `object \| null` | No | — |
+| `isDefault` | `boolean \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="styles full type">
+
+```ts
+{
+  backgroundColor?: string | null,
+  backgroundXPadding?: number | null,
+  backgroundYPadding?: number | null,
+  bodyColor?: string | null,
+  bodyXPadding?: number | null,
+  bodyYPadding?: number | null,
+  bodyFontFamily?: string | null,
+  bodyFontCategory?: string | null,
+  borderColor?: string | null,
+  borderWidth?: number | null,
+  borderRadius?: number | null,
+  buttonBodyColor?: string | null,
+  buttonBodyXPadding?: number | null,
+  buttonBodyYPadding?: number | null,
+  buttonBorderColor?: string | null,
+  buttonBorderWidth?: number | null,
+  buttonBorderRadius?: number | null,
+  buttonTextColor?: string | null,
+  buttonTextFormat?: number | null,
+  buttonTextFontSize?: number | null,
+  dividerColor?: string | null,
+  dividerBorderWidth?: number | null,
+  textBaseColor?: string | null,
+  textBaseFontSize?: number | null,
+  textBaseLineHeight?: number | null,
+  textBaseLetterSpacing?: number | null,
+  textLinkColor?: string | null,
+  heading1Color?: string | null,
+  heading1FontSize?: number | null,
+  heading1LineHeight?: number | null,
+  heading1LetterSpacing?: number | null,
+  heading2Color?: string | null,
+  heading2FontSize?: number | null,
+  heading2LineHeight?: number | null,
+  heading2LetterSpacing?: number | null,
+  heading3Color?: string | null,
+  heading3FontSize?: number | null,
+  heading3LineHeight?: number | null,
+  heading3LetterSpacing?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`themes.list`
+
+Retrieve a paginated list of email themes, most recently created first.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.themes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `perPage` | `number` | No | How many results to return in each request. Must be between 10 and 50. Default is 20. |
+| `cursor` | `string` | No | A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  totalResults?: number | null,
+  returnedResults?: number | null,
+  perPage?: number | null,
+  totalPages?: number | null,
+  nextCursor?: string | null | null,
+  nextPage?: string | null | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  styles?: {
+    backgroundColor?: string | null,
+    backgroundXPadding?: number | null,
+    backgroundYPadding?: number | null,
+    bodyColor?: string | null,
+    bodyXPadding?: number | null,
+    bodyYPadding?: number | null,
+    bodyFontFamily?: string | null,
+    bodyFontCategory?: string | null,
+    borderColor?: string | null,
+    borderWidth?: number | null,
+    borderRadius?: number | null,
+    buttonBodyColor?: string | null,
+    buttonBodyXPadding?: number | null,
+    buttonBodyYPadding?: number | null,
+    buttonBorderColor?: string | null,
+    buttonBorderWidth?: number | null,
+    buttonBorderRadius?: number | null,
+    buttonTextColor?: string | null,
+    buttonTextFormat?: number | null,
+    buttonTextFontSize?: number | null,
+    dividerColor?: string | null,
+    dividerBorderWidth?: number | null,
+    textBaseColor?: string | null,
+    textBaseFontSize?: number | null,
+    textBaseLineHeight?: number | null,
+    textBaseLetterSpacing?: number | null,
+    textLinkColor?: string | null,
+    heading1Color?: string | null,
+    heading1FontSize?: number | null,
+    heading1LineHeight?: number | null,
+    heading1LetterSpacing?: number | null,
+    heading2Color?: string | null,
+    heading2FontSize?: number | null,
+    heading2LineHeight?: number | null,
+    heading2LetterSpacing?: number | null,
+    heading3Color?: string | null,
+    heading3FontSize?: number | null,
+    heading3LineHeight?: number | null,
+    heading3LetterSpacing?: number | null
+  } | null,
+  isDefault?: boolean | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`themes.update`
+
+Update a theme's name and/or styles. When `styles` change, the update cascades to every email using this theme, and `affectedEmailCount` in the response reports how many emails were affected.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.themes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `themeId` | `string` | Yes | The ID of the theme. |
+| `name` | `string` | No | — |
+| `styles` | `object` | No | Flat map of style attributes, matching the attribute names accepted by the LMX `<Style />` tag. |
+
+<AccordionGroup>
+<Accordion title="styles full type">
+
+```ts
+{
+  backgroundColor?: string,
+  backgroundXPadding?: number,
+  backgroundYPadding?: number,
+  bodyColor?: string,
+  bodyXPadding?: number,
+  bodyYPadding?: number,
+  bodyFontFamily?: string,
+  bodyFontCategory?: string,
+  borderColor?: string,
+  borderWidth?: number,
+  borderRadius?: number,
+  buttonBodyColor?: string,
+  buttonBodyXPadding?: number,
+  buttonBodyYPadding?: number,
+  buttonBorderColor?: string,
+  buttonBorderWidth?: number,
+  buttonBorderRadius?: number,
+  buttonTextColor?: string,
+  buttonTextFormat?: number,
+  buttonTextFontSize?: number,
+  dividerColor?: string,
+  dividerBorderWidth?: number,
+  textBaseColor?: string,
+  textBaseFontSize?: number,
+  textBaseLineHeight?: number,
+  textBaseLetterSpacing?: number,
+  textLinkColor?: string,
+  heading1Color?: string,
+  heading1FontSize?: number,
+  heading1LineHeight?: number,
+  heading1LetterSpacing?: number,
+  heading2Color?: string,
+  heading2FontSize?: number,
+  heading2LineHeight?: number,
+  heading2LetterSpacing?: number,
+  heading3Color?: string,
+  heading3FontSize?: number,
+  heading3LineHeight?: number,
+  heading3LetterSpacing?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  styles?: {
+    backgroundColor?: string | null,
+    backgroundXPadding?: number | null,
+    backgroundYPadding?: number | null,
+    bodyColor?: string | null,
+    bodyXPadding?: number | null,
+    bodyYPadding?: number | null,
+    bodyFontFamily?: string | null,
+    bodyFontCategory?: string | null,
+    borderColor?: string | null,
+    borderWidth?: number | null,
+    borderRadius?: number | null,
+    buttonBodyColor?: string | null,
+    buttonBodyXPadding?: number | null,
+    buttonBodyYPadding?: number | null,
+    buttonBorderColor?: string | null,
+    buttonBorderWidth?: number | null,
+    buttonBorderRadius?: number | null,
+    buttonTextColor?: string | null,
+    buttonTextFormat?: number | null,
+    buttonTextFontSize?: number | null,
+    dividerColor?: string | null,
+    dividerBorderWidth?: number | null,
+    textBaseColor?: string | null,
+    textBaseFontSize?: number | null,
+    textBaseLineHeight?: number | null,
+    textBaseLetterSpacing?: number | null,
+    textLinkColor?: string | null,
+    heading1Color?: string | null,
+    heading1FontSize?: number | null,
+    heading1LineHeight?: number | null,
+    heading1LetterSpacing?: number | null,
+    heading2Color?: string | null,
+    heading2FontSize?: number | null,
+    heading2LineHeight?: number | null,
+    heading2LetterSpacing?: number | null,
+    heading3Color?: string | null,
+    heading3FontSize?: number | null,
+    heading3LineHeight?: number | null,
+    heading3LetterSpacing?: number | null
+  } | null,
+  isDefault?: boolean | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}& {
+  affectedEmailCount?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Transactional
+
+### list
+
+`transactional.list`
+
+Get a list of published transactional emails.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.transactional.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `perPage` | `number` | No | How many results to return in each request. Must be between 10 and 50. Default is 20. |
+| `cursor` | `string` | No | A cursor, to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  totalResults?: number | null,
+  returnedResults?: number | null,
+  perPage?: number | null,
+  totalPages?: number | null,
+  nextCursor?: string | null | null,
+  nextPage?: string | null | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  lastUpdated?: string | null,
+  dataVariables?: any[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`transactional.send`
+
+Send a published transactional email to a real inbox; pass an idempotencyKey (max 100 chars) to make a retry within 24 hours return 409 instead of a duplicate
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loops.api.transactional.send({ email: 'alex@company.com', transactionalId: 'cll42l54f20i1la0lfooe3z12', dataVariables: { name: 'Alex' }, idempotencyKey: '0e8e17e0-3e73-4c8b-b7c9-2a5a6d3f9c1d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `transactionalId` | `string` | Yes | — |
+| `addToAudience` | `boolean` | No | — |
+| `dataVariables` | `Record<string, any>` | No | — |
+| `attachments` | `object[]` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+The transactionalId must name a published transactional email. Requires the data variables that email declares; missing ones answer 400 with their names in the message.
+
+<AccordionGroup>
+<Accordion title="attachments full type">
+
+```ts
+{
+  filename: string,
+  contentType: string,
+  data: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+## Transactional Emails
+
+### create
+
+`transactionalEmails.create`
+
+Create a new transactional email. An empty draft email message is created automatically and its `draftEmailMessageId` is returned.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.transactionalEmails.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name of the transactional email. |
+| `transactionalGroupId` | `string` | No | The ID of the group to add this transactional email to. Defaults to the team's Unsorted group when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `draftEmailMessageId` | `string \| null \| null` | No | — |
+| `draftEmailMessageContentRevisionId` | `string \| null \| null` | No | — |
+| `publishedEmailMessageId` | `string \| null \| null` | No | — |
+| `transactionalGroupId` | `string \| null \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `dataVariables` | `string[] \| null` | No | — |
+
+
+
+---
+
+### ensureDraft
+
+`transactionalEmails.ensureDraft`
+
+Ensure the transactional email has a draft email message. If a draft already exists it is returned unchanged; otherwise a new empty draft is created (seeded from the most recent published version when present).
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.transactionalEmails.ensureDraft({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionalId` | `string` | Yes | The ID of the transactional email. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `draftEmailMessageId` | `string \| null \| null` | No | — |
+| `draftEmailMessageContentRevisionId` | `string \| null \| null` | No | — |
+| `publishedEmailMessageId` | `string \| null \| null` | No | — |
+| `transactionalGroupId` | `string \| null \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `dataVariables` | `string[] \| null` | No | — |
+
+
+
+---
+
+### get
+
+`transactionalEmails.get`
+
+Retrieve a single transactional email by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.transactionalEmails.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionalId` | `string` | Yes | The ID of the transactional email. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `draftEmailMessageId` | `string \| null \| null` | No | — |
+| `publishedEmailMessageId` | `string \| null \| null` | No | — |
+| `transactionalGroupId` | `string \| null \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `dataVariables` | `string[] \| null` | No | — |
+
+
+
+---
+
+### getMetrics
+
+`transactionalEmails.getMetrics`
+
+Retrieve all-time delivery metrics for a transactional email, totalled across every published version.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.transactionalEmails.getMetrics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionalId` | `string` | Yes | The ID of the transactional email. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sends` | `number \| null` | No | — |
+| `deliveries` | `number \| null` | No | — |
+| `spamReports` | `number \| null` | No | — |
+| `hardBounces` | `number \| null` | No | — |
+| `softBounces` | `number \| null` | No | — |
+
+
+
+---
+
+### list
+
+`transactionalEmails.list`
+
+Retrieve a paginated list of transactional emails, most recently created first.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.transactionalEmails.list({ perPage: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `perPage` | `number` | No | How many results to return in each request. Must be between 10 and 50. Default is 20. |
+| `cursor` | `string` | No | A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response. |
+| `transactionalGroupId` | `string` | No | Only return transactional emails in this transactional group. An ID that matches no group returns an empty list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  totalResults?: number | null,
+  returnedResults?: number | null,
+  perPage?: number | null,
+  totalPages?: number | null,
+  nextCursor?: string | null | null,
+  nextPage?: string | null | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  url?: string | null,
+  name?: string | null,
+  draftEmailMessageId?: string | null | null,
+  publishedEmailMessageId?: string | null | null,
+  transactionalGroupId?: string | null | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  dataVariables?: string[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publish
+
+`transactionalEmails.publish`
+
+Publish the transactional email's current draft email message. The draft becomes the published version and the draft is cleared.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loops.api.transactionalEmails.publish({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionalId` | `string` | Yes | The ID of the transactional email. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `draftEmailMessageId` | `string \| null \| null` | No | — |
+| `publishedEmailMessageId` | `string \| null \| null` | No | — |
+| `transactionalGroupId` | `string \| null \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `dataVariables` | `string[] \| null` | No | — |
+
+
+
+---
+
+### update
+
+`transactionalEmails.update`
+
+Update a transactional email's name or group. At least one field must be provided.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.transactionalEmails.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionalId` | `string` | Yes | The ID of the transactional email. |
+| `name` | `string` | No | — |
+| `transactionalGroupId` | `string` | No | The ID of the group to move this transactional email to. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `draftEmailMessageId` | `string \| null \| null` | No | — |
+| `publishedEmailMessageId` | `string \| null \| null` | No | — |
+| `transactionalGroupId` | `string \| null \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `dataVariables` | `string[] \| null` | No | — |
+
+
+
+---
+
+## Transactional Groups
+
+### create
+
+`transactionalGroups.create`
+
+Create a new transactional group.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.transactionalGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The group name. Cannot be the reserved name "Unsorted". |
+| `description` | `string` | No | An optional description for the group. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`transactionalGroups.get`
+
+Retrieve a single transactional group by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.transactionalGroups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionalGroupId` | `string` | Yes | The ID of the transactional group. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`transactionalGroups.list`
+
+Retrieve a paginated list of transactional groups, most recently created first.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.transactionalGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `perPage` | `number` | No | How many results to return in each request. Must be between 10 and 50. Default is 20. |
+| `cursor` | `string` | No | A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  totalResults?: number | null,
+  returnedResults?: number | null,
+  perPage?: number | null,
+  totalPages?: number | null,
+  nextCursor?: string | null | null,
+  nextPage?: string | null | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`transactionalGroups.update`
+
+Update a transactional group's name or description. At least one field must be provided. The reserved "Unsorted" group cannot be edited.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.transactionalGroups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionalGroupId` | `string` | Yes | The ID of the transactional group. |
+| `name` | `string` | No | The group name. Cannot be the reserved name "Unsorted". |
+| `description` | `string` | No | A description for the group. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+## Uploads
+
+### complete
+
+`uploads.complete`
+
+Finalize an image upload after the file has been uploaded to the pre-signed URL. Returns the public URL of the uploaded image asset.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.uploads.complete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailAssetId` | `string` | Yes | The `emailAssetId` returned when the upload was created via `POST /v1/uploads`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailAssetId` | `string \| null` | No | — |
+| `finalUrl` | `string \| null` | No | — |
+
+
+
+---
+
+### create
+
+`uploads.create`
+
+Request a pre-signed URL to upload an image asset. Upload the file with an HTTP `PUT` to the returned `presignedUrl` (sending the same `Content-Type` and `Content-Length`), then call `/uploads/{emailAssetId}/complete` to finalize the asset. Answers a presigned URL; PUT the file bytes there yourself, then call uploads.complete.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.uploads.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | The MIME type of the file to upload. Supported types are `image/jpeg`, `image/png`, `image/gif` and `image/webp`. |
+| `contentLength` | `number` | Yes | The size of the file in bytes. Must be a positive integer no greater than 4,000,000 bytes. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailAssetId` | `string \| null` | No | — |
+| `presignedUrl` | `string \| null` | No | — |
+
+
+
+---
+
+## Workflow Groups
+
+### create
+
+`workflowGroups.create`
+
+Create a new workflow group.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.workflowGroups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The group name. Cannot be the reserved name "Unsorted". |
+| `description` | `string` | No | An optional description for the group. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`workflowGroups.get`
+
+Retrieve a single workflow group by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.workflowGroups.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowGroupId` | `string` | Yes | The ID of the workflow group. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`workflowGroups.list`
+
+Retrieve a paginated list of workflow groups, most recently created first.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.workflowGroups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `perPage` | `number` | No | How many results to return in each request. Must be between 10 and 50. Default is 20. |
+| `cursor` | `string` | No | A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  totalResults?: number | null,
+  returnedResults?: number | null,
+  perPage?: number | null,
+  totalPages?: number | null,
+  nextCursor?: string | null | null,
+  nextPage?: string | null | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`workflowGroups.update`
+
+Update a workflow group's name or description. At least one field must be provided. The reserved "Unsorted" group cannot be edited.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.workflowGroups.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowGroupId` | `string` | Yes | The ID of the workflow group. |
+| `name` | `string` | No | The group name. Cannot be the reserved name "Unsorted". |
+| `description` | `string` | No | A description for the group. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+## Workflow Nodes
+
+### addBranch
+
+`workflowNodes.addBranch`
+
+Add a branch and a child node under an existing Branch or Experiment node. Returns the created child node plus the latest workflow. - Adding a branch to a `BranchNode` creates one `AudienceFilter` child node.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.workflowNodes.addBranch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The ID of the workflow. |
+| `nodeId` | `string` | Yes | The ID of the BranchNode or ExperimentBranchNode that should receive one new child. |
+| `expectedRevisionId` | `string \| null` | Yes | The workflow revision token returned by the latest workflow read or mutation. Older workflows may return `null` before their first revision-aware mutation; pass `null` back as `expectedRevisionId` in that case. If the token is stale, the API returns a `409 Conflict` error. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `node` | `object \| null` | No | — |
+| `workflow` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="node full type">
+
+```ts
+{
+  id?: string | null,
+  typeName?: string | null,
+  nextNodeIds?: string[] | null
+}& {
+  workflowRevisionId?: string | null
+} | {
+  id?: string | null,
+  typeName?: string | null,
+  nextNodeIds?: string[] | null,
+  eventName?: string | null,
+  eventProperties?: {
+    name?: string | null,
+    type?: string | null
+  }[] | null,
+  reEligible?: boolean | null
+}& {
+  workflowRevisionId?: string | null
+} | {
+  id?: string | null,
+  typeName?: string | null,
+  nextNodeIds?: string[] | null,
+  contactPropertyQuery?: {
+    key?: string | null,
+    is?: {
+      value?: string | number | boolean | null,
+      operator?: string | null
+    } | null,
+    was?: {
+      value?: string | number | boolean | null,
+      operator?: string | null
+    } | null
+  } | null | null,
+  reEligible?: boolean | null
+}& {
+  workflowRevisionId?: string | null
+} | {
+  id?: string | null,
+  typeName?: string | null,
+  nextNodeIds?: string[] | null,
+  mailingListId?: string | null | null,
+  reEligible?: boolean | null
+}& {
+  workflowRevisionId?: string | null
+} | {
+  id?: string | null,
+  typeName?: string | null,
+  nextNodeIds?: string[] | null
+}& {
+  workflowRevisionId?: string | null
+} | {
+  id?: string | null,
+  typeName?: string | null,
+  nextNodeIds?: string[] | null,
+  audienceFilter?: {
+    match?: string | null,
+    conditions?: (
+      {
+        type?: string | null,
+        key?: string | null,
+        operator?: string | null,
+        value?: string | number | {
+          from?: string | null,
+          to?: string | null
+        } | null
+      } | {
+        type?: string | null,
+        status?: string | null | null
+      } | {
+        type?: string | null,
+        action?: string | null,
+        negate?: boolean | null,
+        target?: string | null,
+        id?: string | null
+      }
+    )[] | null
+  } | null | null,
+  audienceSegmentId?: string | null,
+  appliesDownstream?: boolean | null
+}& {
+  workflowRevisionId?: string | null
+} | {
+  id?: string | null,
+  typeName?: string | null,
+  nextNodeIds?: string[] | null,
+  amount?: number | null,
+  unit?: string | null
+}& {
+  workflowRevisionId?: string | null
+} | {
+  id?: string | null,
+  typeName?: string | null,
+  nextNodeIds?: string[] | null,
+  emailMessageId?: string | null,
+  subject?: string | null
+}& {
+  workflowRevisionId?: string | null
+} | {
+  id?: string | null,
+  typeName?: string | null,
+  nextNodeIds?: string[] | null
+}& {
+  workflowRevisionId?: string | null
+} | {
+  id?: string | null,
+  typeName?: string | null,
+  nextNodeIds?: string[] | null
+}& {
+  workflowRevisionId?: string | null
+} | {
+  id?: string | null,
+  typeName?: string | null,
+  nextNodeIds?: string[] | null,
+  samplingRate?: number | null
+}& {
+  workflowRevisionId?: string | null
+} | {
+  id?: string | null,
+  typeName?: string | null,
+  nextNodeIds?: string[] | null,
+  isControl?: boolean | null
+}& {
+  workflowRevisionId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="workflow full type">
+
+```ts
+{
+  id?: string | null,
+  url?: string | null,
+  workflowRevisionId?: string | null | null,
+  status?: string | null,
+  name?: string | null,
+  description?: string | null,
+  workflowGroupId?: string | null,
+  mailingListId?: string | null | null,
+  rootNodeId?: string | null,
+  nodes?: {
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`workflowNodes.create`
+
+Create a new default workflow node and return it with the latest workflow.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.workflowNodes.create({});
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  workflowId: string
+}& (
+  {
+    expectedRevisionId: string | null,
+    insertMode: between,
+    nodeTypeName: AudienceFilter | BranchNode | ExperimentBranchNode | TimerAction | SendEmailAction | VariantNode,
+    fromNodeId: string,
+    toNodeId: string
+  } | {
+    expectedRevisionId: string | null,
+    insertMode: before,
+    nodeTypeName: AudienceFilter | BranchNode | ExperimentBranchNode | TimerAction | SendEmailAction | VariantNode,
+    toNodeId?: string,
+    beforeNodeId?: string
+  }& (
+    {
+      toNodeId: string
+    } | {
+      beforeNodeId: string
+    }
+  ) | {
+    expectedRevisionId: string | null,
+    insertMode: after,
+    nodeTypeName: AudienceFilter | BranchNode | ExperimentBranchNode | TimerAction | SendEmailAction | VariantNode,
+    fromNodeId: string
+  }
+)
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `node` | `object \| null` | No | — |
+| `workflow` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="node full type">
+
+```ts
+(
+  {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    eventName?: string | null,
+    eventProperties?: {
+      name?: string | null,
+      type?: string | null
+    }[] | null,
+    reEligible?: boolean | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    contactPropertyQuery?: {
+      key?: string | null,
+      is?: {
+        value?: string | number | boolean | null,
+        operator?: string | null
+      } | null,
+      was?: {
+        value?: string | number | boolean | null,
+        operator?: string | null
+      } | null
+    } | null | null,
+    reEligible?: boolean | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    mailingListId?: string | null | null,
+    reEligible?: boolean | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    audienceFilter?: {
+      match?: string | null,
+      conditions?: (
+        {
+          type?: string | null,
+          key?: string | null,
+          operator?: string | null,
+          value?: string | number | {
+            from?: string | null,
+            to?: string | null
+          } | null
+        } | {
+          type?: string | null,
+          status?: string | null | null
+        } | {
+          type?: string | null,
+          action?: string | null,
+          negate?: boolean | null,
+          target?: string | null,
+          id?: string | null
+        }
+      )[] | null
+    } | null | null,
+    audienceSegmentId?: string | null,
+    appliesDownstream?: boolean | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    amount?: number | null,
+    unit?: string | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    emailMessageId?: string | null,
+    subject?: string | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    samplingRate?: number | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    isControl?: boolean | null
+  }& {
+    workflowRevisionId?: string | null
+  }
+)& {
+  createdChildNodes?: (
+    {
+      id?: string | null,
+      typeName?: string | null,
+      nextNodeIds?: string[] | null
+    } | {
+      id?: string | null,
+      typeName?: string | null,
+      nextNodeIds?: string[] | null,
+      eventName?: string | null,
+      eventProperties?: {
+        name?: string | null,
+        type?: string | null
+      }[] | null,
+      reEligible?: boolean | null
+    } | {
+      id?: string | null,
+      typeName?: string | null,
+      nextNodeIds?: string[] | null,
+      contactPropertyQuery?: {
+        key?: string | null,
+        is?: {
+          value?: string | number | boolean | null,
+          operator?: string | null
+        } | null,
+        was?: {
+          value?: string | number | boolean | null,
+          operator?: string | null
+        } | null
+      } | null | null,
+      reEligible?: boolean | null
+    } | {
+      id?: string | null,
+      typeName?: string | null,
+      nextNodeIds?: string[] | null,
+      mailingListId?: string | null | null,
+      reEligible?: boolean | null
+    } | {
+      id?: string | null,
+      typeName?: string | null,
+      nextNodeIds?: string[] | null
+    } | {
+      id?: string | null,
+      typeName?: string | null,
+      nextNodeIds?: string[] | null,
+      audienceFilter?: {
+        match?: string | null,
+        conditions?: (
+          {
+            type?: string | null,
+            key?: string | null,
+            operator?: string | null,
+            value?: string | number | {
+              from?: string | null,
+              to?: string | null
+            } | null
+          } | {
+            type?: string | null,
+            status?: string | null | null
+          } | {
+            type?: string | null,
+            action?: string | null,
+            negate?: boolean | null,
+            target?: string | null,
+            id?: string | null
+          }
+        )[] | null
+      } | null | null,
+      audienceSegmentId?: string | null,
+      appliesDownstream?: boolean | null
+    } | {
+      id?: string | null,
+      typeName?: string | null,
+      nextNodeIds?: string[] | null,
+      amount?: number | null,
+      unit?: string | null
+    } | {
+      id?: string | null,
+      typeName?: string | null,
+      nextNodeIds?: string[] | null,
+      emailMessageId?: string | null,
+      subject?: string | null
+    } | {
+      id?: string | null,
+      typeName?: string | null,
+      nextNodeIds?: string[] | null
+    } | {
+      id?: string | null,
+      typeName?: string | null,
+      nextNodeIds?: string[] | null
+    } | {
+      id?: string | null,
+      typeName?: string | null,
+      nextNodeIds?: string[] | null,
+      samplingRate?: number | null
+    } | {
+      id?: string | null,
+      typeName?: string | null,
+      nextNodeIds?: string[] | null,
+      isControl?: boolean | null
+    }
+  )[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="workflow full type">
+
+```ts
+{
+  id?: string | null,
+  url?: string | null,
+  workflowRevisionId?: string | null | null,
+  status?: string | null,
+  name?: string | null,
+  description?: string | null,
+  workflowGroupId?: string | null,
+  mailingListId?: string | null | null,
+  rootNodeId?: string | null,
+  nodes?: {
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`workflowNodes.delete`
+
+Delete a single workflow node. If contacts are queued at the node, Loops returns with `"status": "queuedContactsFound"` instead of deleting. Retry with `queuedContactPolicy: "discard"` to delete the node and discard those queued contacts.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.loops.api.workflowNodes.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The ID of the workflow. |
+| `nodeId` | `string` | Yes | The ID of the workflow node. |
+| `expectedRevisionId` | `string \| null` | Yes | The workflow revision token returned by the latest workflow read or mutation. Older workflows may return `null` before their first revision-aware mutation; pass `null` back as `expectedRevisionId` in that case. If the token is stale, the API returns a `409 Conflict` error. |
+| `dryRun` | `boolean` | No | If `true`, the request will be validated but the workflow will not be modified. |
+| `queuedContactPolicy` | `fail \| discard` | No | `fail` returns queued-contact impact instead of mutating. `discard` confirms that matching queued contacts should be discarded. Defaults to `fail` when omitted. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status?: string | null,
+  nodeIds?: string[] | null,
+  queuedContactCount?: number | null
+} | {
+  status?: string | null,
+  nodeIds?: string[] | null,
+  workflowRevisionId?: string | null,
+  queuedContactCount?: number | null,
+  workflow?: {
+    id?: string | null,
+    url?: string | null,
+    workflowRevisionId?: string | null | null,
+    status?: string | null,
+    name?: string | null,
+    description?: string | null,
+    workflowGroupId?: string | null,
+    mailingListId?: string | null | null,
+    rootNodeId?: string | null,
+    nodes?: {
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteRecursive
+
+`workflowNodes.deleteRecursive`
+
+Delete a node and its downstream subtree. If contacts are queued at any node that would be deleted, Loops returns with `"status": "queuedContactsFound"` instead of deleting.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.loops.api.workflowNodes.deleteRecursive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The ID of the workflow. |
+| `nodeId` | `string` | Yes | The root node ID of the subtree to delete. |
+| `expectedRevisionId` | `string \| null` | Yes | The workflow revision token returned by the latest workflow read or mutation. Older workflows may return `null` before their first revision-aware mutation; pass `null` back as `expectedRevisionId` in that case. If the token is stale, the API returns a `409 Conflict` error. |
+| `dryRun` | `boolean` | No | If `true`, the request will be validated but the workflow will not be modified. |
+| `queuedContactPolicy` | `fail \| discard` | No | `fail` returns queued-contact impact instead of mutating. `discard` confirms that matching queued contacts should be discarded. Defaults to `fail` when omitted. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status?: string | null,
+  nodeIds?: string[] | null,
+  queuedContactCount?: number | null
+} | {
+  status?: string | null,
+  nodeIds?: string[] | null,
+  workflowRevisionId?: string | null,
+  queuedContactCount?: number | null,
+  workflow?: {
+    id?: string | null,
+    url?: string | null,
+    workflowRevisionId?: string | null | null,
+    status?: string | null,
+    name?: string | null,
+    description?: string | null,
+    workflowGroupId?: string | null,
+    mailingListId?: string | null | null,
+    rootNodeId?: string | null,
+    nodes?: {
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`workflowNodes.get`
+
+Retrieve detailed data for a single workflow node.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.workflowNodes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The ID of the workflow. |
+| `nodeId` | `string` | Yes | The ID of the workflow node. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+(
+  {
+    id?: string | null,
+    workflowId?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null
+  } | {
+    id?: string | null,
+    workflowId?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    eventName?: string | null,
+    eventProperties?: {
+      name?: string | null,
+      type?: string | null
+    }[] | null,
+    reEligible?: boolean | null
+  } | {
+    id?: string | null,
+    workflowId?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    contactPropertyQuery?: {
+      key?: string | null,
+      is?: {
+        value?: string | number | boolean | null,
+        operator?: string | null
+      } | null,
+      was?: {
+        value?: string | number | boolean | null,
+        operator?: string | null
+      } | null
+    } | null | null,
+    reEligible?: boolean | null
+  } | {
+    id?: string | null,
+    workflowId?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    mailingListId?: string | null | null,
+    reEligible?: boolean | null
+  } | {
+    id?: string | null,
+    workflowId?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null
+  } | {
+    id?: string | null,
+    workflowId?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    audienceFilter?: {
+      match?: string | null,
+      conditions?: (
+        {
+          type?: string | null,
+          key?: string | null,
+          operator?: string | null,
+          value?: string | number | {
+            from?: string | null,
+            to?: string | null
+          } | null
+        } | {
+          type?: string | null,
+          status?: string | null | null
+        } | {
+          type?: string | null,
+          action?: string | null,
+          negate?: boolean | null,
+          target?: string | null,
+          id?: string | null
+        }
+      )[] | null
+    } | null | null,
+    audienceSegmentId?: string | null,
+    appliesDownstream?: boolean | null
+  } | {
+    id?: string | null,
+    workflowId?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    amount?: number | null,
+    unit?: string | null
+  } | {
+    id?: string | null,
+    workflowId?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    emailMessageId?: string | null,
+    subject?: string | null
+  } | {
+    id?: string | null,
+    workflowId?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null
+  } | {
+    id?: string | null,
+    workflowId?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null
+  } | {
+    id?: string | null,
+    workflowId?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    samplingRate?: number | null
+  } | {
+    id?: string | null,
+    workflowId?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    isControl?: boolean | null
+  }
+)& {
+  workflowRevisionId?: string | null | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getMetrics
+
+`workflowNodes.getMetrics`
+
+Retrieve all-time email engagement metrics for a workflow `SendEmailAction` node. Nodes of any other type return a `400` response. A `SendEmailAction` node with an email that has not sent anything yet reports every counter as `0`.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.workflowNodes.getMetrics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The ID of the workflow. |
+| `nodeId` | `string` | Yes | The ID of the `SendEmailAction` node. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sends` | `number \| null` | No | — |
+| `opens` | `number \| null` | No | — |
+| `clicks` | `number \| null` | No | — |
+| `unsubscribes` | `number \| null` | No | — |
+| `spamReports` | `number \| null` | No | — |
+| `hardBounces` | `number \| null` | No | — |
+| `softBounces` | `number \| null` | No | — |
+
+
+
+---
+
+### reroute
+
+`workflowNodes.reroute`
+
+Reroute the source node's existing connection to another valid target node. Returns the updated source node and the latest workflow.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.workflowNodes.reroute({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The ID of the workflow. |
+| `nodeId` | `string` | Yes | The ID of the source workflow node whose outgoing connection should be moved. |
+| `expectedRevisionId` | `string \| null` | Yes | The workflow revision token returned by the latest workflow read or mutation. Older workflows may return `null` before their first revision-aware mutation; pass `null` back as `expectedRevisionId` in that case. If the token is stale, the API returns a `409 Conflict` error. |
+| `newTargetNodeId` | `string` | Yes | The valid workflow node that should receive the connection from the source node. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+(
+  {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    eventName?: string | null,
+    eventProperties?: {
+      name?: string | null,
+      type?: string | null
+    }[] | null,
+    reEligible?: boolean | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    contactPropertyQuery?: {
+      key?: string | null,
+      is?: {
+        value?: string | number | boolean | null,
+        operator?: string | null
+      } | null,
+      was?: {
+        value?: string | number | boolean | null,
+        operator?: string | null
+      } | null
+    } | null | null,
+    reEligible?: boolean | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    mailingListId?: string | null | null,
+    reEligible?: boolean | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    audienceFilter?: {
+      match?: string | null,
+      conditions?: (
+        {
+          type?: string | null,
+          key?: string | null,
+          operator?: string | null,
+          value?: string | number | {
+            from?: string | null,
+            to?: string | null
+          } | null
+        } | {
+          type?: string | null,
+          status?: string | null | null
+        } | {
+          type?: string | null,
+          action?: string | null,
+          negate?: boolean | null,
+          target?: string | null,
+          id?: string | null
+        }
+      )[] | null
+    } | null | null,
+    audienceSegmentId?: string | null,
+    appliesDownstream?: boolean | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    amount?: number | null,
+    unit?: string | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    emailMessageId?: string | null,
+    subject?: string | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    samplingRate?: number | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    isControl?: boolean | null
+  }& {
+    workflowRevisionId?: string | null
+  }
+)& {
+  workflow?: {
+    id?: string | null,
+    url?: string | null,
+    workflowRevisionId?: string | null | null,
+    status?: string | null,
+    name?: string | null,
+    description?: string | null,
+    workflowGroupId?: string | null,
+    mailingListId?: string | null | null,
+    rootNodeId?: string | null,
+    nodes?: {
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`workflowNodes.update`
+
+Update workflow-node-owned fields for a single node. To update a node, the workflow's `state` must not be `Sending`. Shared resources such as email messages and audience segments should be updated through their own APIs.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.workflowNodes.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The ID of the workflow. |
+| `nodeId` | `string` | Yes | The ID of the workflow node. |
+| `expectedRevisionId` | `string \| null` | Yes | The workflow revision token returned by the latest workflow read or mutation. Older workflows may return `null` before their first revision-aware mutation; pass `null` back as `expectedRevisionId` in that case. If the token is stale, the API returns a `409 Conflict` error. |
+| `payload` | `object` | Yes | Node-type-specific fields to update. The allowed fields depend on the existing node type. Trigger node updates may include `typeName` when changing one trigger node type to another trigger node type. |
+
+<AccordionGroup>
+<Accordion title="payload full type">
+
+```ts
+{
+  typeName: SignupTrigger
+} | {
+  typeName?: EventTrigger,
+  eventPatternId?: string | null,
+  eventName?: string | null,
+  reEligible?: boolean
+} | {
+  typeName?: ContactPropertyTrigger,
+  contactPropertyQuery?: {
+    key: string,
+    is: {
+      value: string | number | boolean,
+      operator: any | contains | not_contains | empty | not_empty | equal | not_equal | greater_than | less_than | true | false | numeric_equal | numeric_not_equal | after | before | between
+    },
+    was: {
+      value: string | number | boolean,
+      operator: any | contains | not_contains | empty | not_empty | equal | not_equal | greater_than | less_than | true | false | numeric_equal | numeric_not_equal | after | before | between
+    }
+  },
+  reEligible?: boolean
+} | {
+  typeName?: AddToListTrigger,
+  reEligible?: boolean
+} | {
+  audienceSegmentId?: string | null,
+  audienceFilter?: {
+    match: all | any,
+    conditions: (
+      {
+        type: property,
+        key: string,
+        operator: any | contains | notContains | equals | notEquals | greaterThan | lessThan | isTrue | isFalse | empty | notEmpty | dateEmpty | dateNotEmpty | after | before | between,
+        value?: string | number | {
+          from: string,
+          to: string
+        }
+      } | {
+        type: optIn,
+        status: accepted | pending | rejected | null
+      } | {
+        type: activity,
+        action: sent | opened | clicked,
+        negate: boolean,
+        target: campaign | workflow | workflowEmail,
+        id: string
+      }
+    )[]
+  } | null,
+  appliesDownstream?: boolean
+} | {
+  amount?: number,
+  unit?: m | h | d
+} | {
+  samplingRate?: number
+} | {
+  isControl?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+(
+  {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    eventName?: string | null,
+    eventProperties?: {
+      name?: string | null,
+      type?: string | null
+    }[] | null,
+    reEligible?: boolean | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    contactPropertyQuery?: {
+      key?: string | null,
+      is?: {
+        value?: string | number | boolean | null,
+        operator?: string | null
+      } | null,
+      was?: {
+        value?: string | number | boolean | null,
+        operator?: string | null
+      } | null
+    } | null | null,
+    reEligible?: boolean | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    mailingListId?: string | null | null,
+    reEligible?: boolean | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    audienceFilter?: {
+      match?: string | null,
+      conditions?: (
+        {
+          type?: string | null,
+          key?: string | null,
+          operator?: string | null,
+          value?: string | number | {
+            from?: string | null,
+            to?: string | null
+          } | null
+        } | {
+          type?: string | null,
+          status?: string | null | null
+        } | {
+          type?: string | null,
+          action?: string | null,
+          negate?: boolean | null,
+          target?: string | null,
+          id?: string | null
+        }
+      )[] | null
+    } | null | null,
+    audienceSegmentId?: string | null,
+    appliesDownstream?: boolean | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    amount?: number | null,
+    unit?: string | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    emailMessageId?: string | null,
+    subject?: string | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    samplingRate?: number | null
+  }& {
+    workflowRevisionId?: string | null
+  } | {
+    id?: string | null,
+    typeName?: string | null,
+    nextNodeIds?: string[] | null,
+    isControl?: boolean | null
+  }& {
+    workflowRevisionId?: string | null
+  }
+)& {
+  workflow?: {
+    id?: string | null,
+    url?: string | null,
+    workflowRevisionId?: string | null | null,
+    status?: string | null,
+    name?: string | null,
+    description?: string | null,
+    workflowGroupId?: string | null,
+    mailingListId?: string | null | null,
+    rootNodeId?: string | null,
+    nodes?: {
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Workflows
+
+### changeMailingList
+
+`workflows.changeMailingList`
+
+Dry run or apply a workflow mailing list change. If queued contacts would be removed from the workflow due to the change of mailing list, Loops returns with `"status": "queuedContactsFound"` instead of applying the change.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loops.api.workflows.changeMailingList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The ID of the workflow. |
+| `expectedRevisionId` | `string \| null` | Yes | The workflow revision token returned by the latest workflow read or mutation. Older workflows may return `null` before their first revision-aware mutation; pass `null` back as `expectedRevisionId` in that case. If the token is stale, the API returns a `409 Conflict` error. |
+| `mailingListId` | `string \| null` | Yes | The mailing list to use for the workflow. When assigning a mailing list, queued contacts excluded by the new list can return `queuedContactsFound`; retry with `queuedContactPolicy: "discard"` to apply the change and discard those contacts. Use `null` to clear the workflow mailing list; clearing does not discard queued contacts. |
+| `dryRun` | `boolean` | No | If `true`, the request will be validated but the workflow will not be modified. |
+| `queuedContactPolicy` | `fail \| discard` | No | `fail` returns queued-contact impact instead of mutating. `discard` confirms that matching queued contacts should be discarded. Defaults to `fail` when omitted. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status?: string | null,
+  mailingListId?: string | null | null,
+  queuedContactCount?: number | null
+} | {
+  status?: string | null,
+  mailingListId?: string | null | null,
+  workflowRevisionId?: string | null,
+  queuedContactCount?: number | null,
+  workflow?: {
+    id?: string | null,
+    url?: string | null,
+    workflowRevisionId?: string | null | null,
+    status?: string | null,
+    name?: string | null,
+    description?: string | null,
+    workflowGroupId?: string | null,
+    mailingListId?: string | null | null,
+    rootNodeId?: string | null,
+    nodes?: {
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`workflows.create`
+
+Create a draft workflow with a blank trigger and exit node. When `workflowGroupId` is omitted, the workflow is added to the team's Unsorted group.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.workflows.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name of the workflow. |
+| `description` | `string` | No | The description of the workflow. |
+| `mailingListId` | `string \| null` | No | The ID of a mailing list the workflow sends to. After creation, the mailing list can be changed with the `/v1/workflows/{workflowId}/mailing-list` endpoint. |
+| `workflowGroupId` | `string` | No | The ID of the workflow group to create this workflow in. Defaults to the team's Unsorted group when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `workflowRevisionId` | `string \| null \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `workflowGroupId` | `string \| null` | No | — |
+| `mailingListId` | `string \| null \| null` | No | — |
+| `rootNodeId` | `string \| null` | No | — |
+| `nodes` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`workflows.delete`
+
+Delete a workflow. Successful deletion returns `204 No Content`. If the workflow is currently sending or has queued contacts, Loops returns `409 Conflict` with a message instead of deleting.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.loops.api.workflows.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The ID of the workflow. |
+| `expectedRevisionId` | `string \| null` | Yes | The workflow revision token returned by the latest workflow read or mutation. Older workflows may return `null` before their first revision-aware mutation; pass `null` back as `expectedRevisionId` in that case. If the token is stale, the API returns a `409 Conflict` error. |
+| `confirmDelete` | `boolean` | No | Set to `true` after a confirmation-required `409 Conflict` response to confirm deleting a sending workflow or a workflow with queued contacts. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`workflows.get`
+
+Retrieve a workflow graph with node type names, connections, and selected display fields.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.workflows.get({ workflowId: 'clw1a3b5c7d9e1f3g5h7i9j1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The ID of the workflow. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `workflowRevisionId` | `string \| null \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `workflowGroupId` | `string \| null` | No | — |
+| `mailingListId` | `string \| null \| null` | No | — |
+| `rootNodeId` | `string \| null` | No | — |
+| `nodes` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`workflows.list`
+
+Retrieve a paginated list of workflows.
+
+**Risk:** `read`
+
+```ts
+await corsair.loops.api.workflows.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `perPage` | `number` | No | How many results to return in each request. Must be between 10 and 50. Default is 20. |
+| `cursor` | `string` | No | A cursor to return a specific page of results. Cursors can be found from the `pagination.nextCursor` value in each response. |
+| `workflowGroupId` | `string` | No | Only return workflows in this workflow group. An ID that matches no group returns an empty list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  totalResults?: number | null,
+  returnedResults?: number | null,
+  perPage?: number | null,
+  totalPages?: number | null,
+  nextCursor?: string | null | null,
+  nextPage?: string | null | null
+} | null
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  url?: string | null,
+  name?: string | null,
+  workflowGroupId?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`workflows.update`
+
+Update a workflow's name, description, or group. At least one field must be provided. To change the workflow's mailing list, use the `POST /v1/workflows/{workflowId}/mailing-list` endpoint instead.
+
+**Risk:** `write`
+
+```ts
+await corsair.loops.api.workflows.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workflowId` | `string` | Yes | The ID of the workflow. |
+| `expectedRevisionId` | `string \| null` | Yes | The workflow revision token returned by the latest workflow read or mutation. Older workflows may return `null` before their first revision-aware mutation; pass `null` back as `expectedRevisionId` in that case. If the token is stale, the API returns a `409 Conflict` error. |
+| `name` | `string` | No | The updated workflow name. |
+| `description` | `string` | No | The updated workflow description. |
+| `workflowGroupId` | `string` | No | The ID of the workflow group to move this workflow into. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `workflowRevisionId` | `string \| null \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `workflowGroupId` | `string \| null` | No | — |
+| `mailingListId` | `string \| null \| null` | No | — |
+| `rootNodeId` | `string \| null` | No | — |
+| `nodes` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

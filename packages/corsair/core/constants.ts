@@ -436,6 +436,7 @@ export const BaseProviders = [
 	'lob',
 	'logodev',
 	'loomio',
+	'loops',
 	'loyverse',
 	'lusha',
 	'magichour',
@@ -1232,6 +1233,7 @@ export const ProviderDisplayNames = {
 	lob: 'Lob',
 	logodev: 'Logo.dev',
 	loomio: 'Loomio',
+	loops: 'Loops',
 	loyverse: 'Loyverse',
 	magichour: 'Magic Hour',
 	lusha: 'Lusha',
@@ -2035,6 +2037,7 @@ export type AllProviders =
 	| 'lob'
 	| 'logodev'
 	| 'loomio'
+	| 'loops'
 	| 'loyverse'
 	| 'magichour'
 	| 'lusha'
