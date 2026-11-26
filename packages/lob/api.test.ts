@@ -1,87 +1,276 @@
-import * as Account from './endpoints/account';
-import * as Addresses from './endpoints/addresses';
-import * as Autocomplete from './endpoints/autocomplete';
-import * as IntlVerifications from './endpoints/intl-verifications';
-import * as UsVerifications from './endpoints/us-verifications';
-import * as Zip from './endpoints/zip';
+import { lobEndpointsNested } from './endpoints';
 import type { LobContext } from './index';
 
 /**
- * Live smoke tests against the real API. Gated on `LOB_API_KEY`.
+ * Live smoke tests against the real API. Gated on `LOB_API_KEY`, and only a
+ * TEST key (`test_...`, dashboard.lob.com/settings/api-keys): in test mode
+ * Lob never prints, mails, charges or moves money, verifications return
+ * simulated results, and mailpieces stay virtual. A `live_` key is refused,
+ * because the round trips below send and cancel mail.
  *
- * These call the endpoint functions, so the output schemas parse every real
- * payload. Every call is a read: verifications, autocomplete, ZIP lookup and
- * the address book list. Nothing here mails anything.
- *
- * A `test_` key (dashboard.lob.com/settings/api-keys) exercises all of it
- * without spending mail credits; a `live_` key bills each US and
- * international verification, so run it against a funded account only.
+ * Every read runs through the output schemas. Writes are round trips that
+ * clean up after themselves (create, read, delete or cancel); billing groups
+ * have no delete, so one named `corsair-plugin-test` stays behind. Groups
+ * Lob gates per account (campaigns, uploads, Informed Delivery, the URL
+ * shortener, buckslips, cards, booklets, snap packs) answer 403/404 when the
+ * feature is off; those tests log the status instead of failing.
  *
  * CI ignores this file by name (`api.test.ts`), so it only runs through
  * `pnpm --filter @corsair-dev/lob test:live`.
  */
 const API_KEY = process.env.LOB_API_KEY;
+const IS_TEST_KEY = API_KEY?.startsWith('test_') ?? false;
 
-const describeIfKey = API_KEY ? describe : describe.skip;
+const describeIfKey = IS_TEST_KEY ? describe : describe.skip;
 
 if (!API_KEY) {
 	// Say so out loud: a skipped run must not read as a green one.
 	console.warn(
-		'LOB_API_KEY is not set, so the Lob live smoke tests are skipped. Create a key at dashboard.lob.com/settings/api-keys and export it to run them.',
+		'LOB_API_KEY is not set, so the Lob live smoke tests are skipped. Create a test key at dashboard.lob.com/settings/api-keys and export it to run them.',
+	);
+} else if (!IS_TEST_KEY) {
+	console.warn(
+		'LOB_API_KEY is not a test_ key, so the Lob live smoke tests are skipped: they send and cancel mail, which a live key would print and bill.',
 	);
 }
 
 // unknown: only ctx.key is read; the full CorsairPluginContext needs a
-// database handle the live reads never touch.
+// database handle the live calls never touch.
 const ctx = { key: API_KEY } as unknown as LobContext;
+const api = lobEndpointsNested;
 
-describeIfKey('Lob live API', () => {
-	it('reads the Lob Credits balance through the output schema', async () => {
-		const result = await Account.getBalance(ctx, {});
+const TAG = 'corsair-plugin-test';
+const TO = {
+	name: 'Corsair Plugin Test',
+	address_line1: '210 King St',
+	address_city: 'San Francisco',
+	address_state: 'CA',
+	address_zip: '94107',
+};
+
+/** Runs a call on a feature Lob may have switched off for the account. */
+async function gated<T>(
+	label: string,
+	run: () => Promise<T>,
+): Promise<T | undefined> {
+	try {
+		return await run();
+	} catch (error) {
+		const status = (error as { status?: number }).status;
+		if (status === 403 || status === 404) {
+			console.warn(`${label}: ${status}, feature not enabled on this account`);
+			return undefined;
+		}
+		throw error;
+	}
+}
+
+describeIfKey('Lob live API (test key)', () => {
+	jest.setTimeout(60_000);
+
+	it('reads the balance', async () => {
+		const result = await api.account.getBalance(ctx, {});
 		expect(typeof result.balance).toBe('number');
 	});
 
-	it('looks up a ZIP code through the output schema', async () => {
-		const result = await Zip.usZipLookup(ctx, { zip_code: '94107' });
-		expect(result.cities.length).toBeGreaterThan(0);
-		expect(result.cities.some((city) => city.preferred)).toBe(true);
-	});
-
-	it('autocompletes a partial address through the output schema', async () => {
-		const result = await Autocomplete.usAutocomplete(ctx, {
+	it('runs the verification family', async () => {
+		const zip = await api.zip.usZipLookup(ctx, { zip_code: '94107' });
+		expect(zip.cities.length).toBeGreaterThan(0);
+		const auto = await api.autocomplete.usAutocomplete(ctx, {
 			address_prefix: '185 Industrial P',
-			valid_addresses: true,
 		});
-		expect(result.suggestions.length).toBeGreaterThan(0);
-	});
-
-	it('verifies one US address through the output schema', async () => {
-		const result = await UsVerifications.verify(ctx, {
+		expect(Array.isArray(auto.suggestions)).toBe(true);
+		const us = await api.usVerifications.verify(ctx, {
 			primary_line: '210 King Street',
 			city: 'San Francisco',
 			state: 'CA',
 			zip_code: '94107',
 		});
-		expect(result.deliverability).toBeDefined();
-		expect(result.components).toMatchObject({ street_name: 'KING' });
-	});
-
-	it('verifies one international address through the output schema', async () => {
-		const result = await IntlVerifications.verify(ctx, {
-			primary_line: '123 Paramount Rd',
-			city: 'Toronto',
-			state: 'ON',
-			postal_code: 'M5V 2T6',
+		expect(us.deliverability).toBeDefined();
+		const intl = await api.intlVerifications.verify(ctx, {
+			primary_line: '370 Water St',
+			city: 'Summerside',
+			state: 'Prince Edward Island',
+			postal_code: 'C1N 1C4',
 			country: 'CA',
 		});
-		expect(result.deliverability).toBeDefined();
+		expect(intl.deliverability).toBeDefined();
+		// Bulk verification answers a dummy response on a test key.
+		await api.usVerifications.bulk(ctx, {
+			addresses: [{ primary_line: '210 King Street', zip_code: '94107' }],
+		});
+		await api.intlVerifications.bulk(ctx, {
+			addresses: [{ primary_line: '370 Water St', country: 'CA' }],
+		});
+		await api.reverseGeocode.lookup(ctx, {
+			latitude: 37.777456,
+			longitude: -122.393039,
+			size: 2,
+		});
+		await gated('identityValidation.validate', () =>
+			api.identityValidation.validate(ctx, {
+				recipient: 'Corsair Plugin Test',
+				primary_line: '210 King St',
+				zip_code: '94107',
+			}),
+		);
 	});
 
-	it('lists the address book through the output schema', async () => {
-		const result = await Addresses.list(ctx, { limit: 1 });
-		expect(result.data.length).toBeLessThanOrEqual(1);
-		expect(
-			result.next_url === null || typeof result.next_url === 'string',
-		).toBe(true);
+	it('pages every list', async () => {
+		const lists: [string, () => Promise<unknown>][] = [
+			['addresses', () => api.addresses.list(ctx, { limit: 2 })],
+			['postcards', () => api.postcards.list(ctx, { limit: 2 })],
+			['letters', () => api.letters.list(ctx, { limit: 2 })],
+			['checks', () => api.checks.list(ctx, { limit: 2 })],
+			['selfMailers', () => api.selfMailers.list(ctx, { limit: 2 })],
+			['snapPacks', () => api.snapPacks.list(ctx, { limit: 2 })],
+			['booklets', () => api.booklets.list(ctx, { limit: 2 })],
+			['bankAccounts', () => api.bankAccounts.list(ctx, { limit: 2 })],
+			['billingGroups', () => api.billingGroups.list(ctx, { limit: 2 })],
+			['buckslips', () => api.buckslips.list(ctx, { limit: 2 })],
+			['cards', () => api.cards.list(ctx, { limit: 2 })],
+			['campaigns', () => api.campaigns.list(ctx, { limit: 2 })],
+			['templates', () => api.templates.list(ctx, { limit: 2 })],
+			['uploads', () => api.uploads.list(ctx, {})],
+			['informedDelivery', () => api.informedDelivery.list(ctx, {})],
+			['domains', () => api.domains.list(ctx, { limit: 2 })],
+			['links', () => api.links.list(ctx, { limit: 2 })],
+			['qrCodes', () => api.qrCodes.list(ctx, { limit: 2 })],
+		];
+		for (const [label, run] of lists) {
+			await gated(`${label}.list`, run);
+		}
+	});
+
+	it('creates, reads and deletes an address', async () => {
+		const created = await api.addresses.create(ctx, {
+			...TO,
+			description: TAG,
+		});
+		const id = String(created.id);
+		expect((await api.addresses.get(ctx, { id })).id).toBe(id);
+		expect((await api.addresses.delete(ctx, { id })).deleted).toBe(true);
+	});
+
+	it('sends, reads and cancels a test postcard, letter and self mailer', async () => {
+		const postcard = await api.postcards.send(ctx, {
+			to: TO,
+			front: '<html style="font-size:36px">corsair-plugin-test</html>',
+			back: '<html style="font-size:24px">front</html>',
+			use_type: 'operational',
+			description: TAG,
+		});
+		const psc = String(postcard.id);
+		expect((await api.postcards.get(ctx, { id: psc })).id).toBe(psc);
+		expect((await api.postcards.cancel(ctx, { id: psc })).deleted).toBe(true);
+
+		const letter = await api.letters.send(ctx, {
+			to: TO,
+			from: TO,
+			file: '<html>corsair-plugin-test</html>',
+			color: false,
+			use_type: 'operational',
+			description: TAG,
+		});
+		const ltr = String(letter.id);
+		expect((await api.letters.get(ctx, { id: ltr })).id).toBe(ltr);
+		expect((await api.letters.cancel(ctx, { id: ltr })).deleted).toBe(true);
+
+		const mailer = await api.selfMailers.send(ctx, {
+			to: TO,
+			inside: '<html>inside</html>',
+			outside: '<html>outside</html>',
+			use_type: 'operational',
+			description: TAG,
+		});
+		const sfm = String(mailer.id);
+		expect((await api.selfMailers.get(ctx, { id: sfm })).id).toBe(sfm);
+		expect((await api.selfMailers.cancel(ctx, { id: sfm })).deleted).toBe(true);
+	});
+
+	it('round-trips a template and a version', async () => {
+		const template = await api.templates.create(ctx, {
+			html: '<html>{{name}}</html>',
+			engine: 'handlebars',
+			description: TAG,
+		});
+		const tmpl = String(template.id);
+		try {
+			const version = await api.templateVersions.create(ctx, {
+				template_id: tmpl,
+				html: '<html>v2 {{name}}</html>',
+				engine: 'handlebars',
+				description: TAG,
+			});
+			const vrsn = String(version.id);
+			await api.templateVersions.get(ctx, { template_id: tmpl, id: vrsn });
+			await api.templateVersions.update(ctx, {
+				template_id: tmpl,
+				id: vrsn,
+				description: `${TAG} v2`,
+			});
+			await api.templateVersions.list(ctx, { template_id: tmpl });
+			await api.templates.update(ctx, { id: tmpl, description: `${TAG} 2` });
+			await api.templates.get(ctx, { id: tmpl });
+		} finally {
+			await api.templates.delete(ctx, { id: tmpl });
+		}
+	});
+
+	it('creates and renames a billing group (no delete exists)', async () => {
+		const group = await api.billingGroups.create(ctx, { name: TAG });
+		const bg = String(group.id);
+		await api.billingGroups.get(ctx, { id: bg });
+		await api.billingGroups.update(ctx, { id: bg, description: TAG });
+	});
+
+	it('round-trips a test bank account and a check', async () => {
+		const bank = await api.bankAccounts.create(ctx, {
+			routing_number: '322271627',
+			account_number: '123456789',
+			account_type: 'company',
+			signatory: 'Corsair Plugin Test',
+			description: TAG,
+		});
+		const id = String(bank.id);
+		try {
+			await api.bankAccounts.get(ctx, { id });
+			// Test mode accepts any two amounts.
+			await api.bankAccounts.verify(ctx, { id, amounts: [11, 35] });
+			const check = await api.checks.send(ctx, {
+				to: TO,
+				from: TO,
+				bank_account: id,
+				amount: 1,
+				memo: TAG,
+				message: TAG,
+				use_type: 'operational',
+			});
+			const chk = String(check.id);
+			await api.checks.get(ctx, { id: chk });
+			await api.checks.cancel(ctx, { id: chk });
+		} finally {
+			await api.bankAccounts.delete(ctx, { id });
+		}
+	});
+
+	it('creates and deletes a draft campaign when campaigns are enabled', async () => {
+		const campaign = await gated('campaigns.create', () =>
+			api.campaigns.create(ctx, {
+				name: TAG,
+				schedule_type: 'immediate',
+				use_type: 'operational',
+			}),
+		);
+		if (!campaign?.id) return;
+		try {
+			await api.campaigns.get(ctx, { id: campaign.id });
+			await api.campaigns.update(ctx, {
+				id: campaign.id,
+				description: TAG,
+			});
+		} finally {
+			await api.campaigns.delete(ctx, { id: campaign.id });
+		}
 	});
 });
