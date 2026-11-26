@@ -96,7 +96,7 @@ const PostLogSchema = z
 	})
 	.loose();
 const PostLogsOutput = z
-	.object({ success: B, logs: z.array(PostLogSchema).default([]) })
+	.object({ success: B, logs: z.array(PostLogSchema).nullable().optional() })
 	.loose();
 
 // ---------------------------------------------------------------------------
@@ -404,7 +404,8 @@ const LinkedInMentionablesOutput = z
 					})
 					.loose(),
 			)
-			.default([]),
+			.nullable()
+			.optional(),
 	})
 	.loose();
 
@@ -596,7 +597,7 @@ const CompanyContextsOutput = companyEnvelope(
 				.nullable()
 				.optional(),
 			singleContext: B,
-			accounts: z.array(CompanyAccount).default([]),
+			accounts: z.array(CompanyAccount).nullable().optional(),
 		})
 		.loose(),
 );
@@ -641,7 +642,7 @@ const CompanyConnectionsOutput = companyEnvelope(
 		.object({
 			accountId: S,
 			workspaceId: S,
-			items: z.array(CompanyConnection).default([]),
+			items: z.array(CompanyConnection).nullable().optional(),
 		})
 		.loose(),
 );
@@ -796,7 +797,7 @@ const CompanyGetPostGroupOutput = companyEnvelope(
 	z
 		.object({
 			group: CompanyGroup,
-			posts: z.array(CompanyChannelPost).default([]),
+			posts: z.array(CompanyChannelPost).nullable().optional(),
 		})
 		.loose(),
 );
@@ -939,7 +940,7 @@ const CompanyListMediaOutput = companyEnvelope(
 			workspaceId: S,
 			postGroupId: S,
 			mediaFileIds: z.array(z.string()).nullable().optional(),
-			items: z.array(CompanyMediaItem).default([]),
+			items: z.array(CompanyMediaItem).nullable().optional(),
 		})
 		.loose(),
 );
@@ -1051,7 +1052,7 @@ const CompanyListWebhooksOutput = companyEnvelope(
 		.object({
 			accountId: S,
 			workspaceId: S,
-			items: z.array(CompanyWebhook).default([]),
+			items: z.array(CompanyWebhook).nullable().optional(),
 		})
 		.loose(),
 );

@@ -381,7 +381,7 @@ await corsair.publora.api.company.getWorkspaceContext({ accountId: 'ACCOUNT_ID',
     workspaceId?: string | null
   } | null,
   singleContext?: boolean | null,
-  accounts: {
+  accounts?: {
     id?: string | null,
     membershipId?: string | null,
     name?: string | null,
@@ -400,7 +400,7 @@ await corsair.publora.api.company.getWorkspaceContext({ accountId: 'ACCOUNT_ID',
       name?: string | null,
       capabilities?: Record<string, any> | null
     }[] | null
-  }[]
+  }[] | null
 }
 ```
 </Accordion>
@@ -445,7 +445,7 @@ await corsair.publora.api.company.listConnections({ workspaceId: 'WORKSPACE_ID' 
 {
   accountId?: string | null,
   workspaceId?: string | null,
-  items: {
+  items?: {
     id?: string | null,
     accountId?: string | null,
     workspaceId?: string | null,
@@ -463,7 +463,7 @@ await corsair.publora.api.company.listConnections({ workspaceId: 'WORKSPACE_ID' 
     addedAt?: string | null,
     linkedinReconnectRecommended?: boolean | null,
     activationStatus?: string | null
-  }[]
+  }[] | null
 }
 ```
 </Accordion>
@@ -506,7 +506,7 @@ await corsair.publora.api.company.listContexts({});
     workspaceId?: string | null
   } | null,
   singleContext?: boolean | null,
-  accounts: {
+  accounts?: {
     id?: string | null,
     membershipId?: string | null,
     name?: string | null,
@@ -525,7 +525,7 @@ await corsair.publora.api.company.listContexts({});
       name?: string | null,
       capabilities?: Record<string, any> | null
     }[] | null
-  }[]
+  }[] | null
 }
 ```
 </Accordion>
@@ -843,7 +843,7 @@ await corsair.publora.api.company.posts.get({ workspaceId: 'WORKSPACE_ID', postG
     createdAt?: string | null,
     updatedAt?: string | null
   },
-  posts: {
+  posts?: {
     id?: string | null,
     postGroupId?: string | null,
     content?: string | null,
@@ -860,7 +860,7 @@ await corsair.publora.api.company.posts.get({ workspaceId: 'WORKSPACE_ID', postG
     publishedAt?: string | null,
     createdAt?: string | null,
     updatedAt?: string | null
-  }[]
+  }[] | null
 }
 ```
 </Accordion>
@@ -962,14 +962,14 @@ await corsair.publora.api.company.posts.listMedia({ workspaceId: 'WORKSPACE_ID',
   workspaceId?: string | null,
   postGroupId?: string | null,
   mediaFileIds?: string[] | null,
-  items: {
+  items?: {
     id?: string | null,
     url?: string | null,
     type?: string | null,
     mimeType?: string | null,
     status?: string | null,
     purpose?: string | null
-  }[]
+  }[] | null
 }
 ```
 </Accordion>
@@ -1628,7 +1628,7 @@ await corsair.publora.api.company.webhooks.list({ workspaceId: 'WORKSPACE_ID' })
 {
   accountId?: string | null,
   workspaceId?: string | null,
-  items: {
+  items?: {
     id?: string | null,
     name?: string | null,
     url?: string | null,
@@ -1638,7 +1638,7 @@ await corsair.publora.api.company.webhooks.list({ workspaceId: 'WORKSPACE_ID' })
     lastTriggeredAt?: string | null,
     createdAt?: string | null,
     updatedAt?: string | null
-  }[]
+  }[] | null
 }
 ```
 </Accordion>
@@ -2058,7 +2058,7 @@ await corsair.publora.api.linkedin.mentionables({ q: 'Jane', limit: 10 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
-| `people` | `object[]` | Yes | — |
+| `people` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="people full type">
@@ -2072,7 +2072,7 @@ await corsair.publora.api.linkedin.mentionables({ q: 'Jane', limit: 10 });
   source?: string | null,
   lastSeenAt?: string | null,
   mention?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2814,7 +2814,7 @@ await corsair.publora.api.posts.getLogs({ postGroupId: 'POST_GROUP_ID' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean \| null` | No | — |
-| `logs` | `object[]` | Yes | — |
+| `logs` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="logs full type">
@@ -2832,7 +2832,7 @@ await corsair.publora.api.posts.getLogs({ postGroupId: 'POST_GROUP_ID' });
   metadata?: Record<string, any> | null,
   createdAt?: string | null,
   updatedAt?: string | null
-}[]
+}[] | null
 ```
 </Accordion>
 </AccordionGroup>

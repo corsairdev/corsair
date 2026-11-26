@@ -676,6 +676,61 @@ describe('spec response shapes', () => {
 	}
 });
 
+describe('response arrays are not filled in', () => {
+	// A list the reply leaves out stays absent; an empty list stays empty.
+	const cases: Array<{
+		op: keyof typeof publoraEndpointSchemas;
+		wrap: (list?: unknown[]) => Record<string, unknown>;
+		read: (out: Record<string, any>) => unknown;
+	}> = [
+		{
+			op: 'posts.getLogs',
+			wrap: (l) => ({ success: true, ...(l && { logs: l }) }),
+			read: (o) => o.logs,
+		},
+		{
+			op: 'linkedin.mentionables',
+			wrap: (l) => ({ success: true, ...(l && { people: l }) }),
+			read: (o) => o.people,
+		},
+		{
+			op: 'company.listContexts',
+			wrap: (l) => ({ success: true, data: l ? { accounts: l } : {} }),
+			read: (o) => o.data.accounts,
+		},
+		{
+			op: 'company.listConnections',
+			wrap: (l) => ({ success: true, data: l ? { items: l } : {} }),
+			read: (o) => o.data.items,
+		},
+		{
+			op: 'company.posts.get',
+			wrap: (l) => ({
+				success: true,
+				data: { group: {}, ...(l && { posts: l }) },
+			}),
+			read: (o) => o.data.posts,
+		},
+		{
+			op: 'company.posts.listMedia',
+			wrap: (l) => ({ success: true, data: l ? { items: l } : {} }),
+			read: (o) => o.data.items,
+		},
+		{
+			op: 'company.webhooks.list',
+			wrap: (l) => ({ success: true, data: l ? { items: l } : {} }),
+			read: (o) => o.data.items,
+		},
+	];
+	for (const { op, wrap, read } of cases) {
+		it(`${op}: missing stays undefined, [] stays []`, () => {
+			const schema = publoraEndpointSchemas[op].output;
+			expect(read(schema.parse(wrap()) as Record<string, any>)).toBeUndefined();
+			expect(read(schema.parse(wrap([])) as Record<string, any>)).toEqual([]);
+		});
+	}
+});
+
 describe('company', () => {
 	beforeEach(() => {
 		reply = {
