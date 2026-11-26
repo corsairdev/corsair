@@ -1,7 +1,10 @@
-// Response bodies modeled on the examples in the More Trees API guide
-// (https://moretrees.eco/learn/user-guides/api), with made-up accounts.
+// Response bodies from the More Trees OpenAPI documents and API guide, with
+// made-up accounts. `projectsBody` is a trimmed copy of the live
+// GET /external/projects response (11-26), kept as raw text because its
+// 64-bit IDs do not survive a JSON round trip in JavaScript.
 
 export const account = {
+	account_code: 'AC1C2C',
 	account_name: 'Beachy BV',
 	credit_balance: 123,
 	forest_name: 'Beachy Forest',
@@ -21,29 +24,19 @@ export const forest = {
 	},
 };
 
-export const project = {
-	id: 1,
-	name: 'Green Tree Reforestation',
-	description: 'Reforestation in Germany.',
-	country: 'Germany',
-	project_type: 'Mangrove',
-	supplier_name: 'Eden',
-	default: true,
-	project_image: 'https://example.com/project.png',
-	trees: [
-		{
-			id: 1,
-			name: 'Bald cypress',
-			description: 'Small brown cones all year round.',
-			tonnes_c02: 0.3,
-			credits_required: 2,
-			default: true,
-			tree_image: 'https://example.com/tree.png',
-		},
-	],
-};
+/** AccountInformationResponseDto rows, made-up people. */
+export const accountLookupBody =
+	'[{"userId":1212386588741409999,"accountCode":"AC1C2C","accountName":"Beachy BV","emailAddress":"ops@example.com","accountId":42,"quantity":0,"index":0,"accountStatus":"ACTIVE"}]';
 
-export const projects = [project];
+export const BIG_TREE_ID = '1212386588741402633';
+
+export const projectsBody = `{"data":[{"default":true,"id":24,"name":"Usambara Mountains","description":"Located in Tanzania's Kilimanjaro and Tanga regions.","country":"Tanzania","project_type":"Agroforestry & Forest Restoration","supplier_name":"Forest Focus","project_image":"https://fcdn.moretrees.eco/projects/tanzania/photo-1.jpg","trees":[{"default":true,"id":${BIG_TREE_ID},"name":"Markhamia lutea","description":"Usambara Mountains, Tanga, Tanzania","tonnes_co2":0.3,"credits_required":1.0,"tree_image":"https://fcdn.moretrees.eco/c550c852-1dd4-4d1c-a373-e4072b423b0f_tanzania_tree_type_picture_02.jpg"}]},{"default":false,"id":20,"name":"Canada, British Columbia","description":"Wildfire restoration.","country":"Canada","project_type":"Post Wildfire Restoration","supplier_name":"Veritree","project_image":"https://fcdn.moretrees.eco/projects/canada-bc/photo-1.jpg","trees":[{"default":true,"id":28,"name":"Conifer","description":"British Columbia, Canada","tonnes_co2":2.58,"credits_required":2.0,"tree_image":"https://fcdn.moretrees.eco/f3efad57-4358-4358-aadf-672a59a1a9db_canada_wildfire_tree_type_picture_02.jpg"}]}],"total":2}`;
+
+/** ProjectTreeCreditInformationDto. */
+export const projectTreeBody = `{"projectTreeId":1212386588741402700,"projectId":24,"treeId":${BIG_TREE_ID},"creditTypeId":3,"numberOfCredits":1.0,"creditTypeStripeCode":"price_tree_1","projectName":"Usambara Mountains","treeName":"Markhamia lutea"}`;
+
+/** TotalProjectAndCo2Dto. */
+export const totalCo2 = { totalCo2: 2.88, supportedProjects: 2 };
 
 export const plantSelfResponse = {
 	test: false,
@@ -67,10 +60,20 @@ export const plantOthersResponse = {
 	],
 };
 
-/** The probed JSON envelope for a 400 without a key. */
+/** The probed 400 envelope (11-26). */
 export const badRequest = {
 	status: 400,
+	timeStamp: '2026-11-26',
 	error: 'Bad Request',
 	message: 'Bad Request',
 	path: '/external/accounts/TEST',
+};
+
+/** The probed 404 envelope (11-26). */
+export const notFound = {
+	status: 404,
+	timeStamp: '2026-11-26',
+	error: 'MTC-0004',
+	message: 'The requested resource does not exist.',
+	path: '/external/forest/zz-not-a-forest',
 };

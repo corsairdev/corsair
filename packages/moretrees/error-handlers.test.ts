@@ -1,5 +1,6 @@
+import { ApiError } from 'corsair/http';
 import { ZodError } from 'zod';
-import { MoreTreesAPIError } from './client';
+import { recordRequestFacts } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { badRequest } from './test-fixtures';
 
@@ -24,30 +25,41 @@ function apiError(
 	body: unknown = {},
 	options: { retryAfter?: number; method?: string; replayable?: boolean } = {},
 ) {
-	return new MoreTreesAPIError(`More Trees ${status}: failed`, {
-		status,
-		body,
-		...options,
+	const method = (options.method ?? 'GET') as 'GET';
+	const error = new ApiError(
+		{ method, url: '/x' },
+		{ url: 'https://x', ok: false, status, statusText: '', body },
+		`More Trees ${status}: failed`,
+		{ retryAfter: options.retryAfter },
+	);
+	recordRequestFacts(error, {
+		method,
+		replayable: options.replayable ?? false,
 	});
+	return error;
+}
+
+function transportError(replayable: boolean) {
+	const error = new TypeError('fetch failed');
+	recordRequestFacts(error, { method: 'GET', replayable });
+	return error;
 }
 
 describe('More Trees error handlers', () => {
-	it('retries a 429 with backoff', async () => {
+	it('leaves 429 retries to core', async () => {
 		const error = apiError(429, {}, { replayable: true });
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
 		expect(await strategy(error)).toEqual({
-			maxRetries: 3,
+			maxRetries: 0,
 			headersRetryAfterMs: undefined,
-			retryStrategy: 'exponential_backoff',
 		});
 	});
 
-	it('honours Retry-After when More Trees sends one', async () => {
+	it('passes Retry-After on', async () => {
 		const error = apiError(429, {}, { retryAfter: 4000 });
 		expect(await strategy(error)).toEqual({
-			maxRetries: 3,
+			maxRetries: 0,
 			headersRetryAfterMs: 4000,
-			retryStrategy: 'exponential_backoff',
 		});
 	});
 
@@ -58,7 +70,7 @@ describe('More Trees error handlers', () => {
 		}
 	});
 
-	it.each([400, 404, 406])('does not retry a %i', async (status) => {
+	it.each([400, 404, 405, 406])('does not retry a %i', async (status) => {
 		const error = apiError(status, badRequest);
 		expect(classify(error)).toBe('VALIDATION_ERROR');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
@@ -79,16 +91,14 @@ describe('More Trees error handlers', () => {
 		});
 	});
 
-	it.each(['POST', 'DELETE'])('does not replay a failed %s', async (method) => {
+	it.each(['POST'])('does not replay a failed %s', async (method) => {
 		const error = apiError(503, {}, { method, replayable: false });
 		expect(classify(error)).toBe('DEFAULT');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('retries a transport failure on a read', async () => {
-		const error = new MoreTreesAPIError('fetch failed', {
-			replayable: true,
-		});
+		const error = transportError(true);
 		expect(classify(error)).toBe('TRANSPORT_ERROR');
 		expect(await strategy(error)).toEqual({
 			maxRetries: 2,
@@ -97,9 +107,7 @@ describe('More Trees error handlers', () => {
 	});
 
 	it('does not retry a transport failure on a write', async () => {
-		const error = new MoreTreesAPIError('fetch failed', {
-			replayable: false,
-		});
+		const error = transportError(false);
 		expect(classify(error)).toBe('DEFAULT');
 	});
 

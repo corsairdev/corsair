@@ -1,13 +1,14 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { moretrees } from './index';
-import { account, plantSelfResponse, projects } from './test-fixtures';
+import { account, plantSelfResponse, projectsBody } from './test-fixtures';
 
 /**
- * The endpoints call the HTTP client, which is configured with `maxRetries: 0`;
- * only the bound client retries, using this plugin's error handlers. This file
- * goes through `createCorsair` so that retry layer actually runs. It is not
- * named `integration.test.ts`, because CI skips that name.
+ * Core's request() retries a 429 itself (three times, honouring Retry-After);
+ * the bound client then applies this plugin's error handlers (5xx and
+ * transport replays for reads only). This file goes through `createCorsair`
+ * so both layers run. It is not named `integration.test.ts`, because CI
+ * skips that name.
  */
 async function createClient() {
 	const testDb = createTestDatabase();
@@ -22,14 +23,13 @@ async function createClient() {
 
 let fetchMock: jest.SpyInstance;
 
-// unknown: response bodies are arbitrary JSON.
 function respond(
-	body: unknown, // unknown: response bodies are arbitrary JSON.
+	body: unknown, // unknown: response bodies are arbitrary JSON or raw text.
 	status = 200,
 	headers: Record<string, string> = {},
 ) {
 	fetchMock.mockResolvedValueOnce(
-		new Response(JSON.stringify(body), {
+		new Response(typeof body === 'string' ? body : JSON.stringify(body), {
 			status,
 			headers: { 'Content-Type': 'application/json', ...headers },
 		}),
@@ -73,7 +73,7 @@ describe('retries through the bound client', () => {
 			await expect(
 				corsair.moretrees.api.account.get({ accountCode: 'AC1C2C' }),
 			).rejects.toMatchObject({ status: 429 });
-			// One attempt plus the three retries RATE_LIMIT_ERROR allows.
+			// One attempt plus core's three 429 retries; the handler adds none.
 			expect(fetchMock).toHaveBeenCalledTimes(4);
 		} finally {
 			testDb.cleanup();
@@ -98,11 +98,11 @@ describe('retries through the bound client', () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
-			respond(projects);
+			respond(projectsBody);
 
 			const result = await corsair.moretrees.api.projects.list({});
 
-			expect(result).toHaveLength(1);
+			expect(result.data).toHaveLength(2);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();
@@ -121,6 +121,38 @@ describe('retries through the bound client', () => {
 					quantity: 1,
 				}),
 			).rejects.toMatchObject({ status: 503 });
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('replays a read after a 503 and succeeds', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respond({ status: 503, error: 'Service Unavailable' }, 503);
+			respond(account);
+
+			const result = await corsair.moretrees.api.account.get({});
+
+			expect(result.account_code).toBe('AC1C2C');
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('does not replay a plant after a transport failure', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+
+			await expect(
+				corsair.moretrees.api.trees.plant({
+					plant_for_others: false,
+					quantity: 1,
+				}),
+			).rejects.toThrow('fetch failed');
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
