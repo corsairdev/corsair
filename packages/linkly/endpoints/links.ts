@@ -1,5 +1,5 @@
 import type { LinklyEndpoints } from '..';
-import { segment } from '../client';
+import { LINKLY_BULK_TIMEOUT_MS, segment } from '../client';
 import { call } from './call';
 import {
 	LinklyEndpointInputSchemas as Inputs,
@@ -219,6 +219,8 @@ export const bulkUpsert: LinklyEndpoints['linksBulkUpsert'] = (ctx, input) =>
 			// Items without an id create links, so only an all-update batch is
 			// safe to send again.
 			replaySafe: links.every((link) => link.id !== undefined),
+			// Up to 1,000 links per call can outlast core's 20 s default.
+			timeoutMs: LINKLY_BULK_TIMEOUT_MS,
 		}),
 		{
 			log: ({ links }, result) => ({
@@ -243,6 +245,7 @@ export const removeMany: LinklyEndpoints['linksDeleteMany'] = (ctx, input) =>
 			body: { ids },
 			// Trashing a trashed link again is a no-op.
 			replaySafe: true,
+			timeoutMs: LINKLY_BULK_TIMEOUT_MS,
 		}),
 		{
 			log: ({ workspace_id, ids }) => ({

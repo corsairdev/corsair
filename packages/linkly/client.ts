@@ -34,7 +34,12 @@ export type LinklyRequest = {
 	 * original instead of counting twice.
 	 */
 	replaySafe?: boolean;
+	/** Overrides core's 20 s default, for calls that carry big batches. */
+	timeoutMs?: number;
 };
+
+/** For bulk calls of up to 1,000 links, which can outlast core's 20 s. */
+export const LINKLY_BULK_TIMEOUT_MS = 60_000;
 
 /** What the error handlers need to know about the request that failed. */
 export type LinklyRequestFacts = {
@@ -150,16 +155,29 @@ export function segment(value: string | number): string {
 }
 
 /**
+ * Webhook ids are the webhook URLs themselves, encoded into the unsubscribe
+ * paths, and a hook URL often carries its own secret
+ * (https://hooks.example.com/<token>). Core redacts only known query
+ * parameters, so the hook segment is masked here.
+ */
+export function redactWebhookPath(url: string): string {
+	return url.replace(/(\/webhooks\/)[^/?#]+/, '$1[REDACTED]');
+}
+
+/**
  * Core's ApiError keeps the request it sent, body included: destination URLs,
  * link passwords, webhook URLs and conversion visitor IPs. The rebuilt error
- * keeps status, body, URL and rate-limit fields and drops the request body
- * and headers (R8's one allowed rebuild).
+ * keeps status, body, URL (webhook segment masked) and rate-limit fields and
+ * drops the request body and headers (R8's one allowed rebuild).
  */
 function withoutRequestData(error: ApiError): ApiError {
 	const rebuilt = new ApiError(
-		{ method: error.request.method, url: error.request.url },
 		{
-			url: error.url,
+			method: error.request.method,
+			url: redactWebhookPath(error.request.url),
+		},
+		{
+			url: redactWebhookPath(error.url),
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
@@ -180,7 +198,7 @@ function withoutRequestData(error: ApiError): ApiError {
 // undefined when Linkly answers without a body.
 export async function makeLinklyRequest(
 	apiKey: string,
-	{ method, path, query, body, replaySafe }: LinklyRequest,
+	{ method, path, query, body, replaySafe, timeoutMs }: LinklyRequest,
 ): Promise<ApiBody> {
 	const config: OpenAPIConfig = {
 		BASE: LINKLY_API_BASE,
@@ -188,6 +206,7 @@ export async function makeLinklyRequest(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		HEADERS: { Accept: 'application/json', Authorization: `Bearer ${apiKey}` },
+		...(timeoutMs === undefined ? {} : { TIMEOUT: timeoutMs }),
 	};
 
 	const requestOptions: ApiRequestOptions = {

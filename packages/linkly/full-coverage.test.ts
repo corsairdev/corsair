@@ -107,6 +107,31 @@ describe('links: the rest of the API', () => {
 		expect(result).toBe('Links deleted.');
 	});
 
+	it('gives the two bulk calls a 60 s timeout and leaves single-link calls on the 20 s default', async () => {
+		const timeout = jest.spyOn(AbortSignal, 'timeout');
+		mockFetch(jsonResponse([{ index: 0, status: 'success', link }]));
+		mockFetch(jsonResponse('Links deleted.'));
+		mockFetch(jsonResponse(link));
+
+		await endpoints.links.bulkUpsert(makeCtx(), {
+			links: [{ workspace_id: 42, id: 30, name: 'A' }],
+		});
+		await endpoints.links.deleteMany(makeCtx(), {
+			workspace_id: 42,
+			ids: [30],
+		});
+		await endpoints.links.update(makeCtx(), {
+			workspace_id: 42,
+			id: 30,
+			name: 'A',
+		});
+
+		// CodeRabbit thread on client.ts:185.
+		expect(timeout.mock.calls.map(([ms]) => ms)).toEqual([
+			60_000, 60_000, 20_000,
+		]);
+	});
+
 	it('encodes filter as filter[field]=value, the deepObject the spec documents', async () => {
 		mockFetch(
 			jsonResponse({

@@ -242,6 +242,47 @@ describe('makeLinklyRequest', () => {
 		expect(error.request.method).toBe('POST');
 	});
 
+	it('masks the webhook URL in an unsubscribe path, so a hook token stays out of the error', async () => {
+		respond(linklyError('Not found', 'not_found'), 404);
+		const hook = 'https://hooks.example.com/hook-secret-token';
+
+		const error = await failure(
+			makeLinklyRequest(API_KEY, {
+				method: 'DELETE',
+				path: `/api/v1/link/30/webhooks/${segment(hook)}`,
+			}),
+		);
+		// CodeRabbit thread on client.ts:160.
+		const dump = inspect(error, { depth: 10 });
+		expect(dump).not.toContain('hook-secret-token');
+		expect(JSON.stringify(error)).not.toContain('hook-secret-token');
+		expect(error.url).toBe(
+			'https://api.linklyhq.com/api/v1/link/30/webhooks/[REDACTED]',
+		);
+		expect(error.status).toBe(404);
+	});
+
+	it('passes timeoutMs to core as its request timeout, and keeps core default otherwise', async () => {
+		const timeout = jest.spyOn(AbortSignal, 'timeout');
+		respond([], 200);
+		respond([], 200);
+
+		await makeLinklyRequest(API_KEY, {
+			method: 'POST',
+			path: '/api/v1/links',
+			body: [],
+			timeoutMs: 60_000,
+		});
+		await makeLinklyRequest(API_KEY, {
+			method: 'GET',
+			path: '/api/v1/workspaces',
+		});
+
+		// CodeRabbit thread on client.ts:185.
+		expect(timeout.mock.calls.map(([ms]) => ms)).toEqual([60_000, 20_000]);
+		timeout.mockRestore();
+	});
+
 	it('throws a gateway 429 with no Linkly body after core retries', async () => {
 		for (let i = 0; i < 4; i += 1) respond('', 429);
 
