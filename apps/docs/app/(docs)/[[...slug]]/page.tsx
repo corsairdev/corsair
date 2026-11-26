@@ -9,7 +9,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { DocsShell } from '@/components/docs-shell';
 import { getMDXComponents } from '@/components/mdx';
-import { compileApiPage } from '@/lib/api-pages';
+import { compilePluginPage } from '@/lib/plugin-pages';
 import { getPrerenderedDocParams } from '@/lib/rendering';
 import { source } from '@/lib/source';
 
@@ -46,11 +46,11 @@ export default async function Page(props: PageProps) {
 	if (!page) notFound();
 
 	const components = getMDXComponents({ a: createRelativeLink(source, page) });
-	// The generated API pages have no compiled chunk: see lib/api-pages.ts.
+	// Plugin pages have no compiled chunk: see lib/plugin-pages.ts.
 	const { body: MDX, toc } =
 		'load' in page.data
 			? await page.data.load()
-			: await compileApiPage(page.absolutePath as string, components);
+			: await compilePluginPage(page.absolutePath as string, components);
 
 	return (
 		<DocsShell url={page.url}>

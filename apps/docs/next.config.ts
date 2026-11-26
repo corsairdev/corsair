@@ -13,6 +13,10 @@ const config: NextConfig = {
 	turbopack: { root: repoRoot },
 	experimental: {
 		optimizePackageImports: ['fumadocs-ui', 'fumadocs-core', 'lucide-react'],
+		// Each static-generation worker loads the whole page index; two keep the
+		// build well inside an 8 GB build machine and prerender ~90 pages in
+		// seconds. DOCS_PRERENDER_ALL builds (CI) get more.
+		cpus: process.env.DOCS_PRERENDER_ALL === '1' ? 4 : 2,
 	},
 	redirects: async () => getAllRedirects(),
 	// Read from disk at request time, which file tracing can't infer.

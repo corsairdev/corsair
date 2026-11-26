@@ -3,19 +3,19 @@ import { loader } from 'fumadocs-core/source';
 import { pageSchema } from 'fumadocs-core/source/schema';
 import { defineDocs } from 'fumadocs-mdx/macro';
 import { z } from 'zod';
-import { apiPageFiles } from './api-pages';
 import { buildPageTree, sidebarIcon } from './nav';
+import { pluginPageFiles } from './plugin-pages';
 
 /**
  * The content is docs/ at the repo root, the tree Mintlify publishes, read in
  * place. `async` keeps each page's compiled MDX in its own chunk, loaded when
- * the page renders. The generated API pages are compiled on request instead
- * (lib/api-pages.ts).
+ * the page renders. The ~2,500 plugin pages are compiled on request instead
+ * (lib/plugin-pages.ts).
  */
 const docs = defineDocs({
 	dir: '../../docs',
 	docs: {
-		files: ['**/*.mdx', '!plugins/*/api.mdx', '!snippets/**'],
+		files: ['**/*.mdx', '!plugins/**', '!snippets/**'],
 		async: true,
 		schema: pageSchema.extend({
 			sidebarTitle: z.string().optional(),
@@ -32,7 +32,7 @@ type DocsFile = (typeof mdx.files)[number];
 export const source = loader({
 	baseUrl: '/',
 	source: {
-		files: [...mdx.files, ...(apiPageFiles() as unknown as DocsFile[])],
+		files: [...mdx.files, ...(pluginPageFiles() as unknown as DocsFile[])],
 	},
 	icon: sidebarIcon,
 });
