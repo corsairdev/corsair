@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-24T16:11:04.009Z",
-  "corsairVersion": "0.2.32",
+  "generatedAt": "2026-11-25T17:28:38.881Z",
+  "corsairVersion": "0.2.33",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -9492,7 +9492,7 @@
       ],
       "defaultAuthType": "api_key",
       "counts": {
-        "api": 46,
+        "api": 47,
         "webhooks": 9,
         "db": 5
       }
@@ -10812,14 +10812,15 @@
     {
       "id": "twitter",
       "displayName": "X (Twitter)",
-      "description": "Social media platform for posts, timelines, users, and public conversation data via X API.",
+      "description": "Read and act on X (Twitter) through the full X API v2: publish and search posts, read timelines, mentions, likes, bookmarks and followers, look up and search users, send and read Direct Messages and encrypted Chat, manage Lists, Spaces, Communities, trends, news, Community Notes, live broadcasts and media uploads, and run usage, compliance and webhook routes (259 operations).",
       "npmPackageName": "@corsair-dev/twitter",
       "authTypes": [
-        "oauth_2"
+        "oauth_2",
+        "api_key"
       ],
       "defaultAuthType": "oauth_2",
       "counts": {
-        "api": 2,
+        "api": 259,
         "webhooks": 0,
         "db": 1
       }
@@ -94227,7 +94228,7 @@
       "pluginId": "github",
       "kind": "api",
       "shortPath": "search.issues",
-      "haystack": "search.issues github.api.search.issues search issues and pull requests with github qualifiers in q, e.g. \"is:issue is:open repo:owner/name assignee:login\". users.getauthenticated gives your own login. read"
+      "haystack": "search.issues github.api.search.issues search issues and pull requests with structured fields (keywords, type, state, author, assignee, label, repo, org, created, updated, ...) or a raw q of github qualifiers; no qualifier syntax needed. users.getauthenticated gives your own login. read"
     },
     {
       "pluginId": "github",
@@ -96135,13 +96136,13 @@
       "pluginId": "gmail",
       "kind": "api",
       "shortPath": "messages.getAttachment",
-      "haystack": "messages.getattachment gmail.api.messages.getattachment fetch an attachment of a message by partid (from messages.get, format full) or attachmentid. returns the file like drive files.download: inline when small, otherwise saved by the host and returned as fileid read"
+      "haystack": "messages.getattachment gmail.api.messages.getattachment fetch an attachment of a message by partid (shown in messages.get with format full, or in a database search of messages fetched with format full) or attachmentid. returns the file like drive files.download: inline when small, otherwise saved by the host and returned as fileid read"
     },
     {
       "pluginId": "gmail",
       "kind": "api",
       "shortPath": "messages.list",
-      "haystack": "messages.list gmail.api.messages.list returns only id and threadid per message, no subject or body. use messages.get to read one read"
+      "haystack": "messages.list gmail.api.messages.list search messages with structured fields (keywords, from, to, subject, after, before, hasattachment, label, in, isunread, ...) or a raw q; no gmail syntax needed. returns only id and threadid per message, no subject or body. use messages.get to read one read"
     },
     {
       "pluginId": "gmail",
@@ -125097,7 +125098,7 @@
       "pluginId": "linear",
       "kind": "api",
       "shortPath": "issues.list",
-      "haystack": "issues.list linear.api.issues.list lists issues, newest created first, across the workspace or one team; filter by assignee, state, labels or project. read"
+      "haystack": "issues.list linear.api.issues.list lists issues, newest created first, across the workspace or one team. search with structured fields (keywords, assignee, creator, statename, statetype, teamkey, label, priority, createdafter, updatedafter, ...) or a raw filter; no graphql needed. read"
     },
     {
       "pluginId": "linear",
@@ -174542,6 +174543,12 @@
     {
       "pluginId": "slack",
       "kind": "api",
+      "shortPath": "files.download",
+      "haystack": "files.download slack.api.files.download download one file's content by id (an image, pdf or any upload). needs a token that can see the file; private channels and dms need the user token. read"
+    },
+    {
+      "pluginId": "slack",
+      "kind": "api",
       "shortPath": "files.get",
       "haystack": "files.get slack.api.files.get get metadata of one file by id, not its content. read"
     },
@@ -174579,7 +174586,7 @@
       "pluginId": "slack",
       "kind": "api",
       "shortPath": "messages.search",
-      "haystack": "messages.search slack.api.messages.search search messages with slack search syntax, e.g. \"deploy in:#channel from:@user\". needs a user token. read"
+      "haystack": "messages.search slack.api.messages.search search messages with structured fields (keywords, in, from, with, after, before, on, during, haspin, hasreaction, isthread, ...) or a raw query in slack search syntax; no modifier syntax needed. needs a user token. read"
     },
     {
       "pluginId": "slack",
@@ -192638,14 +192645,1556 @@
     {
       "pluginId": "twitter",
       "kind": "api",
+      "shortPath": "account.ensure",
+      "haystack": "account.ensure twitter.api.account.ensure creates an x developer platform account for the authenticated user if they do not already have one, and returns it. idempotent: when the user already has an account it is returned unchanged with `created` false. needs a user (oauth 2.0) token. needs the extra oauth scope developer.write (pass scopes to the plugin). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "account.get",
+      "haystack": "account.get twitter.api.account.get returns the x developer platform account that is billed for the authenticated user's api access. a user with no such account gets a resource-not-found error entry. needs a user (oauth 2.0) token. needs the extra oauth scope developer.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "accountActivity.subscriptions.count",
+      "haystack": "accountactivity.subscriptions.count twitter.api.accountactivity.subscriptions.count retrieves a count of currently active account activity subscriptions. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "accountActivity.subscriptions.create",
+      "haystack": "accountactivity.subscriptions.create twitter.api.accountactivity.subscriptions.create creates an account activity subscription for the user and the given webhook. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "accountActivity.subscriptions.delete",
+      "haystack": "accountactivity.subscriptions.delete twitter.api.accountactivity.subscriptions.delete deletes an account activity subscription for the given webhook and user id. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "accountActivity.subscriptions.list",
+      "haystack": "accountactivity.subscriptions.list twitter.api.accountactivity.subscriptions.list retrieves a list of all active subscriptions for a given webhook. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "accountActivity.subscriptions.validate",
+      "haystack": "accountactivity.subscriptions.validate twitter.api.accountactivity.subscriptions.validate checks a user's account activity subscription for a given webhook. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "activity.subscriptions.create",
+      "haystack": "activity.subscriptions.create twitter.api.activity.subscriptions.create creates a subscription for an x activity event. oauth2 user-context tokens must hold the scope matching the requested event_type: dm.read for chat.* and dm.* events, like.read for like.* events, mute.read for mute.* events, block.read for block.* events, follows.read for subscriptions.* events, and tweet.read for all other event types. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "activity.subscriptions.delete",
+      "haystack": "activity.subscriptions.delete twitter.api.activity.subscriptions.delete deletes a subscription for an x activity event. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "activity.subscriptions.deleteMany",
+      "haystack": "activity.subscriptions.deletemany twitter.api.activity.subscriptions.deletemany deletes multiple subscriptions for x activity events by their ids. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "activity.subscriptions.list",
+      "haystack": "activity.subscriptions.list twitter.api.activity.subscriptions.list get a list of active subscriptions for xaa. optional user_id narrows the list to subscriptions whose filter.user_id matches; with a user-context token it must identify the authenticated user. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "activity.subscriptions.update",
+      "haystack": "activity.subscriptions.update twitter.api.activity.subscriptions.update updates a subscription for an x activity event. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "articles.createDraft",
+      "haystack": "articles.createdraft twitter.api.articles.createdraft creates a new article draft that can later be published. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "articles.publish",
+      "haystack": "articles.publish twitter.api.articles.publish publishes a draft article, making it publicly visible. needs a user (oauth 2.0) token. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "bots.create",
+      "haystack": "bots.create twitter.api.bots.create creates a bot account in the calling app's project and returns its bearer token. repeating the request for a handle the project already has returns that bot with a new token and revokes the previous one, so a retry can revoke a token another caller just received. coordinate retries for the same handle. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "bots.delete",
+      "haystack": "bots.delete twitter.api.bots.delete deletes a bot account from the calling app's project. with an oauth 2.0 user token, the user must be an admin of the project's developer account. on api connect, where the request bills the user's own account, the bot is deleted from the user's project instead. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "bots.list",
+      "haystack": "bots.list twitter.api.bots.list retrieves the bot accounts in the calling app's project. meta.max_bots is the most bots the project can have. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "bots.token.revoke",
+      "haystack": "bots.token.revoke twitter.api.bots.token.revoke revokes a bot's bearer token. the bot account is kept, and rotating its token mints a new one. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "bots.token.rotate",
+      "haystack": "bots.token.rotate twitter.api.bots.token.rotate mints a new bearer token for a bot and invalidates every token previously issued for it. the new token is returned only once. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "bots.update",
+      "haystack": "bots.update twitter.api.bots.update updates a bot's handle, display name, or who may send it direct messages. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.chat.deleteMessage",
+      "haystack": "broadcasts.chat.deletemessage twitter.api.broadcasts.chat.deletemessage removes a specific chat message from a running broadcast where the authenticated user is the host or a moderator. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.chat.list",
+      "haystack": "broadcasts.chat.list twitter.api.broadcasts.chat.list returns newest-first chat messages for a broadcast owned by the authenticated user. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.chat.muteUser",
+      "haystack": "broadcasts.chat.muteuser twitter.api.broadcasts.chat.muteuser prevents a user from posting further messages in a running broadcast chat. when `end_at_ms` is provided, the mute expires at that time. the authenticated user must be the broadcast host or a moderator. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.chat.send",
+      "haystack": "broadcasts.chat.send twitter.api.broadcasts.chat.send posts a chat message to a running broadcast, attributed to the authenticated user. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.chat.unmuteUser",
+      "haystack": "broadcasts.chat.unmuteuser twitter.api.broadcasts.chat.unmuteuser allows a muted user to post messages in a running broadcast chat again. the authenticated user must be the broadcast host or a moderator. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.chatModerators.add",
+      "haystack": "broadcasts.chatmoderators.add twitter.api.broadcasts.chatmoderators.add adds a moderator to the authenticated broadcaster's persistent list and returns the updated moderator user ids. the list applies to all current and future broadcast chats. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.chatModerators.list",
+      "haystack": "broadcasts.chatmoderators.list twitter.api.broadcasts.chatmoderators.list returns the authenticated broadcaster's persistent moderators as user resources. the list applies to all of their current and future broadcast chats. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.chatModerators.remove",
+      "haystack": "broadcasts.chatmoderators.remove twitter.api.broadcasts.chatmoderators.remove removes a moderator from the authenticated broadcaster's persistent list and returns the updated moderator user ids. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.chatMutes.create",
+      "haystack": "broadcasts.chatmutes.create twitter.api.broadcasts.chatmutes.create prevents a user from posting messages in all of a broadcaster's chats. without `broadcast_id`, the user is muted in the authenticated user's own chats. moderators pass `broadcast_id` to mute the user in that broadcast host's chats. when `end_at_ms` is provided, the mute expires at that time. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.chatMutes.delete",
+      "haystack": "broadcasts.chatmutes.delete twitter.api.broadcasts.chatmutes.delete allows a muted user to post messages in a broadcaster's chats again. without `broadcast_id`, the user is unmuted in the authenticated user's own chats. moderators pass `broadcast_id` to unmute the user in that broadcast host's chats. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.chatMutes.list",
+      "haystack": "broadcasts.chatmutes.list twitter.api.broadcasts.chatmutes.list returns the users muted in the authenticated broadcaster's chat, with the expiry time of timed mutes. mutes apply to all of their broadcasts. expired timed mutes are omitted. use `expansions=user_id` to include the muted users. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.create",
+      "haystack": "broadcasts.create twitter.api.broadcasts.create takes one or more of the authenticated user's sources live and returns 201 with the new broadcast. several sources (`source_id` plus `additional_source_ids`, one per video format) go live together as one broadcast; they must all be rtmp sources in one region, and when one of them is already live its broadcast is returned only if it holds every listed source. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.delete",
+      "haystack": "broadcasts.delete twitter.api.broadcasts.delete deletes one of the authenticated user's broadcasts, scheduled or ended, including its replay. a running broadcast must be ended first. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.end",
+      "haystack": "broadcasts.end twitter.api.broadcasts.end ends one of the authenticated user's broadcasts. only `state: end` is supported. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.get",
+      "haystack": "broadcasts.get twitter.api.broadcasts.get returns a broadcast owned by the authenticated user. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.list",
+      "haystack": "broadcasts.list twitter.api.broadcasts.list returns the authenticated user's live-video broadcasts, or selected owned broadcasts when ids are provided. at most one of `ids`, `max_results` may be provided. at most one of `ids`, `pagination_token` may be provided. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.listCategories",
+      "haystack": "broadcasts.listcategories twitter.api.broadcasts.listcategories returns the live categories a host can pick when going live, in display order. pass a category's `id` as `live_category_id` on post /2/broadcasts. ids are permanent; names can change, so store the id and show the current name. the whole list is returned in one response, without paging. needs the extra oauth scope broadcast.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.scheduled.create",
+      "haystack": "broadcasts.scheduled.create twitter.api.broadcasts.scheduled.create schedules a broadcast for the authenticated user on one of their sources: `source_id` is required. passing a stream key as `source_id` is deprecated and stops working when the /2/users/:id/sources and /2/users/:id/broadcasts routes reach end of life on january 1, 2027; pass the source's `id` from get /2/sources instead. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.scheduled.delete",
+      "haystack": "broadcasts.scheduled.delete twitter.api.broadcasts.scheduled.delete deletes a scheduled broadcast by its alphanumeric broadcast id. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.scheduled.get",
+      "haystack": "broadcasts.scheduled.get twitter.api.broadcasts.scheduled.get returns a single scheduled broadcast by its alphanumeric broadcast id. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.scheduled.goLive",
+      "haystack": "broadcasts.scheduled.golive twitter.api.broadcasts.scheduled.golive publishes a schedule that was created or updated with `manual_publish: true`. without that flag the coordinator auto-publishes at start and this call is rejected. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.scheduled.list",
+      "haystack": "broadcasts.scheduled.list twitter.api.broadcasts.scheduled.list returns scheduled broadcasts owned by the authenticated user. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.scheduled.update",
+      "haystack": "broadcasts.scheduled.update twitter.api.broadcasts.scheduled.update updates a scheduled broadcast. path `:id` is the broadcast id; the body must include `scheduled_broadcast_id`. re-send every field that should be kept. passing a stream key as `source_id` is deprecated and stops working when the /2/users/:id/sources and /2/users/:id/broadcasts routes reach end of life on january 1, 2027; pass the source's `id` from get /2/sources instead. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "broadcasts.update",
+      "haystack": "broadcasts.update twitter.api.broadcasts.update changes the title, chat option or live category of one of the authenticated user's broadcasts and returns the broadcast. send at least one of `title`, `chat_option` and `live_category_id`; fields left out keep their values. a broadcast can be updated before it starts, while it is live and after it has ended. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "calls.create",
+      "haystack": "calls.create twitter.api.calls.create starts an x call hosted by the authenticated user (typically a bot). pass an xchat conversation_id to start the call in that conversation, or omit it for a standalone call anyone can join with the returned join_url (subject to join_policy). the call starts empty: put an agent in it with post /2/calls/:id/join. when the host joins a conversation call, the other members are rung. needs a user (oauth 2.0) token. needs the extra oauth scope calls.write (pass scopes to the plugin). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "calls.get",
+      "haystack": "calls.get twitter.api.calls.get returns a call's title, join policy, host and participant count, and whether the authenticated user may join it without asking the host. needs a user (oauth 2.0) token. needs the extra oauth scope calls.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "calls.join",
+      "haystack": "calls.join twitter.api.calls.join starts a media session that takes part in the call as the authenticated user. the response carries a media_url and a short-lived media_token: open a websocket to media_url with the token as a bearer credential to exchange pcm16 audio and events with the call; the user enters the call when the websocket connects. needs a user (oauth 2.0) token. needs the extra oauth scope calls.join (pass scopes to the plugin). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "calls.leave",
+      "haystack": "calls.leave twitter.api.calls.leave ends the authenticated user's media session in the call (its websocket receives session.ended with reason left) and removes the user from the call. needs a user (oauth 2.0) token. needs the extra oauth scope calls.join (pass scopes to the plugin). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "calls.scheduled.cancel",
+      "haystack": "calls.scheduled.cancel twitter.api.calls.scheduled.cancel cancels a scheduled call the authenticated user organizes, and takes it off invitees' calendars. for a recurring call, scope and occurrence_start_time pick the occurrences: all of them (the default), one, or one and every one after it. cancelling what is already cancelled succeeds. needs a user (oauth 2.0) token. needs the extra oauth scope calls.write (pass scopes to the plugin). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "calls.scheduled.create",
+      "haystack": "calls.scheduled.create twitter.api.calls.scheduled.create puts an x call on the authenticated user's x calls calendar, with them as its organizer, and invites people to it. the call exists right away: share its join_url, or put an agent in it at start time with post /2/calls/:id/join. a recurrence (an rfc 5545 rrule) repeats it. invitees get an email unless notify_invitees is false. invitees get an email unless notify_invitees is false. needs a user (oauth 2.0) token. needs the extra oauth scope calls.write (pass scopes to the plugin). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "calls.scheduled.get",
+      "haystack": "calls.scheduled.get twitter.api.calls.scheduled.get returns a scheduled call the authenticated user organizes or is invited to, at its occurrence running now or its next one within a year: its time, call, recurrence and who is invited and how they answered. changes can take a few seconds to show here. use scheduled_call.fields to select which fields are returned. needs a user (oauth 2.0) token. needs the extra oauth scope calls.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "calls.scheduled.list",
+      "haystack": "calls.scheduled.list twitter.api.calls.scheduled.list returns the x calls on the authenticated user's calendar, earliest first: events on their x calls calendar, and events on the microsoft outlook calendars they linked to x whose conference is an x call. calls still running at start_time are included. the window defaults to the next 24 hours and may span at most 7 days. use scheduled_call.fields to select which fields are returned. needs a user (oauth 2.0) token. needs the extra oauth scope calls.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "calls.scheduled.respond",
+      "haystack": "calls.scheduled.respond twitter.api.calls.scheduled.respond accepts, declines or tentatively accepts an invitation to a scheduled call for the authenticated user. for a recurring call, scope and occurrence_start_time pick the occurrences the answer is for: all of them (the default), one, or one and every one after it. needs a user (oauth 2.0) token. needs the extra oauth scope calls.write (pass scopes to the plugin). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "calls.scheduled.update",
+      "haystack": "calls.scheduled.update twitter.api.calls.scheduled.update moves, renames or re-invites a scheduled call the authenticated user organizes. only the fields sent change. for a recurring call, scope and occurrence_start_time pick the occurrences: all of them (the default), one, or one and every one after it. invitees get an email about the change unless notify_invitees is false. needs a user (oauth 2.0) token. needs the extra oauth scope calls.write (pass scopes to the plugin). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.conversations.addKeys",
+      "haystack": "chat.conversations.addkeys twitter.api.chat.conversations.addkeys adds (initializes or rotates) the encryption keys for a chat conversation. call this before sending messages in a new 1:1 conversation, and again with a newer key version to rotate the conversation key. for 1:1 conversations, provide the recipient's user id as the conversation id; the server constructs the canonical conversation id from the authenticated user and recipient. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.conversations.archive",
+      "haystack": "chat.conversations.archive twitter.api.chat.conversations.archive archives a chat conversation for the authenticated user only. archiving an archived conversation changes nothing. works for group and 1:1 conversations. for 1:1 conversations, provide the recipient's user id; the server constructs the canonical conversation id from the authenticated user and recipient. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.conversations.delete",
+      "haystack": "chat.conversations.delete twitter.api.chat.conversations.delete deletes a chat conversation for the authenticated user only; other participants keep it. works for group and 1:1 conversations. for 1:1 conversations, provide the recipient's user id; the server constructs the canonical conversation id from the authenticated user and recipient. deleting a pending message request's conversation deletes the request, like delete in the x app. needs a user (oauth 2.0) token. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.conversations.disableMessageTtl",
+      "haystack": "chat.conversations.disablemessagettl twitter.api.chat.conversations.disablemessagettl stops new messages in a 1:1 or group chat conversation from disappearing, for every participant. for 1:1 conversations, provide the recipient's user id; the server constructs the canonical conversation id from the authenticated user and recipient. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.conversations.enableMessageTtl",
+      "haystack": "chat.conversations.enablemessagettl twitter.api.chat.conversations.enablemessagettl sets how long new messages in a 1:1 or group chat conversation last before they disappear, for every participant. for 1:1 conversations, provide the recipient's user id; the server constructs the canonical conversation id from the authenticated user and recipient. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.conversations.get",
+      "haystack": "chat.conversations.get twitter.api.chat.conversations.get returns metadata for a chat conversation including type, muted status, group details, and your unread state. for the unread state, request chat_conversation.fields=unread,last_read_event_id,newest_event_id: those fields give your read state, computed from your latest read receipt and the conversation's latest notifying message. use chat_conversation.fields to select which fields are returned. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.conversations.list",
+      "haystack": "chat.conversations.list twitter.api.chat.conversations.list retrieves a list of chat conversations for the authenticated user's inbox, newest first: the most recently active conversation comes first. to find the chat with a particular person, start with participant_query set to their @username or name; with expansions=participant_ids, user.fields=receives_your_chat says how you can message each match. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.conversations.listEvents",
+      "haystack": "chat.conversations.listevents twitter.api.chat.conversations.listevents retrieves the events of a specific chat conversation, newest first, with pagination support: messages, key changes, group changes, and read receipts. events with an id above the conversation's last_read_event_id are unread: they come after the point you read up to. to collect them, page until an event's id is at or below it. only `id` and `encoded_event` are always present. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.conversations.listPinnedMessages",
+      "haystack": "chat.conversations.listpinnedmessages twitter.api.chat.conversations.listpinnedmessages retrieves the pinned message events of a chat conversation with pagination support. each event is a base64-encoded thrift pin event whose contents are end-to-end encrypted; decode and decrypt it client-side. for 1:1 conversations, provide the recipient's user id; the server constructs the canonical conversation id from the authenticated user and recipient. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.conversations.markRead",
+      "haystack": "chat.conversations.markread twitter.api.chat.conversations.markread marks a specific chat conversation as read on behalf of the authenticated user. for 1:1 conversations, provide the recipient's user id; the server constructs the canonical conversation id from the authenticated user and recipient. without action_signatures the conversation is marked read up to its newest event and the read receipt is unsigned. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.conversations.markUnread",
+      "haystack": "chat.conversations.markunread twitter.api.chat.conversations.markunread marks a specific chat conversation as unread on behalf of the authenticated user. for 1:1 conversations, provide the recipient's user id; the server constructs the canonical conversation id from the authenticated user and recipient. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.conversations.mute",
+      "haystack": "chat.conversations.mute twitter.api.chat.conversations.mute mutes notifications for a chat conversation for the authenticated user only. works for group and 1:1 conversations. for 1:1 conversations, provide the recipient's user id; the server constructs the canonical conversation id from the authenticated user and recipient. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.conversations.sendTyping",
+      "haystack": "chat.conversations.sendtyping twitter.api.chat.conversations.sendtyping sends a typing indicator to a specific chat conversation on behalf of the authenticated user. for 1:1 conversations, provide the recipient's user id; the server constructs the canonical conversation id from the authenticated user and recipient. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.conversations.unarchive",
+      "haystack": "chat.conversations.unarchive twitter.api.chat.conversations.unarchive unarchives a chat conversation for the authenticated user only. unarchiving a conversation that is not archived changes nothing. works for group and 1:1 conversations. for 1:1 conversations, provide the recipient's user id; the server constructs the canonical conversation id from the authenticated user and recipient. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.conversations.unmute",
+      "haystack": "chat.conversations.unmute twitter.api.chat.conversations.unmute unmutes notifications for a chat conversation for the authenticated user only. works for group and 1:1 conversations. for 1:1 conversations, provide the recipient's user id; the server constructs the canonical conversation id from the authenticated user and recipient. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.conversations.updateScreenCapture",
+      "haystack": "chat.conversations.updatescreencapture twitter.api.chat.conversations.updatescreencapture turns screenshot blocking or screenshot detection on or off in a chat conversation, for every participant. in a group conversation, only admins can change these settings. each request changes one setting: send either blocking or detection. for 1:1 conversations, provide the recipient's user id; the server constructs the canonical conversation id from the authenticated user and recipient. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.groups.adminRequests.approve",
+      "haystack": "chat.groups.adminrequests.approve twitter.api.chat.groups.adminrequests.approve makes the user who requested admin permissions an admin of an encrypted chat group conversation. only a group admin can approve. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.groups.adminRequests.create",
+      "haystack": "chat.groups.adminrequests.create twitter.api.chat.groups.adminrequests.create asks the admins of an encrypted chat group conversation to make the authenticated user an admin. an admin approves or rejects the request. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.groups.adminRequests.list",
+      "haystack": "chat.groups.adminrequests.list twitter.api.chat.groups.adminrequests.list returns the users who have asked to become admins of an encrypted chat group conversation. only a group admin can list admin requests. use user.fields to select which profile fields are returned. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.groups.adminRequests.reject",
+      "haystack": "chat.groups.adminrequests.reject twitter.api.chat.groups.adminrequests.reject declines a user's pending request for admin permissions in an encrypted chat group conversation. only a group admin can reject. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.groups.admins.add",
+      "haystack": "chat.groups.admins.add twitter.api.chat.groups.admins.add grants admin rights to one or more members of an existing encrypted chat group conversation. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.groups.admins.remove",
+      "haystack": "chat.groups.admins.remove twitter.api.chat.groups.admins.remove revokes admin rights from one or more admins of an existing encrypted chat group conversation. they stay members of the group. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.groups.create",
+      "haystack": "chat.groups.create twitter.api.chat.groups.create creates a new encrypted chat group conversation on behalf of the authenticated user. needs a user (oauth 2.0) token. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.groups.initialize",
+      "haystack": "chat.groups.initialize twitter.api.chat.groups.initialize initializes a new chat group conversation and returns a unique conversation id. use the returned conversation_id in a subsequent post /chat/conversations/group call to fully create and configure the group. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.groups.inviteLink.disable",
+      "haystack": "chat.groups.invitelink.disable twitter.api.chat.groups.invitelink.disable turns off the invite link for an encrypted chat group conversation. the existing link stops working. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.groups.inviteLink.enable",
+      "haystack": "chat.groups.invitelink.enable twitter.api.chat.groups.invitelink.enable turns on the invite link for an encrypted chat group conversation and returns the link details. the client builds the link and sends it as invite_url, in the form https://x.com/i/chat/group_join/<conversation_id>/<token>, where the token is exactly 10 letters, digits, '-' or '_'. invite_url is required when action_signatures is sent. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.groups.inviteLink.get",
+      "haystack": "chat.groups.invitelink.get twitter.api.chat.groups.invitelink.get returns the preview of an encrypted chat group conversation from its invite link: group name, avatar, member count, and the authenticated user's join state. the conversation id and the token both come from the invite link. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.groups.joinRequests.create",
+      "haystack": "chat.groups.joinrequests.create twitter.api.chat.groups.joinrequests.create asks to join an encrypted chat group conversation through its invite link. the request stays pending until a group admin adds the user to the group. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.groups.joinRequests.reject",
+      "haystack": "chat.groups.joinrequests.reject twitter.api.chat.groups.joinrequests.reject rejects pending requests to join an encrypted chat group conversation. only group admins can reject requests. to approve a request instead, add the requesting users with addchatgroupmembers; adding a user clears their pending request. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.groups.members.add",
+      "haystack": "chat.groups.members.add twitter.api.chat.groups.members.add adds one or more members to an existing encrypted chat group conversation, rotating the conversation key. adding a user who has a pending join request approves that request; approval needs the same key-rotation body as adding any member. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.groups.members.remove",
+      "haystack": "chat.groups.members.remove twitter.api.chat.groups.members.remove removes one or more members from an existing encrypted chat group conversation. to leave a group, pass your own user id. leaving does not delete the conversation for the caller. when the removal rotates the conversation key, send group_key_rotation_data and the action signatures for the removal and the key change, in that order. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.groups.update",
+      "haystack": "chat.groups.update twitter.api.chat.groups.update renames an encrypted chat group conversation, changes its avatar, or sets its description. the client encrypts each value with the conversation key and lists the values it changed in modified_fields. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.groups.updateAdminSettings",
+      "haystack": "chat.groups.updateadminsettings twitter.api.chat.groups.updateadminsettings sets which actions only admins can perform in an existing encrypted chat group conversation. a setting set to true restricts that action to admins, and false opens it to all members. setting `send_message` to true makes the group announcement-only. omitted settings keep their stored value. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.media.appendUpload",
+      "haystack": "chat.media.appendupload twitter.api.chat.media.appendupload appends media data to an xchat upload session. pass media as { base64: \"…\" }, { url } or a public url string (a bare string is a url, not base64); the plugin base64-encodes the bytes for x. up to 4 mb per segment. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.media.download",
+      "haystack": "chat.media.download twitter.api.chat.media.download downloads encrypted media bytes from an xchat conversation. the response body contains raw binary bytes. a media item too large to return in one response fails with a 413 problem of type `https://api.x.com/2/problems/response-too-large`, and a retry fails the same way. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.media.finalizeUpload",
+      "haystack": "chat.media.finalizeupload twitter.api.chat.media.finalizeupload finalizes an xchat media upload session. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.media.initializeUpload",
+      "haystack": "chat.media.initializeupload twitter.api.chat.media.initializeupload initializes an xchat media upload session. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.messageRequests.accept",
+      "haystack": "chat.messagerequests.accept twitter.api.chat.messagerequests.accept accepts the other user's pending message request in a 1:1 chat conversation, which moves to the authenticated user's inbox. without a pending request, including after a successful accept, the response is 404. replying to a request does not accept it. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.messageRequests.get",
+      "haystack": "chat.messagerequests.get twitter.api.chat.messagerequests.get retrieves the message request state of a 1:1 chat conversation and its newest message events. like opening the request in an x app, reading it marks the returned messages as delivered and updates the unread badge. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.messageRequests.list",
+      "haystack": "chat.messagerequests.list twitter.api.chat.messagerequests.list retrieves the authenticated user's pending chat message requests from one inbox. message contents are end-to-end encrypted unless the conversation is unencrypted. accepting or deleting requests between pages can skip or repeat requests, and a page can be empty while `next_token` is set. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.messages.delete",
+      "haystack": "chat.messages.delete twitter.api.chat.messages.delete deletes one or more messages from a chat conversation. for 1:1 conversations, provide the recipient's user id; the server constructs the canonical conversation id from the authenticated user and recipient. delete for all removes a message you sent (or, in groups you administer, any message) for every participant; delete for self removes any message only from your own view. needs a user (oauth 2.0) token. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.messages.send",
+      "haystack": "chat.messages.send twitter.api.chat.messages.send sends a message or reaction to a chat conversation, which you can find with `participant_query` on get chat conversations. send it end-to-end encrypted by default: `encoded_message_create_event`, built with the chat xdk. needs a user (oauth 2.0) token. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.settings.get",
+      "haystack": "chat.settings.get twitter.api.chat.settings.get returns the authenticated user's chat privacy settings: who can message them, read receipts, the message quality filter, and audio/video call permissions. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "chat.settings.update",
+      "haystack": "chat.settings.update twitter.api.chat.settings.update updates the authenticated user's chat privacy settings: who can message them, read receipts, the message quality filter, and audio/video call permissions. allow_dms_from, dm_receipt_settings, and dm_quality_filter accept only their listed values, matched exactly and case-sensitively; anything else is a 400. av_settings must set at least one of its settings. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "communities.get",
+      "haystack": "communities.get twitter.api.communities.get retrieves details of a specific community by its id. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "communities.search",
+      "haystack": "communities.search twitter.api.communities.search retrieves a list of communities matching the specified search query. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "communityNotes.create",
+      "haystack": "communitynotes.create twitter.api.communitynotes.create creates a community note on a post. with test_mode set to true, the note is only for testing and is not publicly visible. needs a user (oauth 2.0) token. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "communityNotes.delete",
+      "haystack": "communitynotes.delete twitter.api.communitynotes.delete deletes a community note. needs a user (oauth 2.0) token. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "communityNotes.evaluate",
+      "haystack": "communitynotes.evaluate twitter.api.communitynotes.evaluate evaluates the text of a proposed community note on a post and returns its claim-opinion score. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "communityNotes.searchEligiblePosts",
+      "haystack": "communitynotes.searcheligibleposts twitter.api.communitynotes.searcheligibleposts retrieves posts that are eligible for community notes. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "communityNotes.searchWritten",
+      "haystack": "communitynotes.searchwritten twitter.api.communitynotes.searchwritten retrieves the community notes written by the authenticated user. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "compliance.jobs.cancel",
+      "haystack": "compliance.jobs.cancel twitter.api.compliance.jobs.cancel cancels a compliance job that has not finished processing; its status becomes failed and a new job of the same type can be created. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "compliance.jobs.create",
+      "haystack": "compliance.jobs.create twitter.api.compliance.jobs.create creates a new compliance job for the specified job type. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "compliance.jobs.downloadResults",
+      "haystack": "compliance.jobs.downloadresults twitter.api.compliance.jobs.downloadresults downloads the results file of a completed compliance job using the signed url returned at job creation. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "compliance.jobs.get",
+      "haystack": "compliance.jobs.get twitter.api.compliance.jobs.get retrieves details of a specific compliance job by its id. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "compliance.jobs.list",
+      "haystack": "compliance.jobs.list twitter.api.compliance.jobs.list retrieves a list of compliance jobs filtered by job type and optional status. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "compliance.jobs.upload",
+      "haystack": "compliance.jobs.upload twitter.api.compliance.jobs.upload uploads the newline-delimited id file for a compliance job using the signed url returned at job creation. pass file as { base64 } or a url to a text file with one post or user id per line. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "connections.history",
+      "haystack": "connections.history twitter.api.connections.history returns active and historical streaming connections with disconnect reasons for the authenticated application. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "connections.terminateAll",
+      "haystack": "connections.terminateall twitter.api.connections.terminateall terminates all active streaming connections for the authenticated application. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "connections.terminateByEndpoint",
+      "haystack": "connections.terminatebyendpoint twitter.api.connections.terminatebyendpoint terminates all streaming connections for a specific endpoint id for the authenticated application. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "connections.terminateMany",
+      "haystack": "connections.terminatemany twitter.api.connections.terminatemany terminates multiple streaming connections by their uuids for the authenticated application. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "directMessages.conversations.create",
+      "haystack": "directmessages.conversations.create twitter.api.directmessages.conversations.create initiates a new direct message conversation with specified participants. billed by x: $0.015 per direct message. needs a user (oauth 2.0) token. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "directMessages.events.delete",
+      "haystack": "directmessages.events.delete twitter.api.directmessages.events.delete deletes a specific direct message event by its id, if owned by the authenticated user. needs a user (oauth 2.0) token. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "directMessages.events.get",
+      "haystack": "directmessages.events.get twitter.api.directmessages.events.get retrieves details of a specific direct message event by its id. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "directMessages.events.list",
+      "haystack": "directmessages.events.list twitter.api.directmessages.events.list retrieves a list of recent direct message events across all conversations. billed by x per dm event returned ($0.010 each). needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "directMessages.events.listByConversation",
+      "haystack": "directmessages.events.listbyconversation twitter.api.directmessages.events.listbyconversation retrieves direct message events for a specific conversation by its id. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "directMessages.events.listWithParticipant",
+      "haystack": "directmessages.events.listwithparticipant twitter.api.directmessages.events.listwithparticipant retrieves direct message events for the one-to-one conversation between the authenticated user and a specific participant. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "directMessages.media.download",
+      "haystack": "directmessages.media.download twitter.api.directmessages.media.download downloads media attached to a legacy direct message. the requesting user must be a participant in the conversation containing the specified dm event. the response body contains raw binary bytes. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "directMessages.sendToConversation",
+      "haystack": "directmessages.sendtoconversation twitter.api.directmessages.sendtoconversation sends a new direct message to a specific conversation by its id. billed by x: $0.015 per direct message. needs a user (oauth 2.0) token. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "directMessages.sendToParticipant",
+      "haystack": "directmessages.sendtoparticipant twitter.api.directmessages.sendtoparticipant sends a new direct message to a specific participant by their id. billed by x: $0.015 per direct message. needs a user (oauth 2.0) token. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "lists.create",
+      "haystack": "lists.create twitter.api.lists.create creates a new list for the authenticated user. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "lists.delete",
+      "haystack": "lists.delete twitter.api.lists.delete deletes a specific list owned by the authenticated user by its id. needs a user (oauth 2.0) token. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "lists.followers.list",
+      "haystack": "lists.followers.list twitter.api.lists.followers.list retrieves a list of users who follow a specific list by its id. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "lists.get",
+      "haystack": "lists.get twitter.api.lists.get retrieves details of a specific list by its id. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "lists.members.add",
+      "haystack": "lists.members.add twitter.api.lists.members.add adds a user to a specific list by its id. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "lists.members.list",
+      "haystack": "lists.members.list twitter.api.lists.members.list retrieves a list of users who are members of a specific list by its id. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "lists.members.remove",
+      "haystack": "lists.members.remove twitter.api.lists.members.remove removes a user from a list by their id. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "lists.posts.list",
+      "haystack": "lists.posts.list twitter.api.lists.posts.list retrieves a list of posts associated with a specific list by its id. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "lists.update",
+      "haystack": "lists.update twitter.api.lists.update updates the details of a specific list owned by the authenticated user by its id. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "media.amplify.addPost",
+      "haystack": "media.amplify.addpost twitter.api.media.amplify.addpost publishes one of the authenticated user's video posts into one or more active amplify pre-roll programs the user is enrolled in as a publisher. needs a user (oauth 2.0) token. needs the extra oauth scope media.library.write (pass scopes to the plugin). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "media.amplify.programs.get",
+      "haystack": "media.amplify.programs.get twitter.api.media.amplify.programs.get returns one amplify pre-roll program the authenticated user is enrolled in as a publisher. a program the user is not enrolled in is reported as not found. needs a user (oauth 2.0) token. needs the extra oauth scope media.library.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "media.amplify.programs.list",
+      "haystack": "media.amplify.programs.list twitter.api.media.amplify.programs.list returns the amplify pre-roll programs the authenticated user is enrolled in as a publisher. needs a user (oauth 2.0) token. needs the extra oauth scope media.library.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "media.amplify.programs.listPosts",
+      "haystack": "media.amplify.programs.listposts twitter.api.media.amplify.programs.listposts returns the posts published into an amplify pre-roll program the authenticated user is enrolled in as a publisher. needs a user (oauth 2.0) token. needs the extra oauth scope media.library.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "media.analytics",
+      "haystack": "media.analytics twitter.api.media.analytics retrieves analytics data for media. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "media.get",
+      "haystack": "media.get twitter.api.media.get retrieves details of a specific media file by its media key. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "media.getMany",
+      "haystack": "media.getmany twitter.api.media.getmany retrieves details of media files by their media keys. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "media.library.add",
+      "haystack": "media.library.add twitter.api.media.library.add adds previously uploaded media to the authenticated user's media library with its library metadata. the user must own the media. geo restrictions, content expiry, the preview image and the audience policy are set with the media metadata endpoint. needs a user (oauth 2.0) token. needs the extra oauth scope media.library.write (pass scopes to the plugin). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "media.library.listCategories",
+      "haystack": "media.library.listcategories twitter.api.media.library.listcategories returns the video categories a publisher can assign to a media library item and the advertiser categories whose ads can be blocked from running against it. needs a user (oauth 2.0) token. needs the extra oauth scope media.library.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "media.library.remove",
+      "haystack": "media.library.remove twitter.api.media.library.remove removes an item from the authenticated user's media library. posts scheduled through the api that have not yet been published and still use the media are cancelled. published posts and the underlying media are not affected. needs a user (oauth 2.0) token. needs the extra oauth scope media.library.write (pass scopes to the plugin). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "media.library.update",
+      "haystack": "media.library.update twitter.api.media.library.update updates the library metadata of an item in the authenticated user's media library. only the fields sent are changed; the others keep their values. geo restrictions, content expiry, the preview image and the audience policy are set with the media metadata endpoint. needs a user (oauth 2.0) token. needs the extra oauth scope media.library.write (pass scopes to the plugin). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "media.metadata.create",
+      "haystack": "media.metadata.create twitter.api.media.metadata.create creates metadata for a media file. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "media.subtitles.create",
+      "haystack": "media.subtitles.create twitter.api.media.subtitles.create creates subtitles for a specific media file. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "media.subtitles.delete",
+      "haystack": "media.subtitles.delete twitter.api.media.subtitles.delete deletes subtitles for a specific media file. needs a user (oauth 2.0) token. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "media.upload.append",
+      "haystack": "media.upload.append twitter.api.media.upload.append appends one segment of the file to a chunked upload. send the segment base64-encoded in media (raw bytes in multipart bodies) and its position in the file in segment_index, counting from 0. a segment can be up to 8 mb; in a json body keep it to 4 mb or less, because base64 adds a third. after the last segment, call finalize media upload. pass media as { base64: \"…\" }, { url } or a public url string (a bare string is a url, not base64); the plugin base64-encodes the bytes for x. up to 4 mb per segment. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "media.upload.finalize",
+      "haystack": "media.upload.finalize twitter.api.media.upload.finalize completes a chunked upload once every segment is appended. for video the result carries processing_info: the media can go on a post only when its state is succeeded, so call get media upload status until it is. a result without processing_info is ready to use. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "media.upload.getStatus",
+      "haystack": "media.upload.getstatus twitter.api.media.upload.getstatus returns how far x has processed an uploaded media file, in processing_info.state: pending, in_progress, succeeded or failed. call it after finalize media upload returns processing_info, waiting check_after_secs between calls, until the state is succeeded. a failed state means the media can't be used. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "media.upload.initialize",
+      "haystack": "media.upload.initialize twitter.api.media.upload.initialize starts a chunked media upload and returns its id. use it for video and for other files too large for one request. for a video on a post, set media_category to tweet_video, media_type to the file's type (for example video/mp4) and total_bytes to the file's size. send the file with append media upload, call finalize media upload, then pass the id in media.media_ids on create or edit post. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "media.upload.single",
+      "haystack": "media.upload.single twitter.api.media.upload.single uploads a media file in one request and returns its id. send the file base64-encoded in media (raw bytes in multipart bodies). for a post, set media_category to tweet_image (jpg, png, gif or webp, up to 5 mb) or tweet_gif, then pass the returned id in media.media_ids on create or edit post. dm media uses dm_image or dm_gif. for video, use initialize media upload. pass media as { base64: \"…\" }, { url } or a public url string (a bare string is a url, not base64); the plugin base64-encodes the bytes for x. up to 15 mb here; use the chunked upload (initialize, append, finalize) for video. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "news.get",
+      "haystack": "news.get twitter.api.news.get retrieves news story by its id. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "news.search",
+      "haystack": "news.search twitter.api.news.search retrieves a list of news stories matching the specified search query. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.analytics",
+      "haystack": "posts.analytics twitter.api.posts.analytics retrieves analytics data for specified posts within a defined time range. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.counts.all",
+      "haystack": "posts.counts.all twitter.api.posts.counts.all retrieves the count of posts matching a search query from the full archive. at most one of `pagination_token`, `next_token` may be provided. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.counts.recent",
+      "haystack": "posts.counts.recent twitter.api.posts.counts.recent retrieves the count of posts from the last 7 days matching a search query. at most one of `pagination_token`, `next_token` may be provided. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.create",
+      "haystack": "posts.create twitter.api.posts.create creates a new post for the authenticated user, or edits an existing post when edit_options are provided. media in media.media_ids is attached in the order given; get the ids by uploading each image with upload media, or a video with initialize media upload. supports paid partnership disclosure via the paid_partnership field. billed by x: $0.015 per post, $0.20 for a post that contains a url. quote posts (quote_tweet_id): x removed this from the self-serve pay-per-use tiers on 2026-04-20, so it may answer 403 unless the app has an enterprise or legacy tier. needs a user (oauth 2.0) token. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.delete",
+      "haystack": "posts.delete twitter.api.posts.delete deletes a specific post by its id, if owned by the authenticated user. needs a user (oauth 2.0) token. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.drafts.create",
+      "haystack": "posts.drafts.create twitter.api.posts.drafts.create saves a post draft to the authenticated user's x account without publishing it. takes the body of create or edit post, of which a draft stores text, media with tagged users, a reply and the ai and paid partnership disclosures. any other field that is set is a 400 that names it. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.drafts.delete",
+      "haystack": "posts.drafts.delete twitter.api.posts.drafts.delete deletes one of the authenticated user's post drafts by its id. the whole draft is deleted, including any part get post drafts does not list, and cannot be restored. an id that is not one of the user's drafts also returns deleted: true. needs a user (oauth 2.0) token. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.drafts.list",
+      "haystack": "posts.drafts.list twitter.api.posts.drafts.list returns the authenticated user's post drafts, newest first, in the fields of the create or edit post body. thread holds the posts after the first. a draft with unsupported_content is not listed in full: do not publish it from this list or delete it unless the user asks. needs the tweet.write scope. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.get",
+      "haystack": "posts.get twitter.api.posts.get retrieves details of a specific post by its id. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.getMany",
+      "haystack": "posts.getmany twitter.api.posts.getmany retrieves details of multiple posts by their ids. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.hideReply",
+      "haystack": "posts.hidereply twitter.api.posts.hidereply hides or unhides a reply to a conversation owned by the authenticated user. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.likingUsers",
+      "haystack": "posts.likingusers twitter.api.posts.likingusers retrieves a list of users who liked a specific post by its id. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.quotes",
+      "haystack": "posts.quotes twitter.api.posts.quotes retrieves a list of posts that quote a specific post by its id. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.repostedBy",
+      "haystack": "posts.repostedby twitter.api.posts.repostedby retrieves a list of users who reposted a specific post by its id. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.reposts",
+      "haystack": "posts.reposts twitter.api.posts.reposts retrieves a list of posts that repost a specific post by its id. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.search.all",
+      "haystack": "posts.search.all twitter.api.posts.search.all retrieves posts from the full archive matching a search query. at most one of `start_time`, `since_id` may be provided. at most one of `end_time`, `until_id` may be provided. at most one of `pagination_token`, `next_token` may be provided. billed by x per post returned ($0.005 each); keep max_results low. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.search.recent",
+      "haystack": "posts.search.recent twitter.api.posts.search.recent retrieves posts from the last 7 days matching a search query. at most one of `start_time`, `since_id` may be provided. at most one of `end_time`, `until_id` may be provided. at most one of `pagination_token`, `next_token` may be provided. billed by x per post returned ($0.005 each); keep max_results low. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.streamLinks.create",
+      "haystack": "posts.streamlinks.create twitter.api.posts.streamlinks.create creates a link to deliver filteredstream events to the given webhook. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.streamLinks.delete",
+      "haystack": "posts.streamlinks.delete twitter.api.posts.streamlinks.delete deletes the link delivering filteredstream events to the given webhook. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.streamLinks.list",
+      "haystack": "posts.streamlinks.list twitter.api.posts.streamlinks.list get a list of webhook links associated with a filtered stream ruleset. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.streamRules.counts",
+      "haystack": "posts.streamrules.counts twitter.api.posts.streamrules.counts retrieves the count of rules in the active rule set for the filtered stream. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.streamRules.list",
+      "haystack": "posts.streamrules.list twitter.api.posts.streamrules.list returns the active filtered-stream rules for the authenticated app. provide `ids` to fetch specific rules; omit it to list all rules. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "posts.streamRules.update",
+      "haystack": "posts.streamrules.update twitter.api.posts.streamrules.update adds or deletes rules from the active rule set for the filtered stream. exactly one of `add`, `delete`, or `?delete_all=true` must be specified. use `?dry_run=true` to validate without committing. send exactly one of add, delete or delete_all: true; dry_run checks the change without applying it. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "sources.create",
+      "haystack": "sources.create twitter.api.sources.create creates a persistent rtmp/rtmps ingest point for the authenticated user. push an encoder to `rtmps_url` with the returned `stream_key`. this is the only response that includes the stream key; read it later with get /2/sources/:id/stream_key. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "sources.delete",
+      "haystack": "sources.delete twitter.api.sources.delete deletes one of the authenticated user's stream sources. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "sources.get",
+      "haystack": "sources.get twitter.api.sources.get returns one of the authenticated user's stream sources. poll it after starting an encoder and wait for `is_stream_active` before going live. the stream key is not included; read it with get /2/sources/:id/stream_key. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "sources.getIngestRegion",
+      "haystack": "sources.getingestregion twitter.api.sources.getingestregion returns the ingest region nearest the server handling the request. pass it as `region` when creating a stream source to ingest there. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "sources.getStreamKey",
+      "haystack": "sources.getstreamkey twitter.api.sources.getstreamkey returns the stream key of one of the authenticated user's stream sources. the stream key is a credential: anyone with it can stream to the source, so keep it out of logs, urls and client-side code. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "sources.list",
+      "haystack": "sources.list twitter.api.sources.list returns the authenticated user's rtmp/rtmps stream sources. a source's `id` is the `source_id` that post /2/broadcasts and scheduled broadcasts take. stream keys are not included; read one with get /2/sources/:id/stream_key. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "sources.rename",
+      "haystack": "sources.rename twitter.api.sources.rename renames one of the authenticated user's stream sources. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "spaces.get",
+      "haystack": "spaces.get twitter.api.spaces.get retrieves details of a specific space by its id. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "spaces.getByCreators",
+      "haystack": "spaces.getbycreators twitter.api.spaces.getbycreators retrieves details of spaces created by specified user ids. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "spaces.getMany",
+      "haystack": "spaces.getmany twitter.api.spaces.getmany retrieves details of multiple spaces by their ids. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "spaces.listBuyers",
+      "haystack": "spaces.listbuyers twitter.api.spaces.listbuyers retrieves a list of users who purchased tickets to a specific space by its id. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "spaces.listPosts",
+      "haystack": "spaces.listposts twitter.api.spaces.listposts retrieves a list of posts shared in a specific space by its id. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "spaces.search",
+      "haystack": "spaces.search twitter.api.spaces.search retrieves a list of spaces matching the specified search query. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "trends.byWoeid",
+      "haystack": "trends.bywoeid twitter.api.trends.bywoeid retrieves trending topics for a specific location identified by its woeid. `meta.location` describes that location: its `woeid` and `name`, and when they are known its `country`, `country_code`, `place_type` (`town`, `country` or `supername`) and `parent_id`, the woeid of the place that contains it. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "trends.locations",
+      "haystack": "trends.locations twitter.api.trends.locations retrieves every location that has trends. each location has a woeid to pass to `get /2/trends/by/woeid/{woeid}`. the list is short and is returned whole, so the route takes no paging parameters. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "trends.personalized",
+      "haystack": "trends.personalized twitter.api.trends.personalized retrieves personalized trending topics for the authenticated user. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
       "shortPath": "tweets.create",
-      "haystack": "tweets.create twitter.api.tweets.create post a new tweet write"
+      "haystack": "tweets.create twitter.api.tweets.create publish a post on x as the connected user (camelcase inputs; posts.create takes x's own fields). billed by x: $0.015 per post, $0.20 for a post that contains a url. destructive"
     },
     {
       "pluginId": "twitter",
       "kind": "api",
       "shortPath": "tweets.createReply",
-      "haystack": "tweets.createreply twitter.api.tweets.createreply post a reply to an existing tweet write"
+      "haystack": "tweets.createreply twitter.api.tweets.createreply reply to a post on x as the connected user. billed by x: $0.015 per post, $0.20 for a post that contains a url. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "usage.credits",
+      "haystack": "usage.credits twitter.api.usage.credits returns the payer's developer-platform credit balance in usd. total_balance is max(0, prepaid_balance + free_balance); prepaid_balance may be negative. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "usage.get",
+      "haystack": "usage.get twitter.api.usage.get retrieves usage statistics for posts over a specified number of days. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.affiliates",
+      "haystack": "users.affiliates twitter.api.users.affiliates retrieves a list of users who are affiliated with a specific organization user by their id. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.blockDms",
+      "haystack": "users.blockdms twitter.api.users.blockdms blocks direct messages to or from a specific user by their id for the authenticated user. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.blocking.block",
+      "haystack": "users.blocking.block twitter.api.users.blocking.block causes the source user to block the target user. a block also removes any follow between the two users, in both directions, and unblocking does not restore it. each call blocks one account: block only accounts the authenticated user named or approved, because finding or reviewing accounts is not approval to block them. needs a user (oauth 2.0) token. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.blocking.list",
+      "haystack": "users.blocking.list twitter.api.users.blocking.list returns the users that the given user is blocking. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.blocking.unblock",
+      "haystack": "users.blocking.unblock twitter.api.users.blocking.unblock causes the source user to unblock the target user. unblocking does not restore any follow the block removed, so blocking and then unblocking a follower removes them as a follower: do that only for followers the authenticated user approved removing. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.bookmarks.create",
+      "haystack": "users.bookmarks.create twitter.api.users.bookmarks.create adds one or more posts to the authenticated user's bookmarks. supply `tweet_id` for a single post, or `tweet_ids` (at most 25) to bookmark several in one request. optional `folder_id` applies to every post in the request. billing and rate limits still apply per http request. send tweet_id or tweet_ids, not both. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.bookmarks.delete",
+      "haystack": "users.bookmarks.delete twitter.api.users.bookmarks.delete removes a post from the authenticated user's bookmarks by its id. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.bookmarks.folders.create",
+      "haystack": "users.bookmarks.folders.create twitter.api.users.bookmarks.folders.create creates a new bookmark folder for the authenticated user. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.bookmarks.folders.list",
+      "haystack": "users.bookmarks.folders.list twitter.api.users.bookmarks.folders.list retrieves a list of bookmark folders created by the authenticated user. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.bookmarks.folders.listPosts",
+      "haystack": "users.bookmarks.folders.listposts twitter.api.users.bookmarks.folders.listposts retrieves posts in a specific bookmark folder by its id for the authenticated user. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.bookmarks.list",
+      "haystack": "users.bookmarks.list twitter.api.users.bookmarks.list retrieves a list of posts bookmarked by the authenticated user. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.broadcasts.create",
+      "haystack": "users.broadcasts.create twitter.api.users.broadcasts.create creates a broadcast on one of the authenticated user's sources. `id` must be the authenticated user. the broadcast is `not_started` and posts nothing until it is published with put /2/users/:id/broadcasts/:broadcast_id/state; one that is never published is deleted after 7 days. when the source already has a running broadcast, that broadcast is returned. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.broadcasts.delete",
+      "haystack": "users.broadcasts.delete twitter.api.users.broadcasts.delete deletes one of the authenticated user's broadcasts. `id` must be the authenticated user. deprecated: use delete /2/broadcasts/:id. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.broadcasts.get",
+      "haystack": "users.broadcasts.get twitter.api.users.broadcasts.get returns one of the authenticated user's broadcasts. `id` must be the authenticated user. deprecated: use get /2/broadcasts/:id. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.broadcasts.list",
+      "haystack": "users.broadcasts.list twitter.api.users.broadcasts.list returns the authenticated user's broadcasts, 100 per page. `id` must be the authenticated user. deprecated: use get /2/broadcasts. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.broadcasts.updateState",
+      "haystack": "users.broadcasts.updatestate twitter.api.users.broadcasts.updatestate publishes or ends one of the authenticated user's broadcasts. `id` must be the authenticated user. `publish` takes a broadcast created with post /2/users/:id/broadcasts live once its source is receiving video, and posts it unless `should_not_tweet` is true. `end` ends the broadcast. deprecated: use put /2/broadcasts/:id/state to end a broadcast. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.followedLists.follow",
+      "haystack": "users.followedlists.follow twitter.api.users.followedlists.follow causes the authenticated user to follow a specific list by its id. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.followedLists.list",
+      "haystack": "users.followedlists.list twitter.api.users.followedlists.list retrieves a list of lists followed by a specific user by their id. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.followedLists.unfollow",
+      "haystack": "users.followedlists.unfollow twitter.api.users.followedlists.unfollow causes the authenticated user to unfollow a list by its id. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.followers",
+      "haystack": "users.followers twitter.api.users.followers retrieves a list of users who follow a specific user by their id. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.following.follow",
+      "haystack": "users.following.follow twitter.api.users.following.follow causes the authenticated user to follow a specific user by their id. x removed this from the self-serve pay-per-use tiers on 2026-04-20, so it may answer 403 unless the app has an enterprise or legacy tier. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.following.list",
+      "haystack": "users.following.list twitter.api.users.following.list retrieves a list of users followed by a specific user by their id. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.following.unfollow",
+      "haystack": "users.following.unfollow twitter.api.users.following.unfollow causes the authenticated user to unfollow a specific user by their id. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.get",
+      "haystack": "users.get twitter.api.users.get retrieves details of a specific user by their id. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.getByUsername",
+      "haystack": "users.getbyusername twitter.api.users.getbyusername retrieves details of a specific user by their username. billed by x as one user read ($0.010). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.getMany",
+      "haystack": "users.getmany twitter.api.users.getmany retrieves details of multiple users by their ids. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.getManyByUsernames",
+      "haystack": "users.getmanybyusernames twitter.api.users.getmanybyusernames retrieves details of multiple users by their usernames. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.likes.like",
+      "haystack": "users.likes.like twitter.api.users.likes.like causes the authenticated user to like a specific post by its id. x removed this from the self-serve pay-per-use tiers on 2026-04-20, so it may answer 403 unless the app has an enterprise or legacy tier. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.likes.list",
+      "haystack": "users.likes.list twitter.api.users.likes.list retrieves a list of posts liked by a specific user by their id. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.likes.unlike",
+      "haystack": "users.likes.unlike twitter.api.users.likes.unlike causes the authenticated user to unlike a specific post by its id. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.listMemberships",
+      "haystack": "users.listmemberships twitter.api.users.listmemberships retrieves a list of lists that a specific user is a member of by their id. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.me",
+      "haystack": "users.me twitter.api.users.me get the user the access token belongs to (id, name, username). billed by x as one user read ($0.010). needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.mentions",
+      "haystack": "users.mentions twitter.api.users.mentions retrieves a list of posts that mention a specific user by their id. when both are provided, `start_time` must be earlier than `end_time`. when both are provided, `since_id` must be less than `until_id`. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.muting.list",
+      "haystack": "users.muting.list twitter.api.users.muting.list retrieves a list of users muted by the authenticated user. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.muting.mute",
+      "haystack": "users.muting.mute twitter.api.users.muting.mute causes the authenticated user to mute a specific user by their id. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.muting.unmute",
+      "haystack": "users.muting.unmute twitter.api.users.muting.unmute causes the authenticated user to unmute the target user. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.myFollowers",
+      "haystack": "users.myfollowers twitter.api.users.myfollowers returns the users who follow the authenticated user. same results as `get /2/users/{id}/followers` with your own user id, without looking it up. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.myFollowing",
+      "haystack": "users.myfollowing twitter.api.users.myfollowing returns the users the authenticated user follows. same results as `get /2/users/{id}/following` with your own user id, without looking it up. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.ownedLists",
+      "haystack": "users.ownedlists twitter.api.users.ownedlists retrieves a list of lists owned by a specific user by their id. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.pinnedLists.list",
+      "haystack": "users.pinnedlists.list twitter.api.users.pinnedlists.list retrieves a list of lists pinned by the authenticated user. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.pinnedLists.pin",
+      "haystack": "users.pinnedlists.pin twitter.api.users.pinnedlists.pin causes the authenticated user to pin a specific list by its id. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.pinnedLists.unpin",
+      "haystack": "users.pinnedlists.unpin twitter.api.users.pinnedlists.unpin causes the authenticated user to unpin a list by its id. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.posts",
+      "haystack": "users.posts twitter.api.users.posts retrieves a list of posts authored by a specific user by their id. when both are provided, `start_time` must be earlier than `end_time`. when both are provided, `since_id` must be less than `until_id`. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.publicKeys.add",
+      "haystack": "users.publickeys.add twitter.api.users.publickeys.add registers a user's public key for x chat encryption. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.publicKeys.get",
+      "haystack": "users.publickeys.get twitter.api.users.publickeys.get returns a user's registered public keys for x chat encryption. every key field is returned by default, so public_key.fields can be left out. it takes public_key, signing_public_key, identity_public_key_signature, public_key_version and juicebox_config. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.publicKeys.getMany",
+      "haystack": "users.publickeys.getmany twitter.api.users.publickeys.getmany returns the public keys that up to 100 users registered for x chat encryption, looked up by numeric user id. each key carries the user_id of the user it belongs to. every key field is returned by default, so public_key.fields can be left out. it takes public_key, signing_public_key, identity_public_key_signature, public_key_version, juicebox_config and user_id. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.reposts.create",
+      "haystack": "users.reposts.create twitter.api.users.reposts.create causes the authenticated user to repost a specific post by its id. billed by x: $0.015 per post, $0.20 for a post that contains a url. needs a user (oauth 2.0) token. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.reposts.delete",
+      "haystack": "users.reposts.delete twitter.api.users.reposts.delete causes the authenticated user to unrepost a specific post by its id. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.repostsOfMe",
+      "haystack": "users.repostsofme twitter.api.users.repostsofme retrieves a list of posts that repost content from the authenticated user. needs a user (oauth 2.0) token. needs the extra oauth scope timeline.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.search",
+      "haystack": "users.search twitter.api.users.search retrieves a list of users matching a search query. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.sources.create",
+      "haystack": "users.sources.create twitter.api.users.sources.create creates a persistent rtmp/rtmps ingest point for the authenticated user. `id` must be the authenticated user. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.sources.delete",
+      "haystack": "users.sources.delete twitter.api.users.sources.delete deletes one of the authenticated user's stream sources. `id` must be the authenticated user. success is an empty object. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.sources.get",
+      "haystack": "users.sources.get twitter.api.users.sources.get returns one of the authenticated user's stream sources. `id` must be the authenticated user. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.sources.list",
+      "haystack": "users.sources.list twitter.api.users.sources.list returns the authenticated user's rtmp/rtmps stream sources (empty array if none). `id` must be the authenticated user. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read (pass scopes to the plugin). read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.sources.rename",
+      "haystack": "users.sources.rename twitter.api.users.sources.rename renames one of the authenticated user's stream sources. `id` must be the authenticated user. needs a user (oauth 2.0) token. needs the extra oauth scope broadcast.read, broadcast.write (pass scopes to the plugin). write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.timeline",
+      "haystack": "users.timeline twitter.api.users.timeline retrieves a reverse chronological list of posts in the authenticated user's timeline. when both are provided, `start_time` must be earlier than `end_time`. when both are provided, `since_id` must be less than `until_id`. needs a user (oauth 2.0) token. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "users.unblockDms",
+      "haystack": "users.unblockdms twitter.api.users.unblockdms unblocks direct messages to or from a specific user by their id for the authenticated user. needs a user (oauth 2.0) token. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create twitter.api.webhooks.create creates a new webhook configuration. write"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete twitter.api.webhooks.delete deletes an existing webhook configuration. destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list twitter.api.webhooks.list get a list of webhook configs associated with a client app. read"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "webhooks.replay",
+      "haystack": "webhooks.replay twitter.api.webhooks.replay creates a replay job to retrieve events from up to the past 24 hours for all events delivered or attempted to be delivered to the webhook. needs app-only auth: x accepts only the app's bearer token here (connect with authtype 'api_key'). destructive"
+    },
+    {
+      "pluginId": "twitter",
+      "kind": "api",
+      "shortPath": "webhooks.validate",
+      "haystack": "webhooks.validate twitter.api.webhooks.validate triggers a crc check for a given webhook. write"
     },
     {
       "pluginId": "twitterapiio",

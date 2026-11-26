@@ -712,7 +712,7 @@
     {
       "path": "gmail.api.messages.getAttachment",
       "shortPath": "messages.getAttachment",
-      "description": "Fetch an attachment of a message by partId (from messages.get, format full) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId",
+      "description": "Fetch an attachment of a message by partId (shown in messages.get with format full, or in a database search of messages fetched with format full) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -731,7 +731,7 @@
             "key": "partId",
             "optional": true,
             "type": "string",
-            "description": "partId of a part from messages.get with format full, e.g. \"1.2\". Give partId or attachmentId"
+            "description": "partId of an attachment part, e.g. \"1.2\"; shown in messages.get with format full, or in a database search of messages fetched with format full. Give partId or attachmentId"
           },
           {
             "key": "attachmentId",
@@ -792,7 +792,7 @@
     {
       "path": "gmail.api.messages.list",
       "shortPath": "messages.list",
-      "description": "Returns only id and threadId per message, no subject or body. Use messages.get to read one",
+      "description": "Search messages with structured fields (keywords, from, to, subject, after, before, hasAttachment, label, in, isUnread, ...) or a raw q; no Gmail syntax needed. Returns only id and threadId per message, no subject or body. Use messages.get to read one",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -806,7 +806,115 @@
             "key": "q",
             "optional": true,
             "type": "string",
-            "description": "Same syntax as the Gmail search box, e.g. \"from:alice newer_than:7d\" or \"after:2025/01/31 has:attachment\"."
+            "description": "Same syntax as the Gmail search box, e.g. \"from:alice newer_than:7d\" or \"after:2025/01/31 has:attachment\". Optional: prefer the structured fields below; when both are given, a message must match both."
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "string[]",
+            "description": "Words that must all appear in the message (AND logic)"
+          },
+          {
+            "key": "exactPhrase",
+            "optional": true,
+            "type": "string",
+            "description": "Exact phrase that must appear in the message"
+          },
+          {
+            "key": "anyOf",
+            "optional": true,
+            "type": "string[]",
+            "description": "At least one of these words must appear (OR logic, minimum 2 items)"
+          },
+          {
+            "key": "exclude",
+            "optional": true,
+            "type": "string[]",
+            "description": "Words that must not appear in the message"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string",
+            "description": "Words that must appear in the subject line"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string[]",
+            "description": "Sender: email address or name; several match any of them"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string[]",
+            "description": "Recipient in the To field: email address or name; several match any of them"
+          },
+          {
+            "key": "cc",
+            "optional": true,
+            "type": "string[]",
+            "description": "Recipient in the Cc field: email address or name; several match any of them"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Only messages sent on or after this date (YYYY-MM-DD)"
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Only messages sent before this date (YYYY-MM-DD)"
+          },
+          {
+            "key": "hasAttachment",
+            "optional": true,
+            "type": "boolean",
+            "description": "true: only messages with an attachment"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "Attachment file name or type, e.g. \"report.pdf\" or \"pdf\""
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string",
+            "description": "Label name (not id), e.g. \"work\". Spaces in a name are written as hyphens."
+          },
+          {
+            "key": "in",
+            "optional": true,
+            "type": "inbox | sent | drafts | trash | spam | snoozed | anywhere",
+            "description": "Mailbox location; \"anywhere\" also searches spam and trash"
+          },
+          {
+            "key": "isUnread",
+            "optional": true,
+            "type": "boolean",
+            "description": "true: only unread messages; false: only read messages"
+          },
+          {
+            "key": "isStarred",
+            "optional": true,
+            "type": "boolean",
+            "description": "true: only starred messages; false: only unstarred ones"
+          },
+          {
+            "key": "larger",
+            "optional": true,
+            "type": "number | string",
+            "description": "Bytes, or a number with a K, M or G suffix such as \"5M\""
+          },
+          {
+            "key": "smaller",
+            "optional": true,
+            "type": "number | string",
+            "description": "Bytes, or a number with a K, M or G suffix such as \"5M\""
           },
           {
             "key": "maxResults",

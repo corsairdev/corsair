@@ -112,9 +112,9 @@ const ADD: {
 	{
 		client: 'Claude',
 		steps: [
-			'Open Customize, then Connectors, then Add custom connector.',
-			'Name it Corsair and paste your URL, such as https://yourname.lug.dev/work. Leave the advanced OAuth fields empty.',
-			'Claude sends you to Corsair to sign in and allow that one path.',
+			'Open Plugins, select Add, then Add custom connector.',
+			'Name it Corsair, paste your URL, such as https://yourname.lug.dev/work, and select Continue.',
+			'Keep the settings Claude detects and select Add. Claude sends you to Corsair to sign in and allow that one path.',
 		],
 		note: 'On a Team or Enterprise plan, an owner adds connectors under Organization settings.',
 	},
@@ -203,7 +203,7 @@ const FAQ: FaqItem[] = [
 	},
 	{
 		q: 'How do I add my MCP URL to Claude?',
-		a: 'In Claude, open Customize, then Connectors, then Add custom connector. Name it Corsair, paste your URL, such as https://yourname.lug.dev/work, and leave the advanced OAuth fields empty. Claude sends you to Corsair to sign in and allow that one path; there is no API key to paste. Cursor, ChatGPT, Codex and the rest take the same URL in their own MCP settings, and ChatGPT and Cursor can also install Corsair from their directories.',
+		a: 'In Claude, open Plugins, select Add, then Add custom connector. Name it Corsair, paste your URL, such as https://yourname.lug.dev/work, select Continue, keep the settings Claude detects and select Add. Claude sends you to Corsair to sign in and allow that one path; there is no API key to paste. Cursor, ChatGPT, Codex and the rest take the same URL in their own MCP settings, and ChatGPT and Cursor can also install Corsair from their directories.',
 	},
 	{
 		q: 'Is it safe to connect my Gmail and Slack to Corsair?',
