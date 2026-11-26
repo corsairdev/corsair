@@ -3,8 +3,10 @@
  * (`api.test.ts`), and so does the PR gate; run it with
  * `pnpm --filter @corsair-dev/listclean test:live`.
  *
- * Read-only: it never starts a batch, downloads results or deletes a list.
- * verify.verifyEmail spends one credit; the other calls are free. Every
+ * By default it only reads: verify.verifyEmail spends one credit, the other
+ * calls are free. With LISTCLEAN_LIVE_BILLED=1 it also runs one batch of two
+ * example.com addresses (two credits), polls it, downloads both result
+ * formats and deletes the list it made. It never updates the profile. Every
  * answer is parsed through its output schema, so a field the real API sends
  * differently than typed fails here rather than in production.
  */
@@ -14,6 +16,13 @@ import { listclean } from './index';
 
 const API_KEY = process.env.LISTCLEAN_API_KEY;
 const describeIfKey = API_KEY ? describe : describe.skip;
+if (!API_KEY) {
+	console.warn(
+		'Skipping the Listclean live suite: set LISTCLEAN_API_KEY to run it.',
+	);
+}
+const BILLED = process.env.LISTCLEAN_LIVE_BILLED === '1';
+const itIfBilled = API_KEY && BILLED ? it : it.skip;
 
 const KEK = process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef';
 
@@ -97,4 +106,54 @@ describeIfKey('Listclean live smoke', () => {
 			testDb.cleanup();
 		}
 	});
+	it('lists the chunked uploads', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			const result = await corsair.listclean.api.uploads.listUploads({});
+			expect(Array.isArray(result)).toBe(true);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('reads the account profile', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			const result = await corsair.listclean.api.account.getProfile({});
+			expect(typeof result).toBe('object');
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	itIfBilled(
+		'runs a two-address batch, downloads both formats and deletes the list',
+		async () => {
+			const { corsair, testDb } = await createClient();
+			try {
+				const api = corsair.listclean.api;
+				const { list_id } = await api.verify.startBatchVerification({
+					emails: ['corsair-test-1@example.com', 'corsair-test-2@example.com'],
+					filename: 'corsair-plugin-test.csv',
+				});
+				let status: string | null | undefined;
+				for (let poll = 0; poll < 30 && status !== 'COMPLETED'; poll++) {
+					await new Promise((done) => setTimeout(done, 5_000));
+					status = (await api.lists.getList({ list_id })).list.status;
+				}
+				expect(status).toBe('COMPLETED');
+				for (const type of ['clean', 'dirty', 'unknown'] as const) {
+					const rows = await api.lists.getListResults({ list_id, type });
+					expect(Array.isArray(rows)).toBe(true);
+					const { csv } = await api.lists.getListResultsCsv({ list_id, type });
+					expect(typeof csv).toBe('string');
+				}
+				const deleted = await api.lists.delete({ list_id });
+				expect(typeof deleted.message).toBe('string');
+			} finally {
+				testDb.cleanup();
+			}
+		},
+		240_000,
+	);
 });
