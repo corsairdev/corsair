@@ -300,6 +300,17 @@ def test_bodyless_error_uses_the_request_id_header(cloud):
     )
 
 
+def test_runtime_refusal_keeps_the_trace_id(cloud):
+    cloud.routes[("GET", f"{BILLING}/tenants")] = (
+        404,
+        {"code": "not_found", "hop": "internal", "message": "no route"},
+        {"X-Corsair-Trace-Id": "trace_1"},
+    )
+    with pytest.raises(CorsairError) as exc_info:
+        client().with_instance("billing").tenants()
+    assert (exc_info.value.code, exc_info.value.request_id) == ("not_found", "trace_1")
+
+
 def test_rejects_non_https_url():
     with pytest.raises(ValueError, match="https"):
         CorsairCloud(api_key="ck_cloud_x", url="http://attacker.example")

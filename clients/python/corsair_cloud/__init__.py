@@ -273,7 +273,13 @@ class CorsairCloud:
             with urllib.request.urlopen(req, timeout=self.timeout) as resp:
                 return json.loads(resp.read() or b"{}")
         except urllib.error.HTTPError as e:
-            request_id = (e.headers.get("Request-Id") or "").strip() if e.headers else ""
+            # Request-Id from hub; the runtime's own refusals carry only
+            # x-corsair-trace-id.
+            headers = e.headers or {}
+            request_id = (
+                (headers.get("Request-Id") or "").strip()
+                or (headers.get("X-Corsair-Trace-Id") or "").strip()
+            )
             raise _error_from(e.code, e.read(), request_id or None) from None
 
 

@@ -359,10 +359,14 @@ public struct CorsairCloud: Sendable {
 		let http = response as? HTTPURLResponse
 		let status = http?.statusCode ?? 0
 		guard (200 ..< 300).contains(status) else {
-			let requestId = http?.value(forHTTPHeaderField: "Request-Id")?
-				.trimmingCharacters(in: .whitespaces)
+			// Request-Id from hub; the runtime's own refusals carry only
+			// X-Corsair-Trace-Id.
+			let requestId = [
+				http?.value(forHTTPHeaderField: "Request-Id"),
+				http?.value(forHTTPHeaderField: "X-Corsair-Trace-Id"),
+			].lazy.compactMap { $0?.trimmingCharacters(in: .whitespaces) }.first { !$0.isEmpty }
 			throw CorsairError.from(
-				status: status, data: data, requestId: requestId?.isEmpty == false ? requestId : nil)
+				status: status, data: data, requestId: requestId)
 		}
 		return data
 	}

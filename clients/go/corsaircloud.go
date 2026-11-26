@@ -567,7 +567,13 @@ func (c *Client) sendTo(ctx context.Context, base, method string, path []string,
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, errorFrom(resp.StatusCode, respBody.Bytes(), strings.TrimSpace(resp.Header.Get("Request-Id")))
+		// Request-Id from hub; the runtime's own refusals carry only
+		// X-Corsair-Trace-Id.
+		requestID := strings.TrimSpace(resp.Header.Get("Request-Id"))
+		if requestID == "" {
+			requestID = strings.TrimSpace(resp.Header.Get("X-Corsair-Trace-Id"))
+		}
+		return nil, errorFrom(resp.StatusCode, respBody.Bytes(), requestID)
 	}
 
 	return respBody.Bytes(), nil

@@ -282,7 +282,10 @@ struct CorsairCloudTests {
 
 	@Test func runtimeRefusalBodyThrowsTypedError() async throws {
 		// What the old client got for every call: the code is read, not lost.
-		let e = try await error(404, #"{"code":"not_found","hop":"internal","message":"no route"}"#)
+		let e = try await error(
+			404, #"{"code":"not_found","hop":"internal","message":"no route"}"#,
+			["X-Corsair-Trace-Id": "trace_1"])
+		#expect(e.requestId == "trace_1")
 		#expect(e.status == 404)
 		#expect(e.code == "not_found")
 		#expect(e.message == "no route")

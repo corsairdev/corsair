@@ -360,8 +360,8 @@ func TestManagementErrorBodyMapsToCorsairError(t *testing.T) {
 
 func TestRuntimeRefusalBodyMapsToCorsairError(t *testing.T) {
 	// What the old client got for every call: the code is read, not lost.
-	ce := errorFor(t, http.StatusNotFound, `{"code":"not_found","hop":"internal","message":"no route"}`, nil)
-	if ce.Status != 404 || ce.Code != "not_found" || ce.Message != "no route" {
+	ce := errorFor(t, http.StatusNotFound, `{"code":"not_found","hop":"internal","message":"no route"}`, map[string]string{"X-Corsair-Trace-Id": "trace_1"})
+	if ce.Status != 404 || ce.Code != "not_found" || ce.Message != "no route" || ce.RequestID != "trace_1" {
 		t.Errorf("error = %+v", ce)
 	}
 }
