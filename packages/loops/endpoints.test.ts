@@ -4,6 +4,7 @@ jest.mock('corsair/core', () => {
 });
 
 import { ApiError } from 'corsair/http';
+import { ZodError } from 'zod';
 import {
 	contactPropertiesResponse,
 	contactResponse,
@@ -157,74 +158,117 @@ describe('Loops output parsing', () => {
 	});
 });
 
+/**
+ * Asserts the input schema refused the call: a ZodError, and no request sent.
+ * A bare rejects.toThrow() would also pass on the unmocked-fetch error.
+ */
+async function expectInputRejected(
+	// unknown: each endpoint resolves to its own output type; only the
+	// rejection matters here.
+	call: () => Promise<unknown>,
+	message?: RegExp,
+): Promise<void> {
+	const caught = await captureError(call());
+	expect(caught).toBeInstanceOf(ZodError);
+	if (message) expect((caught as ZodError).message).toMatch(message);
+	expect(currentFetch()).not.toHaveBeenCalled();
+}
+
 describe('Loops input validation', () => {
 	it('rejects contacts.find with both identifiers', async () => {
-		await expect(() =>
-			endpoints.contacts.find(makeCtx(), {
-				email: 'alex@company.com',
-				userId: 'usr_7f8e9d0c1b2a',
-			}),
-		).rejects.toThrow();
+		await expectInputRejected(
+			() =>
+				endpoints.contacts.find(makeCtx(), {
+					email: 'alex@company.com',
+					userId: 'usr_7f8e9d0c1b2a',
+				}),
+			/not both/,
+		);
 	});
 
 	it('rejects contacts.find with no identifier', async () => {
-		await expect(() =>
-			endpoints.contacts.find(makeCtx(), {}),
-		).rejects.toThrow();
+		await expectInputRejected(
+			() => endpoints.contacts.find(makeCtx(), {}),
+			/exactly one/,
+		);
+	});
+
+	it('rejects an empty userId next to an email, which would be sent as userId=', async () => {
+		await expectInputRejected(
+			() =>
+				endpoints.contacts.find(makeCtx(), {
+					email: 'alex@company.com',
+					userId: '',
+				}),
+			/cannot be empty/,
+		);
+		await expectInputRejected(
+			() =>
+				endpoints.contacts.delete(makeCtx(), {
+					email: 'alex@company.com',
+					userId: '',
+				}),
+			/cannot be empty/,
+		);
 	});
 
 	it('rejects contacts.update with no identifier', async () => {
-		await expect(() =>
-			endpoints.contacts.update(makeCtx(), { firstName: 'Alex' }),
-		).rejects.toThrow();
+		await expectInputRejected(
+			() => endpoints.contacts.update(makeCtx(), { firstName: 'Alex' }),
+			/Provide email or userId/,
+		);
 	});
 
 	it('rejects contacts.create with no email', async () => {
 		// Loops answers 400 for an identifier-less create; fail before the call.
-		await expect(() =>
-			endpoints.contacts.create(makeCtx(), { firstName: 'Alex' }),
-		).rejects.toThrow(/Provide an email/);
+		await expectInputRejected(
+			() => endpoints.contacts.create(makeCtx(), { firstName: 'Alex' }),
+			/Provide an email/,
+		);
 	});
 
 	it('rejects a custom property named email, which would overwrite the selector', async () => {
-		await expect(() =>
-			endpoints.contacts.update(makeCtx(), {
-				email: 'right@company.com',
-				customProperties: {
-					// The body is flat, so this key would land on the selector field.
-					email: 'wrong@company.com',
-				} as never,
-			}),
-		).rejects.toThrow(/fixed field/);
+		await expectInputRejected(
+			() =>
+				endpoints.contacts.update(makeCtx(), {
+					email: 'right@company.com',
+					customProperties: {
+						// The body is flat, so this key would land on the selector field.
+						email: 'wrong@company.com',
+					} as never,
+				}),
+			/fixed field/,
+		);
 	});
 
 	it('rejects a custom property longer than 500 characters', async () => {
-		await expect(() =>
+		await expectInputRejected(() =>
 			endpoints.contacts.create(makeCtx(), {
 				email: 'alex@company.com',
 				customProperties: { note: 'x'.repeat(501) } as never,
 			}),
-		).rejects.toThrow();
+		);
 	});
 
 	it('rejects an events.send with neither email nor userId', async () => {
-		await expect(() =>
-			endpoints.events.send(makeCtx(), { eventName: 'signup' }),
-		).rejects.toThrow();
+		await expectInputRejected(
+			() => endpoints.events.send(makeCtx(), { eventName: 'signup' }),
+			/Provide email or userId/,
+		);
 	});
 
 	it('rejects a transactional idempotency key over 100 characters', async () => {
-		await expect(() =>
+		await expectInputRejected(() =>
 			endpoints.transactional.send(makeCtx(), {
 				email: 'alex@company.com',
 				transactionalId: 'cll42l54f20i1la0lfooe3z12',
 				idempotencyKey: 'k'.repeat(101),
 			}),
-		).rejects.toThrow();
+		);
 	});
 
 	it('rejects a non-base64 attachment payload', async () => {
-		await expect(() =>
+		await expectInputRejected(() =>
 			endpoints.transactional.send(makeCtx(), {
 				email: 'alex@company.com',
 				transactionalId: 'cll42l54f20i1la0lfooe3z12',
@@ -232,44 +276,76 @@ describe('Loops input validation', () => {
 					{ filename: 'a.pdf', contentType: 'application/pdf', data: '!!' },
 				],
 			}),
-		).rejects.toThrow();
+		);
 	});
 
 	it('rejects a bad email address before any request is sent', async () => {
-		const spy = currentFetch();
-
-		await expect(
+		await expectInputRejected(() =>
 			endpoints.contacts.create(makeCtx(), { email: 'not-an-email' }),
-		).rejects.toThrow();
-		expect(spy).not.toHaveBeenCalled();
+		);
 	});
 
 	it('rejects a custom property that would overwrite an events.send field', async () => {
 		for (const key of ['eventName', 'eventProperties', 'idempotencyKey']) {
-			await expect(
-				endpoints.events.send(makeCtx(), {
-					eventName: 'signup',
-					email: 'alex@company.com',
-					customProperties: { [key]: 'cancelled' },
-				}),
-			).rejects.toThrow(/fixed field/);
+			await expectInputRejected(
+				() =>
+					endpoints.events.send(makeCtx(), {
+						eventName: 'signup',
+						email: 'alex@company.com',
+						customProperties: { [key]: 'cancelled' },
+					}),
+				/fixed field/,
+			);
 		}
 	});
 
-	it('rejects an empty idempotency key, which would be sent without the header', async () => {
-		await expect(
-			endpoints.transactional.send(makeCtx(), {
-				email: 'alex@company.com',
-				transactionalId: 'cll42l54f20i1la0lfooe3z12',
-				idempotencyKey: '',
-			}),
-		).rejects.toThrow();
-		await expect(
-			endpoints.events.send(makeCtx(), {
-				eventName: 'signup',
-				email: 'alex@company.com',
-				idempotencyKey: '',
-			}),
-		).rejects.toThrow();
+	it('rejects an empty or blank idempotency key, which would go out as no key', async () => {
+		// Fetch trims spaces, tabs and line breaks from header values.
+		for (const idempotencyKey of ['', ' ', '\t \r\n']) {
+			await expectInputRejected(() =>
+				endpoints.transactional.send(makeCtx(), {
+					email: 'alex@company.com',
+					transactionalId: 'cll42l54f20i1la0lfooe3z12',
+					idempotencyKey,
+				}),
+			);
+			await expectInputRejected(() =>
+				endpoints.events.send(makeCtx(), {
+					eventName: 'signup',
+					email: 'alex@company.com',
+					idempotencyKey,
+				}),
+			);
+		}
+	});
+
+	it('checks campaign scheduling per mode', async () => {
+		await expectInputRejected(
+			() =>
+				endpoints.campaigns.update(makeCtx(), {
+					campaignId: 'c_1',
+					scheduling: { method: 'schedule' },
+				}),
+			/timestamp is required/,
+		);
+		await expectInputRejected(
+			() =>
+				endpoints.campaigns.update(makeCtx(), {
+					campaignId: 'c_1',
+					scheduling: { method: 'now', timestamp: '2030-01-01T00:00:00Z' },
+				}),
+			/Leave timestamp out/,
+		);
+	});
+
+	it('rejects removeSuppression with an empty second selector', async () => {
+		await expectInputRejected(
+			() =>
+				endpoints.contacts.removeSuppression(makeCtx(), {
+					email: 'alex@company.com',
+					userId: '',
+				}),
+			/neither empty/,
+		);
 	});
 });

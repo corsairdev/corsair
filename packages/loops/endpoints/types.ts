@@ -23,6 +23,17 @@ const TemplateDataSchema = z.record(z.string(), z.unknown());
 
 const MailingListsSchema = z.record(z.string(), z.boolean());
 
+// Sent as the Idempotency-Key header. Fetch trims spaces, tabs and line breaks
+// from header values, so a key made only of them would go out empty: Loops
+// would not deduplicate it, yet the send would count as replay-safe.
+const IdempotencyKeySchema = z
+	.string()
+	.min(1)
+	.max(100)
+	.refine((key) => /[^\t\n\r ]/.test(key), {
+		message: 'The idempotency key cannot be blank.',
+	});
+
 /**
  * Custom contact properties ride as additional top-level keys on the request
  * body, next to the fixed fields, so a key like `email` here would overwrite
@@ -64,17 +75,29 @@ function rejectReservedProperties<
 	}
 }
 
+// A selector counts as given whenever it is present: the request builders
+// send any defined value, so an empty userId would go out as `userId=` next
+// to the email.
 function requireExactlyOneIdentifier(
 	value: { email?: string; userId?: string },
 	ctx: z.RefinementCtx,
 ): void {
-	if (!value.email && !value.userId) {
+	if (value.userId === '') {
+		ctx.addIssue({
+			code: 'custom',
+			path: ['userId'],
+			message: 'userId cannot be empty; leave it out instead.',
+		});
+	}
+	const hasEmail = value.email !== undefined;
+	const hasUserId = value.userId !== undefined;
+	if (!hasEmail && !hasUserId) {
 		ctx.addIssue({
 			code: 'custom',
 			message: 'Provide exactly one of email or userId.',
 		});
 	}
-	if (value.email && value.userId) {
+	if (hasEmail && hasUserId) {
 		ctx.addIssue({
 			code: 'custom',
 			message: 'Provide email or userId, not both.',
@@ -252,7 +275,7 @@ const EventsSendInputSchema = z
 			.record(z.string(), CustomPropertyValueSchema)
 			.optional(),
 		// Sent as the Idempotency-Key header; a reuse within 24 hours answers 409.
-		idempotencyKey: z.string().min(1).max(100).optional(),
+		idempotencyKey: IdempotencyKeySchema.optional(),
 	})
 	.superRefine((value, ctx) => {
 		rejectReservedProperties(value, ctx);
@@ -279,7 +302,7 @@ const TransactionalSendInputSchema = z.object({
 	dataVariables: TemplateDataSchema.optional(),
 	attachments: z.array(AttachmentSchema).optional(),
 	// Reusing a key within 24 hours answers 409; the API recommends a V4 UUID.
-	idempotencyKey: z.string().min(1).max(100).optional(),
+	idempotencyKey: IdempotencyKeySchema.optional(),
 });
 
 const TransactionalSendResponseSchema = z.object({

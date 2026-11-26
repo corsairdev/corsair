@@ -1756,7 +1756,7 @@ await corsair.loops.api.emailMessages.update({});
 | `languageCode` | `string` | No | ISO 639-1 language code for the email, e.g. `en` or `fr`. |
 | `emailFormat` | `styled \| plain` | No | The rendering format of the email. |
 | `footerId` | `string \| null` | No | Apply a specific footer to this email message. Use `null` for the system default footer. Omit it to keep the current footer. Only for teams with footers enabled, and only for campaign and workflow emails. Transactional emails and critical notices have no footer. |
-| `lmx` | `string` | No | The email body serialized as LMX. Styles must be embedded in the LMX `` tag. |
+| `lmx` | `string` | No | The email body serialized as LMX. Styles must be embedded in the LMX `<Style />` tag. |
 | `contactPropertiesFallbacks` | `object` | No | Fallback values for contact properties, keyed by property name. Per-key merge: a string value sets the fallback, a null value deletes it, and keys omitted from the map are left unchanged. |
 | `eventPropertiesFallbacks` | `object` | No | Fallback values for event properties, keyed by property name. Per-key merge: a string value sets the fallback, a null value deletes it, and keys omitted from the map are left unchanged. |
 | `dataVariablesFallbacks` | `object` | No | Fallback values for data variables, keyed by variable name. Per-key merge: a string value sets the fallback, a null value deletes it, and keys omitted from the map are left unchanged. |
@@ -1919,7 +1919,7 @@ await corsair.loops.api.eventPatterns.getByName({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `eventName` | `string` | Yes | The exact event name. Event names are case-sensitive and should be URL-encoded if they contain special characters. |
+| `eventName` | `string` | Yes | The exact event name. Event names are case-sensitive. Pass the name as it is (e.g. `Trial started`); the plugin URL-encodes it. |
 
 
 
@@ -2455,7 +2455,7 @@ await corsair.loops.api.footers.updateVariant({});
 | `footerId` | `string` | Yes | The ID of the footer. |
 | `variantId` | `string` | Yes | The ID of the footer variant. |
 | `expectedRevisionId` | `string` | Yes | The `contentRevisionId` you last fetched. |
-| `lmx` | `string` | Yes | The new draft content as LMX. Footer LMX can use `{system.company_name}`, `{system.company_address}`, `{system.mailing_list_name}`, `{system.unsubscribe_link}` and `{contact.email}`. It cannot use ``, components, other contact properties, event properties or data variables. |
+| `lmx` | `string` | Yes | The new draft content as LMX. Footer LMX can use `{system.company_name}`, `{system.company_address}`, `{system.mailing_list_name}`, `{system.unsubscribe_link}` and `{contact.email}`. It cannot use `<Style />`, components, other contact properties, event properties or data variables. |
 
 
 
@@ -2533,7 +2533,7 @@ await corsair.loops.api.themes.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | The theme name. |
-| `styles` | `object` | No | Flat map of style attributes, matching the attribute names accepted by the LMX `` tag. |
+| `styles` | `object` | No | Flat map of style attributes, matching the attribute names accepted by the LMX `<Style />` tag. |
 
 <AccordionGroup>
 <Accordion title="styles full type">
@@ -2854,7 +2854,7 @@ await corsair.loops.api.themes.update({});
 |------|------|----------|-------------|
 | `themeId` | `string` | Yes | The ID of the theme. |
 | `name` | `string` | No | — |
-| `styles` | `object` | No | Flat map of style attributes, matching the attribute names accepted by the LMX `` tag. |
+| `styles` | `object` | No | Flat map of style attributes, matching the attribute names accepted by the LMX `<Style />` tag. |
 
 <AccordionGroup>
 <Accordion title="styles full type">

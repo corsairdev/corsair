@@ -95,6 +95,20 @@ const CampaignSchedulingRequestIn = memo(() =>
 			timestamp: z.string().optional(),
 		})
 		.loose()
+		.superRefine((v, ctx) => {
+			if (v.method === 'schedule' && !v.timestamp)
+				ctx.addIssue({
+					code: 'custom',
+					path: ['timestamp'],
+					message: 'timestamp is required when method is schedule.',
+				});
+			if (v.method === 'now' && v.timestamp !== undefined)
+				ctx.addIssue({
+					code: 'custom',
+					path: ['timestamp'],
+					message: 'Leave timestamp out when method is now.',
+				});
+		})
 		.describe(
 			'When the campaign should send. `timestamp` is required and must be in the future when `method` is `schedule`, and must be omitted when `method` is `now`.',
 		),
@@ -144,7 +158,7 @@ const ThemeStylesIn = memo(() =>
 		})
 		.loose()
 		.describe(
-			'Flat map of style attributes, matching the attribute names accepted by the LMX `` tag.',
+			'Flat map of style attributes, matching the attribute names accepted by the LMX `<Style />` tag.',
 		),
 );
 const WorkflowExpectedRevisionIdIn = memo(() =>
@@ -1897,9 +1911,13 @@ const ContactsRemoveSuppressionInputSchema = memo(() =>
 			email: z.string().optional().describe('Email address'),
 			userId: z.string().optional(),
 		})
-		.refine((v) => Boolean(v.email) !== Boolean(v.userId), {
-			message: 'Provide exactly one of email or userId.',
-		}),
+		.refine(
+			(v) =>
+				v.email !== '' &&
+				v.userId !== '' &&
+				(v.email !== undefined) !== (v.userId !== undefined),
+			{ message: 'Provide exactly one of email or userId, and neither empty.' },
+		),
 );
 const ContactsRemoveSuppressionResponseSchema = memo(() =>
 	ContactSuppressionRemoveResponseOut(),
@@ -2031,7 +2049,7 @@ const EmailMessagesUpdateInputSchema = memo(() =>
 			lmx: z
 				.string()
 				.describe(
-					'The email body serialized as LMX. Styles must be embedded in the LMX `` tag.',
+					'The email body serialized as LMX. Styles must be embedded in the LMX `<Style />` tag.',
 				)
 				.optional(),
 			contactPropertiesFallbacks: z
@@ -2166,7 +2184,7 @@ const EventPatternsGetByNameInputSchema = memo(() =>
 			.string()
 			.min(1)
 			.describe(
-				'The exact event name. Event names are case-sensitive and should be URL-encoded if they contain special characters.',
+				'The exact event name. Event names are case-sensitive. Pass the name as it is (e.g. `Trial started`); the plugin URL-encodes it.',
 			),
 	}),
 );
@@ -2275,7 +2293,7 @@ const FootersUpdateVariantInputSchema = memo(() =>
 			lmx: z
 				.string()
 				.describe(
-					'The new draft content as LMX. Footer LMX can use `{system.company_name}`, `{system.company_address}`, `{system.mailing_list_name}`, `{system.unsubscribe_link}` and `{contact.email}`. It cannot use ``, components, other contact properties, event properties or data variables.',
+					'The new draft content as LMX. Footer LMX can use `{system.company_name}`, `{system.company_address}`, `{system.mailing_list_name}`, `{system.unsubscribe_link}` and `{contact.email}`. It cannot use `<Style />`, components, other contact properties, event properties or data variables.',
 				),
 		})
 		.loose(),

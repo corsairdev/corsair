@@ -44,10 +44,19 @@ export function isReplayable(error: Error): boolean {
 	return replayable.has(error);
 }
 
-// The same truthiness test decides whether the header is sent, so a request
-// counts as keyed only when Loops really got a key.
+/**
+ * The key as Loops receives it. Fetch trims HTTP whitespace (space, tab, CR,
+ * LF) from header values, so `' k '` goes out as `k` and `' '` as an empty
+ * header. The header, replay safety and redaction all use this value.
+ */
+export function wireIdempotencyKey(req: LoopsRequest): string | undefined {
+	const key = req.idempotencyKey?.replace(/^[\t\n\r ]+|[\t\n\r ]+$/g, '');
+	return key ? key : undefined;
+}
+
+// A request counts as keyed only when Loops really got a non-empty key.
 function canReplay(req: LoopsRequest): boolean {
-	return req.method === 'GET' || Boolean(req.idempotencyKey);
+	return req.method === 'GET' || wireIdempotencyKey(req) !== undefined;
 }
 
 /**
@@ -120,7 +129,8 @@ function loopsApiError(
 		rateLimitLimit?: number;
 	},
 ): ApiError {
-	const safeBody = withoutKey(body, req.idempotencyKey);
+	const key = wireIdempotencyKey(req);
+	const safeBody = withoutKey(body, key);
 	const message = describeLoopsError(status, safeBody, fallback);
 	const error = new ApiError(
 		{ method: req.method, url: req.path },
@@ -131,7 +141,7 @@ function loopsApiError(
 			statusText,
 			body: safeBody,
 		},
-		`Loops ${status}: ${withoutKey(message, req.idempotencyKey)}`,
+		`Loops ${status}: ${withoutKey(message, key)}`,
 		rateLimit,
 	);
 	if (canReplay(req)) replayable.add(error);
@@ -162,15 +172,14 @@ export async function makeLoopsRequest(
 		HEADERS: { Accept: 'application/json', Authorization: `Bearer ${apiKey}` },
 	};
 
+	const key = wireIdempotencyKey(req);
 	const requestOptions: ApiRequestOptions = {
 		method: req.method,
 		url: req.path,
 		query: req.query,
 		body: req.body,
 		mediaType: req.body === undefined ? undefined : 'application/json',
-		headers: req.idempotencyKey
-			? { 'Idempotency-Key': req.idempotencyKey }
-			: undefined,
+		headers: key ? { 'Idempotency-Key': key } : undefined,
 	};
 
 	// unknown: the generic stays unknown; the endpoint's output schema owns

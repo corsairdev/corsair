@@ -4,6 +4,7 @@ import {
 	isReplayable,
 	LOOPS_API_BASE,
 	makeLoopsRequest,
+	wireIdempotencyKey,
 } from './client';
 import {
 	apiKeyResponse,
@@ -208,6 +209,54 @@ describe('Loops client', () => {
 			makeLoopsRequest('test-key', { method: 'GET', path: '/v1/lists' }),
 		).rejects.toMatchObject({ status: 429 });
 		expect(spy).toHaveBeenCalledTimes(1);
+	});
+
+	it('sends, redacts and replays on the key as Fetch puts it on the wire', async () => {
+		// Fetch trims HTTP whitespace from header values, so Loops sees and
+		// quotes the trimmed key.
+		const key = 'receipt:alex@company.com';
+		queue(
+			{
+				success: false,
+				message: `Idempotency key ${key} has already been used`,
+			},
+			409,
+		);
+
+		const caught = await captureError(
+			makeLoopsRequest('test-key', {
+				method: 'POST',
+				path: '/v1/transactional',
+				body: { email: 'alex@company.com', transactionalId: 'cll42l54f' },
+				idempotencyKey: ` ${key}\t`,
+			}),
+		);
+
+		const [, init] = currentFetch().mock.calls[0]!;
+		expect(new Headers(init!.headers).get('Idempotency-Key')).toBe(key);
+		expect(JSON.stringify(caught)).not.toContain(key);
+		expect((caught as ApiError).message).not.toContain(key);
+		expect(isReplayable(caught as Error)).toBe(true);
+	});
+
+	it('treats a key that trims to nothing as no key: no header, no replay', async () => {
+		expect(
+			wireIdempotencyKey({ method: 'POST', path: '/x', idempotencyKey: ' ' }),
+		).toBeUndefined();
+		currentFetch().mockRejectedValueOnce(new TypeError('fetch failed'));
+
+		const caught = await captureError(
+			makeLoopsRequest('test-key', {
+				method: 'POST',
+				path: '/v1/transactional',
+				body: { email: 'alex@company.com', transactionalId: 'cll42l54f' },
+				idempotencyKey: ' \r\n',
+			}),
+		);
+
+		const [, init] = currentFetch().mock.calls[0]!;
+		expect(new Headers(init!.headers).has('Idempotency-Key')).toBe(false);
+		expect(isReplayable(caught as Error)).toBe(false);
 	});
 
 	it('cuts the idempotency key Loops quotes in a 409 out of the error', async () => {
