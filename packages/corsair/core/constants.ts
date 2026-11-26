@@ -469,6 +469,7 @@ export const BaseProviders = [
 	'modelry',
 	'monday',
 	'mondaymcp',
+	'moneybird',
 	'moonclerk',
 	'moosend',
 	'mopinion',
@@ -1266,6 +1267,7 @@ export const ProviderDisplayNames = {
 	modelry: 'Modelry',
 	monday: 'Monday',
 	mondaymcp: 'Monday MCP',
+	moneybird: 'Moneybird',
 	moonclerk: 'MoonClerk',
 	moosend: 'Moosend',
 	mopinion: 'Mopinion',
@@ -2070,6 +2072,7 @@ export type AllProviders =
 	| 'modelry'
 	| 'monday'
 	| 'mondaymcp'
+	| 'moneybird'
 	| 'moonclerk'
 	| 'moosend'
 	| 'mopinion'

@@ -3897,6 +3897,14 @@
                 ]
               },
               {
+                "group": "Moneybird",
+                "pages": [
+                  "plugins/moneybird/overview",
+                  "plugins/moneybird/api",
+                  "plugins/moneybird/database"
+                ]
+              },
+              {
                 "group": "MoonClerk",
                 "pages": [
                   "plugins/moonclerk/overview",
