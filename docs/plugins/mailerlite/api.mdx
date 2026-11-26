@@ -1,0 +1,1223 @@
+---
+title: "MailerLite API reference"
+sidebarTitle: "API"
+description: "API reference for the MailerLite plugin in Corsair: every `mailerlite.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Campaigns
+
+### activity
+
+`campaigns.activity`
+
+List the recipients of a sent campaign with their open and click activity
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.campaigns.activity({ campaignId: '66200823885989563', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | Id of a sent campaign |
+| `filterType` | `opened \| unopened \| clicked \| unsubscribed \| forwarded \| hardbounced \| softbounced \| junk \| sent \| social_interaction` | No | Only recipients with this kind of activity |
+| `filterSearch` | `string` | No | Only the activity of the subscriber with this email address |
+| `limit` | `10 \| 25 \| 50 \| 100` | No | Recipients per page: 10, 25, 50 or 100 |
+| `sort` | `string` | No | Sort field, prefix with - for descending order |
+| `page` | `number` | No | Page number to return, counting from 1 |
+| `include` | `subscriber \| subscriber.groups` | No | Relations to embed in the response |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  opens_count?: number | null,
+  clicks_count?: number | null,
+  subscriber?: {
+    id?: string | null,
+    email?: string | null,
+    status?: string | null,
+    sent?: number | null,
+    opens_count?: number | null,
+    clicks_count?: number | null,
+    open_rate?: number | null,
+    click_rate?: number | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number | null,
+  from?: number | null,
+  last_page?: number | null,
+  links?: {
+    url?: string | null,
+    label?: string | null,
+    active?: boolean | null
+  }[] | null,
+  path?: string | null,
+  per_page?: number | null,
+  to?: number | null,
+  total?: number | null,
+  aggregations?: {
+    sum?: number | null,
+    opened?: number | null,
+    unopened?: number | null,
+    clicked?: number | null,
+    unsubscribed?: number | null,
+    forwarded?: number | null,
+    hardbounced?: number | null,
+    softbounced?: number | null,
+    junk?: number | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### cancel
+
+`campaigns.cancel`
+
+Cancel a scheduled campaign that has not started sending, returning it to draft so it can be edited and rescheduled
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.campaigns.cancel({ campaignId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | Campaign id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: string,
+  status: string,
+  delivery_schedule?: string | null,
+  scheduled_for?: string | null,
+  queued_at?: string | null,
+  started_at?: string | null,
+  finished_at?: string | null,
+  stopped_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  emails?: {
+    id?: string | null,
+    subject?: string | null,
+    from?: string | null,
+    from_name?: string | null,
+    reply_to?: string | null,
+    plain_text?: string | null,
+    is_designed?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null,
+  used_in_automations?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`campaigns.create`
+
+Create a draft campaign with recipients and email content. Nothing is sent until campaigns.schedule runs
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.campaigns.create({ name: 'October update', type: 'regular', emails: [{ subject: 'Our October update', from_name: 'Acme Logistics', from: 'news@acme-logistics.com' }], groups: ['42'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Campaign name, up to 255 characters |
+| `type` | `regular \| ab \| resend \| multivariate` | Yes | Campaign kind. resend and multivariate need a paid plan |
+| `language_id` | `number` | No | Language for the unsubscribe template. Defaults to English |
+| `emails` | `object[]` | Yes | Exactly one email object, unless this is a multivariate campaign testing content |
+| `groups` | `string[]` | No | Group ids to send to. Ignored when segments is also given |
+| `segments` | `string[]` | No | Segment ids to send to. Takes precedence over groups |
+| `ab_settings` | `object` | No | — |
+| `resend_settings` | `object` | No | — |
+| `multivariate_settings` | `object` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="emails full type">
+
+```ts
+{
+  subject?: string,
+  from_name?: string,
+  from?: string,
+  reply_to?: string,
+  content?: string,
+  editor?: simple,
+  template_id?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="ab_settings full type">
+
+```ts
+{
+  test_type: subject | sender | sending_time,
+  select_winner_by?: o | c,
+  after_time_amount?: number,
+  after_time_unit?: h | d,
+  test_split?: number,
+  b_value?: {
+    subject?: string,
+    from_name?: string,
+    from?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="resend_settings full type">
+
+```ts
+{
+  test_type: subject,
+  select_winner_by: o | c,
+  b_value: {
+    subject: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="multivariate_settings full type">
+
+```ts
+{
+  test_variants: {
+    subject: string[],
+    sender: {
+      from: string,
+      from_name: string
+    }[],
+    content: number,
+    sending_time: number
+  },
+  select_winner_by?: o | c,
+  after_time_amount?: number,
+  after_time_unit?: h | d,
+  test_split?: number
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  ecommerce_tracking?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: string,
+  status: string,
+  delivery_schedule?: string | null,
+  scheduled_for?: string | null,
+  queued_at?: string | null,
+  started_at?: string | null,
+  finished_at?: string | null,
+  stopped_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  emails?: {
+    id?: string | null,
+    subject?: string | null,
+    from?: string | null,
+    from_name?: string | null,
+    reply_to?: string | null,
+    plain_text?: string | null,
+    is_designed?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null,
+  used_in_automations?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+List campaigns with their status and delivery stats, page paginated
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.campaigns.list({ filterStatus: 'sent', limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filterStatus` | `sent \| draft \| ready` | No | Only campaigns with this status. Defaults to ready when any other filter is given |
+| `filterType` | `regular \| ab \| resend \| rss \| multivariate \| all` | No | Only campaigns of this type |
+| `filterDateFrom` | `string` | No | Only campaigns from this date onwards, Y-m-d |
+| `filterDateTo` | `string` | No | Only campaigns up to this date, Y-m-d |
+| `filterFolder` | `number` | No | Only campaigns in this folder, by folder id |
+| `filterSubject` | `string` | No | Only campaigns whose subject line contains this value |
+| `limit` | `number` | No | Campaigns per page, 1-100. Defaults to 25 |
+| `page` | `number` | No | Page number to return, counting from 1 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: string,
+  status: string,
+  delivery_schedule?: string | null,
+  scheduled_for?: string | null,
+  queued_at?: string | null,
+  started_at?: string | null,
+  finished_at?: string | null,
+  stopped_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  emails?: {
+    id?: string | null,
+    subject?: string | null,
+    from?: string | null,
+    from_name?: string | null,
+    reply_to?: string | null,
+    plain_text?: string | null,
+    is_designed?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null,
+  used_in_automations?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number | null,
+  from?: number | null,
+  last_page?: number | null,
+  links?: {
+    url?: string | null,
+    label?: string | null,
+    active?: boolean | null
+  }[] | null,
+  path?: string | null,
+  per_page?: number | null,
+  to?: number | null,
+  total?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### schedule
+
+`campaigns.schedule`
+
+Schedule a ready draft, or send it now with delivery instant. This emails real recipients and an instant send cannot be unsent
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.campaigns.schedule({ campaignId: '1', delivery: 'scheduled', schedule: { date: '2026-12-01', hours: '09', minutes: '30' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | Campaign id |
+| `delivery` | `instant \| scheduled \| timezone_based \| smart_sending` | No | When to send. instant sends now and cannot be unsent; required unless the campaign type is rss, which takes no body |
+| `schedule` | `object` | No | Send time, used by the scheduled, timezone_based and smart_sending deliveries |
+| `resend` | `object` | No | Second-send time, for auto-resend campaigns only |
+| `sending_time_test_schedule` | `object[]` | No | Send times to test, ordered soonest first. Only for campaigns testing sending time: exactly 2 entries for A/B, 2-8 for multivariate |
+
+<AccordionGroup>
+<Accordion title="schedule full type">
+
+```ts
+{
+  date?: string,
+  hours?: string,
+  minutes?: string,
+  timezone_id?: number
+}
+```
+</Accordion>
+
+<Accordion title="resend full type">
+
+```ts
+{
+  delivery: day | scheduled,
+  date?: string,
+  hours?: string,
+  minutes?: string,
+  timezone_id?: number
+}
+```
+</Accordion>
+
+<Accordion title="sending_time_test_schedule full type">
+
+```ts
+{
+  date: string,
+  hours: string,
+  minutes: string,
+  timezone_id?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: string,
+  status: string,
+  delivery_schedule?: string | null,
+  scheduled_for?: string | null,
+  queued_at?: string | null,
+  started_at?: string | null,
+  finished_at?: string | null,
+  stopped_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  emails?: {
+    id?: string | null,
+    subject?: string | null,
+    from?: string | null,
+    from_name?: string | null,
+    reply_to?: string | null,
+    plain_text?: string | null,
+    is_designed?: boolean | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[] | null,
+  used_in_automations?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Fields
+
+### list
+
+`fields.list`
+
+List custom fields with their keys and types, page paginated
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.fields.list({ filterType: 'text,number' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filterKeyword` | `string` | No | Only fields whose name contains this value |
+| `filterType` | `string` | No | Only fields of these types, comma separated |
+| `sort` | `string` | No | Sort field, prefix with - for descending order. Defaults to name |
+| `limit` | `number` | No | Fields per page, 1-1000. Defaults to 200 |
+| `page` | `number` | No | Page number to return, counting from 1 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  key: string,
+  type: string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number | null,
+  from?: number | null,
+  last_page?: number | null,
+  links?: {
+    url?: string | null,
+    label?: string | null,
+    active?: boolean | null
+  }[] | null,
+  path?: string | null,
+  per_page?: number | null,
+  to?: number | null,
+  total?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### create
+
+`groups.create`
+
+Create an empty group for subscribers, named up to 255 characters
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.groups.create({ name: 'Newsletter' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Group name, up to 255 characters |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  active_count?: number | null,
+  sent_count?: number | null,
+  opens_count?: number | null,
+  open_rate?: {
+    float?: number | null,
+    string?: string | null
+  } | null,
+  clicks_count?: number | null,
+  click_rate?: {
+    float?: number | null,
+    string?: string | null
+  } | null,
+  unsubscribed_count?: number | null,
+  unconfirmed_count?: number | null,
+  bounced_count?: number | null,
+  junk_count?: number | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`groups.delete`
+
+Delete a group. Membership history is not restorable and the subscribers are kept
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mailerlite.api.groups.delete({ groupId: '14133878422767533' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | Group id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`groups.list`
+
+List groups with their counts and open and click rates, page paginated
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.groups.list({ limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filterName` | `string` | No | Only groups whose name contains this value |
+| `sort` | `string` | No | Sort field, prefix with - for descending order. Defaults to name |
+| `limit` | `number` | No | Groups per page, 1-1000. Defaults to 1000, the account maximum |
+| `page` | `number` | No | Page number to return, counting from 1 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  active_count?: number | null,
+  sent_count?: number | null,
+  opens_count?: number | null,
+  open_rate?: {
+    float?: number | null,
+    string?: string | null
+  } | null,
+  clicks_count?: number | null,
+  click_rate?: {
+    float?: number | null,
+    string?: string | null
+  } | null,
+  unsubscribed_count?: number | null,
+  unconfirmed_count?: number | null,
+  bounced_count?: number | null,
+  junk_count?: number | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number | null,
+  from?: number | null,
+  last_page?: number | null,
+  links?: {
+    url?: string | null,
+    label?: string | null,
+    active?: boolean | null
+  }[] | null,
+  path?: string | null,
+  per_page?: number | null,
+  to?: number | null,
+  total?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscribers
+
+### addToGroup
+
+`subscribers.addToGroup`
+
+Add an existing subscriber to an existing group
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.subscribers.addToGroup({ subscriberId: '31986843064993537', groupId: '14133878422767533' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriberId` | `string` | Yes | Existing subscriber id |
+| `groupId` | `string` | Yes | Existing group id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  active_count?: number | null,
+  sent_count?: number | null,
+  opens_count?: number | null,
+  open_rate?: {
+    float?: number | null,
+    string?: string | null
+  } | null,
+  clicks_count?: number | null,
+  click_rate?: {
+    float?: number | null,
+    string?: string | null
+  } | null,
+  unsubscribed_count?: number | null,
+  unconfirmed_count?: number | null,
+  bounced_count?: number | null,
+  junk_count?: number | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`subscribers.delete`
+
+Permanently delete a subscriber and their history. There is no undo
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mailerlite.api.subscribers.delete({ subscriberId: '31986843064993537' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriberId` | `string` | Yes | Subscriber id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`subscribers.get`
+
+Fetch one subscriber by id or by email address, with its custom field values
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.subscribers.get({ subscriberId: '31986843064993537' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriberId` | `string` | Yes | Subscriber id, or the subscriber email address |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  status: string,
+  source?: string | null,
+  sent?: number | null,
+  opens_count?: number | null,
+  clicks_count?: number | null,
+  open_rate?: number | null,
+  click_rate?: number | null,
+  ip_address?: string | null,
+  subscribed_at?: string | null,
+  unsubscribed_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: Record<string, string | number | null> | null,
+  groups?: string[] | null,
+  opted_in_at?: string | null,
+  optin_ip?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`subscribers.list`
+
+List subscribers, cursor paginated, optionally filtered by status or group
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.subscribers.list({ filterStatus: 'active', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filterStatus` | `string` | No | Only subscribers with these statuses, comma separated |
+| `filterGroup` | `string` | No | Only subscribers in this group, by group id or name |
+| `limit` | `number` | No | Subscribers per page, 1-1000. Defaults to 25 |
+| `cursor` | `string` | No | Cursor for the page to return, read from meta.next_cursor |
+| `sort` | `string` | No | Sort field, prefix with - for descending order |
+| `include` | `groups` | No | Embed each subscriber groups in the response |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object \| null` | No | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  status: string,
+  source?: string | null,
+  sent?: number | null,
+  opens_count?: number | null,
+  clicks_count?: number | null,
+  open_rate?: number | null,
+  click_rate?: number | null,
+  ip_address?: string | null,
+  subscribed_at?: string | null,
+  unsubscribed_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: Record<string, string | number | null> | null,
+  groups?: string[] | null,
+  opted_in_at?: string | null,
+  optin_ip?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  path?: string | null,
+  per_page?: number | null,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeFromGroup
+
+`subscribers.removeFromGroup`
+
+Remove a subscriber from a group. The subscriber keeps their status; only the membership goes
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.subscribers.removeFromGroup({ subscriberId: '31986843064993537', groupId: '14133878422767533' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriberId` | `string` | Yes | Existing subscriber id |
+| `groupId` | `string` | Yes | Existing group id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### update
+
+`subscribers.update`
+
+Update one subscriber. groups is the complete set: subscribers are removed from groups not listed, so an empty array removes them from every group
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.subscribers.update({ subscriberId: '31986843064993537', fields: { name: 'Jordan' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriberId` | `string` | Yes | Subscriber id |
+| `email` | `string` | No | A new email address. Changeable once per calendar month, and it must not belong to another subscriber |
+| `fields` | `Record<string, string \| number \| null>` | No | Custom field values keyed by field key. Pass null to clear a field |
+| `groups` | `string[]` | No | The complete set of group ids the subscriber belongs to. The subscriber is removed from every group not listed, so an empty array removes them from all groups |
+| `status` | `active \| unsubscribed \| unconfirmed \| bounced \| junk` | No | Subscriber status. Setting active or unconfirmed is silently ignored for unsubscribed, bounced or junk subscribers; only subscribers.upsert with resubscribe reactivates them |
+| `subscribed_at` | `string` | No | Subscribe time |
+| `ip_address` | `string` | No | Signup IP address |
+| `opted_in_at` | `string` | No | Opt-in confirmation time |
+| `optin_ip` | `string` | No | Confirmation IP address |
+| `unsubscribed_at` | `string` | No | Unsubscribe time |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  status: string,
+  source?: string | null,
+  sent?: number | null,
+  opens_count?: number | null,
+  clicks_count?: number | null,
+  open_rate?: number | null,
+  click_rate?: number | null,
+  ip_address?: string | null,
+  subscribed_at?: string | null,
+  unsubscribed_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: Record<string, string | number | null> | null,
+  groups?: string[] | null,
+  opted_in_at?: string | null,
+  optin_ip?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`subscribers.upsert`
+
+Create a subscriber or update an existing one matched by email. Repeating the call is safe: it never deletes fields or group membership
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.subscribers.upsert({ email: 'jordan@acme-logistics.com', fields: { name: 'Jordan' }, groups: ['4243829086487936'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | Subscriber email address, RFC 2821 |
+| `fields` | `Record<string, string \| number \| null>` | No | Custom field values keyed by field key. Unknown keys are ignored; omission never removes a value |
+| `groups` | `string[]` | No | Group ids to add the subscriber to. Additive only: omission never removes membership |
+| `status` | `active \| unsubscribed \| unconfirmed \| bounced \| junk` | No | Subscriber status. New subscribers default to active, or unconfirmed on double opt-in accounts |
+| `subscribed_at` | `string` | No | Subscribe time, yyyy-MM-dd HH:mm:ss, at most one hour in the future |
+| `ip_address` | `string` | No | Signup IP address. A value that is not a valid IP address is ignored |
+| `opted_in_at` | `string` | No | Opt-in confirmation time |
+| `optin_ip` | `string` | No | Confirmation IP address. A value that is not a valid IP address is ignored |
+| `unsubscribed_at` | `string` | No | Unsubscribe time; only used together with status unsubscribed |
+| `resubscribe` | `boolean` | No | Set true to reactivate an unsubscribed, bounced or junk subscriber. Without it, a request that omits status fails with 422 |
+| `double_optin` | `boolean` | No | Whether a new subscriber starts as unconfirmed. Ignored by most API tokens |
+| `notes` | `string[]` | No | Free-text notes, each up to 10000 characters. Ignored for existing subscribers |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  email: string,
+  status: string,
+  source?: string | null,
+  sent?: number | null,
+  opens_count?: number | null,
+  clicks_count?: number | null,
+  open_rate?: number | null,
+  click_rate?: number | null,
+  ip_address?: string | null,
+  subscribed_at?: string | null,
+  unsubscribed_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  fields?: Record<string, string | number | null> | null,
+  groups?: string[] | null,
+  opted_in_at?: string | null,
+  optin_ip?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

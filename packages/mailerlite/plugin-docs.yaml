@@ -1,0 +1,67 @@
+displayName: MailerLite
+description: Email marketing from MailerLite - manage subscribers, groups and custom fields, create draft campaigns, schedule or cancel sends, and read subscriber activity after a campaign goes out.
+domain: mailerlite.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API token in MailerLite under Integrations, MailerLite API, and copy it. It goes in the `Authorization` header as a bearer token. The token is shown once at creation and stays tied to the user who made it.
+
+  Things that shape the calls:
+
+  - **Every answer wraps in `data`.** Lists add `links` and `meta` alongside, and this plugin passes the envelope through, so pagination fields keep the provider's own names: `meta.next_cursor` for subscribers and `meta.current_page`, `meta.last_page` and `meta.total` for the rest.
+  - **Paging is mixed.** `subscribers.list` pages by cursor: pass `meta.next_cursor` from one response as `cursor` on the next. Groups, fields, campaigns and campaign activity page by number: pass `page`. Subscribers take up to 1000 per page, campaigns 100, campaign activity 10, 25, 50 or 100.
+  - **Upsert and update differ on groups.** `subscribers.upsert` only adds groups and never removes on omission. `subscribers.update` takes the complete set: subscribers are removed from every group not listed, so an empty array removes them from all groups. Setting a status back to active or unconfirmed is silently ignored for unsubscribed, bounced or junk subscribers; reactivation needs `subscribers.upsert` with `resubscribe: true`.
+  - **`campaigns.create` makes a draft only.** Nothing sends until `campaigns.schedule`, whose `delivery: 'instant'` emails every recipient immediately and cannot be unsent. `delivery: 'scheduled'`, `'timezone_based'` or `'smart_sending'` need a future `schedule.date`, and the first two also need `schedule.hours` and `schedule.minutes`. `campaigns.cancel` returns a campaign that has not started sending back to draft, so it can be edited and rescheduled.
+  - **The sender must be verified.** `emails.from` and `emails.reply_to` on a campaign must already be verified on the MailerLite account, or creation fails with 422.
+  - **`campaigns.activity` reads a sent campaign**, listing recipients with their open and click counts. The docs specify GET for this route and that is what the plugin sends.
+  - **Rate limits.** MailerLite allows 120 requests per minute per account. A 429 carries `Retry-After`, which the plugin honours, and retries up to three times. Only reads and the subscriber upsert are replayed after a server error or a dropped connection; a campaign schedule is never replayed, because a repeat could send twice.
+  - **Webhooks.** MailerLite can deliver subscriber events to URLs it registers, but this plugin does not receive those deliveries; it exposes no webhook handling.
+examples:
+  read:
+    path: subscribers.list
+    title: List active subscribers
+    args:
+      filterStatus: active
+      limit: 50
+  write:
+    path: subscribers.upsert
+    title: Add or update a subscriber
+    args:
+      email: jordan@acme-logistics.com
+      fields:
+        name: Jordan
+        last_name: Ellis
+      groups:
+        - '4243829086487936'
+apiExamples:
+  subscribers.list:
+    call: "{ filterStatus: 'active', limit: 50 }"
+  subscribers.get:
+    call: "{ subscriberId: '31986843064993537' }"
+  subscribers.upsert:
+    call: "{ email: 'jordan@acme-logistics.com', fields: { name: 'Jordan' }, groups: ['4243829086487936'] }"
+  subscribers.update:
+    call: "{ subscriberId: '31986843064993537', fields: { name: 'Jordan' } }"
+  subscribers.delete:
+    call: "{ subscriberId: '31986843064993537' }"
+  subscribers.addToGroup:
+    call: "{ subscriberId: '31986843064993537', groupId: '14133878422767533' }"
+  subscribers.removeFromGroup:
+    call: "{ subscriberId: '31986843064993537', groupId: '14133878422767533' }"
+  groups.list:
+    call: "{ limit: 100 }"
+  groups.create:
+    call: "{ name: 'Newsletter' }"
+  groups.delete:
+    call: "{ groupId: '14133878422767533' }"
+  fields.list:
+    call: "{ filterType: 'text,number' }"
+  campaigns.list:
+    call: "{ filterStatus: 'sent', limit: 25 }"
+  campaigns.create:
+    call: "{ name: 'October update', type: 'regular', emails: [{ subject: 'Our October update', from_name: 'Acme Logistics', from: 'news@acme-logistics.com' }], groups: ['42'] }"
+  campaigns.schedule:
+    call: "{ campaignId: '1', delivery: 'scheduled', schedule: { date: '2026-12-01', hours: '09', minutes: '30' } }"
+  campaigns.cancel:
+    call: "{ campaignId: '1' }"
+  campaigns.activity:
+    call: "{ campaignId: '66200823885989563', limit: 50 }"
