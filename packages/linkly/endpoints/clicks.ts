@@ -106,3 +106,28 @@ export const getCounters: LinklyEndpoints['clicksGetCounters'] = (ctx, input) =>
 			}),
 		},
 	);
+
+export const exportClicks: LinklyEndpoints['clicksExport'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'clicks.export',
+			input: Inputs.clicksExport,
+			output: Outputs.clicksExport,
+		},
+		input,
+		({ workspace_id, link_id, start, end, country, platform, bots }) => ({
+			method: 'GET',
+			path: `/api/v1/workspace/${segment(workspace_id)}/clicks/export`,
+			// json is pinned: Linkly's MCP server always sends it, and the
+			// output schema parses only that shape.
+			query: { format: 'json', link_id, start, end, country, platform, bots },
+			replaySafe: true,
+		}),
+		{
+			log: ({ workspace_id }, result) => ({
+				workspaceId: workspace_id,
+				rows: Array.isArray(result) ? result.length : result.clicks.length,
+			}),
+		},
+	);

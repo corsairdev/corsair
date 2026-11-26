@@ -81,3 +81,71 @@ export const unsubscribe: LinklyEndpoints['webhooksUnsubscribe'] = (
 			}),
 		},
 	);
+
+export const listForLink: LinklyEndpoints['webhooksListForLink'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		{
+			event: 'webhooks.listForLink',
+			input: Inputs.webhooksListForLink,
+			output: Outputs.webhooksListForLink,
+		},
+		input,
+		({ link_id }) => ({
+			method: 'GET',
+			path: `/api/v1/link/${segment(link_id)}/webhooks`,
+			replaySafe: true,
+		}),
+		{
+			log: ({ link_id }, result) => ({ linkId: link_id, count: result.length }),
+		},
+	);
+
+export const subscribeToLink: LinklyEndpoints['webhooksSubscribeToLink'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		{
+			event: 'webhooks.subscribeToLink',
+			input: Inputs.webhooksSubscribeToLink,
+			output: Outputs.webhooksSubscribeToLink,
+		},
+		input,
+		({ link_id, url }) => ({
+			method: 'POST',
+			path: `/api/v1/link/${segment(link_id)}/webhooks`,
+			body: { url },
+			// Not documented as a no-op on repeat, so not replayed.
+			replaySafe: false,
+		}),
+		{
+			// The hook id is its URL, so only the link is logged.
+			log: ({ link_id }) => ({ linkId: link_id, subscribed: 1 }),
+		},
+	);
+
+export const unsubscribeFromLink: LinklyEndpoints['webhooksUnsubscribeFromLink'] =
+	(ctx, input) =>
+		call(
+			ctx,
+			{
+				event: 'webhooks.unsubscribeFromLink',
+				input: Inputs.webhooksUnsubscribeFromLink,
+				output: Outputs.webhooksUnsubscribeFromLink,
+			},
+			input,
+			({ link_id, hook_id }) => ({
+				method: 'DELETE',
+				// The hook id is the webhook URL itself, so it needs path encoding.
+				path: `/api/v1/link/${segment(link_id)}/webhooks/${segment(hook_id)}`,
+				replaySafe: true,
+			}),
+			{
+				log: ({ link_id }) => ({ linkId: link_id, unsubscribed: 1 }),
+			},
+		);

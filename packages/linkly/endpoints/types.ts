@@ -162,9 +162,6 @@ export type WorkspacesListWorkspacesResponse = z.infer<
 >;
 
 // ── links.list ──────────────────────────────────────────────────────────────
-// The spec also documents a `filter` query object; it is not exposed here
-// because no doc or example shows how an object serialises into this query,
-// and a guessed encoding would silently return unfiltered pages.
 
 const LinksListInputSchema = z.object({
 	workspace_id: WorkspaceIdSchema,
@@ -196,6 +193,20 @@ const LinksListInputSchema = z.object({
 		.boolean()
 		.optional()
 		.describe('Set true to page through the trash instead of live links.'),
+	// The spec documents a deepObject query, filter[utm_campaign]=summer_sale,
+	// which is how core encodes a nested query object.
+	filter: z
+		.object({
+			domain: z.string().optional(),
+			slug: z.string().optional(),
+			utm_source: z.string().optional(),
+			utm_medium: z.string().optional(),
+			utm_campaign: z.string().optional(),
+			utm_term: z.string().optional(),
+			utm_content: z.string().optional(),
+		})
+		.optional()
+		.describe('Exact-match filters, ANDed together.'),
 });
 
 export type LinksListInput = z.infer<typeof LinksListInputSchema>;
@@ -301,6 +312,42 @@ const linkWriteFields = {
 		.describe(
 			'Click routing rules, e.g. send matches to another URL or split traffic. Only sent as JSON.',
 		),
+	password: z
+		.string()
+		.optional()
+		.describe('Visitors must enter this password before the redirect.'),
+	metadata: z
+		.record(z.string(), z.string().nullable())
+		.optional()
+		.describe(
+			'Your own key-value data, up to 20 keys. Updates merge into the existing keys; set a key to null to remove it. Never shown to visitors.',
+		),
+	skip_social_crawler_tracking: z
+		.boolean()
+		.optional()
+		.describe(
+			'With block_bots on, still let social crawlers through so link previews work.',
+		),
+	public_analytics: z
+		.boolean()
+		.optional()
+		.describe("Turns on the link's public stats page."),
+	webhooks: z
+		.array(z.url())
+		.optional()
+		.describe(
+			'Per-link webhook URLs. On update this replaces the list; use webhooks.subscribeToLink to add one.',
+		),
+	notify_user_ids: z
+		.array(z.number().int())
+		.optional()
+		.describe('Workspace user IDs to notify on each click.'),
+	// The docs list fgColor, bgColor, qrStyle, eyeStyle, logoImage and more;
+	// Linkly owns the keys, so the object passes through as given.
+	qr_styles: z
+		.record(z.string(), z.unknown()) // unknown: free-form style object, passed through
+		.optional()
+		.describe('QR code styling, e.g. { fgColor: "#000000", qrStyle: "dots" }.'),
 };
 
 const LinksCreateInputSchema = z.object({
@@ -384,9 +431,11 @@ export type LinksRestoreResponse = z.infer<typeof LinksRestoreResponseSchema>;
 const LinksExportInputSchema = z.object({
 	workspace_id: WorkspaceIdSchema,
 	format: z
-		.enum(['json', 'csv'])
+		.enum(['json'])
 		.optional()
-		.describe("Defaults to 'json'. This plugin parses the json shape."),
+		.describe(
+			"Only 'json', the default. Linkly also serves csv, which this plugin does not parse.",
+		),
 	search: z.string().optional().describe('Only links matching this search.'),
 });
 
@@ -435,9 +484,11 @@ const ClicksGetTimeSeriesInputSchema = z.object({
 		.describe('Include bot clicks. Defaults to false.'),
 	unique: z.boolean().optional().describe('Count unique visitors only.'),
 	format: z
-		.enum(['json', 'csv', 'tsv'])
+		.enum(['json'])
 		.optional()
-		.describe("Defaults to 'json'. This plugin parses the json shape."),
+		.describe(
+			"Only 'json', the default. Linkly also serves csv and tsv, which this plugin does not parse.",
+		),
 	pivot: z
 		.enum(['link_id'])
 		.optional()
@@ -556,9 +607,11 @@ const ClicksGetCountersInputSchema = z.object({
 		.describe('Include bot clicks. Defaults to false.'),
 	unique: z.boolean().optional().describe('Count unique visitors only.'),
 	format: z
-		.enum(['json', 'csv', 'tsv'])
+		.enum(['json'])
 		.optional()
-		.describe("Defaults to 'json'. This plugin parses the json shape."),
+		.describe(
+			"Only 'json', the default. Linkly also serves csv and tsv, which this plugin does not parse.",
+		),
 });
 
 export type ClicksGetCountersInput = z.infer<
@@ -640,7 +693,7 @@ const WebhooksSubscribeInputSchema = z.object({
 	url: z
 		.url()
 		.describe(
-			'Receives a POST for every click in the workspace. Respond 2xx quickly; delivery is fire-and-forget with no retries.',
+			"Receives a POST for every click, link.created, link.updated and link.deleted in the workspace; branch on the body's `event` field (only click events carry a `click` object). Respond 2xx within 5 seconds; delivery is fire-and-forget with no retries.",
 		),
 });
 
@@ -681,6 +734,431 @@ export type WebhooksUnsubscribeResponse = z.infer<
 	typeof WebhooksUnsubscribeResponseSchema
 >;
 
+// ── links.getDetails ────────────────────────────────────────────────────────
+// GET /get_link/{id}: the link with its click counts, plus the workspace's
+// domains. links.get is the lighter read without counts.
+
+const LinksGetDetailsInputSchema = z.object({
+	id: z.number().int().positive().describe('The link to read.'),
+});
+
+export type LinksGetDetailsInput = z.infer<typeof LinksGetDetailsInputSchema>;
+
+const LinksGetDetailsResponseSchema = z
+	.object({
+		base62_id: z.string().nullish(),
+		clicks_count: z
+			.number()
+			.int()
+			.nullish()
+			.describe('Lifetime clicks, bots included.'),
+		// The spec types both as bare objects.
+		domain: z.record(z.string(), z.unknown()).nullish(), // unknown: untyped object in the spec
+		domains: z.array(z.record(z.string(), z.unknown())).nullish(), // unknown: untyped objects in the spec
+		link: WorkspaceLinkSchema,
+	})
+	.loose();
+
+export type LinksGetDetailsResponse = z.infer<
+	typeof LinksGetDetailsResponseSchema
+>;
+
+// ── links.bulkUpsert ────────────────────────────────────────────────────────
+
+const LinksBulkUpsertItemSchema = z.object({
+	workspace_id: WorkspaceIdSchema,
+	id: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Include to update that link; omit to create one.'),
+	url: z
+		.string()
+		.min(1)
+		.optional()
+		.describe('The destination URL. Required when creating.'),
+	...linkWriteFields,
+});
+
+const LinksBulkUpsertInputSchema = z.object({
+	links: z
+		.array(LinksBulkUpsertItemSchema)
+		.min(1)
+		.max(1000)
+		.describe(
+			'Up to 1000 links, each shaped like links.create (or links.update with an id).',
+		),
+});
+
+export type LinksBulkUpsertInput = z.infer<typeof LinksBulkUpsertInputSchema>;
+
+const LinksBulkUpsertResponseSchema = z.array(
+	z
+		.object({
+			index: z
+				.number()
+				.int()
+				.nullish()
+				.describe('0-based position in the request.'),
+			status: z
+				.string()
+				.describe("'success' or 'error'. The call answers 200 either way."),
+			link: LinklyLinkSchema.nullish(),
+			// The spec types the error detail as a bare object.
+			error: z.unknown().optional(), // unknown: untyped error detail, read per item
+		})
+		.loose(),
+);
+
+export type LinksBulkUpsertResponse = z.infer<
+	typeof LinksBulkUpsertResponseSchema
+>;
+
+// ── links.deleteMany ────────────────────────────────────────────────────────
+
+const LinksDeleteManyInputSchema = z.object({
+	workspace_id: WorkspaceIdSchema,
+	ids: z
+		.array(z.number().int().positive())
+		.min(1)
+		.describe('Link IDs to move to the trash.'),
+});
+
+export type LinksDeleteManyInput = z.infer<typeof LinksDeleteManyInputSchema>;
+
+// The spec documents a bare string acknowledgement.
+const LinksDeleteManyResponseSchema = z.string();
+
+export type LinksDeleteManyResponse = z.infer<
+	typeof LinksDeleteManyResponseSchema
+>;
+
+// ── clicks.export ───────────────────────────────────────────────────────────
+// Not in the OpenAPI spec. Linkly's analytics docs list /export with /clicks
+// and /counters, and Linkly's own MCP server calls
+// GET /workspace/{id}/clicks/export?format=json. The row fields come from the
+// MCP tool's description (timestamp, browser, country, URL, platform,
+// referer, bot, ISP, params), so every field is optional.
+
+const ClicksExportInputSchema = z.object({
+	workspace_id: WorkspaceIdSchema,
+	link_id: LinkIdQuerySchema.optional(),
+	start: DateQuerySchema,
+	end: DateQuerySchema,
+	country: CountryQuerySchema.optional(),
+	platform: z.string().optional(),
+	bots: z
+		.boolean()
+		.optional()
+		.describe('Include bot clicks. Defaults to false.'),
+});
+
+export type ClicksExportInput = z.infer<typeof ClicksExportInputSchema>;
+
+const ClickRecordSchema = z.record(z.string(), z.unknown()); // unknown: undocumented raw click row
+
+const ClicksExportResponseSchema = z.union([
+	z.array(ClickRecordSchema),
+	z
+		.object({
+			clicks: z.array(ClickRecordSchema),
+		})
+		.loose(),
+]);
+
+export type ClicksExportResponse = z.infer<typeof ClicksExportResponseSchema>;
+
+// ── domains.create / delete / updateFavicon ─────────────────────────────────
+// The spec has two create routes: POST /domains with workspace_id in the
+// body, and POST /workspace/{id}/domains. They take the same name; the
+// workspace-scoped one is wrapped here.
+
+const DomainResponseSchema = z
+	.object({
+		id: z.number().int().nullish(),
+		name: z.string().nullish(),
+		workspace_id: z.number().int().nullish(),
+	})
+	.loose();
+
+const DomainsCreateInputSchema = z.object({
+	workspace_id: WorkspaceIdSchema,
+	name: z
+		.string()
+		.min(1)
+		.describe(
+			'The domain, e.g. go.yourcompany.com. Point a CNAME at domains.linklyhq.com first.',
+		),
+});
+
+export type DomainsCreateInput = z.infer<typeof DomainsCreateInputSchema>;
+
+const DomainsCreateResponseSchema = DomainResponseSchema;
+
+export type DomainsCreateResponse = z.infer<typeof DomainsCreateResponseSchema>;
+
+const DomainIdSchema = z
+	.union([z.string().min(1), z.number().int().positive()])
+	.describe('The domain ID.');
+
+const DomainsDeleteInputSchema = z.object({
+	workspace_id: WorkspaceIdSchema,
+	domain_id: DomainIdSchema,
+});
+
+export type DomainsDeleteInput = z.infer<typeof DomainsDeleteInputSchema>;
+
+// The spec documents a bare string acknowledgement.
+const DomainsDeleteResponseSchema = z.string();
+
+export type DomainsDeleteResponse = z.infer<typeof DomainsDeleteResponseSchema>;
+
+const DomainsUpdateFaviconInputSchema = z.object({
+	workspace_id: WorkspaceIdSchema,
+	domain_id: DomainIdSchema,
+	favicon_url: z
+		.url()
+		.nullable()
+		.describe('Icon shown for the domain. null clears it.'),
+});
+
+export type DomainsUpdateFaviconInput = z.infer<
+	typeof DomainsUpdateFaviconInputSchema
+>;
+
+const DomainsUpdateFaviconResponseSchema = z
+	.object({
+		id: z.number().int().nullish(),
+		name: z.string().nullish(),
+		favicon_url: z.string().nullish(),
+	})
+	.loose();
+
+export type DomainsUpdateFaviconResponse = z.infer<
+	typeof DomainsUpdateFaviconResponseSchema
+>;
+
+// ── webhooks on one link ────────────────────────────────────────────────────
+
+const LinkIdPathSchema = z
+	.number()
+	.int()
+	.positive()
+	.describe('The link the webhook belongs to.');
+
+const WebhooksListForLinkInputSchema = z.object({
+	link_id: LinkIdPathSchema,
+});
+
+export type WebhooksListForLinkInput = z.infer<
+	typeof WebhooksListForLinkInputSchema
+>;
+
+const WebhooksListForLinkResponseSchema = WebhooksListResponseSchema;
+
+export type WebhooksListForLinkResponse = z.infer<
+	typeof WebhooksListForLinkResponseSchema
+>;
+
+const WebhooksSubscribeToLinkInputSchema = z.object({
+	link_id: LinkIdPathSchema,
+	url: z
+		.url()
+		.describe(
+			"Receives a POST for each click, link.updated and link.deleted on this link; branch on the body's `event` field. Respond 2xx within 5 seconds; no retries.",
+		),
+});
+
+export type WebhooksSubscribeToLinkInput = z.infer<
+	typeof WebhooksSubscribeToLinkInputSchema
+>;
+
+const WebhooksSubscribeToLinkResponseSchema = WebhooksSubscribeResponseSchema;
+
+export type WebhooksSubscribeToLinkResponse = z.infer<
+	typeof WebhooksSubscribeToLinkResponseSchema
+>;
+
+const WebhooksUnsubscribeFromLinkInputSchema = z.object({
+	link_id: LinkIdPathSchema,
+	hook_id: z
+		.string()
+		.min(1)
+		.describe(
+			'The webhook URL, exactly as webhooks.listForLink returned it. Encoded into the path for you.',
+		),
+});
+
+export type WebhooksUnsubscribeFromLinkInput = z.infer<
+	typeof WebhooksUnsubscribeFromLinkInputSchema
+>;
+
+const WebhooksUnsubscribeFromLinkResponseSchema = z.string();
+
+export type WebhooksUnsubscribeFromLinkResponse = z.infer<
+	typeof WebhooksUnsubscribeFromLinkResponseSchema
+>;
+
+// ── conversions.list / create ───────────────────────────────────────────────
+
+const ConversionSchema = z
+	.object({
+		id: z.string().describe('ULID; sorts by creation time.'),
+		link_id: z.number().int().nullish(),
+		click_id: z.string().nullish(),
+		event_type: z.string().nullish().describe('lead, sale or custom.'),
+		event_name: z.string().nullish(),
+		source: z.string().nullish(),
+		occurred_at: z.string().nullish(),
+		inserted_at: z.string().nullish(),
+		amount_cents: z.number().int().nullish(),
+		currency: z.string().nullish(),
+		country: z.string().nullish(),
+		event_id: z.string().nullish(),
+		external_id: z.string().nullish(),
+		ip_source: z
+			.string()
+			.nullish()
+			.describe('visitor, server or unknown. The address is never returned.'),
+		metadata: z.record(z.string(), z.unknown()).nullish(), // unknown: caller-defined metadata object
+	})
+	.loose();
+
+const ConversionsListInputSchema = z.object({
+	workspace_id: WorkspaceIdSchema,
+	limit: z
+		.number()
+		.int()
+		.min(1)
+		.max(1000)
+		.optional()
+		.describe('Defaults to 100.'),
+	after: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'A conversion id: return the ones recorded after it, oldest first. Pass the last id of the previous page.',
+		),
+	since: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'ISO 8601 date or date-time: return conversions recorded at or after it, oldest first. Without since or after, the newest come first.',
+		),
+});
+
+export type ConversionsListInput = z.infer<typeof ConversionsListInputSchema>;
+
+const ConversionsListResponseSchema = z
+	.object({
+		conversions: z.array(ConversionSchema),
+		has_more: z.boolean().describe('More follow; page on with after.'),
+	})
+	.loose();
+
+export type ConversionsListResponse = z.infer<
+	typeof ConversionsListResponseSchema
+>;
+
+const ConversionsCreateInputSchema = z.object({
+	workspace_id: WorkspaceIdSchema,
+	event_name: z.string().min(1).describe('e.g. purchase or signup.'),
+	event_type: z
+		.enum(['lead', 'sale', 'custom'])
+		.optional()
+		.describe('lead for signups and trials, sale when money changes hands.'),
+	linkly_cid: z
+		.string()
+		.optional()
+		.describe(
+			'The token Linkly appended to the destination URL. Without it (and no earlier attributed event for external_id) the conversion is discarded.',
+		),
+	event_id: z
+		.string()
+		.optional()
+		.describe(
+			'Your id for this event. Repeating it returns the original conversion instead of counting twice, which also makes the call safe to retry.',
+		),
+	external_id: z
+		.string()
+		.optional()
+		.describe(
+			'Your customer id; links later events to an earlier attributed one.',
+		),
+	amount_cents: z.number().int().optional(),
+	currency: z.string().optional().describe('ISO 4217, e.g. USD.'),
+	country: z.string().optional(),
+	occurred_at: z
+		.string()
+		.optional()
+		.describe('ISO 8601 date-time. Defaults to now.'),
+	visitor_ip: z
+		.string()
+		.optional()
+		.describe("The visitor's IP, for geography. Never returned."),
+	metadata: z.record(z.string(), z.unknown()).optional(), // unknown: caller-defined metadata object
+});
+
+export type ConversionsCreateInput = z.infer<
+	typeof ConversionsCreateInputSchema
+>;
+
+// 200/201 return the conversion; 202 means it could not be attributed and
+// was discarded (not an error, so not retried).
+const ConversionsCreateResponseSchema = z.union([
+	ConversionSchema,
+	z
+		.object({
+			attributed: z.literal(false),
+			message: z.string().nullish(),
+		})
+		.loose(),
+]);
+
+export type ConversionsCreateResponse = z.infer<
+	typeof ConversionsCreateResponseSchema
+>;
+
+// ── workspaces.update ───────────────────────────────────────────────────────
+// Not in the OpenAPI spec. Linkly's own MCP server sends
+// PATCH /workspace/{id} with { name, webhooks }, and a keyless probe answers
+// 401 (unknown routes redirect). The answer's shape is undocumented.
+
+const WorkspacesUpdateInputSchema = z.object({
+	workspace_id: WorkspaceIdSchema,
+	name: z.string().min(1).optional().describe('A new workspace name.'),
+	webhooks: z
+		.array(z.url())
+		.optional()
+		.describe(
+			"REPLACES the workspace's whole webhook list. Omit to leave it alone; use webhooks.subscribe or webhooks.unsubscribe for one URL.",
+		),
+});
+
+export type WorkspacesUpdateInput = z.infer<typeof WorkspacesUpdateInputSchema>;
+
+const WorkspacesUpdateResponseSchema = z.record(z.string(), z.unknown()); // unknown: undocumented workspace object
+
+export type WorkspacesUpdateResponse = z.infer<
+	typeof WorkspacesUpdateResponseSchema
+>;
+
+// ── auth.test ───────────────────────────────────────────────────────────────
+// Not in the OpenAPI spec. Linkly's MCP server calls POST /api/v1/test to
+// check a key; a keyless probe answers 401. The success body is
+// undocumented, so it passes through.
+
+const AuthTestInputSchema = z.object({});
+
+export type AuthTestInput = z.infer<typeof AuthTestInputSchema>;
+
+const AuthTestResponseSchema = z.unknown(); // unknown: undocumented success body
+
+export type AuthTestResponse = z.infer<typeof AuthTestResponseSchema>;
+
 // ── registries ──────────────────────────────────────────────────────────────
 
 export type LinklyEndpointInputs = {
@@ -698,6 +1176,20 @@ export type LinklyEndpointInputs = {
 	webhooksList: WebhooksListInput;
 	webhooksSubscribe: WebhooksSubscribeInput;
 	webhooksUnsubscribe: WebhooksUnsubscribeInput;
+	linksGetDetails: LinksGetDetailsInput;
+	linksBulkUpsert: LinksBulkUpsertInput;
+	linksDeleteMany: LinksDeleteManyInput;
+	clicksExport: ClicksExportInput;
+	domainsCreate: DomainsCreateInput;
+	domainsDelete: DomainsDeleteInput;
+	domainsUpdateFavicon: DomainsUpdateFaviconInput;
+	webhooksListForLink: WebhooksListForLinkInput;
+	webhooksSubscribeToLink: WebhooksSubscribeToLinkInput;
+	webhooksUnsubscribeFromLink: WebhooksUnsubscribeFromLinkInput;
+	conversionsList: ConversionsListInput;
+	conversionsCreate: ConversionsCreateInput;
+	workspacesUpdate: WorkspacesUpdateInput;
+	authTest: AuthTestInput;
 };
 
 export type LinklyEndpointOutputs = {
@@ -715,6 +1207,20 @@ export type LinklyEndpointOutputs = {
 	webhooksList: WebhooksListResponse;
 	webhooksSubscribe: WebhooksSubscribeResponse;
 	webhooksUnsubscribe: WebhooksUnsubscribeResponse;
+	linksGetDetails: LinksGetDetailsResponse;
+	linksBulkUpsert: LinksBulkUpsertResponse;
+	linksDeleteMany: LinksDeleteManyResponse;
+	clicksExport: ClicksExportResponse;
+	domainsCreate: DomainsCreateResponse;
+	domainsDelete: DomainsDeleteResponse;
+	domainsUpdateFavicon: DomainsUpdateFaviconResponse;
+	webhooksListForLink: WebhooksListForLinkResponse;
+	webhooksSubscribeToLink: WebhooksSubscribeToLinkResponse;
+	webhooksUnsubscribeFromLink: WebhooksUnsubscribeFromLinkResponse;
+	conversionsList: ConversionsListResponse;
+	conversionsCreate: ConversionsCreateResponse;
+	workspacesUpdate: WorkspacesUpdateResponse;
+	authTest: AuthTestResponse;
 };
 
 export const LinklyEndpointInputSchemas = {
@@ -732,6 +1238,20 @@ export const LinklyEndpointInputSchemas = {
 	webhooksList: WebhooksListInputSchema,
 	webhooksSubscribe: WebhooksSubscribeInputSchema,
 	webhooksUnsubscribe: WebhooksUnsubscribeInputSchema,
+	linksGetDetails: LinksGetDetailsInputSchema,
+	linksBulkUpsert: LinksBulkUpsertInputSchema,
+	linksDeleteMany: LinksDeleteManyInputSchema,
+	clicksExport: ClicksExportInputSchema,
+	domainsCreate: DomainsCreateInputSchema,
+	domainsDelete: DomainsDeleteInputSchema,
+	domainsUpdateFavicon: DomainsUpdateFaviconInputSchema,
+	webhooksListForLink: WebhooksListForLinkInputSchema,
+	webhooksSubscribeToLink: WebhooksSubscribeToLinkInputSchema,
+	webhooksUnsubscribeFromLink: WebhooksUnsubscribeFromLinkInputSchema,
+	conversionsList: ConversionsListInputSchema,
+	conversionsCreate: ConversionsCreateInputSchema,
+	workspacesUpdate: WorkspacesUpdateInputSchema,
+	authTest: AuthTestInputSchema,
 } as const;
 
 export const LinklyEndpointOutputSchemas = {
@@ -749,4 +1269,18 @@ export const LinklyEndpointOutputSchemas = {
 	webhooksList: WebhooksListResponseSchema,
 	webhooksSubscribe: WebhooksSubscribeResponseSchema,
 	webhooksUnsubscribe: WebhooksUnsubscribeResponseSchema,
+	linksGetDetails: LinksGetDetailsResponseSchema,
+	linksBulkUpsert: LinksBulkUpsertResponseSchema,
+	linksDeleteMany: LinksDeleteManyResponseSchema,
+	clicksExport: ClicksExportResponseSchema,
+	domainsCreate: DomainsCreateResponseSchema,
+	domainsDelete: DomainsDeleteResponseSchema,
+	domainsUpdateFavicon: DomainsUpdateFaviconResponseSchema,
+	webhooksListForLink: WebhooksListForLinkResponseSchema,
+	webhooksSubscribeToLink: WebhooksSubscribeToLinkResponseSchema,
+	webhooksUnsubscribeFromLink: WebhooksUnsubscribeFromLinkResponseSchema,
+	conversionsList: ConversionsListResponseSchema,
+	conversionsCreate: ConversionsCreateResponseSchema,
+	workspacesUpdate: WorkspacesUpdateResponseSchema,
+	authTest: AuthTestResponseSchema,
 } as const;

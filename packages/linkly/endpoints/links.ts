@@ -23,10 +23,11 @@ export const list: LinklyEndpoints['linksList'] = (ctx, input) =>
 			sort_by,
 			sort_dir,
 			deleted,
+			filter,
 		}) => ({
 			method: 'GET',
 			path: `/api/v1/workspace/${segment(workspace_id)}/list_links`,
-			query: { search, page, page_size, sort_by, sort_dir, deleted },
+			query: { search, page, page_size, sort_by, sort_dir, deleted, filter },
 			replaySafe: true,
 		}),
 		{
@@ -178,6 +179,75 @@ export const exportLinks: LinklyEndpoints['linksExport'] = (ctx, input) =>
 			log: ({ workspace_id }, result) => ({
 				workspaceId: workspace_id,
 				count: result.length,
+			}),
+		},
+	);
+
+export const getDetails: LinklyEndpoints['linksGetDetails'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'links.getDetails',
+			input: Inputs.linksGetDetails,
+			output: Outputs.linksGetDetails,
+		},
+		input,
+		({ id }) => ({
+			method: 'GET',
+			path: `/api/v1/get_link/${segment(id)}`,
+			replaySafe: true,
+		}),
+		{
+			log: ({ id }) => ({ linkId: id }),
+		},
+	);
+
+export const bulkUpsert: LinklyEndpoints['linksBulkUpsert'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'links.bulkUpsert',
+			input: Inputs.linksBulkUpsert,
+			output: Outputs.linksBulkUpsert,
+		},
+		input,
+		({ links }) => ({
+			method: 'POST',
+			path: '/api/v1/links',
+			// The body is the bare array the spec documents.
+			body: links,
+			// Items without an id create links, so only an all-update batch is
+			// safe to send again.
+			replaySafe: links.every((link) => link.id !== undefined),
+		}),
+		{
+			log: ({ links }, result) => ({
+				submitted: links.length,
+				failed: result.filter((item) => item.status !== 'success').length,
+			}),
+		},
+	);
+
+export const removeMany: LinklyEndpoints['linksDeleteMany'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'links.deleteMany',
+			input: Inputs.linksDeleteMany,
+			output: Outputs.linksDeleteMany,
+		},
+		input,
+		({ workspace_id, ids }) => ({
+			method: 'DELETE',
+			path: `/api/v1/workspace/${segment(workspace_id)}/links`,
+			body: { ids },
+			// Trashing a trashed link again is a no-op.
+			replaySafe: true,
+		}),
+		{
+			log: ({ workspace_id, ids }) => ({
+				workspaceId: workspace_id,
+				count: ids.length,
 			}),
 		},
 	);

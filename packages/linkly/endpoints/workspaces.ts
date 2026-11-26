@@ -1,4 +1,5 @@
 import type { LinklyEndpoints } from '..';
+import { segment } from '../client';
 import { call } from './call';
 import {
 	LinklyEndpointInputSchemas as Inputs,
@@ -24,5 +25,29 @@ export const listWorkspaces: LinklyEndpoints['workspacesListWorkspaces'] = (
 		}),
 		{
 			log: (_, result) => ({ count: result.length }),
+		},
+	);
+
+export const update: LinklyEndpoints['workspacesUpdate'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'workspaces.update',
+			input: Inputs.workspacesUpdate,
+			output: Outputs.workspacesUpdate,
+		},
+		input,
+		({ workspace_id, name, webhooks }) => ({
+			method: 'PATCH',
+			path: `/api/v1/workspace/${segment(workspace_id)}`,
+			body: { name, webhooks },
+			// The same fields again leave the same state.
+			replaySafe: true,
+		}),
+		{
+			log: ({ workspace_id, webhooks }) => ({
+				workspaceId: workspace_id,
+				webhooks: webhooks?.length,
+			}),
 		},
 	);
