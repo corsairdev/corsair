@@ -426,6 +426,7 @@ export const BaseProviders = [
 	'linear',
 	'linguapop',
 	'linkedin',
+	'linkhut',
 	'linkly',
 	'linkup',
 	'listennotes',
@@ -1215,6 +1216,7 @@ export const ProviderDisplayNames = {
 	linear: 'Linear',
 	linguapop: 'Linguapop',
 	linkedin: 'LinkedIn',
+	linkhut: 'Linkhut',
 	linkly: 'Linkly',
 	linkup: 'Linkup',
 	listennotes: 'Listen Notes',
@@ -2011,6 +2013,7 @@ export type AllProviders =
 	| 'linear'
 	| 'linguapop'
 	| 'linkedin'
+	| 'linkhut'
 	| 'linkly'
 	| 'linkup'
 	| 'listennotes'

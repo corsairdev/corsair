@@ -140,6 +140,7 @@ function buildCloudSurface<Plugins extends readonly CorsairPlugin[]>(
 						'corsair.withTenant(tenantId): tenantId must be a non-empty string',
 					);
 				}
+				refuseCloudConnectLinks(options);
 				return buildCloudClient(opts.plugins, {
 					transport,
 					tenantId,
@@ -421,6 +422,7 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 							'corsair.withTenant(tenantId): tenantId must be a non-empty string',
 						);
 					}
+					refuseCloudConnectLinks(options);
 					return buildCloudClient(undefined, {
 						transport: getTransport,
 						tenantId,
@@ -437,4 +439,17 @@ export function corsairCloud<Registry = CorsairCloudRegistry>(
 				: unreachableManagement<CorsairCloudInstanceHandle<Registry>>(handle);
 		},
 	};
+}
+
+/**
+ * connectLinks is a local-client switch. A cloud instance decides whether to
+ * mint a link from the caller's role, and nothing here could carry false to
+ * it, so asking for it fails loudly instead of being dropped.
+ */
+function refuseCloudConnectLinks(options?: WithTenantOptions): void {
+	if (options?.connectLinks === false) {
+		throw new Error(
+			'corsair.withTenant: connectLinks applies to local clients; a cloud instance mints no link for a caller that cannot authorize',
+		);
+	}
 }

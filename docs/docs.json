@@ -3539,6 +3539,14 @@
                 ]
               },
               {
+                "group": "Linkhut",
+                "pages": [
+                  "plugins/linkhut/overview",
+                  "plugins/linkhut/api",
+                  "plugins/linkhut/database"
+                ]
+              },
+              {
                 "group": "Linkly",
                 "pages": [
                   "plugins/linkly/overview",
