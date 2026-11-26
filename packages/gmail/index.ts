@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import type { GmailEndpointInputs, GmailEndpointOutputs } from './endpoints';
 import {
 	DraftsEndpoints,
@@ -57,6 +58,10 @@ import {
  */
 export const gmailAuthConfig = {
 	oauth_2: {
+		integration: ['topic_id', 'pubsub_audience'] as const,
+		account: ['email_address', 'last_history_id'] as const,
+	},
+	managed: {
 		integration: ['topic_id', 'pubsub_audience'] as const,
 		account: ['email_address', 'last_history_id'] as const,
 	},
@@ -259,7 +264,7 @@ export const gmailWebhooksNested = {
 } as const;
 
 export type GmailPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	credentials?: GmailCredentials;
 	hooks?: InternalGmailPlugin['hooks'];
@@ -457,6 +462,25 @@ export function gmail<const T extends GmailPluginOptions>(
 					plugin: 'gmail',
 					tokenUrl: 'https://oauth2.googleapis.com/token',
 				});
+			}
+
+			// Corsair's own Google app: Hub holds the client secret, so the token
+			// comes from (and refreshes through) Hub rather than Google directly.
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:gmail:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'gmail',
+					tenantId: ctx.tenantId,
+				};
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('gmail', 'oauth_2');
