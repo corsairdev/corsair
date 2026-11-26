@@ -218,90 +218,108 @@ describeIfReady('live Linkly API', () => {
 		);
 		const id = created.id;
 
-		// The reads that need a link, against the one just made.
-		const read = Outputs.linksGet.parse(
-			await makeLinklyRequest(key, {
-				method: 'GET',
-				path: `/api/v1/link/${id}`,
-				query: { workspace_id: WORKSPACE_ID },
-			}),
-		);
-		expect(read.id).toBe(id);
-		const details = Outputs.linksGetDetails.parse(
-			await makeLinklyRequest(key, {
-				method: 'GET',
-				path: `/api/v1/get_link/${id}`,
-			}),
-		);
-		expect(details.link.id).toBe(id);
-
-		const updated = Outputs.linksUpdate.parse(
-			await makeLinklyRequest(key, {
-				method: 'POST',
-				path: '/api/v1/link',
-				body: {
-					workspace_id: WORKSPACE_ID,
-					id,
-					note: 'updated by the live suite',
-					metadata: { source: 'corsair-live' },
-				},
-			}),
-		);
-		expect(updated.id).toBe(id);
-
-		const bulk = Outputs.linksBulkUpsert.parse(
-			await makeLinklyRequest(key, {
-				method: 'POST',
-				path: '/api/v1/links',
-				body: [
-					{ workspace_id: WORKSPACE_ID, id, name: 'corsair-plugin-test-bulk' },
-				],
-			}),
-		);
-		expect(bulk[0]?.status).toBe('success');
-
 		const hook = 'https://www.example.com/corsair-linkly-hook';
-		Outputs.webhooksSubscribeToLink.parse(
-			await makeLinklyRequest(key, {
-				method: 'POST',
-				path: `/api/v1/link/${id}/webhooks`,
-				body: { url: hook },
-			}),
-		);
-		const hooks = Outputs.webhooksListForLink.parse(
-			await makeLinklyRequest(key, {
-				method: 'GET',
-				path: `/api/v1/link/${id}/webhooks`,
-			}),
-		);
-		expect(hooks.map((entry) => entry.id)).toContain(hook);
-		Outputs.webhooksUnsubscribeFromLink.parse(
-			await makeLinklyRequest(key, {
+		const unsubscribeHook = () =>
+			makeLinklyRequest(key, {
 				method: 'DELETE',
 				path: `/api/v1/link/${id}/webhooks/${encodeURIComponent(hook)}`,
-			}),
-		);
-
-		Outputs.linksDelete.parse(
-			await makeLinklyRequest(key, {
-				method: 'DELETE',
-				path: `/api/v1/workspace/${WORKSPACE_ID}/links/${id}`,
-			}),
-		);
-		const restored = Outputs.linksRestore.parse(
-			await makeLinklyRequest(key, {
-				method: 'POST',
-				path: `/api/v1/workspace/${WORKSPACE_ID}/links/restore`,
-				body: { ids: [id] },
-			}),
-		);
-		expect(restored.restored).toBe(1);
-		Outputs.linksDeleteMany.parse(
-			await makeLinklyRequest(key, {
+			});
+		const trashLink = () =>
+			makeLinklyRequest(key, {
 				method: 'DELETE',
 				path: `/api/v1/workspace/${WORKSPACE_ID}/links`,
 				body: { ids: [id] },
-			}),
-		);
+			});
+		let hookSubscribed = false;
+		let trashed = false;
+
+		// A failing step still leaves no live link or hook behind; a cleanup
+		// error is swallowed so the step's own failure is what the run reports.
+		try {
+			// The reads that need a link, against the one just made.
+			const read = Outputs.linksGet.parse(
+				await makeLinklyRequest(key, {
+					method: 'GET',
+					path: `/api/v1/link/${id}`,
+					query: { workspace_id: WORKSPACE_ID },
+				}),
+			);
+			expect(read.id).toBe(id);
+			const details = Outputs.linksGetDetails.parse(
+				await makeLinklyRequest(key, {
+					method: 'GET',
+					path: `/api/v1/get_link/${id}`,
+				}),
+			);
+			expect(details.link.id).toBe(id);
+
+			const updated = Outputs.linksUpdate.parse(
+				await makeLinklyRequest(key, {
+					method: 'POST',
+					path: '/api/v1/link',
+					body: {
+						workspace_id: WORKSPACE_ID,
+						id,
+						note: 'updated by the live suite',
+						metadata: { source: 'corsair-live' },
+					},
+				}),
+			);
+			expect(updated.id).toBe(id);
+
+			const bulk = Outputs.linksBulkUpsert.parse(
+				await makeLinklyRequest(key, {
+					method: 'POST',
+					path: '/api/v1/links',
+					body: [
+						{
+							workspace_id: WORKSPACE_ID,
+							id,
+							name: 'corsair-plugin-test-bulk',
+						},
+					],
+				}),
+			);
+			expect(bulk[0]?.status).toBe('success');
+
+			// Set first: the hook may land even if its answer fails to parse.
+			hookSubscribed = true;
+			Outputs.webhooksSubscribeToLink.parse(
+				await makeLinklyRequest(key, {
+					method: 'POST',
+					path: `/api/v1/link/${id}/webhooks`,
+					body: { url: hook },
+				}),
+			);
+			const hooks = Outputs.webhooksListForLink.parse(
+				await makeLinklyRequest(key, {
+					method: 'GET',
+					path: `/api/v1/link/${id}/webhooks`,
+				}),
+			);
+			expect(hooks.map((entry) => entry.id)).toContain(hook);
+			Outputs.webhooksUnsubscribeFromLink.parse(await unsubscribeHook());
+			hookSubscribed = false;
+
+			Outputs.linksDelete.parse(
+				await makeLinklyRequest(key, {
+					method: 'DELETE',
+					path: `/api/v1/workspace/${WORKSPACE_ID}/links/${id}`,
+				}),
+			);
+			const restored = Outputs.linksRestore.parse(
+				await makeLinklyRequest(key, {
+					method: 'POST',
+					path: `/api/v1/workspace/${WORKSPACE_ID}/links/restore`,
+					body: { ids: [id] },
+				}),
+			);
+			expect(restored.restored).toBe(1);
+			Outputs.linksDeleteMany.parse(await trashLink());
+			trashed = true;
+		} finally {
+			if (hookSubscribed) await unsubscribeHook().catch(() => undefined);
+			if (!trashed) await trashLink().catch(() => undefined);
+		}
 	});
 });
