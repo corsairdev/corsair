@@ -525,6 +525,20 @@ describe('errors', () => {
 		).rejects.toThrow(/Invalid input for moneybird contacts.list/);
 		expect(calls).toHaveLength(0);
 	});
+
+	it('applies the same range to a page size sent as a digit string', async () => {
+		reply(200, []);
+		for (const per_page of ['101', '0']) {
+			await expect(
+				endpointFor('contacts.list')(ctx(), { per_page }),
+			).rejects.toThrow(/Invalid input for moneybird contacts.list/);
+		}
+		expect(calls).toHaveLength(0);
+		await endpointFor('contacts.list')(ctx(), { per_page: '100' });
+		expect(new URL(String(calls[0]?.url)).searchParams.get('per_page')).toBe(
+			'100',
+		);
+	});
 });
 
 describe('rate limits', () => {

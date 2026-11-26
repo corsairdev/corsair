@@ -11,6 +11,7 @@ import {
 import {
 	getMoneybirdInputSchema,
 	getMoneybirdOutputSchema,
+	numbersFromStrings,
 } from './endpoints/openapi-schema';
 import { MONEYBIRD_OPERATION_IDS } from './endpoints/operation-types';
 
@@ -297,5 +298,22 @@ describe('risk levels (R8)', () => {
 					.description,
 		);
 		expect(empty).toEqual([]);
+	});
+});
+
+describe('numbersFromStrings', () => {
+	const estimate = { $ref: 'estimate_response' };
+
+	it('keeps a string where the schema also takes a string', () => {
+		// `number` is string | number: converting would round this rate.
+		expect(
+			numbersFromStrings(estimate, { exchange_rate: '1.0000000000000001' }),
+		).toEqual({ exchange_rate: '1.0000000000000001' });
+	});
+
+	it('still turns a numeric string into a number for a number-only field', () => {
+		expect(numbersFromStrings(estimate, { draft_id: '12' })).toEqual({
+			draft_id: 12,
+		});
 	});
 });

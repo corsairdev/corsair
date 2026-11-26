@@ -55,6 +55,9 @@ function patternOf(value: unknown): RegExp | undefined {
 	}
 }
 
+/** A decimal Moneybird may write as a string ("9.09", "100"). */
+const NUMERIC_STRING = /^-?\d+(\.\d+)?$/;
+
 function withDescription(schema: z.ZodType, value: OpenApiDocument) {
 	return typeof value.description === 'string'
 		? schema.describe(value.description)
@@ -294,6 +297,15 @@ function schemaFromOpenApi(
 		const pattern = strict ? patternOf(value.pattern) : undefined;
 		if (pattern) stringSchema = stringSchema.regex(pattern);
 		schema = stringSchema;
+		// The string member of a `["integer", "string"]` field (per_page) carries
+		// the field's range too: a digit string gets the same bounds as the number.
+		if (strict && hasNumericBounds(value)) {
+			schema = stringSchema.refine(
+				(text) =>
+					!NUMERIC_STRING.test(text) || withinBounds(Number(text), value),
+				{ message: 'Number out of range' },
+			);
+		}
 	} else if (type === 'integer' || type === 'number') {
 		let numberSchema = z.number();
 		// A cursor or count that comes back fractional would be refused when sent back.
@@ -635,7 +647,41 @@ export function maskedIssuePath(
 
 export type { MoneybirdOpenApiSchema, MoneybirdOperationDefinition };
 
-const NUMERIC_STRING = /^-?\d+(\.\d+)?$/;
+function hasNumericBounds(value: OpenApiDocument): boolean {
+	return (
+		typeof value.minimum === 'number' ||
+		typeof value.maximum === 'number' ||
+		typeof value.exclusiveMinimum === 'number' ||
+		typeof value.exclusiveMaximum === 'number'
+	);
+}
+
+/** The same bounds the number branch of schemaFromOpenApi applies. */
+function withinBounds(number: number, value: OpenApiDocument): boolean {
+	const { minimum, maximum, exclusiveMinimum, exclusiveMaximum } = value;
+	if (typeof minimum === 'number') {
+		if (exclusiveMinimum === true ? number <= minimum : number < minimum)
+			return false;
+	}
+	if (typeof exclusiveMinimum === 'number' && number <= exclusiveMinimum)
+		return false;
+	if (typeof maximum === 'number') {
+		if (exclusiveMaximum === true ? number >= maximum : number > maximum)
+			return false;
+	}
+	if (typeof exclusiveMaximum === 'number' && number >= exclusiveMaximum)
+		return false;
+	return true;
+}
+
+// `unknown` because the member is a raw provider JSON Schema document.
+function takesString(member: unknown, value: string): boolean {
+	if (!isRecord(member)) return false;
+	const types = Array.isArray(member.type) ? member.type : [member.type];
+	if (!types.includes('string')) return false;
+	const pattern = patternOf(member.pattern);
+	return pattern === undefined || pattern.test(value);
+}
 
 /**
  * Moneybird writes some decimals as strings: an expense's
@@ -663,20 +709,31 @@ export function numbersFromStrings(
 	for (const key of ['anyOf', 'oneOf'] as const) {
 		const members = resolved[key];
 		if (Array.isArray(members)) {
+			// A string a string member takes is what Moneybird meant to send
+			// (`number` is string | number): converting it could round it.
+			if (
+				typeof value === 'string' &&
+				members.some((member) => takesString(resolve(member), value))
+			) {
+				return value;
+			}
 			return members.reduce(
 				(current, member) => numbersFromStrings(member, current, depth + 1),
 				value,
 			);
 		}
 	}
-	const type = resolved.type;
+	// OpenAPI 3.1 writes a nullable number as type: ["integer", "null"].
+	const types = Array.isArray(resolved.type) ? resolved.type : [resolved.type];
 	if (
-		(type === 'number' || type === 'integer') &&
+		(types.includes('number') || types.includes('integer')) &&
+		!types.includes('string') &&
 		typeof value === 'string' &&
 		NUMERIC_STRING.test(value)
 	) {
 		return Number(value);
 	}
+	const type = resolved.type;
 	if (Array.isArray(value)) {
 		return type === 'array' || resolved.items !== undefined
 			? value.map((item) => numbersFromStrings(resolved.items, item, depth + 1))
