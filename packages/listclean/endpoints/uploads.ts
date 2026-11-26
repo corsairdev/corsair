@@ -1,3 +1,4 @@
+import { asRecord } from 'corsair/core';
 import type { ListcleanEndpoints } from '..';
 import { envelopeData, envelopeMessage, segment } from '../client';
 import { call } from './call';
@@ -74,8 +75,11 @@ export const uploadChunk: ListcleanEndpoints['uploadsUploadChunk'] = (
 			replayable: false,
 		}),
 		{
-			// No `data` on this answer: the documented message stands in for it.
-			shape: (raw) => ({ message: envelopeMessage(raw) }),
+			// The message, plus the chunk counters the live API sends in data.
+			shape: (raw) => ({
+				message: envelopeMessage(raw),
+				chunk_details: asRecord(envelopeData(raw))?.chunk_details,
+			}),
 			// The chunk content is the CSV of addresses; only counters are logged.
 			log: ({ upload_id, chunk_sequence_number }) => ({
 				uploadId: upload_id,

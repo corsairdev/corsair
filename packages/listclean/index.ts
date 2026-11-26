@@ -238,22 +238,22 @@ const listcleanEndpointMeta = {
 	'uploads.listUploads': {
 		riskLevel: 'read',
 		description:
-			'List the chunked CSV uploads with their id, status, file names and record counts',
+			"List chunked CSV uploads with their id, status, file names and record counts. On 2026-11-26 the live route did not include the account's own new uploads, so keep the upload id startUpload answers and poll getUpload instead.",
 	},
 	'uploads.startUpload': {
 		riskLevel: 'write',
 		description:
-			'Open a chunked CSV upload: name the file, its chunk count and chunk size, and optional CSV characters and fast mode. Answers the upload id the chunks go to. Once every chunk is in, the list is verified and spends one credit per address.',
+			'Open a chunked CSV upload: name the file, its chunk count and chunk size, the zero-based email column, and optional CSV characters and fast mode. Answers the upload id the chunks go to. Once every chunk is in, the list is verified and spends one credit per address.',
 	},
 	'uploads.uploadChunk': {
 		riskLevel: 'write',
 		description:
-			'Send one base64-encoded chunk of an upload, with its sequence number and an optional md5 checksum. The last chunk starts the billed verification. Not replayed after a 5xx or a lost answer.',
+			'Send one base64-encoded chunk of an upload, with its sequence number (counted from 1) and an optional md5 checksum. Answers the chunk counters. The last chunk starts the billed verification. Not replayed after a 5xx or a lost answer.',
 	},
 	'uploads.getUpload': {
 		riskLevel: 'read',
 		description:
-			'Read one upload: its inprocess, success or error status, progress, chunk counts and the request id of the list it became',
+			'Read one upload: its inprocess, success or error status, chunk counts and the request id of the list it became (pass it to lists.getList)',
 	},
 	'account.getCredits': {
 		riskLevel: 'read',

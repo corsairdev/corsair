@@ -5,17 +5,20 @@ jest.mock('corsair/core', () => {
 
 import {
 	LIVE_ANALYTICS,
+	LIVE_CHUNK_UPLOADED,
 	LIVE_LIST,
 	LIVE_LISTS_EMPTY,
 	LIVE_LOGS,
 	LIVE_RESULTS_DIRTY,
 	LIVE_UPLOAD_ROW,
+	LIVE_UPLOAD_STATUS,
 } from './test-fixtures';
 import {
 	captureError,
 	endpoints,
 	installFetchMock,
 	jsonResponse,
+	lastCall,
 	makeCtx,
 	mockFetch,
 	ok,
@@ -125,5 +128,82 @@ describe('Listclean answers as the live API sends them', () => {
 
 		expect((error as Error).name).toBe('ApiError');
 		expect((error as Error).message).toContain('List not found');
+	});
+
+	it('uploads.startUpload sends email_column_index, which the live API requires', async () => {
+		mockFetch(ok({ upload_id: 200016 }));
+
+		await endpoints.uploads.startUpload(makeCtx(), {
+			filename: 'corsair-upload-probe.csv',
+			file_type: 'csv',
+			total_chunk_count: 1,
+			max_chunk_size: 64,
+			email_column_index: 0,
+		});
+
+		const body = JSON.parse(String(lastCall().init.body));
+		expect(body.email_column_index).toBe(0);
+	});
+
+	it('uploads.startUpload refuses a start without email_column_index', async () => {
+		const error = await captureError(
+			endpoints.uploads.startUpload(makeCtx(), {
+				filename: 'a.csv',
+				file_type: 'csv',
+				total_chunk_count: 1,
+				max_chunk_size: 64,
+			} as never),
+		);
+
+		expect((error as Error).name).toBe('ZodError');
+	});
+
+	it('uploads.uploadChunk returns the chunk counters with the message', async () => {
+		mockFetch(jsonResponse(LIVE_CHUNK_UPLOADED));
+
+		const result = await endpoints.uploads.uploadChunk(makeCtx(), {
+			upload_id: 200016,
+			chunk_sequence_number: 1,
+			content: 'AAAA',
+		});
+
+		expect(result.message).toBe('Chunk uploaded successfully');
+		expect(result.chunk_details).toEqual({
+			total_chunk_count: '1',
+			uploaded_chunk_count: '1',
+		});
+	});
+
+	it('uploads.getUpload reads the upload row with chunk_details and request_id', async () => {
+		mockFetch(ok(LIVE_UPLOAD_STATUS));
+
+		const result = await endpoints.uploads.getUpload(makeCtx(), {
+			upload_id: 200016,
+		});
+
+		expect(result.status).toBe('success');
+		expect(result.request_id).toBe(186846);
+		expect(result.chunk_details?.uploaded_chunk_count).toBe('1');
+	});
+
+	it('uploads.getUpload reads chunk counts sent as false on an upload that never got its chunks', async () => {
+		mockFetch(
+			ok({
+				...LIVE_UPLOAD_STATUS,
+				status: 'error',
+				chunk_details: {
+					total_chunk_count: false,
+					uploaded_chunk_count: false,
+				},
+				request_id: 0,
+			}),
+		);
+
+		const result = await endpoints.uploads.getUpload(makeCtx(), {
+			upload_id: 200016,
+		});
+
+		expect(result.status).toBe('error');
+		expect(result.chunk_details?.total_chunk_count).toBe(false);
 	});
 });

@@ -546,6 +546,15 @@ const StartUploadInputSchema = z.object({
 		.int()
 		.min(1)
 		.describe('The largest chunk, in bytes before base64 encoding.'),
+	// Not in the spec; the live API answers "email column index is required"
+	// without it (2026-11-26).
+	email_column_index: z
+		.number()
+		.int()
+		.min(0)
+		.describe(
+			'Zero-based index of the CSV column holding the email address (0 is the first column). Required by the live API, though the spec omits it.',
+		),
 	separator_char: SingleCharSchema.optional().describe(
 		'CSV field separator, e.g. `,`.',
 	),
@@ -589,7 +598,7 @@ const UploadChunkInputSchema = z.object({
 		.int()
 		.min(0)
 		.describe(
-			"Position of this chunk. The spec's example sends chunk 24 of 24, so numbering appears to start at 1.",
+			'Position of this chunk, counted from 1: the last chunk of a 24-chunk file is 24.',
 		),
 	content: z
 		.string()
@@ -605,8 +614,27 @@ const UploadChunkInputSchema = z.object({
 
 export type UploadChunkInput = z.infer<typeof UploadChunkInputSchema>;
 
-// The answer documents only `message` ("Chunk uploaded successfully").
-const UploadChunkResponseSchema = z.object({ message: z.string() }).loose();
+// The chunk counters arrive as strings, or `false` on an upload that never
+// received its chunks (live, 2026-11-26).
+const ChunkCountSchema = z.union([z.number(), z.string(), z.literal(false)]);
+
+const ChunkDetailsSchema = z
+	.object({
+		total_chunk_count: ChunkCountSchema.nullish(),
+		uploaded_chunk_count: ChunkCountSchema.nullish(),
+	})
+	.loose();
+
+// The spec documents only `message` ("Chunk uploaded successfully"); the live
+// answer also carries the chunk counters in data.
+const UploadChunkResponseSchema = z
+	.object({
+		message: z.string(),
+		chunk_details: ChunkDetailsSchema.nullish().describe(
+			'How many chunks the upload expects and how many have arrived.',
+		),
+	})
+	.loose();
 
 export type UploadChunkResponse = z.infer<typeof UploadChunkResponseSchema>;
 
@@ -623,19 +651,13 @@ const GetUploadResponseSchema = z
 				'Upload status: inprocess, success or error (lowercase, unlike the list statuses).',
 			),
 		progress: ProgressSchema.nullish().describe('Completion percentage.'),
-		chunk_details: z
-			.object({
-				total_chunk_count: CountValueSchema.nullish(),
-				uploaded_chunk_count: CountValueSchema.nullish(),
-			})
-			.loose()
-			.nullish(),
+		chunk_details: ChunkDetailsSchema.nullish(),
 		request_id: z
 			.number()
 			.int()
 			.nullish()
 			.describe(
-				'The Listclean request id for this upload; the list it becomes in `lists.listLists`.',
+				'The list this upload became: pass it as list_id to `lists.getList`. 0 or null while no list exists.',
 			),
 	})
 	.loose();

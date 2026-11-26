@@ -254,3 +254,40 @@ export const LIVE_RESULTS_DIRTY = {
 		},
 	},
 } as const;
+
+/** POST /uploads/{upload_id}, the whole body: the chunk counters ride in data, as strings. */
+export const LIVE_CHUNK_UPLOADED = {
+	success: 1,
+	error_code: 0,
+	message: 'Chunk uploaded successfully',
+	data: {
+		chunk_details: { total_chunk_count: '1', uploaded_chunk_count: '1' },
+	},
+} as const;
+
+/**
+ * GET /uploads/{upload_id} once the chunks are in: the upload row with
+ * chunk_details and the list id in request_id (2026-11-26, our own upload).
+ */
+export const LIVE_UPLOAD_STATUS = {
+	id: 200016,
+	entered: '2026-11-26 19:54:21',
+	client_filename: 'corsair-upload-probe.csv',
+	filename: '1795703061-8602_corsair-upload-probe.csv',
+	status: 'success',
+	count: 0,
+	total_records: 100,
+	stage: 'Please wait..',
+	remarks: 'all chunks uploaded',
+	import_result: null,
+	separator_char: ',',
+	enclosure_char: '"',
+	escape_char: '',
+	fast_process: 0,
+	upload_session_id: '1795703061-818742',
+	email_column_index: 0,
+	token_id: 0,
+	token_type: 'session',
+	chunk_details: { total_chunk_count: '1', uploaded_chunk_count: '1' },
+	request_id: 186846,
+} as const;

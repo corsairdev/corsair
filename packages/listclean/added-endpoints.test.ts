@@ -74,6 +74,7 @@ describe('uploads', () => {
 			file_type: 'csv',
 			total_chunk_count: 24,
 			max_chunk_size: 64000,
+			email_column_index: 0,
 			separator_char: ',',
 			enclosure_char: '"',
 			escape_char: '',
@@ -87,6 +88,7 @@ describe('uploads', () => {
 			file_type: 'csv',
 			total_chunk_count: 24,
 			max_chunk_size: 64000,
+			email_column_index: 0,
 			separator_char: ',',
 			enclosure_char: '"',
 			escape_char: '',
@@ -111,6 +113,7 @@ describe('uploads', () => {
 				file_type: 'csv',
 				total_chunk_count: 1,
 				max_chunk_size: 10,
+				email_column_index: 0,
 				separator_char: ';;',
 			}),
 		);
