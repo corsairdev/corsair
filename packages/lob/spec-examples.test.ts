@@ -10,7 +10,7 @@ import { LobEndpointOutputSchemas } from './endpoints/types';
  * object), which is how earlier plugins failed live.
  */
 const examples = JSON.parse(
-	readFileSync(join(__dirname, 'fixtures', 'spec-examples.json'), 'utf8'),
+	readFileSync(join(__dirname, '__fixtures__', 'spec-examples.json'), 'utf8'),
 ) as Record<string, unknown>;
 
 const OPERATION_BY_ROUTE: Record<
