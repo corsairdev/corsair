@@ -20,7 +20,7 @@ import {
 	QrCodeInputSchema,
 	SendDateSchema,
 	UseTypeSchema,
-} from './types';
+} from './types-base';
 
 // The rest of Lob's public API (OpenAPI 1.22.0, github.com/lob/lob-openapi):
 // the mail products beyond postcards and letters, bank accounts, billing

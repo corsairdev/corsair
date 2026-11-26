@@ -1,11 +1,11 @@
 import type { LobEndpoints } from '..';
 import { segment } from '../client';
 import { call, idempotencyHeaders } from './call';
+import { omit } from './shared';
 import {
 	LobEndpointInputSchemas as Inputs,
 	LobEndpointOutputSchemas as Outputs,
-} from './registry';
-import { omit } from './shared';
+} from './types';
 
 // Sends real, billed mail that cannot be recalled once in production.
 export const send: LobEndpoints['postcardsSend'] = (ctx, input) =>

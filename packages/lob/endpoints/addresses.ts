@@ -4,7 +4,7 @@ import { call } from './call';
 import {
 	LobEndpointInputSchemas as Inputs,
 	LobEndpointOutputSchemas as Outputs,
-} from './registry';
+} from './types';
 
 export const create: LobEndpoints['addressesCreate'] = (ctx, input) =>
 	call(

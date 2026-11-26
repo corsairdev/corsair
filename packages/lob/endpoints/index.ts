@@ -180,5 +180,5 @@ export const lobEndpointsNested = {
 	},
 } as const;
 
-export * from './registry';
 export * from './types';
+export * from './types-base';

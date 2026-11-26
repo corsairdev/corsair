@@ -3,11 +3,11 @@ import type { z } from 'zod';
 import type { LobContext, LobEndpoints } from '..';
 import type { LobRequest } from '../client';
 import { makeLobRequest } from '../client';
-import type { LobOperation } from './registry';
+import type { LobOperation } from './types';
 import {
 	LobEndpointInputSchemas as Inputs,
 	LobEndpointOutputSchemas as Outputs,
-} from './registry';
+} from './types';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 

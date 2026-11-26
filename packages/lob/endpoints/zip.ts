@@ -3,7 +3,7 @@ import { call } from './call';
 import {
 	LobEndpointInputSchemas as Inputs,
 	LobEndpointOutputSchemas as Outputs,
-} from './registry';
+} from './types';
 
 export const usZipLookup: LobEndpoints['zipUsZipLookup'] = (ctx, input) =>
 	call(

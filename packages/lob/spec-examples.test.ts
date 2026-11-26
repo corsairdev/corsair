@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { LobEndpointOutputSchemas } from './endpoints/registry';
+import { LobEndpointOutputSchemas } from './endpoints/types';
 
 /**
  * Every example response in Lob's OpenAPI 1.22.0 (github.com/lob/lob-openapi),

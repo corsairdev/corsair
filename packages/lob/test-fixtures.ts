@@ -8,7 +8,7 @@ import {
 	LobPostcardSchema,
 	UsVerificationSchema,
 	ZipLookupResponseSchema,
-} from './endpoints/types';
+} from './endpoints/types-base';
 
 // Response bodies the Lob API sends per its OpenAPI spec examples (spec
 // v1.22.0). Every fixture parses through the matching output schema, so a

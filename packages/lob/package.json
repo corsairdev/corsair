@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/lob",
   "version": "0.1.0",
-  "description": "Address verification and print mail with Lob - verify US and international addresses, autocomplete and look up ZIP codes, manage the address book, send and track postcards and letters, and read the account balance.",
+  "description": "Address verification and print mail with Lob - verify US and international addresses, send and track postcards, letters, checks, self mailers, snap packs and booklets, run bulk-mail campaigns, and manage templates, bank accounts, billing groups and short links.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

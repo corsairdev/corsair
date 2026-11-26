@@ -3,7 +3,7 @@ import { call } from './call';
 import {
 	LobEndpointInputSchemas as Inputs,
 	LobEndpointOutputSchemas as Outputs,
-} from './registry';
+} from './types';
 
 // Verifications are synchronous POSTs that read nothing back from Lob, but
 // they spend verifications on the account's plan, so the log keeps only the

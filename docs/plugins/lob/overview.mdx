@@ -1,7 +1,7 @@
 ---
 title: "Lob plugin"
 sidebarTitle: "Overview"
-description: "Address verification and print mail with Lob - verify US and international addresses, autocomplete and look up ZIP codes, manage the address book, send and track postcards and letters, and read the account balance."
+description: "Address verification and print mail with Lob - verify US and international addresses, send and track postcards, letters, checks, self mailers, snap packs and booklets, run bulk-mail campaigns, and manage templates, bank accounts, billing groups and short links."
 ---
 
 Use **Lob** through Corsair: one client, typed API calls.
@@ -11,14 +11,18 @@ Create an API key in the Lob dashboard under Settings, API keys (dashboard.lob.c
 - **Test vs live keys.** Keys prefixed `test_` never print, mail, or verify real addresses: verifications return simulated outcomes and mailpieces stay virtual. Keys prefixed `live_` spend real money per mailpiece and per verification.
 - **Sends are physical.** `postcards.send` and `letters.send` dispatch print jobs that cannot be recalled once in production, and each piece is billed. Pass an `idempotency_key` (at most 256 characters): Lob returns the original piece for 24 hours instead of mailing a duplicate.
 - **Bulk US verification needs a live key.** `usVerifications.bulk` answers a dummy response on a `test_` key; the single verification works in both modes.
-- **Rate limits.** Lob allows 150 requests per 5 seconds per key and endpoint (300 for the two US verification endpoints), and answers 429 with no `Retry-After` header. The plugin waits 5 seconds between retries, up to 2 times.
+- **Rate limits.** Lob allows 150 requests per 5 seconds per key and endpoint (300 for the two US verification endpoints), and answers 429 with no `Retry-After` header. Corsair retries a 429 three times (after 1, 2 and 4 seconds), then once more after 5 seconds. A 429 means Lob did nothing, so the retry is safe for sends too.
 - **Mailpieces land as addresses.** When you send with inline addresses, the response expands `to` and `from` into full address objects.
 - **Letter paper size.** `letters.send` accepts `size` only when the account pins `Lob-Version` 2024-01-01 or newer; older versions reject it.
-- **Cancels.** The plugin does not wrap mailpiece cancels or the marketing suite (campaigns, templates, uploads). It also does not receive Lob webhooks; track deliveries by reading a mailpiece with `postcards.get` or `letters.get`.
+- **Every mail product sends for real on a live key.** `checks.send`, `selfMailers.send`, `snapPacks.send`, `booklets.send` and `campaigns.send` print, mail and bill like postcards and letters; `checks.send` also moves money from a verified bank account. Print orders (`cards.createOrder`, `buckslips.createOrder`) bill thousands of pieces at once. All of these are `destructive`.
+- **Cancels.** `postcards.cancel`, `letters.cancel`, `checks.cancel`, `selfMailers.cancel`, `snapPacks.cancel` and `booklets.cancel` work only before the piece goes to production (within the account's cancellation window).
+- **Campaigns.** Create a campaign, add a creative (the artwork) and an upload (the audience), attach the CSV with `uploads.uploadFile`, check `uploads.getReport`, then `campaigns.send`. Campaigns, uploads and Informed Delivery need those features enabled on the Lob account.
+- **Multipart.** `uploads.uploadFile` and the two Informed Delivery writes send files: pass a public URL, `{ url }`, or `{ base64, filename }`.
+- **Webhooks.** The plugin does not receive Lob webhooks; track deliveries by reading a mailpiece (`postcards.get`, `letters.get`, `checks.get`, ...).
 
 **What you get:**
 
-- 14 typed API operations
+- 105 typed API operations
 
 ## Setup
 

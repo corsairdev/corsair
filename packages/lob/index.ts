@@ -12,14 +12,11 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { lobEndpointsNested } from './endpoints';
-import type {
-	LobEndpointInputs,
-	LobEndpointOutputs,
-} from './endpoints/registry';
+import type { LobEndpointInputs, LobEndpointOutputs } from './endpoints/types';
 import {
 	LobEndpointInputSchemas,
 	LobEndpointOutputSchemas,
-} from './endpoints/registry';
+} from './endpoints/types';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { LobSchema } from './schema';
 
@@ -1042,9 +1039,9 @@ export function lob<const T extends LobPluginOptions>(
 export type {
 	LobEndpointInputs,
 	LobEndpointOutputs,
-} from './endpoints/registry';
+} from './endpoints/types';
 export type {
 	IntlVerification,
 	LobAddress,
 	UsVerification,
-} from './endpoints/types';
+} from './endpoints/types-base';
