@@ -56,6 +56,25 @@ async function loopsError(
 	)) as Error;
 }
 
+const context = {
+	pluginId: 'loops',
+	operation: 'test',
+	input: {},
+	originalError: new Error('test'),
+};
+
+/**
+ * Mirrors core's handleCorsairError (not exported): the first key other than
+ * DEFAULT whose match passes wins, else DEFAULT. Returns the winning key.
+ */
+function dispatch(handlers: CorsairErrorHandler, error: Error): string {
+	return (
+		Object.keys(handlers).find(
+			(name) => name !== 'DEFAULT' && handlers[name]?.match(error, context),
+		) ?? 'DEFAULT'
+	);
+}
+
 beforeEach(installFetchMock);
 afterEach(restoreFetchMock);
 
@@ -75,6 +94,37 @@ describe('Loops error handler matching', () => {
 		});
 	});
 
+	it('does not retry a 429 for a used-up upload or preview quota', async () => {
+		mockFetch(
+			jsonResponse(
+				{
+					message:
+						'Upload limit exceeded: max 50 uploads per 24 hours. Please contact support if you need to increase your upload limit.',
+					maxUploads: 50,
+					windowHours: 24,
+				},
+				{ status: 429 },
+			),
+		);
+		const uploads = (await captureError(
+			makeLoopsRequest('test-key', {
+				method: 'POST',
+				path: '/v1/uploads/a_1/complete',
+			}),
+		)) as Error;
+		const preview = await loopsError('The daily preview limit was reached.', {
+			status: 429,
+		});
+		const rateLimit = await loopsError('Rate limit exceeded', { status: 429 });
+
+		expect(dispatch(errorHandlers, uploads)).toBe('QUOTA_EXHAUSTED');
+		expect(dispatch(errorHandlers, preview)).toBe('QUOTA_EXHAUSTED');
+		expect(dispatch(errorHandlers, rateLimit)).toBe('RATE_LIMIT_ERROR');
+		expect(await handler('QUOTA_EXHAUSTED').handler()).toEqual({
+			maxRetries: 0,
+		});
+	});
+
 	it('keeps a Retry-After header value when Loops ever sends one', async () => {
 		const error = await loopsError('Loops 429: Rate limit exceeded', {
 			status: 429,
@@ -91,9 +141,9 @@ describe('Loops error handler matching', () => {
 			{ status: 401 },
 		);
 
-		expect(handler('FEATURE_NOT_ENABLED').match(error)).toBe(true);
+		// Both match; key order decides, so check what core would pick.
 		expect(handler('AUTH_ERROR').match(error)).toBe(true);
-		expect(handler('RATE_LIMIT_ERROR').match(error)).toBe(false);
+		expect(dispatch(errorHandlers, error)).toBe('FEATURE_NOT_ENABLED');
 		const result = await handler('FEATURE_NOT_ENABLED').handler();
 		expect(result?.maxRetries).toBe(0);
 	});
@@ -202,19 +252,22 @@ describe('mergeErrorHandlers', () => {
 	} satisfies CorsairErrorHandler;
 
 	it('puts the caller handlers first so core runs them before the builtins', () => {
-		const callerCallOrder: string[] = [];
-		const merged = mergeErrorHandlers(builtin, {
-			QUOTA_ERROR: {
-				match: () => true,
-				handler: async () => {
-					callerCallOrder.push('caller');
-					return { maxRetries: 0 };
+		// Both match the same error; the caller's must win.
+		const merged = mergeErrorHandlers(
+			{ ...builtin, AUTH_ERROR: { ...builtin.AUTH_ERROR, match: () => true } },
+			{
+				QUOTA_ERROR: {
+					match: () => true,
+					handler: async () => ({ maxRetries: 4 }),
 				},
 			},
-		});
+		);
 
+		expect(dispatch(merged, new Error('Loops 401: Invalid API key'))).toBe(
+			'QUOTA_ERROR',
+		);
 		const keys = Object.keys(merged);
-		expect(keys.indexOf('QUOTA_ERROR')).toBeLessThan(keys.indexOf('DEFAULT'));
+		expect(keys[keys.length - 1]).toBe('DEFAULT');
 	});
 
 	it('lets a caller handler under a builtin-covered key win', async () => {

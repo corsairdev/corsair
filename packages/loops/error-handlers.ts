@@ -1,4 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { asRecord } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { isFeatureNotEnabled, isReplayable } from './client';
 
@@ -7,12 +8,29 @@ function statusOf(error: Error): number | undefined {
 }
 
 /**
- * Loops status map: 429 rate limit, 401 bad key or disabled feature flag,
+ * A 429 for a used-up quota rather than the per-second rate limit: uploads.complete
+ * past 50 uploads per 24 hours (its body carries `maxUploads` and `windowHours`)
+ * and emailMessages.sendPreview past the daily preview limit. Retrying within
+ * seconds only repeats the failure.
+ */
+export function isQuotaExhausted(error: Error): boolean {
+	if (statusOf(error) !== 429) return false;
+	const body = asRecord((error as ApiError).body);
+	if (body && ('maxUploads' in body || 'windowHours' in body)) return true;
+	return /daily|per 24 hours|upload limit/i.test(error.message);
+}
+
+/**
+ * Loops status map: 429 rate limit (or a used-up upload/preview quota), 401 bad key or disabled feature flag,
  * 409 duplicate contact or reused idempotency key, 400/404 validation and
  * not-found, 405 wrong method. No documented Retry-After, so rate-limit
  * retries run the exponential strategy (1s/2s/4s).
  */
 export const errorHandlers = {
+	QUOTA_EXHAUSTED: {
+		match: (error: Error) => isQuotaExhausted(error),
+		handler: async () => ({ maxRetries: 0 }),
+	},
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
