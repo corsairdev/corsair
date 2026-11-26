@@ -12966,5 +12966,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-26",
+    "package": "@corsair-dev/lob",
+    "dir": "packages/lob",
+    "name": "Lob",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-26",
+    "package": "@corsair-dev/lusha",
+    "dir": "packages/lusha",
+    "name": "Lusha",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-26",
+    "package": "@corsair-dev/publora",
+    "dir": "packages/publora",
+    "name": "Publora",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
