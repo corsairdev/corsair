@@ -21,7 +21,8 @@ overviewNote: |
   return, so paginated lists take `page` and `per_page` (up to 100; the
   plugin sends 100 when it is left out, since Moneybird's own default differs
   per route) and return `{ items, next_page }`, with `next_page` set while a
-  page comes back full. `listVersions` + `fetchByIds` is Moneybird's
+  page comes back full. `contacts.listDuplicates` takes no page size, so
+  its `next_page` is set while a page has any groups. `listVersions` + `fetchByIds` is Moneybird's
   synchronization API: ids and versions first, then up to 100 records by id.
   - **Filtering goes through one string.** List filters are `key:value`
   terms separated by commas (e.g. `state:open|late`, `period:this_year`),
@@ -30,6 +31,8 @@ overviewNote: |
   `estimates.send` and `contacts.paymentsMandate.request` email customers;
   `subscriptions.create`, `recurringSalesInvoices.create` and
   `subscriptions.createAndScheduleOneOffSalesInvoice` start invoicing them;
+  `contacts.additionalCharges.create` and
+  `subscriptions.additionalCharges.create` add a charge to their next invoice;
   `purchaseTransactionBatches.createFromSepaFile` prepares bank transfers.
   All are `destructive`, as is every delete.
   - **Downloads** (invoice and estimate PDFs, UBL, attachments, exports)
@@ -418,7 +421,7 @@ apiExamples:
   projects.update:
     args: {"id": "458026356994737217", "project": {"name": "Website Relaunch"}}
   purchaseTransactionBatches.createFromSepaFile:
-    args: {"file": {"base64": "JVBERi0xLjQKJSVFT0YK", "filename": "invoice.pdf", "contentType": "application/pdf"}}
+    args: {"file": {"base64": "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPERvY3VtZW50IHhtbG5zPSJ1cm46aXNvOnN0ZDppc286MjAwMjI6dGVjaDp4c2Q6cGFpbi4wMDEuMDAxLjA5Ij48Q3N0bXJDZHRUcmZJbml0bj48R3JwSGRyPjxNc2dJZD5NQi0yMDI2LTA0LTA5LTE8L01zZ0lkPjxDcmVEdFRtPjIwMjYtMDQtMDlUMTA6MDA6MDA8L0NyZUR0VG0+PE5iT2ZUeHM+MTwvTmJPZlR4cz48Q3RybFN1bT4xMDAuMDA8L0N0cmxTdW0+PEluaXRnUHR5PjxObT5CZWFjaHkgQlY8L05tPjwvSW5pdGdQdHk+PC9HcnBIZHI+PFBtdEluZj48UG10SW5mSWQ+TUItMjAyNi0wNC0wOS0xLTE8L1BtdEluZklkPjxQbXRNdGQ+VFJGPC9QbXRNdGQ+PE5iT2ZUeHM+MTwvTmJPZlR4cz48Q3RybFN1bT4xMDAuMDA8L0N0cmxTdW0+PFBtdFRwSW5mPjxTdmNMdmw+PENkPlNFUEE8L0NkPjwvU3ZjTHZsPjwvUG10VHBJbmY+PFJlcWRFeGN0bkR0PjxEdD4yMDI2LTA0LTEwPC9EdD48L1JlcWRFeGN0bkR0PjxEYnRyPjxObT5CZWFjaHkgQlY8L05tPjwvRGJ0cj48RGJ0ckFjY3Q+PElkPjxJQkFOPk5MOTFBQk5BMDQxNzE2NDMwMDwvSUJBTj48L0lkPjwvRGJ0ckFjY3Q+PERidHJBZ3Q+PEZpbkluc3RuSWQ+PEJJQ0ZJPkFCTkFOTDJBPC9CSUNGST48L0Zpbkluc3RuSWQ+PC9EYnRyQWd0PjxDZHRUcmZUeEluZj48UG10SWQ+PEVuZFRvRW5kSWQ+SU5WLTIwMjYtMDA0MjwvRW5kVG9FbmRJZD48L1BtdElkPjxBbXQ+PEluc3RkQW10IENjeT0iRVVSIj4xMDAuMDA8L0luc3RkQW10PjwvQW10PjxDZHRyPjxObT5KYW5hIEJlcmdlcjwvTm0+PC9DZHRyPjxDZHRyQWNjdD48SWQ+PElCQU4+REU4OTM3MDQwMDQ0MDUzMjAxMzAwMDwvSUJBTj48L0lkPjwvQ2R0ckFjY3Q+PFJtdEluZj48VXN0cmQ+SW52b2ljZSAyMDI2LTAwNDI8L1VzdHJkPjwvUm10SW5mPjwvQ2R0VHJmVHhJbmY+PC9QbXRJbmY+PC9Dc3RtckNkdFRyZkluaXRuPjwvRG9jdW1lbnQ+Cg==", "filename": "payments.xml", "contentType": "application/xml"}}
   purchaseTransactionBatches.download:
     args: {"id": "458026356994737217"}
   purchaseTransactionBatches.get:
@@ -634,7 +637,7 @@ apiExamples:
   timeEntries.stop:
     args: {"id": "458026356994737217"}
   timeEntries.update:
-    args: {"id": "458026356994737217", "time_entry": {"started_at": "example"}}
+    args: {"id": "458026356994737217", "time_entry": {"description": "Kickoff call and follow-up"}}
   users.list:
     args: {}
   verifications.list:

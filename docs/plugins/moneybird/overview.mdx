@@ -21,7 +21,8 @@ accepted too).
 return, so paginated lists take `page` and `per_page` (up to 100; the
 plugin sends 100 when it is left out, since Moneybird's own default differs
 per route) and return `{ items, next_page }`, with `next_page` set while a
-page comes back full. `listVersions` + `fetchByIds` is Moneybird's
+page comes back full. `contacts.listDuplicates` takes no page size, so
+its `next_page` is set while a page has any groups. `listVersions` + `fetchByIds` is Moneybird's
 synchronization API: ids and versions first, then up to 100 records by id.
 - **Filtering goes through one string.** List filters are `key:value`
 terms separated by commas (e.g. `state:open|late`, `period:this_year`),
@@ -30,6 +31,8 @@ and a filter you pass replaces the defaults.
 `estimates.send` and `contacts.paymentsMandate.request` email customers;
 `subscriptions.create`, `recurringSalesInvoices.create` and
 `subscriptions.createAndScheduleOneOffSalesInvoice` start invoicing them;
+`contacts.additionalCharges.create` and
+`subscriptions.additionalCharges.create` add a charge to their next invoice;
 `purchaseTransactionBatches.createFromSepaFile` prepares bank transfers.
 All are `destructive`, as is every delete.
 - **Downloads** (invoice and estimate PDFs, UBL, attachments, exports)
