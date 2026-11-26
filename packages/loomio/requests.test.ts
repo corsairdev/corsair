@@ -310,4 +310,16 @@ describe('polls.create', () => {
 
 		expect(lastRequest().body).toMatchObject({ closing_at: null });
 	});
+
+	it('refuses an anonymous draft before Loomio saves it and answers 403', async () => {
+		await expect(
+			invoke(Polls.create, {
+				group_id: 12,
+				title: 'Secret ballot?',
+				poll_type: 'proposal',
+				anonymous: true,
+			}),
+		).rejects.toThrow(/closing_at/);
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
 });

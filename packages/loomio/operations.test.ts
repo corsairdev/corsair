@@ -403,6 +403,7 @@ describe('memberships', () => {
 	});
 
 	it('sends remove_absent as 1, which the controller reads with to_i', async () => {
+		respond({ memberships: [], meta: { total: 0 } });
 		respond({
 			added_emails: ['new@example.org'],
 			removed_emails: ['old@example.org'],
@@ -425,6 +426,57 @@ describe('memberships', () => {
 		});
 		// Emails never reach the event log.
 		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('example.org');
+	});
+
+	it('sends the stored spelling so a case-only difference never revokes a member', async () => {
+		respond({
+			memberships: [
+				{ id: 1, user_email: 'Ada@Example.org' },
+				{ id: 2, user_email: 'grace@example.org' },
+			],
+			meta: { total: 3 },
+		});
+		respond({
+			memberships: [{ id: 3, user_email: 'old@example.org' }],
+			meta: { total: 3 },
+		});
+		respond({ added_emails: ['new@example.org'], removed_emails: [] });
+
+		await invoke(Memberships.manage, {
+			group_id: 12,
+			emails: ['ada@EXAMPLE.org', 'GRACE@example.org', 'new@example.org'],
+			remove_absent: true,
+		});
+
+		const [first, second] = fetchMock.mock.calls.map(
+			([url]) => new URL(String(url)),
+		);
+		expect(first?.pathname).toBe('/api/user0/memberships');
+		expect(Object.fromEntries(first?.searchParams ?? [])).toMatchObject({
+			group_id: '12',
+			offset: '0',
+			limit: '500',
+		});
+		expect(second?.searchParams.get('offset')).toBe('2');
+		expect(fetchMock).toHaveBeenCalledTimes(3);
+		expect(lastRequest()).toMatchObject({
+			method: 'POST',
+			body: {
+				group_id: 12,
+				emails: ['Ada@Example.org', 'grace@example.org', 'new@example.org'],
+				remove_absent: 1,
+			},
+		});
+	});
+
+	it('skips the membership read when remove_absent is off', async () => {
+		respond({ added_emails: ['Ada@EXAMPLE.org'], removed_emails: [] });
+		await invoke(Memberships.manage, {
+			group_id: 12,
+			emails: ['Ada@EXAMPLE.org'],
+		});
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(lastRequest().body).toMatchObject({ emails: ['Ada@EXAMPLE.org'] });
 	});
 });
 

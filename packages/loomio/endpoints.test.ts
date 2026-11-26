@@ -219,6 +219,12 @@ describe('next page derivation', () => {
 		expect(nextOffset(60, 0, 50)).toBe(50);
 	});
 
+	it('never returns the current offset after an empty page', () => {
+		// Loomio counts the total before reading the page, so a shrinking
+		// collection can answer an empty page while total > offset.
+		expect(nextOffset(60, 50, 0)).toBeUndefined();
+	});
+
 	it('returns undefined without a total', () => {
 		expect(nextOffset(null, 0, 50)).toBeUndefined();
 		expect(nextOffset(undefined, 0, 50)).toBeUndefined();

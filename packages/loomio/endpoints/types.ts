@@ -84,14 +84,15 @@ export function relatedQuery(input: {
 /**
  * The offset of the next page, derived in each list endpoint's `shape` from
  * `meta.total` and the records actually returned. Undefined once paging is
- * done or when the response carries no total.
+ * done, when the response carries no total, or when an empty page would
+ * repeat the current offset (the total is counted before the page is read).
  */
 export function nextOffset(
 	total: number | null | undefined,
 	offset: number,
 	returned: number,
 ): number | undefined {
-	if (typeof total !== 'number') return undefined;
+	if (typeof total !== 'number' || returned <= 0) return undefined;
 	const next = offset + returned;
 	return next < total ? next : undefined;
 }
@@ -709,7 +710,7 @@ const PollsCreateInputSchema = z
 			.boolean()
 			.optional()
 			.describe(
-				'Hide voter identities. Options freeze after the first ballot.',
+				'Hide voter identities. Needs closing_at (Loomio refuses anonymous drafts). Options freeze after the first ballot.',
 			),
 		shuffle_options: z
 			.boolean()
@@ -754,6 +755,17 @@ const PollsCreateInputSchema = z
 				code: 'custom',
 				message: 'Provide group_id or discussion_id to place the poll.',
 				path: ['group_id'],
+			});
+		}
+		// Loomio saves the poll, then PollService.invite refuses any anonymous
+		// poll that isn't open (no closing_at), so the caller gets a 403 and a
+		// stray draft stays behind.
+		if (value.anonymous === true && !value.closing_at) {
+			ctx.addIssue({
+				code: 'custom',
+				message:
+					'An anonymous poll needs closing_at: Loomio refuses anonymous drafts after saving them.',
+				path: ['closing_at'],
 			});
 		}
 	});
@@ -982,7 +994,7 @@ const MembershipsManageInputSchema = z.object({
 		.boolean()
 		.optional()
 		.describe(
-			'Remove every current member whose email is not in `emails`. An empty list removes everyone.',
+			'Remove every current member whose email is not in `emails`. An empty list removes everyone. The plugin first reads the group memberships so an address that differs only in letter case keeps its member.',
 		),
 });
 
