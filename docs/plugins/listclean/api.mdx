@@ -412,7 +412,7 @@ Answers total (a string such as "0" on the live API), an opaque cursor and the l
 
 `uploads.getUpload`
 
-Read one upload: its inprocess, success or error status, progress, chunk counts and the request id of the list it became
+Read one upload: its inprocess, success or error status, chunk counts and the request id of the list it became (pass it to lists.getList)
 
 **Risk:** `read`
 
@@ -426,7 +426,7 @@ await corsair.listclean.api.uploads.getUpload({ upload_id: 1327 });
 |------|------|----------|-------------|
 | `upload_id` | `number` | Yes | The upload id `uploads.startUpload` answered. |
 
-status is inprocess, success or error (lowercase, unlike list statuses). request_id is the list the upload became.
+Answers the upload row (file names, status inprocess, success or error in lowercase, remarks) with chunk_details and request_id, the list the upload became. Chunk counts arrive as strings, or false before any chunk; request_id is 0 or null while there is no list. total_records reads 100 whatever the file holds.
 
 
 
@@ -437,15 +437,15 @@ status is inprocess, success or error (lowercase, unlike list statuses). request
 | `status` | `inprocess \| success \| error \| string \| null` | No | Upload status: inprocess, success or error (lowercase, unlike the list statuses). |
 | `progress` | `number \| string \| null` | No | Completion percentage. |
 | `chunk_details` | `object \| null` | No | — |
-| `request_id` | `number \| null` | No | The Listclean request id for this upload; the list it becomes in `lists.listLists`. |
+| `request_id` | `number \| null` | No | The list this upload became: pass it as list_id to `lists.getList`. 0 or null while no list exists. |
 
 <AccordionGroup>
 <Accordion title="chunk_details full type">
 
 ```ts
 {
-  total_chunk_count?: number | string | null,
-  uploaded_chunk_count?: number | string | null
+  total_chunk_count?: number | string | false | null,
+  uploaded_chunk_count?: number | string | false | null
 } | null
 ```
 </Accordion>
@@ -459,7 +459,7 @@ status is inprocess, success or error (lowercase, unlike list statuses). request
 
 `uploads.listUploads`
 
-List the chunked CSV uploads with their id, status, file names and record counts
+List chunked CSV uploads with their id, status, file names and record counts. On 2026-11-26 the live route did not include the account's own new uploads, so keep the upload id startUpload answers and poll getUpload instead.
 
 **Risk:** `read`
 
@@ -469,7 +469,7 @@ await corsair.listclean.api.uploads.listUploads({});
 
 **Input:** _empty object_
 
-Answers each upload with its id, status (success or error), file names, total_records and stage. The spec's example shows upload_id and progress instead; both spellings are read.
+Answers upload rows with their id, status (success or error), file names, total_records and stage. The spec's example shows upload_id and progress instead; both spellings are read. On 2026-11-26 the live route answered the same ten rows from 2021 and not the account's own new upload, so track uploads by the id startUpload answers.
 
 
 **Output:** `object[]`
@@ -503,12 +503,12 @@ Answers each upload with its id, status (success or error), file names, total_re
 
 `uploads.startUpload`
 
-Open a chunked CSV upload: name the file, its chunk count and chunk size, and optional CSV characters and fast mode. Answers the upload id the chunks go to. Once every chunk is in, the list is verified and spends one credit per address.
+Open a chunked CSV upload: name the file, its chunk count and chunk size, the zero-based email column, and optional CSV characters and fast mode. Answers the upload id the chunks go to. Once every chunk is in, the list is verified and spends one credit per address.
 
 **Risk:** `write`
 
 ```ts
-await corsair.listclean.api.uploads.startUpload({ filename: 'leads.csv', file_type: 'csv', total_chunk_count: 2, max_chunk_size: 64000, separator_char: ',' });
+await corsair.listclean.api.uploads.startUpload({ filename: 'leads.csv', file_type: 'csv', total_chunk_count: 2, max_chunk_size: 64000, email_column_index: 0, separator_char: ',' });
 ```
 
 **Input**
@@ -519,12 +519,13 @@ await corsair.listclean.api.uploads.startUpload({ filename: 'leads.csv', file_ty
 | `file_type` | `string` | Yes | The file format. The spec documents `csv`. |
 | `total_chunk_count` | `number` | Yes | How many chunks `uploads.uploadChunk` will send. |
 | `max_chunk_size` | `number` | Yes | The largest chunk, in bytes before base64 encoding. |
+| `email_column_index` | `number` | Yes | Zero-based index of the CSV column holding the email address (0 is the first column). Required by the live API, though the spec omits it. |
 | `separator_char` | `string` | No | CSV field separator, e.g. `,`. |
 | `enclosure_char` | `string` | No | CSV field enclosure character, one single-byte character, e.g. `"`. |
 | `escape_char` | `string` | No | CSV escape character, at most one single-byte character; an empty string turns escaping off. |
 | `fast_process` | `0 \| 1` | No | 1 skips slow checks such as SMTP and uses only cache, DNS and format checks. Defaults to 0 (off). |
 
-filename, file_type, total_chunk_count and max_chunk_size are required. fast_process 1 skips SMTP checks. Answers upload_id. Not retried after a 5xx or a dropped connection.
+filename, file_type, total_chunk_count, max_chunk_size and email_column_index (zero-based; 0 is the first column) are required. The spec omits email_column_index, but the live API refuses a start without it. fast_process 1 skips SMTP checks. Answers upload_id. Not retried after a 5xx or a dropped connection.
 
 
 
@@ -542,7 +543,7 @@ filename, file_type, total_chunk_count and max_chunk_size are required. fast_pro
 
 `uploads.uploadChunk`
 
-Send one base64-encoded chunk of an upload, with its sequence number and an optional md5 checksum. The last chunk starts the billed verification. Not replayed after a 5xx or a lost answer.
+Send one base64-encoded chunk of an upload, with its sequence number (counted from 1) and an optional md5 checksum. Answers the chunk counters. The last chunk starts the billed verification. Not replayed after a 5xx or a lost answer.
 
 **Risk:** `write`
 
@@ -555,11 +556,11 @@ await corsair.listclean.api.uploads.uploadChunk({ upload_id: 1327, chunk_sequenc
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `upload_id` | `number` | Yes | The upload id `uploads.startUpload` answered. |
-| `chunk_sequence_number` | `number` | Yes | Position of this chunk. The spec's example sends chunk 24 of 24, so numbering appears to start at 1. |
+| `chunk_sequence_number` | `number` | Yes | Position of this chunk, counted from 1: the last chunk of a 24-chunk file is 24. |
 | `content` | `string` | Yes | The chunk of the file, base64-encoded. |
 | `md5_checksum` | `string` | No | md5 hash Listclean checks the file against, as hex. |
 
-content is the base64 of one chunk of the file. The spec does not say whether chunk numbers start at 0 or 1; its example sends 24 of 24. The last chunk starts the billed verification. Not retried after a 5xx or a dropped connection.
+content is the base64 of one chunk of the file. Chunks are numbered from 1 (live: chunk 1 of 1 completed an upload). Answers the message and chunk_details (total and uploaded counts, as strings). The last chunk starts the billed verification. Not retried after a 5xx or a dropped connection.
 
 
 
@@ -568,6 +569,19 @@ content is the base64 of one chunk of the file. The spec does not say whether ch
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `message` | `string` | Yes | — |
+| `chunk_details` | `object \| null` | No | How many chunks the upload expects and how many have arrived. |
+
+<AccordionGroup>
+<Accordion title="chunk_details full type">
+
+```ts
+{
+  total_chunk_count?: number | string | false | null,
+  uploaded_chunk_count?: number | string | false | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
