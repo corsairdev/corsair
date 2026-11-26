@@ -172,7 +172,7 @@ await corsair.listclean.api.lists.getList({ list_id: 159261 });
 |------|------|----------|-------------|
 | `list_id` | `number` | Yes | The list id, as `startBatchVerification` answered it or `listLists` reported it. |
 
-Listclean answers an array holding the one list; the plugin unwraps it, so the status reads as list.status. This is the poll for a startBatchVerification job.
+The list arrives under list (the spec shows a one-element array, the live API the object; both are read), so the status reads as list.status. This is the poll for a startBatchVerification job. allow_download turns 1 when the results can be fetched.
 
 
 
@@ -193,6 +193,8 @@ Listclean answers an array holding the one list; the plugin unwraps it, so the s
   request_time?: string | null,
   status?: SUBMITTED | INPROCESS | COMPLETED | string | null,
   upload_id?: string | null,
+  size_for_human?: string | null,
+  allow_download?: number | null,
   analytics?: {
     summary?: {
       total?: number | null,
@@ -255,7 +257,7 @@ await corsair.listclean.api.lists.getListResults({ list_id: 159261, type: 'clean
 | `list_id` | `number` | Yes | The list id, as `startBatchVerification` answered it or `listLists` reported it. |
 | `type` | `clean \| dirty \| unknown` | Yes | Which verified rows to download: the clean, dirty or unknown ones. |
 
-Download the verified rows of one type as a JSON array. This route answers a bare JSON stream, not the envelope. The list must be COMPLETED for rows to exist.
+Download the verified rows of one type as a JSON array. The live API wraps the rows in a second envelope (data.data.result); the plugin checks both envelopes and returns the rows. Each row has email, status, reason_code, reason, mx, msp and the uploaded columns in attributes. The list must be COMPLETED for rows to exist.
 
 
 
@@ -277,7 +279,11 @@ Download the verified rows of one type as a JSON array. This route answers a bar
   msp?: string | null,
   email_user?: string | null,
   email_domain?: string | null,
-  free_email?: boolean | null
+  free_email?: boolean | null,
+  reason_code?: string | null,
+  reason?: string | null,
+  mx?: string | null,
+  attributes?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -333,15 +339,15 @@ await corsair.listclean.api.lists.listLists({});
 
 **Input:** _empty object_
 
-Answers total, an opaque cursor integer and the lists. Listclean documents no way to send the cursor back, so there is no paging input here.
+Answers total (a string such as "0" on the live API), an opaque cursor and the lists. Listclean documents no way to send the cursor back, so there is no paging input here.
 
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `total` | `number \| null` | No | — |
-| `cursor` | `number \| null` | No | — |
+| `total` | `number \| string \| null` | No | — |
+| `cursor` | `number \| string \| null` | No | — |
 | `lists` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -355,6 +361,8 @@ Answers total, an opaque cursor integer and the lists. Listclean documents no wa
   request_time?: string | null,
   status?: SUBMITTED | INPROCESS | COMPLETED | string | null,
   upload_id?: string | null,
+  size_for_human?: string | null,
+  allow_download?: number | null,
   analytics?: {
     summary?: {
       total?: number | null,
@@ -451,7 +459,7 @@ status is inprocess, success or error (lowercase, unlike list statuses). request
 
 `uploads.listUploads`
 
-List the chunked CSV uploads with their status and progress
+List the chunked CSV uploads with their id, status, file names and record counts
 
 **Risk:** `read`
 
@@ -461,7 +469,7 @@ await corsair.listclean.api.uploads.listUploads({});
 
 **Input:** _empty object_
 
-Answers upload_id, status and progress for each upload. progress is a string such as "100%" here and a number on uploads.getUpload.
+Answers each upload with its id, status (success or error), file names, total_records and stage. The spec's example shows upload_id and progress instead; both spellings are read.
 
 
 **Output:** `object[]`
@@ -471,9 +479,18 @@ Answers upload_id, status and progress for each upload. progress is a string suc
 
 ```ts
 {
-  upload_id: number,
+  id?: number | null,
+  upload_id?: number | null,
   status?: string | null,
-  progress?: number | string | null
+  progress?: number | string | null,
+  entered?: string | null,
+  client_filename?: string | null,
+  filename?: string | null,
+  count?: number | null,
+  total_records?: number | null,
+  stage?: string | null,
+  remarks?: string | null,
+  fast_process?: number | null
 }[]
 ```
 </Accordion>
@@ -579,7 +596,7 @@ await corsair.listclean.api.verify.getAnalytics({ start_date: '2026-11-01', end_
 | `source` | `api \| file_upload \| single_email` | No | Only this verification source. |
 | `status` | `clean \| dirty \| unknown \| error` | No | Only this verdict. |
 
-Listclean documents no inner fields for total_summary, datewise_summary or graph_summary, so they are passed through untyped.
+total_summary maps each status (total, clean, dirty, unknown, error) to &#123; count, perc &#125;; datewise_summary holds one of those per day, keyed YYYYMMDD; graph_summary is parallel arrays (dates, &lt;status&gt;_counts, &lt;status&gt;_percs). Counts can arrive as strings.
 
 
 
@@ -587,9 +604,31 @@ Listclean documents no inner fields for total_summary, datewise_summary or graph
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `total_summary` | `Record<string, any> \| null` | No | — |
-| `datewise_summary` | `Record<string, any> \| null` | No | — |
-| `graph_summary` | `Record<string, any>[] \| null` | No | — |
+| `total_summary` | `object \| null` | No | — |
+| `datewise_summary` | `object \| null` | No | — |
+| `graph_summary` | `Record<string, (string \| number)[]> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="total_summary full type">
+
+```ts
+Record<string, {
+  count?: number | string | null,
+  perc?: number | string | null
+}> | null
+```
+</Accordion>
+
+<Accordion title="datewise_summary full type">
+
+```ts
+Record<string, Record<string, {
+  count?: number | string | null,
+  perc?: number | string | null
+}>> | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -599,7 +638,7 @@ Listclean documents no inner fields for total_summary, datewise_summary or graph
 
 `verify.getVerificationLogs`
 
-Read past verifications in a date range of up to 30 days, with optional email, source and status filters and offset paging
+Read past verifications in a date range of up to 30 days, with optional email, source and status filters and offset paging; answers the logs and their total_count
 
 **Risk:** `read`
 
@@ -619,14 +658,19 @@ await corsair.listclean.api.verify.getVerificationLogs({ start_date: '2026-11-01
 | `start` | `number` | No | Zero-based page offset. |
 | `limit` | `number` | No | Page size, at most 100. Defaults to 10. |
 
-The range spans at most 30 days and end_date cannot be in the future. Paging is a start offset with a limit of at most 100, 10 by default. error_code on a log row is a string, unlike the integer on the envelope.
+The range spans at most 30 days and end_date cannot be in the future. Paging is a start offset with a limit of at most 100, 10 by default. Answers &#123; logs, total_count &#125; (the spec says a bare array; the live API sends the object). error_code on a log row is a string, unlike the integer on the envelope.
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logs` | `object[]` | Yes | — |
+| `total_count` | `number \| string \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="logs full type">
 
 ```ts
 {
@@ -636,11 +680,15 @@ The range spans at most 30 days and end_date cannot be in the future. Paging is 
   status?: clean | dirty | unknown | error | string | null,
   remarks?: string | null,
   credits_deducted?: number | null,
-  error_code?: string | null
+  error_code?: string | null,
+  instance_name?: string | null,
+  source?: string | null,
+  reason_code?: string | null
 }[]
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
