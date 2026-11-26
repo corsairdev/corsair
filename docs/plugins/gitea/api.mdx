@@ -1,0 +1,2175 @@
+---
+title: "Gitea API reference"
+sidebarTitle: "API"
+description: "API reference for the Gitea plugin in Corsair: every `gitea.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Branches
+
+### list
+
+`branches.list`
+
+List a repository's branches with their latest commit and protection status
+
+**Risk:** `read`
+
+```ts
+await corsair.gitea.api.branches.list({ owner: 'gitea', repo: 'tea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | The owner (user or org) of the repository. |
+| `repo` | `string` | Yes | The repository name. |
+| `q` | `string` | No | Only branches whose name contains this string. |
+| `page` | `number` | No | Page number of results to return (1-based). Defaults to 1. |
+| `limit` | `number` | No | Page size of results, at most 50 (the server-side cap). Defaults to 50. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `branches` | `object[]` | Yes | — |
+| `page` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="branches full type">
+
+```ts
+{
+  name?: string | null,
+  commit?: {
+    id?: string | null,
+    message?: string | null,
+    url?: string | null,
+    author?: {
+      name?: string | null,
+      email?: string | null,
+      username?: string | null
+    } | null,
+    committer?: {
+      name?: string | null,
+      email?: string | null,
+      username?: string | null
+    } | null,
+    verification?: Record<string, any> | null,
+    timestamp?: string | null,
+    added?: string[] | null,
+    removed?: string[] | null,
+    modified?: string[] | null
+  } | null,
+  protected?: boolean | null,
+  effective_branch_protection_name?: string | null,
+  user_can_push?: boolean | null,
+  user_can_merge?: boolean | null,
+  enable_status_check?: boolean | null,
+  required_approvals?: number | null,
+  status_check_contexts?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Comments
+
+### create
+
+`comments.create`
+
+Add a markdown comment to an issue or pull request
+
+**Risk:** `write`
+
+```ts
+await corsair.gitea.api.comments.create({ owner: 'gitea', repo: 'tea', index: 1, body: 'Fixed on main, closing next week.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | The owner (user or org) of the repository. |
+| `repo` | `string` | Yes | The repository name. |
+| `index` | `number` | Yes | The issue's `number` (shown in the issue URL), not its global `id`. |
+| `body` | `string` | Yes | Comment text, markdown. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `body` | `string \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `issue_url` | `string \| null` | No | — |
+| `pull_request_url` | `string \| null` | No | — |
+| `html_url` | `string \| null` | No | — |
+| `original_author` | `string \| null` | No | — |
+| `original_author_id` | `number \| null` | No | — |
+| `assets` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  login?: string | null,
+  type?: string | null,
+  login_name?: string | null,
+  source_id?: number | null,
+  full_name?: string | null,
+  email?: string | null,
+  avatar_url?: string | null,
+  html_url?: string | null,
+  language?: string | null,
+  is_admin?: boolean | null,
+  last_login?: string | null,
+  created?: string | null,
+  restricted?: boolean | null,
+  active?: boolean | null,
+  prohibit_login?: boolean | null,
+  location?: string | null,
+  website?: string | null,
+  description?: string | null,
+  visibility?: string | null,
+  followers_count?: number | null,
+  following_count?: number | null,
+  starred_repos_count?: number | null,
+  username?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assets full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  size?: number | null,
+  download_count?: number | null,
+  created_at?: string | null,
+  uuid?: string | null,
+  browser_download_url?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`comments.list`
+
+List every comment on an issue, oldest first, optionally within an updated-at window; this route takes no paging
+
+**Risk:** `read`
+
+```ts
+await corsair.gitea.api.comments.list({ owner: 'gitea', repo: 'tea', index: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | The owner (user or org) of the repository. |
+| `repo` | `string` | Yes | The repository name. |
+| `index` | `number` | Yes | The issue's `number` (shown in the issue URL), not its global `id`. |
+| `since` | `string` | No | Only comments updated at or after this time. |
+| `before` | `string` | No | Only comments updated at or before this time. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="comments full type">
+
+```ts
+{
+  id: number,
+  body?: string | null,
+  user?: {
+    id: number,
+    login?: string | null,
+    type?: string | null,
+    login_name?: string | null,
+    source_id?: number | null,
+    full_name?: string | null,
+    email?: string | null,
+    avatar_url?: string | null,
+    html_url?: string | null,
+    language?: string | null,
+    is_admin?: boolean | null,
+    last_login?: string | null,
+    created?: string | null,
+    restricted?: boolean | null,
+    active?: boolean | null,
+    prohibit_login?: boolean | null,
+    location?: string | null,
+    website?: string | null,
+    description?: string | null,
+    visibility?: string | null,
+    followers_count?: number | null,
+    following_count?: number | null,
+    starred_repos_count?: number | null,
+    username?: string | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  issue_url?: string | null,
+  pull_request_url?: string | null,
+  html_url?: string | null,
+  original_author?: string | null,
+  original_author_id?: number | null,
+  assets?: {
+    id: number,
+    name?: string | null,
+    size?: number | null,
+    download_count?: number | null,
+    created_at?: string | null,
+    uuid?: string | null,
+    browser_download_url?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Commits
+
+### list
+
+`commits.list`
+
+List a repository's commits, newest first, optionally from a ref, path or time window; a repository with no commits answers an error rather than an empty list
+
+**Risk:** `read`
+
+```ts
+await corsair.gitea.api.commits.list({ owner: 'gitea', repo: 'tea', sha: 'main', limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | The owner (user or org) of the repository. |
+| `repo` | `string` | Yes | The repository name. |
+| `sha` | `string` | No | Branch or tag name, or a commit SHA, to start listing from. |
+| `path` | `string` | No | Only commits touching this file path. |
+| `since` | `string` | No | Only commits made at or after this time. |
+| `until` | `string` | No | Only commits made at or before this time. |
+| `stat` | `boolean` | No | Include add and delete counts per commit. |
+| `verification` | `boolean` | No | Include signature verification per commit. |
+| `files` | `boolean` | No | Include the list of affected files per commit. |
+| `page` | `number` | No | Page number of results to return (1-based). Defaults to 1. |
+| `limit` | `number` | No | Page size of results, at most 50 (the server-side cap). Defaults to 50. |
+| `not` | `string` | No | Exclude commits reachable from this ref (the API names the parameter `not`). |
+
+Answers 409 with the provider message when the repository has no commits; the plugin leaves it an error rather than an empty page. `since` and `until` are RFC3339; the `not` field maps to the query parameter of that name and excludes commits reachable from the given ref.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `commits` | `object[]` | Yes | — |
+| `page` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="commits full type">
+
+```ts
+{
+  url?: string | null,
+  sha?: string | null,
+  created?: string | null,
+  html_url?: string | null,
+  author?: {
+    id: number,
+    login?: string | null,
+    type?: string | null,
+    login_name?: string | null,
+    source_id?: number | null,
+    full_name?: string | null,
+    email?: string | null,
+    avatar_url?: string | null,
+    html_url?: string | null,
+    language?: string | null,
+    is_admin?: boolean | null,
+    last_login?: string | null,
+    created?: string | null,
+    restricted?: boolean | null,
+    active?: boolean | null,
+    prohibit_login?: boolean | null,
+    location?: string | null,
+    website?: string | null,
+    description?: string | null,
+    visibility?: string | null,
+    followers_count?: number | null,
+    following_count?: number | null,
+    starred_repos_count?: number | null,
+    username?: string | null
+  } | null,
+  committer?: {
+    id: number,
+    login?: string | null,
+    type?: string | null,
+    login_name?: string | null,
+    source_id?: number | null,
+    full_name?: string | null,
+    email?: string | null,
+    avatar_url?: string | null,
+    html_url?: string | null,
+    language?: string | null,
+    is_admin?: boolean | null,
+    last_login?: string | null,
+    created?: string | null,
+    restricted?: boolean | null,
+    active?: boolean | null,
+    prohibit_login?: boolean | null,
+    location?: string | null,
+    website?: string | null,
+    description?: string | null,
+    visibility?: string | null,
+    followers_count?: number | null,
+    following_count?: number | null,
+    starred_repos_count?: number | null,
+    username?: string | null
+  } | null,
+  commit?: {
+    url?: string | null,
+    message?: string | null,
+    author?: {
+      name?: string | null,
+      email?: string | null,
+      date?: string | null
+    } | null,
+    committer?: {
+      name?: string | null,
+      email?: string | null,
+      date?: string | null
+    } | null,
+    tree?: {
+      url?: string | null,
+      sha?: string | null,
+      created?: string | null
+    } | null,
+    verification?: Record<string, any> | null
+  } | null,
+  parents?: {
+    url?: string | null,
+    sha?: string | null,
+    created?: string | null
+  }[] | null,
+  stats?: {
+    total?: number | null,
+    additions?: number | null,
+    deletions?: number | null
+  } | null,
+  files?: {
+    filename?: string | null,
+    status?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Issues
+
+### create
+
+`issues.create`
+
+Create an issue with a title, body, labels, assignees, milestone and optional deadline, optionally already closed
+
+**Risk:** `write`
+
+```ts
+await corsair.gitea.api.issues.create({ owner: 'gitea', repo: 'tea', title: 'Docs miss the renamed keys', labels: [7] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | The owner (user or org) of the repository. |
+| `repo` | `string` | Yes | The repository name. |
+| `title` | `string` | Yes | Title of the issue. |
+| `body` | `string` | No | Body of the issue, markdown. |
+| `assignee` | `string` | No | User name to assign; ignored when assignees is set. |
+| `assignees` | `string[]` | No | User names to assign. |
+| `closed` | `boolean` | No | Create the issue already closed. |
+| `due_date` | `string` | No | Deadline shown on the issue. |
+| `labels` | `number[]` | No | Label ids to apply; ids come from the repository label list. |
+| `milestone` | `number` | No | Milestone id to set. |
+| `projects` | `number[]` | No | Project ids to add the issue to. |
+| `ref` | `string` | No | Git reference the issue relates to. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `number` | Yes | — |
+| `url` | `string \| null` | No | — |
+| `html_url` | `string \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `original_author` | `string \| null` | No | — |
+| `original_author_id` | `number \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `ref` | `string \| null` | No | — |
+| `assets` | `object[] \| null` | No | — |
+| `labels` | `object[] \| null` | No | — |
+| `milestone` | `object \| null` | No | — |
+| `projects` | `number[] \| null` | No | — |
+| `assignee` | `object \| null` | No | — |
+| `assignees` | `object[] \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `is_locked` | `boolean \| null` | No | — |
+| `comments` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `closed_at` | `string \| null` | No | — |
+| `due_date` | `string \| null` | No | — |
+| `time_estimate` | `number \| null` | No | — |
+| `pull_request` | `object \| null` | No | — |
+| `repository` | `object \| null` | No | — |
+| `pin_order` | `number \| null` | No | — |
+| `content_version` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  login?: string | null,
+  type?: string | null,
+  login_name?: string | null,
+  source_id?: number | null,
+  full_name?: string | null,
+  email?: string | null,
+  avatar_url?: string | null,
+  html_url?: string | null,
+  language?: string | null,
+  is_admin?: boolean | null,
+  last_login?: string | null,
+  created?: string | null,
+  restricted?: boolean | null,
+  active?: boolean | null,
+  prohibit_login?: boolean | null,
+  location?: string | null,
+  website?: string | null,
+  description?: string | null,
+  visibility?: string | null,
+  followers_count?: number | null,
+  following_count?: number | null,
+  starred_repos_count?: number | null,
+  username?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assets full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  size?: number | null,
+  download_count?: number | null,
+  created_at?: string | null,
+  uuid?: string | null,
+  browser_download_url?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  color?: string | null,
+  description?: string | null,
+  exclusive?: boolean | null,
+  is_archived?: boolean | null,
+  url?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="milestone full type">
+
+```ts
+{
+  id: number,
+  title?: string | null,
+  description?: string | null,
+  state?: string | null,
+  open_issues_count?: number | null,
+  closed_issues_count?: number | null,
+  due_on?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  closed_at?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  id: number,
+  login?: string | null,
+  type?: string | null,
+  login_name?: string | null,
+  source_id?: number | null,
+  full_name?: string | null,
+  email?: string | null,
+  avatar_url?: string | null,
+  html_url?: string | null,
+  language?: string | null,
+  is_admin?: boolean | null,
+  last_login?: string | null,
+  created?: string | null,
+  restricted?: boolean | null,
+  active?: boolean | null,
+  prohibit_login?: boolean | null,
+  location?: string | null,
+  website?: string | null,
+  description?: string | null,
+  visibility?: string | null,
+  followers_count?: number | null,
+  following_count?: number | null,
+  starred_repos_count?: number | null,
+  username?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assignees full type">
+
+```ts
+{
+  id: number,
+  login?: string | null,
+  type?: string | null,
+  login_name?: string | null,
+  source_id?: number | null,
+  full_name?: string | null,
+  email?: string | null,
+  avatar_url?: string | null,
+  html_url?: string | null,
+  language?: string | null,
+  is_admin?: boolean | null,
+  last_login?: string | null,
+  created?: string | null,
+  restricted?: boolean | null,
+  active?: boolean | null,
+  prohibit_login?: boolean | null,
+  location?: string | null,
+  website?: string | null,
+  description?: string | null,
+  visibility?: string | null,
+  followers_count?: number | null,
+  following_count?: number | null,
+  starred_repos_count?: number | null,
+  username?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pull_request full type">
+
+```ts
+{
+  merged?: boolean | null,
+  merged_at?: string | null,
+  draft?: boolean | null,
+  html_url?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="repository full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  owner?: string | null,
+  full_name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`issues.get`
+
+Get one issue or pull request by its number, including labels, assignees and the comment count
+
+**Risk:** `read`
+
+```ts
+await corsair.gitea.api.issues.get({ owner: 'gitea', repo: 'tea', index: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | The owner (user or org) of the repository. |
+| `repo` | `string` | Yes | The repository name. |
+| `index` | `number` | Yes | The issue's `number` (shown in the issue URL), not its global `id`. |
+
+`index` is the issue NUMBER shown in the URL, never the global `Issue.id` (number 1 and id 31370 on the probe differ). Unset fields arrive as JSON `null`, including `assignees`, `closed_at`, `milestone` and `pull_request`; `pull_request` is non-null when the row is a pull request. `content_version` is the optimistic-lock token to send back on `issues.update`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `number` | Yes | — |
+| `url` | `string \| null` | No | — |
+| `html_url` | `string \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `original_author` | `string \| null` | No | — |
+| `original_author_id` | `number \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `ref` | `string \| null` | No | — |
+| `assets` | `object[] \| null` | No | — |
+| `labels` | `object[] \| null` | No | — |
+| `milestone` | `object \| null` | No | — |
+| `projects` | `number[] \| null` | No | — |
+| `assignee` | `object \| null` | No | — |
+| `assignees` | `object[] \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `is_locked` | `boolean \| null` | No | — |
+| `comments` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `closed_at` | `string \| null` | No | — |
+| `due_date` | `string \| null` | No | — |
+| `time_estimate` | `number \| null` | No | — |
+| `pull_request` | `object \| null` | No | — |
+| `repository` | `object \| null` | No | — |
+| `pin_order` | `number \| null` | No | — |
+| `content_version` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  login?: string | null,
+  type?: string | null,
+  login_name?: string | null,
+  source_id?: number | null,
+  full_name?: string | null,
+  email?: string | null,
+  avatar_url?: string | null,
+  html_url?: string | null,
+  language?: string | null,
+  is_admin?: boolean | null,
+  last_login?: string | null,
+  created?: string | null,
+  restricted?: boolean | null,
+  active?: boolean | null,
+  prohibit_login?: boolean | null,
+  location?: string | null,
+  website?: string | null,
+  description?: string | null,
+  visibility?: string | null,
+  followers_count?: number | null,
+  following_count?: number | null,
+  starred_repos_count?: number | null,
+  username?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assets full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  size?: number | null,
+  download_count?: number | null,
+  created_at?: string | null,
+  uuid?: string | null,
+  browser_download_url?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  color?: string | null,
+  description?: string | null,
+  exclusive?: boolean | null,
+  is_archived?: boolean | null,
+  url?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="milestone full type">
+
+```ts
+{
+  id: number,
+  title?: string | null,
+  description?: string | null,
+  state?: string | null,
+  open_issues_count?: number | null,
+  closed_issues_count?: number | null,
+  due_on?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  closed_at?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  id: number,
+  login?: string | null,
+  type?: string | null,
+  login_name?: string | null,
+  source_id?: number | null,
+  full_name?: string | null,
+  email?: string | null,
+  avatar_url?: string | null,
+  html_url?: string | null,
+  language?: string | null,
+  is_admin?: boolean | null,
+  last_login?: string | null,
+  created?: string | null,
+  restricted?: boolean | null,
+  active?: boolean | null,
+  prohibit_login?: boolean | null,
+  location?: string | null,
+  website?: string | null,
+  description?: string | null,
+  visibility?: string | null,
+  followers_count?: number | null,
+  following_count?: number | null,
+  starred_repos_count?: number | null,
+  username?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assignees full type">
+
+```ts
+{
+  id: number,
+  login?: string | null,
+  type?: string | null,
+  login_name?: string | null,
+  source_id?: number | null,
+  full_name?: string | null,
+  email?: string | null,
+  avatar_url?: string | null,
+  html_url?: string | null,
+  language?: string | null,
+  is_admin?: boolean | null,
+  last_login?: string | null,
+  created?: string | null,
+  restricted?: boolean | null,
+  active?: boolean | null,
+  prohibit_login?: boolean | null,
+  location?: string | null,
+  website?: string | null,
+  description?: string | null,
+  visibility?: string | null,
+  followers_count?: number | null,
+  following_count?: number | null,
+  starred_repos_count?: number | null,
+  username?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pull_request full type">
+
+```ts
+{
+  merged?: boolean | null,
+  merged_at?: string | null,
+  draft?: boolean | null,
+  html_url?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="repository full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  owner?: string | null,
+  full_name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`issues.list`
+
+List a repository's issues and pull requests, filterable by state, labels, milestone, assignee and time window
+
+**Risk:** `read`
+
+```ts
+await corsair.gitea.api.issues.list({ owner: 'gitea', repo: 'tea', state: 'open', type: 'issues' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | The owner (user or org) of the repository. |
+| `repo` | `string` | Yes | The repository name. |
+| `state` | `open \| closed \| all` | No | Only issues in this state. Defaults to open. |
+| `labels` | `string` | No | Comma-separated label names to filter by. |
+| `q` | `string` | No | Filter issues whose title or body contains this string. |
+| `type` | `issues \| pulls` | No | Only issues or only pull requests; the issues list returns both by default. |
+| `milestones` | `string` | No | Comma-separated milestone ids to filter by, or * for any milestone. |
+| `since` | `string` | No | Only issues updated at or after this time. |
+| `before` | `string` | No | Only issues updated at or before this time. |
+| `created_by` | `string` | No | Only issues created by this user name. |
+| `assigned_by` | `string` | No | Only issues assigned to this user name. |
+| `mentioned_by` | `string` | No | Only issues mentioning this user name. |
+| `page` | `number` | No | Page number of results to return (1-based). Defaults to 1. |
+| `limit` | `number` | No | Page size of results, at most 50 (the server-side cap). Defaults to 50. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issues` | `object[]` | Yes | — |
+| `page` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="issues full type">
+
+```ts
+{
+  id: number,
+  number: number,
+  url?: string | null,
+  html_url?: string | null,
+  user?: {
+    id: number,
+    login?: string | null,
+    type?: string | null,
+    login_name?: string | null,
+    source_id?: number | null,
+    full_name?: string | null,
+    email?: string | null,
+    avatar_url?: string | null,
+    html_url?: string | null,
+    language?: string | null,
+    is_admin?: boolean | null,
+    last_login?: string | null,
+    created?: string | null,
+    restricted?: boolean | null,
+    active?: boolean | null,
+    prohibit_login?: boolean | null,
+    location?: string | null,
+    website?: string | null,
+    description?: string | null,
+    visibility?: string | null,
+    followers_count?: number | null,
+    following_count?: number | null,
+    starred_repos_count?: number | null,
+    username?: string | null
+  } | null,
+  original_author?: string | null,
+  original_author_id?: number | null,
+  title?: string | null,
+  body?: string | null,
+  ref?: string | null,
+  assets?: {
+    id: number,
+    name?: string | null,
+    size?: number | null,
+    download_count?: number | null,
+    created_at?: string | null,
+    uuid?: string | null,
+    browser_download_url?: string | null
+  }[] | null,
+  labels?: {
+    id: number,
+    name?: string | null,
+    color?: string | null,
+    description?: string | null,
+    exclusive?: boolean | null,
+    is_archived?: boolean | null,
+    url?: string | null
+  }[] | null,
+  milestone?: {
+    id: number,
+    title?: string | null,
+    description?: string | null,
+    state?: string | null,
+    open_issues_count?: number | null,
+    closed_issues_count?: number | null,
+    due_on?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    closed_at?: string | null
+  } | null,
+  projects?: number[] | null,
+  assignee?: {
+    id: number,
+    login?: string | null,
+    type?: string | null,
+    login_name?: string | null,
+    source_id?: number | null,
+    full_name?: string | null,
+    email?: string | null,
+    avatar_url?: string | null,
+    html_url?: string | null,
+    language?: string | null,
+    is_admin?: boolean | null,
+    last_login?: string | null,
+    created?: string | null,
+    restricted?: boolean | null,
+    active?: boolean | null,
+    prohibit_login?: boolean | null,
+    location?: string | null,
+    website?: string | null,
+    description?: string | null,
+    visibility?: string | null,
+    followers_count?: number | null,
+    following_count?: number | null,
+    starred_repos_count?: number | null,
+    username?: string | null
+  } | null,
+  assignees?: {
+    id: number,
+    login?: string | null,
+    type?: string | null,
+    login_name?: string | null,
+    source_id?: number | null,
+    full_name?: string | null,
+    email?: string | null,
+    avatar_url?: string | null,
+    html_url?: string | null,
+    language?: string | null,
+    is_admin?: boolean | null,
+    last_login?: string | null,
+    created?: string | null,
+    restricted?: boolean | null,
+    active?: boolean | null,
+    prohibit_login?: boolean | null,
+    location?: string | null,
+    website?: string | null,
+    description?: string | null,
+    visibility?: string | null,
+    followers_count?: number | null,
+    following_count?: number | null,
+    starred_repos_count?: number | null,
+    username?: string | null
+  }[] | null,
+  state?: string | null,
+  is_locked?: boolean | null,
+  comments?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  closed_at?: string | null,
+  due_date?: string | null,
+  time_estimate?: number | null,
+  pull_request?: {
+    merged?: boolean | null,
+    merged_at?: string | null,
+    draft?: boolean | null,
+    html_url?: string | null
+  } | null,
+  repository?: {
+    id?: number | null,
+    name?: string | null,
+    owner?: string | null,
+    full_name?: string | null
+  } | null,
+  pin_order?: number | null,
+  content_version?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`issues.update`
+
+Edit an issue: set title, body, labels, assignees, milestone or deadline, or close and reopen it through state
+
+**Risk:** `write`
+
+```ts
+await corsair.gitea.api.issues.update({ owner: 'gitea', repo: 'tea', index: 1, state: 'closed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | The owner (user or org) of the repository. |
+| `repo` | `string` | Yes | The repository name. |
+| `index` | `number` | Yes | The issue's `number` (shown in the issue URL), not its global `id`. |
+| `title` | `string` | No | New title; omitted keeps the current one. |
+| `body` | `string` | No | New body; omitted keeps the current one. |
+| `state` | `open \| closed` | No | Set to closed to close the issue, open to reopen it. |
+| `assignee` | `string` | No | User name to assign; ignored when assignees is set. |
+| `assignees` | `string[]` | No | User names to assign. |
+| `due_date` | `string` | No | New deadline; pair with unset_due_date to clear it. |
+| `milestone` | `number` | No | Milestone id to set. |
+| `projects` | `number[]` | No | Project ids to set. |
+| `ref` | `string` | No | Git reference the issue relates to. |
+| `unset_due_date` | `boolean` | No | Clear the deadline instead of setting one. |
+| `content_version` | `number` | No | The `content_version` from a previous read, so a stale edit is refused rather than applied. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `number` | `number` | Yes | — |
+| `url` | `string \| null` | No | — |
+| `html_url` | `string \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `original_author` | `string \| null` | No | — |
+| `original_author_id` | `number \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `ref` | `string \| null` | No | — |
+| `assets` | `object[] \| null` | No | — |
+| `labels` | `object[] \| null` | No | — |
+| `milestone` | `object \| null` | No | — |
+| `projects` | `number[] \| null` | No | — |
+| `assignee` | `object \| null` | No | — |
+| `assignees` | `object[] \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `is_locked` | `boolean \| null` | No | — |
+| `comments` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `closed_at` | `string \| null` | No | — |
+| `due_date` | `string \| null` | No | — |
+| `time_estimate` | `number \| null` | No | — |
+| `pull_request` | `object \| null` | No | — |
+| `repository` | `object \| null` | No | — |
+| `pin_order` | `number \| null` | No | — |
+| `content_version` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  login?: string | null,
+  type?: string | null,
+  login_name?: string | null,
+  source_id?: number | null,
+  full_name?: string | null,
+  email?: string | null,
+  avatar_url?: string | null,
+  html_url?: string | null,
+  language?: string | null,
+  is_admin?: boolean | null,
+  last_login?: string | null,
+  created?: string | null,
+  restricted?: boolean | null,
+  active?: boolean | null,
+  prohibit_login?: boolean | null,
+  location?: string | null,
+  website?: string | null,
+  description?: string | null,
+  visibility?: string | null,
+  followers_count?: number | null,
+  following_count?: number | null,
+  starred_repos_count?: number | null,
+  username?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assets full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  size?: number | null,
+  download_count?: number | null,
+  created_at?: string | null,
+  uuid?: string | null,
+  browser_download_url?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  color?: string | null,
+  description?: string | null,
+  exclusive?: boolean | null,
+  is_archived?: boolean | null,
+  url?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="milestone full type">
+
+```ts
+{
+  id: number,
+  title?: string | null,
+  description?: string | null,
+  state?: string | null,
+  open_issues_count?: number | null,
+  closed_issues_count?: number | null,
+  due_on?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  closed_at?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assignee full type">
+
+```ts
+{
+  id: number,
+  login?: string | null,
+  type?: string | null,
+  login_name?: string | null,
+  source_id?: number | null,
+  full_name?: string | null,
+  email?: string | null,
+  avatar_url?: string | null,
+  html_url?: string | null,
+  language?: string | null,
+  is_admin?: boolean | null,
+  last_login?: string | null,
+  created?: string | null,
+  restricted?: boolean | null,
+  active?: boolean | null,
+  prohibit_login?: boolean | null,
+  location?: string | null,
+  website?: string | null,
+  description?: string | null,
+  visibility?: string | null,
+  followers_count?: number | null,
+  following_count?: number | null,
+  starred_repos_count?: number | null,
+  username?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assignees full type">
+
+```ts
+{
+  id: number,
+  login?: string | null,
+  type?: string | null,
+  login_name?: string | null,
+  source_id?: number | null,
+  full_name?: string | null,
+  email?: string | null,
+  avatar_url?: string | null,
+  html_url?: string | null,
+  language?: string | null,
+  is_admin?: boolean | null,
+  last_login?: string | null,
+  created?: string | null,
+  restricted?: boolean | null,
+  active?: boolean | null,
+  prohibit_login?: boolean | null,
+  location?: string | null,
+  website?: string | null,
+  description?: string | null,
+  visibility?: string | null,
+  followers_count?: number | null,
+  following_count?: number | null,
+  starred_repos_count?: number | null,
+  username?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pull_request full type">
+
+```ts
+{
+  merged?: boolean | null,
+  merged_at?: string | null,
+  draft?: boolean | null,
+  html_url?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="repository full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  owner?: string | null,
+  full_name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Releases
+
+### create
+
+`releases.create`
+
+Create a release for a tag, creating the tag on the target commit when it does not exist yet; a tag that already has a release answers 409
+
+**Risk:** `write`
+
+```ts
+await corsair.gitea.api.releases.create({ owner: 'gitea', repo: 'tea', tag_name: 'v1.2.0', name: '1.2.0', body: 'Bug fixes.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | The owner (user or org) of the repository. |
+| `repo` | `string` | Yes | The repository name. |
+| `tag_name` | `string` | Yes | Tag to release; created on the target commit if it does not exist. A tag that already has a release answers 409. |
+| `target_commitish` | `string` | No | Branch or SHA the tag points at when the tag does not exist yet. Defaults to the default branch. |
+| `name` | `string` | No | Release title. |
+| `body` | `string` | No | Release notes, markdown. |
+| `draft` | `boolean` | No | Create as a draft, invisible to non-collaborators. |
+| `prerelease` | `boolean` | No | Mark the release as a prerelease. |
+| `tag_message` | `string` | No | Annotation for the tag created along with the release. |
+
+`tag_name` is required; the tag is created on `target_commitish` when it does not exist yet, and a tag that already has a release answers 409. `releases.list` filters with `draft` and `pre_release` (sent to the API as `pre-release`).
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `tag_name` | `string \| null` | No | — |
+| `target_commitish` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `draft` | `boolean \| null` | No | — |
+| `prerelease` | `boolean \| null` | No | — |
+| `author` | `object \| null` | No | — |
+| `assets` | `object[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `published_at` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `html_url` | `string \| null` | No | — |
+| `tarball_url` | `string \| null` | No | — |
+| `zipball_url` | `string \| null` | No | — |
+| `upload_url` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="author full type">
+
+```ts
+{
+  id: number,
+  login?: string | null,
+  type?: string | null,
+  login_name?: string | null,
+  source_id?: number | null,
+  full_name?: string | null,
+  email?: string | null,
+  avatar_url?: string | null,
+  html_url?: string | null,
+  language?: string | null,
+  is_admin?: boolean | null,
+  last_login?: string | null,
+  created?: string | null,
+  restricted?: boolean | null,
+  active?: boolean | null,
+  prohibit_login?: boolean | null,
+  location?: string | null,
+  website?: string | null,
+  description?: string | null,
+  visibility?: string | null,
+  followers_count?: number | null,
+  following_count?: number | null,
+  starred_repos_count?: number | null,
+  username?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="assets full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  size?: number | null,
+  download_count?: number | null,
+  created_at?: string | null,
+  uuid?: string | null,
+  browser_download_url?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`releases.list`
+
+List a repository's releases with their assets, filterable by draft, prerelease and tag
+
+**Risk:** `read`
+
+```ts
+await corsair.gitea.api.releases.list({ owner: 'gitea', repo: 'tea', draft: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | The owner (user or org) of the repository. |
+| `repo` | `string` | Yes | The repository name. |
+| `draft` | `boolean` | No | Only draft (true) or published (false) releases. |
+| `pre_release` | `boolean` | No | Only prereleases (true) or final releases (false). Sent to the API as `pre-release`. |
+| `tag_filter` | `string` | No | Only releases whose tag matches this filter. |
+| `page` | `number` | No | Page number of results to return (1-based). Defaults to 1. |
+| `limit` | `number` | No | Page size of results, at most 50 (the server-side cap). Defaults to 50. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `releases` | `object[]` | Yes | — |
+| `page` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="releases full type">
+
+```ts
+{
+  id: number,
+  tag_name?: string | null,
+  target_commitish?: string | null,
+  name?: string | null,
+  body?: string | null,
+  draft?: boolean | null,
+  prerelease?: boolean | null,
+  author?: {
+    id: number,
+    login?: string | null,
+    type?: string | null,
+    login_name?: string | null,
+    source_id?: number | null,
+    full_name?: string | null,
+    email?: string | null,
+    avatar_url?: string | null,
+    html_url?: string | null,
+    language?: string | null,
+    is_admin?: boolean | null,
+    last_login?: string | null,
+    created?: string | null,
+    restricted?: boolean | null,
+    active?: boolean | null,
+    prohibit_login?: boolean | null,
+    location?: string | null,
+    website?: string | null,
+    description?: string | null,
+    visibility?: string | null,
+    followers_count?: number | null,
+    following_count?: number | null,
+    starred_repos_count?: number | null,
+    username?: string | null
+  } | null,
+  assets?: {
+    id: number,
+    name?: string | null,
+    size?: number | null,
+    download_count?: number | null,
+    created_at?: string | null,
+    uuid?: string | null,
+    browser_download_url?: string | null
+  }[] | null,
+  created_at?: string | null,
+  published_at?: string | null,
+  url?: string | null,
+  html_url?: string | null,
+  tarball_url?: string | null,
+  zipball_url?: string | null,
+  upload_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Repos
+
+### create
+
+`repos.create`
+
+Create a repository owned by the authenticated user, optionally seeded with a README, license and gitignore
+
+**Risk:** `write`
+
+```ts
+await corsair.gitea.api.repos.create({ name: 'demo', auto_init: true, description: 'Scratch repository' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the repository to create. |
+| `description` | `string` | No | Short description displayed next to the repository. |
+| `private` | `boolean` | No | Make the repository private. Defaults to public. |
+| `auto_init` | `boolean` | No | Create an initial commit with a README so the repository is not empty. |
+| `default_branch` | `string` | No | Branch used as the default, e.g. main. |
+| `gitignores` | `string` | No | Comma-separated gitignore template names applied on auto_init. |
+| `issue_labels` | `string` | No | Issue label set applied on auto_init. |
+| `license` | `string` | No | License template applied on auto_init. |
+| `readme` | `string` | No | Readme template applied on auto_init. |
+| `template` | `boolean` | No | Mark the repository as a template. |
+| `object_format_name` | `sha1 \| sha256` | No | Git object format. Defaults to sha1. |
+| `trust_model` | `default \| collaborator \| committer \| collaboratorcommitter` | No | Which signatures to trust when verifying commits. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `owner` | `object \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `full_name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `empty` | `boolean \| null` | No | — |
+| `private` | `boolean \| null` | No | — |
+| `fork` | `boolean \| null` | No | — |
+| `template` | `boolean \| null` | No | — |
+| `mirror` | `boolean \| null` | No | — |
+| `size` | `number \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `languages_url` | `string \| null` | No | — |
+| `html_url` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `link` | `string \| null` | No | — |
+| `ssh_url` | `string \| null` | No | — |
+| `clone_url` | `string \| null` | No | — |
+| `original_url` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `stars_count` | `number \| null` | No | — |
+| `forks_count` | `number \| null` | No | — |
+| `watchers_count` | `number \| null` | No | — |
+| `branch_count` | `number \| null` | No | — |
+| `open_issues_count` | `number \| null` | No | — |
+| `open_pr_counter` | `number \| null` | No | — |
+| `release_counter` | `number \| null` | No | — |
+| `default_branch` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `archived_at` | `string \| null` | No | — |
+| `permissions` | `object \| null` | No | — |
+| `has_code` | `boolean \| null` | No | — |
+| `has_issues` | `boolean \| null` | No | — |
+| `internal_tracker` | `Record<string, any> \| null` | No | — |
+| `has_wiki` | `boolean \| null` | No | — |
+| `has_pull_requests` | `boolean \| null` | No | — |
+| `has_projects` | `boolean \| null` | No | — |
+| `projects_mode` | `string \| null` | No | — |
+| `has_releases` | `boolean \| null` | No | — |
+| `has_packages` | `boolean \| null` | No | — |
+| `has_actions` | `boolean \| null` | No | — |
+| `ignore_whitespace_conflicts` | `boolean \| null` | No | — |
+| `allow_merge_commits` | `boolean \| null` | No | — |
+| `allow_rebase` | `boolean \| null` | No | — |
+| `allow_rebase_explicit` | `boolean \| null` | No | — |
+| `allow_rebase_update` | `boolean \| null` | No | — |
+| `allow_squash_merge` | `boolean \| null` | No | — |
+| `allow_fast_forward_only_merge` | `boolean \| null` | No | — |
+| `allow_merge_update` | `boolean \| null` | No | — |
+| `allow_manual_merge` | `boolean \| null` | No | — |
+| `autodetect_manual_merge` | `boolean \| null` | No | — |
+| `default_delete_branch_after_merge` | `boolean \| null` | No | — |
+| `default_merge_style` | `string \| null` | No | — |
+| `default_update_style` | `string \| null` | No | — |
+| `default_allow_maintainer_edit` | `boolean \| null` | No | — |
+| `avatar_url` | `string \| null` | No | — |
+| `internal` | `boolean \| null` | No | — |
+| `mirror_interval` | `string \| null` | No | — |
+| `mirror_updated` | `string \| null` | No | — |
+| `mirror_last_sync_at` | `string \| null` | No | — |
+| `object_format_name` | `string \| null` | No | — |
+| `topics` | `string[] \| null` | No | — |
+| `licenses` | `string[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  id: number,
+  login?: string | null,
+  type?: string | null,
+  login_name?: string | null,
+  source_id?: number | null,
+  full_name?: string | null,
+  email?: string | null,
+  avatar_url?: string | null,
+  html_url?: string | null,
+  language?: string | null,
+  is_admin?: boolean | null,
+  last_login?: string | null,
+  created?: string | null,
+  restricted?: boolean | null,
+  active?: boolean | null,
+  prohibit_login?: boolean | null,
+  location?: string | null,
+  website?: string | null,
+  description?: string | null,
+  visibility?: string | null,
+  followers_count?: number | null,
+  following_count?: number | null,
+  starred_repos_count?: number | null,
+  username?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="permissions full type">
+
+```ts
+{
+  admin?: boolean | null,
+  push?: boolean | null,
+  pull?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`repos.delete`
+
+Permanently delete a repository together with its issues, pull requests, releases and wiki; no API call can restore it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gitea.api.repos.delete({ owner: 'gitea', repo: 'demo' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | The owner (user or org) of the repository. |
+| `repo` | `string` | Yes | The repository name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`repos.get`
+
+Get one repository, including its counts, permissions and feature flags
+
+**Risk:** `read`
+
+```ts
+await corsair.gitea.api.repos.get({ owner: 'gitea', repo: 'tea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | The owner (user or org) of the repository. |
+| `repo` | `string` | Yes | The repository name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `owner` | `object \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `full_name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `empty` | `boolean \| null` | No | — |
+| `private` | `boolean \| null` | No | — |
+| `fork` | `boolean \| null` | No | — |
+| `template` | `boolean \| null` | No | — |
+| `mirror` | `boolean \| null` | No | — |
+| `size` | `number \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `languages_url` | `string \| null` | No | — |
+| `html_url` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `link` | `string \| null` | No | — |
+| `ssh_url` | `string \| null` | No | — |
+| `clone_url` | `string \| null` | No | — |
+| `original_url` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `stars_count` | `number \| null` | No | — |
+| `forks_count` | `number \| null` | No | — |
+| `watchers_count` | `number \| null` | No | — |
+| `branch_count` | `number \| null` | No | — |
+| `open_issues_count` | `number \| null` | No | — |
+| `open_pr_counter` | `number \| null` | No | — |
+| `release_counter` | `number \| null` | No | — |
+| `default_branch` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `archived_at` | `string \| null` | No | — |
+| `permissions` | `object \| null` | No | — |
+| `has_code` | `boolean \| null` | No | — |
+| `has_issues` | `boolean \| null` | No | — |
+| `internal_tracker` | `Record<string, any> \| null` | No | — |
+| `has_wiki` | `boolean \| null` | No | — |
+| `has_pull_requests` | `boolean \| null` | No | — |
+| `has_projects` | `boolean \| null` | No | — |
+| `projects_mode` | `string \| null` | No | — |
+| `has_releases` | `boolean \| null` | No | — |
+| `has_packages` | `boolean \| null` | No | — |
+| `has_actions` | `boolean \| null` | No | — |
+| `ignore_whitespace_conflicts` | `boolean \| null` | No | — |
+| `allow_merge_commits` | `boolean \| null` | No | — |
+| `allow_rebase` | `boolean \| null` | No | — |
+| `allow_rebase_explicit` | `boolean \| null` | No | — |
+| `allow_rebase_update` | `boolean \| null` | No | — |
+| `allow_squash_merge` | `boolean \| null` | No | — |
+| `allow_fast_forward_only_merge` | `boolean \| null` | No | — |
+| `allow_merge_update` | `boolean \| null` | No | — |
+| `allow_manual_merge` | `boolean \| null` | No | — |
+| `autodetect_manual_merge` | `boolean \| null` | No | — |
+| `default_delete_branch_after_merge` | `boolean \| null` | No | — |
+| `default_merge_style` | `string \| null` | No | — |
+| `default_update_style` | `string \| null` | No | — |
+| `default_allow_maintainer_edit` | `boolean \| null` | No | — |
+| `avatar_url` | `string \| null` | No | — |
+| `internal` | `boolean \| null` | No | — |
+| `mirror_interval` | `string \| null` | No | — |
+| `mirror_updated` | `string \| null` | No | — |
+| `mirror_last_sync_at` | `string \| null` | No | — |
+| `object_format_name` | `string \| null` | No | — |
+| `topics` | `string[] \| null` | No | — |
+| `licenses` | `string[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  id: number,
+  login?: string | null,
+  type?: string | null,
+  login_name?: string | null,
+  source_id?: number | null,
+  full_name?: string | null,
+  email?: string | null,
+  avatar_url?: string | null,
+  html_url?: string | null,
+  language?: string | null,
+  is_admin?: boolean | null,
+  last_login?: string | null,
+  created?: string | null,
+  restricted?: boolean | null,
+  active?: boolean | null,
+  prohibit_login?: boolean | null,
+  location?: string | null,
+  website?: string | null,
+  description?: string | null,
+  visibility?: string | null,
+  followers_count?: number | null,
+  following_count?: number | null,
+  starred_repos_count?: number | null,
+  username?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="permissions full type">
+
+```ts
+{
+  admin?: boolean | null,
+  push?: boolean | null,
+  pull?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`repos.list`
+
+List the repositories the authenticated user owns, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.gitea.api.repos.list({ limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number of results to return (1-based). Defaults to 1. |
+| `limit` | `number` | No | Page size of results, at most 50 (the server-side cap). Defaults to 50. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repositories` | `object[]` | Yes | — |
+| `page` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="repositories full type">
+
+```ts
+{
+  id: number,
+  owner?: {
+    id: number,
+    login?: string | null,
+    type?: string | null,
+    login_name?: string | null,
+    source_id?: number | null,
+    full_name?: string | null,
+    email?: string | null,
+    avatar_url?: string | null,
+    html_url?: string | null,
+    language?: string | null,
+    is_admin?: boolean | null,
+    last_login?: string | null,
+    created?: string | null,
+    restricted?: boolean | null,
+    active?: boolean | null,
+    prohibit_login?: boolean | null,
+    location?: string | null,
+    website?: string | null,
+    description?: string | null,
+    visibility?: string | null,
+    followers_count?: number | null,
+    following_count?: number | null,
+    starred_repos_count?: number | null,
+    username?: string | null
+  } | null,
+  name?: string | null,
+  full_name?: string | null,
+  description?: string | null,
+  empty?: boolean | null,
+  private?: boolean | null,
+  fork?: boolean | null,
+  template?: boolean | null,
+  mirror?: boolean | null,
+  size?: number | null,
+  language?: string | null,
+  languages_url?: string | null,
+  html_url?: string | null,
+  url?: string | null,
+  link?: string | null,
+  ssh_url?: string | null,
+  clone_url?: string | null,
+  original_url?: string | null,
+  website?: string | null,
+  stars_count?: number | null,
+  forks_count?: number | null,
+  watchers_count?: number | null,
+  branch_count?: number | null,
+  open_issues_count?: number | null,
+  open_pr_counter?: number | null,
+  release_counter?: number | null,
+  default_branch?: string | null,
+  archived?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  archived_at?: string | null,
+  permissions?: {
+    admin?: boolean | null,
+    push?: boolean | null,
+    pull?: boolean | null
+  } | null,
+  has_code?: boolean | null,
+  has_issues?: boolean | null,
+  internal_tracker?: Record<string, any> | null,
+  has_wiki?: boolean | null,
+  has_pull_requests?: boolean | null,
+  has_projects?: boolean | null,
+  projects_mode?: string | null,
+  has_releases?: boolean | null,
+  has_packages?: boolean | null,
+  has_actions?: boolean | null,
+  ignore_whitespace_conflicts?: boolean | null,
+  allow_merge_commits?: boolean | null,
+  allow_rebase?: boolean | null,
+  allow_rebase_explicit?: boolean | null,
+  allow_rebase_update?: boolean | null,
+  allow_squash_merge?: boolean | null,
+  allow_fast_forward_only_merge?: boolean | null,
+  allow_merge_update?: boolean | null,
+  allow_manual_merge?: boolean | null,
+  autodetect_manual_merge?: boolean | null,
+  default_delete_branch_after_merge?: boolean | null,
+  default_merge_style?: string | null,
+  default_update_style?: string | null,
+  default_allow_maintainer_edit?: boolean | null,
+  avatar_url?: string | null,
+  internal?: boolean | null,
+  mirror_interval?: string | null,
+  mirror_updated?: string | null,
+  mirror_last_sync_at?: string | null,
+  object_format_name?: string | null,
+  topics?: string[] | null,
+  licenses?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## User
+
+### me
+
+`user.me`
+
+Get the authenticated user, as the account token sees it
+
+**Risk:** `read`
+
+```ts
+await corsair.gitea.api.user.me({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `login` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `login_name` | `string \| null` | No | — |
+| `source_id` | `number \| null` | No | — |
+| `full_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `avatar_url` | `string \| null` | No | — |
+| `html_url` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `is_admin` | `boolean \| null` | No | — |
+| `last_login` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `restricted` | `boolean \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `prohibit_login` | `boolean \| null` | No | — |
+| `location` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `visibility` | `string \| null` | No | — |
+| `followers_count` | `number \| null` | No | — |
+| `following_count` | `number \| null` | No | — |
+| `starred_repos_count` | `number \| null` | No | — |
+| `username` | `string \| null` | No | — |
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Register a webhook on a repository: a target URL and payload type, the events to subscribe, and an optional signing secret. Deliveries are sent by Gitea to that URL; this plugin does not receive them
+
+**Risk:** `write`
+
+```ts
+await corsair.gitea.api.webhooks.create({ owner: 'gitea', repo: 'tea', type: 'gitea', config: { url: 'https://receiver.example.com/gitea', content_type: 'json' }, events: ['push'], active: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | The owner (user or org) of the repository. |
+| `repo` | `string` | Yes | The repository name. |
+| `type` | `dingtalk \| discord \| gitea \| gogs \| msteams \| slack \| telegram \| feishu \| wechatwork \| packagist` | Yes | Which payload format the target expects, e.g. gitea, slack or discord. |
+| `config` | `Record<string, string>` | Yes | Target settings. `url` (delivery target) and `content_type` (json or form) are required; a `secret` key sets the HMAC signing secret and is never echoed back. |
+| `active` | `boolean` | No | Whether the hook triggers on events. Gitea creates hooks inactive when this is omitted. |
+| `events` | `string[]` | No | Event names to subscribe, as named in the repository's webhook settings (for example push, issue_events, pull_request_events). Empty subscribes push only. |
+| `name` | `string` | No | Display name of the hook. |
+| `authorization_header` | `string` | No | Sent as the Authorization header on every delivery. |
+| `branch_filter` | `string` | No | Glob pattern restricting which branches trigger push events. |
+
+`type` accepts dingtalk, discord, gitea, gogs, msteams, slack, telegram, feishu, wechatwork or packagist, and `config` must carry `url` and `content_type` (json or form); a `secret` key sets the HMAC signing secret and is never echoed back on reads. Gitea creates hooks inactive unless `active` is true, and an omitted `events` subscribes push only.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `type` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `events` | `string[] \| null` | No | — |
+| `config` | `Record<string, string> \| null` | No | — |
+| `authorization_header` | `string \| null` | No | — |
+| `branch_filter` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Permanently remove a webhook registration; deliveries stop immediately and the hook id is not reused
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.gitea.api.webhooks.delete({ owner: 'gitea', repo: 'tea', id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | The owner (user or org) of the repository. |
+| `repo` | `string` | Yes | The repository name. |
+| `id` | `number` | Yes | The numeric `id` of the resource. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List the webhook registrations on a repository, with their target URLs, events and active flag
+
+**Risk:** `read`
+
+```ts
+await corsair.gitea.api.webhooks.list({ owner: 'gitea', repo: 'tea' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | The owner (user or org) of the repository. |
+| `repo` | `string` | Yes | The repository name. |
+| `page` | `number` | No | Page number of results to return (1-based). Defaults to 1. |
+| `limit` | `number` | No | Page size of results, at most 50 (the server-side cap). Defaults to 50. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hooks` | `object[]` | Yes | — |
+| `page` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="hooks full type">
+
+```ts
+{
+  id: number,
+  type?: string | null,
+  name?: string | null,
+  active?: boolean | null,
+  events?: string[] | null,
+  config?: Record<string, string> | null,
+  authorization_header?: string | null,
+  branch_filter?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
