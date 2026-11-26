@@ -16,7 +16,8 @@ import { LinklyEndpointOutputSchemas as Outputs } from './endpoints/types';
  * the free plan, 50 an hour on any plan); this file makes four.
  *
  * LINKLY_LIVE_WRITES=1 also runs a round trip on one throwaway link: create,
- * update, bulk update, a link webhook subscribe and unsubscribe, trash,
+ * read it back (links.get, get_link), update, bulk update, a link webhook
+ * subscribe, list and unsubscribe, trash,
  * restore, and trash again. It leaves that link in the trash. It never adds
  * or deletes a domain, changes the workspace, or reports a conversion.
  *
@@ -82,6 +83,8 @@ describeIfReady('live Linkly API', () => {
 		const body = await makeLinklyRequest(key, {
 			method: 'GET',
 			path: `/api/v1/link/${listed.id}`,
+			// Without it an API-key call gets 400 workspace_required.
+			query: { workspace_id: WORKSPACE_ID },
 		});
 		const result = Outputs.linksGet.parse(body);
 		expect(result.id).toBe(listed.id);
@@ -215,6 +218,23 @@ describeIfReady('live Linkly API', () => {
 		);
 		const id = created.id;
 
+		// The reads that need a link, against the one just made.
+		const read = Outputs.linksGet.parse(
+			await makeLinklyRequest(key, {
+				method: 'GET',
+				path: `/api/v1/link/${id}`,
+				query: { workspace_id: WORKSPACE_ID },
+			}),
+		);
+		expect(read.id).toBe(id);
+		const details = Outputs.linksGetDetails.parse(
+			await makeLinklyRequest(key, {
+				method: 'GET',
+				path: `/api/v1/get_link/${id}`,
+			}),
+		);
+		expect(details.link.id).toBe(id);
+
 		const updated = Outputs.linksUpdate.parse(
 			await makeLinklyRequest(key, {
 				method: 'POST',
@@ -248,6 +268,13 @@ describeIfReady('live Linkly API', () => {
 				body: { url: hook },
 			}),
 		);
+		const hooks = Outputs.webhooksListForLink.parse(
+			await makeLinklyRequest(key, {
+				method: 'GET',
+				path: `/api/v1/link/${id}/webhooks`,
+			}),
+		);
+		expect(hooks.map((entry) => entry.id)).toContain(hook);
 		Outputs.webhooksUnsubscribeFromLink.parse(
 			await makeLinklyRequest(key, {
 				method: 'DELETE',
