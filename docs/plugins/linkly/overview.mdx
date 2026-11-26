@@ -1,0 +1,171 @@
+---
+title: "Linkly plugin"
+sidebarTitle: "Overview"
+description: "Link tracking and URL shortening with Linkly - create, bulk-update, trash and restore tracked short links, read click analytics and raw click exports, manage custom domains and webhooks, and report conversions."
+---
+
+Use **Linkly** through Corsair: one client, typed API calls.
+
+Create an API key in Linkly under Settings, API Keys at app.linklyhq.com. The key is
+available on every plan, including the free one. Every workspace-scoped call takes a
+`workspace_id` input; `workspaces.listWorkspaces` lists the IDs your key can reach, and
+`auth.test` checks the key.
+
+Things to know before you send:
+
+- **Create and update share one endpoint.** `links.create` POSTs a new link; `links.update`
+  is the same call with the link's `id`, updating it in place. `links.bulkUpsert` does the
+  same for up to 1000 links and answers 200 even when some fail, so read each item's
+  `status`.
+- **Deleting a link is soft.** `links.delete` and `links.deleteMany` move links to the trash
+  and their short URLs stop redirecting straight away. `links.restore` takes them back out;
+  a restored link whose back-half is already taken on the domain is reported under
+  `conflicts`.
+- **Deleting a domain is not.** `domains.delete` removes a custom domain, and every link on
+  it stops working.
+- **`links.list` paging.** The API defaults to 1000 rows per page, the largest page it
+  serves; `page_number` and `total_pages` in the answer tell you where you are. `filter`
+  narrows by exact domain, slug or UTM value.
+- **Analytics has its own allowance.** `clicks.getTimeSeries`, `clicks.getCounters`,
+  `clicks.export` and `links.export` count against the workspace's analytics allowance
+  (100 requests a month on the free plan) and a limit of 50 requests an hour. When a paid
+  workspace runs out, Linkly adds a billed API pack to its subscription automatically;
+  free and Starter workspaces get a 429 instead. Pivot mode
+  (`clicks.getTimeSeries` with `pivot: 'link_id'`) returns every link in one call.
+- **Rate limits.** The link API allows 20 requests a second. Core retries a 429 three times
+  with backoff; Linkly sends no `Retry-After` header.
+- **Webhooks.** Linkly POSTs `click`, `link.created`, `link.updated` and `link.deleted`
+  events to the URLs you register with `webhooks.subscribe` (whole workspace) or
+  `webhooks.subscribeToLink` (one link). Branch on the body's `event` field; only click
+  events carry a `click` object. Deliveries arrive at that URL, not to this plugin.
+  `workspaces.update` with `webhooks` replaces the whole list.
+- **Conversions.** `conversions.create` attributes a lead or sale to the link through the
+  `linkly_cid` your landing page captured. Without it the event is discarded and the
+  answer says `attributed: false`. Pass `event_id` so a repeat is not counted twice.
+- **Outside the OpenAPI spec.** `auth.test`, `workspaces.update` and `clicks.export` are
+  routes Linkly's own MCP server uses but its OpenAPI document leaves out.
+
+**What you get:**
+
+- 28 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/linkly better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/linkly better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/linkly better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/linkly better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { linkly } from '@corsair-dev/linkly';
+
+export const corsair = createCorsair({
+	plugins: [
+		linkly(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Linkly API key before the first call: `pnpm corsair setup --plugin=linkly --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+linkly()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'linkly',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List links in a workspace**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.linkly.api.links.list({ workspace_id: 42, page_size: 50 });
+```
+
+
+**Create a tracked short link**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.linkly.api.links.create({
+	workspace_id: 42,
+	url: 'https://www.example.com/summer-sale',
+	name: 'Summer sale',
+	utm_source: 'newsletter',
+});
+```
+
+
+See the full list on the [API](/plugins/linkly/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/linkly/api">
+    Every `linkly.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -3547,6 +3547,14 @@
                 ]
               },
               {
+                "group": "Linkly",
+                "pages": [
+                  "plugins/linkly/overview",
+                  "plugins/linkly/api",
+                  "plugins/linkly/database"
+                ]
+              },
+              {
                 "group": "Linkup",
                 "pages": [
                   "plugins/linkup/overview",
