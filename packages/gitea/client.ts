@@ -377,9 +377,28 @@ function sentStrings(request: ApiError['request']): SentString[] {
 	// An id or record type in the path, at any length:
 	// a 404 can quote it back.
 	visit(request.path, 0, true);
+	// The path values were sent encoded (`a%40b.md`); Gitea quotes them back
+	// decoded, so the decoded form is scrubbed too.
+	visit(decodedValues(request.path), 0, true);
 	return [...found]
 		.map(([text, wholeWord]) => ({ text, wholeWord }))
 		.sort((a, b) => b.text.length - a.text.length);
+}
+
+// `unknown` because path values are validated scalars.
+function decodedValues(
+	values: Record<string, unknown> | undefined,
+): Record<string, string> {
+	const decoded: Record<string, string> = {};
+	for (const [key, value] of Object.entries(values ?? {})) {
+		if (typeof value !== 'string') continue;
+		try {
+			decoded[key] = decodeURIComponent(value);
+		} catch {
+			// Not percent-encoded after all: the raw value is already collected.
+		}
+	}
+	return decoded;
 }
 
 function escapeRegExp(text: string): string {

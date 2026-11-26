@@ -37,7 +37,8 @@ import { gitea } from './index';
  * every operation's result there.
  *
  * With GITEA_HOOK_URL (a listener Gitea can reach) and GITEA_HOOK_DIR (where
- * that listener writes each delivery as { headers, body } JSON), the run also
+ * that listener writes each delivery as { headers, body } JSON, `body` the raw
+ * request body as a string, since the signature covers its exact bytes), the run also
  * registers a signed webhook, triggers pushes, issues, comments, a pull
  * request, a review, a release and a wiki edit, and feeds every delivery
  * Gitea sent through processWebhook.
@@ -112,6 +113,11 @@ describeIfLive('gitea live', () => {
 			results[id] = result;
 		};
 		try {
+			// An explicit actor that isn't there (the second user's client failed)
+			// must not quietly become the admin.
+			if ('as' in options && !options.as) {
+				throw new Error(`${id}: the client for this actor was not created`);
+			}
 			const out = await fn(options.as ?? admin, id)(input);
 			record(
 				options.expect
@@ -1857,6 +1863,11 @@ describeIfLive('gitea live', () => {
 		const seen: Record<string, number> = {};
 		for (const file of files) {
 			const delivery = JSON.parse(readFileSync(join(hookDir, file), 'utf8'));
+			if (typeof delivery.body !== 'string') {
+				throw new Error(
+					`${file}: the listener must save the raw body as a string (the signature covers its exact bytes)`,
+				);
+			}
 			const headers = Object.fromEntries(
 				Object.entries(delivery.headers as Record<string, string>).map(
 					([k, v]) => [k.toLowerCase(), v],

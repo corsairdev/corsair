@@ -449,6 +449,18 @@ describe('errors', () => {
 		expect(JSON.stringify(error)).not.toContain('gt_test_token');
 	});
 
+	it('scrubs path values Gitea quotes back decoded', async () => {
+		reply(404, { message: 'file private/ada@example.com.txt does not exist' });
+		const error = (await endpointFor('contents.get')(ctx(), {
+			owner: 'ada',
+			repo: 'site',
+			filepath: 'private/ada@example.com.txt',
+		}).catch((e: unknown) => e)) as ApiError;
+		expect(error.status).toBe(404);
+		expect(error.message).not.toContain('ada@example.com');
+		expect(JSON.stringify(error.body)).not.toContain('ada@example.com');
+	});
+
 	it('drops the sent body from a validation error', async () => {
 		reply(422, { message: '[Title]: Required', errors: ['title is empty'] });
 		const error = (await endpointFor('issues.create')(ctx(), {
