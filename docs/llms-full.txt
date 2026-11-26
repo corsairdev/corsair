@@ -1814,6 +1814,1304 @@ Don't hardcode channel IDs or team IDs when the app is multi-tenant. Read them f
 
 ---
 
+# Management API
+
+Source: https://docs.corsair.dev/v1/overview.md
+
+> Manage a Corsair Cloud project from your own backend over REST, with one project key.
+
+```
+Base URL  https://api.corsair.cloud/v1/projects/{slug}
+Auth      Authorization: Bearer ck_cloud_{slug}.{secret}
+```
+
+The management API reads and writes a project's configuration: its instances,
+integrations, tenants, access lines, connections, connect sessions, MCP links
+and webhooks. Most of what the dashboard does by hand, your backend can do over
+HTTP.
+
+It doesn't run tool calls. A tenant's operations run on the instance's own
+runtime, which you reach through the [Corsair SDK](https://docs.corsair.dev/cloud/overview.md) or an MCP
+link you hand to an agent.
+
+## One host, two kinds of path
+
+Everything is on `api.corsair.cloud`. Requests under `/v1/` go to the
+management API. Every other path goes to your project's runtime, and each
+instance reports where its tool calls go in its `url` field (`null` until the
+instance is deployed).
+
+Most management writes change Corsair's stored configuration and reach the
+runtime on the instance's next apply (`POST /instances/{key}/apply`).
+Integration changes work this way. Access changes are pushed straight away: a
+`PUT` or `DELETE` on `/access/{ref}` updates the runtime as part of the request,
+and its response carries `synced`. `synced: false` means the change is saved but
+the runtime still enforces the old access until you apply the instance again.
+
+## One key, one project
+
+Every request carries your project key as a bearer token:
+
+```
+Authorization: Bearer ck_cloud_{slug}.{secret}
+```
+
+The `{slug}` in the path has to match the slug inside the key. Naming any other
+slug returns `404`, so a key can't tell whether another project exists. A key has
+full authority over its project, with no tenant scope and no read-only mode, so
+keep it on your server. See [Authentication](https://docs.corsair.dev/v1/authentication.md).
+
+## Resources
+
+- **Instances** (`/instances/{key}`) are runtime boundaries, such as `prod` and
+  `staging`. A key is a lowercase letter followed by lowercase letters, digits
+  or hyphens, up to 32 characters, and it can't change.
+- **Integrations** (`/integrations/{instance}:{integration}`, for example
+  `prod:slack`) are the plugins enabled on one instance. Each has an
+  `auth_type`: `managed` (Corsair's OAuth app), `managed_pricing` (Corsair's
+  provider key, paid per operation from credits), `oauth_2`, `api_key` or
+  `bot_token`. Leave it out and Corsair picks `managed` when it hosts an app for
+  that plugin, or `managed_pricing` when the plugin is paid per operation.
+  `GET /integrations/catalog` lists every plugin, its auth types, and whether a
+  managed app is available.
+- **Tenants** (`/tenants/{instance}:{tenant}`) are the people you serve, per
+  instance. You choose the id: letters, digits and `. _ : ~ @ + -`, up to 128
+  characters.
+- **Access** (`/access/{instance}:{tenant}`) is one line per tenant on an
+  instance, at `readonly`, `readwrite` or `admin`. A `PUT` creates the tenant if
+  it's new. An MCP link can only name lines that already exist.
+- **Connections** (`/connections/{instance}:{integration}:{tenant}`) are one
+  tenant's stored credential for one integration. Filter the list with
+  `instance`, `integration` and `tenant`. Each has a `status` of `connected` or
+  `expired`.
+- **Connect sessions** (`POST /connect/sessions`) return a hosted URL where a
+  tenant authorizes integrations.
+- **MCP links** (`/mcp/links`) are MCP URLs for agents. A link has one `admin`
+  line it may write on, optional read-only `context` lines, and a `mode`. For
+  the project's shared MCP URL, `POST /mcp/tokens` mints a bearer token instead.
+- **Webhooks** (`/webhooks/{instance}:{integration}`) receive a provider's
+  inbound webhooks and keep a delivery log you can read and retry.
+
+The project itself is at `GET /project`, and the key at `/keys`. The
+[OpenAPI document](https://github.com/corsairdev/corsair/blob/main/packages/corsair/core/cloud/v1/openapi.yaml)
+describes every route the TypeScript client calls, with each field.
+
+> [!NOTE]
+>
+> No endpoint accepts a tenant's token. To connect a tenant, create a connect
+> session and send them to its URL, so they authorize the integration themselves.
+> `GET /connections` reads back the result. Credentials an integration uses for
+> everyone, such as an API key, go in `PUT /integrations/{ref}` and can't be read
+> back.
+
+## Conventions
+
+Fields are `snake_case`. Single objects carry `object` and `id`. A `DELETE`
+returns `200` with `{ "object": …, "id": …, "deleted": true }`, plus anything
+else the caller needs to know, such as `synced`.
+
+Lists come back in one envelope:
+
+```json
+{ "object": "list", "data": [ ... ], "has_more": false, "next_cursor": null }
+```
+
+Page with `limit` and `starting_after`, passing the previous response's
+`next_cursor`. `limit` takes 1 to 100 and defaults to 100. A larger value is
+clamped to 100. Anything that isn't a positive integer is a `400`, and so is a
+`starting_after` id that isn't in the list.
+
+Every response carries a `Request-Id` header, and every error repeats it as
+`request_id`. Send your own in `X-Corsair-Request-Id` and Corsair uses that
+instead. Quote it when you report a problem.
+
+Responses also carry `Corsair-Version`, today `2026-10-04`. Corsair echoes a
+version you send but doesn't act on it yet.
+
+The routes that mint something take an `Idempotency-Key` header, so a retried
+call returns the first result instead of minting a second credential:
+`POST /instances`, `POST /keys/rotate`, `POST /instances/{key}/signing-secret/rotate`,
+`POST /mcp/links`, `POST /mcp/links/{id}/rotate`, `POST /mcp/links/{id}/api-key`,
+`POST /mcp/tokens` and `POST /connect/sessions`. See
+[Retrying safely](https://docs.corsair.dev/v1/errors.md#retrying-safely).
+
+Every error has the same shape on every route. See [Errors](https://docs.corsair.dev/v1/errors.md).
+
+---
+
+# Quickstart
+
+Source: https://docs.corsair.dev/v1/quickstart.md
+
+> From a project key to an MCP link and a connected user, in four calls.
+
+This guide gives one of your users access to an instance, mints an MCP link for
+their agent, sends them to connect Slack, and reads back what they connected.
+
+You need a project key (`ck_cloud_…`). In the dashboard, open your project,
+then Project, then Keys. Set the key and your base URL once. The slug is the
+part of the key between `ck_cloud_` and the first dot:
+
+```bash
+export CORSAIR_CLOUD_KEY="ck_cloud_acme.…"
+export CORSAIR_BASE="https://api.corsair.cloud/v1/projects/acme"
+```
+
+The TypeScript examples use one client:
+
+```ts
+import { corsairCloud } from 'corsair';
+
+const corsair = corsairCloud({ apiKey: process.env.CORSAIR_CLOUD_KEY! });
+const prod = corsair.withInstance('prod');
+```
+
+## Before you start
+
+Minting a link needs an instance that has been applied, which means its
+configuration has been pushed to the runtime at least once. Applying needs at
+least one integration. If your `prod` instance is already applied, skip to the
+next section.
+
+```bash curl
+# Create the instance. Sending it again returns the existing one.
+curl -s -X POST "$CORSAIR_BASE/instances" \
+  -H "Authorization: Bearer $CORSAIR_CLOUD_KEY" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: create-prod" \
+  -d '{ "instance_key": "prod" }'
+
+# Enable Slack on it.
+curl -s -X PUT "$CORSAIR_BASE/integrations/prod:slack" \
+  -H "Authorization: Bearer $CORSAIR_CLOUD_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{}'
+
+# Push the configuration to the runtime.
+curl -s -X POST "$CORSAIR_BASE/instances/prod/apply" \
+  -H "Authorization: Bearer $CORSAIR_CLOUD_KEY"
+```
+
+```ts TypeScript
+await corsair.manage.instances.create({ instance_key: 'prod' });
+await prod.integrations.put('slack', {});
+await prod.apply();
+```
+
+With no `auth_type`, Corsair uses its own OAuth app for a plugin when it has
+one. `managed_available` in `GET /integrations/catalog` tells you which plugins
+that covers.
+
+## Grant a user access
+
+An access line is one tenant on one instance at one permission. Naming a tenant
+that doesn't exist yet creates it, so this one call registers Dave and gives him
+write access on `prod`:
+
+```bash curl
+curl -s -X PUT "$CORSAIR_BASE/access/prod:usr_8841" \
+  -H "Authorization: Bearer $CORSAIR_CLOUD_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "permission": "readwrite", "email": "dave@acme.com", "label": "Dave" }'
+```
+
+```ts TypeScript
+await prod.access.set('usr_8841', {
+  permission: 'readwrite',
+  email: 'dave@acme.com',
+  label: 'Dave',
+});
+```
+
+```json
+{
+  "object": "access",
+  "id": "prod:usr_8841",
+  "instance": "prod",
+  "tenant": "usr_8841",
+  "label": "Dave",
+  "permission": "readwrite",
+  "connected": [],
+  "expired": [],
+  "synced": true
+}
+```
+
+The first call returns `201`, later ones `200`. `PUT` is an upsert, so you can
+call it on every sign-in without creating duplicates. `connected` stays empty
+until Dave authorizes an integration. `synced: false` would mean the line is
+saved but the runtime hasn't picked it up yet; applying the instance again fixes
+that.
+
+## Mint an MCP link
+
+A link is an MCP URL for an agent. It writes on one access line, `admin`, and
+can read others you list in `context`. The response holds the URL, so send an
+`Idempotency-Key`: a retry then returns the same link instead of minting a
+second one.
+
+```bash curl
+curl -s -X POST "$CORSAIR_BASE/mcp/links" \
+  -H "Authorization: Bearer $CORSAIR_CLOUD_KEY" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: dave-link-1" \
+  -d '{
+    "recipient": "dave@acme.com",
+    "admin": { "instance": "prod", "tenant": "usr_8841" }
+  }'
+```
+
+```ts TypeScript
+const link = await corsair.manage.mcp.links.mint(
+  {
+    recipient: 'dave@acme.com',
+    admin: { instance: 'prod', tenant: 'usr_8841' },
+  },
+  { idempotencyKey: 'dave-link-1' },
+);
+```
+
+```json
+{
+  "object": "link",
+  "id": "mcpg_…",
+  "recipient": "dave@acme.com",
+  "mode": "cautious",
+  "can_mint_links": false,
+  "can_add_plugins": false,
+  "admin": { "instance": "prod", "tenant": "usr_8841", "lost_access": false },
+  "context": [],
+  "url": "https://mcp.corsair.cloud/acme/mcpg_…/mcp",
+  "short_url": null,
+  "path": "…",
+  "expires_at": null,
+  "api_key_prefix": "mcpk_…",
+  "created": "2026-11-26T12:00:00.000Z",
+  "api_key": "mcpk_…"
+}
+```
+
+Paste `url` into any MCP client as a custom connector. The id in the URL is the
+credential, so treat the whole URL as a secret. `mode` defaults to `cautious`;
+the other modes are `open`, `strict` and `readonly`. `api_key` appears only in
+this response, and when the link is rotated or its key regenerated: Corsair
+keeps a hash. Your project's short URL for the link, when it has one, takes the
+key as a bearer token.
+
+> [!WARNING]
+>
+> Every line a link names needs an access line already. Naming a tenant the
+> project doesn't have returns `400 no tenant 'usr_8841' in this project`, and a
+> tenant without access on that instance returns `400 No access for prod:usr_8841`.
+> An instance that hasn't been applied returns `409 resource_conflict`.
+
+If a link leaks, `POST /mcp/links/{id}/rotate` mints a replacement with the same
+lines and a new id, and revokes the old one in the same transaction, so the two
+are never live together. `DELETE /mcp/links/{id}` revokes it outright.
+
+## Connect the user
+
+`POST /connect/sessions` returns a hosted URL for one tenant. Send the tenant
+there: they authorize the integration, and the credential never passes through
+your code.
+
+```bash curl
+curl -s -X POST "$CORSAIR_BASE/connect/sessions" \
+  -H "Authorization: Bearer $CORSAIR_CLOUD_KEY" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: dave-connect-1" \
+  -d '{ "instance": "prod", "tenant": "usr_8841", "integrations": ["slack"] }'
+```
+
+```ts TypeScript
+const session = await prod.connect.createSession(
+  { tenant: 'usr_8841', integrations: ['slack'] },
+  { idempotencyKey: 'dave-connect-1' },
+);
+// Send the tenant to session.url before session.expires_at.
+```
+
+```json
+{
+  "object": "connect_session",
+  "url": "https://…",
+  "expires_at": "2026-11-26T12:10:00.000Z",
+  "instance": "prod",
+  "tenant": "usr_8841",
+  "integrations": ["slack"]
+}
+```
+
+Leave out `integrations` to include every integration on the instance. Naming
+the ones you need keeps an integration that isn't set up yet from getting in
+the way of the rest. `delivery_url` sets where the tenant lands when they
+finish. A retry with the same `Idempotency-Key` returns the same URL until it
+expires, then mints a fresh session.
+
+## Check what landed
+
+Connections are keyed by instance, integration and tenant. Filter on any of the
+three:
+
+```bash curl
+curl -s "$CORSAIR_BASE/connections?instance=prod&tenant=usr_8841" \
+  -H "Authorization: Bearer $CORSAIR_CLOUD_KEY"
+```
+
+```ts TypeScript
+const { data } = await prod.connections.list({ tenant: 'usr_8841' });
+```
+
+```json
+{
+  "object": "list",
+  "data": [
+    {
+      "object": "connection",
+      "id": "prod:slack:usr_8841",
+      "instance": "prod",
+      "tenant": "usr_8841",
+      "integration": "slack",
+      "status": "connected",
+      "account": { "id": "…", "label": "…" },
+      "accounts": [{ "id": "…", "label": "…", "status": "connected" }]
+    }
+  ],
+  "has_more": false,
+  "next_cursor": null
+}
+```
+
+`status` is `expired` when the credential is past its expiry with no refresh
+token, or when the provider refused the refresh token. Either way the tenant
+needs a new connect session. A credential past its expiry that still has a
+refresh token reports `connected` and renews on the next call.
+
+The access line from the first step lists the tenant's connected integrations
+in `connected` too, but its `expired` list is always empty on Corsair Cloud, so
+read status from `/connections`.
+
+Every route and field is in the
+[OpenAPI document](https://github.com/corsairdev/corsair/blob/main/packages/corsair/core/cloud/v1/openapi.yaml).
+When a call fails, the error's `doc_url` links to its entry in
+[Errors](https://docs.corsair.dev/v1/errors.md).
+
+---
+
+# Authentication
+
+Source: https://docs.corsair.dev/v1/authentication.md
+
+> Project keys, the bearer header, what a key can do, and rate limits.
+
+Every request authenticates with your project key as a bearer token:
+
+```bash
+curl https://api.corsair.cloud/v1/projects/acme/project \
+  -H "Authorization: Bearer $CORSAIR_CLOUD_KEY"
+```
+
+## The key
+
+A project key looks like `ck_cloud_{slug}.{secret}`. In the dashboard, open
+your project, then Project, then Keys. Only an organization owner can reveal it
+there. The `{slug}` isn't secret: it appears in the project's URLs, including
+the path above. The `{secret}` after the dot is the part to keep private.
+
+Corsair checks the slug in the path against the key, so a key only ever answers
+for its own project. Any other slug returns `404 resource_missing` with
+`param: "project_slug"`, never `403`, so a key can't probe which other slugs
+exist.
+
+A key has no tenant scope and no read-only mode. It can mint and revoke MCP
+links for any tenant, change access lines, create and delete tenants and
+instances, read every connection, and read or rotate the key itself.
+
+> [!WARNING]
+>
+> Keep the key on your server. Never ship a `ck_cloud_` key to a browser, a mobile
+> app, or an agent: whoever holds it can manage the whole project. Give an agent
+> an [MCP link](https://docs.corsair.dev/v1/quickstart.md#mint-an-mcp-link) instead, which writes only on
+> the one access line you give it.
+
+## Reading the key back
+
+A backend that needs its own key, to show it once on a setup screen for
+example, can read it:
+
+```bash
+curl https://api.corsair.cloud/v1/projects/acme/keys \
+  -H "Authorization: Bearer $CORSAIR_CLOUD_KEY"
+```
+
+```json
+{ "object": "key", "project_key": "ck_cloud_acme.…" }
+```
+
+The response is sent with `Cache-Control: no-store`.
+
+## Rotating the key
+
+`POST /keys/rotate` mints a new key and redeploys every deployed instance with
+it. There's no grace period: the old key stops working when the call returns.
+
+```json
+{
+  "object": "key",
+  "project_key": "ck_cloud_acme.…",
+  "previous_key_revoked": true,
+  "instances": 2,
+  "reapplied": 2,
+  "failed": []
+}
+```
+
+`failed` lists instances that didn't redeploy and still hold the revoked key.
+Apply each one (`POST /instances/{key}/apply`).
+
+### If the response is lost
+
+The API won't hand you the new key in exchange for the old one. If the
+connection drops after the rotate went through, a retry with the old key gets
+`401 unauthorized`, even with the same `Idempotency-Key`, because Corsair checks
+the key before it looks for a stored response.
+
+Get the new key from the dashboard instead: open the project, then Project,
+then Keys, and reveal it. An organization owner has to do this. If that page
+was already open before the rotate, reload it first, or it shows the old key.
+
+An `Idempotency-Key` still helps when a second copy of the rotate reaches
+Corsair while the first is still running. The second copy waits for the first
+and gets the same new key back, instead of rotating again.
+
+## The SDK
+
+The TypeScript SDK derives the management URL from the key's slug, so `apiKey`
+is the only option you need:
+
+```ts
+import { corsairCloud } from 'corsair';
+
+const corsair = corsairCloud({ apiKey: process.env.CORSAIR_CLOUD_KEY! });
+
+// The project as a whole: instances, keys, MCP links.
+await corsair.manage.project.get();
+
+// One instance: its tenants, access, connections, integrations.
+await corsair.withInstance('prod').access.list();
+
+// A tool call, which runs on the instance's runtime.
+await corsair
+  .withInstance('prod')
+  .withTenant('usr_8841')
+  .slack.api.chat.postMessage({ channel: '#general', text: 'hi' });
+```
+
+## Rate limits
+
+Corsair counts requests per project per minute, in three classes:
+
+| Class | Limit | What counts                                                                                                        |
+| ----- | ----- | ------------------------------------------------------------------------------------------------------------------ |
+| read  | 1000  | every `GET`                                                                                                        |
+| write | 120   | `PUT`, `PATCH`, `DELETE` and every `POST` that doesn't mint                                                        |
+| mint  | 60    | the routes that take an `Idempotency-Key` (see [Conventions](https://docs.corsair.dev/v1/overview.md#conventions)) |
+
+A request to a path that doesn't exist still counts, as a read for `GET` and a
+write otherwise. Over the limit returns `429 rate_limit_exceeded` with a
+`Retry-After` header in seconds.
+
+## Failures
+
+A missing or malformed header, or a key that doesn't verify, returns `401` with
+code `unauthorized`. Corsair checks the key before anything else, so the answer
+is the same for every path. See [Errors](https://docs.corsair.dev/v1/errors.md) for the shape.
+
+---
+
+# Errors
+
+Source: https://docs.corsair.dev/v1/errors.md
+
+> One error shape on every route, and what each error code means.
+
+Every error comes back in this body:
+
+```json
+{
+  "error": {
+    "type": "invalid_request_error",
+    "code": "invalid_request",
+    "message": "permission must be readonly, readwrite or admin",
+    "retryable": false,
+    "param": "permission",
+    "doc_url": "https://docs.corsair.dev/v1/errors#invalid_request",
+    "request_id": "req_6dd8536a-222f-4d63-a45b-a4d3559a695d"
+  }
+}
+```
+
+- `type` is the broad family: `authentication_error`, `permission_error`,
+  `invalid_request_error`, `not_found`, `conflict`, `rate_limit_error` or
+  `api_error`.
+- `code` is the specific cause and the field to branch on. It's stable, and
+  `doc_url` points at its entry on this page.
+- `message` is a sentence for a person. Don't parse it.
+- `retryable` says whether sending the same request again can succeed.
+- `param` names the field at fault, when one field was. It's absent otherwise.
+- `request_id` matches the `Request-Id` response header. Quote it when you
+  report a problem.
+
+## Retrying safely
+
+`retryable` is `true` for every `429` and `5xx`, and for
+[`idempotency_in_flight`](https://docs.corsair.dev/v1/errors.md#idempotency_in_flight). It's `false` for every other
+`4xx`: those need a different request. On a `429`, wait for `Retry-After`
+seconds. Otherwise back off exponentially.
+
+A retry is safe even on the routes that mint credentials, as long as you send
+the same `Idempotency-Key` (see [Conventions](https://docs.corsair.dev/v1/overview.md#conventions) for the
+routes):
+
+- Corsair stores the first response for that key, for 24 hours or until a
+  credential in it expires, whichever comes first. The key is scoped to your
+  project.
+- A retry inside that window gets the stored status and body back, with an
+  `Idempotent-Replay: true` header.
+- A `4xx` from the route is stored and replayed like a success. A `5xx` isn't
+  stored, so a retry with the same key runs the request again.
+- Corsair checks the project key and the rate limit before it looks at the
+  `Idempotency-Key`, so a `401` or a `429` is never stored. After a `429`, wait
+  for `Retry-After` and send the same key again. The limited request never ran.
+- A replay counts toward the mint limit like any other request.
+- `POST /keys/rotate` can't be replayed once it has succeeded, because the
+  retry's old key gets the `401` first. See
+  [If the response is lost](https://docs.corsair.dev/v1/authentication.md#if-the-response-is-lost).
+- A connect session's URL expires sooner than 24 hours. Once it has, a retry
+  with its key creates a new session.
+- The same key with a different method, path or body returns
+  [`idempotency_key_reuse`](https://docs.corsair.dev/v1/errors.md#idempotency_key_reuse).
+- A key can be up to 255 characters. A longer one is a `400`.
+
+## In the SDK
+
+The TypeScript SDK throws a `CloudApiError` for any error response. It extends
+`ManagementApiError`, so one `catch` covers the management API and the runtime.
+
+```ts
+import { CloudApiError, corsairCloud } from 'corsair';
+
+const corsair = corsairCloud({ apiKey: process.env.CORSAIR_CLOUD_KEY! });
+
+try {
+  await corsair.manage.mcp.links.mint({
+    admin: { instance: 'nope', tenant: 'usr_8841' },
+  });
+} catch (err) {
+  if (err instanceof CloudApiError) {
+    err.status;    // 400
+    err.code;      // 'invalid_request'
+    err.message;   // "no instance 'nope' in this project"
+    err.param;     // 'admin'
+    err.retryable; // false
+    err.docUrl;    // 'https://docs.corsair.dev/v1/errors#invalid_request'
+    err.requestId; // 'req_…'
+  }
+}
+```
+
+The SDK doesn't retry for you. When a request never gets an answer, from a
+network failure or the 30-second default timeout, it throws `CloudApiError` with
+`status: 0` and [`request_failed`](https://docs.corsair.dev/v1/errors.md#request_failed). If the status arrived but
+the body didn't, the error keeps that status.
+
+## Codes on every route
+
+These come from the management API itself, on any route.
+
+| Code                                                                                   | Status | Retryable |
+| -------------------------------------------------------------------------------------- | ------ | --------- |
+| [`invalid_request`](https://docs.corsair.dev/v1/errors.md#invalid_request)             | 400    | no        |
+| [`unauthorized`](https://docs.corsair.dev/v1/errors.md#unauthorized)                   | 401    | no        |
+| [`project_mismatch`](https://docs.corsair.dev/v1/errors.md#project_mismatch)           | 403    | no        |
+| [`resource_missing`](https://docs.corsair.dev/v1/errors.md#resource_missing)           | 404    | no        |
+| [`method_not_allowed`](https://docs.corsair.dev/v1/errors.md#method_not_allowed)       | 405    | no        |
+| [`resource_conflict`](https://docs.corsair.dev/v1/errors.md#resource_conflict)         | 409    | no        |
+| [`idempotency_key_reuse`](https://docs.corsair.dev/v1/errors.md#idempotency_key_reuse) | 409    | no        |
+| [`idempotency_in_flight`](https://docs.corsair.dev/v1/errors.md#idempotency_in_flight) | 409    | yes       |
+| [`rate_limit_exceeded`](https://docs.corsair.dev/v1/errors.md#rate_limit_exceeded)     | 429    | yes       |
+| [`internal_error`](https://docs.corsair.dev/v1/errors.md#internal_error)               | 500    | yes       |
+| [`delivery_failed`](https://docs.corsair.dev/v1/errors.md#delivery_failed)             | 502    | yes       |
+| [`database_unavailable`](https://docs.corsair.dev/v1/errors.md#database_unavailable)   | 503    | yes       |
+
+### invalid_request
+
+Status `400`, type `invalid_request_error`.
+
+A body field or query parameter failed validation: it's missing, the wrong
+type, out of range, or a ref in the wrong shape. `param` names it. Some causes
+you'll meet:
+
+- A mint names an instance or tenant the project doesn't have:
+  `no instance 'nope' in this project`.
+- A mint names a tenant with no access line on that instance:
+  `No access for prod:usr_8841`. Create it with `PUT /access/prod:usr_8841`
+  first.
+- `limit` isn't a positive integer, or `starting_after` names an id that isn't
+  in the list.
+- An `Idempotency-Key` is longer than 255 characters.
+
+Skill upload links use it for an upload they can't read. Fix the request;
+sending it again unchanged gets the same answer.
+
+### unauthorized
+
+Status `401`, type `authentication_error`.
+
+The `Authorization: Bearer` header is missing or malformed, or the key doesn't
+verify. Corsair checks the key before it looks at the path, so this comes back
+for every route. On a Files link or a skill upload link, it means the link's
+token is invalid or has expired: ask for a new link.
+
+### project_mismatch
+
+Status `403`, type `permission_error`.
+
+The key is valid, but this action is refused for this project. Examples are an
+account that no longer has access to the project, an action only the
+organization's owner can take, and setting up a provider that only the
+workspace admin can set up. A path slug that doesn't match the key doesn't
+return this. It returns [`resource_missing`](https://docs.corsair.dev/v1/errors.md#resource_missing).
+
+### resource_missing
+
+Status `404`, type `not_found`.
+
+No such route, resource or project for this key. A slug in the path that
+doesn't match the key also lands here, with `param: "project_slug"`, so a key
+can't find out which other projects exist.
+
+A `404` on something you expect to exist is usually a typo in a ref. Refs are
+positional: `instance:tenant` for `/tenants` and `/access`,
+`instance:integration` for `/integrations` and `/webhooks`, and
+`instance:integration:tenant` for `/connections`.
+
+### method_not_allowed
+
+Status `405`, type `invalid_request_error`.
+
+The path exists, but not with this method. For example, access lines take `PUT`,
+not `PATCH`.
+
+### resource_conflict
+
+Status `409`, type `conflict`.
+
+The write contradicts what's already there. Some causes:
+
+- `POST /tenants` for a tenant that already exists on the instance.
+- Minting a link on an instance that hasn't been applied:
+  `Instance 'prod' has not been applied. POST /instances/prod/apply first.`
+- Applying an instance that holds no integrations.
+- A link `path` or a box handle that's already taken.
+
+### idempotency_key_reuse
+
+Status `409`, type `conflict`.
+
+This `Idempotency-Key` was already used, inside its window, for a request with a
+different method, path or body. Sending it again gets the same error. Use a new
+key for a new request.
+
+### idempotency_in_flight
+
+Status `409`, type `conflict`. Retryable.
+
+An earlier request with this `Idempotency-Key` hasn't finished. Retry shortly
+with the same key to get its result. You should rarely see this, because a
+duplicate normally waits for the first request and then replays its answer.
+
+### rate_limit_exceeded
+
+Status `429`, type `rate_limit_error`. Retryable.
+
+The project went over its per-minute limit for this class of request: 1000
+reads, 120 writes or 60 mints. Wait for the `Retry-After` header, in seconds.
+See [Rate limits](https://docs.corsair.dev/v1/authentication.md#rate-limits).
+
+The pg plugin (`POST /oss/pg`) has its own limits and returns this code too.
+Its error adds `retry_after` and `limit: { max, window_seconds }`.
+
+### internal_error
+
+Status `500`, type `api_error`. Retryable.
+
+Something failed on Corsair's side. The message is generic on purpose. Retry
+with backoff, and quote `request_id` if it keeps happening. A minting write that
+fails this way stores nothing, so a retry with the same `Idempotency-Key` runs
+again.
+
+The SDK also uses this code for an error response that has no error body, such
+as a gateway failure.
+
+### delivery_failed
+
+Status `502`, type `api_error`. Retryable.
+
+From `POST /webhooks/{ref}/deliveries/{id}/retry`. Corsair understood the
+request and re-sent the stored event, but delivering it to your instance
+failed. `message` carries the reason.
+
+### database_unavailable
+
+Status `503`, type `api_error`. Retryable.
+
+Corsair couldn't reach its database, so nothing was applied. Retry with
+backoff.
+
+### request_failed
+
+Raised by the TypeScript SDK, not sent by Corsair. The request didn't get a
+usable answer: the network failed, the request timed out, or the response body
+couldn't be read. `retryable` depends on how much of the response arrived.
+
+- Nothing arrived. `status` is `0`. `retryable` is `true` for `GET`, `PUT` and
+  `DELETE`, and for any request that carried an `Idempotency-Key`. It's `false`
+  for a `POST` or `PATCH` without one, because Corsair may have applied it.
+- The status arrived, but the body couldn't be read. `status` is that status.
+  `retryable` is `true` for `GET`, `PUT` and `DELETE`. For a `POST` or `PATCH`
+  it follows the status, as on any other error: `true` for `429` and `5xx`,
+  `false` otherwise, with or without an `Idempotency-Key`.
+
+So a mint whose `201` arrived without its body reports `retryable: false`. It's
+still safe to repeat with the same `Idempotency-Key`, and Corsair replays the
+stored response with the new credential in it. `POST /keys/rotate` is the
+exception, because the old key no longer works. See
+[If the response is lost](https://docs.corsair.dev/v1/authentication.md#if-the-response-is-lost).
+
+## Skills, files and plugin codes
+
+These come from the routes that work inside a project's workspace rather than on
+its configuration:
+
+- Skills: the `/skills` routes, skill upload links, and skill imports from the
+  dashboard.
+- Files: the `/v1/files/…` upload, download and zip links, and the Files
+  plugin.
+- The open-source plugins behind `POST /oss/{plugin}`: CRM, PM (issues), pg
+  (Postgres databases), Files, Items, the assistant, and the workspace sharing
+  they rely on.
+
+The `message` on these is written for a person and usually says what to change.
+Several areas share a code, so the list is alphabetical. `retryable` follows the
+status: `true` for `429` and `5xx`, `false` for the rest.
+
+### address_refused
+
+`502`, pg. The database URL points at a host that isn't a public address. The
+SQL broker only connects to public hosts.
+
+### already_invited
+
+`409`, workspaces. That person already has an invite.
+
+### already_related
+
+`409`, PM. Those issues already have that relation.
+
+### already_set
+
+`409`, PM. The team already has a rule for that event. Update the rule instead.
+
+### already_shared
+
+`409`, assistant. That chat is already in Shared.
+
+### ambiguous
+
+`400` or `409`. In Files, `old_text` appears more than once in the file:
+include more of the surrounding text, or pass `replace_all: true`. In a CRM
+import, a row's emails or LinkedIn belong to different people already in the
+CRM.
+
+### archived_attribute
+
+`400`, CRM. The attribute is archived, so it can't take a value.
+
+### auth_failed
+
+`502`, pg. The database refused the stored credentials. The workspace owner can
+test or rotate the URL in the dashboard.
+
+### bad_access
+
+`400`, pg. `access` must be `none`, `read` or `write`.
+
+### bad_content_table
+
+`500`, workspaces. An internal lookup named a table Corsair doesn't know. It's
+a bug on Corsair's side, and retrying won't help. Report it with the
+`request_id`.
+
+### bad_description
+
+`400`, pg. A database description must be text, under 500 characters.
+
+### bad_name
+
+`400`, pg. A database name is a lowercase letter, then letters, digits or
+underscores, up to 63 characters.
+
+### bad_read_only
+
+`400`, pg. `read_only` must be `true` or `false`.
+
+### bad_record
+
+`400`, Items. A record id isn't one of this workspace's records.
+
+### bad_request
+
+`400`. In pg, `sql` is missing or too long, or `params` isn't a list of
+strings, numbers, booleans, null or arrays of those. In Items, the agent must be
+`claude`, `cursor` or `codex`.
+
+### bad_response
+
+`502`, CRM. A people lookup didn't return a list.
+
+### bad_seal
+
+`400`, pg. The value isn't a sealed database URL.
+
+### bad_target
+
+`400`, workspaces. Choose an existing workspace or a new one.
+
+### bad_url
+
+`400` or `502`. In Items, `resultUrl` must be an http or https link under 500
+characters. In pg, the stored database URL isn't usable: it must be a postgres
+URL with a user, one host and a valid port.
+
+### binary_file
+
+`400`, Skills. A file in the skill, or its `SKILL.md`, isn't text. Skills carry
+text files only.
+
+### broker_unavailable
+
+`502`, pg. The SQL broker didn't answer. Try again shortly.
+
+### changed
+
+`409`, Files. The file changed or was deleted while you were saving or deleting
+it. Read it again and retry.
+
+### claimed
+
+`409`, Items. Another agent has claimed this item.
+
+### conflict
+
+`409`, plugins. The write collided with an existing row: a value already on the
+record, an object slug that's taken, or another write at the same moment. If it
+was a race, read again and retry.
+
+### connect_failed
+
+`502`, pg. The SQL broker couldn't reach the database.
+
+### credentials_unreadable
+
+`500`, pg. The stored database credentials couldn't be opened. The workspace
+owner needs to set the URL again; retrying won't help.
+
+### database_not_found
+
+`502`, pg. The database named in the URL doesn't exist on that server.
+
+### email_failed
+
+`502`, workspaces. The invite email didn't send. Try again.
+
+### empty_file
+
+`400`, Files. The upload or the new content was empty. To remove a file, use
+`files.delete`.
+
+### exists
+
+`409`, pg. A database with that name already exists, or it's already set up.
+Rotate its URL from the dashboard, or remove it first.
+
+### fetch_refused
+
+`400`, `413` or `502`, Files. Corsair wouldn't fetch the URL you gave it, or the
+fetch failed: only public `https` addresses are fetched, the file was over the
+size limit, the server answered with an error, or it redirected too many times.
+
+### forbidden
+
+`403`, assistant and skill sharing. Only the person who started a chat or shared
+a skill, or the workspace owner, can delete it. Also returned when someone in
+that space has already shared the skill.
+
+### internal
+
+`500`, PM. The issue, label or project wasn't created. Try again.
+
+### invalid_agent
+
+`400`, Items. Say which agent is claiming the item or reporting on it.
+
+### invalid_email
+
+`400`, workspaces. That isn't an email address.
+
+### invalid_field
+
+`400`, CRM, PM, Files and Slack channel settings. A field is missing, the wrong
+type, or not allowed here. The message names the field. This is the most common
+plugin code.
+
+### invalid_folder
+
+`400`, Files. A folder is a path like `contracts/2026`, at most 8 levels deep.
+
+### invalid_handle
+
+`400`, workspaces. Enter a lug URL or an email address.
+
+### invalid_id
+
+`400`, Items and assistant. Pass the item's or the chat's id.
+
+### invalid_name
+
+`400`. A skill name is lowercase letters, digits and hyphens, starts with a
+letter or digit, is at most 64 characters, and isn't a reserved name. In
+workspaces, a name is at most 48 characters. Sharing a skill needs the skill's
+name.
+
+### invalid_skill
+
+`400`, Skills. A file path in the skill isn't valid, or the folder being
+imported isn't a skill.
+
+### invalid_status
+
+`400`, Items. Status is `done`, `blocked` or `needs_input`.
+
+### invalid_title
+
+`400`, Items and assistant. A title is required.
+
+### invalid_url
+
+`400`, Files. `url` must be an `https` address.
+
+### key_taken
+
+`409`, PM. That team key is already in use, or issues from another team still
+use it.
+
+### library_full
+
+`400`, Skills. The library is at its 64 MB limit, counting saved versions.
+Delete a skill to make room.
+
+### limit_reached
+
+`400`, Skills. The project holds its maximum of 100 skills. Delete one first.
+
+### missing_description
+
+`400`, Skills. A skill needs a one-line description.
+
+### multiple_matches
+
+`409`, CRM. The value you matched on fits more than one record.
+
+### name_taken
+
+`409`. A skill with that name exists: pass another name, or overwrite it. When
+sharing, someone in the space already shared a skill with that name. In PM, the
+team already has a state with that name.
+
+### no_file
+
+`400`, Files. The upload had no file. Send it as a `file` form field, or as the
+raw body with `?name=`.
+
+### no_handle
+
+`400`, workspaces. Claim a lug URL before starting a workspace, moving a link
+or answering an invite.
+
+### no_link
+
+`400`, workspaces. Choose a link to join with.
+
+### no_model
+
+`503`, Items. Drafting isn't available right now.
+
+### no_state
+
+`400`, PM. The team has no workflow states.
+
+### no_team
+
+`400`, PM. The workspace has no team.
+
+### no_text_layer
+
+`415`, Files. The file has no text Corsair can read, such as a scan, or it's too
+large to read here. Call `files.reparse` to read it.
+
+### no_workspace
+
+`400` or `500`, workspaces. Start the workspace before inviting someone (`400`),
+or the workspace couldn't be started (`500`).
+
+### not_claimed
+
+`409`, Items. Claim the item before reporting on it.
+
+### not_configured
+
+`503`. The plugin (the assistant, Loops, pg or skills) isn't available on this
+deployment yet.
+
+### not_connected
+
+`403` or `409`. The link's profile isn't connected to a workspace (`403`), or
+Items aren't ready for this link yet (`409`). Files opens its workspace on the
+first call, so you won't see this from Files.
+
+### not_failed
+
+`409`, Files. The file isn't waiting on a read to start or retry.
+
+### not_found
+
+`404`, plugins, Skills and Files. A row the plugin looked up isn't in this
+workspace: a record, object, issue, file, database, item or skill. A Files
+download link returns it when the file is gone. The configuration routes use
+[`resource_missing`](https://docs.corsair.dev/v1/errors.md#resource_missing) instead.
+
+### not_movable
+
+`400`, assistant. Only a chat can move to Shared.
+
+### not_owner
+
+`403`, Files. Only the link that added this file can change it.
+
+### not_read_yet
+
+`409`, Files. The file hasn't been read yet. Its owner can start that with
+`files.reparse`.
+
+### not_supported
+
+`501`, Items. Items are served by Corsair's hub, not by the plugin directly.
+
+### not_text
+
+`415`, Files. The file isn't text, so text operations don't apply. Get a link
+with `files.url` and hand it to an app that reads that type.
+
+### not_unique
+
+`409`, CRM. The attribute already has repeated values, so it can't be made
+unique.
+
+### not_yours
+
+`403`, Files. Only the link that added this file can change it.
+
+### one_file
+
+`400`, Files. A replace link takes exactly one file.
+
+### owner
+
+`400`, workspaces and pg. The owner can't leave their own workspace or lose
+write access to a database.
+
+### owner_only
+
+`403`, pg and PM. Only the workspace owner can do this.
+
+### parent_loop
+
+`400`, PM. An issue can't be its own parent, or the parent of an issue above it.
+
+### pending
+
+`409`, pg. The database isn't set up yet. The owner needs to open the setup link
+from `dbs.create`.
+
+### query_error
+
+`400`, pg. Postgres rejected the statement. The message carries Postgres's error
+and its SQLSTATE.
+
+### rate_limited
+
+`429`, Skills and Files. Too many uploads in 10 minutes, too many GitHub
+requests from one skill library, or the server is busy. Try again in a minute.
+
+### read_only
+
+`400`, pg. `query.sql` is read-only. Use `query.exec` to change data.
+
+### read_only_credentials
+
+`400`, pg. The credentials saved for this database can't write, so `query.exec`
+can't change data. The owner can save credentials that can write.
+
+### read_only_db
+
+`403`, pg. The database is marked read-only in Hub, so `query.exec` is off for
+it.
+
+### read_only_grant
+
+`403`, pg. You have read access to this database. Use `query.sql`, or ask the
+owner for write access.
+
+### reading_failed
+
+`422`, Files. Reading the file failed. The message says why.
+
+### rejected
+
+`400`, `409` or `500`, plugins. The database refused the write because of a
+constraint, for example an option that a value still uses. `500` means the
+attribute wasn't saved.
+
+### running
+
+`409`, assistant. Wait for the answer to finish, then move the chat.
+
+### same_workspace
+
+`400`, workspaces. The link already files into that workspace.
+
+### self
+
+`400`, workspaces. That's your own box or workspace. Connect one of your
+profiles instead.
+
+### stale
+
+`400`, Skills. The skill changed since you opened it. Reload it and save again.
+
+### state_in_use
+
+`409`, PM. Move issues out of this state first.
+
+### still_reading
+
+`409`, Files. The file is still being read. Try again in a minute.
+
+### storage_failed
+
+`502`, Files. Corsair couldn't reach file storage. Try again.
+
+### system_object
+
+`400`, CRM. A standard object can't be deleted.
+
+### target_in_use
+
+`409`, CRM. A value still points at that target.
+
+### team_in_use
+
+`409`, PM. Move or delete this team's issues first.
+
+### text_not_found
+
+`409`, Files. `old_text` isn't in the file. Read it with `files.read_text` and
+copy the text exactly, spaces and line breaks included.
+
+### timeout
+
+`400`, pg. The database didn't answer in time, or the statement ran past its
+time limit.
+
+### tls_failed
+
+`502`, pg. Corsair couldn't set up a verified TLS connection to the database.
+
+### tls_required
+
+`502`, pg. The database URL allows an unencrypted connection. It must require
+TLS.
+
+### too_large
+
+`400` or `413`, Files and Skills. A file is over 25 MB, a zip would be too big,
+a skill file is over its limit, or a repo is too large to read whole (paste the
+folder's URL instead).
+
+### too_many_files
+
+`400` or `413`, Files and Skills. An upload takes up to 20 files at a time, a
+zip has a file limit, and a skill carries at most 200 files.
+
+### unavailable
+
+`503`, Skills and Files. Uploads or file storage aren't set up on this server,
+the workspace isn't ready yet, or the project has no key to sign an upload link
+with. Try again in a minute.
+
+### unique_conflict
+
+`409`, CRM. That unique value is already on a record.
+
+### unknown_box
+
+`404`, workspaces. There's no box at that address.
+
+### unknown_op
+
+`400`, Items. No such operation.
+
+### unknown_operation
+
+`404`, plugins. The plugin has no operation by that name. `GET /oss/{plugin}`
+lists its operations.
+
+### unknown_tenant
+
+`404`, workspaces. That profile isn't on this box, or that link isn't yours.
+
+### workspace_exists
+
+`409`, workspaces. You already have a workspace of your own, or this box already
+has one by that name. Move the link into the existing one.
+
+### wrong_object
+
+`400`, CRM. The record isn't on the list's parent object, or the attribute can't
+point at that object.
+
+### wrong_project
+
+`400`, PM. `projectMilestoneId` must be a milestone of the issue's project.
+
+### wrong_team
+
+`400`, PM. The state, cycle or labels belong to a different team than the
+issue.
+
+---
+
 # Next.js
 
 Source: https://docs.corsair.dev/frameworks/next.md
