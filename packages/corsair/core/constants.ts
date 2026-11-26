@@ -312,6 +312,7 @@ export const BaseProviders = [
 	'giftup',
 	'gigasheet',
 	'giphy',
+	'gitea',
 	'github',
 	'gitlab',
 	'givebutter',
@@ -1100,6 +1101,7 @@ export const ProviderDisplayNames = {
 	giftup: 'Gift Up!',
 	gigasheet: 'Gigasheet',
 	giphy: 'Giphy',
+	gitea: 'Gitea',
 	github: 'GitHub',
 	gitlab: 'GitLab',
 	givebutter: 'Givebutter',
@@ -1895,6 +1897,7 @@ export type AllProviders =
 	| 'giftup'
 	| 'gigasheet'
 	| 'giphy'
+	| 'gitea'
 	| 'github'
 	| 'gitlab'
 	| 'givebutter'

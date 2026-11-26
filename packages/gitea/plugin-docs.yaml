@@ -1,0 +1,74 @@
+displayName: Gitea
+description: >-
+  Git hosting platform behind gitea.com and most self-hosted Forgejo-style
+  instances. This plugin manages repositories, branches, commits, issues,
+  comments, releases and webhook registrations through each account's own
+  instance. Webhook deliveries are not received here; the webhooks operations
+  only create, list and delete the registrations, so point `config.url` at your
+  own receiver.
+domain: gitea.com
+recommendedAuth: api_key
+overviewNote: |
+  Gitea is self-hosted, so each connected account stores two things: the API token and the `instance_url` of the Gitea site it belongs to (for example `https://gitea.com` or a self-hosted `https://git.example.com`, with or without `/api/v1`). Tokens are created in the instance UI under `user/settings/applications` with `read:` and `write:` scopes over repository and issue, and are sent as `Authorization: token <api_key>`, the literal word `token` rather than Bearer. SDK users can pass `instanceUrl` in the plugin options instead of storing it. Calls fail with a connect prompt until both are set.
+  Lists are paged with `page` (1-based) and `limit`; the server caps pages at 50 items, and the plugin sends 50 when `limit` is omitted, so each list result echoes the `page` and `limit` it fetched and callers page by stepping `page` until a page comes back short. `comments.list` is the one unpaged route and returns every comment on an issue. `commits.list` answers an error rather than an empty list on a repository with no commits. The issues list returns pull requests too; pass `type: 'issues'` to exclude them and read `pull_request` on each row to tell them apart.
+examples:
+  read:
+    path: repos.get
+    title: Get a repository
+    args:
+      owner: gitea
+      repo: tea
+  write:
+    path: issues.create
+    title: Create an issue
+    args:
+      owner: gitea
+      repo: tea
+      title: Release notes cover the breaking change
+      body: 'The 2.0 migration guide does not mention the renamed config keys.'
+apiExamples:
+  user.me:
+    call: '{}'
+  repos.list:
+    call: '{ limit: 50 }'
+  repos.get:
+    call: "{ owner: 'gitea', repo: 'tea' }"
+  repos.create:
+    call: "{ name: 'demo', auto_init: true, description: 'Scratch repository' }"
+  repos.delete:
+    call: "{ owner: 'gitea', repo: 'demo' }"
+  branches.list:
+    call: "{ owner: 'gitea', repo: 'tea' }"
+  commits.list:
+    call: "{ owner: 'gitea', repo: 'tea', sha: 'main', limit: 10 }"
+  issues.list:
+    call: "{ owner: 'gitea', repo: 'tea', state: 'open', type: 'issues' }"
+  issues.get:
+    call: '{ owner: ''gitea'', repo: ''tea'', index: 1 }'
+  issues.create:
+    call: "{ owner: 'gitea', repo: 'tea', title: 'Docs miss the renamed keys', labels: [7] }"
+  issues.update:
+    call: "{ owner: 'gitea', repo: 'tea', index: 1, state: 'closed' }"
+  comments.list:
+    call: '{ owner: ''gitea'', repo: ''tea'', index: 1 }'
+  comments.create:
+    call: "{ owner: 'gitea', repo: 'tea', index: 1, body: 'Fixed on main, closing next week.' }"
+  releases.list:
+    call: "{ owner: 'gitea', repo: 'tea', draft: false }"
+  releases.create:
+    call: "{ owner: 'gitea', repo: 'tea', tag_name: 'v1.2.0', name: '1.2.0', body: 'Bug fixes.' }"
+  webhooks.list:
+    call: "{ owner: 'gitea', repo: 'tea' }"
+  webhooks.create:
+    call: "{ owner: 'gitea', repo: 'tea', type: 'gitea', config: { url: 'https://receiver.example.com/gitea', content_type: 'json' }, events: ['push'], active: true }"
+  webhooks.delete:
+    call: '{ owner: ''gitea'', repo: ''tea'', id: 3 }'
+apiNotes:
+  commits.list: |
+    Answers 409 with the provider message when the repository has no commits; the plugin leaves it an error rather than an empty page. `since` and `until` are RFC3339; the `not` field maps to the query parameter of that name and excludes commits reachable from the given ref.
+  issues.get: |
+    `index` is the issue NUMBER shown in the URL, never the global `Issue.id` (number 1 and id 31370 on the probe differ). Unset fields arrive as JSON `null`, including `assignees`, `closed_at`, `milestone` and `pull_request`; `pull_request` is non-null when the row is a pull request. `content_version` is the optimistic-lock token to send back on `issues.update`.
+  releases.create: |
+    `tag_name` is required; the tag is created on `target_commitish` when it does not exist yet, and a tag that already has a release answers 409. `releases.list` filters with `draft` and `pre_release` (sent to the API as `pre-release`).
+  webhooks.create: |
+    `type` accepts dingtalk, discord, gitea, gogs, msteams, slack, telegram, feishu, wechatwork or packagist, and `config` must carry `url` and `content_type` (json or form); a `secret` key sets the HMAC signing secret and is never echoed back on reads. Gitea creates hooks inactive unless `active` is true, and an omitted `events` subscribes push only.
