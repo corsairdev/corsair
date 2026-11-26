@@ -12993,5 +12993,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-26",
+    "package": "@corsair-dev/loomio",
+    "dir": "packages/loomio",
+    "name": "Loomio",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
