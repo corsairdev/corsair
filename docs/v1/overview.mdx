@@ -1,0 +1,122 @@
+---
+title: Management API
+sidebarTitle: Overview
+description: Manage a Corsair Cloud project from your own backend over REST, with one project key.
+---
+
+```
+Base URL  https://api.corsair.cloud/v1/projects/{slug}
+Auth      Authorization: Bearer ck_cloud_{slug}.{secret}
+```
+
+The management API reads and writes a project's configuration: its instances,
+integrations, tenants, access lines, connections, connect sessions, MCP links
+and webhooks. Most of what the dashboard does by hand, your backend can do over
+HTTP.
+
+It doesn't run tool calls. A tenant's operations run on the instance's own
+runtime, which you reach through the [Corsair SDK](/cloud/overview) or an MCP
+link you hand to an agent.
+
+## One host, two kinds of path
+
+Everything is on `api.corsair.cloud`. Requests under `/v1/` go to the
+management API. Every other path goes to your project's runtime, and each
+instance reports where its tool calls go in its `url` field (`null` until the
+instance is deployed).
+
+Most management writes change Corsair's stored configuration and reach the
+runtime on the instance's next apply (`POST /instances/{key}/apply`).
+Integration changes work this way. Access changes are pushed straight away: a
+`PUT` or `DELETE` on `/access/{ref}` updates the runtime as part of the request,
+and its response carries `synced`. `synced: false` means the change is saved but
+the runtime still enforces the old access until you apply the instance again.
+
+## One key, one project
+
+Every request carries your project key as a bearer token:
+
+```
+Authorization: Bearer ck_cloud_{slug}.{secret}
+```
+
+The `{slug}` in the path has to match the slug inside the key. Naming any other
+slug returns `404`, so a key can't tell whether another project exists. A key has
+full authority over its project, with no tenant scope and no read-only mode, so
+keep it on your server. See [Authentication](/v1/authentication).
+
+## Resources
+
+- **Instances** (`/instances/{key}`) are runtime boundaries, such as `prod` and
+  `staging`. A key is a lowercase letter followed by lowercase letters, digits
+  or hyphens, up to 32 characters, and it can't change.
+- **Integrations** (`/integrations/{instance}:{integration}`, for example
+  `prod:slack`) are the plugins enabled on one instance. Each has an
+  `auth_type`: `managed` (Corsair's OAuth app), `managed_pricing` (Corsair's
+  provider key, paid per operation from credits), `oauth_2`, `api_key` or
+  `bot_token`. Leave it out and Corsair picks `managed` when it hosts an app for
+  that plugin, or `managed_pricing` when the plugin is paid per operation.
+  `GET /integrations/catalog` lists every plugin, its auth types, and whether a
+  managed app is available.
+- **Tenants** (`/tenants/{instance}:{tenant}`) are the people you serve, per
+  instance. You choose the id: letters, digits and `. _ : ~ @ + -`, up to 128
+  characters.
+- **Access** (`/access/{instance}:{tenant}`) is one line per tenant on an
+  instance, at `readonly`, `readwrite` or `admin`. A `PUT` creates the tenant if
+  it's new. An MCP link can only name lines that already exist.
+- **Connections** (`/connections/{instance}:{integration}:{tenant}`) are one
+  tenant's stored credential for one integration. Filter the list with
+  `instance`, `integration` and `tenant`. Each has a `status` of `connected` or
+  `expired`.
+- **Connect sessions** (`POST /connect/sessions`) return a hosted URL where a
+  tenant authorizes integrations.
+- **MCP links** (`/mcp/links`) are MCP URLs for agents. A link has one `admin`
+  line it may write on, optional read-only `context` lines, and a `mode`. For
+  the project's shared MCP URL, `POST /mcp/tokens` mints a bearer token instead.
+- **Webhooks** (`/webhooks/{instance}:{integration}`) receive a provider's
+  inbound webhooks and keep a delivery log you can read and retry.
+
+The project itself is at `GET /project`, and the key at `/keys`. The
+[OpenAPI document](https://github.com/corsairdev/corsair/blob/main/packages/corsair/core/cloud/v1/openapi.yaml)
+describes every route the TypeScript client calls, with each field.
+
+<Note>
+No endpoint accepts a tenant's token. To connect a tenant, create a connect
+session and send them to its URL, so they authorize the integration themselves.
+`GET /connections` reads back the result. Credentials an integration uses for
+everyone, such as an API key, go in `PUT /integrations/{ref}` and can't be read
+back.
+</Note>
+
+## Conventions
+
+Fields are `snake_case`. Single objects carry `object` and `id`. A `DELETE`
+returns `200` with `{ "object": …, "id": …, "deleted": true }`, plus anything
+else the caller needs to know, such as `synced`.
+
+Lists come back in one envelope:
+
+```json
+{ "object": "list", "data": [ ... ], "has_more": false, "next_cursor": null }
+```
+
+Page with `limit` and `starting_after`, passing the previous response's
+`next_cursor`. `limit` takes 1 to 100 and defaults to 100. A larger value is
+clamped to 100. Anything that isn't a positive integer is a `400`, and so is a
+`starting_after` id that isn't in the list.
+
+Every response carries a `Request-Id` header, and every error repeats it as
+`request_id`. Send your own in `X-Corsair-Request-Id` and Corsair uses that
+instead. Quote it when you report a problem.
+
+Responses also carry `Corsair-Version`, today `2026-10-04`. Corsair echoes a
+version you send but doesn't act on it yet.
+
+The routes that mint something take an `Idempotency-Key` header, so a retried
+call returns the first result instead of minting a second credential:
+`POST /instances`, `POST /keys/rotate`, `POST /instances/{key}/signing-secret/rotate`,
+`POST /mcp/links`, `POST /mcp/links/{id}/rotate`, `POST /mcp/links/{id}/api-key`,
+`POST /mcp/tokens` and `POST /connect/sessions`. See
+[Retrying safely](/v1/errors#retrying-safely).
+
+Every error has the same shape on every route. See [Errors](/v1/errors).

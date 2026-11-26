@@ -47,6 +47,15 @@
             ]
           },
           {
+            "group": "Management API",
+            "pages": [
+              "v1/overview",
+              "v1/quickstart",
+              "v1/authentication",
+              "v1/errors"
+            ]
+          },
+          {
             "group": "Frameworks",
             "pages": [
               {
@@ -6629,6 +6638,10 @@
     {
       "source": "/getting-started/quick-start",
       "destination": "/quick-start"
+    },
+    {
+      "source": "/v1",
+      "destination": "/v1/overview"
     },
     {
       "source": "/",

@@ -1,0 +1,275 @@
+---
+title: Quickstart
+description: From a project key to an MCP link and a connected user, in four calls.
+---
+
+This guide gives one of your users access to an instance, mints an MCP link for
+their agent, sends them to connect Slack, and reads back what they connected.
+
+You need a project key (`ck_cloud_…`) from your project's Overview page in the
+dashboard. Set it and your base URL once. The slug is the part of the key
+between `ck_cloud_` and the first dot:
+
+```bash
+export CORSAIR_CLOUD_KEY="ck_cloud_acme.…"
+export CORSAIR_BASE="https://api.corsair.cloud/v1/projects/acme"
+```
+
+The TypeScript examples use one client:
+
+```ts
+import { corsairCloud } from 'corsair';
+
+const corsair = corsairCloud({ apiKey: process.env.CORSAIR_CLOUD_KEY! });
+const prod = corsair.withInstance('prod');
+```
+
+## Before you start
+
+Minting a link needs an instance that has been applied, which means its
+configuration has been pushed to the runtime at least once. Applying needs at
+least one integration. If your `prod` instance is already applied, skip to the
+next section.
+
+<CodeGroup>
+
+```bash curl
+# Create the instance. Sending it again returns the existing one.
+curl -s -X POST "$CORSAIR_BASE/instances" \
+  -H "Authorization: Bearer $CORSAIR_CLOUD_KEY" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: create-prod" \
+  -d '{ "instance_key": "prod" }'
+
+# Enable Slack on it.
+curl -s -X PUT "$CORSAIR_BASE/integrations/prod:slack" \
+  -H "Authorization: Bearer $CORSAIR_CLOUD_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{}'
+
+# Push the configuration to the runtime.
+curl -s -X POST "$CORSAIR_BASE/instances/prod/apply" \
+  -H "Authorization: Bearer $CORSAIR_CLOUD_KEY"
+```
+
+```ts TypeScript
+await corsair.manage.instances.create({ instance_key: 'prod' });
+await prod.integrations.put('slack', {});
+await prod.apply();
+```
+
+</CodeGroup>
+
+With no `auth_type`, Corsair uses its own OAuth app for a plugin when it has
+one. `managed_available` in `GET /integrations/catalog` tells you which plugins
+that covers.
+
+## Grant a user access
+
+An access line is one tenant on one instance at one permission. Naming a tenant
+that doesn't exist yet creates it, so this one call registers Dave and gives him
+write access on `prod`:
+
+<CodeGroup>
+
+```bash curl
+curl -s -X PUT "$CORSAIR_BASE/access/prod:usr_8841" \
+  -H "Authorization: Bearer $CORSAIR_CLOUD_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "permission": "readwrite", "email": "dave@acme.com", "label": "Dave" }'
+```
+
+```ts TypeScript
+await prod.access.set('usr_8841', {
+  permission: 'readwrite',
+  email: 'dave@acme.com',
+  label: 'Dave',
+});
+```
+
+</CodeGroup>
+
+```json
+{
+  "object": "access",
+  "id": "prod:usr_8841",
+  "instance": "prod",
+  "tenant": "usr_8841",
+  "label": "Dave",
+  "permission": "readwrite",
+  "connected": [],
+  "expired": [],
+  "synced": true
+}
+```
+
+The first call returns `201`, later ones `200`. `PUT` is an upsert, so you can
+call it on every sign-in without creating duplicates. `connected` stays empty
+until Dave authorizes an integration. `synced: false` would mean the line is
+saved but the runtime hasn't picked it up yet; applying the instance again fixes
+that.
+
+## Mint an MCP link
+
+A link is an MCP URL for an agent. It writes on one access line, `admin`, and
+can read others you list in `context`. The response holds the URL, so send an
+`Idempotency-Key`: a retry then returns the same link instead of minting a
+second one.
+
+<CodeGroup>
+
+```bash curl
+curl -s -X POST "$CORSAIR_BASE/mcp/links" \
+  -H "Authorization: Bearer $CORSAIR_CLOUD_KEY" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: dave-link-1" \
+  -d '{
+    "recipient": "dave@acme.com",
+    "admin": { "instance": "prod", "tenant": "usr_8841" }
+  }'
+```
+
+```ts TypeScript
+const link = await corsair.manage.mcp.links.mint(
+  {
+    recipient: 'dave@acme.com',
+    admin: { instance: 'prod', tenant: 'usr_8841' },
+  },
+  { idempotencyKey: 'dave-link-1' },
+);
+```
+
+</CodeGroup>
+
+```json
+{
+  "object": "link",
+  "id": "mcpg_…",
+  "recipient": "dave@acme.com",
+  "mode": "cautious",
+  "can_mint_links": false,
+  "can_add_plugins": false,
+  "admin": { "instance": "prod", "tenant": "usr_8841", "lost_access": false },
+  "context": [],
+  "url": "https://mcp.corsair.cloud/acme/mcpg_…/mcp",
+  "short_url": null,
+  "path": "…",
+  "expires_at": null,
+  "api_key_prefix": "mcpk_…",
+  "created": "2026-11-26T12:00:00.000Z",
+  "api_key": "mcpk_…"
+}
+```
+
+Paste `url` into any MCP client as a custom connector. The id in the URL is the
+credential, so treat the whole URL as a secret. `mode` defaults to `cautious`;
+the other modes are `open`, `strict` and `readonly`. `api_key` appears only in
+this response, and when the link is rotated or its key regenerated: Corsair
+keeps a hash. Your project's short URL for the link, when it has one, takes the
+key as a bearer token.
+
+<Warning>
+Every line a link names needs an access line already. Naming a tenant the
+project doesn't have returns `400 no tenant 'usr_8841' in this project`, and a
+tenant without access on that instance returns `400 No access for prod:usr_8841`.
+An instance that hasn't been applied returns `409 resource_conflict`.
+</Warning>
+
+If a link leaks, `POST /mcp/links/{id}/rotate` mints a replacement with the same
+lines and a new id, and revokes the old one in the same transaction, so the two
+are never live together. `DELETE /mcp/links/{id}` revokes it outright.
+
+## Connect the user
+
+`POST /connect/sessions` returns a hosted URL for one tenant. Send the tenant
+there: they authorize the integration, and the credential never passes through
+your code.
+
+<CodeGroup>
+
+```bash curl
+curl -s -X POST "$CORSAIR_BASE/connect/sessions" \
+  -H "Authorization: Bearer $CORSAIR_CLOUD_KEY" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: dave-connect-1" \
+  -d '{ "instance": "prod", "tenant": "usr_8841", "integrations": ["slack"] }'
+```
+
+```ts TypeScript
+const session = await prod.connect.createSession(
+  { tenant: 'usr_8841', integrations: ['slack'] },
+  { idempotencyKey: 'dave-connect-1' },
+);
+// Send the tenant to session.url before session.expires_at.
+```
+
+</CodeGroup>
+
+```json
+{
+  "object": "connect_session",
+  "url": "https://…",
+  "expires_at": "2026-11-26T12:10:00.000Z",
+  "instance": "prod",
+  "tenant": "usr_8841",
+  "integrations": ["slack"]
+}
+```
+
+Leave out `integrations` to include every integration on the instance. Naming
+the ones you need keeps an integration that isn't set up yet from getting in
+the way of the rest. `delivery_url` sets where the tenant lands when they
+finish. A retry with the same `Idempotency-Key` returns the same URL until it
+expires, then mints a fresh session.
+
+## Check what landed
+
+Connections are keyed by instance, integration and tenant. Filter on any of the
+three:
+
+<CodeGroup>
+
+```bash curl
+curl -s "$CORSAIR_BASE/connections?instance=prod&tenant=usr_8841" \
+  -H "Authorization: Bearer $CORSAIR_CLOUD_KEY"
+```
+
+```ts TypeScript
+const { data } = await prod.connections.list({ tenant: 'usr_8841' });
+```
+
+</CodeGroup>
+
+```json
+{
+  "object": "list",
+  "data": [
+    {
+      "object": "connection",
+      "id": "prod:slack:usr_8841",
+      "instance": "prod",
+      "tenant": "usr_8841",
+      "integration": "slack",
+      "status": "connected",
+      "account": { "id": "…", "label": "…" },
+      "accounts": [{ "id": "…", "label": "…", "status": "connected" }]
+    }
+  ],
+  "has_more": false,
+  "next_cursor": null
+}
+```
+
+`status` is `expired` when the credential is past its expiry with no refresh
+token, or when the provider refused the refresh token. Either way the tenant
+needs a new connect session. A credential past its expiry that still has a
+refresh token reports `connected` and renews on the next call.
+
+The access line from the first step lists the tenant's connected integrations
+in `connected` too, but its `expired` list is always empty on Corsair Cloud, so
+read status from `/connections`.
+
+Every route and field is in the
+[OpenAPI document](https://github.com/corsairdev/corsair/blob/main/packages/corsair/core/cloud/v1/openapi.yaml).
+When a call fails, the error's `doc_url` links to its entry in
+[Errors](/v1/errors).

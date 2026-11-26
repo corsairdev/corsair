@@ -1,0 +1,113 @@
+---
+title: Authentication
+description: Project keys, the bearer header, what a key can do, and rate limits.
+---
+
+Every request authenticates with your project key as a bearer token:
+
+```bash
+curl https://api.corsair.cloud/v1/projects/acme/project \
+  -H "Authorization: Bearer $CORSAIR_CLOUD_KEY"
+```
+
+## The key
+
+A project key looks like `ck_cloud_{slug}.{secret}`, and it's on your project's
+Overview page in the dashboard. The `{slug}` isn't secret: it appears in the
+project's URLs, including the path above. The `{secret}` after the dot is the
+part to keep private.
+
+Corsair checks the slug in the path against the key, so a key only ever answers
+for its own project. Any other slug returns `404 resource_missing` with
+`param: "project_slug"`, never `403`, so a key can't probe which other slugs
+exist.
+
+A key has no tenant scope and no read-only mode. It can mint and revoke MCP
+links for any tenant, change access lines, create and delete tenants and
+instances, read every connection, and read or rotate the key itself.
+
+<Warning>
+Keep the key on your server. Never ship a `ck_cloud_` key to a browser, a mobile
+app, or an agent: whoever holds it can manage the whole project. Give an agent
+an [MCP link](/v1/quickstart#mint-an-mcp-link) instead, which writes only on
+the one access line you give it.
+</Warning>
+
+## Reading the key back
+
+A backend that needs its own key, to show it once on a setup screen for
+example, can read it:
+
+```bash
+curl https://api.corsair.cloud/v1/projects/acme/keys \
+  -H "Authorization: Bearer $CORSAIR_CLOUD_KEY"
+```
+
+```json
+{ "object": "key", "project_key": "ck_cloud_acme.…" }
+```
+
+The response is sent with `Cache-Control: no-store`.
+
+## Rotating the key
+
+`POST /keys/rotate` mints a new key and redeploys every deployed instance with
+it. There's no grace period: the old key stops working when the call returns.
+
+```json
+{
+  "object": "key",
+  "project_key": "ck_cloud_acme.…",
+  "previous_key_revoked": true,
+  "instances": 2,
+  "reapplied": 2,
+  "failed": []
+}
+```
+
+`failed` lists instances that didn't redeploy and still hold the revoked key.
+Apply each one (`POST /instances/{key}/apply`). Send an `Idempotency-Key` with
+the rotate so a retry after a dropped connection doesn't rotate twice.
+
+## The SDK
+
+The TypeScript SDK derives the management URL from the key's slug, so `apiKey`
+is the only option you need:
+
+```ts
+import { corsairCloud } from 'corsair';
+
+const corsair = corsairCloud({ apiKey: process.env.CORSAIR_CLOUD_KEY! });
+
+// The project as a whole: instances, keys, MCP links.
+await corsair.manage.project.get();
+
+// One instance: its tenants, access, connections, integrations.
+await corsair.withInstance('prod').access.list();
+
+// A tool call, which runs on the instance's runtime.
+await corsair
+  .withInstance('prod')
+  .withTenant('usr_8841')
+  .slack.api.chat.postMessage({ channel: '#general', text: 'hi' });
+```
+
+## Rate limits
+
+Corsair counts requests per project per minute, in three classes:
+
+| Class | Limit | What counts |
+|-------|-------|-------------|
+| read | 1000 | every `GET` |
+| write | 120 | `PUT`, `PATCH`, `DELETE` and every `POST` that doesn't mint |
+| mint | 60 | the routes that take an `Idempotency-Key` (see [Conventions](/v1/overview#conventions)) |
+
+A request to a path that doesn't exist still counts, as a read for `GET` and a
+write otherwise. Over the limit returns `429 rate_limit_exceeded` with a
+`Retry-After` header in seconds.
+
+## Failures
+
+A missing or malformed header, or a key that doesn't verify, returns `401` with
+code `unauthorized`. Corsair checks the key before anything else, so the answer
+is the same for every path. See [Errors](/v1/errors) for the shape.
