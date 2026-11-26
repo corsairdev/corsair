@@ -1,4 +1,13 @@
 import { z } from 'zod';
+import type {
+	ContentEndpointInputs,
+	ContentEndpointOutputs,
+} from './content-types';
+import {
+	ContentEndpointInputSchemas,
+	ContentEndpointOutputSchemas,
+} from './content-types';
+import { joinLazy } from './memo';
 
 /** Loops custom property and data variable value types, per the docs. */
 const CustomPropertyValueSchema = z.union([
@@ -30,6 +39,11 @@ const RESERVED_BODY_FIELDS = [
 	'userGroup',
 	'mailingLists',
 	'customProperties',
+	// events.send body fields; a custom property with one of these names
+	// would overwrite them.
+	'eventName',
+	'eventProperties',
+	'idempotencyKey',
 ] as const;
 
 // unknown: the caller's input type carries the fixed fields; only the
@@ -125,7 +139,8 @@ const ContactSchema = z
 		userGroup: z.string().nullish(),
 		userId: z.string().nullish(),
 		mailingLists: MailingListsSchema.optional(),
-		optInStatus: z.enum(['accepted', 'pending', 'rejected']).nullish(),
+		// accepted, pending or rejected today; open so a new status still parses.
+		optInStatus: z.string().nullish(),
 	})
 	// Custom contact properties come back inline beside the fixed fields.
 	.loose();
@@ -189,7 +204,8 @@ const ContactPropertySchema = z
 	.object({
 		key: z.string(),
 		label: z.string(),
-		type: z.enum(['string', 'number', 'boolean', 'date']),
+		// string, number, boolean or date today; open so a new type still parses.
+		type: z.string(),
 	})
 	.loose();
 
@@ -235,6 +251,8 @@ const EventsSendInputSchema = z
 		customProperties: z
 			.record(z.string(), CustomPropertyValueSchema)
 			.optional(),
+		// Sent as the Idempotency-Key header; a reuse within 24 hours answers 409.
+		idempotencyKey: z.string().max(100).optional(),
 	})
 	.superRefine((value, ctx) => {
 		rejectReservedProperties(value, ctx);
@@ -332,7 +350,7 @@ export type LoopsEndpointInputs = {
 	eventsSend: EventsSendInput;
 	transactionalSend: TransactionalSendInput;
 	listsList: ListsListInput;
-};
+} & ContentEndpointInputs;
 
 export type LoopsEndpointOutputs = {
 	apikeyVerifyConnection: VerifyConnectionResponse;
@@ -345,9 +363,9 @@ export type LoopsEndpointOutputs = {
 	eventsSend: EventsSendResponse;
 	transactionalSend: TransactionalSendResponse;
 	listsList: ListsListResponse;
-};
+} & ContentEndpointOutputs;
 
-export const LoopsEndpointInputSchemas = {
+const HandWrittenInputSchemas = {
 	apikeyVerifyConnection: VerifyConnectionInputSchema,
 	contactsFind: ContactsFindInputSchema,
 	contactsCreate: ContactsCreateInputSchema,
@@ -360,7 +378,12 @@ export const LoopsEndpointInputSchemas = {
 	listsList: ListsListInputSchema,
 } as const;
 
-export const LoopsEndpointOutputSchemas = {
+export const LoopsEndpointInputSchemas = joinLazy(
+	HandWrittenInputSchemas,
+	ContentEndpointInputSchemas,
+);
+
+const HandWrittenOutputSchemas = {
 	apikeyVerifyConnection: VerifyConnectionResponseSchema,
 	contactsFind: ContactsFindResponseSchema,
 	contactsCreate: ContactWriteResponseSchema,
@@ -372,3 +395,8 @@ export const LoopsEndpointOutputSchemas = {
 	transactionalSend: TransactionalSendResponseSchema,
 	listsList: ListsListResponseSchema,
 } as const;
+
+export const LoopsEndpointOutputSchemas = joinLazy(
+	HandWrittenOutputSchemas,
+	ContentEndpointOutputSchemas,
+);

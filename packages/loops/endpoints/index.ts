@@ -5,4 +5,5 @@ import * as Lists from './lists';
 import * as Transactional from './transactional';
 
 export { Apikey, Contacts, Events, Lists, Transactional };
+export * from './content-registry';
 export * from './types';

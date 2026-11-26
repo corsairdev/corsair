@@ -1,8 +1,9 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { LoopsAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { isFeatureNotEnabled, isReplayable } from './client';
 
-function asLoopsError(error: Error): LoopsAPIError | undefined {
-	return error instanceof LoopsAPIError ? error : undefined;
+function statusOf(error: Error): number | undefined {
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 /**
@@ -13,10 +14,11 @@ function asLoopsError(error: Error): LoopsAPIError | undefined {
  */
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => asLoopsError(error)?.status === 429,
+		match: (error: Error) => statusOf(error) === 429,
 		handler: async (error: Error) => ({
 			maxRetries: 3,
-			headersRetryAfterMs: asLoopsError(error)?.retryAfter,
+			headersRetryAfterMs:
+				error instanceof ApiError ? error.retryAfter : undefined,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
@@ -24,30 +26,31 @@ export const errorHandlers = {
 	// API, workflow API). Retrying cannot change that, and the caller needs the
 	// message, not a generic auth failure.
 	FEATURE_NOT_ENABLED: {
-		match: (error: Error) => asLoopsError(error)?.featureNotEnabled === true,
+		match: (error: Error) => isFeatureNotEnabled(error),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
-		match: (error: Error) => asLoopsError(error)?.status === 401,
+		match: (error: Error) => statusOf(error) === 401,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 409 on contacts/create means the email or userId already exists, and on
-	// transactional.send a reused Idempotency-Key. The request has to change.
+	// transactional.send or events.send a reused Idempotency-Key. The request
+	// has to change.
 	CONFLICT_ERROR: {
-		match: (error: Error) => asLoopsError(error)?.status === 409,
+		match: (error: Error) => statusOf(error) === 409,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 400 invalid input, 404 not-found, 405 wrong method, and the
 	// success:false envelope that arrived inside a 2xx.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
-			const loops = asLoopsError(error);
+			const status = statusOf(error);
 			return (
 				error.name === 'ZodError' ||
-				loops?.envelopeFailure === true ||
-				loops?.status === 400 ||
-				loops?.status === 404 ||
-				loops?.status === 405
+				(status !== undefined && status < 300) ||
+				status === 400 ||
+				status === 404 ||
+				status === 405
 			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
@@ -56,8 +59,7 @@ export const errorHandlers = {
 	// requests that carry an Idempotency-Key.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			(asLoopsError(error)?.status ?? 0) >= 500 &&
-			asLoopsError(error)!.canReplay,
+			(statusOf(error) ?? 0) >= 500 && isReplayable(error),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
@@ -66,7 +68,7 @@ export const errorHandlers = {
 	// The request never reached Loops, so a read or a keyed send can go again.
 	TRANSPORT_ERROR: {
 		match: (error: Error) =>
-			asLoopsError(error)?.transport === true && asLoopsError(error)!.canReplay,
+			!(error instanceof ApiError) && isReplayable(error),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

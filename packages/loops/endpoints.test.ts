@@ -3,7 +3,7 @@ jest.mock('corsair/core', () => {
 	return { ...actual, logEventFromContext: jest.fn().mockResolvedValue('evt') };
 });
 
-import { LoopsAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import {
 	contactPropertiesResponse,
 	contactResponse,
@@ -97,12 +97,12 @@ describe('Loops output parsing', () => {
 		).rejects.toThrow();
 	});
 
-	it('rejects a property row whose type is not one of the four', async () => {
+	it('accepts a property type Loops adds later', async () => {
 		mockFetch(ok([{ key: 'x', label: 'X', type: 'datetime' }]));
 
 		await expect(
 			endpoints.contacts.listProperties(makeCtx(), {}),
-		).rejects.toThrow();
+		).resolves.toEqual([{ key: 'x', label: 'X', type: 'datetime' }]);
 	});
 
 	it('rejects a contact missing its email', async () => {
@@ -128,8 +128,8 @@ describe('Loops output parsing', () => {
 			endpoints.contacts.create(makeCtx(), { email: 'alex@company.com' }),
 		);
 
-		expect(caught).toBeInstanceOf(LoopsAPIError);
-		expect((caught as LoopsAPIError).message).toContain('Email already exists');
+		expect(caught).toBeInstanceOf(ApiError);
+		expect((caught as ApiError).message).toContain('Email already exists');
 	});
 
 	it('carries the validation path and transactionalId from a 400 body', async () => {
@@ -142,10 +142,10 @@ describe('Loops output parsing', () => {
 			}),
 		);
 
-		expect((caught as LoopsAPIError).path).toBe('dataVariables');
-		expect((caught as LoopsAPIError).transactionalId).toBe(
-			'cll42l54f20i1la0lfooe3z12',
-		);
+		expect((caught as ApiError).body).toMatchObject({
+			error: { path: 'dataVariables' },
+			transactionalId: 'cll42l54f20i1la0lfooe3z12',
+		});
 	});
 
 	it('carries a 401 message from an invalid key', async () => {

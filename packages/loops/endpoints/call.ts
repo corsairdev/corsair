@@ -49,3 +49,13 @@ export function withCustomProperties(fields: {
 	const { customProperties, ...rest } = fields;
 	return { ...rest, ...customProperties };
 }
+
+/**
+ * Loops answers some deletes with a bodyless 204. Only an empty body counts as
+ * the confirmation; any other body goes to the output schema unchanged, so an
+ * unexpected answer fails the parse instead of looking like a delete.
+ */
+// unknown: raw is the response body, undefined after a 204.
+export function deleteResult(raw: unknown): unknown {
+	return raw === undefined || raw === '' ? { success: true } : raw;
+}

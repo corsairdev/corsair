@@ -1,21 +1,67 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { LoopsAPIError } from './client';
+import { makeLoopsRequest } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
+import {
+	captureError,
+	currentFetch,
+	installFetchMock,
+	jsonResponse,
+	mockFetch,
+	restoreFetchMock,
+} from './test-helpers';
 
 function handler<K extends keyof typeof errorHandlers>(name: K) {
 	return errorHandlers[name];
 }
 
-function loopsError(
+/**
+ * Produces the error the client really throws for a Loops answer, so the
+ * handlers are tested against core's ApiError and not a hand-made object.
+ */
+async function loopsError(
 	message: string,
-	options: ConstructorParameters<typeof LoopsAPIError>[1] = {},
-): LoopsAPIError {
-	return new LoopsAPIError(message, options);
+	options: {
+		status?: number;
+		method?: 'GET' | 'POST';
+		hasIdempotency?: boolean;
+		envelopeFailure?: boolean;
+		transport?: boolean;
+		retryAfterSeconds?: number;
+	} = {},
+): Promise<Error> {
+	if (options.transport) {
+		currentFetch().mockRejectedValueOnce(new TypeError(message));
+	} else {
+		mockFetch(
+			jsonResponse(
+				{ success: false, message },
+				{
+					status: options.envelopeFailure ? 200 : (options.status ?? 400),
+					headers: {
+						'Content-Type': 'application/json',
+						...(options.retryAfterSeconds === undefined
+							? {}
+							: { 'Retry-After': String(options.retryAfterSeconds) }),
+					},
+				},
+			),
+		);
+	}
+	return (await captureError(
+		makeLoopsRequest('test-key', {
+			method: options.method ?? 'POST',
+			path: '/v1/test',
+			idempotencyKey: options.hasIdempotency ? 'idem-1' : undefined,
+		}),
+	)) as Error;
 }
+
+beforeEach(installFetchMock);
+afterEach(restoreFetchMock);
 
 describe('Loops error handler matching', () => {
 	it('retries a 429 three times with the exponential strategy', async () => {
-		const error = loopsError('Loops 429: Rate limit exceeded', {
+		const error = await loopsError('Loops 429: Rate limit exceeded', {
 			status: 429,
 			method: 'GET',
 		});
@@ -30,9 +76,9 @@ describe('Loops error handler matching', () => {
 	});
 
 	it('keeps a Retry-After header value when Loops ever sends one', async () => {
-		const error = loopsError('Loops 429: Rate limit exceeded', {
+		const error = await loopsError('Loops 429: Rate limit exceeded', {
 			status: 429,
-			retryAfter: 4000,
+			retryAfterSeconds: 4,
 		});
 
 		const result = await handler('RATE_LIMIT_ERROR').handler(error);
@@ -40,9 +86,9 @@ describe('Loops error handler matching', () => {
 	});
 
 	it('sends a disabled-feature 401 to FEATURE_NOT_ENABLED, not to AUTH_ERROR', async () => {
-		const error = loopsError(
+		const error = await loopsError(
 			'Loops 401: Invalid API key or content API not enabled for this team',
-			{ status: 401, featureNotEnabled: true },
+			{ status: 401 },
 		);
 
 		expect(handler('FEATURE_NOT_ENABLED').match(error)).toBe(true);
@@ -53,7 +99,9 @@ describe('Loops error handler matching', () => {
 	});
 
 	it('never retries a plain 401', async () => {
-		const error = loopsError('Loops 401: Invalid API key', { status: 401 });
+		const error = await loopsError('Loops 401: Invalid API key', {
+			status: 401,
+		});
 
 		expect(handler('AUTH_ERROR').match(error)).toBe(true);
 		expect(handler('FEATURE_NOT_ENABLED').match(error)).toBe(false);
@@ -62,7 +110,7 @@ describe('Loops error handler matching', () => {
 	});
 
 	it('never retries a 409 duplicate contact or reused idempotency key', async () => {
-		const error = loopsError('Loops 409: Email already exists', {
+		const error = await loopsError('Loops 409: Email already exists', {
 			status: 409,
 		});
 
@@ -73,7 +121,9 @@ describe('Loops error handler matching', () => {
 
 	it('never retries validation, not-found or wrong-method errors', async () => {
 		for (const status of [400, 404, 405]) {
-			const error = loopsError(`Loops ${status}: bad request`, { status });
+			const error = await loopsError(`Loops ${status}: bad request`, {
+				status,
+			});
 			expect(handler('VALIDATION_ERROR').match(error)).toBe(true);
 			const result = await handler('VALIDATION_ERROR').handler();
 			expect(result?.maxRetries).toBe(0);
@@ -81,7 +131,7 @@ describe('Loops error handler matching', () => {
 	});
 
 	it('treats a 2xx success:false envelope as validation, not as a retriable failure', async () => {
-		const error = loopsError('Loops: Email already exists', {
+		const error = await loopsError('Loops: Email already exists', {
 			envelopeFailure: true,
 			method: 'POST',
 		});
@@ -90,8 +140,11 @@ describe('Loops error handler matching', () => {
 	});
 
 	it('replays a 5xx on a read but not on a plain write', async () => {
-		const read = loopsError('Loops 500', { status: 500, method: 'GET' });
-		const write = loopsError('Loops 500', { status: 500, method: 'POST' });
+		const read = await loopsError('Loops 500', { status: 500, method: 'GET' });
+		const write = await loopsError('Loops 500', {
+			status: 500,
+			method: 'POST',
+		});
 
 		expect(handler('SERVER_ERROR').match(read)).toBe(true);
 		expect(handler('SERVER_ERROR').match(write)).toBe(false);
@@ -100,7 +153,7 @@ describe('Loops error handler matching', () => {
 	});
 
 	it('replays a 5xx on a write that carries an idempotency key', async () => {
-		const error = loopsError('Loops 503', {
+		const error = await loopsError('Loops 503', {
 			status: 503,
 			method: 'POST',
 			hasIdempotency: true,
@@ -110,11 +163,11 @@ describe('Loops error handler matching', () => {
 	});
 
 	it('retries a dropped read as a transport failure and not a dropped write', async () => {
-		const read = loopsError('fetch failed', {
+		const read = await loopsError('fetch failed', {
 			method: 'GET',
 			transport: true,
 		});
-		const write = loopsError('fetch failed', {
+		const write = await loopsError('fetch failed', {
 			method: 'POST',
 			transport: true,
 		});

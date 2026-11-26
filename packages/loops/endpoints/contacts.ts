@@ -1,16 +1,13 @@
 import type { LoopsEndpoints } from '..';
 import { call, withCustomProperties } from './call';
 import {
+	ContentEndpointInputSchemas as ContentInputs,
+	ContentEndpointOutputSchemas as ContentOutputs,
+} from './content-types';
+import {
 	LoopsEndpointInputSchemas as Inputs,
 	LoopsEndpointOutputSchemas as Outputs,
 } from './types';
-
-// Deliberately unbuilt, per the first-PR scope: DELETE /v1/contacts/suppression
-// (destructive, quota-limited) and POST /v1/contacts/properties (create a
-// property definition), both sharing paths with reads built here. The gated
-// content and workflow endpoint groups (campaigns, transactional-emails,
-// email-messages, workflows, themes, components, footers, uploads, segments,
-// event-patterns) stay out until the team has that feature enabled.
 
 export const find: LoopsEndpoints['contactsFind'] = (ctx, input) =>
 	call(
@@ -125,4 +122,39 @@ export const getSuppression: LoopsEndpoints['contactsGetSuppression'] = (
 			path: '/v1/contacts/suppression',
 			query: { email, userId },
 		}),
+	);
+
+export const removeSuppression: LoopsEndpoints['contactsRemoveSuppression'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		{
+			event: 'contacts.removeSuppression',
+			input: ContentInputs.contactsRemoveSuppression,
+			output: ContentOutputs.contactsRemoveSuppression,
+		},
+		input,
+		({ email, userId }) => ({
+			method: 'DELETE',
+			path: '/v1/contacts/suppression',
+			query: { email, userId },
+		}),
+	);
+
+export const createProperty: LoopsEndpoints['contactsCreateProperty'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		{
+			event: 'contacts.createProperty',
+			input: ContentInputs.contactsCreateProperty,
+			output: ContentOutputs.contactsCreateProperty,
+		},
+		input,
+		(body) => ({ method: 'POST', path: '/v1/contacts/properties', body }),
+		{ log: (parsed) => ({ name: parsed.name, type: parsed.type }) },
 	);

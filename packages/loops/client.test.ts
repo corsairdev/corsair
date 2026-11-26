@@ -1,4 +1,10 @@
-import { LOOPS_API_BASE, LoopsAPIError, makeLoopsRequest } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	isFeatureNotEnabled,
+	isReplayable,
+	LOOPS_API_BASE,
+	makeLoopsRequest,
+} from './client';
 import {
 	apiKeyResponse,
 	contactResponse,
@@ -69,12 +75,12 @@ describe('Loops client', () => {
 			}),
 		);
 
-		expect(caught).toBeInstanceOf(LoopsAPIError);
-		expect((caught as LoopsAPIError).message).toContain('Email already exists');
-		expect((caught as LoopsAPIError).envelopeFailure).toBe(true);
+		expect(caught).toBeInstanceOf(ApiError);
+		expect((caught as ApiError).message).toContain('Email already exists');
+		expect((caught as ApiError).status).toBe(200);
 	});
 
-	it('parses message, path and transactionalId from an error body', async () => {
+	it('keeps the message and the error body, and strips the request body', async () => {
 		queue(validationErrorResponse, 400);
 
 		const caught = await captureError(
@@ -85,14 +91,17 @@ describe('Loops client', () => {
 			}),
 		);
 
-		expect(caught).toBeInstanceOf(LoopsAPIError);
-		expect((caught as LoopsAPIError).message).toContain(
+		expect(caught).toBeInstanceOf(ApiError);
+		const error = caught as ApiError;
+		expect(error.message).toContain(
 			'Missing required data variable(s): confirmationUrl',
 		);
-		expect((caught as LoopsAPIError).path).toBe('dataVariables');
-		expect((caught as LoopsAPIError).transactionalId).toBe(
-			'cll42l54f20i1la0lfooe3z12',
-		);
+		expect(error.body).toMatchObject({
+			error: { path: 'dataVariables' },
+			transactionalId: 'cll42l54f20i1la0lfooe3z12',
+		});
+		expect(error.request.body).toBeUndefined();
+		expect(JSON.stringify(error.request)).not.toContain('alex@company.com');
 	});
 
 	it('keeps the status from a 401 and does not mark it as a disabled feature', async () => {
@@ -105,8 +114,8 @@ describe('Loops client', () => {
 			}),
 		);
 
-		expect((caught as LoopsAPIError).status).toBe(401);
-		expect((caught as LoopsAPIError).featureNotEnabled).toBe(false);
+		expect((caught as ApiError).status).toBe(401);
+		expect(isFeatureNotEnabled(caught as Error)).toBe(false);
 	});
 
 	it('flags a 401 that says the feature is off, so it reads differently from a bad key', async () => {
@@ -125,8 +134,8 @@ describe('Loops client', () => {
 			}),
 		);
 
-		expect((caught as LoopsAPIError).status).toBe(401);
-		expect((caught as LoopsAPIError).featureNotEnabled).toBe(true);
+		expect((caught as ApiError).status).toBe(401);
+		expect(isFeatureNotEnabled(caught as Error)).toBe(true);
 	});
 
 	it('marks a request carrying an idempotency key as replay-safe', async () => {
@@ -154,7 +163,7 @@ describe('Loops client', () => {
 			}),
 		);
 
-		expect((caught as LoopsAPIError).canReplay).toBe(true);
+		expect(isReplayable(caught as Error)).toBe(true);
 	});
 
 	it('marks a keyed POST as non-replayable when it carries no idempotency key', async () => {
@@ -168,11 +177,11 @@ describe('Loops client', () => {
 			}),
 		);
 
-		expect((caught as LoopsAPIError).transport).toBe(true);
-		expect((caught as LoopsAPIError).canReplay).toBe(false);
+		expect(caught).toBeInstanceOf(TypeError);
+		expect(isReplayable(caught as Error)).toBe(false);
 	});
 
-	it('drops the ApiError cause so the request it carries cannot leak the key', async () => {
+	it('keeps the key out of the error', async () => {
 		queue(invalidKeyResponse, 401);
 
 		const caught = await captureError(
@@ -182,8 +191,9 @@ describe('Loops client', () => {
 			}),
 		);
 
-		expect((caught as LoopsAPIError).message).not.toContain('secret-key-value');
-		expect((caught as Error).cause).toBeUndefined();
+		expect(JSON.stringify(caught)).not.toContain('secret-key-value');
+		expect((caught as ApiError).message).not.toContain('secret-key-value');
+		expect((caught as ApiError).request.headers).toBeUndefined();
 	});
 
 	it('does not retry inside the client: rate limiting belongs to error-handlers.ts', async () => {

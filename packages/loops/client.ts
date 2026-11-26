@@ -29,64 +29,32 @@ export type LoopsRequest = {
 	query?: Record<string, string | number | boolean | undefined>;
 	// unknown: the endpoint's input schema has already validated the body.
 	body?: unknown;
-	/** Sent as the Idempotency-Key header; only POST /v1/transactional takes one. */
+	/** Sent as the Idempotency-Key header (POST /v1/transactional and /v1/events/send). */
 	idempotencyKey?: string;
 };
 
-export class LoopsAPIError extends Error {
-	readonly status?: number;
-	/** Milliseconds from a Retry-After header; Loops does not send one today. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request, for replay-safety decisions. */
-	readonly method?: string;
-	/** True when the request carried an Idempotency-Key, so a replay reuses it. */
-	readonly hasIdempotency?: boolean;
-	/** A 2xx body that said `success: false`; the status code showed success. */
-	readonly envelopeFailure?: boolean;
-	/** 401 whose message says a feature flag is off, not that the key is bad. */
-	readonly featureNotEnabled?: boolean;
-	/** Field path from a validation failure, when Loops named one. */
-	readonly path?: string;
-	/** Transactional email id from a validation failure, when Loops sent one. */
-	readonly transactionalId?: string;
-	/** The request never reached Loops (reset, DNS, abort), so replay is safe for reads. */
-	readonly transport?: boolean;
+/**
+ * Errors from a request that can run again without doubling its effect: reads
+ * (GET) and sends that carried an Idempotency-Key. error-handlers.ts only
+ * retries 5xx and transport failures that are in here.
+ */
+const replayable = new WeakSet<object>();
 
-	constructor(
-		message: string,
-		options: {
-			status?: number;
-			retryAfter?: number;
-			method?: string;
-			hasIdempotency?: boolean;
-			envelopeFailure?: boolean;
-			featureNotEnabled?: boolean;
-			path?: string;
-			transactionalId?: string;
-			transport?: boolean;
-			cause?: Error;
-		} = {},
-	) {
-		// The cause is kept only for transport errors, which never carried a
-		// request body; for HTTP errors the fields copied above are everything
-		// a caller needs, and the ApiError cause would sit in util.inspect output.
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'LoopsAPIError';
-		this.status = options.status;
-		this.retryAfter = options.retryAfter;
-		this.method = options.method;
-		this.hasIdempotency = options.hasIdempotency;
-		this.envelopeFailure = options.envelopeFailure;
-		this.featureNotEnabled = options.featureNotEnabled;
-		this.path = options.path;
-		this.transactionalId = options.transactionalId;
-		this.transport = options.transport;
-	}
+export function isReplayable(error: Error): boolean {
+	return replayable.has(error);
+}
 
-	/** True when a replay cannot double the effect: reads and keyed sends. */
-	get canReplay(): boolean {
-		return this.method === 'GET' || this.hasIdempotency === true;
-	}
+function canReplay(req: LoopsRequest): boolean {
+	return req.method === 'GET' || req.idempotencyKey !== undefined;
+}
+
+/** True for a 401 whose message says a feature flag is off, not that the key is bad. */
+export function isFeatureNotEnabled(error: Error): boolean {
+	return (
+		error instanceof ApiError &&
+		error.status === 401 &&
+		FEATURE_NOT_ENABLED_PATTERN.test(error.message)
+	);
 }
 
 // unknown: the body is an untyped error body until asRecord narrows it.
@@ -114,32 +82,39 @@ export function describeLoopsError(
 	);
 }
 
-// unknown: the body is an untyped error body; asRecord reads fields off it.
-function loopsErrorFrom(
-	status: number | undefined,
+/**
+ * Rebuilds core's ApiError without the request body and headers, which hold
+ * contact data, template variables and attachments, and with Loops' own
+ * message. Status, response body and rate-limit fields stay for the handlers.
+ */
+// unknown: the body is an untyped error body; describeLoopsError reads it.
+function loopsApiError(
+	req: LoopsRequest,
+	status: number,
+	statusText: string,
 	body: unknown,
 	fallback: string,
-	req: LoopsRequest,
-	options: {
-		envelopeFailure?: boolean;
+	rateLimit?: {
 		retryAfter?: number;
-	} = {},
-): LoopsAPIError {
-	const message = describeLoopsError(status, body, fallback);
-	const text = status === undefined ? message : `Loops ${status}: ${message}`;
-	const record = asRecord(body);
-	const errorField = asRecord(record?.error);
-	return new LoopsAPIError(text, {
-		status,
-		retryAfter: options.retryAfter,
-		method: req.method,
-		hasIdempotency: req.idempotencyKey !== undefined,
-		envelopeFailure: options.envelopeFailure,
-		featureNotEnabled:
-			status === 401 && FEATURE_NOT_ENABLED_PATTERN.test(message),
-		path: readString(errorField, 'path') ?? readString(record, 'path'),
-		transactionalId: readString(record, 'transactionalId'),
-	});
+		rateLimitReset?: number;
+		rateLimitRemaining?: number;
+		rateLimitLimit?: number;
+	},
+): ApiError {
+	const error = new ApiError(
+		{ method: req.method, url: req.path },
+		{
+			url: `${LOOPS_API_BASE}${req.path}`,
+			ok: false,
+			status,
+			statusText,
+			body,
+		},
+		`Loops ${status}: ${describeLoopsError(status, body, fallback)}`,
+		rateLimit,
+	);
+	if (canReplay(req)) replayable.add(error);
+	return error;
 }
 
 // A 2xx body that still says `success: false` is a failure: Loops answers
@@ -177,41 +152,36 @@ export async function makeLoopsRequest(
 			: undefined,
 	};
 
+	// unknown: the generic stays unknown; the endpoint's output schema owns
+	// the contract, and typing it here would skip that parse.
+	let raw: unknown;
 	try {
-		// unknown: the generic stays unknown; the endpoint's output schema owns
-		// the contract, and typing it here would skip that parse.
-		const raw = await request<unknown>(config, requestOptions, {
+		raw = await request<unknown>(config, requestOptions, {
 			rateLimitConfig: LOOPS_RATE_LIMIT_CONFIG,
 		});
-		if (isFailureEnvelope(raw)) {
-			throw loopsErrorFrom(undefined, raw, 'Loops request failed', req, {
-				envelopeFailure: true,
-			});
-		}
-		return raw;
 	} catch (error) {
-		// Rethrow our own envelope failure untouched, before the ApiError branch
-		// would re-wrap it and drop the parsed fields.
-		if (error instanceof LoopsAPIError) throw error;
 		if (error instanceof ApiError) {
-			throw loopsErrorFrom(error.status, error.body, error.message, req, {
-				retryAfter: error.retryAfter,
-			});
+			throw loopsApiError(
+				req,
+				error.status,
+				error.statusText,
+				error.body,
+				error.message,
+				{
+					retryAfter: error.retryAfter,
+					rateLimitReset: error.rateLimitReset,
+					rateLimitRemaining: error.rateLimitRemaining,
+					rateLimitLimit: error.rateLimitLimit,
+				},
+			);
 		}
-
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new LoopsAPIError(error.message, {
-				cause: error,
-				method: req.method,
-				hasIdempotency: req.idempotencyKey !== undefined,
-				transport: true,
-			});
-		}
-		throw new LoopsAPIError('Unknown Loops error', {
-			method: req.method,
-			hasIdempotency: req.idempotencyKey !== undefined,
-			transport: true,
-		});
+		// Transport failures (reset, DNS, timeout) never reached Loops; they
+		// carry no request data, so they go up unchanged.
+		if (error instanceof Error && canReplay(req)) replayable.add(error);
+		throw error;
 	}
+	if (isFailureEnvelope(raw)) {
+		throw loopsApiError(req, 200, 'OK', raw, 'Loops request failed');
+	}
+	return raw;
 }

@@ -14,7 +14,15 @@ export const send: LoopsEndpoints['eventsSend'] = (ctx, input) =>
 			output: Outputs.eventsSend,
 		},
 		input,
-		({ eventName, email, userId, eventProperties, mailingLists, ...rest }) => ({
+		({
+			eventName,
+			email,
+			userId,
+			eventProperties,
+			mailingLists,
+			idempotencyKey,
+			...rest
+		}) => ({
 			method: 'POST',
 			path: '/v1/events/send',
 			body: {
@@ -25,6 +33,7 @@ export const send: LoopsEndpoints['eventsSend'] = (ctx, input) =>
 				mailingLists,
 				...withCustomProperties(rest),
 			},
+			idempotencyKey,
 		}),
 		{
 			log: (parsed) => ({ eventName: parsed.eventName, userId: parsed.userId }),
