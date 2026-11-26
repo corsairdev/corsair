@@ -110,16 +110,26 @@ export function segment(value: string): string {
 	return encodeURIComponent(value);
 }
 
+/** Drops the query string: list filters can carry customer metadata. */
+function withoutQuery(url: string): string {
+	const cut = url.search(/[?#]/);
+	return cut === -1 ? url : url.slice(0, cut);
+}
+
 /**
- * Rebuilds core's ApiError without the request body: mailpiece bodies carry
- * recipient names and street addresses, and bank account bodies carry account
- * numbers. Status, Lob's error envelope and rate-limit facts stay.
+ * Rebuilds core's ApiError without the request body or query: mailpiece
+ * bodies carry recipient names and street addresses, bank account bodies
+ * carry account numbers, and list filters (metadata, description) can carry
+ * customer data. Status, Lob's error envelope and rate-limit facts stay.
  */
 function withoutRequestData(error: ApiError, method: string): ApiError {
 	return new ApiError(
-		{ method: error.request.method ?? method, url: error.request.url },
 		{
-			url: error.url,
+			method: error.request.method ?? method,
+			url: withoutQuery(error.request.url),
+		},
+		{
+			url: withoutQuery(error.url),
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,

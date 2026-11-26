@@ -186,6 +186,25 @@ describe('makeLobRequest', () => {
 		expect(inspect(error)).not.toContain('Jordan');
 	});
 
+	it('drops the query string from the error URLs', async () => {
+		respond({ error: { message: 'bad key', code: 'unauthorized' } }, 401);
+
+		const error = await failure(
+			makeLobRequest(API_KEY, {
+				method: 'GET',
+				path: '/addresses',
+				query: { metadata: { customer_name: 'Jordan Lee' }, limit: 10 },
+			}),
+		);
+		expect(fetchMock.mock.calls[0][0]).toContain('customer_name');
+		expect(error.status).toBe(401);
+		expect(error.url).toBe('https://api.lob.com/v1/addresses');
+		expect(error.request.query).toBeUndefined();
+		expect(error.request.url).not.toContain('?');
+		expect(JSON.stringify(error)).not.toContain('Jordan');
+		expect(inspect(error, { depth: 10 })).not.toContain('Jordan');
+	});
+
 	describe('rate limits', () => {
 		beforeEach(() => jest.useFakeTimers());
 		afterEach(() => jest.useRealTimers());
