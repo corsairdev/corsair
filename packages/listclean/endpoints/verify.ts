@@ -97,8 +97,18 @@ export const getAnalytics: ListcleanEndpoints['verifyGetAnalytics'] = (
 		{ shape: envelopeData },
 	);
 
-/** The part after the last @, for logs; undefined when there is none. */
-function domainOf(email: string): string | undefined {
+// A hostname: dot-separated labels of letters, digits and hyphens.
+const HOSTNAME =
+	/^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9-]{2,63}$/i;
+
+/**
+ * The part after the last @, for logs, only when it is a plain hostname.
+ * The input is any non-empty string, so `a@b.com (Alice Smith)` must not log
+ * the name that follows the domain.
+ */
+export function domainOf(email: string): string | undefined {
 	const at = email.lastIndexOf('@');
-	return at === -1 ? undefined : email.slice(at + 1);
+	if (at === -1) return undefined;
+	const domain = email.slice(at + 1);
+	return HOSTNAME.test(domain) ? domain.toLowerCase() : undefined;
 }

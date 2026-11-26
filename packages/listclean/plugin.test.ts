@@ -30,7 +30,7 @@ function paths(tree: Record<string, Record<string, unknown>>): string[] {
 }
 
 describe('Listclean plugin', () => {
-	it('registers the nine operations across three groups', () => {
+	it('registers the sixteen operations across four groups', () => {
 		expect(
 			paths(plugin.endpoints as Record<string, Record<string, unknown>>).sort(),
 		).toEqual(
@@ -42,8 +42,15 @@ describe('Listclean plugin', () => {
 				'lists.listLists',
 				'lists.getList',
 				'lists.getListResults',
+				'lists.getListResultsCsv',
 				'lists.delete',
+				'uploads.listUploads',
+				'uploads.startUpload',
+				'uploads.uploadChunk',
+				'uploads.getUpload',
 				'account.getCredits',
+				'account.getProfile',
+				'account.updateProfile',
 			].sort(),
 		);
 	});
@@ -81,6 +88,20 @@ describe('Listclean plugin', () => {
 		expect(meta['account.getCredits']?.riskLevel).toBe('read');
 		expect(meta['verify.startBatchVerification']?.riskLevel).toBe('write');
 		expect(meta['lists.delete']?.riskLevel).toBe('destructive');
+		expect(meta['lists.getListResultsCsv']?.riskLevel).toBe('read');
+		expect(meta['uploads.listUploads']?.riskLevel).toBe('read');
+		expect(meta['uploads.getUpload']?.riskLevel).toBe('read');
+		expect(meta['account.getProfile']?.riskLevel).toBe('read');
+		// Metered verification spends prepaid credits: write, not destructive.
+		expect(meta['uploads.startUpload']?.riskLevel).toBe('write');
+		expect(meta['uploads.uploadChunk']?.riskLevel).toBe('write');
+		expect(meta['account.updateProfile']?.riskLevel).toBe('write');
+		// Only the delete is destructive.
+		expect(
+			Object.entries(meta)
+				.filter(([, entry]) => entry?.riskLevel === 'destructive')
+				.map(([path]) => path),
+		).toEqual(['lists.delete']);
 		expect(meta['lists.delete']?.irreversible).toBe(true);
 	});
 

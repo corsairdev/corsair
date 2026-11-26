@@ -86,7 +86,7 @@ export const getListResults: ListcleanEndpoints['listsGetListResults'] = (
 			method: 'GET',
 			path: `/downloads/json/${segment(list_id)}/${segment(type)}`,
 			// This route answers a bare JSON stream instead of the envelope.
-			download: true,
+			response: 'json',
 			replayable: true,
 		}),
 		{
@@ -94,6 +94,35 @@ export const getListResults: ListcleanEndpoints['listsGetListResults'] = (
 				listId: list_id,
 				type,
 				count: result.length,
+			}),
+		},
+	);
+
+export const getListResultsCsv: ListcleanEndpoints['listsGetListResultsCsv'] = (
+	ctx,
+	input,
+) =>
+	call(
+		ctx,
+		{
+			event: 'lists.getListResultsCsv',
+			input: Inputs.listsGetListResultsCsv,
+			output: Outputs.listsGetListResultsCsv,
+		},
+		input,
+		({ list_id, type }) => ({
+			method: 'GET',
+			path: `/downloads/${segment(list_id)}/${segment(type)}`,
+			// This route answers the CSV file itself as an octet stream.
+			response: 'text',
+			replayable: true,
+		}),
+		{
+			shape: (raw) => ({ csv: raw }),
+			log: ({ list_id, type }, result) => ({
+				listId: list_id,
+				type,
+				bytes: result.csv.length,
 			}),
 		},
 	);

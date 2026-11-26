@@ -12,8 +12,9 @@ const EmailAddressSchema = z
 		'An email address. Sent unchanged: an undecodable one comes back as `status: "error"` rather than being rejected here.',
 	);
 
-// The verification verdict. Kept as an enum: it is the product's fixed
-// vocabulary, and a value outside it should fail loudly, not read as data.
+// The verification verdict. Inputs (filters) take only the documented values;
+// outputs also accept any other string, so a verdict Listclean adds later
+// cannot fail a call whose credit is already spent.
 export const LISTCLEAN_VERIFICATION_STATUSES = [
 	'clean',
 	'dirty',
@@ -22,6 +23,11 @@ export const LISTCLEAN_VERIFICATION_STATUSES = [
 ] as const;
 
 const VerificationStatusSchema = z.enum(LISTCLEAN_VERIFICATION_STATUSES);
+
+const VerificationStatusOutputSchema = z.union([
+	VerificationStatusSchema,
+	z.string(),
+]);
 
 /** Where a verification came from, as the logs and analytics filters spell it. */
 export const LISTCLEAN_SOURCES = [
@@ -44,7 +50,8 @@ export const LISTCLEAN_LIST_STATUSES = [
 	'COMPLETED',
 ] as const;
 
-const ListStatusSchema = z.enum(LISTCLEAN_LIST_STATUSES);
+// Output only, so an undocumented status (a failed state, say) reads as data.
+const ListStatusSchema = z.union([z.enum(LISTCLEAN_LIST_STATUSES), z.string()]);
 
 // The spec types these as integers but its own examples send both spellings
 // (`"count": {"example": "8"}` in one summary, `8` in another), so either is
@@ -64,7 +71,7 @@ export const VerificationSchema = z
 	.object({
 		datetime: z.string().nullish(),
 		email: z.string(),
-		status: VerificationStatusSchema,
+		status: VerificationStatusOutputSchema,
 		remarks: z.string().nullish(),
 		disposable: z.boolean().nullish(),
 		role_based: z.boolean().nullish(),
@@ -84,7 +91,7 @@ const LogSchema = z
 		id: z.number().int().nullish(),
 		entered: z.string().nullish(),
 		email: z.string().nullish(),
-		status: VerificationStatusSchema.nullish(),
+		status: VerificationStatusOutputSchema.nullish(),
 		remarks: z.string().nullish(),
 		credits_deducted: z.number().int().nullish(),
 		// A string here, unlike the integer error_code on the envelope.
@@ -170,14 +177,32 @@ export type ListcleanList = z.infer<typeof ListSchema>;
 const DateStringSchema = z
 	.string()
 	.regex(/^\d{4}-\d{2}-\d{2}$/, 'Use the YYYY-MM-DD date format.')
+	.refine(isCalendarDate, 'Not a real calendar date.')
 	.describe('A date in YYYY-MM-DD format.');
+
+/** True for a YYYY-MM-DD string that names a real day (2024-02-29 yes, 2026-02-30 no). */
+export function isCalendarDate(value: string): boolean {
+	const [year, month, day] = value.split('-').map(Number);
+	if (!year || !month || !day) return false;
+	const date = new Date(Date.UTC(year, month - 1, day));
+	return (
+		date.getUTCFullYear() === year &&
+		date.getUTCMonth() === month - 1 &&
+		date.getUTCDate() === day
+	);
+}
+
+// The earliest UTC offset is UTC+14, so "today" somewhere can be this far
+// ahead of UTC midnight; an end_date that is today in the caller's zone
+// passes, and Listclean (which answers in IST) has the final word.
+const TODAY_ANYWHERE_MS = 14 * 3_600_000;
 
 type RangeInput = { start_date: string; end_date: string };
 
 // The range rules are checked here rather than left to the provider, so a bad
-// range fails before it can cost a call. The future rule is documented on both
-// routes' end_date; the 30-day cap only on the logs route. Unparseable dates
-// are left to the format check above.
+// range fails before the call. The future rule is documented on both routes'
+// end_date; the 30-day cap only on the logs route. Impossible dates are left
+// to the calendar check above.
 function refineRange(maxDays?: number) {
 	return (value: RangeInput, refine: z.RefinementCtx) => {
 		const start = Date.parse(value.start_date);
@@ -190,7 +215,7 @@ function refineRange(maxDays?: number) {
 				message: 'end_date must not be before start_date.',
 			});
 		}
-		if (end > Date.now()) {
+		if (end > Date.now() + TODAY_ANYWHERE_MS) {
 			refine.addIssue({
 				code: z.ZodIssueCode.custom,
 				path: ['end_date'],
@@ -393,6 +418,26 @@ export type GetListResultsResponse = z.infer<
 	typeof GetListResultsResponseSchema
 >;
 
+// ── lists.getListResultsCsv ───────────────────────────────────────────────
+
+const GetListResultsCsvInputSchema = GetListResultsInputSchema;
+
+export type GetListResultsCsvInput = z.infer<
+	typeof GetListResultsCsvInputSchema
+>;
+
+const GetListResultsCsvResponseSchema = z.object({
+	csv: z
+		.string()
+		.describe(
+			'The CSV file of that type, exactly as Listclean sent it, header row included.',
+		),
+});
+
+export type GetListResultsCsvResponse = z.infer<
+	typeof GetListResultsCsvResponseSchema
+>;
+
 // ── lists.delete ──────────────────────────────────────────────────────────
 
 const DeleteListInputSchema = z.object({ list_id: ListIdSchema });
@@ -405,6 +450,213 @@ export type DeleteListInput = z.infer<typeof DeleteListInputSchema>;
 const DeleteListResponseSchema = z.object({ message: z.string() }).loose();
 
 export type DeleteListResponse = z.infer<typeof DeleteListResponseSchema>;
+
+// ── uploads ───────────────────────────────────────────────────────────────
+
+const UploadIdSchema = z
+	.number()
+	.int()
+	.positive()
+	.describe('The upload id `uploads.startUpload` answered.');
+
+// The list route sends progress as "100%" and the status route as 21, so
+// either spelling is read.
+// unknown: the provider's two routes disagree on the type.
+const ProgressSchema = z.union([z.number(), z.string()]);
+
+const ListUploadsInputSchema = z.object({});
+
+export type ListUploadsInput = z.infer<typeof ListUploadsInputSchema>;
+
+const ListUploadsResponseSchema = z.array(
+	z
+		.object({
+			upload_id: z.number().int(),
+			// "COMPLETED" in the spec example: free text, not an enum.
+			status: z.string().nullish(),
+			progress: ProgressSchema.nullish(),
+		})
+		.loose(),
+);
+
+export type ListUploadsResponse = z.infer<typeof ListUploadsResponseSchema>;
+
+// A single-byte character: separator and enclosure take exactly one.
+const SingleCharSchema = z.string().length(1);
+
+const StartUploadInputSchema = z.object({
+	filename: z
+		.string()
+		.min(1)
+		.describe('Name of the file, shown on the list (e.g. `leads.csv`).'),
+	file_type: z
+		.string()
+		.min(1)
+		.describe('The file format. The spec documents `csv`.'),
+	total_chunk_count: z
+		.number()
+		.int()
+		.min(1)
+		.describe('How many chunks `uploads.uploadChunk` will send.'),
+	max_chunk_size: z
+		.number()
+		.int()
+		.min(1)
+		.describe('The largest chunk, in bytes before base64 encoding.'),
+	separator_char: SingleCharSchema.optional().describe(
+		'CSV field separator, e.g. `,`.',
+	),
+	enclosure_char: SingleCharSchema.optional().describe(
+		'CSV field enclosure character, one single-byte character, e.g. `"`.',
+	),
+	escape_char: z
+		.string()
+		.max(1)
+		.optional()
+		.describe(
+			'CSV escape character, at most one single-byte character; an empty string turns escaping off.',
+		),
+	fast_process: z
+		.union([z.literal(0), z.literal(1)])
+		.optional()
+		.describe(
+			'1 skips slow checks such as SMTP and uses only cache, DNS and format checks. Defaults to 0 (off).',
+		),
+});
+
+export type StartUploadInput = z.infer<typeof StartUploadInputSchema>;
+
+const StartUploadResponseSchema = z
+	.object({
+		upload_id: z
+			.number()
+			.int()
+			.describe(
+				'Send the chunks to this id, then poll it with `uploads.getUpload`.',
+			),
+	})
+	.loose();
+
+export type StartUploadResponse = z.infer<typeof StartUploadResponseSchema>;
+
+const UploadChunkInputSchema = z.object({
+	upload_id: UploadIdSchema,
+	chunk_sequence_number: z
+		.number()
+		.int()
+		.min(0)
+		.describe(
+			"Position of this chunk. The spec's example sends chunk 24 of 24, so numbering appears to start at 1.",
+		),
+	content: z
+		.string()
+		.min(1)
+		.regex(/^[A-Za-z0-9+/]+={0,2}$/, 'Send the chunk base64-encoded.')
+		.describe('The chunk of the file, base64-encoded.'),
+	md5_checksum: z
+		.string()
+		.regex(/^[a-f0-9]{32}$/i, 'An md5 hash is 32 hex characters.')
+		.optional()
+		.describe('md5 hash Listclean checks the file against, as hex.'),
+});
+
+export type UploadChunkInput = z.infer<typeof UploadChunkInputSchema>;
+
+// The answer documents only `message` ("Chunk uploaded successfully").
+const UploadChunkResponseSchema = z.object({ message: z.string() }).loose();
+
+export type UploadChunkResponse = z.infer<typeof UploadChunkResponseSchema>;
+
+const GetUploadInputSchema = z.object({ upload_id: UploadIdSchema });
+
+export type GetUploadInput = z.infer<typeof GetUploadInputSchema>;
+
+const GetUploadResponseSchema = z
+	.object({
+		status: z
+			.union([z.enum(['inprocess', 'success', 'error']), z.string()])
+			.nullish()
+			.describe(
+				'Upload status: inprocess, success or error (lowercase, unlike the list statuses).',
+			),
+		progress: ProgressSchema.nullish().describe('Completion percentage.'),
+		chunk_details: z
+			.object({
+				total_chunk_count: CountValueSchema.nullish(),
+				uploaded_chunk_count: CountValueSchema.nullish(),
+			})
+			.loose()
+			.nullish(),
+		request_id: z
+			.number()
+			.int()
+			.nullish()
+			.describe(
+				'The Listclean request id for this upload; the list it becomes in `lists.listLists`.',
+			),
+	})
+	.loose();
+
+export type GetUploadResponse = z.infer<typeof GetUploadResponseSchema>;
+
+// ── account.getProfile / account.updateProfile ────────────────────────────
+
+const PROFILE_FIELDS = {
+	name: 'First name of the user.',
+	address: 'Street address.',
+	city: 'City.',
+	country: 'Country.',
+	phone_number: 'Phone number.',
+	skype_id: 'Skype id.',
+	company_name: 'Company name.',
+	website: 'Website.',
+	twitter_handle: 'Twitter handle, e.g. `@example`.',
+	linkedin: 'LinkedIn profile.',
+	billing_name: 'Name on invoices.',
+	billing_company_name: 'Company on invoices.',
+	billing_address: 'Address on invoices.',
+} as const;
+
+type ProfileField = keyof typeof PROFILE_FIELDS;
+
+const ProfileSchema = z
+	.object(
+		Object.fromEntries(
+			Object.entries(PROFILE_FIELDS).map(([field, text]) => [
+				field,
+				z.string().nullish().describe(text),
+			]),
+		) as Record<ProfileField, z.ZodOptional<z.ZodNullable<z.ZodString>>>,
+	)
+	.loose();
+
+const GetProfileInputSchema = z.object({});
+
+export type GetProfileInput = z.infer<typeof GetProfileInputSchema>;
+
+const GetProfileResponseSchema = ProfileSchema;
+
+export type GetProfileResponse = z.infer<typeof GetProfileResponseSchema>;
+
+const UpdateProfileInputSchema = z
+	.object(
+		Object.fromEntries(
+			Object.entries(PROFILE_FIELDS).map(([field, text]) => [
+				field,
+				z.string().optional().describe(text),
+			]),
+		) as Record<ProfileField, z.ZodOptional<z.ZodString>>,
+	)
+	.refine((value) => Object.values(value).some((v) => v !== undefined), {
+		message: 'Set at least one profile field.',
+	});
+
+export type UpdateProfileInput = z.infer<typeof UpdateProfileInputSchema>;
+
+// The answer is the bare ApiResponse: success, message, error_code.
+const UpdateProfileResponseSchema = z.object({ message: z.string() }).loose();
+
+export type UpdateProfileResponse = z.infer<typeof UpdateProfileResponseSchema>;
 
 // ── account.getCredits ────────────────────────────────────────────────────
 
@@ -435,8 +687,15 @@ export type ListcleanEndpointInputs = {
 	listsListLists: ListListsInput;
 	listsGetList: GetListInput;
 	listsGetListResults: GetListResultsInput;
+	listsGetListResultsCsv: GetListResultsCsvInput;
 	listsDelete: DeleteListInput;
+	uploadsListUploads: ListUploadsInput;
+	uploadsStartUpload: StartUploadInput;
+	uploadsUploadChunk: UploadChunkInput;
+	uploadsGetUpload: GetUploadInput;
 	accountGetCredits: GetCreditsInput;
+	accountGetProfile: GetProfileInput;
+	accountUpdateProfile: UpdateProfileInput;
 };
 
 export type ListcleanEndpointOutputs = {
@@ -447,8 +706,15 @@ export type ListcleanEndpointOutputs = {
 	listsListLists: ListListsResponse;
 	listsGetList: GetListResponse;
 	listsGetListResults: GetListResultsResponse;
+	listsGetListResultsCsv: GetListResultsCsvResponse;
 	listsDelete: DeleteListResponse;
+	uploadsListUploads: ListUploadsResponse;
+	uploadsStartUpload: StartUploadResponse;
+	uploadsUploadChunk: UploadChunkResponse;
+	uploadsGetUpload: GetUploadResponse;
 	accountGetCredits: GetCreditsResponse;
+	accountGetProfile: GetProfileResponse;
+	accountUpdateProfile: UpdateProfileResponse;
 };
 
 export const ListcleanEndpointInputSchemas = {
@@ -459,8 +725,15 @@ export const ListcleanEndpointInputSchemas = {
 	listsListLists: ListListsInputSchema,
 	listsGetList: GetListInputSchema,
 	listsGetListResults: GetListResultsInputSchema,
+	listsGetListResultsCsv: GetListResultsCsvInputSchema,
 	listsDelete: DeleteListInputSchema,
+	uploadsListUploads: ListUploadsInputSchema,
+	uploadsStartUpload: StartUploadInputSchema,
+	uploadsUploadChunk: UploadChunkInputSchema,
+	uploadsGetUpload: GetUploadInputSchema,
 	accountGetCredits: GetCreditsInputSchema,
+	accountGetProfile: GetProfileInputSchema,
+	accountUpdateProfile: UpdateProfileInputSchema,
 } as const;
 
 export const ListcleanEndpointOutputSchemas = {
@@ -471,6 +744,13 @@ export const ListcleanEndpointOutputSchemas = {
 	listsListLists: ListListsResponseSchema,
 	listsGetList: GetListResponseSchema,
 	listsGetListResults: GetListResultsResponseSchema,
+	listsGetListResultsCsv: GetListResultsCsvResponseSchema,
 	listsDelete: DeleteListResponseSchema,
+	uploadsListUploads: ListUploadsResponseSchema,
+	uploadsStartUpload: StartUploadResponseSchema,
+	uploadsUploadChunk: UploadChunkResponseSchema,
+	uploadsGetUpload: GetUploadResponseSchema,
 	accountGetCredits: GetCreditsResponseSchema,
+	accountGetProfile: GetProfileResponseSchema,
+	accountUpdateProfile: UpdateProfileResponseSchema,
 } as const;

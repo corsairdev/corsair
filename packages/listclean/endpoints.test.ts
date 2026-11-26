@@ -3,7 +3,7 @@ jest.mock('corsair/core', () => {
 	return { ...actual, logEventFromContext: jest.fn().mockResolvedValue('evt') };
 });
 
-import { ListcleanAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import {
 	ANALYTICS,
 	BATCH_ACCEPTED,
@@ -165,15 +165,14 @@ describe('Listclean rejections', () => {
 		expect((error as Error).name).toBe('ZodError');
 	});
 
-	it('rejects a malformed known field: a verdict outside the documented vocabulary', async () => {
-		mockFetch(ok({ ...VERIFY_RESULT, status: 'maybe' }));
+	it('reads a verdict outside the documented vocabulary instead of failing a spent call', async () => {
+		mockFetch(ok({ ...VERIFY_RESULT, status: 'catch_all' }));
 
-		const error = await captureError(
-			endpoints.verify.verifyEmail(makeCtx(), { email: 'a@example.com' }),
-		);
+		const result = await endpoints.verify.verifyEmail(makeCtx(), {
+			email: 'a@example.com',
+		});
 
-		expect(error).toBeInstanceOf(Error);
-		expect((error as Error).name).toBe('ZodError');
+		expect(result.status).toBe('catch_all');
 	});
 
 	it('rejects a delete whose answer lost the documented message string', async () => {
@@ -218,14 +217,14 @@ describe('Listclean rejections', () => {
 		expect((error as Error).message).toContain('cannot be in the future');
 	});
 
-	it('surfaces an HTML 404 as a ListcleanAPIError, not an empty page', async () => {
+	it('surfaces an HTML 404 as an ApiError, not an empty page', async () => {
 		mockFetch(new Response('<!DOCTYPE html>', { status: 404 }));
 
 		const error = await captureError(
 			endpoints.lists.getList(makeCtx(), { list_id: 1 }),
 		);
 
-		expect(error).toBeInstanceOf(ListcleanAPIError);
-		expect((error as ListcleanAPIError).status).toBe(404);
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(404);
 	});
 });

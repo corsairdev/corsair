@@ -1,5 +1,12 @@
-import { getCredits } from './account';
-import { getList, getListResults, listLists, remove } from './lists';
+import { getCredits, getProfile, updateProfile } from './account';
+import {
+	getList,
+	getListResults,
+	getListResultsCsv,
+	listLists,
+	remove,
+} from './lists';
+import { getUpload, listUploads, startUpload, uploadChunk } from './uploads';
 import {
 	getAnalytics,
 	getVerificationLogs,
@@ -14,13 +21,23 @@ export const Verify = {
 	getAnalytics,
 };
 
+export const Uploads = {
+	listUploads,
+	startUpload,
+	uploadChunk,
+	getUpload,
+};
+
 export const Lists = {
 	listLists,
 	getList,
 	getListResults,
+	getListResultsCsv,
 	delete: remove,
 };
 
 export const Account = {
 	getCredits,
+	getProfile,
+	updateProfile,
 };
