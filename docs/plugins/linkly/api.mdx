@@ -49,7 +49,7 @@ await corsair.linkly.api.clicks.export({ workspace_id: 42, start: '2026-06-01', 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `workspace_id` | `number` | Yes | The workspace that owns the links. Find IDs with workspaces.listWorkspaces. |
-| `link_id` | `string \| number` | No | A link ID, e.g. 30. One ID also works in link_ids. |
+| `link_id` | `string \| number` | No | Only clicks on this link, e.g. 30. |
 | `start` | `string` | No | YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ. |
 | `end` | `string` | No | YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ. |
 | `country` | `string` | No | ISO 3166-1 alpha-2 code, e.g. US. |
@@ -336,7 +336,7 @@ await corsair.linkly.api.conversions.list({ workspace_id: 42, since: '2026-07-01
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `conversions` | `object[]` | Yes | — |
-| `has_more` | `boolean` | Yes | More follow; page on with after. |
+| `has_more` | `boolean` | Yes | More follow. To walk the whole history, start with since set before the first conversion (e.g. 2020-01-01), then pass the last id as after while has_more is true; a page without since or after is newest first and cannot be continued with after. |
 
 <AccordionGroup>
 <Accordion title="conversions full type">
@@ -569,6 +569,7 @@ await corsair.linkly.api.links.bulkUpsert({ links: [{ workspace_id: 42, url: 'ht
   }[],
   password?: string,
   metadata?: Record<string, string | null>,
+  privacy_mode?: boolean,
   skip_social_crawler_tracking?: boolean,
   public_analytics?: boolean,
   webhooks?: string[],
@@ -701,6 +702,7 @@ await corsair.linkly.api.links.create({ workspace_id: 42, url: 'https://www.exam
 | `rules` | `object[]` | No | Click routing rules, e.g. send matches to another URL or split traffic. Only sent as JSON. |
 | `password` | `string` | No | Visitors must enter this password before the redirect. |
 | `metadata` | `Record<string, string \| null>` | No | Your own key-value data, up to 20 keys. Updates merge into the existing keys; set a key to null to remove it. Never shown to visitors. |
+| `privacy_mode` | `boolean` | No | Record clicks without personal data (no IP, location, user agent, referrer or query parameters; click times kept to the hour). Turning it on also clears pixels, custom scripts, conversion tracking, webhooks and click notifications on the link. Paid plans only. |
 | `skip_social_crawler_tracking` | `boolean` | No | With block_bots on, still let social crawlers through so link previews work. |
 | `public_analytics` | `boolean` | No | Turns on the link's public stats page. |
 | `webhooks` | `string[]` | No | Per-link webhook URLs. On update this replaces the list; use webhooks.subscribeToLink to add one. |
@@ -1318,6 +1320,7 @@ await corsair.linkly.api.links.update({ id: 41657524, workspace_id: 42, enabled:
 | `rules` | `object[]` | No | Click routing rules, e.g. send matches to another URL or split traffic. Only sent as JSON. |
 | `password` | `string` | No | Visitors must enter this password before the redirect. |
 | `metadata` | `Record<string, string \| null>` | No | Your own key-value data, up to 20 keys. Updates merge into the existing keys; set a key to null to remove it. Never shown to visitors. |
+| `privacy_mode` | `boolean` | No | Record clicks without personal data (no IP, location, user agent, referrer or query parameters; click times kept to the hour). Turning it on also clears pixels, custom scripts, conversion tracking, webhooks and click notifications on the link. Paid plans only. |
 | `skip_social_crawler_tracking` | `boolean` | No | With block_bots on, still let social crawlers through so link previews work. |
 | `public_analytics` | `boolean` | No | Turns on the link's public stats page. |
 | `webhooks` | `string[]` | No | Per-link webhook URLs. On update this replaces the list; use webhooks.subscribeToLink to add one. |
@@ -1539,7 +1542,7 @@ await corsair.linkly.api.webhooks.subscribeToLink({ link_id: 41657524, url: 'htt
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | The webhook URL. Pass it to webhooks.unsubscribe. |
+| `id` | `string` | Yes | The webhook URL. Pass it as hook_id, with link_id, to webhooks.unsubscribeFromLink. |
 
 
 
