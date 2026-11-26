@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/lusha",
   "version": "0.1.0",
-  "description": "B2B contact and company data: search and enrich Lusha records (emails, phone numbers, firmographics), follow async enrich jobs, and read account credit usage. Metered reads charge credits per call.",
+  "description": "B2B contact and company data from Lusha: search, enrich and prospect contacts and companies, lookalikes, recommendations, buying groups, signals and scores, tables, signal and opt-out webhooks, conversations and account usage. Most calls charge credits.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

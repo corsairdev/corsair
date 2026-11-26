@@ -3591,7 +3591,8 @@
                 "pages": [
                   "plugins/lusha/overview",
                   "plugins/lusha/api",
-                  "plugins/lusha/database"
+                  "plugins/lusha/database",
+                  "plugins/lusha/webhooks"
                 ]
               },
               {

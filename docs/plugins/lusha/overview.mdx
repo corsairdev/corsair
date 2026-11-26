@@ -1,24 +1,28 @@
 ---
 title: "Lusha plugin"
 sidebarTitle: "Overview"
-description: "B2B contact and company data with Lusha - search contacts and companies by email, LinkedIn URL or domain, reveal their emails and phone numbers plus company firmographics, follow async enrich jobs and read account credit usage."
+description: "B2B contact and company data with Lusha - search, enrich and prospect contacts and companies, find lookalikes, recommendations and buying groups, read signals, signal and ICP fit scores and website visits, manage contact and company tables and signal webhooks, search call conversations and read account credit usage."
 ---
 
-Use **Lusha** through Corsair: one client, typed API calls.
+Use **Lusha** through Corsair: one client, typed API calls, and incoming webhooks.
 
 Create an API key at https://dashboard.lusha.com/api/manage-api-keys (sign up at https://auth.lusha.com/signup first). The plugin sends it in Lusha's `api_key` header; a different spelling is rejected.
 
+The plugin covers Lusha's whole public V3 API (68 operations): search, enrich and search-and-enrich, prospecting with filters, lookalikes, recommendations, buying groups, contact and company signals, signal scores, ICP fit scores, website visits, contact and company tables, webhook subscriptions and their audit logs, call conversations, and account usage. The two operations that return the account's webhook signing secret are left out: set the secret in Lusha and store it in Corsair as the webhook signature.
+
 Things to know before you call:
 
-- **Searches and enrichment cost credits.** Every `person.*` and `company.*` call charges credits from your account pool per result or per revealed field, and a repeat of the same call charges again. When the account runs out, Lusha answers HTTP 402 `Insufficient credits for this operation`; the plugin reports this as a fatal error and does not retry it. `account.getAccountUsage` and the job poll are free. Lusha's free plan includes a small monthly credit allowance, but useful enrichment volume generally needs a paid plan.
+- **Most calls cost credits, so they ask for approval.** Searches, enrichment, prospecting, lookalikes, recommendations, buying groups, signals, scores, table exports and runs, and conversation exports charge credits from your account pool per result, per revealed field or per row; each operation's description says how. They are marked `destructive`, so Corsair asks before running them, like deletes. Filter lists, signal types, table setup, subscriptions, audit logs, `account.getAccountUsage` and the job poll are free. When the account runs out, Lusha answers HTTP 402 `Insufficient credits for this operation`; the plugin does not retry it. Lusha's free plan includes a small monthly credit allowance; useful volume needs a paid plan.
 - **Search first, enrich second.** `person.searchContacts` and `company.searchCompanies` match records by email, LinkedIn URL, name plus company, or domain, and return previews that say which data points exist (`has`) and what revealing them costs (`canReveal`). `person.enrichContacts` and `company.enrichCompanies` take ids from those previews and return the full records with emails or phones (contacts) and premium firmographics (companies).
 - **Enrichment can continue in the background.** A contact enrich call may answer with `status: 'partial'` and a `job`; poll `jobs.getContactsEnrichJob` with that job id until it reports `complete` (its `contacts` merge into the ones you already have, by `id`), `expired` or `failed`. The poll is free.
-- **Rate limits are per account.** The default window is 25 requests per second and `account.getAccountUsage` is capped at 5 requests per minute. The plugin retries a 429 with backoff; Lusha sends no `Retry-After` header.
+- **Rate limits are per account.** The default window is 25 requests per second, `account.getAccountUsage` is capped at 5 requests per minute and the webhook API at 100 per minute. A 429 is retried three times with backoff; Lusha sends no `Retry-After` header. A 5xx or dropped connection is retried only on free reads, because a charged call may already have run.
 - **Ids are Lusha's own strings** (for example `4389064654`), returned as `id` on every search result.
+- **Webhooks.** `subscriptions.create` subscribes contacts or companies to signals (each delivered signal is charged); `subscriptions.createOptOut` sends contact opt-outs. Point them at your Corsair webhook URL. Deliveries arrive as `signals.received` and `optOuts.received`, are checked against `X-Lusha-Signature` (HMAC-SHA256 of `timestamp.body` with the account webhook secret) and answered with the `{ received, timestamp, webhookId }` acknowledgement Lusha requires. An opt-out lists the emails and phone numbers you must remove from your own systems.
 
 **What you get:**
 
-- 8 typed API operations
+- 68 typed API operations
+- 2 incoming webhook event types
 
 ## Setup
 
@@ -112,18 +116,30 @@ await tenant.lusha.api.account.getAccountUsage({});
 ```
 
 
-**Write**
+**`company.enrichCompanies`**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/lusha/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.lusha.api.company.enrichCompanies({});
+```
 
 
 See the full list on the [API](/plugins/lusha/api) page.
+
+## Webhooks
+
+This plugin registers **2** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/lusha/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
 
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/lusha/api">
     Every `lusha.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/lusha/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.
