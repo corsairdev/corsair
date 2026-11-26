@@ -175,6 +175,43 @@ describe('gitea error handlers', () => {
 		}
 	});
 
+	it('lets a caller handler under a new key claim a status a builtin also matches', async () => {
+		// Core resolves a handler to the first key whose match passes in
+		// insertion order. A caller CONFLICT_ERROR must sit before the builtin
+		// STATE_ERROR (which also matches 409), or it would never run.
+		const caller: CorsairErrorHandler = {
+			CONFLICT_ERROR: {
+				match: (error: Error) =>
+					error instanceof GiteaAPIError && error.status === 409,
+				handler: async () => ({
+					maxRetries: 1,
+					retryStrategy: 'linear_1s' as const,
+				}),
+			},
+		};
+		const merged = mergeErrorHandlers(errorHandlers, caller);
+		const names = Object.keys(merged);
+		expect(names.at(-1)).toBe('DEFAULT');
+		expect(names.indexOf('CONFLICT_ERROR')).toBeLessThan(
+			names.indexOf('STATE_ERROR'),
+		);
+
+		const conflict = apiError(409, { replayable: true });
+		const first = names.find((name) =>
+			merged[name]?.match(conflict, testContext(conflict)),
+		);
+		expect(first).toBe('CONFLICT_ERROR');
+		const entry = merged.CONFLICT_ERROR;
+		expect(entry?.handler).toBeDefined();
+		if (entry?.handler) {
+			const result: object = await entry.handler(
+				conflict,
+				testContext(conflict),
+			);
+			expect(result).toEqual({ maxRetries: 1, retryStrategy: 'linear_1s' });
+		}
+	});
+
 	it('returns the builtin map unchanged when the caller adds nothing', () => {
 		expect(mergeErrorHandlers(errorHandlers, undefined)).toBe(errorHandlers);
 	});
