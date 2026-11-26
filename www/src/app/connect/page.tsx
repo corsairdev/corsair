@@ -14,7 +14,11 @@ import {
 	Section,
 	textLink,
 } from '@/components/gateway/gateway-ui';
-import type { ClientGuide, GatewayClient } from '@/lib/gateway-content';
+import type {
+	ClientGuide,
+	GatewayClient,
+	GuideVideo,
+} from '@/lib/gateway-content';
 import { getGatewayContent } from '@/lib/gateway-content';
 import {
 	APP_URL,
@@ -173,6 +177,26 @@ function CardHead({
 
 const stepText = 'text-[15px] leading-[1.6] text-[#1c1c1c99]';
 
+// A clip of the setup, from Hub's guide (the Claude app's Plugins page today). Dev's day-2 email links to
+// #claude. Muted, captions in the video; it loads only when played.
+function GuideClip({ video }: { video: GuideVideo }) {
+	return (
+		<figure className="flex flex-col gap-2">
+			<video
+				src={video.src}
+				poster={video.poster}
+				controls
+				muted
+				playsInline
+				preload="none"
+				aria-label={video.label}
+				className="aspect-[640/427] w-full rounded-lg border border-[#e4e3ec] bg-[#f6f5fb]"
+			/>
+			<figcaption className={stepText}>{video.label}.</figcaption>
+		</figure>
+	);
+}
+
 function Guide({
 	client,
 	guide,
@@ -224,6 +248,7 @@ function Guide({
 					))}
 				</ol>
 			) : null}
+			{guide.video ? <GuideClip video={guide.video} /> : null}
 			{guide.note ? (
 				<Body className="text-sm md:text-sm">{guide.note}</Body>
 			) : null}
