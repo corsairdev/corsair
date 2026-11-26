@@ -435,6 +435,7 @@ export const BaseProviders = [
 	'livesession',
 	'lob',
 	'logodev',
+	'loomio',
 	'loyverse',
 	'lusha',
 	'magichour',
@@ -1230,6 +1231,7 @@ export const ProviderDisplayNames = {
 	livesession: 'LiveSession',
 	lob: 'Lob',
 	logodev: 'Logo.dev',
+	loomio: 'Loomio',
 	loyverse: 'Loyverse',
 	magichour: 'Magic Hour',
 	lusha: 'Lusha',
@@ -2032,6 +2034,7 @@ export type AllProviders =
 	| 'livesession'
 	| 'lob'
 	| 'logodev'
+	| 'loomio'
 	| 'loyverse'
 	| 'magichour'
 	| 'lusha'
