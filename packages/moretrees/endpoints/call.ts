@@ -7,9 +7,9 @@ import { makeMoreTreesRequest } from '../client';
 type LogFields = Record<string, string | number | boolean | undefined>;
 
 /**
- * Validates the input, sends the request, shapes and validates the response,
- * then logs the event. The whole More Trees public API is reads plus one
- * planting POST.
+ * Validates the input, sends the request, validates the response, then logs
+ * the event. The More Trees external API is reads, one CO2 calculation and
+ * one planting POST.
  */
 export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	ctx: MoreTreesContext,
@@ -18,15 +18,14 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	rawInput: unknown,
 	toRequest: (
 		parsed: z.output<Input>,
+		ctx: MoreTreesContext,
 	) => MoreTreesRequest | Promise<MoreTreesRequest>,
 	options: {
 		log?: (parsed: z.output<Input>, result: z.output<Output>) => LogFields;
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const raw = await makeMoreTreesRequest(ctx, await toRequest(parsed));
-	// The docs publish no response schemas; read bodies pass through as open
-	// records and only the documented plant response is typed.
+	const raw = await makeMoreTreesRequest(ctx, await toRequest(parsed, ctx));
 	const result = operation.output.parse(raw);
 
 	await logEventFromContext(

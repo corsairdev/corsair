@@ -60,20 +60,26 @@ type MoreTreesEndpoint<K extends keyof MoreTreesEndpointOutputs> =
 
 export type MoreTreesEndpoints = {
 	accountGet: MoreTreesEndpoint<'accountGet'>;
+	accountLookup: MoreTreesEndpoint<'accountLookup'>;
 	forestGet: MoreTreesEndpoint<'forestGet'>;
 	projectsList: MoreTreesEndpoint<'projectsList'>;
+	projectsGetTree: MoreTreesEndpoint<'projectsGetTree'>;
+	projectsCalculateCo2: MoreTreesEndpoint<'projectsCalculateCo2'>;
 	treesPlant: MoreTreesEndpoint<'treesPlant'>;
 };
 
 const moreTreesEndpointsNested = {
 	account: {
 		get: Account.getAccount,
+		lookup: Account.lookup,
 	},
 	forest: {
 		get: Forest.get,
 	},
 	projects: {
 		list: Projects.list,
+		getTree: Projects.getTree,
+		calculateCo2: Projects.calculateCo2,
 	},
 	trees: {
 		plant: Trees.plant,
@@ -85,6 +91,10 @@ export const moreTreesEndpointSchemas = {
 		input: MoreTreesEndpointInputSchemas.accountGet,
 		output: MoreTreesEndpointOutputSchemas.accountGet,
 	},
+	'account.lookup': {
+		input: MoreTreesEndpointInputSchemas.accountLookup,
+		output: MoreTreesEndpointOutputSchemas.accountLookup,
+	},
 	'forest.get': {
 		input: MoreTreesEndpointInputSchemas.forestGet,
 		output: MoreTreesEndpointOutputSchemas.forestGet,
@@ -92,6 +102,14 @@ export const moreTreesEndpointSchemas = {
 	'projects.list': {
 		input: MoreTreesEndpointInputSchemas.projectsList,
 		output: MoreTreesEndpointOutputSchemas.projectsList,
+	},
+	'projects.getTree': {
+		input: MoreTreesEndpointInputSchemas.projectsGetTree,
+		output: MoreTreesEndpointOutputSchemas.projectsGetTree,
+	},
+	'projects.calculateCo2': {
+		input: MoreTreesEndpointInputSchemas.projectsCalculateCo2,
+		output: MoreTreesEndpointOutputSchemas.projectsCalculateCo2,
 	},
 	'trees.plant': {
 		input: MoreTreesEndpointInputSchemas.treesPlant,
@@ -108,6 +126,11 @@ const moreTreesEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Read one account: name, credit balance, forest name and slug',
 	},
+	'account.lookup': {
+		riskLevel: 'read',
+		description:
+			'Look up accounts by account code or email address: code, name, email and status',
+	},
 	'forest.get': {
 		riskLevel: 'read',
 		description:
@@ -117,6 +140,16 @@ const moreTreesEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'List every active planting project with country, supplier and the trees you can plant in it',
+	},
+	'projects.getTree': {
+		riskLevel: 'read',
+		description:
+			'Read one tree in a project: credits per tree, credit type and the project and tree names',
+	},
+	'projects.calculateCo2': {
+		riskLevel: 'read',
+		description:
+			'Calculate the CO2 captured and projects supported for a set of tree counts; plants nothing',
 	},
 	'trees.plant': {
 		riskLevel: 'destructive',
@@ -130,8 +163,8 @@ const moreTreesEndpointMeta = {
 /**
  * More Trees authenticates with a single X-API-KEY header. The account code
  * (not a secret) selects the payment account and is stored on the account.
- * The projects endpoint's docs mention a separate "public validation key";
- * the plugin sends the one X-API-KEY everywhere and flags this ambiguity.
+ * The project routes answer without a key (probed 11-26); the plugin sends
+ * the key anyway.
  */
 export const moreTreesAuthConfig = {
 	api_key: {
@@ -191,15 +224,19 @@ export function moretrees<const T extends MoreTreesPluginOptions>(
 	} satisfies InternalMoreTreesPlugin;
 }
 
-export { MoreTreesAPIError } from './client';
-
 export type {
 	AccountGetInput,
 	AccountGetResponse,
+	AccountLookupInput,
+	AccountLookupResponse,
 	ForestGetInput,
 	ForestGetResponse,
 	MoreTreesEndpointInputs,
 	MoreTreesEndpointOutputs,
+	ProjectsCalculateCo2Input,
+	ProjectsCalculateCo2Response,
+	ProjectsGetTreeInput,
+	ProjectsGetTreeResponse,
 	ProjectsListInput,
 	ProjectsListResponse,
 	TreesPlantInput,

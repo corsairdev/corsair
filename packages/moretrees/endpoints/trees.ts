@@ -1,4 +1,5 @@
 import type { MoreTreesEndpoints } from '..';
+import { rawId, resolveAccountCode } from '../client';
 import { call } from './call';
 import {
 	MoreTreesEndpointInputSchemas as Inputs,
@@ -7,9 +8,8 @@ import {
 
 /**
  * Plants trees from the payment account, either for the account itself or as
- * gifts for listed recipients. With `test: true` the request is a
- * evaluated without persisting; the default plants real trees and spends
- * credits.
+ * gifts for listed recipients. With `test: true` the request is evaluated
+ * without persisting; the default plants real trees and spends credits.
  */
 export const plant: MoreTreesEndpoints['treesPlant'] = async (ctx, input) =>
 	call(
@@ -20,30 +20,32 @@ export const plant: MoreTreesEndpoints['treesPlant'] = async (ctx, input) =>
 			output: Outputs.treesPlant,
 		},
 		input,
-		(parsed) => ({
+		async (parsed, context) => ({
 			service: 'transaction_management',
 			// A planting that may have reached More Trees is never replayed: it
-			// spends credits. test=true is a caller choice, not our default.
+			// spends credits.
 			replayable: false,
 			method: 'POST',
 			path: '/plant',
 			body: {
-				payment_account_code: parsed.payment_account_code,
+				payment_account_code:
+					parsed.payment_account_code ?? (await resolveAccountCode(context)),
 				test: parsed.test,
 				plant_for_others: parsed.plant_for_others,
 				quantity:
 					parsed.plant_for_others === false ? parsed.quantity : undefined,
-				project_id: parsed.project_id,
-				tree_id: parsed.tree_id,
+				// Exact digits: tree and project IDs can exceed 2^53.
+				project_id: rawId(parsed.project_id),
+				tree_id: rawId(parsed.tree_id),
 				recipients:
-					parsed.plant_for_others === false ? undefined : parsed.recipients,
+					parsed.plant_for_others === true ? parsed.recipients : undefined,
 			},
-			mediaType: 'application/json',
 		}),
 		{
-			log: (_, result) => ({
+			log: (parsed, result) => ({
 				creditsUsed: result.credits_used ?? undefined,
-				test: result.test ?? false,
+				// The requested mode when the response leaves `test` out.
+				test: result.test ?? parsed.test ?? false,
 			}),
 		},
 	);

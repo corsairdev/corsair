@@ -1,5 +1,5 @@
 import type { MoreTreesEndpoints } from '..';
-import { segment } from '../client';
+import { resolveAccountCode, segment } from '../client';
 import { call } from './call';
 import {
 	MoreTreesEndpointInputSchemas as Inputs,
@@ -16,15 +16,10 @@ export const get: MoreTreesEndpoints['forestGet'] = async (ctx, input) =>
 			output: Outputs.forestGet,
 		},
 		input,
-		({ forestSlugOrAccountCode }) => ({
+		async ({ forestSlugOrAccountCode }, context) => ({
 			service: 'user_management',
 			replayable: true,
 			method: 'GET',
-			path: `/forest/${segment(forestSlugOrAccountCode)}`,
+			path: `/forest/${segment(forestSlugOrAccountCode ?? (await resolveAccountCode(context)))}`,
 		}),
-		{
-			log: ({ forestSlugOrAccountCode }) => ({
-				forestSlugOrAccountCode,
-			}),
-		},
 	);
