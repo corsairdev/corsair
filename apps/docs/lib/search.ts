@@ -1,7 +1,10 @@
+import { readFile } from 'node:fs/promises';
 import { getBreadcrumbItems } from 'fumadocs-core/breadcrumb';
+import { structure } from 'fumadocs-core/mdx-plugins';
 import type { Root } from 'fumadocs-core/page-tree';
 import type { AdvancedIndex } from 'fumadocs-core/search/server';
 import { createSearchAPI } from 'fumadocs-core/search/server';
+import remarkMdx from 'remark-mdx';
 import { pluginSearchIndex } from './search-index';
 import { getPageTree, source } from './source';
 
@@ -9,6 +12,17 @@ function breadcrumbsOf(tree: Root, url: string): string[] {
 	return getBreadcrumbItems(url, tree, { includeRoot: true })
 		.map((item) => item.name)
 		.filter((name): name is string => typeof name === 'string');
+}
+
+/**
+ * Plugin pages compile on request (lib/plugin-pages.ts), so they carry no
+ * structured data; the ones without a catalog entry (get-credentials) are
+ * indexed from their MDX here, headings and text only.
+ */
+async function pluginPageStructure(file: string | undefined) {
+	if (!file) return undefined;
+	const raw = await readFile(file, 'utf8');
+	return structure(raw.replace(/^---\n[\s\S]*?\n---\n/, ''), [remarkMdx]);
 }
 
 async function searchIndexes(): Promise<AdvancedIndex[]> {
@@ -21,7 +35,9 @@ async function searchIndexes(): Promise<AdvancedIndex[]> {
 			const lean = pluginSearchIndex(page.url);
 			if (lean) return lean;
 
-			const data = page.data.structuredData;
+			const data =
+				page.data.structuredData ??
+				(await pluginPageStructure(page.absolutePath));
 			return {
 				id: page.url,
 				url: page.url,

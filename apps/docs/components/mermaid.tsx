@@ -56,23 +56,14 @@ export function Mermaid({ chart }: { chart: string }) {
 		};
 	}, [chart, dark, id]);
 
-	// Source is still readable, so show it rather than nothing — both when the
-	// diagram won't parse and on the server, where mermaid never runs.
-	if (failed || (svg === null && typeof window === 'undefined')) {
+	// The source until the SVG is ready (and if the diagram won't parse): the
+	// server and the first client render must match for hydration, and the
+	// source is readable without JavaScript.
+	if (failed || svg === null) {
 		return (
 			<pre className="my-4 overflow-x-auto rounded-lg border bg-fd-card p-4 text-sm">
 				{chart.trim()}
 			</pre>
-		);
-	}
-
-	// Either the rendered SVG or the placeholder — React rejects an element
-	// carrying both dangerouslySetInnerHTML and children.
-	if (svg === null) {
-		return (
-			<figure className="not-prose my-6">
-				<div className="h-32 w-full animate-pulse rounded-lg bg-fd-muted" />
-			</figure>
 		);
 	}
 

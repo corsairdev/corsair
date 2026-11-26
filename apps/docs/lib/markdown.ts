@@ -77,6 +77,47 @@ async function snippetChildren(source: string): Promise<RootContent[]> {
 	return tree.children;
 }
 
+function powershellNote(body: string): RootContent[] {
+	return [
+		{
+			type: 'blockquote',
+			children: [
+				{ type: 'paragraph', children: [{ type: 'html', value: '[!NOTE]' }] },
+				{
+					type: 'paragraph',
+					children: [
+						{ type: 'strong', children: [text('PowerShell syntax')] },
+						text(`: ${body}`),
+					],
+				},
+			],
+		},
+	];
+}
+
+/**
+ * components/generate-kek.tsx and components/windows-shell.tsx, as Markdown.
+ * The KEK widget becomes its command; pages show the .env line after it.
+ */
+const WIDGETS: Record<string, () => RootContent[]> = {
+	GenerateKEK: () => [
+		{
+			type: 'code',
+			lang: 'bash',
+			meta: null,
+			value: 'openssl rand -base64 32',
+		},
+	],
+	WindowsMigrationNote: () =>
+		powershellNote(
+			'Bash redirection and $VAR env vars do not work in PowerShell. Use the Windows commands shown in this tab instead.',
+		),
+	WindowsEnvVarsNote: () =>
+		powershellNote(
+			'Use $env:VAR_NAME = "value" to set variables and $env:VAR_NAME wherever docs show $VAR.',
+		),
+};
+
 interface Ctx {
 	/** local name → snippet path, for imports of /snippets/*.mdx */
 	snippets: Map<string, string>;
@@ -136,6 +177,11 @@ async function element(
 ): Promise<RootContent[]> {
 	const name = node.name ?? '';
 	const inner = () => convert(node.children as RootContent[], ctx);
+
+	// Interactive widgets, written out as what they show. They come in as
+	// snippet imports, so this has to run before snippet expansion.
+	const widget = WIDGETS[name];
+	if (widget) return widget();
 
 	const snippet = ctx.snippets.get(name);
 	if (snippet)
@@ -260,11 +306,6 @@ async function element(
 				...(await inner()),
 			];
 		}
-		// Interactive widgets have no Markdown form.
-		case 'GenerateKEK':
-		case 'WindowsMigrationNote':
-		case 'WindowsEnvVarsNote':
-			return [];
 		default:
 			// CardGroup, CodeGroup, Tabs, AccordionGroup, Frame and anything
 			// unknown: keep what's inside.

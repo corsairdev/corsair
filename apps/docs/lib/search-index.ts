@@ -30,27 +30,14 @@ function overviewData(plugin: PluginCatalogEntry): StructuredData {
 }
 
 /**
- * One block per operation — every extra block costs ~800 bytes of index.
- * Anchors mirror `app/(docs)/plugins/[plugin]/api/page.tsx`, which ids by shortPath.
+ * One block per operation (every extra block costs ~800 bytes of index), linked
+ * to its group heading. The page is the generated api.mdx: groups are
+ * `## <Resource Title>` and operations `### <method>`, whose ids repeat across
+ * groups (`get`, `get-1`, …), so the group heading is the anchor that always
+ * resolves.
  */
 function apiData(plugin: PluginCatalogEntry): StructuredData {
-	const headings: StructuredData['headings'] = [];
-	const seen = new Set<string>();
-	for (const op of plugin.api) {
-		const id = anchor(groupKey(op.shortPath));
-		if (seen.has(id)) continue;
-		seen.add(id);
-		headings.push({ id, content: resourceTitle(groupKey(op.shortPath)) });
-	}
-	return {
-		headings,
-		contents: plugin.api.map((op) => ({
-			heading: anchor(op.shortPath),
-			content: op.description
-				? `${op.shortPath} — ${op.description}`
-				: op.shortPath,
-		})),
-	};
+	return groupedData(plugin.api);
 }
 
 /** Group-level anchors only: the generated MDX dedupes per-entry ids, groups are stable. */

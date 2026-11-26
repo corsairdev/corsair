@@ -2,10 +2,18 @@
 
 import { useEffect, useState } from 'react';
 
+type CopyState = 'idle' | 'copied' | 'failed';
+
+function copyLabel(state: CopyState) {
+	if (state === 'copied') return '✓ Copied';
+	if (state === 'failed') return 'Copy failed: select the text';
+	return 'Copy';
+}
+
 export function GenerateKEK() {
 	const [key, setKey] = useState('');
-	const [copiedCmd, setCopiedCmd] = useState(false);
-	const [copiedEnv, setCopiedEnv] = useState(false);
+	const [copiedCmd, setCopiedCmd] = useState<CopyState>('idle');
+	const [copiedEnv, setCopiedEnv] = useState<CopyState>('idle');
 
 	const generate = () => {
 		const bytes = new Uint8Array(32);
@@ -17,10 +25,16 @@ export function GenerateKEK() {
 		generate();
 	}, []);
 
-	const copy = (text: string, setter: (value: boolean) => void) => {
-		navigator.clipboard.writeText(text);
-		setter(true);
-		setTimeout(() => setter(false), 2000);
+	// "Copied" only once the write succeeds: it rejects when clipboard access
+	// is denied, and the text stays on screen to copy by hand.
+	const copy = async (text: string, setter: (value: CopyState) => void) => {
+		try {
+			await navigator.clipboard.writeText(text);
+			setter('copied');
+		} catch {
+			setter('failed');
+		}
+		setTimeout(() => setter('idle'), 2000);
 	};
 
 	const envValue = `CORSAIR_KEK="${key || 'loading...'}"`;
@@ -94,7 +108,7 @@ export function GenerateKEK() {
 						style={btnStyle}
 						onClick={() => copy('openssl rand -base64 32', setCopiedCmd)}
 					>
-						{copiedCmd ? '✓ Copied' : 'Copy'}
+						{copyLabel(copiedCmd)}
 					</button>
 				</div>
 				<pre style={{ margin: 0 }}>
@@ -113,7 +127,7 @@ export function GenerateKEK() {
 							style={btnStyle}
 							onClick={() => copy(envValue, setCopiedEnv)}
 						>
-							{copiedEnv ? '✓ Copied' : 'Copy'}
+							{copyLabel(copiedEnv)}
 						</button>
 					</div>
 				</div>

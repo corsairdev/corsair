@@ -41,6 +41,8 @@ function frontmatter(file: string): PluginPageData {
 	const field = (name: string) => {
 		const m = new RegExp(`^${name}:\\s*(.+)$`, 'm').exec(head)?.[1]?.trim();
 		if (!m) return undefined;
+		if (m.length > 1 && m.startsWith("'") && m.endsWith("'"))
+			return m.slice(1, -1).replace(/''/g, "'");
 		return m.startsWith('"') ? (JSON.parse(m) as string) : m;
 	};
 	return {

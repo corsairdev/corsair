@@ -4,7 +4,8 @@ import { SITE_URL } from '@/lib/site';
 import { getPageTree, source } from '@/lib/source';
 
 /**
- * Every written page, in sidebar order. The ~2,500 generated plugin pages
+ * Every written page, in sidebar order, then the ones the sidebar leaves out.
+ * The ~2,500 generated plugin pages
  * stay out (the Mintlify version was 53 MB, more than an agent can read);
  * each plugin's reference is at /plugins/<id>/api.md and friends.
  */
@@ -22,9 +23,17 @@ function urls(nodes: PageTree.Node[], out: string[] = []): string[] {
 }
 
 export async function GET() {
-	const ordered = urls(getPageTree().children).filter(
-		(u) => !u.startsWith('/plugins/'),
-	);
+	const written = (u: string) => !u.startsWith('/plugins/');
+	// Sidebar order first, then the written pages docs.json doesn't list
+	// (hub/*, management/*, a few concepts/*), which other pages link to.
+	const inSidebar = urls(getPageTree().children).filter(written);
+	const listed = new Set(inSidebar);
+	const unlisted = source
+		.getPages()
+		.map((p) => p.url)
+		.filter((u) => written(u) && !listed.has(u))
+		.sort();
+	const ordered = [...inSidebar, ...unlisted];
 	const parts: string[] = [
 		`# Corsair documentation\n\nEvery page of ${SITE_URL} except the per-plugin reference pages. A plugin's pages are at ${SITE_URL}/plugins/<id>/overview.md, /api.md, /database.md and /webhooks.md; the plugin list is at ${SITE_URL}/guides/plugins.md.\n`,
 	];

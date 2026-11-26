@@ -16,6 +16,8 @@ async function fetchStars(): Promise<number | null> {
 					: {}),
 			},
 			next: { revalidate: 3600 },
+			// Covers the body read too: a stalled API mustn't hold up the page.
+			signal: AbortSignal.timeout(3000),
 		});
 		if (!res.ok) return null;
 		const data = (await res.json()) as { stargazers_count?: number };

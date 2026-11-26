@@ -2,13 +2,20 @@ import { isMarkdownPreferred } from 'fumadocs-core/negotiation';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
+/** Paths that are endpoints, not pages. Whole segments: /mcp-adapters/* are pages. */
+function isEndpoint(pathname: string): boolean {
+	return /^\/(?:api|mcp|llms\.mdx)(?:\/|$)/.test(pathname);
+}
+
 /** A request that prefers Markdown (`Accept: text/markdown`) gets the page's .md. */
 export default function proxy(request: NextRequest) {
 	const { pathname } = request.nextUrl;
 	if (
 		!isMarkdownPreferred(request) ||
-		/\.[a-z]+$/i.test(pathname) ||
-		pathname === '/'
+		pathname === '/' ||
+		isEndpoint(pathname) ||
+		// Files (.md, .txt, icons, images) are already what was asked for.
+		/\.[a-z0-9]+$/i.test(pathname)
 	)
 		return NextResponse.next();
 	return NextResponse.rewrite(
@@ -20,5 +27,5 @@ export default function proxy(request: NextRequest) {
 }
 
 export const config = {
-	matcher: ['/((?!_next|api|mcp|llms\\.mdx|icons|images|favicon\\.ico).*)'],
+	matcher: ['/((?!_next/).*)'],
 };

@@ -14,12 +14,12 @@ const calloutStyle = {
 
 const titleStyle = {
 	fontWeight: 600,
-	color: 'var(--foreground, rgba(255,255,255,0.92))',
+	color: 'var(--color-fd-foreground, rgba(255,255,255,0.92))',
 	marginBottom: '0.2rem',
 };
 
 const bodyStyle = {
-	color: 'var(--muted-foreground, rgba(255,255,255,0.62))',
+	color: 'var(--color-fd-muted-foreground, rgba(255,255,255,0.62))',
 };
 
 const codeStyle = {
@@ -28,7 +28,7 @@ const codeStyle = {
 	padding: '0.1rem 0.35rem',
 	borderRadius: '0.25rem',
 	backgroundColor: 'rgba(0, 120, 212, 0.12)',
-	color: 'var(--foreground, rgba(255,255,255,0.88))',
+	color: 'var(--color-fd-foreground, rgba(255,255,255,0.88))',
 };
 
 function WindowsIcon() {
