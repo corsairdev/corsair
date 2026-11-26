@@ -14,8 +14,9 @@ overviewNote: |
     `test: true` for a dry run: More Trees evaluates the request and
     persists nothing, but still checks the balance, so a dry run on an
     account with too few credits answers 400 `MTT-6006` "Insufficient
-    credits" (checked 11-26). A planting that may have reached More Trees is never
-    replayed after a failure.
+    credits" (checked 11-26). A planting is retried only after a 429, which
+    More Trees answers before doing anything; after a 5xx or a transport
+    failure it may have gone through, so it is never replayed.
   - **IDs are strings.** More Trees issues 64-bit project and tree IDs
     (such as `1212386588741402633`) that a JavaScript number cannot hold.
     The plugin returns every ID as a string; pass it back unchanged and it

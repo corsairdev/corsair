@@ -22,8 +22,8 @@ export const plant: MoreTreesEndpoints['treesPlant'] = async (ctx, input) =>
 		input,
 		async (parsed, context) => ({
 			service: 'transaction_management',
-			// A planting that may have reached More Trees is never replayed: it
-			// spends credits.
+			// No replay after a 5xx or a transport failure: the planting may have
+			// gone through and it spends credits. Core still retries a 429.
 			replayable: false,
 			method: 'POST',
 			path: '/plant',
