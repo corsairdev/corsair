@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/moneybird",
   "version": "0.1.0",
-  "description": "Accounting with Moneybird - list administrations, manage contacts, create and send sales invoices, track time entries, and manage products and projects.",
+  "description": "Accounting with Moneybird: contacts, sales invoices (send, payments, reminders, PDFs and UBL), estimates, subscriptions and recurring invoices, documents (purchase invoices, receipts, journal entries), bank mutations and statements, ledger accounts, products, projects, time entries, task lists, reports, webhooks and the rest of the API (298 operations).",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

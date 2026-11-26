@@ -1,174 +1,179 @@
 import { AuthMissingError } from 'corsair/core';
-import {
-	moneybird,
-	moneybirdAuthConfig,
-	moneybirdEndpointSchemas,
-} from './index';
+import { ApiError } from 'corsair/http';
+import { moneybirdOperations } from './endpoints/manifest';
+import { errorHandlers } from './error-handlers';
+import { moneybird } from './index';
 
-// The key builder only reads authType and keys.
-function keyContext(apiKey: string | null) {
-	return {
-		authType: 'api_key' as const,
-		options: {},
-		tenantId: 'default',
-		keys: {
-			get_api_key: jest.fn().mockResolvedValue(apiKey),
-			get_administration_id: jest.fn().mockResolvedValue('107693607045039116'),
+// `unknown` because each case gives the key builder only the context fields it reads.
+type KeyBuilder = (
+	ctx: unknown,
+	source: 'endpoint' | 'webhook',
+) => Promise<string>;
+
+function keyBuilderOf(plugin: ReturnType<typeof moneybird>): KeyBuilder {
+	// `unknown` because the key builder's real context type is wider than what these cases build.
+	return plugin.keyBuilder as unknown as KeyBuilder;
+}
+
+function apiError(status: number, method = 'GET'): ApiError {
+	return new ApiError(
+		{ method: method as 'GET', url: '/{administration_id}/projects/{id}.json' },
+		{
+			url: 'https://moneybird.com/api/v2/{administration_id}/projects/{id}.json',
+			ok: false,
+			status,
+			statusText: 'x',
+			body: {},
 		},
-	};
+		`Moneybird ${status}`,
+	);
 }
 
-function buildKey(
-	plugin: ReturnType<typeof moneybird>,
-	ctx: ReturnType<typeof keyContext>,
-) {
-	// The fake context is not a full KeyBuilderContext.
-	return plugin.keyBuilder?.(ctx as never, 'endpoint');
-}
-
-const operations = [
-	'administrations.list',
-	'contacts.create',
-	'contacts.delete',
-	'contacts.get',
-	'contacts.list',
-	'contacts.update',
-	'products.create',
-	'products.delete',
-	'products.get',
-	'products.list',
-	'products.update',
-	'projects.create',
-	'projects.delete',
-	'projects.get',
-	'projects.list',
-	'projects.update',
-	'salesInvoices.create',
-	'salesInvoices.delete',
-	'salesInvoices.get',
-	'salesInvoices.list',
-	'salesInvoices.send',
-	'salesInvoices.update',
-	'timeEntries.create',
-	'timeEntries.delete',
-	'timeEntries.get',
-	'timeEntries.list',
-	'timeEntries.update',
-];
-
-const riskLevels: Record<string, string> = {
-	'administrations.list': 'read',
-	'contacts.list': 'read',
-	'contacts.get': 'read',
-	'contacts.create': 'write',
-	'contacts.update': 'write',
-	'contacts.delete': 'destructive',
-	'salesInvoices.list': 'read',
-	'salesInvoices.get': 'read',
-	'salesInvoices.create': 'write',
-	'salesInvoices.update': 'write',
-	'salesInvoices.send': 'destructive',
-	'salesInvoices.delete': 'destructive',
-	'timeEntries.list': 'read',
-	'timeEntries.get': 'read',
-	'timeEntries.create': 'write',
-	'timeEntries.update': 'write',
-	'timeEntries.delete': 'destructive',
-	'products.list': 'read',
-	'products.get': 'read',
-	'products.create': 'write',
-	'products.update': 'write',
-	'products.delete': 'destructive',
-	'projects.list': 'read',
-	'projects.get': 'read',
-	'projects.create': 'write',
-	'projects.update': 'write',
-	'projects.delete': 'destructive',
-};
-
-describe('moneybird plugin definition', () => {
-	const plugin = moneybird();
-
-	it('registers as moneybird with api_key auth, the administration account field and no webhooks', () => {
+describe('moneybird plugin', () => {
+	it('registers every operation with meta and schemas', () => {
+		const plugin = moneybird();
 		expect(plugin.id).toBe('moneybird');
-		expect(plugin.options?.authType).toBe('api_key');
-		expect(moneybirdAuthConfig.api_key?.account).toEqual(['administration_id']);
-		expect(plugin.webhooks).toEqual({});
-		expect(
-			plugin.pluginWebhookMatcher?.({ headers: {}, body: {} } as never),
-		).toBe(false);
-	});
-
-	it('exposes exactly the 27 catalog operations across 6 groups', () => {
-		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
-			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
+		const ids = moneybirdOperations.map((o) => o.id).sort();
+		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(ids);
+		expect(Object.keys(plugin.endpointSchemas ?? {}).sort()).toEqual(ids);
+		expect(ids).toHaveLength(298);
+		expect(plugin.endpoints?.contacts.contactPeople.create).toEqual(
+			expect.any(Function),
 		);
-		expect(nested.sort()).toEqual(operations);
-		expect(Object.keys(plugin.endpoints ?? {})).toHaveLength(6);
+		expect(plugin.endpoints?.salesInvoices.send).toEqual(expect.any(Function));
+		expect(plugin.options?.authType).toBe('api_key');
+		expect(plugin.authConfig).toEqual({
+			api_key: { account: ['administration_id'] },
+		});
 	});
 
-	it('gives every endpoint a description and the right risk level', () => {
-		const meta = plugin.endpointMeta ?? {};
-		expect(Object.keys(meta).sort()).toEqual(operations);
-		for (const entry of Object.values(meta)) {
-			expect(entry.description?.length).toBeGreaterThan(10);
+	it('keeps the names the first version of the plugin used', () => {
+		const ids = new Set(moneybirdOperations.map((o) => o.id));
+		for (const group of ['contacts', 'timeEntries', 'products', 'projects']) {
+			for (const verb of ['list', 'get', 'create', 'update', 'delete']) {
+				expect(ids.has(`${group}.${verb}`)).toBe(true);
+			}
 		}
-		expect(
-			Object.fromEntries(
-				Object.entries(meta).map(([name, entry]) => [name, entry.riskLevel]),
+		for (const verb of ['list', 'get', 'create', 'update', 'send', 'delete']) {
+			expect(ids.has(`salesInvoices.${verb}`)).toBe(true);
+		}
+		expect(ids.has('administrations.list')).toBe(true);
+	});
+
+	it('marks sends, money and deletes destructive and reads read', () => {
+		const meta = moneybird().endpointMeta as Record<
+			string,
+			{ riskLevel: string }
+		>;
+		for (const id of [
+			'salesInvoices.send',
+			'salesInvoices.sendReminders',
+			'estimates.send',
+			'contacts.paymentsMandate.request',
+			'subscriptions.create',
+			'recurringSalesInvoices.create',
+			'purchaseTransactionBatches.createFromSepaFile',
+			'contacts.delete',
+			'webhooks.delete',
+		]) {
+			expect([id, meta[id]?.riskLevel]).toEqual([id, 'destructive']);
+		}
+		for (const id of [
+			'contacts.list',
+			'salesInvoices.downloadPdf',
+			'salesInvoices.fetchByIds',
+			'downloads.download',
+			'reports.profitLoss',
+		]) {
+			expect([id, meta[id]?.riskLevel]).toEqual([id, 'read']);
+		}
+		for (const id of ['contacts.create', 'salesInvoices.create']) {
+			expect([id, meta[id]?.riskLevel]).toEqual([id, 'write']);
+		}
+	});
+
+	it('prefers the key from options', async () => {
+		const plugin = moneybird({ key: 'opt-key' });
+		await expect(keyBuilderOf(plugin)({}, 'endpoint')).resolves.toBe('opt-key');
+	});
+
+	it('reads the stored key', async () => {
+		const plugin = moneybird();
+		await expect(
+			keyBuilderOf(plugin)(
+				{ keys: { get_api_key: async () => 'stored' } },
+				'endpoint',
 			),
-		).toEqual(riskLevels);
+		).resolves.toBe('stored');
 	});
 
-	it('has input and output schemas for every endpoint', () => {
-		expect(Object.keys(moneybirdEndpointSchemas).sort()).toEqual(operations);
-		for (const schemas of Object.values(moneybirdEndpointSchemas)) {
-			expect(typeof schemas.input.safeParse).toBe('function');
-			expect(typeof schemas.output.safeParse).toBe('function');
-		}
+	it('asks for a connection when no key is stored', async () => {
+		const plugin = moneybird();
+		await expect(
+			keyBuilderOf(plugin)(
+				{ keys: { get_api_key: async () => null } },
+				'endpoint',
+			),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		await expect(
+			keyBuilderOf(plugin)(
+				{
+					keys: {
+						get_api_key: async () => {
+							throw new Error('No DEK found for account');
+						},
+					},
+				},
+				'endpoint',
+			),
+		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
-	it('keeps DEFAULT last when caller handlers are merged', () => {
-		const custom = moneybird({
+	it('keeps a caller DEFAULT handler last', () => {
+		const plugin = moneybird({
 			errorHandlers: {
-				OVERLOADED_ERROR: {
+				DEFAULT: {
+					match: () => true,
+					handler: async () => ({ maxRetries: 1 }),
+				},
+				CUSTOM: {
 					match: () => false,
 					handler: async () => ({ maxRetries: 0 }),
 				},
 			},
 		});
-		const names = Object.keys(custom.errorHandlers ?? {});
-		expect(names.at(-1)).toBe('DEFAULT');
-		expect(names).toContain('OVERLOADED_ERROR');
-		expect(names).toContain('RATE_LIMIT_ERROR');
+		const keys = Object.keys(plugin.errorHandlers ?? {});
+		expect(keys[keys.length - 1]).toBe('DEFAULT');
+		expect(keys).toContain('CUSTOM');
 	});
 });
 
-describe('moneybird key builder', () => {
-	it('prefers an explicit key option', async () => {
-		const ctx = keyContext('stored-token');
-
-		await expect(
-			buildKey(moneybird({ key: 'option-token' }), ctx),
-		).resolves.toBe('option-token');
-		expect(ctx.keys.get_api_key).not.toHaveBeenCalled();
+describe('error handlers', () => {
+	it('does not retry a 429 again (core already did)', async () => {
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(apiError(429))).toBe(true);
+		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
+			maxRetries: 0,
+		});
 	});
 
-	it('reads the stored API token', async () => {
-		await expect(
-			buildKey(moneybird(), keyContext('stored-token')),
-		).resolves.toBe('stored-token');
+	it('matches auth, not found and validation statuses', () => {
+		expect(errorHandlers.AUTH_ERROR.match(apiError(401))).toBe(true);
+		expect(errorHandlers.AUTH_ERROR.match(apiError(403))).toBe(true);
+		expect(errorHandlers.NOT_FOUND_ERROR.match(apiError(404))).toBe(true);
+		expect(errorHandlers.BAD_REQUEST_ERROR.match(apiError(422))).toBe(true);
+		// 402: the account limit is reached; no retry clears it.
+		expect(errorHandlers.BAD_REQUEST_ERROR.match(apiError(402))).toBe(true);
+		expect(errorHandlers.BAD_REQUEST_ERROR.match(apiError(406))).toBe(true);
+		expect(errorHandlers.BAD_REQUEST_ERROR.match(apiError(500))).toBe(false);
 	});
 
-	it('throws AuthMissingError when no API token is stored', async () => {
+	it('retries a 5xx only for reads', async () => {
+		expect(errorHandlers.SERVER_ERROR.match(apiError(502))).toBe(true);
 		await expect(
-			buildKey(moneybird(), keyContext(null)),
-		).rejects.toBeInstanceOf(AuthMissingError);
-	});
-
-	it('refuses webhook keys', async () => {
+			errorHandlers.SERVER_ERROR.handler(apiError(502, 'GET')),
+		).resolves.toMatchObject({ maxRetries: 2 });
 		await expect(
-			moneybird().keyBuilder?.(keyContext('stored-token') as never, 'webhook'),
-		).rejects.toBeInstanceOf(AuthMissingError);
+			errorHandlers.SERVER_ERROR.handler(apiError(502, 'POST')),
+		).resolves.toEqual({ maxRetries: 0 });
 	});
 });

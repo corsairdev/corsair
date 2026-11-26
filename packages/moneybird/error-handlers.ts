@@ -1,97 +1,87 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { MoneybirdAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
-function asMoneybirdError(error: Error): MoneybirdAPIError | undefined {
-	return error instanceof MoneybirdAPIError ? error : undefined;
+// Moneybird answers errors with a meaningful HTTP status (400 malformed
+// parameters, 401 bad or revoked token, 402 account limit reached, 403 IP
+// blacklisted or a scope missing, 404, 405/406 unsupported method or content
+// type, 422 validation, 429 over 150 requests per 5 minutes per IP). The
+// status is the signal; the message text is a fallback for an error that
+// lost it. Status codes: https://developer.moneybird.com/introduction
+// (Responses, Throttling).
+function text(error: Error): string {
+	return error.message.toLowerCase();
 }
 
-function statusOf(error: Error): number | undefined {
-	return asMoneybirdError(error)?.status;
+function status(error: Error): number | undefined {
+	return error instanceof ApiError ? error.status : undefined;
 }
 
-/**
- * Status codes: https://developer.moneybird.com (Responses table) and the
- * Throttling section (429 with Retry-After, 150 requests per 5 minutes per
- * IP).
- */
+function isRead(error: Error): boolean {
+	return error instanceof ApiError && error.request?.method === 'GET';
+}
+
 export const errorHandlers = {
-	// 429 is the documented throttle; Retry-After is documented for it.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => statusOf(error) === 429,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs: asMoneybirdError(error)?.retryAfter ?? undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
-	},
-	// 401: an invalid or revoked token.
-	AUTH_ERROR: {
-		match: (error: Error) => statusOf(error) === 401,
-		handler: async () => ({ maxRetries: 0 }),
-	},
-	// 402: the account plan limit is reached, no retry can clear it.
-	// 403: the IP is blacklisted for API usage.
-	QUOTA_ERROR: {
-		match: (error: Error) => statusOf(error) === 402,
-		handler: async () => ({ maxRetries: 0 }),
-	},
-	PERMISSION_ERROR: {
-		match: (error: Error) => statusOf(error) === 403,
-		handler: async () => ({ maxRetries: 0 }),
-	},
-	// 400 malformed parameters, 404 unknown entity, 406 unsupported content
-	// type, 422 validation. The same request fails the same way.
-	VALIDATION_ERROR: {
 		match: (error: Error) => {
-			const status = statusOf(error);
-			return (
-				error.name === 'ZodError' ||
-				status === 400 ||
-				status === 404 ||
-				status === 406 ||
-				status === 422
-			);
+			const code = status(error);
+			if (code !== undefined) return code === 429;
+			const msg = text(error);
+			return msg.includes('too many requests') || msg.includes('rate limit');
+		},
+		// Core's request() has already retried this 429 (three times, honouring
+		// Retry-After) before it reaches a handler. Retrying the endpoint again
+		// would multiply the attempts.
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	AUTH_ERROR: {
+		match: (error: Error) => {
+			const code = status(error);
+			if (code !== undefined) return code === 401 || code === 403;
+			const msg = text(error);
+			return msg.includes('unauthorized') || msg.includes('forbidden');
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 5xx: only reads are replayed; Moneybird documents no idempotency keys.
-	SERVER_ERROR: {
-		match: (error: Error) =>
-			asMoneybirdError(error)?.replayable === true &&
-			(statusOf(error) ?? 0) >= 500,
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+	NOT_FOUND_ERROR: {
+		match: (error: Error) => {
+			const code = status(error);
+			if (code !== undefined) return code === 404;
+			return text(error).includes('not found');
+		},
+		// A record that was deleted: retrying won't bring it back.
+		handler: async () => ({ maxRetries: 0 }),
 	},
-	// A transport failure (reset, DNS, abort) never reached Moneybird, so a
-	// read can be replayed without a status to gate on.
-	TRANSPORT_ERROR: {
-		match: (error: Error) =>
-			asMoneybirdError(error)?.replayable === true &&
-			asMoneybirdError(error)?.status === undefined,
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+	BAD_REQUEST_ERROR: {
+		match: (error: Error) => {
+			const code = status(error);
+			if (code !== undefined)
+				return (
+					code === 400 ||
+					code === 402 ||
+					code === 405 ||
+					code === 406 ||
+					code === 409 ||
+					code === 422
+				);
+			const msg = text(error);
+			return msg.includes('bad request') || msg.includes('invalid input');
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	SERVER_ERROR: {
+		match: (error: Error) => {
+			const code = status(error);
+			return code !== undefined && code >= 500;
+		},
+		// Only reads are retried: a write (an invoice created, an email sent)
+		// may already have happened, and Moneybird documents no idempotency keys.
+		handler: async (error: Error) =>
+			isRead(error)
+				? { maxRetries: 2, retryStrategy: 'exponential_backoff' as const }
+				: { maxRetries: 0 },
 	},
 	DEFAULT: {
 		match: () => true,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;
-
-// Handlers match in key order and DEFAULT matches everything, so it stays
-// last even when the caller adds or overrides handlers.
-export function mergeErrorHandlers(
-	builtin: CorsairErrorHandler,
-	user: CorsairErrorHandler | undefined,
-): CorsairErrorHandler {
-	if (!user) return builtin;
-	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
-	const { DEFAULT: userDefault, ...userRest } = user;
-	const fallback = userDefault ?? builtinDefault;
-	return fallback
-		? { ...builtinRest, ...userRest, DEFAULT: fallback }
-		: { ...builtinRest, ...userRest };
-}

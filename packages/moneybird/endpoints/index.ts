@@ -1,16 +1,11 @@
-import * as Administrations from './administrations';
-import * as Contacts from './contacts';
-import * as Products from './products';
-import * as Projects from './projects';
-import * as SalesInvoices from './sales-invoices';
-import * as TimeEntries from './time-entries';
-
 export {
-	Administrations,
-	Contacts,
-	Products,
-	Projects,
-	SalesInvoices,
-	TimeEntries,
-};
-export * from './types';
+	moneybirdEndpointMeta,
+	moneybirdEndpointSchemas,
+	moneybirdEndpointsNested,
+} from './catalog';
+export {
+	getMoneybirdInputSchema,
+	getMoneybirdOutputSchema,
+} from './openapi-schema';
+export { MONEYBIRD_OPERATION_IDS } from './operation-types';
+export { createMoneybirdOperation } from './operations';
