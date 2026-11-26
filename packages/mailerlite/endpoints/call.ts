@@ -15,12 +15,11 @@ type LogFields = Record<string, string | number | boolean | undefined>;
 export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	ctx: MailerLiteContext,
 	operation: { event: string; input: Input; output: Output },
-	// unknown: raw caller input, parsed below by the operation's input schema.
-	rawInput: unknown,
+	rawInput: unknown, // unknown: raw caller input, parsed below by the input schema.
 	toRequest: (parsed: z.output<Input>) => MailerLiteRequest,
 	options: {
 		// unknown: raw is the response body, validated by the output schema.
-		shape?: (raw: unknown, parsed: z.output<Input>) => unknown;
+		shape?: (raw: unknown, parsed: z.output<Input>) => unknown; // unknown: raw is the untyped response body
 		log?: (parsed: z.output<Input>, result: z.output<Output>) => LogFields;
 	} = {},
 ): Promise<z.output<Output>> {

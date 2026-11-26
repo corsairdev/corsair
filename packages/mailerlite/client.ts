@@ -44,13 +44,13 @@ export class MailerLiteAPIError extends Error {
 	/**
 	 * True when repeating the request cannot double its effect: reads, and the
 	 * email upsert. Every other write is false, because a retry after an
-	 * unknown outcome could send a campaign twice.
+	 * unclear outcome could send a campaign twice.
 	 */
 	readonly replayable: boolean;
 	/** True for a failure that never reached MailerLite (reset, DNS, abort). */
 	readonly transport: boolean;
 	// unknown: the body is an untyped error body until the readers narrow it.
-	readonly body?: unknown;
+	readonly body?: unknown; // unknown: proxies can answer HTML or text too.
 
 	constructor(
 		message: string,
@@ -58,7 +58,7 @@ export class MailerLiteAPIError extends Error {
 			cause?: Error;
 			status?: number;
 			// unknown: same open error body as the field above.
-			body?: unknown;
+			body?: unknown; // unknown: see the body field above.
 			retryAfter?: number;
 			method?: string;
 			replayable?: boolean;
@@ -93,13 +93,14 @@ export class MailerLiteAPIError extends Error {
 
 
 // unknown: the body is an untyped error body; read one field at a time.
-function readMessage(body: unknown): string | undefined {
+function readMessage(body: unknown): string | undefined { // unknown: the body is an untyped error body
+	// unknown: the record fields are untyped until the guard narrows them.
 	const value = asRecord(body)?.message;
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
 // unknown: the body is an untyped error body until the guard here narrows it.
-function readFieldErrors(body: unknown): Record<string, string[]> | undefined {
+function readFieldErrors(body: unknown): Record<string, string[]> | undefined { // unknown: same open error body as readMessage
 	const errors = asRecord(body)?.errors;
 	if (!errors) return undefined;
 	const fieldErrors: Record<string, string[]> = {};
@@ -117,7 +118,7 @@ function readFieldErrors(body: unknown): Record<string, string[]> | undefined {
 /** Builds the plugin error message from the body's message and field errors. */
 export function describeMailerLiteError(
 	status: number | undefined,
-	body: unknown,
+	body: unknown, // unknown: the body is an untyped error body; readers narrow it.
 	fallback: string,
 ): string {
 	const text = readMessage(body) ?? fallback;
@@ -136,7 +137,7 @@ export type MailerLiteRequest = {
 	path: string;
 	query?: Record<string, string | number | boolean | undefined>;
 	// unknown: the endpoint's input schema has already validated the body.
-	body?: unknown;
+	body?: unknown; // unknown: callers parse the answer with zod output schemas.
 	/**
 	 * True when repeating the request cannot double its effect. Set per
 	 * operation, never derived from the method: reads are replayable, the
@@ -156,7 +157,7 @@ export function segment(value: string | number): string {
 export async function makeMailerLiteRequest(
 	apiKey: string,
 	{ method, path, query, body, replayable }: MailerLiteRequest,
-): Promise<unknown> {
+): Promise<unknown> { // unknown: callers parse the answer with zod output schemas
 	const config: OpenAPIConfig = {
 		BASE: MAILERLITE_API_BASE,
 		VERSION: '1.0.0',
@@ -180,7 +181,7 @@ export async function makeMailerLiteRequest(
 	};
 
 	try {
-		return await request<unknown>(config, requestOptions, {
+		return await request<unknown>(config, requestOptions, { // unknown: the body is untyped at this layer
 			rateLimitConfig: RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
