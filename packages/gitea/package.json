@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/gitea",
   "version": "0.1.0",
-  "description": "Gitea integration for Corsair: manage repos, issues, comments, releases and webhook registrations through the Gitea API of any self-hosted or gitea.com instance. Inbound webhook deliveries are not handled.",
+  "description": "Gitea integration for Corsair: git hosting on Gitea, Forgejo and Codeberg (gitea.com or any self-hosted instance): repositories, branches and protections, commits and statuses, files, tags and releases, issues, comments, labels, milestones and time tracking, pull requests and reviews, wikis, projects, Actions (runs, jobs, artifacts, secrets, variables, runners, workflows), packages, organizations and teams, users, keys, notifications and site admin, plus signed webhooks for pushes, issues, pull requests, reviews and releases (530 operations).",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -16,7 +16,8 @@
   "scripts": {
     "build": "rm -rf dist && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=api\\.test\\.ts"
   },
   "peerDependencies": {
     "corsair": ">=0.1.0",
@@ -34,8 +35,11 @@
   "keywords": [
     "corsair",
     "gitea",
+    "forgejo",
+    "codeberg",
     "git",
     "issues",
+    "pull-requests",
     "plugin"
   ],
   "author": "Corsair (https://corsair.dev)",

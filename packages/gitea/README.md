@@ -1,6 +1,6 @@
 # @corsair-dev/gitea
 
-Gitea integration for Corsair: manage repos, issues, comments, releases and webhook registrations through the Gitea API of any self-hosted or gitea.com instance. Inbound webhook deliveries are not handled.
+Gitea integration for Corsair: git hosting on Gitea, Forgejo and Codeberg (gitea.com or any self-hosted instance): repositories, branches and protections, commits and statuses, files, tags and releases, issues, comments, labels, milestones and time tracking, pull requests and reviews, wikis, projects, Actions (runs, jobs, artifacts, secrets, variables, runners, workflows), packages, organizations and teams, users, keys, notifications and site admin, plus signed webhooks for pushes, issues, pull requests, reviews and releases (530 operations).
 
 ## Install
 

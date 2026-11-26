@@ -1,13 +1,12 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 
-// Gitea answers errors with a meaningful HTTP status (400 malformed
-// parameters, 401 bad or revoked token, 402 account limit reached, 403 IP
-// blacklisted or a scope missing, 404, 405/406 unsupported method or content
-// type, 422 validation, 429 over 150 requests per 5 minutes per IP). The
-// status is the signal; the message text is a fallback for an error that
-// lost it. Status codes: https://developer.gitea.com/introduction
-// (Responses, Throttling).
+// Gitea answers errors with a meaningful HTTP status (400 bad input, 401 bad
+// or revoked token, 403 a missing scope or permission, 404 a missing record
+// or, as plain text, a route the instance lacks, 405 a repository that is not
+// in the state the call needs, 409 a conflict, 422 validation, 429 when the
+// instance turns on rate limiting). The status is the signal; the message
+// text is a fallback for an error that lost it.
 function text(error: Error): string {
 	return error.message.toLowerCase();
 }
@@ -73,8 +72,8 @@ export const errorHandlers = {
 			const code = status(error);
 			return code !== undefined && code >= 500;
 		},
-		// Only reads are retried: a write (an invoice created, an email sent)
-		// may already have happened, and Gitea documents no idempotency keys.
+		// Only reads are retried: a write (an issue created, a merge) may
+		// already have happened, and Gitea has no idempotency keys.
 		handler: async (error: Error) =>
 			isRead(error)
 				? { maxRetries: 2, retryStrategy: 'exponential_backoff' as const }
