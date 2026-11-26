@@ -112,6 +112,13 @@ export const linkhutRequestGap = { minIntervalMs: LINKHUT_MIN_INTERVAL_MS };
 let turn: Promise<void> = Promise.resolve();
 let lastSentAt: number | undefined;
 
+// Forgets the last send time and the queue. Tests call it so one timing test's
+// fake clock can't make the next test's first request wait.
+export function resetLinkhutRequestSlot(): void {
+	lastSentAt = undefined;
+	turn = Promise.resolve();
+}
+
 // Each HTTP attempt takes the queue in turn, so two parallel calls get two
 // slots a full interval apart instead of passing the same check together.
 function waitForSlot(): Promise<void> {

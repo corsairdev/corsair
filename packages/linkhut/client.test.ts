@@ -6,6 +6,7 @@ import {
 	linkhutRequestGap,
 	makeLinkhutRequest,
 	normaliseLinkhutKey,
+	resetLinkhutRequestSlot,
 } from './client';
 import { unauthenticated } from './test-fixtures';
 import {
@@ -19,6 +20,7 @@ const API_KEY = 'linkhut-live-token';
 // The one-second gap is a live-API etiquette rule; no test needs it.
 beforeEach(() => {
 	linkhutRequestGap.minIntervalMs = 0;
+	resetLinkhutRequestSlot();
 });
 
 afterEach(() => {
