@@ -46,8 +46,15 @@ routes):
   project.
 - A retry inside that window gets the stored status and body back, with an
   `Idempotent-Replay: true` header.
-- A `4xx` is stored and replayed like a success. A `5xx` isn't stored, so a retry
-  with the same key runs the request again.
+- A `4xx` from the route is stored and replayed like a success. A `5xx` isn't
+  stored, so a retry with the same key runs the request again.
+- Corsair checks the project key and the rate limit before it looks at the
+  `Idempotency-Key`, so a `401` or a `429` is never stored. After a `429`, wait
+  for `Retry-After` and send the same key again. The limited request never ran.
+- A replay counts toward the mint limit like any other request.
+- `POST /keys/rotate` can't be replayed once it has succeeded, because the
+  retry's old key gets the `401` first. See
+  [If the response is lost](/v1/authentication#if-the-response-is-lost).
 - A connect session's URL expires sooner than 24 hours. Once it has, a retry
   with its key creates a new session.
 - The same key with a different method, path or body returns
@@ -83,7 +90,8 @@ try {
 
 The SDK doesn't retry for you. When a request never gets an answer, from a
 network failure or the 30-second default timeout, it throws `CloudApiError` with
-`status: 0` and [`request_failed`](#request_failed).
+`status: 0` and [`request_failed`](#request_failed). If the status arrived but
+the body didn't, the error keeps that status.
 
 ## Codes on every route
 
@@ -231,11 +239,23 @@ backoff.
 
 ### request_failed
 
-Raised by the TypeScript SDK, not sent by Corsair. The request got no answer:
-the network failed, the request timed out, or the response body couldn't be
-read. `status` is `0` when no response arrived. `retryable` is `true` for `GET`,
-`PUT` and `DELETE`, and for a `POST` that carried an `Idempotency-Key` and never
-got a response.
+Raised by the TypeScript SDK, not sent by Corsair. The request didn't get a
+usable answer: the network failed, the request timed out, or the response body
+couldn't be read. `retryable` depends on how much of the response arrived.
+
+- Nothing arrived. `status` is `0`. `retryable` is `true` for `GET`, `PUT` and
+  `DELETE`, and for any request that carried an `Idempotency-Key`. It's `false`
+  for a `POST` or `PATCH` without one, because Corsair may have applied it.
+- The status arrived, but the body couldn't be read. `status` is that status.
+  `retryable` is `true` for `GET`, `PUT` and `DELETE`. For a `POST` or `PATCH`
+  it follows the status, as on any other error: `true` for `429` and `5xx`,
+  `false` otherwise, with or without an `Idempotency-Key`.
+
+So a mint whose `201` arrived without its body reports `retryable: false`. It's
+still safe to repeat with the same `Idempotency-Key`, and Corsair replays the
+stored response with the new credential in it. `POST /keys/rotate` is the
+exception, because the old key no longer works. See
+[If the response is lost](/v1/authentication#if-the-response-is-lost).
 
 ## Skills, files and plugin codes
 

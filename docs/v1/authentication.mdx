@@ -12,10 +12,10 @@ curl https://api.corsair.cloud/v1/projects/acme/project \
 
 ## The key
 
-A project key looks like `ck_cloud_{slug}.{secret}`, and it's on your project's
-Overview page in the dashboard. The `{slug}` isn't secret: it appears in the
-project's URLs, including the path above. The `{secret}` after the dot is the
-part to keep private.
+A project key looks like `ck_cloud_{slug}.{secret}`. In the dashboard, open
+your project, then Project, then Keys. Only an organization owner can reveal it
+there. The `{slug}` isn't secret: it appears in the project's URLs, including
+the path above. The `{secret}` after the dot is the part to keep private.
 
 Corsair checks the slug in the path against the key, so a key only ever answers
 for its own project. Any other slug returns `404 resource_missing` with
@@ -66,8 +66,22 @@ it. There's no grace period: the old key stops working when the call returns.
 ```
 
 `failed` lists instances that didn't redeploy and still hold the revoked key.
-Apply each one (`POST /instances/{key}/apply`). Send an `Idempotency-Key` with
-the rotate so a retry after a dropped connection doesn't rotate twice.
+Apply each one (`POST /instances/{key}/apply`).
+
+### If the response is lost
+
+The API won't hand you the new key in exchange for the old one. If the
+connection drops after the rotate went through, a retry with the old key gets
+`401 unauthorized`, even with the same `Idempotency-Key`, because Corsair checks
+the key before it looks for a stored response.
+
+Get the new key from the dashboard instead: open the project, then Project,
+then Keys, and reveal it. An organization owner has to do this. If that page
+was already open before the rotate, reload it first, or it shows the old key.
+
+An `Idempotency-Key` still helps when a second copy of the rotate reaches
+Corsair while the first is still running. The second copy waits for the first
+and gets the same new key back, instead of rotating again.
 
 ## The SDK
 
