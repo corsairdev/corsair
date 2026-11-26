@@ -152,6 +152,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 						hubConfig: internalConfig.hub,
 						internalConfig,
 						accounts: options?.accounts ?? {},
+						connectLinks: options?.connectLinks,
 					});
 					return Object.assign(client as object, {
 						[CORSAIR_INTERNAL]: internalConfig,
