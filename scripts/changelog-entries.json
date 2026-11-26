@@ -12939,5 +12939,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-26",
+    "package": "@corsair-dev/linkly",
+    "dir": "packages/linkly",
+    "name": "Linkly",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-26",
+    "package": "@corsair-dev/listclean",
+    "dir": "packages/listclean",
+    "name": "Listclean",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-26",
+    "package": "@corsair-dev/moretrees",
+    "dir": "packages/moretrees",
+    "name": "More Trees",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
