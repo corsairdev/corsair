@@ -63,6 +63,16 @@ export type ValidateCorsairDbTablesOptions = {
 	caseInsensitive?: boolean;
 };
 
+function normalizePhysicalTableName(
+	physical: string,
+	caseInsensitive: boolean,
+): string {
+	// SQLite folds only ASCII A-Z/a-z when comparing table identifiers.
+	return caseInsensitive
+		? physical.replace(/[A-Z]/g, (ch) => ch.toLowerCase())
+		: physical;
+}
+
 /** Postgres truncates an identifier past this, silently. */
 const MAX_IDENTIFIER_BYTES = 63;
 
@@ -111,7 +121,7 @@ export function validateCorsairDbTables(
 	>();
 	for (const key of CORSAIR_CORE_TABLE_NAMES) {
 		const physical = resolved[key];
-		const normalized = caseInsensitive ? physical.toLowerCase() : physical;
+		const normalized = normalizePhysicalTableName(physical, caseInsensitive);
 		const owner = owners.get(normalized);
 		if (owner) {
 			const detail =

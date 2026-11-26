@@ -173,6 +173,29 @@ describe('dbTables name mapping', () => {
 		sqlite.close();
 	});
 
+	it('preserves distinct non-ASCII table names on SQLite', () => {
+		const sqlite = new Database(':memory:');
+		expect(() =>
+			createCorsairDatabase(sqlite, {
+				dbTables: {
+					corsair_accounts: 'Ä',
+					corsair_entities: 'ä',
+				},
+			}),
+		).not.toThrow();
+
+		expect(() =>
+			validateCorsairDbTables(
+				{
+					corsair_accounts: 'Ä',
+					corsair_entities: 'ä',
+				},
+				{ dialect: 'sqlite' },
+			),
+		).not.toThrow();
+		sqlite.close();
+	});
+
 	it('allows case-only distinct physical table names on Postgres', () => {
 		const pool = { query: () => {}, connect: () => {} };
 		expect(() =>
