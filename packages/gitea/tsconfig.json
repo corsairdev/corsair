@@ -12,9 +12,10 @@
     "emitDeclarationOnly": true,
     "declaration": true,
     "declarationMap": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "resolveJsonModule": true
   },
-  "include": ["./**/*"],
+  "include": ["./**/*", "./gitea-manifest.json"],
   "exclude": ["dist", "node_modules"],
   "references": []
 }

@@ -1,8 +1,11 @@
-export { Branches } from './branches';
-export { Comments } from './comments';
-export { Commits } from './commits';
-export { Issues } from './issues';
-export { Releases } from './releases';
-export { Repos } from './repos';
-export { User } from './user';
-export { Webhooks } from './webhooks';
+export {
+	giteaEndpointMeta,
+	giteaEndpointSchemas,
+	giteaEndpointsNested,
+} from './catalog';
+export {
+	getGiteaInputSchema,
+	getGiteaOutputSchema,
+} from './openapi-schema';
+export { GITEA_OPERATION_IDS } from './operation-types';
+export { createGiteaOperation } from './operations';

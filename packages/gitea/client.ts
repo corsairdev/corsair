@@ -1,4 +1,4 @@
-import { AuthMissingError, asRecord } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import type {
 	ApiRequestOptions,
 	OpenAPIConfig,
@@ -6,15 +6,52 @@ import type {
 } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
-// The alias keeps the open type off the signatures below, where a trailing
-// annotation would sit between code and a brace.
-type UntypedBody = unknown; // unknown: provider bodies are open JSON; every use site parses with an output schema or reads one field.
+/**
+ * Gitea's REST API v1 (the same API Forgejo and Codeberg serve). Gitea is
+ * self-hosted, so the base URL is per account: `<instance>/api/v1`, where the
+ * instance is the site root (`https://gitea.com`, `https://codeberg.org`,
+ * `https://git.example.com`, a subpath install such as
+ * `https://example.com/git`). Calls take `Authorization: token <access token>`.
+ */
+export const GITEA_DEFAULT_TIMEOUT_MS = 30_000;
 
 /**
- * Gitea is self-hosted, so the instance URL is account config, not a constant.
- * Every request goes to `<instance>/api/v1`; the account may store the site
- * root (`https://git.example.com`) or the API root
- * (`https://git.example.com/api/v1`) and both land here.
+ * The page size the plugin asks for when a paged list's `limit` is left out.
+ * Gitea caps every page at MAX_RESPONSE_ITEMS (50 by default) and its own
+ * default is DEFAULT_PAGING_NUM (30), so the plugin sends 50: `next_page` is
+ * only exact when it knows the size it asked for.
+ */
+export const GITEA_PAGE_SIZE = 50;
+
+/** Largest file the attachment upload routes send (Gitea's default is 2 MB for issues, configurable). */
+export const GITEA_UPLOAD_MAX_BYTES = 100 * 1024 * 1024;
+
+const NO_DEK_ERROR_PATTERN = /no dek found/i;
+
+/**
+ * Reads a stored value. `ctx.keys.get_*()` throws, rather than returning
+ * null, when the account has no DEK at all: a valid state for an account that
+ * passes the key and instance URL in plugin options. Anything else thrown is
+ * a real failure and propagates.
+ */
+export async function tryGetStoredKey(
+	getter: () => Promise<string | null | undefined>,
+): Promise<string | undefined> {
+	try {
+		const value = await getter();
+		return value ?? undefined;
+	} catch (error) {
+		if (error instanceof Error && NO_DEK_ERROR_PATTERN.test(error.message)) {
+			return undefined;
+		}
+		throw error;
+	}
+}
+
+/**
+ * The API root for an instance URL. The account may store the site root
+ * (`https://git.example.com`) or the API root
+ * (`https://git.example.com/api/v1`); both land on `<site>/api/v1`.
  */
 export function normalizeInstanceUrl(raw: string | undefined): string {
 	const trimmed = (raw ?? '').trim();
@@ -26,7 +63,7 @@ export function normalizeInstanceUrl(raw: string | undefined): string {
 		parsed = new URL(trimmed);
 	} catch {
 		throw new Error(
-			'[gitea] instance URL must be an absolute http(s) URL, for example https://git.example.com',
+			'[gitea] instance URL must be an absolute http(s) URL, for example https://gitea.com',
 		);
 	}
 	if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
@@ -44,7 +81,7 @@ export function normalizeInstanceUrl(raw: string | undefined): string {
 		);
 	}
 	let path = parsed.pathname;
-	// avoid /\/+$/ — CodeQL flags it as ReDoS on long slash runs
+	// A loop rather than /\/+$/, which CodeQL flags as ReDoS on long slash runs.
 	while (path.endsWith('/')) {
 		path = path.slice(0, -1);
 	}
@@ -56,19 +93,27 @@ export function normalizeInstanceUrl(raw: string | undefined): string {
 	return `${parsed.origin}${path}/api/v1`;
 }
 
+/** What a call needs from the endpoint context. */
+export type GiteaCallContext = {
+	key: string;
+	options: { instanceUrl?: string };
+	keys?: {
+		get_instance_url?: () => Promise<string | null | undefined>;
+	};
+};
+
 /**
- * Resolves the instance API base for one call: the `instanceUrl` plugin option
- * when set, otherwise the connected account's stored `instance_url` field.
- * keyBuilder already refused to bind without either; this repeats the check
- * where the URL is actually spent.
+ * The instance API root for one call: the `instanceUrl` plugin option when
+ * set, otherwise the connected account's stored `instance_url`. Without
+ * either the call has nowhere to go, so it asks the tenant to connect.
  */
-export async function resolveGiteaInstance(ctx: {
-	options?: { instanceUrl?: string };
-	keys?: { get_instance_url?: () => Promise<string | null | undefined> };
-}): Promise<string> {
+export async function resolveGiteaInstance(
+	ctx: Pick<GiteaCallContext, 'options' | 'keys'>,
+): Promise<string> {
 	const fromOptions = ctx.options?.instanceUrl?.trim();
 	if (fromOptions) return normalizeInstanceUrl(fromOptions);
-	const fromAccount = (await ctx.keys?.get_instance_url?.())?.trim();
+	const getter = ctx.keys?.get_instance_url;
+	const fromAccount = getter ? (await tryGetStoredKey(getter))?.trim() : '';
 	if (fromAccount) return normalizeInstanceUrl(fromAccount);
 	throw new AuthMissingError(
 		'gitea',
@@ -77,172 +122,350 @@ export async function resolveGiteaInstance(ctx: {
 	);
 }
 
-// The server caps `limit` at MAX_RESPONSE_ITEMS (50 by default, per the
-// Gitea config cheat sheet; gitea.com answers 50 to limit=500). Sending 50
-// when the caller omits one keeps a page from coming back silently short.
-export const GITEA_MAX_PAGE_SIZE = 50;
+/**
+ * One path value, encoded. `slashes` keeps `/` between segments for values
+ * Gitea routes with a wildcard (a branch `feature/login`, a file path
+ * `docs/a.md`); each segment is still encoded on its own. A `.` or `..`
+ * segment would reach another route than the one whose permission was
+ * checked, so it is refused.
+ */
+export function encodeGiteaPathValue(value: string, slashes = false): string {
+	const parts = slashes ? value.split('/') : [value];
+	if (parts.some((part) => part === '' || part === '.' || part === '..')) {
+		throw new Error('Invalid Gitea path value');
+	}
+	return parts.map((part) => encodeURIComponent(part)).join('/');
+}
 
-// Live probe: gitea.com answered 429 with `retry-after: 60` on a burst, and
-// the API documents no quota. When the header is absent the handler waits the
-// observed window instead of hammering a self-hosted instance.
-export const GITEA_RATE_LIMIT_FALLBACK_MS = 60_000;
+export type GiteaHttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
-// error-handlers.ts owns retries, so the client makes one attempt and only
-// reads retry-after into the error.
-const GITEA_RATE_LIMIT_CONFIG: RateLimitConfig = {
+export type GiteaRequest = {
+	method: GiteaHttpMethod;
+	/** The route with `{name}` placeholders, filled from `pathParameters`. */
+	path: string;
+	/** Already encoded (see encodeGiteaPathValue). */
+	pathParameters?: Record<string, string>;
+	query?: Record<string, unknown>;
+	/** JSON object, multipart form, or raw text (POST /markdown/raw). */
+	body?: Record<string, unknown> | FormData | string;
+	/** `text/plain` for a raw text body; JSON otherwise. */
+	bodyMediaType?: string;
+	/** `binary`: the success comes back as `{ bytes, contentType }` (a file, a diff, an empty body). */
+	responseType?: 'binary';
+	timeoutMs?: number;
+};
+
+function configFor(base: string, key: string, timeoutMs?: number) {
+	return {
+		BASE: base,
+		VERSION: '1',
+		WITH_CREDENTIALS: false,
+		CREDENTIALS: 'omit',
+		// Values arrive encoded (encodeGiteaPathValue), some with their `/` kept.
+		ENCODE_PATH: (value: string) => value,
+		TIMEOUT: Math.ceil(timeoutMs ?? GITEA_DEFAULT_TIMEOUT_MS),
+		HEADERS: {
+			Accept: 'application/json',
+			// Gitea reads `token <t>` (and `Bearer <t>`); `token` works on every
+			// Gitea and Forgejo version.
+			Authorization: `token ${key}`,
+		},
+	} satisfies OpenAPIConfig;
+}
+
+/**
+ * Gitea only answers 429 when the instance turns on rate limiting; then core
+ * retries three times, honouring Retry-After.
+ */
+export const GITEA_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: { retryAfter: 'retry-after' },
 };
 
-export type GiteaQuery = Record<string, string | number | boolean | undefined>;
-
-/** Encodes one path segment. */
-export function segment(value: string | number): string {
-	return encodeURIComponent(String(value));
+function mediaTypeFor(request: GiteaRequest): string | undefined {
+	const body = request.body;
+	if (body === undefined) return undefined;
+	if (typeof FormData !== 'undefined' && body instanceof FormData) {
+		return undefined;
+	}
+	return request.bodyMediaType ?? 'application/json';
 }
-
-export type GiteaRequest = {
-	method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
-	path: string;
-	query?: GiteaQuery;
-	// unknown: the endpoint's input schema has already validated the body.
-	body?: UntypedBody;
-	/**
-	 * True only for reads. Set per operation, never derived from the method:
-	 * replaying a write after an unresolved outcome can repeat it (a retried
-	 * issue create duplicates the issue), so SERVER_ERROR and transport
-	 * retries gate on this flag.
-	 */
-	replayable: boolean;
-};
 
 /**
- * Gitea answers every 4xx with JSON `{ message, url }`, same shape on 401 and
- * 404. A missing route answers 404 with text/plain `404 page not found`
- * instead, so a text body here means the route itself does not exist on that
- * instance, not that the resource is missing.
+ * Sends one Gitea call through core's transport, which retries a 429 three
+ * times (honouring Retry-After) and raises `ApiError` with the status.
  */
-export class GiteaAPIError extends Error {
-	readonly status?: number;
-	/** Milliseconds from the retry-after header, when the instance sent one. */
-	readonly retryAfter?: number;
-	/** The replayable flag the operation declared, carried for the handlers. */
-	readonly replayable: boolean;
-	/**
-	 * True when the request never reached the provider (reset, DNS, abort), so
-	 * replaying a read cannot have repeated anything.
-	 */
-	readonly isTransportFailure: boolean;
-	readonly body?: UntypedBody; // unknown: a proxy can answer HTML or plain text instead of the JSON error.
-
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			body?: UntypedBody; // unknown: same open error body as the field above.
-			retryAfter?: number;
-			replayable?: boolean;
-			isTransportFailure?: boolean;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'GiteaAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.body = options.body ?? cause?.body;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.replayable = options.replayable ?? false;
-		this.isTransportFailure = options.isTransportFailure ?? false;
-	}
-
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-}
-
-function readMessage(body: UntypedBody): string | undefined {
-	const value = asRecord(body)?.message;
-	return typeof value === 'string' && value.length > 0 ? value : undefined;
-}
-
-export function describeGiteaError(
-	status: number | undefined,
-	body: UntypedBody, // unknown: JSON error envelope, plain text, or a proxy's HTML.
-	fallback: string,
-): string {
-	const text =
-		readMessage(body) ??
-		(typeof body === 'string' && body.length > 0 ? body : undefined) ??
-		fallback;
-	const label = [status].filter((part) => part !== undefined).join(' ');
-	return label ? `Gitea ${label}: ${text}` : text;
-}
-
 export async function makeGiteaRequest(
-	apiKey: string,
-	baseUrl: string,
-	{ method, path, query, body, replayable }: GiteaRequest,
-): Promise<UntypedBody> {
-	const config: OpenAPIConfig = {
-		// Normalized here too, so a raw instance URL passed straight to the
-		// client still lands on the API root.
-		BASE: normalizeInstanceUrl(baseUrl),
-		VERSION: '1.0.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		// Gitea API tokens do not accept Bearer; the literal word "token" is
-		// required, so the header is written out instead of using TOKEN.
-		HEADERS: {
-			Accept: 'application/json',
-			Authorization: `token ${apiKey}`,
-		},
-	};
-
+	ctx: GiteaCallContext,
+	options: GiteaRequest,
+): Promise<unknown> {
+	if (!ctx.key) {
+		throw new AuthMissingError('gitea', 'api_key');
+	}
+	const base = await resolveGiteaInstance(ctx);
+	const config = configFor(base, ctx.key, options.timeoutMs);
 	const requestOptions: ApiRequestOptions = {
-		method,
-		url: path,
-		query,
-		body,
-		mediaType: body === undefined ? undefined : 'application/json',
+		method: options.method,
+		url: options.path,
+		path: options.pathParameters,
+		query: options.query,
+		body: options.body,
+		mediaType: mediaTypeFor(options),
+		...(options.responseType ? { responseType: options.responseType } : {}),
 	};
-
 	try {
-		return await request<UntypedBody>(config, requestOptions, {
+		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: GITEA_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		// Core's ApiError carries the status and retryAfter the handlers match
-		// (429 retries) and core reads after a 401, so both are copied onto the
-		// plugin error. The cause itself is dropped: the ApiError holds the full
-		// request, and only transport errors keep one.
 		if (error instanceof ApiError) {
-			throw new GiteaAPIError(
-				describeGiteaError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					body: error.body,
-					retryAfter: error.retryAfter,
-					replayable,
-				},
-			);
+			throw withoutRequestData(error, ctx.key);
 		}
-		// Transport failures (reset, DNS, abort) never reached the provider and
-		// never held a body, so this is the one branch that keeps the cause.
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new GiteaAPIError(error.message, {
-				cause: error,
-				replayable,
-				isTransportFailure: true,
-			});
-		}
-		throw new GiteaAPIError('Unknown Gitea error', {
-			replayable,
-			isTransportFailure: true,
-		});
+		throw error;
 	}
+}
+
+const REDACTED = '[REDACTED]';
+
+/** How deep into an error body values are checked; anything deeper is replaced. */
+const MAX_ERROR_DEPTH = 6;
+
+/**
+ * Core keeps the sent body on `ApiError.request`. A Gitea body can hold
+ * private code and file contents, issue text, Actions secrets, deploy keys,
+ * passwords (admin.users.create) and uploads, so the error is rebuilt without it (and without
+ * request headers, which carry the API key), keeping the status and
+ * rate-limit fields the error handlers and core's retries read.
+ *
+ * Core also writes a bare status text ("Not Found") for the common statuses,
+ * which hides Gitea's reason. The message is rebuilt from Gitea's error body.
+ */
+export function withoutRequestData(error: ApiError, key?: string): ApiError {
+	// The key travels in the transport config, not on error.request: add it,
+	// so a body that echoes it loses it too.
+	const sent = [
+		...(key ? [{ text: key, wholeWord: false }] : []),
+		...sentStrings(error.request),
+	].sort((a, b) => b.text.length - a.text.length);
+	const body = scrubSent(withoutEchoedValues(error.body), sent);
+	const message = giteaErrorMessage(error.status, error.statusText, body);
+	return new ApiError(
+		{
+			...error.request,
+			body: error.request.body === undefined ? undefined : REDACTED,
+			formData: undefined,
+			headers: undefined,
+			// Path and query values are ids, names and search terms: keep the keys only.
+			path: redactedValues(error.request.path),
+			query: redactedValues(error.request.query),
+		},
+		{
+			url: routeUrl(error.url, error.request.url),
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body,
+		},
+		message,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
+/**
+ * Gitea's error bodies (APIError, APIValidationError, APIForbiddenError in
+ * the swagger): `{ "message": "repository does not exist", "url": "..." }`,
+ * and for a 422 sometimes `{ "message": "...", "errors": ["..."] }`. A route
+ * the instance doesn't have answers 404 with a plain-text `404 page not
+ * found`, which is kept so the caller can tell a missing route (an older
+ * Gitea or Forgejo) from a missing record.
+ */
+export function giteaErrorMessage(
+	status: number,
+	statusText: string,
+	// `unknown` because an error body is whatever JSON (or text) Gitea sent.
+	body: unknown,
+): string {
+	const fields =
+		typeof body === 'object' && body !== null && !Array.isArray(body)
+			? // `unknown` because an error body's fields are narrowed one by one below.
+				(body as Record<string, unknown>)
+			: {};
+	const parts: string[] = [];
+	if (typeof fields.message === 'string' && fields.message.length > 0) {
+		parts.push(fields.message);
+	}
+	if (Array.isArray(fields.errors)) {
+		for (const item of fields.errors.slice(0, 5)) {
+			if (
+				typeof item === 'string' &&
+				item.length > 0 &&
+				!parts.includes(item)
+			) {
+				parts.push(item);
+			}
+		}
+	}
+	if (
+		parts.length === 0 &&
+		typeof body === 'string' &&
+		body.trim().length > 0
+	) {
+		// An HTML error page (a proxy, a login page) says nothing useful.
+		const text = body.trim();
+		if (!text.startsWith('<')) parts.push(text);
+	}
+	const text = `Gitea ${status}: ${parts.join('; ') || statusText || 'request failed'}`;
+	return text.length > 500 ? `${text.slice(0, 497)}...` : text;
+}
+
+/** Strings shorter than this are matched as whole words only... */
+const WHOLE_WORD_BELOW = 6;
+/**
+ * ...and one-character strings are left alone, unless they sit under a key
+ * like these (a password, a token, a code, a phone number), where every
+ * length counts.
+ */
+const SECRET_KEY =
+	/pass|secret|token|credential|key$|otp|code$|phone|number|email|address|to$|from$/i;
+
+type SentString = { text: string; wholeWord: boolean };
+
+/**
+ * Every string this call sent (JSON body, query values, path values), longest
+ * first, so a Gitea message that quotes one back loses it while keeping its
+ * reason. Any of them can be private (a user name like "ada", an issue title), so
+ * length doesn't exempt one; short ones are matched as whole words, so they
+ * can't take out letters or digits inside other words.
+ */
+function sentStrings(request: ApiError['request']): SentString[] {
+	const found = new Map<string, boolean>();
+	// `unknown` because a sent value is any JSON value.
+	const visit = (value: unknown, depth: number, secret: boolean) => {
+		if (depth > 8 || value === undefined || value === null) return;
+		if (typeof value === 'string') {
+			if (value.length >= (secret ? 1 : 2) && !found.has(value)) {
+				found.set(value, value.length < WHOLE_WORD_BELOW);
+			}
+			return;
+		}
+		if (typeof value === 'number' && secret) {
+			const text = String(value);
+			if (!found.has(text)) found.set(text, true);
+			return;
+		}
+		if (Array.isArray(value)) {
+			for (const item of value) visit(item, depth + 1, secret);
+			return;
+		}
+		if (typeof FormData !== 'undefined' && value instanceof FormData) return;
+		if (typeof value === 'object') {
+			for (const [key, inner] of Object.entries(value)) {
+				visit(inner, depth + 1, secret || SECRET_KEY.test(key));
+			}
+		}
+	};
+	visit(request.body, 0, false);
+	visit(request.query, 0, false);
+	// An id or record type in the path, at any length:
+	// a 404 can quote it back.
+	visit(request.path, 0, true);
+	return [...found]
+		.map(([text, wholeWord]) => ({ text, wholeWord }))
+		.sort((a, b) => b.text.length - a.text.length);
+}
+
+function escapeRegExp(text: string): string {
+	return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/** Replaces every sent string inside an error body with [REDACTED]. */
+// `unknown` because an error body is whatever JSON (or text) Gitea sent.
+function scrubSent(value: unknown, sent: SentString[], depth = 0): unknown {
+	if (sent.length === 0) return value;
+	// A sent value echoed deeper than this is dropped with its subtree.
+	if (depth > MAX_ERROR_DEPTH) return REDACTED;
+	if (typeof value === 'string') {
+		let text = value;
+		for (const item of sent) {
+			text = item.wholeWord
+				? text.replace(
+						new RegExp(
+							`(?<![A-Za-z0-9])${escapeRegExp(item.text)}(?![A-Za-z0-9])`,
+							'g',
+						),
+						REDACTED,
+					)
+				: text.split(item.text).join(REDACTED);
+		}
+		return text;
+	}
+	if (Array.isArray(value)) {
+		return value.map((item) => scrubSent(item, sent, depth + 1));
+	}
+	if (typeof value === 'object' && value !== null) {
+		// `unknown` because error detail items have no fixed shape.
+		const result: Record<string, unknown> = {};
+		for (const [key, inner] of Object.entries(value)) {
+			result[key] = scrubSent(inner, sent, depth + 1);
+		}
+		return result;
+	}
+	return value;
+}
+
+// `unknown` because query and path values are scalars.
+function redactedValues(
+	values: Record<string, unknown> | undefined,
+): Record<string, string> | undefined {
+	if (values === undefined) return undefined;
+	return Object.fromEntries(Object.keys(values).map((key) => [key, REDACTED]));
+}
+
+/**
+ * The route the call took, without the caller's values:
+ * `https://git.example.com/api/v1/repos/ada/site/issues/4?state=open` →
+ * `https://git.example.com/api/v1/repos/{owner}/{repo}/issues/{index}?[REDACTED]`.
+ */
+export function routeUrl(url: string, route: string | undefined): string {
+	const mark = url.indexOf('/api/v1/');
+	if (typeof route !== 'string' || !route.startsWith('/') || mark === -1) {
+		return withoutQuery(url);
+	}
+	const base = url.slice(0, mark + '/api/v1'.length);
+	return `${base}${route}${url.includes('?') ? `?${REDACTED}` : ''}`;
+}
+
+/** `https://…/contacts.json?query=…` → `https://…/contacts.json?[REDACTED]`. */
+export function withoutQuery(url: string): string {
+	const mark = url.indexOf('?');
+	return mark === -1 ? url : `${url.slice(0, mark)}?${REDACTED}`;
+}
+
+/** Fields an error body may use to echo back what was sent. */
+const ECHO_KEYS = new Set(['value', 'values', 'input', 'received', 'params']);
+
+/** Drops fields a validation error may use to echo back what was sent. */
+// `unknown` because an error body is whatever JSON (or text) Gitea sent.
+function withoutEchoedValues(body: unknown, depth = 0): unknown {
+	if (typeof body !== 'object' || body === null) return body;
+	// Deeper than the scrub below reaches: nothing of it is kept.
+	if (depth > MAX_ERROR_DEPTH) return REDACTED;
+	if (Array.isArray(body)) {
+		return body.map((item) => withoutEchoedValues(item, depth + 1));
+	}
+	// `unknown` because error detail items have no fixed shape.
+	const result: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(body)) {
+		if (ECHO_KEYS.has(key)) continue;
+		result[key] = withoutEchoedValues(value, depth + 1);
+	}
+	return result;
 }
