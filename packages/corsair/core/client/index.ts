@@ -245,7 +245,10 @@ export type CorsairClient<Plugins extends readonly CorsairPlugin[]> =
 export type CorsairTenantWrapper<Plugins extends readonly CorsairPlugin[]> = {
 	withTenant: (
 		tenantId: string,
-		options?: { accounts?: { [P in Plugins[number]['id']]?: string } },
+		options?: {
+			accounts?: { [P in Plugins[number]['id']]?: string };
+			connectLinks?: WithTenantOptions['connectLinks'];
+		},
 	) => CorsairClient<Plugins>;
 	/**
 	 * Integration-level key managers for each plugin.
@@ -478,7 +481,9 @@ export type WithTenantOptions = {
 	 * Whether a call that finds its app unconnected mints a connect link for the
 	 * person (default true). Pass false for callers that can't show one, such as
 	 * background jobs: the call still fails with AuthMissingError, without a
-	 * link, and Hub's hourly link allowance isn't spent.
+	 * link, and Hub's hourly link allowance isn't spent. Local clients only: a
+	 * cloud client refuses false, since the cloud instance decides from the
+	 * caller's role.
 	 */
 	connectLinks?: boolean;
 };

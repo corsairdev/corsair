@@ -52,9 +52,8 @@ describe('withTenant connectLinks option', () => {
 	});
 
 	it('fails without a link when the scope turns links off', async () => {
-		const err = await ping(
-			corsair.withTenant('t1', { connectLinks: false }),
-		).catch((e: unknown) => e);
+		const scope = corsair.withTenant('t1', { connectLinks: false });
+		const err = await ping(scope).catch((e: unknown) => e);
 		expect(err).toBeInstanceOf(AuthMissingError);
 		expect(err).toMatchObject({ connectUrl: null, tenantId: 't1' });
 		expect((err as Error).message).not.toContain('myapp.example/connect');
