@@ -49,7 +49,7 @@ await corsair.linkly.api.clicks.export({ workspace_id: 42, start: '2026-06-01', 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `workspace_id` | `number` | Yes | The workspace that owns the links. Find IDs with workspaces.listWorkspaces. |
-| `link_id` | `string` | No | A link ID, e.g. "30". One ID also works in link_ids. |
+| `link_id` | `string \| number` | No | A link ID, e.g. 30. One ID also works in link_ids. |
 | `start` | `string` | No | YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ. |
 | `end` | `string` | No | YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ. |
 | `country` | `string` | No | ISO 3166-1 alpha-2 code, e.g. US. |
@@ -92,7 +92,7 @@ await corsair.linkly.api.clicks.getCounters({ workspace_id: 42, counter: 'countr
 |------|------|----------|-------------|
 | `workspace_id` | `number` | Yes | The workspace that owns the links. Find IDs with workspaces.listWorkspaces. |
 | `counter` | `country \| city \| region \| platform \| destination \| referer \| bot_name \| isp \| link_id \| remote_ip \| top_params \| ad_network \| utm_source \| utm_medium \| utm_campaign \| utm_content \| utm_term` | Yes | The dimension to group clicks by. |
-| `link_id` | `string` | No | A link ID, e.g. "30". One ID also works in link_ids. |
+| `link_id` | `string \| number` | No | A link ID, e.g. 30. One ID also works in link_ids. |
 | `link_ids` | `string` | No | Hyphen-separated link IDs, e.g. "24-25-26". |
 | `start` | `string` | No | YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ. |
 | `end` | `string` | No | YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ. |
@@ -195,7 +195,7 @@ await corsair.linkly.api.clicks.getTimeSeries({ workspace_id: 42, start: '2026-0
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `workspace_id` | `number` | Yes | The workspace that owns the links. Find IDs with workspaces.listWorkspaces. |
-| `link_id` | `string` | No | A link ID, e.g. "30". One ID also works in link_ids. |
+| `link_id` | `string \| number` | No | A link ID, e.g. 30. One ID also works in link_ids. |
 | `link_ids` | `string` | No | Hyphen-separated link IDs, e.g. "24-25-26". |
 | `start` | `string` | No | YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ. |
 | `end` | `string` | No | YYYY-MM-DD or YYYY-MM-DDTHH:MM:SSZ. |
@@ -944,7 +944,7 @@ await corsair.linkly.api.links.get({ id: 41657524, workspace_id: 42 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string \| number` | Yes | — |
-| `workspace_id` | `number` | No | Optional. The workspace the link belongs to. |
+| `workspace_id` | `number` | Yes | The workspace the link belongs to. Linkly refuses the call without it. |
 
 
 
@@ -1042,8 +1042,8 @@ await corsair.linkly.api.links.getDetails({ id: 41657524 });
 |------|------|----------|-------------|
 | `base62_id` | `string \| null` | No | — |
 | `clicks_count` | `number \| null` | No | Lifetime clicks, bots included. |
-| `domain` | `Record<string, any> \| null` | No | — |
-| `domains` | `Record<string, any>[] \| null` | No | — |
+| `domain` | `string \| Record<string, any> \| null` | No | The link's domain, e.g. linkly.link. |
+| `domains` | `(string \| Record<string, any>)[] \| null` | No | Domains the workspace can use. |
 | `link` | `object` | Yes | — |
 
 <AccordionGroup>
