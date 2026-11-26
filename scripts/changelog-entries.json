@@ -12684,5 +12684,94 @@
         "title": "X (Twitter) plugin: full API v2 on api.x.com, OAuth 2.0 PKCE"
       }
     ]
+  },
+  {
+    "date": "2026-11-26",
+    "package": "@corsair-dev/gmail",
+    "dir": "packages/gmail",
+    "name": "Gmail",
+    "version": "0.1.14",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2758,
+        "title": "Support Corsair's managed Google app in the 5 Google plugins"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-26",
+    "package": "@corsair-dev/googlecalendar",
+    "dir": "packages/googlecalendar",
+    "name": "Google Calendar",
+    "version": "0.1.11",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2758,
+        "title": "Support Corsair's managed Google app in the 5 Google plugins"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-26",
+    "package": "@corsair-dev/googledocs",
+    "dir": "packages/googledocs",
+    "name": "Google Docs",
+    "version": "0.1.7",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2758,
+        "title": "Support Corsair's managed Google app in the 5 Google plugins"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-26",
+    "package": "@corsair-dev/googledrive",
+    "dir": "packages/googledrive",
+    "name": "Google Drive",
+    "version": "0.1.10",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2758,
+        "title": "Support Corsair's managed Google app in the 5 Google plugins"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-26",
+    "package": "@corsair-dev/googlesheets",
+    "dir": "packages/googlesheets",
+    "name": "Google Sheets",
+    "version": "0.1.11",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2758,
+        "title": "Support Corsair's managed Google app in the 5 Google plugins"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-26",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.103",
+    "isNew": false,
+    "changes": []
   }
 ]
