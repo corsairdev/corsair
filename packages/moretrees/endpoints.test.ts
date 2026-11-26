@@ -3,13 +3,12 @@ import { Account, Forest, Projects, Trees } from './endpoints';
 import { MoreTreesEndpointOutputSchemas as Outputs } from './endpoints/types';
 import {
 	account,
-	accountLookupBody,
 	BIG_TREE_ID,
 	forest,
+	insufficientCreditsBody,
 	plantOthersResponse,
 	plantSelfResponse,
 	projectsBody,
-	projectTreeBody,
 	totalCo2,
 } from './test-fixtures';
 
@@ -150,57 +149,6 @@ describe('account.get', () => {
 	});
 });
 
-describe('account.lookup', () => {
-	it('GETs /external/accounts with repeated list parameters', async () => {
-		respond(accountLookupBody);
-
-		const result = await invoke(Account.lookup, {
-			accountCodes: ['AC1C2C', 'ACE2MK'],
-			emails: ['ops@example.com'],
-			includeInactive: true,
-		});
-
-		const sent = await lastRequest();
-		expect(sent.path).toBe('/user-management-api/external/accounts');
-		expect(sent.search.getAll('accountCodes')).toEqual(['AC1C2C', 'ACE2MK']);
-		expect(sent.search.getAll('emails')).toEqual(['ops@example.com']);
-		expect(sent.search.get('includeInactive')).toBe('true');
-		expect(result).toEqual([
-			{
-				userId: '1212386588741409999',
-				accountCode: 'AC1C2C',
-				accountName: 'Beachy BV',
-				emailAddress: 'ops@example.com',
-				accountId: '42',
-				quantity: 0,
-				index: 0,
-				accountStatus: 'ACTIVE',
-			},
-		]);
-	});
-
-	it('logs counts, never the email addresses', async () => {
-		respond(accountLookupBody);
-
-		await invoke(Account.lookup, { emails: ['ops@example.com'] });
-
-		expect(mockLog).toHaveBeenCalledWith(
-			expect.anything(),
-			'moretrees.account.lookup',
-			{ accountCodes: 0, emails: 1, found: 1 },
-			'completed',
-		);
-		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('example.com');
-	});
-
-	it('needs at least one account code or email', async () => {
-		await expect(invoke(Account.lookup, {})).rejects.toThrow(
-			'at least one account code or email',
-		);
-		expect(fetchMock).not.toHaveBeenCalled();
-	});
-});
-
 describe('forest.get', () => {
 	it('GETs the forest by slug or account code', async () => {
 		respond(forest);
@@ -259,44 +207,6 @@ describe('projects.list', () => {
 
 	it('rejects the bare array the guide shows, which the API does not send', () => {
 		expect(Outputs.projectsList.safeParse([]).success).toBe(false);
-	});
-});
-
-describe('projects.getTree', () => {
-	it('GETs one project tree with exact IDs in the path and result', async () => {
-		respond(projectTreeBody);
-
-		const result = await invoke(Projects.getTree, {
-			projectId: 24,
-			treeId: BIG_TREE_ID,
-		});
-
-		expect(await lastRequest()).toMatchObject({
-			method: 'GET',
-			path: `/project-management-api/external/projects/24/trees/${BIG_TREE_ID}`,
-		});
-		expect(result).toMatchObject({
-			projectTreeId: '1212386588741402700',
-			projectId: '24',
-			treeId: BIG_TREE_ID,
-			creditTypeId: '3',
-			numberOfCredits: 1,
-			treeName: 'Markhamia lutea',
-		});
-	});
-
-	it('refuses an ID that is not digits', async () => {
-		await expect(
-			invoke(Projects.getTree, { projectId: '24', treeId: '1e5' }),
-		).rejects.toThrow('IDs are digits');
-		expect(fetchMock).not.toHaveBeenCalled();
-	});
-
-	it('refuses a number too large to be exact', async () => {
-		await expect(
-			invoke(Projects.getTree, { projectId: 24, treeId: 2 ** 60 }),
-		).rejects.toThrow();
-		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 
@@ -415,6 +325,24 @@ describe('trees.plant', () => {
 			plant_for_others: true,
 			recipients: [{ email: 'jane@example.com', name: 'Frank', quantity: 1 }],
 		});
+	});
+
+	it('surfaces the balance check a test-mode plant still runs', async () => {
+		respond(insufficientCreditsBody, 400);
+
+		const error = await invoke(Trees.plant, {
+			test: true,
+			plant_for_others: false,
+			quantity: 1,
+		}).catch((e: unknown) => e);
+
+		expect(error).toMatchObject({ status: 400 });
+		expect(String((error as Error).message)).toContain(
+			'More Trees 400: Insufficient credits.',
+		);
+		expect(String((error as Error).message)).toContain('(MTT-6006)');
+		// A planting is never replayed.
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 
 	it('logs the requested test mode when the response leaves it out', async () => {

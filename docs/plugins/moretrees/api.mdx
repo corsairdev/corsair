@@ -44,55 +44,6 @@ await corsair.moretrees.api.account.get({ accountCode: 'AC1C2C' });
 
 ---
 
-### lookup
-
-`account.lookup`
-
-Look up accounts by account code or email address: code, name, email and status
-
-**Risk:** `read`
-
-```ts
-await corsair.moretrees.api.account.lookup({ accountCodes: ['AC1C2C'] });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `accountCodes` | `string[]` | No | Account codes to look up. |
-| `emails` | `string[]` | No | Email addresses to look up. |
-| `includeInactive` | `boolean` | No | True also returns accounts with no active member (closed accounts). Defaults to false. |
-
-`GET /external/accounts` on the user-management service, from More
-Trees' OpenAPI document (not in the API guide). Pass `accountCodes`,
-`emails` or both; each is sent as a repeated query parameter.
-
-
-
-**Output:** `object[]`
-
-<AccordionGroup>
-<Accordion title="Output full type">
-
-```ts
-{
-  userId?: string | null,
-  accountCode?: string | null,
-  accountName?: string | null,
-  emailAddress?: string | null,
-  accountId?: string | null,
-  quantity?: number | null,
-  index?: number | null,
-  accountStatus?: string | null
-}[]
-```
-</Accordion>
-</AccordionGroup>
-
-
----
-
 ## Forest
 
 ### get
@@ -161,12 +112,16 @@ await corsair.moretrees.api.projects.calculateCo2({ totalTreesByProjectTree: { '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `totalTreesByProjectTree` | `object` | Yes | Tree counts keyed by project tree ID (projectTreeId from projects.getTree). |
+| `totalTreesByProjectTree` | `object` | Yes | Tree counts keyed by project tree ID. Project tree IDs are not tree IDs and no API-key route lists them; 26 and 28 are known (probed 11-26). |
 
 `POST /external/projects/total-co2` on the project-management service,
-from the OpenAPI document. Keys are project tree IDs (`projectTreeId`
-from `projects.getTree`); an unknown key answers 404 "Project Tree is not
-found". A calculation only: nothing is planted or stored.
+from the OpenAPI document. Keys are project tree IDs, which are not the
+tree IDs from `projects.list`: `26` and `28` answer, a tree ID answers
+404 `MTC-0001` "Project Tree is not found" (checked 11-26). The route
+that maps a tree to its project tree ID
+(`GET /external/projects/{projectId}/trees/{treeId}`) answers 401 to a
+customer API key, so the plugin leaves it out. A calculation only:
+nothing is planted or stored.
 
 <AccordionGroup>
 <Accordion title="totalTreesByProjectTree full type">
@@ -188,48 +143,6 @@ Record<string, {
 |------|------|----------|-------------|
 | `totalCo2` | `number \| null` | No | — |
 | `supportedProjects` | `number \| null` | No | — |
-
-
-
----
-
-### getTree
-
-`projects.getTree`
-
-Read one tree in a project: credits per tree, credit type and the project and tree names
-
-**Risk:** `read`
-
-```ts
-await corsair.moretrees.api.projects.getTree({ projectId: '24', treeId: '1212386588741402633' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `projectId` | `string \| number` | Yes | The project ID, from projects.list. |
-| `treeId` | `string \| number` | Yes | The tree ID, from the project in projects.list. |
-
-`GET /external/projects/{projectId}/trees/{treeId}` on the
-project-management service, from the OpenAPI document. Returns the
-`projectTreeId` that `projects.calculateCo2` takes.
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `projectTreeId` | `string \| null` | No | A More Trees ID, as a string (IDs can exceed 2^53). |
-| `projectId` | `string \| null` | No | A More Trees ID, as a string (IDs can exceed 2^53). |
-| `treeId` | `string \| null` | No | A More Trees ID, as a string (IDs can exceed 2^53). |
-| `creditTypeId` | `string \| null` | No | A More Trees ID, as a string (IDs can exceed 2^53). |
-| `numberOfCredits` | `number \| null` | No | — |
-| `creditTypeStripeCode` | `string \| null` | No | — |
-| `projectName` | `string \| null` | No | — |
-| `treeName` | `string \| null` | No | — |
 
 
 

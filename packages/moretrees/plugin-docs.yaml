@@ -1,5 +1,5 @@
 displayName: More Trees
-description: Climate action with More Trees - read the account credit balance, forest stats, planting projects and CO2 figures, look up accounts, and plant trees for yourself or as gifts.
+description: Climate action with More Trees - read the account credit balance, forest stats, planting projects and CO2 figures, and plant trees for yourself or as gifts.
 domain: moretrees.eco
 recommendedAuth: api_key
 overviewNote: |
@@ -12,7 +12,9 @@ overviewNote: |
   - **Planting spends credits.** `trees.plant` defaults to `test: false`,
     which plants real trees and uses the payment account's credits. Pass
     `test: true` for a dry run: More Trees evaluates the request and
-    persists nothing. A planting that may have reached More Trees is never
+    persists nothing, but still checks the balance, so a dry run on an
+    account with too few credits answers 400 `MTT-6006` "Insufficient
+    credits" (checked 11-26). A planting that may have reached More Trees is never
     replayed after a failure.
   - **IDs are strings.** More Trees issues 64-bit project and tree IDs
     (such as `1212386588741402633`) that a JavaScript number cannot hold.
@@ -40,36 +42,28 @@ examples:
 apiExamples:
   account.get:
     call: "{ accountCode: 'AC1C2C' }"
-  account.lookup:
-    call: "{ accountCodes: ['AC1C2C'] }"
   forest.get:
     call: "{ forestSlugOrAccountCode: 'beachy' }"
   projects.list: {}
-  projects.getTree:
-    call: "{ projectId: '24', treeId: '1212386588741402633' }"
   projects.calculateCo2:
     call: "{ totalTreesByProjectTree: { '28': { receivedAndPlantedTrees: 2, giftedAndPlantedTrees: 0 } } }"
   trees.plant:
     call: "{ test: true, plant_for_others: false, quantity: 2, project_id: '24', tree_id: '1212386588741402633' }"
 apiNotes:
-  account.lookup: |
-    `GET /external/accounts` on the user-management service, from More
-    Trees' OpenAPI document (not in the API guide). Pass `accountCodes`,
-    `emails` or both; each is sent as a repeated query parameter.
   projects.list: |
     `GET /external/projects` on the project-management service. Returns
     `{ data, total }`; the API guide shows a bare array, but the API and its
     OpenAPI document wrap the list in `data`. The CO2 field is `tonnes_co2`
     (the guide spells it `tonnes_c02`).
-  projects.getTree: |
-    `GET /external/projects/{projectId}/trees/{treeId}` on the
-    project-management service, from the OpenAPI document. Returns the
-    `projectTreeId` that `projects.calculateCo2` takes.
   projects.calculateCo2: |
     `POST /external/projects/total-co2` on the project-management service,
-    from the OpenAPI document. Keys are project tree IDs (`projectTreeId`
-    from `projects.getTree`); an unknown key answers 404 "Project Tree is not
-    found". A calculation only: nothing is planted or stored.
+    from the OpenAPI document. Keys are project tree IDs, which are not the
+    tree IDs from `projects.list`: `26` and `28` answer, a tree ID answers
+    404 `MTC-0001` "Project Tree is not found" (checked 11-26). The route
+    that maps a tree to its project tree ID
+    (`GET /external/projects/{projectId}/trees/{treeId}`) answers 401 to a
+    customer API key, so the plugin leaves it out. A calculation only:
+    nothing is planted or stored.
   trees.plant: |
     `POST /external/plant` on the transaction-management service. With
     `plant_for_others: true`, send `recipients` (each needs an

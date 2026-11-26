@@ -60,10 +60,8 @@ type MoreTreesEndpoint<K extends keyof MoreTreesEndpointOutputs> =
 
 export type MoreTreesEndpoints = {
 	accountGet: MoreTreesEndpoint<'accountGet'>;
-	accountLookup: MoreTreesEndpoint<'accountLookup'>;
 	forestGet: MoreTreesEndpoint<'forestGet'>;
 	projectsList: MoreTreesEndpoint<'projectsList'>;
-	projectsGetTree: MoreTreesEndpoint<'projectsGetTree'>;
 	projectsCalculateCo2: MoreTreesEndpoint<'projectsCalculateCo2'>;
 	treesPlant: MoreTreesEndpoint<'treesPlant'>;
 };
@@ -71,14 +69,12 @@ export type MoreTreesEndpoints = {
 const moreTreesEndpointsNested = {
 	account: {
 		get: Account.getAccount,
-		lookup: Account.lookup,
 	},
 	forest: {
 		get: Forest.get,
 	},
 	projects: {
 		list: Projects.list,
-		getTree: Projects.getTree,
 		calculateCo2: Projects.calculateCo2,
 	},
 	trees: {
@@ -91,10 +87,6 @@ export const moreTreesEndpointSchemas = {
 		input: MoreTreesEndpointInputSchemas.accountGet,
 		output: MoreTreesEndpointOutputSchemas.accountGet,
 	},
-	'account.lookup': {
-		input: MoreTreesEndpointInputSchemas.accountLookup,
-		output: MoreTreesEndpointOutputSchemas.accountLookup,
-	},
 	'forest.get': {
 		input: MoreTreesEndpointInputSchemas.forestGet,
 		output: MoreTreesEndpointOutputSchemas.forestGet,
@@ -102,10 +94,6 @@ export const moreTreesEndpointSchemas = {
 	'projects.list': {
 		input: MoreTreesEndpointInputSchemas.projectsList,
 		output: MoreTreesEndpointOutputSchemas.projectsList,
-	},
-	'projects.getTree': {
-		input: MoreTreesEndpointInputSchemas.projectsGetTree,
-		output: MoreTreesEndpointOutputSchemas.projectsGetTree,
 	},
 	'projects.calculateCo2': {
 		input: MoreTreesEndpointInputSchemas.projectsCalculateCo2,
@@ -126,11 +114,6 @@ const moreTreesEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Read one account: name, credit balance, forest name and slug',
 	},
-	'account.lookup': {
-		riskLevel: 'read',
-		description:
-			'Look up accounts by account code or email address: code, name, email and status',
-	},
 	'forest.get': {
 		riskLevel: 'read',
 		description:
@@ -140,11 +123,6 @@ const moreTreesEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'List every active planting project with country, supplier and the trees you can plant in it',
-	},
-	'projects.getTree': {
-		riskLevel: 'read',
-		description:
-			'Read one tree in a project: credits per tree, credit type and the project and tree names',
 	},
 	'projects.calculateCo2': {
 		riskLevel: 'read',
@@ -227,16 +205,12 @@ export function moretrees<const T extends MoreTreesPluginOptions>(
 export type {
 	AccountGetInput,
 	AccountGetResponse,
-	AccountLookupInput,
-	AccountLookupResponse,
 	ForestGetInput,
 	ForestGetResponse,
 	MoreTreesEndpointInputs,
 	MoreTreesEndpointOutputs,
 	ProjectsCalculateCo2Input,
 	ProjectsCalculateCo2Response,
-	ProjectsGetTreeInput,
-	ProjectsGetTreeResponse,
 	ProjectsListInput,
 	ProjectsListResponse,
 	TreesPlantInput,

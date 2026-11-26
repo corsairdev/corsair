@@ -1,5 +1,4 @@
 import type { MoreTreesEndpoints } from '..';
-import { segment } from '../client';
 import { call } from './call';
 import {
 	MoreTreesEndpointInputSchemas as Inputs,
@@ -25,30 +24,11 @@ export const list: MoreTreesEndpoints['projectsList'] = async (ctx, input) =>
 		{ log: (_, result) => ({ projects: result.data.length }) },
 	);
 
-/** Reads one project tree: its credit cost, credit type and names. */
-export const getTree: MoreTreesEndpoints['projectsGetTree'] = async (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'projects.getTree',
-			input: Inputs.projectsGetTree,
-			output: Outputs.projectsGetTree,
-		},
-		input,
-		({ projectId, treeId }) => ({
-			service: 'project_management',
-			replayable: true,
-			method: 'GET',
-			path: `/projects/${segment(projectId)}/trees/${segment(treeId)}`,
-		}),
-	);
-
 /**
  * Calculates the CO2 captured and the number of projects supported for a set
- * of tree counts. A calculation: nothing is planted or stored.
+ * of tree counts, keyed by project tree ID (not tree ID: 26 and 28 answer,
+ * tree IDs answer 404 MTC-0001; probed 11-26). A calculation: nothing is
+ * planted or stored.
  */
 export const calculateCo2: MoreTreesEndpoints['projectsCalculateCo2'] = async (
 	ctx,

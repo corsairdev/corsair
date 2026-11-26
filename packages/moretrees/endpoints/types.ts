@@ -51,51 +51,6 @@ const AccountGetResponseSchema = z
 
 export type AccountGetResponse = z.infer<typeof AccountGetResponseSchema>;
 
-// ── account.lookup ────────────────────────────────────────────────────────
-
-const AccountLookupInputSchema = z
-	.object({
-		accountCodes: z
-			.array(z.string().min(1))
-			.optional()
-			.describe('Account codes to look up.'),
-		emails: z
-			.array(z.string().min(1))
-			.optional()
-			.describe('Email addresses to look up.'),
-		includeInactive: z
-			.boolean()
-			.optional()
-			.describe(
-				'True also returns accounts with no active member (closed accounts). Defaults to false.',
-			),
-	})
-	.refine(
-		(value) =>
-			(value.accountCodes?.length ?? 0) > 0 || (value.emails?.length ?? 0) > 0,
-		{ message: 'pass at least one account code or email' },
-	);
-
-export type AccountLookupInput = z.input<typeof AccountLookupInputSchema>;
-
-// AccountInformationResponseDto in the user-management OpenAPI document.
-const AccountLookupEntrySchema = z
-	.object({
-		userId: IdOutput.nullish(),
-		accountCode: z.string().nullish(),
-		accountName: z.string().nullish(),
-		emailAddress: z.string().nullish(),
-		accountId: IdOutput.nullish(),
-		quantity: z.number().nullish(),
-		index: z.number().nullish(),
-		accountStatus: z.string().nullish(),
-	})
-	.loose();
-
-const AccountLookupResponseSchema = z.array(AccountLookupEntrySchema);
-
-export type AccountLookupResponse = z.infer<typeof AccountLookupResponseSchema>;
-
 // ── forest.get ────────────────────────────────────────────────────────────
 
 const ForestGetInputSchema = z.object({
@@ -178,33 +133,6 @@ const ProjectsListResponseSchema = z
 
 export type ProjectsListResponse = z.infer<typeof ProjectsListResponseSchema>;
 
-// ── projects.getTree ──────────────────────────────────────────────────────
-
-const ProjectsGetTreeInputSchema = z.object({
-	projectId: IdInput.describe('The project ID, from projects.list.'),
-	treeId: IdInput.describe('The tree ID, from the project in projects.list.'),
-});
-
-export type ProjectsGetTreeInput = z.input<typeof ProjectsGetTreeInputSchema>;
-
-// ProjectTreeCreditInformationDto in the project-management document.
-const ProjectsGetTreeResponseSchema = z
-	.object({
-		projectTreeId: IdOutput.nullish(),
-		projectId: IdOutput.nullish(),
-		treeId: IdOutput.nullish(),
-		creditTypeId: IdOutput.nullish(),
-		numberOfCredits: z.number().nullish(),
-		creditTypeStripeCode: z.string().nullish(),
-		projectName: z.string().nullish(),
-		treeName: z.string().nullish(),
-	})
-	.loose();
-
-export type ProjectsGetTreeResponse = z.infer<
-	typeof ProjectsGetTreeResponseSchema
->;
-
 // ── projects.calculateCo2 ─────────────────────────────────────────────────
 
 const ProjectsCalculateCo2InputSchema = z.object({
@@ -227,7 +155,7 @@ const ProjectsCalculateCo2InputSchema = z.object({
 			}),
 		)
 		.describe(
-			'Tree counts keyed by project tree ID (projectTreeId from projects.getTree).',
+			'Tree counts keyed by project tree ID. Project tree IDs are not tree IDs and no API-key route lists them; 26 and 28 are known (probed 11-26).',
 		),
 });
 
@@ -289,7 +217,7 @@ const PlantCommon = {
 		.boolean()
 		.optional()
 		.describe(
-			'True evaluates the request as a dry run without persisting changes. Defaults to false, which plants real trees and spends credits.',
+			'True evaluates the request as a dry run without persisting changes; the balance must still cover it (400 MTT-6006 otherwise). Defaults to false, which plants real trees and spends credits.',
 		),
 	project_id: IdInput.optional().describe(
 		'The project to plant in, from projects.list; omitted selects the default project.',
@@ -357,40 +285,32 @@ export type TreesPlantResponse = z.infer<typeof TreesPlantResponseSchema>;
 
 export type MoreTreesEndpointInputs = {
 	accountGet: AccountGetInput;
-	accountLookup: AccountLookupInput;
 	forestGet: ForestGetInput;
 	projectsList: ProjectsListInput;
-	projectsGetTree: ProjectsGetTreeInput;
 	projectsCalculateCo2: ProjectsCalculateCo2Input;
 	treesPlant: TreesPlantInput;
 };
 
 export type MoreTreesEndpointOutputs = {
 	accountGet: AccountGetResponse;
-	accountLookup: AccountLookupResponse;
 	forestGet: ForestGetResponse;
 	projectsList: ProjectsListResponse;
-	projectsGetTree: ProjectsGetTreeResponse;
 	projectsCalculateCo2: ProjectsCalculateCo2Response;
 	treesPlant: TreesPlantResponse;
 };
 
 export const MoreTreesEndpointInputSchemas = {
 	accountGet: AccountGetInputSchema,
-	accountLookup: AccountLookupInputSchema,
 	forestGet: ForestGetInputSchema,
 	projectsList: ProjectsListInputSchema,
-	projectsGetTree: ProjectsGetTreeInputSchema,
 	projectsCalculateCo2: ProjectsCalculateCo2InputSchema,
 	treesPlant: TreesPlantInputSchema,
 } as const;
 
 export const MoreTreesEndpointOutputSchemas = {
 	accountGet: AccountGetResponseSchema,
-	accountLookup: AccountLookupResponseSchema,
 	forestGet: ForestGetResponseSchema,
 	projectsList: ProjectsListResponseSchema,
-	projectsGetTree: ProjectsGetTreeResponseSchema,
 	projectsCalculateCo2: ProjectsCalculateCo2ResponseSchema,
 	treesPlant: TreesPlantResponseSchema,
 } as const;

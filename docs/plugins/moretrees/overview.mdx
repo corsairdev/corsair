@@ -1,7 +1,7 @@
 ---
 title: "More Trees plugin"
 sidebarTitle: "Overview"
-description: "Climate action with More Trees - read the account credit balance, forest stats, planting projects and CO2 figures, look up accounts, and plant trees for yourself or as gifts."
+description: "Climate action with More Trees - read the account credit balance, forest stats, planting projects and CO2 figures, and plant trees for yourself or as gifts."
 ---
 
 Use **More Trees** through Corsair: one client, typed API calls.
@@ -15,7 +15,9 @@ it out.
 - **Planting spends credits.** `trees.plant` defaults to `test: false`,
   which plants real trees and uses the payment account's credits. Pass
   `test: true` for a dry run: More Trees evaluates the request and
-  persists nothing. A planting that may have reached More Trees is never
+  persists nothing, but still checks the balance, so a dry run on an
+  account with too few credits answers 400 `MTT-6006` "Insufficient
+  credits" (checked 11-26). A planting that may have reached More Trees is never
   replayed after a failure.
 - **IDs are strings.** More Trees issues 64-bit project and tree IDs
   (such as `1212386588741402633`) that a JavaScript number cannot hold.
@@ -31,7 +33,7 @@ it out.
 
 **What you get:**
 
-- 7 typed API operations
+- 5 typed API operations
 
 ## Setup
 

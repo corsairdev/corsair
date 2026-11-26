@@ -25,10 +25,8 @@ function buildKey(
 
 const operations = [
 	'account.get',
-	'account.lookup',
 	'forest.get',
 	'projects.calculateCo2',
-	'projects.getTree',
 	'projects.list',
 	'trees.plant',
 ];
@@ -36,10 +34,8 @@ const operations = [
 // Only planting spends credits; the CO2 calculation stores nothing.
 const riskLevels: Record<string, string> = {
 	'account.get': 'read',
-	'account.lookup': 'read',
 	'forest.get': 'read',
 	'projects.calculateCo2': 'read',
-	'projects.getTree': 'read',
 	'projects.list': 'read',
 	'trees.plant': 'destructive',
 };
@@ -57,7 +53,7 @@ describe('moretrees plugin definition', () => {
 		).toBe(false);
 	});
 
-	it('exposes the seven operations across four groups', () => {
+	it('exposes the five operations across four groups', () => {
 		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
 			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
 		);
