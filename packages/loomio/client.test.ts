@@ -1,8 +1,9 @@
 import { inspect } from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
 	describeLoomioError,
-	LoomioAPIError,
 	makeLoomioRequest,
+	normalizeLoomioBaseUrl,
 	readLoomioErrorDetail,
 	segment,
 } from './client';
@@ -26,10 +27,10 @@ function respond(body: unknown, status = 200) {
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<LoomioAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(LoomioAPIError);
-	if (!(error instanceof LoomioAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -37,6 +38,8 @@ function sentRequest() {
 	const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
 	return { url, init, headers: new Headers(init.headers) };
 }
+
+const KEY = { key: 'loomio-secret-key' };
 
 beforeEach(() => {
 	fetchMock = jest.spyOn(globalThis, 'fetch');
@@ -50,10 +53,7 @@ describe('makeLoomioRequest', () => {
 	it('sends the key as a Bearer header under /api/user0 and never in the URL', async () => {
 		respond({ ok: true });
 
-		await makeLoomioRequest('loomio-secret-key', {
-			method: 'GET',
-			path: '/groups',
-		});
+		await makeLoomioRequest(KEY, { method: 'GET', path: '/groups' });
 
 		const sent = sentRequest();
 		expect(sent.url).toBe('https://www.loomio.com/api/user0/groups');
@@ -64,18 +64,63 @@ describe('makeLoomioRequest', () => {
 		expect(sent.headers.get('content-type')).toBeNull();
 	});
 
+	it('targets a self-hosted origin and the Server API prefix', async () => {
+		respond({ users: [] });
+
+		await makeLoomioRequest(
+			{ key: 'server-key', baseUrl: 'https://loomio.example.org/' },
+			{ api: 'server', method: 'GET', path: '/users' },
+		);
+
+		expect(sentRequest().url).toBe(
+			'https://loomio.example.org/api/server0/users',
+		);
+	});
+
+	it('refuses a base URL that is not an https origin before any request', async () => {
+		for (const bad of [
+			'http://loomio.example.org',
+			'https://user:pw@loomio.example.org',
+			'https://loomio.example.org/sub',
+			'https://loomio.example.org?x=1',
+			'not a url',
+		]) {
+			await expect(
+				makeLoomioRequest(
+					{ key: 'k', baseUrl: bad },
+					{ method: 'GET', path: '/groups' },
+				),
+			).rejects.toThrow(/base_url/);
+		}
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('sends no Authorization header when the key is empty', async () => {
 		respond({ ok: true });
 
-		await makeLoomioRequest('', { method: 'GET', path: '/groups' });
+		await makeLoomioRequest({ key: '' }, { method: 'GET', path: '/groups' });
 
 		expect(sentRequest().headers.get('authorization')).toBeNull();
+	});
+
+	it('sends PATCH and DELETE with the right method', async () => {
+		respond({ comments: [{ id: 1 }] });
+		await makeLoomioRequest(KEY, {
+			method: 'PATCH',
+			path: '/comments/1',
+			body: { body: 'x' },
+		});
+		expect(sentRequest().init.method).toBe('PATCH');
+		fetchMock.mockClear();
+		respond({ comments: [{ id: 1 }] });
+		await makeLoomioRequest(KEY, { method: 'DELETE', path: '/comments/1' });
+		expect(sentRequest().init.method).toBe('DELETE');
 	});
 
 	it('POSTs a JSON body with a JSON content type', async () => {
 		respond({ ok: true });
 
-		await makeLoomioRequest('loomio-secret-key', {
+		await makeLoomioRequest(KEY, {
 			method: 'POST',
 			path: '/comments',
 			body: { discussion_id: 55, body: 'hello' },
@@ -89,80 +134,102 @@ describe('makeLoomioRequest', () => {
 		});
 	});
 
-	it('keeps the error body out of the thrown error and its message', async () => {
+	it('throws core ApiError with the status and the provider message', async () => {
 		respond(BAD_KEY_BODY, 403);
 
 		const error = await failure(
-			makeLoomioRequest('loomio-secret-key', {
-				method: 'GET',
-				path: '/groups',
-			}),
+			makeLoomioRequest(KEY, { method: 'GET', path: '/groups' }),
 		);
 
 		expect(error.status).toBe(403);
-		expect(error.detail).toBe(BAD_KEY_BODY.error);
-		expect(error.method).toBe('GET');
-		expect(error.isAuthError).toBe(true);
-		expect(error.replaySafe).toBe(true);
+		expect(error.message).toBe(`Loomio 403: ${BAD_KEY_BODY.error}`);
+		expect(error.body).toEqual({ error: BAD_KEY_BODY.error });
 		const printed = `${error.message} ${JSON.stringify(error)} ${inspect(error)}`;
 		expect(printed).not.toContain('loomio-secret-key');
 	});
 
-	it('marks a 403 on a resource-scoped call as both readings at once', async () => {
+	it('strips the sent body (emails, content) from the error', async () => {
+		respond(VALIDATION_BODY, 422);
+
+		const error = await failure(
+			makeLoomioRequest(KEY, {
+				method: 'POST',
+				path: '/memberships',
+				body: { group_id: 1, emails: ['person@private.example'] },
+			}),
+		);
+
+		expect(error.status).toBe(422);
+		const printed = `${error.message} ${JSON.stringify(error)} ${inspect(error)}`;
+		expect(printed).not.toContain('person@private.example');
+		expect(error.request.body).toBe('[REDACTED]');
+		expect(error.request.headers).toBeUndefined();
+	});
+
+	it('keeps only the error fields of a provider body', async () => {
+		respond({ error: 'nope', echoed: 'person@private.example' }, 400);
+
+		const error = await failure(
+			makeLoomioRequest(KEY, { method: 'GET', path: '/search' }),
+		);
+
+		expect(JSON.stringify(error.body)).not.toContain('private.example');
+	});
+
+	it('says both readings on a 403 for a resource-scoped call', async () => {
 		respond(BAD_KEY_BODY, 403);
 
 		const error = await failure(
-			makeLoomioRequest('loomio-secret-key', {
+			makeLoomioRequest(KEY, {
 				method: 'GET',
 				path: '/groups/999999',
 				resourceScoped: true,
 			}),
 		);
 
-		expect(error.resourceScoped).toBe(true);
-		expect(error.isAuthError).toBe(false);
-		expect(error.resourceNotFound).toBe(true);
 		expect(error.message).toContain('permission');
+		expect(error.message).toContain('may not exist');
 	});
 
 	it('reads the bare-number 404 body as HTTP 404', async () => {
 		respond(NOT_FOUND_BODY, 404);
 
 		const error = await failure(
-			makeLoomioRequest('k', {
-				method: 'GET',
-				path: '/polls/1',
-				resourceScoped: true,
-			}),
+			makeLoomioRequest(KEY, { method: 'GET', path: '/polls/1' }),
 		);
 
 		expect(error.status).toBe(404);
-		expect(error.detail).toBe('HTTP 404');
-		expect(error.resourceNotFound).toBe(true);
+		expect(error.message).toBe('Loomio 404: HTTP 404');
 	});
 
-	it('classifies an unrouted path by its status, not its body shape', async () => {
+	it('reads an unrouted path by its status', async () => {
 		respond(UNKNOWN_ROUTE_BODY, 404);
 
 		const error = await failure(
-			makeLoomioRequest('k', { method: 'GET', path: '/nope' }),
+			makeLoomioRequest(KEY, { method: 'GET', path: '/nope' }),
 		);
 
 		expect(error.status).toBe(404);
-		expect(error.detail).toBe('Not Found');
+		expect(error.message).toContain('Not Found');
 	});
 
-	it('tags transport failures with the method and keeps the cause', async () => {
+	it('lets transport failures through unchanged', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
-		const error = await failure(
-			makeLoomioRequest('k', { method: 'GET', path: '/groups' }),
-		);
+		await expect(
+			makeLoomioRequest(KEY, { method: 'GET', path: '/groups' }),
+		).rejects.toThrow(TypeError);
+	});
+});
 
-		expect(error.status).toBeUndefined();
-		expect(error.method).toBe('GET');
-		expect(error.replaySafe).toBe(true);
-		expect(error.cause).toBeInstanceOf(TypeError);
+describe('normalizeLoomioBaseUrl', () => {
+	it('returns the origin of a valid https URL', () => {
+		expect(normalizeLoomioBaseUrl(' https://loomio.example.org/ ')).toBe(
+			'https://loomio.example.org',
+		);
+		expect(normalizeLoomioBaseUrl('http://localhost:3000')).toBe(
+			'http://localhost:3000',
+		);
 	});
 });
 
@@ -185,12 +252,6 @@ describe('describeLoomioError', () => {
 		expect(describeLoomioError(403, BAD_KEY_BODY, false)).toBe(
 			'Loomio 403: You are not authorized to access this page.',
 		);
-	});
-
-	it('keeps both readings in the scoped-403 message', () => {
-		const message = describeLoomioError(403, BAD_KEY_BODY, true);
-		expect(message).toContain('permission');
-		expect(message).toContain('may not exist');
 	});
 
 	it('falls back when the body says nothing', () => {

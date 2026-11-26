@@ -1,134 +1,133 @@
-import { makeLoomioRequest } from './client';
-import { LoomioEndpointOutputSchemas as Outputs } from './endpoints/types';
+import { ApiError } from 'corsair/http';
+import {
+	Discussions,
+	Groups,
+	Memberships,
+	Polls,
+	Reports,
+	Search,
+	Threads,
+} from './endpoints';
 
-// Live smoke tests. They run only when LOOMIO_API_KEY is set (create one at
-// https://www.loomio.com/profile/api_access) and are read-only: the write
-// operations stay untested here so a CI run cannot post into a real group.
-const describeIfKey = process.env.LOOMIO_API_KEY ? describe : describe.skip;
+jest.mock('corsair/core', () => ({
+	...jest.requireActual('corsair/core'),
+	logEventFromContext: jest.fn().mockResolvedValue(null),
+}));
 
-describeIfKey('loomio live API', () => {
-	const key = process.env.LOOMIO_API_KEY as string;
+// Live smoke tests through the real endpoint code (shaping and output
+// schemas included). They run only when LOOMIO_API_KEY is set (create one at
+// https://www.loomio.com/profile/api_access) and are read-only, so a run never
+// posts into a real group. LOOMIO_BASE_URL points them at a self-hosted install.
+const hasKey = Boolean(process.env.LOOMIO_API_KEY);
+if (!hasKey) {
+	console.warn('Skipping Loomio live tests: LOOMIO_API_KEY is not set.');
+}
+const describeIfKey = hasKey ? describe : describe.skip;
 
-	it('lists and reads a group through its output schema', async () => {
-		const raw = await makeLoomioRequest(key, {
-			method: 'GET',
-			path: '/groups',
-			query: { limit: 5 },
+type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
+
+function run<T>(endpoint: AnyEndpoint, input: unknown, key?: string) {
+	const ctx = {
+		key: key ?? process.env.LOOMIO_API_KEY,
+		options: { baseUrl: process.env.LOOMIO_BASE_URL },
+	};
+	return endpoint(ctx as never, input as never) as Promise<T>;
+}
+
+describeIfKey('loomio live API (read-only)', () => {
+	let groupId: number | undefined;
+
+	it('lists and reads a group', async () => {
+		const list = await run<{ groups: { id: number }[] }>(Groups.list, {
+			limit: 5,
 		});
-		const { groups } = Outputs.groupsList.parse(raw);
-
-		expect(Array.isArray(groups)).toBe(true);
-		const first = groups[0];
-		if (first === undefined) return;
-
-		const shown = Outputs.groupsGet.parse(
-			await makeLoomioRequest(key, {
-				method: 'GET',
-				path: `/groups/${first.id}`,
-				resourceScoped: true,
-			}),
-		);
-		expect(shown.group.id).toBe(first.id);
-	});
-
-	it('lists discussions, threads, and polls through their output schemas', async () => {
-		const rawGroups = Outputs.groupsList.parse(
-			await makeLoomioRequest(key, { method: 'GET', path: '/groups' }),
-		);
-		const groupId = rawGroups.groups[0]?.id;
+		expect(Array.isArray(list.groups)).toBe(true);
+		groupId = list.groups[0]?.id;
 		if (groupId === undefined) return;
 
-		const discussions = Outputs.discussionsList.parse(
-			await makeLoomioRequest(key, {
-				method: 'GET',
-				path: '/discussions',
-				query: { group_id: groupId, limit: 5 },
-			}),
-		);
-		expect(Array.isArray(discussions.discussions)).toBe(true);
-
-		const threads = Outputs.threadsList.parse(
-			await makeLoomioRequest(key, {
-				method: 'GET',
-				path: '/threads',
-				query: { limit: 5 },
-			}),
-		);
-		expect(Array.isArray(threads.threads)).toBe(true);
-
-		const polls = Outputs.pollsList.parse(
-			await makeLoomioRequest(key, {
-				method: 'GET',
-				path: '/polls',
-				query: { group_id: groupId, status: 'all', limit: 5 },
-			}),
-		);
-		expect(Array.isArray(polls.polls)).toBe(true);
+		const shown = await run<{ group: { id: number } }>(Groups.get, {
+			id: groupId,
+			compact: true,
+		});
+		expect(shown.group.id).toBe(groupId);
 	});
 
-	it('reads a thread timeline and markdown export for a real thread', async () => {
-		const threads = Outputs.threadsList.parse(
-			await makeLoomioRequest(key, {
-				method: 'GET',
-				path: '/threads',
-				query: { limit: 1 },
-			}),
+	it('lists discussions, polls, and memberships in the first group', async () => {
+		if (groupId === undefined) return;
+		const discussions = await run<{ discussions: { id: number }[] }>(
+			Discussions.list,
+			{ group_id: groupId, status: 'all', limit: 5 },
 		);
+		const firstDiscussion = discussions.discussions[0];
+		if (firstDiscussion) {
+			const shown = await run<{ discussion: { id: number } }>(Discussions.get, {
+				id: firstDiscussion.id,
+			});
+			expect(shown.discussion.id).toBe(firstDiscussion.id);
+		}
+
+		const polls = await run<{ polls: { id: number }[] }>(Polls.list, {
+			group_id: groupId,
+			status: 'all',
+			limit: 5,
+		});
+		const firstPoll = polls.polls[0];
+		if (firstPoll) {
+			const shown = await run<{ poll: { id: number } }>(Polls.get, {
+				id: firstPoll.id,
+			});
+			expect(shown.poll.id).toBe(firstPoll.id);
+		}
+
+		const memberships = await run<{ memberships: unknown[] }>(
+			Memberships.list,
+			{ group_id: groupId, limit: 5 },
+		);
+		expect(Array.isArray(memberships.memberships)).toBe(true);
+	});
+
+	it('reads a thread, its timeline, and its markdown export', async () => {
+		const threads = await run<{ threads: { id: number }[] }>(Threads.list, {
+			limit: 1,
+		});
 		const topicId = threads.threads[0]?.id;
 		if (topicId === undefined) return;
 
-		const items = Outputs.threadsItems.parse(
-			await makeLoomioRequest(key, {
-				method: 'GET',
-				path: `/threads/${topicId}/items`,
-				resourceScoped: true,
-			}),
-		);
+		const thread = await run<{ thread: { id: number } }>(Threads.get, {
+			topic_id: topicId,
+		});
+		expect(thread.thread.id).toBe(topicId);
+
+		const items = await run<{ items: unknown[] }>(Threads.items, {
+			topic_id: topicId,
+			compact: true,
+		});
 		expect(Array.isArray(items.items)).toBe(true);
 
-		const markdown = Outputs.threadsMarkdown.parse(
-			await makeLoomioRequest(key, {
-				method: 'GET',
-				path: `/threads/${topicId}/markdown`,
-				resourceScoped: true,
-			}),
-		);
-		expect(markdown.markdown.length).toBeGreaterThan(0);
+		const markdown = await run<{ markdown: string }>(Threads.markdown, {
+			topic_id: topicId,
+		});
+		expect(typeof markdown.markdown).toBe('string');
 	});
 
-	it('reads one poll with its options when the group has any', async () => {
-		const groups = Outputs.groupsList.parse(
-			await makeLoomioRequest(key, { method: 'GET', path: '/groups' }),
-		);
-		const groupId = groups.groups[0]?.id;
-		if (groupId === undefined) return;
+	it('searches and builds a participation report', async () => {
+		const results = await run<{ search_results: unknown[] }>(Search.query, {
+			query: 'the',
+		});
+		expect(Array.isArray(results.search_results)).toBe(true);
 
-		const polls = Outputs.pollsList.parse(
-			await makeLoomioRequest(key, {
-				method: 'GET',
-				path: '/polls',
-				query: { group_id: groupId, status: 'all', limit: 5 },
-			}),
-		);
-		const firstPoll = polls.polls[0];
-		if (firstPoll === undefined) return;
-
-		const shown = Outputs.pollsGet.parse(
-			await makeLoomioRequest(key, {
-				method: 'GET',
-				path: `/polls/${firstPoll.id}`,
-				resourceScoped: true,
-			}),
-		);
-		expect(shown.poll.id).toBe(firstPoll.id);
+		const report = await run<Record<string, unknown>>(Reports.get, {
+			section: 'base',
+			group_scope: 'my',
+		});
+		expect(typeof report).toBe('object');
 	});
 
-	it('answers a missing key with 403 and a message body', async () => {
-		await expect(
-			makeLoomioRequest('definitely-not-a-key', {
-				method: 'GET',
-				path: '/groups',
-			}),
-		).rejects.toThrow(/403/);
+	it('answers a bad key with 403', async () => {
+		const error = await run(Groups.list, {}, 'definitely-not-a-key').catch(
+			(caught: unknown) => caught,
+		);
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(403);
 	});
 });

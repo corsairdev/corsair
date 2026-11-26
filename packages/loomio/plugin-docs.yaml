@@ -1,18 +1,21 @@
 displayName: Loomio
-description: Group decision making with Loomio - browse groups, threads and discussions, read thread timelines and markdown exports, start discussions and comments, and create polls.
+description: "Group decision making with Loomio: groups, discussions, comments, polls, threads, memberships, search, participation reports and group webhooks through the User API, plus user and membership admin through the Server API on self-hosted installs."
 domain: loomio.com
 recommendedAuth: api_key
 overviewNote: |
   Create an API key by signing in at loomio.com and opening the API access page at https://www.loomio.com/profile/api_access. The page also lists your groups with their numeric ids, which every group-scoped call needs.
 
   - **The key is you.** The key acts as its full user account, with that account's permissions and visibility. Loomio recommends a dedicated bot account for integrations. The key rotates when the account's password changes.
-  - **Header auth only.** Requests authenticate with `Authorization: Bearer <key>`. Query-string keys are rejected. This plugin always talks to `https://www.loomio.com/api/user0` (never the legacy `/api/b2` prefix, which renames poll fields), so self-hosted installs are not reachable with it.
-  - **Bad keys answer 403.** A missing or invalid key gets 403 `{"error":"You are not authorized to access this page."}`, and so does a permission denial, even on calls that name a record. The plugin reports both readings on the error.
-  - **Compound envelopes.** Every response carries the primary records in an array named after the resource (`groups`, `discussions`, `threads`, `items`, `polls`, `comments`), related records in sibling arrays (users, topics, groups, poll_options, outcomes), and `meta: {root, total}`. Thread titles are not on the thread record: join the related `discussions` (or `polls`) array on `topicable_id`.
-  - **Paging.** List calls take `limit` (default 50, capped at 500 for groups and thread items) and `offset`, and return `meta.total` plus a derived `next_offset` that disappears on the last page.
+  - **Self-hosted installs.** Loomio is open source. Set the account's `base_url` (or the `baseUrl` option) to your install's https origin, e.g. `https://loomio.example.org`; leave it empty for loomio.com. Requests go to `<origin>/api/user0` (never the legacy `/api/b2` prefix, which renames poll fields).
+  - **Server API (self-hosted only).** The `server.*` operations call `/api/server0` and authenticate with the install's `SERVER_API_KEY` instead of a user key: list every group, sync memberships and roles, and create, update, deactivate, redact or delete user accounts. They are not available on loomio.com. Use a separate Corsair account for the server key.
+  - **Header auth only.** Requests authenticate with `Authorization: Bearer <key>`. Query-string keys are rejected.
+  - **Bad keys answer 403.** A missing or invalid key gets 403 `{"error":"You are not authorized to access this page."}`, and so does a permission denial, even on calls that name a record. Errors are core `ApiError`s with the status and Loomio's message; the sent body (content, email addresses) is stripped.
+  - **Compound envelopes.** User API responses carry the primary records in an array named after the resource (`groups`, `discussions`, `threads`, `items`, `polls`, `comments`, `memberships`, `chatbots`), related records in sibling arrays (users, topics, groups, poll_options, outcomes), and `meta: {root, total}`. Single-record calls also return the record under a singular key (`group`, `discussion`, `thread`, `comment`, `poll`, `chatbot`). Pass `compact: true` or `exclude_types` on reads to drop bulky related records. Thread titles are not on the thread record: join the related `discussions` (or `polls`) array on `topicable_id`.
+  - **Paging.** List calls take `limit` (default 50; capped at 500 for groups, thread items and webhooks; 50 on the Server API) and `offset`, and return `meta.total` plus a derived `next_offset` that disappears on the last page. Search returns up to 20 results and reports return the whole section, without paging.
   - **Polls.** A poll without `closing_at` stays a draft with voting disabled. Proposal polls default to the agree, disagree, abstain, and block options when `options` is omitted. Options ride in the related `poll_options` array and the current outcome in `outcomes`, matched by `current_outcome_id`.
-  - **No webhooks.** Loomio supports outgoing webhooks (chatbots) for group admins, but this plugin does not receive webhook deliveries and does not manage chatbot registrations.
-  - **Writes are not idempotent.** A retry of a failed `discussions.create` or `comments.create` can post twice, so the plugin never replays writes on server errors.
+  - **Who gets emailed.** `recipient_emails`, `recipient_user_ids` and `recipient_audience: 'group'` on discussions and polls notify or invite people, and `memberships.manage` emails every new address; these operations are `destructive`. Deletes of discussions, comments and polls are soft deletes the API cannot undo.
+  - **Webhooks.** Group admins manage outgoing webhooks (Loomio's `/chatbots` route) with `webhooks.*`. Deliveries are chat-style messages with no signature, so this plugin does not receive them; treat the destination URL as a secret and use the API for current state.
+  - **Writes are not idempotent.** A retry of a failed create can post twice, so the plugin replays only reads on server errors. Core retries 429s; Loomio sends no rate-limit headers (the hosted service allows about 900 requests per 5 minutes per IP).
 examples:
   read:
     path: discussions.list
@@ -21,29 +24,38 @@ examples:
       group_id: 12
       limit: 20
   write:
-    path: discussions.create
-    title: Start a discussion
+    path: comments.create
+    title: Comment on a discussion
     args:
-      group_id: 12
-      title: Spring palette
-      description: Pick three colours for the rebrand.
+      discussion_id: 88
+      body: Sounds good to me.
 apiExamples:
   groups.list:
     call: "{ limit: 50 }"
   groups.get:
     call: "{ id: 'design' }"
   discussions.list:
-    call: "{ group_id: 12, limit: 20 }"
+    call: "{ group_id: 12, limit: 20, compact: true }"
   discussions.get:
     call: "{ id: 'dX2' }"
   discussions.create:
     call: "{ group_id: 12, title: 'Spring palette', description: 'Pick three colours for the rebrand.' }"
+  discussions.update:
+    call: "{ id: 88, title: 'Spring palette (final)' }"
+  discussions.delete:
+    call: "{ id: 88 }"
   comments.create:
     call: "{ discussion_id: 88, body: 'Sounds good to me.' }"
+  comments.update:
+    call: "{ id: 301, body: 'Sounds good to me, with one change.' }"
+  comments.delete:
+    call: "{ id: 301 }"
   threads.list:
     call: "{ limit: 50 }"
+  threads.get:
+    call: "{ topic_id: 55 }"
   threads.items:
-    call: "{ topic_id: 55, limit: 100 }"
+    call: "{ topic_id: 55, limit: 100, compact: true }"
   threads.markdown:
     call: "{ topic_id: 55 }"
   polls.list:
@@ -52,20 +64,102 @@ apiExamples:
     call: "{ id: 63 }"
   polls.create:
     call: "{ discussion_id: 88, title: 'Which blue?', poll_type: 'poll', options: ['Sky blue', 'Navy'], closing_at: '2026-04-01T00:00:00.000Z' }"
+  polls.update:
+    call: "{ id: 63, closing_at: '2026-04-08T00:00:00.000Z' }"
+  polls.delete:
+    call: "{ id: 63 }"
+  memberships.list:
+    call: "{ group_id: 12, limit: 50 }"
+  memberships.manage:
+    call: "{ group_id: 12, emails: ['new.member@example.org'] }"
+  reports.get:
+    call: "{ section: 'users', group_scope: 'custom', group_ids: [12], start_month: '2026-01', end_month: '2026-09' }"
+  search.query:
+    call: "{ query: 'quarterly planning', types: ['Discussion'] }"
+  webhooks.list:
+    call: "{ group_id: 12 }"
+  webhooks.create:
+    call: "{ group_id: 12, name: 'Planning system', kind: 'webhook', webhook_kind: 'markdown', server: 'https://hooks.example.org/loomio/unguessable-token', event_kinds: ['new_discussion', 'outcome_created'] }"
+  webhooks.update:
+    call: "{ id: 456, event_kinds: ['new_discussion'] }"
+  webhooks.delete:
+    call: "{ id: 456 }"
+  webhooks.check:
+    call: "{ group_id: 12, server: 'https://hooks.example.org/loomio/unguessable-token' }"
+  server.groups.list:
+    call: "{ limit: 50 }"
+  server.memberships.list:
+    call: "{ group_id: 12 }"
+  server.memberships.sync:
+    call: "{ group_id: 12, emails: ['ada@example.org'] }"
+  server.memberships.update:
+    call: "{ id: 9, admin: true }"
+  server.memberships.revoke:
+    call: "{ id: 9 }"
+  server.users.list:
+    call: "{ is_admin: true }"
+  server.users.create:
+    call: "{ email: 'ada@example.org', name: 'Ada' }"
+  server.users.get:
+    call: "{ id: 5 }"
+  server.users.update:
+    call: "{ id: 5, name: 'Ada L.' }"
+  server.users.delete:
+    call: "{ id: 5 }"
+  server.users.deactivate:
+    call: "{ id: 5 }"
+  server.users.reactivate:
+    call: "{ id: 5 }"
+  server.users.redact:
+    call: "{ id: 5 }"
+  server.users.getByIdentity:
+    call: "{ identity_type: 'saml', uid: 'ada-1' }"
+  server.users.updateByIdentity:
+    call: "{ identity_type: 'saml', uid: 'ada-1', name: 'Ada L.' }"
+  server.users.deleteByIdentity:
+    call: "{ identity_type: 'saml', uid: 'ada-1' }"
+  server.users.deactivateByIdentity:
+    call: "{ identity_type: 'saml', uid: 'ada-1' }"
+  server.users.reactivateByIdentity:
+    call: "{ identity_type: 'saml', uid: 'ada-1' }"
+  server.users.redactByIdentity:
+    call: "{ identity_type: 'saml', uid: 'ada-1' }"
 apiNotes:
   groups.get:
     'The id accepts a numeric id, a url key, or a handle.'
   discussions.list:
     'group_id is required; Loomio answers a missing one with 404 {"error":404}. status takes open (default), closed, or all.'
   discussions.create:
-    'A permission denial on create answers the same 403 body a bad key does, so a failure here can mean the account may not post in that group.'
+    'recipient_audience: group notifies the whole group and recipient_emails emails invitations, so this is destructive. A permission denial answers the same 403 body a bad key does.'
+  discussions.delete:
+    'A soft delete: the record stays with discarded_at set, hidden from members. The API has no undo.'
   comments.create:
-    'discussion_id is the thread id (the discussion''s topic_id). body_format takes md (default) or html.'
+    'discussion_id is the numeric discussion id (not the topic id). Set parent_id to reply to a comment. body_format takes md (default) or html.'
   threads.items:
     'Items come back in ascending sequence order and cap limit at 500. Comments, polls, votes, and outcomes ride in related arrays matched by itemable_id.'
   threads.markdown:
     'Requires export permission on the thread; the thread''s whole visible content comes back as one document under markdown.'
   polls.create:
-    'Provide group_id or discussion_id. Omit closing_at (or send null) to keep the poll a draft with voting disabled. For proposals, options default to agree, disagree, abstain, and block.'
+    'Provide group_id or discussion_id. Omit closing_at (or send null) to keep the poll a draft with voting disabled. For proposals, options default to agree, disagree, abstain, and block. notify_recipients: true emails everyone invited.'
+  polls.update:
+    'Edit detailed options by id; add ones without an id; remove one with id and _destroy: true. Closed polls cannot be edited, and anonymous polls freeze options after the first vote.'
   polls.list:
     'status takes active (default), closed, or all. Current outcomes ride in the outcomes array; match current_outcome_id on each poll.'
+  memberships.list:
+    'Email addresses come back only for your own membership or when the key user is a group admin.'
+  memberships.manage:
+    'Group admin only. remove_absent: true removes every member whose email is not listed, so an empty or partial list can empty the group.'
+  reports.get:
+    'group_ids outside the key user''s memberships are ignored. Anonymous polls are left out of per-person voting counts.'
+  search.query:
+    'Returns at most 20 results with no paging. author_id without a query returns that author''s recent activity.'
+  webhooks.list:
+    'Group admin only. The response includes destination URLs, which are secrets.'
+  webhooks.check:
+    'Sends a real test message to the URL. Loomio answers an empty 200; the plugin returns { delivered: true }.'
+  server.memberships.sync:
+    'Self-hosted, server key. remove_absent: true revokes everyone not listed in the group and its subgroups; an empty list removes everyone.'
+  server.users.delete:
+    'Self-hosted, server key. Permanent: the user and associated records are deleted by a background job.'
+  server.users.redact:
+    'Self-hosted, server key. Irreversibly removes identifying data while keeping the user''s contributions.'

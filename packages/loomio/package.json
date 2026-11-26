@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/loomio",
   "version": "0.1.0",
-  "description": "Group decision making with Loomio - browse groups, threads and discussions, read thread timelines and markdown exports, start discussions and comments, and create polls.",
+  "description": "Group decision making with Loomio: groups, discussions, comments, polls, threads, memberships, search, participation reports and group webhooks through the User API, plus user and membership admin through the Server API on self-hosted installs.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

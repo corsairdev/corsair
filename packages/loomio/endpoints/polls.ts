@@ -1,9 +1,10 @@
 import type { LoomioEndpoints } from '..';
 import { segment } from '../client';
-import { call, unwrapResource, withPaging } from './call';
+import { bodyWithout, call, unwrapResource, withPaging } from './call';
 import {
 	LoomioEndpointInputSchemas as Inputs,
 	LoomioEndpointOutputSchemas as Outputs,
+	relatedQuery,
 } from './types';
 
 export const list: LoomioEndpoints['pollsList'] = (ctx, input) =>
@@ -15,10 +16,16 @@ export const list: LoomioEndpoints['pollsList'] = (ctx, input) =>
 			output: Outputs.pollsList,
 		},
 		input,
-		({ group_id, status, limit, offset }) => ({
+		(parsed) => ({
 			method: 'GET',
 			path: '/polls',
-			query: { group_id, status, limit, offset },
+			query: {
+				group_id: parsed.group_id,
+				status: parsed.status,
+				limit: parsed.limit,
+				offset: parsed.offset,
+				...relatedQuery(parsed),
+			},
 		}),
 		{
 			shape: (raw, parsed) => withPaging(raw, 'polls', parsed.offset ?? 0),
@@ -35,9 +42,10 @@ export const get: LoomioEndpoints['pollsGet'] = (ctx, input) =>
 			output: Outputs.pollsGet,
 		},
 		input,
-		({ id }) => ({
+		(parsed) => ({
 			method: 'GET',
-			path: `/polls/${segment(id)}`,
+			path: `/polls/${segment(parsed.id)}`,
+			query: relatedQuery(parsed),
 			resourceScoped: true,
 		}),
 		{
@@ -55,57 +63,54 @@ export const create: LoomioEndpoints['pollsCreate'] = (ctx, input) =>
 			output: Outputs.pollsCreate,
 		},
 		input,
-		({
-			group_id,
-			discussion_id,
-			title,
-			poll_type,
-			options,
-			poll_options_attributes,
-			closing_at,
-			specified_voters_only,
-			hide_results,
-			anonymous,
-			shuffle_options,
-			stance_reason_required,
-			reason_prompt,
-			notify_on_closing_soon,
-			recipient_audience,
-			recipient_user_ids,
-			recipient_emails,
-			recipient_message,
-			notify_recipients,
-		}) => ({
-			method: 'POST',
-			path: '/polls',
-			body: {
-				group_id,
-				discussion_id,
-				title,
-				poll_type,
-				options,
-				poll_options_attributes,
-				// An explicit null keeps the poll a draft, which Loomio documents.
-				closing_at,
-				specified_voters_only,
-				hide_results,
-				anonymous,
-				shuffle_options,
-				stance_reason_required,
-				reason_prompt,
-				notify_on_closing_soon,
-				recipient_audience,
-				recipient_user_ids,
-				recipient_emails,
-				recipient_message,
-				notify_recipients,
-			},
-		}),
+		// An explicit closing_at: null keeps the poll a draft, which Loomio documents.
+		(parsed) => ({ method: 'POST', path: '/polls', body: parsed }),
 		{
 			shape: (raw) => unwrapResource(raw, 'polls', 'poll'),
 			log: (_, result) => ({
 				pollId: result.poll.id,
 				pollType: result.poll.poll_type ?? undefined,
 			}),
+		},
+	);
+
+export const update: LoomioEndpoints['pollsUpdate'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'polls.update',
+			input: Inputs.pollsUpdate,
+			output: Outputs.pollsUpdate,
+		},
+		input,
+		(parsed) => ({
+			method: 'PATCH',
+			path: `/polls/${segment(parsed.id)}`,
+			body: bodyWithout(parsed, 'id'),
+			resourceScoped: true,
+		}),
+		{
+			shape: (raw) => unwrapResource(raw, 'polls', 'poll'),
+			log: (_, result) => ({ pollId: result.poll.id }),
+		},
+	);
+
+export const remove: LoomioEndpoints['pollsDelete'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'polls.delete',
+			input: Inputs.pollsDelete,
+			output: Outputs.pollsDelete,
+		},
+		input,
+		(parsed) => ({
+			method: 'DELETE',
+			path: `/polls/${segment(parsed.id)}`,
+			resourceScoped: true,
+		}),
+		{
+			shape: (raw) => unwrapResource(raw, 'polls', 'poll'),
+			log: (_, result) => ({ pollId: result.poll.id }),
 		},
 	);

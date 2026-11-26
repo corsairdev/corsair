@@ -1,6 +1,6 @@
 import { createCorsair } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
-import { LoomioAPIError } from './client';
 import { loomio } from './index';
 import { captureError, refuseNetwork } from './test-errors';
 
@@ -62,8 +62,8 @@ describe('Loomio retries through createCorsair', () => {
 		jest.useFakeTimers();
 		const { corsair, testDb } = await createClient();
 		try {
-			// Loomio sends no Retry-After, so the delay comes from the
-			// exponential_backoff strategy alone: exactly 1s on the first retry.
+			// Loomio sends no Retry-After, so core's default backoff applies:
+			// exactly 1s before the first retry.
 			respond({ error: 'slow down' }, 429);
 			respond({ groups: [], meta: { root: 'groups', total: 0 } });
 
@@ -82,7 +82,7 @@ describe('Loomio retries through createCorsair', () => {
 		}
 	});
 
-	it('gives up after the configured attempts', async () => {
+	it("gives up after core's three 429 retries", async () => {
 		jest.useFakeTimers();
 		const { corsair, testDb } = await createClient();
 		try {
@@ -93,7 +93,7 @@ describe('Loomio retries through createCorsair', () => {
 			await jest.advanceTimersByTimeAsync(20_000);
 			const error = await pending;
 
-			expect(error).toBeInstanceOf(LoomioAPIError);
+			expect(error).toBeInstanceOf(ApiError);
 			expect(fetchMock).toHaveBeenCalledTimes(4);
 		} finally {
 			testDb.cleanup();
@@ -113,11 +113,10 @@ describe('Loomio retries through createCorsair', () => {
 				}),
 			);
 
-			// The 5xx reached Loomio and the write is not idempotent, so
-			// replaySafe is false and the DEFAULT handler refuses to retry.
-			expect(error).toBeInstanceOf(LoomioAPIError);
-			expect((error as LoomioAPIError).status).toBe(500);
-			expect((error as LoomioAPIError).replaySafe).toBe(false);
+			// The 5xx reached Loomio and the write is not idempotent, so the
+			// DEFAULT handler refuses to retry.
+			expect(error).toBeInstanceOf(ApiError);
+			expect((error as ApiError).status).toBe(500);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();

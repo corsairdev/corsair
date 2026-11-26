@@ -1,31 +1,28 @@
 import { asRecord } from 'corsair/core';
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+
+/** Loomio's hosted service. Self-hosted installs set their own origin. */
+export const LOOMIO_DEFAULT_BASE_URL = 'https://www.loomio.com';
 
 // /api/user0 is the canonical user-API prefix. /api/b2 routes to the same
 // controllers, but a translation layer (Api::User0::LegacyB2Fields) renames
-// poll fields there (voters_count -> vote_count_eligible and similar), which
+// poll fields there (vote_count_eligible -> voters_count and similar), which
 // would break the output schemas. Never point requests at /api/b2.
-export const LOOMIO_API_BASE = 'https://www.loomio.com/api/user0';
+// /api/server0 is the Server API of a self-hosted install (server key).
+export const LOOMIO_API_PREFIXES = {
+	user: '/api/user0',
+	server: '/api/server0',
+} as const;
 
-// Loomio has no published rate limit and sends no rate-limit headers. The
-// hosted install throttles at 900 requests per 5 minutes per IP (Rack::Attack),
-// so retries live in error-handlers.ts with the default backoff. headerNames
-// stays for the core contract even though no header is expected.
-const LOOMIO_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
-	headerNames: { retryAfter: 'retry-after' },
-};
+export const LOOMIO_API_BASE = `${LOOMIO_DEFAULT_BASE_URL}${LOOMIO_API_PREFIXES.user}`;
+
+export type LoomioApi = keyof typeof LOOMIO_API_PREFIXES;
 
 export type LoomioRequest = {
-	method: 'GET' | 'POST';
+	/** Which API the path belongs to; defaults to the User API. */
+	api?: LoomioApi;
+	method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
 	path: string;
 	query?: Record<string, string | number | boolean | undefined>;
 	// unknown: the endpoint's input schema has already validated the body.
@@ -33,6 +30,37 @@ export type LoomioRequest = {
 	/** True when the path names a record id, so a 403 may mean permission. */
 	resourceScoped?: boolean;
 };
+
+const LOCAL_HTTP_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]']);
+
+/**
+ * Validates a Loomio installation URL and returns its origin. HTTPS only
+ * (plain http only for localhost), no credentials, query or fragment; a path
+ * other than `/` is refused so the key can't be sent to a sub-path proxy.
+ */
+export function normalizeLoomioBaseUrl(raw: string): string {
+	let url: URL;
+	try {
+		url = new URL(raw.trim());
+	} catch {
+		throw new Error('Loomio base_url must be an absolute URL');
+	}
+	const localHttp =
+		url.protocol === 'http:' && LOCAL_HTTP_HOSTS.has(url.hostname);
+	if (
+		(url.protocol !== 'https:' && !localHttp) ||
+		url.username !== '' ||
+		url.password !== '' ||
+		url.search !== '' ||
+		url.hash !== '' ||
+		(url.pathname !== '/' && url.pathname !== '')
+	) {
+		throw new Error(
+			'Loomio base_url must be an https origin such as https://loomio.example.org, without a path, credentials, query, or fragment',
+		);
+	}
+	return url.origin;
+}
 
 // unknown: the record is an untyped error body; read one field at a time.
 function readErrorValue(
@@ -92,54 +120,45 @@ export function describeLoomioError(
 		: `Loomio request failed (${status})`;
 }
 
-export class LoomioAPIError extends Error {
-	readonly status?: number;
-	readonly method?: string;
-	readonly retryAfter?: number;
-	/** Human-readable piece of the provider's error body, when one arrived. */
-	readonly detail?: string;
-	/** The request named a record id, so a 403 may be permission, not auth. */
-	readonly resourceScoped: boolean;
-
-	constructor(
-		message: string,
-		options: {
-			status?: number;
-			method?: string;
-			retryAfter?: number;
-			detail?: string;
-			resourceScoped?: boolean;
-			cause?: Error;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'LoomioAPIError';
-		this.status = options.status;
-		this.method = options.method;
-		this.retryAfter = options.retryAfter;
-		this.detail = options.detail;
-		this.resourceScoped = options.resourceScoped ?? false;
-	}
-
-	/**
-	 * Loomio answers a missing or invalid key with 403, not 401, and a
-	 * permission denial gets the identical body. A 403 on a call that named no
-	 * record reads as an auth failure; on a resource-scoped call both readings
-	 * stay open (see `resourceScoped`).
-	 */
-	get isAuthError(): boolean {
-		return this.status === 401 || (this.status === 403 && !this.resourceScoped);
-	}
-
-	/** True when the response suggests the named record is missing or invisible. */
-	get resourceNotFound(): boolean {
-		return this.status === 404 || (this.status === 403 && this.resourceScoped);
-	}
-
-	/** GETs can be replayed after a failure; Loomio POSTs are not idempotent. */
-	get replaySafe(): boolean {
-		return this.method === 'GET';
-	}
+/**
+ * Core keeps the sent body on `ApiError.request`. Loomio bodies carry
+ * discussion and comment text, recipient and member email addresses, so the
+ * error is rebuilt without the body and headers (the key rides in the
+ * Authorization header). Status and rate-limit fields stay, because the error
+ * handlers and core's retries read them. The provider body keeps only the
+ * `error`/`errors` fields that describe the failure.
+ */
+export function withoutRequestData(
+	error: ApiError,
+	resourceScoped: boolean,
+): ApiError {
+	const record = asRecord(error.body);
+	const body =
+		record && ('error' in record || 'errors' in record)
+			? { error: record.error, errors: record.errors }
+			: undefined;
+	return new ApiError(
+		{
+			method: error.request.method,
+			url: error.request.url,
+			path: error.request.path,
+			body: error.request.body === undefined ? undefined : '[REDACTED]',
+		},
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body,
+		},
+		describeLoomioError(error.status, error.body, resourceScoped),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 export function segment(value: string | number): string {
@@ -148,15 +167,25 @@ export function segment(value: string | number): string {
 
 // unknown: callers parse the body with the endpoint's zod output schema.
 export async function makeLoomioRequest(
-	apiKey: string,
-	{ method, path, query, body, resourceScoped = false }: LoomioRequest,
+	connection: { key: string; baseUrl?: string },
+	{
+		api = 'user',
+		method,
+		path,
+		query,
+		body,
+		resourceScoped = false,
+	}: LoomioRequest,
 ): Promise<unknown> {
+	const origin = connection.baseUrl
+		? normalizeLoomioBaseUrl(connection.baseUrl)
+		: LOOMIO_DEFAULT_BASE_URL;
 	const config: OpenAPIConfig = {
-		BASE: LOOMIO_API_BASE,
+		BASE: `${origin}${LOOMIO_API_PREFIXES[api]}`,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		TOKEN: connection.key,
 		HEADERS: { Accept: 'application/json' },
 	};
 
@@ -168,37 +197,15 @@ export async function makeLoomioRequest(
 		mediaType: body === undefined ? undefined : 'application/json',
 	};
 
+	// Core retries a 429 itself (three times, honouring Retry-After). Loomio
+	// sends no rate-limit headers; the hosted install throttles at 900
+	// requests per 5 minutes per IP (Rack::Attack).
 	try {
-		return await request<unknown>(config, requestOptions, {
-			rateLimitConfig: LOOMIO_RATE_LIMIT_CONFIG,
-		});
+		return await request<unknown>(config, requestOptions);
 	} catch (error) {
-		if (error instanceof LoomioAPIError) throw error;
 		if (error instanceof ApiError) {
-			// The key rides in the Authorization header, but the body is still
-			// provider-controlled: copy safe scalars only, never the cause or body.
-			throw new LoomioAPIError(
-				describeLoomioError(error.status, error.body, resourceScoped),
-				{
-					status: error.status,
-					method,
-					retryAfter: error.retryAfter,
-					detail: readLoomioErrorDetail(error.body),
-					resourceScoped,
-				},
-			);
+			throw withoutRequestData(error, resourceScoped);
 		}
-		// Transport failures never reached Loomio, so the cause holds no body.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new LoomioAPIError(error.message, {
-				method,
-				cause: error,
-				resourceScoped,
-			});
-		}
-		throw new LoomioAPIError('Unknown Loomio error', {
-			method,
-			resourceScoped,
-		});
+		throw error;
 	}
 }

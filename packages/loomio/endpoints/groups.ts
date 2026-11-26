@@ -4,6 +4,7 @@ import { call, unwrapResource, withPaging } from './call';
 import {
 	LoomioEndpointInputSchemas as Inputs,
 	LoomioEndpointOutputSchemas as Outputs,
+	relatedQuery,
 } from './types';
 
 export const list: LoomioEndpoints['groupsList'] = (ctx, input) =>
@@ -15,10 +16,14 @@ export const list: LoomioEndpoints['groupsList'] = (ctx, input) =>
 			output: Outputs.groupsList,
 		},
 		input,
-		({ limit, offset }) => ({
+		(parsed) => ({
 			method: 'GET',
 			path: '/groups',
-			query: { limit, offset },
+			query: {
+				limit: parsed.limit,
+				offset: parsed.offset,
+				...relatedQuery(parsed),
+			},
 		}),
 		{
 			shape: (raw, parsed) => withPaging(raw, 'groups', parsed.offset ?? 0),
@@ -35,9 +40,10 @@ export const get: LoomioEndpoints['groupsGet'] = (ctx, input) =>
 			output: Outputs.groupsGet,
 		},
 		input,
-		({ id }) => ({
+		(parsed) => ({
 			method: 'GET',
-			path: `/groups/${segment(id)}`,
+			path: `/groups/${segment(parsed.id)}`,
+			query: relatedQuery(parsed),
 			resourceScoped: true,
 		}),
 		{

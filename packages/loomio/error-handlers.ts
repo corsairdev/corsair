@@ -1,70 +1,47 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { LoomioAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 // Status and body taxonomy from the API docs and source (Api::V1::SnorlaxBase):
 // 403 `{"error":"message"}` for a bad key or a permission denial, 404
 // `{"error":404}`, 400 `{"error":400}`, 422 `{"errors":{field:["message"]}}`,
 // 429 with no headers (Rack::Attack, 900 requests per 5 minutes per IP).
+// Errors are core's ApiError (rebuilt in client.ts without request data).
+
+function hasStatus(error: Error, test: (status: number) => boolean): boolean {
+	return error instanceof ApiError && test(error.status);
+}
+
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof LoomioAPIError && error.status === 429,
-		// No Retry-After exists, so the header value stays undefined and the
-		// default exponential backoff paces the retries.
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof LoomioAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
-	},
-	AUTH_ERROR: {
-		// 403 with no record in the path reads as a bad or missing key; Loomio
-		// never sends 401 for key problems.
-		match: (error: Error) =>
-			error instanceof LoomioAPIError && error.isAuthError,
+		// Core's request() already retried the 429 three times.
+		match: (error: Error) => hasStatus(error, (s) => s === 429),
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	PERMISSION_ERROR: {
-		// A 403 on a resource-scoped call can be a valid key without permission
-		// on that record (or a plan limit). Nothing a retry fixes.
-		match: (error: Error) =>
-			error instanceof LoomioAPIError && error.status === 403,
+	AUTH_ERROR: {
+		// Loomio answers a bad or missing key with 403 (never 401), and a
+		// permission denial with the same body. Nothing a retry fixes.
+		match: (error: Error) => hasStatus(error, (s) => s === 401 || s === 403),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	NOT_FOUND_ERROR: {
 		// A missing record answers {"error":404}; an unrouted path answers
-		// {"status":404,"error":"Not Found"}. Both are this status.
-		match: (error: Error) =>
-			error instanceof LoomioAPIError && error.status === 404,
+		// {"status":404,"error":"Not Found"}.
+		match: (error: Error) => hasStatus(error, (s) => s === 404),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	VALIDATION_ERROR: {
 		match: (error: Error) =>
 			error.name === 'ZodError' ||
-			(error instanceof LoomioAPIError &&
-				(error.status === 400 || error.status === 422)),
+			hasStatus(error, (s) => s === 400 || s === 422),
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	TRANSPORT_ERROR: {
-		// A dropped connection never reached Loomio, so a read replays safely;
-		// the replaySafe flag already excludes writes.
-		match: (error: Error) =>
-			error instanceof LoomioAPIError &&
-			error.status === undefined &&
-			error.replaySafe,
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
-	},
 	SERVER_ERROR: {
-		// A 5xx may have executed, and Loomio POSTs are not idempotent, so only
-		// reads replay. Failed writes fall through to DEFAULT.
+		// A 5xx may have executed, and Loomio writes are not idempotent, so only
+		// GETs replay. Failed writes fall through to DEFAULT.
 		match: (error: Error) =>
-			error instanceof LoomioAPIError &&
-			(error.status ?? 0) >= 500 &&
-			error.replaySafe,
+			error instanceof ApiError &&
+			error.status >= 500 &&
+			error.request.method === 'GET',
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

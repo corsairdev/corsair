@@ -21,24 +21,60 @@ function buildKey(
 
 const operations = [
 	'comments.create',
+	'comments.delete',
+	'comments.update',
 	'discussions.create',
+	'discussions.delete',
 	'discussions.get',
 	'discussions.list',
+	'discussions.update',
 	'groups.get',
 	'groups.list',
+	'memberships.list',
+	'memberships.manage',
 	'polls.create',
+	'polls.delete',
 	'polls.get',
 	'polls.list',
+	'polls.update',
+	'reports.get',
+	'search.query',
+	'server.groups.list',
+	'server.memberships.list',
+	'server.memberships.revoke',
+	'server.memberships.sync',
+	'server.memberships.update',
+	'server.users.create',
+	'server.users.deactivate',
+	'server.users.deactivateByIdentity',
+	'server.users.delete',
+	'server.users.deleteByIdentity',
+	'server.users.get',
+	'server.users.getByIdentity',
+	'server.users.list',
+	'server.users.reactivate',
+	'server.users.reactivateByIdentity',
+	'server.users.redact',
+	'server.users.redactByIdentity',
+	'server.users.update',
+	'server.users.updateByIdentity',
+	'threads.get',
 	'threads.items',
 	'threads.list',
 	'threads.markdown',
-];
+	'webhooks.check',
+	'webhooks.create',
+	'webhooks.delete',
+	'webhooks.list',
+	'webhooks.update',
+].sort();
 
 describe('loomio plugin definition', () => {
 	const plugin = loomio();
 
 	it('registers as loomio with api_key auth and no webhooks', () => {
 		expect(plugin.id).toBe('loomio');
+		expect(plugin.authConfig).toEqual({ api_key: { account: ['base_url'] } });
 		expect(plugin.options?.authType).toBe('api_key');
 		expect(plugin.webhooks).toEqual({});
 		expect(
@@ -46,10 +82,15 @@ describe('loomio plugin definition', () => {
 		).toBe(false);
 	});
 
-	it('exposes exactly the twelve catalog operations', () => {
-		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
-			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
-		);
+	it('exposes the full User and Server API (47 operations)', () => {
+		const flatten = (node: object, prefix: string): string[] =>
+			Object.entries(node).flatMap(([name, value]) =>
+				typeof value === 'function'
+					? [`${prefix}${name}`]
+					: flatten(value as object, `${prefix}${name}.`),
+			);
+		const nested = flatten(plugin.endpoints ?? {}, '');
+		expect(nested).toHaveLength(47);
 		expect(nested.sort()).toEqual(operations);
 	});
 
@@ -68,14 +109,49 @@ describe('loomio plugin definition', () => {
 			'groups.get': 'read',
 			'discussions.list': 'read',
 			'discussions.get': 'read',
-			'discussions.create': 'write',
+			'discussions.create': 'destructive',
+			'discussions.update': 'destructive',
+			'discussions.delete': 'destructive',
 			'comments.create': 'write',
+			'comments.update': 'write',
+			'comments.delete': 'destructive',
 			'threads.list': 'read',
+			'threads.get': 'read',
 			'threads.items': 'read',
 			'threads.markdown': 'read',
 			'polls.list': 'read',
 			'polls.get': 'read',
-			'polls.create': 'write',
+			'polls.create': 'destructive',
+			'polls.update': 'destructive',
+			'polls.delete': 'destructive',
+			'memberships.list': 'read',
+			'memberships.manage': 'destructive',
+			'reports.get': 'read',
+			'search.query': 'read',
+			'webhooks.list': 'read',
+			'webhooks.create': 'write',
+			'webhooks.update': 'write',
+			'webhooks.delete': 'destructive',
+			'webhooks.check': 'destructive',
+			'server.groups.list': 'read',
+			'server.memberships.list': 'read',
+			'server.memberships.sync': 'destructive',
+			'server.memberships.update': 'write',
+			'server.memberships.revoke': 'destructive',
+			'server.users.list': 'read',
+			'server.users.create': 'write',
+			'server.users.get': 'read',
+			'server.users.update': 'write',
+			'server.users.delete': 'destructive',
+			'server.users.deactivate': 'destructive',
+			'server.users.reactivate': 'write',
+			'server.users.redact': 'destructive',
+			'server.users.getByIdentity': 'read',
+			'server.users.updateByIdentity': 'write',
+			'server.users.deleteByIdentity': 'destructive',
+			'server.users.deactivateByIdentity': 'destructive',
+			'server.users.reactivateByIdentity': 'write',
+			'server.users.redactByIdentity': 'destructive',
 		});
 	});
 
@@ -100,6 +176,20 @@ describe('loomio plugin definition', () => {
 		expect(names.at(-1)).toBe('DEFAULT');
 		expect(names).toContain('QUOTA_ERROR');
 		expect(names).toContain('RATE_LIMIT_ERROR');
+	});
+});
+
+describe('loomio baseUrl option', () => {
+	it('normalizes a self-hosted origin', () => {
+		expect(
+			loomio({ baseUrl: 'https://loomio.example.org/' }).options?.baseUrl,
+		).toBe('https://loomio.example.org');
+	});
+
+	it('refuses a non-https origin at setup', () => {
+		expect(() => loomio({ baseUrl: 'http://loomio.example.org' })).toThrow(
+			/base_url/,
+		);
 	});
 });
 

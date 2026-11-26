@@ -8,6 +8,20 @@ import { nextOffset } from './types';
 type LogFields = Record<string, string | number | boolean | undefined>;
 
 /**
+ * The installation origin: `options.baseUrl` first, then the account's stored
+ * `base_url`, else undefined (www.loomio.com). Read per call so each tenant's
+ * account can point at its own self-hosted install.
+ */
+export async function resolveBaseUrl(
+	ctx: LoomioContext,
+): Promise<string | undefined> {
+	const fromOptions = ctx.options?.baseUrl?.trim();
+	if (fromOptions) return fromOptions;
+	const fromAccount = (await ctx.keys?.get_base_url?.())?.trim();
+	return fromAccount ? fromAccount : undefined;
+}
+
+/**
  * Validates the input, sends the request, shapes and validates the response,
  * then logs the event. Inputs are not logged because discussion and comment
  * bodies hold user content; `log` picks the safe fields.
@@ -25,7 +39,10 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const raw = await makeLoomioRequest(ctx.key, toRequest(parsed));
+	const raw = await makeLoomioRequest(
+		{ key: ctx.key, baseUrl: await resolveBaseUrl(ctx) },
+		toRequest(parsed),
+	);
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,
 	);
@@ -81,4 +98,14 @@ export function unwrapResource(
 	const primary = envelope[root];
 	const first = Array.isArray(primary) ? primary[0] : undefined;
 	return { ...envelope, [singular]: first };
+}
+
+/** Copy of `input` without the listed keys (path params that aren't body fields). */
+export function bodyWithout<
+	T extends Record<string, unknown>,
+	K extends keyof T,
+>(input: T, ...keys: K[]): Omit<T, K> {
+	const copy: Record<string, unknown> = { ...input };
+	for (const key of keys) delete copy[key as string];
+	return copy as Omit<T, K>;
 }

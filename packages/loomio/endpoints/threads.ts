@@ -1,9 +1,10 @@
 import type { LoomioEndpoints } from '..';
 import { segment } from '../client';
-import { call, withPaging } from './call';
+import { call, unwrapResource, withPaging } from './call';
 import {
 	LoomioEndpointInputSchemas as Inputs,
 	LoomioEndpointOutputSchemas as Outputs,
+	relatedQuery,
 } from './types';
 
 export const list: LoomioEndpoints['threadsList'] = (ctx, input) =>
@@ -15,14 +16,39 @@ export const list: LoomioEndpoints['threadsList'] = (ctx, input) =>
 			output: Outputs.threadsList,
 		},
 		input,
-		({ limit, offset }) => ({
+		(parsed) => ({
 			method: 'GET',
 			path: '/threads',
-			query: { limit, offset },
+			query: {
+				limit: parsed.limit,
+				offset: parsed.offset,
+				...relatedQuery(parsed),
+			},
 		}),
 		{
 			shape: (raw, parsed) => withPaging(raw, 'threads', parsed.offset ?? 0),
 			log: (_, result) => ({ count: result.threads.length }),
+		},
+	);
+
+export const get: LoomioEndpoints['threadsGet'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'threads.get',
+			input: Inputs.threadsGet,
+			output: Outputs.threadsGet,
+		},
+		input,
+		(parsed) => ({
+			method: 'GET',
+			path: `/threads/${segment(parsed.topic_id)}`,
+			query: relatedQuery(parsed),
+			resourceScoped: true,
+		}),
+		{
+			shape: (raw) => unwrapResource(raw, 'threads', 'thread'),
+			log: ({ topic_id }) => ({ topicId: topic_id }),
 		},
 	);
 
@@ -35,10 +61,14 @@ export const items: LoomioEndpoints['threadsItems'] = (ctx, input) =>
 			output: Outputs.threadsItems,
 		},
 		input,
-		({ topic_id, limit, offset }) => ({
+		(parsed) => ({
 			method: 'GET',
-			path: `/threads/${segment(topic_id)}/items`,
-			query: { limit, offset },
+			path: `/threads/${segment(parsed.topic_id)}/items`,
+			query: {
+				limit: parsed.limit,
+				offset: parsed.offset,
+				...relatedQuery(parsed),
+			},
 			resourceScoped: true,
 		}),
 		{

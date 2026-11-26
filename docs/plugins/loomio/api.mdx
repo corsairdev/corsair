@@ -14,7 +14,7 @@ description: "API reference for the Loomio plugin in Corsair: every `loomio.api.
 
 `comments.create`
 
-Post a comment on a discussion, in markdown or html
+Post a comment, or a reply to a comment, on a discussion, in markdown or html
 
 **Risk:** `write`
 
@@ -26,11 +26,122 @@ await corsair.loomio.api.comments.create({ discussion_id: 88, body: 'Sounds good
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `discussion_id` | `number` | Yes | The discussion (thread) to comment on. |
+| `discussion_id` | `number` | Yes | The discussion to comment on (its numeric discussion id). |
+| `parent_id` | `number` | No | Reply to this comment id inside the discussion. |
 | `body` | `string` | Yes | The comment text. Required. |
 | `body_format` | `md \| html` | No | Format of `body`; `md` (default) or `html`. |
 
-discussion_id is the thread id (the discussion's topic_id). body_format takes md (default) or html.
+discussion_id is the numeric discussion id (not the topic id). Set parent_id to reply to a comment. body_format takes md (default) or html.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="comment full type">
+
+```ts
+{
+  id: number,
+  body?: string | null,
+  body_format?: string | null,
+  mentioned_usernames?: string[] | null,
+  topic_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  parent_id?: number | null,
+  parent_type?: string | null,
+  content_locale?: string | null,
+  versions_count?: number | null,
+  author_id?: number | null,
+  discarded_at?: string | null,
+  discarded_by?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`comments.delete`
+
+Soft-delete a comment: its body is hidden and the API cannot restore it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loomio.api.comments.delete({ id: 301 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The comment id to soft-delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `comment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="comment full type">
+
+```ts
+{
+  id: number,
+  body?: string | null,
+  body_format?: string | null,
+  mentioned_usernames?: string[] | null,
+  topic_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  parent_id?: number | null,
+  parent_type?: string | null,
+  content_locale?: string | null,
+  versions_count?: number | null,
+  author_id?: number | null,
+  discarded_at?: string | null,
+  discarded_by?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`comments.update`
+
+Edit the body of a comment the key user may edit
+
+**Risk:** `write`
+
+```ts
+await corsair.loomio.api.comments.update({ id: 301, body: 'Sounds good to me, with one change.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The comment id. |
+| `body` | `string` | Yes | The new comment text. |
+| `body_format` | `md \| html` | No | Format of `body`; `md` (default) or `html`. |
 
 
 
@@ -74,9 +185,9 @@ discussion_id is the thread id (the discussion's topic_id). body_format takes md
 
 `discussions.create`
 
-Start a discussion in a group, optionally notifying members or inviting email recipients
+Start a discussion in a group; can notify the whole group and email invitations to recipient addresses
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.loomio.api.discussions.create({ group_id: 12, title: 'Spring palette', description: 'Pick three colours for the rebrand.' });
@@ -95,7 +206,64 @@ await corsair.loomio.api.discussions.create({ group_id: 12, title: 'Spring palet
 | `recipient_emails` | `string[]` | No | Invite these email addresses to the group with the discussion. |
 | `recipient_message` | `string` | No | Message sent to the notified recipients. |
 
-A permission denial on create answers the same 403 body a bad key does, so a failure here can mean the account may not post in that group.
+recipient_audience: group notifies the whole group and recipient_emails emails invitations, so this is destructive. A permission denial answers the same 403 body a bad key does.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `discussion` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="discussion full type">
+
+```ts
+{
+  id: number,
+  key?: string | null,
+  group_id?: number | null,
+  topic_id?: number | null,
+  title?: string | null,
+  content_locale?: string | null,
+  description?: string | null,
+  description_format?: string | null,
+  discussion_template_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  context_changed_at?: string | null,
+  versions_count?: number | null,
+  mentioned_usernames?: string[] | null,
+  discarded_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`discussions.delete`
+
+Soft-delete a discussion; it disappears for members and the API cannot restore it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loomio.api.discussions.delete({ id: 88 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The discussion id to soft-delete. |
+
+A soft delete: the record stays with discarded_at set, hidden from members. The API has no undo.
 
 
 
@@ -151,6 +319,8 @@ await corsair.loomio.api.discussions.get({ id: 'dX2' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number \| string` | Yes | The discussion, by numeric id or url key. |
+| `compact` | `boolean` | No | Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations. |
+| `exclude_types` | `string[]` | No | Singular related record types to omit, e.g. ["group", "reaction"]. The primary records always stay. |
 
 
 
@@ -198,7 +368,7 @@ List discussions in one group, filtered by open or closed status, ordered by lat
 **Risk:** `read`
 
 ```ts
-await corsair.loomio.api.discussions.list({ group_id: 12, limit: 20 });
+await corsair.loomio.api.discussions.list({ group_id: 12, limit: 20, compact: true });
 ```
 
 **Input**
@@ -209,6 +379,8 @@ await corsair.loomio.api.discussions.list({ group_id: 12, limit: 20 });
 | `status` | `open \| closed \| all` | No | Filter: `open` (default), `closed`, or `all`. |
 | `limit` | `number` | No | Records per page; Loomio defaults to 50 when omitted. |
 | `offset` | `number` | No | Records to skip for this page; Loomio defaults to 0. |
+| `compact` | `boolean` | No | Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations. |
+| `exclude_types` | `string[]` | No | Singular related record types to omit, e.g. ["group", "reaction"]. The primary records always stay. |
 
 group_id is required; Loomio answers a missing one with 404 &#123;"error":404&#125;. status takes open (default), closed, or all.
 
@@ -261,6 +433,68 @@ group_id is required; Loomio answers a missing one with 404 &#123;"error":404&#1
 
 ---
 
+### update
+
+`discussions.update`
+
+Edit a discussion title or context; can notify the group and email invitations to recipient addresses
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loomio.api.discussions.update({ id: 88, title: 'Spring palette (final)' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The discussion id. |
+| `title` | `string` | No | New title. |
+| `description` | `string` | No | New context (body). |
+| `description_format` | `md \| html` | No | Format of `description`; `md` (default) or `html`. |
+| `recipient_audience` | `string \| null` | No | `group` notifies the whole group; null notifies nobody beyond the listed recipients. |
+| `recipient_user_ids` | `number[]` | No | Notify or invite these user ids. |
+| `recipient_emails` | `string[]` | No | Invite these email addresses; Loomio emails each one. |
+| `recipient_message` | `string` | No | Message included in the email invitation. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `discussion` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="discussion full type">
+
+```ts
+{
+  id: number,
+  key?: string | null,
+  group_id?: number | null,
+  topic_id?: number | null,
+  title?: string | null,
+  content_locale?: string | null,
+  description?: string | null,
+  description_format?: string | null,
+  discussion_template_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  context_changed_at?: string | null,
+  versions_count?: number | null,
+  mentioned_usernames?: string[] | null,
+  discarded_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Groups
 
 ### get
@@ -280,6 +514,8 @@ await corsair.loomio.api.groups.get({ id: 'design' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number \| string` | Yes | The group, by numeric id, url key, or handle. |
+| `compact` | `boolean` | No | Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations. |
+| `exclude_types` | `string[]` | No | Singular related record types to omit, e.g. ["group", "reaction"]. The primary records always stay. |
 
 The id accepts a numeric id, a url key, or a handle.
 
@@ -340,7 +576,7 @@ The id accepts a numeric id, a url key, or a handle.
 
 `groups.list`
 
-List the groups the API key user belongs to, including subgroups, oldest first
+List the groups the key user belongs to, including subgroups, oldest first
 
 **Risk:** `read`
 
@@ -354,6 +590,8 @@ await corsair.loomio.api.groups.list({ limit: 50 });
 |------|------|----------|-------------|
 | `limit` | `number` | No | Records per page, capped at 500; Loomio defaults to 50 when omitted. |
 | `offset` | `number` | No | Records to skip for this page; Loomio defaults to 0. |
+| `compact` | `boolean` | No | Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations. |
+| `exclude_types` | `string[]` | No | Singular related record types to omit, e.g. ["group", "reaction"]. The primary records always stay. |
 
 
 
@@ -420,15 +658,121 @@ await corsair.loomio.api.groups.list({ limit: 50 });
 
 ---
 
+## Memberships
+
+### list
+
+`memberships.list`
+
+List a group's memberships with related users; emails only for group admins
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.memberships.list({ group_id: 12, limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | The group whose memberships to list. Required. |
+| `limit` | `number` | No | Records per page; Loomio defaults to 50 when omitted. |
+| `offset` | `number` | No | Records to skip for this page; Loomio defaults to 0. |
+| `compact` | `boolean` | No | Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations. |
+| `exclude_types` | `string[]` | No | Singular related record types to omit, e.g. ["group", "reaction"]. The primary records always stay. |
+
+Email addresses come back only for your own membership or when the key user is a group admin.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memberships` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="memberships full type">
+
+```ts
+{
+  id: number,
+  group_id?: number | null,
+  user_id?: number | null,
+  inviter_id?: number | null,
+  admin?: boolean | null,
+  delegate?: boolean | null,
+  title?: string | null,
+  created_at?: string | null,
+  accepted_at?: string | null,
+  revoked_at?: string | null,
+  user_email?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  root?: string | null,
+  total?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### manage
+
+`memberships.manage`
+
+Invite email addresses to a group (Loomio emails them) and optionally remove every member not listed; group admin only
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loomio.api.memberships.manage({ group_id: 12, emails: ['new.member@example.org'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | The group to manage. The key user must be a group admin. |
+| `emails` | `string[]` | Yes | Email addresses to invite; Loomio emails each new address. |
+| `remove_absent` | `boolean` | No | Remove every current member whose email is not in `emails`. An empty list removes everyone. |
+
+Group admin only. remove_absent: true removes every member whose email is not listed, so an empty or partial list can empty the group.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `added_emails` | `string[] \| null` | No | — |
+| `removed_emails` | `string[] \| null` | No | — |
+
+
+
+---
+
 ## Polls
 
 ### create
 
 `polls.create`
 
-Create a poll in a group or on a discussion: proposal, poll, count, score, ranked_choice, meeting, or dot_vote
+Create a poll in a group or on a discussion; can invite the group to vote and email invitations to recipient addresses
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.loomio.api.polls.create({ discussion_id: 88, title: 'Which blue?', poll_type: 'poll', options: ['Sky blue', 'Navy'], closing_at: '2026-04-01T00:00:00.000Z' });
@@ -441,6 +785,8 @@ await corsair.loomio.api.polls.create({ discussion_id: 88, title: 'Which blue?',
 | `group_id` | `number` | No | Start the poll in this group. Provide this or `discussion_id`. |
 | `discussion_id` | `number` | No | Start the poll on this discussion. Provide this or `group_id`. |
 | `title` | `string` | Yes | The poll question. Required. |
+| `details` | `string` | No | The poll body text. |
+| `details_format` | `md \| html` | No | Format of `details`; `md` (default) or `html`. |
 | `poll_type` | `proposal \| poll \| count \| score \| ranked_choice \| meeting \| dot_vote` | Yes | Voting style: proposal, poll, count, score, ranked_choice, meeting, or dot_vote. |
 | `options` | `string[]` | No | Option texts. For a proposal, Loomio uses agree, disagree, abstain, and block when omitted. |
 | `poll_options_attributes` | `object[]` | No | Options with per-option settings; an alternative to `options`. |
@@ -458,7 +804,7 @@ await corsair.loomio.api.polls.create({ discussion_id: 88, title: 'Which blue?',
 | `recipient_message` | `string` | No | Message sent to the notified recipients. |
 | `notify_recipients` | `boolean` | No | Send the invitation notification. |
 
-Provide group_id or discussion_id. Omit closing_at (or send null) to keep the poll a draft with voting disabled. For proposals, options default to agree, disagree, abstain, and block.
+Provide group_id or discussion_id. Omit closing_at (or send null) to keep the poll a draft with voting disabled. For proposals, options default to agree, disagree, abstain, and block. notify_recipients: true emails everyone invited.
 
 <AccordionGroup>
 <Accordion title="poll_options_attributes full type">
@@ -469,7 +815,10 @@ Provide group_id or discussion_id. Omit closing_at (or send null) to keep the po
   meaning?: string,
   prompt?: string,
   icon?: string,
-  priority?: number
+  priority?: number,
+  test_operator?: gte | lte | null,
+  test_percent?: number | null,
+  test_against?: score_percent | voter_percent | null
 }[]
 ```
 </Accordion>
@@ -522,11 +871,11 @@ Provide group_id or discussion_id. Omit closing_at (or send null) to keep the po
   quorum_reached?: boolean | null,
   quorum_threshold?: number | null,
   quorum_shortfall?: number | null,
-  min_score?: number | null,
-  max_score?: number | null,
-  minimum_stance_choices?: number | null,
-  maximum_stance_choices?: number | null,
-  dots_per_person?: number | null,
+  score_min?: number | null,
+  score_max?: number | null,
+  choice_count_min?: number | null,
+  choice_count_max?: number | null,
+  points_per_voter?: number | null,
   meeting_duration?: number | null,
   stv_seats?: number | null,
   stv_method?: string | null,
@@ -544,23 +893,23 @@ Provide group_id or discussion_id. Omit closing_at (or send null) to keep the po
 
 ---
 
-### get
+### delete
 
-`polls.get`
+`polls.delete`
 
-Read one poll by numeric id or url key, with vote counts and its options
+Soft-delete a poll; it disappears for voters and the API cannot restore it
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
-await corsair.loomio.api.polls.get({ id: 63 });
+await corsair.loomio.api.polls.delete({ id: 63 });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `number \| string` | Yes | The poll, by numeric id or url key. |
+| `id` | `number` | Yes | The poll id to soft-delete. |
 
 
 
@@ -609,11 +958,100 @@ await corsair.loomio.api.polls.get({ id: 63 });
   quorum_reached?: boolean | null,
   quorum_threshold?: number | null,
   quorum_shortfall?: number | null,
-  min_score?: number | null,
-  max_score?: number | null,
-  minimum_stance_choices?: number | null,
-  maximum_stance_choices?: number | null,
-  dots_per_person?: number | null,
+  score_min?: number | null,
+  score_max?: number | null,
+  choice_count_min?: number | null,
+  choice_count_max?: number | null,
+  points_per_voter?: number | null,
+  meeting_duration?: number | null,
+  stv_seats?: number | null,
+  stv_method?: string | null,
+  stv_quota?: number | null,
+  chart_type?: string | null,
+  show_none_of_the_above?: boolean | null,
+  weighted_voting?: boolean | null,
+  current_outcome_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`polls.get`
+
+Read one poll by numeric id or url key, with vote counts and its options
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.polls.get({ id: 63 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | The poll, by numeric id or url key. |
+| `compact` | `boolean` | No | Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations. |
+| `exclude_types` | `string[]` | No | Singular related record types to omit, e.g. ["group", "reaction"]. The primary records always stay. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `poll` | `object` | Yes | Poll record. The chosen options arrive in the related `poll_options` array and the current outcome in `outcomes`, matched by `current_outcome_id`. |
+
+<AccordionGroup>
+<Accordion title="poll full type">
+
+```ts
+{
+  id: number,
+  key?: string | null,
+  title?: string | null,
+  details?: string | null,
+  details_format?: string | null,
+  poll_type?: string | null,
+  poll_option_names?: string[] | null,
+  closing_at?: string | null,
+  closed_at?: string | null,
+  opening_at?: string | null,
+  opened_at?: string | null,
+  created_at?: string | null,
+  anonymous?: boolean | null,
+  hide_results?: string | null,
+  shuffle_options?: boolean | null,
+  specified_voters_only?: boolean | null,
+  stance_reason_required?: string | null,
+  reason_prompt?: string | null,
+  notify_on_closing_soon?: string | null,
+  notify_on_open?: boolean | null,
+  topic_id?: number | null,
+  group_id?: number | null,
+  author_id?: number | null,
+  discarded_at?: string | null,
+  discarded_by?: number | null,
+  vote_count_cast?: number | null,
+  vote_count_eligible?: number | null,
+  vote_count_uncast?: number | null,
+  participation_pct?: number | null,
+  total_score?: number | null,
+  quorum_pct?: number | null,
+  quorum_reached?: boolean | null,
+  quorum_threshold?: number | null,
+  quorum_shortfall?: number | null,
+  score_min?: number | null,
+  score_max?: number | null,
+  choice_count_min?: number | null,
+  choice_count_max?: number | null,
+  points_per_voter?: number | null,
   meeting_duration?: number | null,
   stv_seats?: number | null,
   stv_method?: string | null,
@@ -651,6 +1089,8 @@ await corsair.loomio.api.polls.list({ group_id: 12, status: 'all', limit: 50 });
 | `status` | `active \| closed \| all` | No | Filter: `active` (default), `closed`, or `all`. |
 | `limit` | `number` | No | Records per page; Loomio defaults to 50 when omitted. |
 | `offset` | `number` | No | Records to skip for this page; Loomio defaults to 0. |
+| `compact` | `boolean` | No | Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations. |
+| `exclude_types` | `string[]` | No | Singular related record types to omit, e.g. ["group", "reaction"]. The primary records always stay. |
 
 status takes active (default), closed, or all. Current outcomes ride in the outcomes array; match current_outcome_id on each poll.
 
@@ -703,11 +1143,11 @@ status takes active (default), closed, or all. Current outcomes ride in the outc
   quorum_reached?: boolean | null,
   quorum_threshold?: number | null,
   quorum_shortfall?: number | null,
-  min_score?: number | null,
-  max_score?: number | null,
-  minimum_stance_choices?: number | null,
-  maximum_stance_choices?: number | null,
-  dots_per_person?: number | null,
+  score_min?: number | null,
+  score_max?: number | null,
+  choice_count_min?: number | null,
+  choice_count_max?: number | null,
+  points_per_voter?: number | null,
   meeting_duration?: number | null,
   stv_seats?: number | null,
   stv_method?: string | null,
@@ -735,7 +1175,1208 @@ status takes active (default), closed, or all. Current outcomes ride in the outc
 
 ---
 
+### update
+
+`polls.update`
+
+Edit a poll (title, details, options, closing time); can change existing votes and email invitations
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loomio.api.polls.update({ id: 63, closing_at: '2026-04-08T00:00:00.000Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The poll id. |
+| `title` | `string` | No | New poll title. |
+| `details` | `string` | No | New poll details. |
+| `details_format` | `md \| html` | No | Format of `details`; `md` (default) or `html`. |
+| `options` | `string[]` | No | Replacement option names; may affect existing votes. |
+| `poll_options_attributes` | `object[]` | No | Edit options by `id`, add ones without an `id`, remove with `id` + `_destroy: true`. Omitted options stay. |
+| `reason_prompt` | `string` | No | Shared reason prompt. |
+| `stance_reason_required` | `disabled \| optional \| required \| required_for_disagree_or_block \| required_for_block` | No | When a reason is required with a vote. |
+| `closing_at` | `string \| null` | No | ISO 8601 close time; a future time opens voting. |
+| `recipient_audience` | `string \| null` | No | `group` notifies the whole group; null notifies nobody beyond the listed recipients. |
+| `recipient_user_ids` | `number[]` | No | Notify or invite these user ids. |
+| `recipient_emails` | `string[]` | No | Invite these email addresses; Loomio emails each one. |
+| `recipient_message` | `string` | No | Message included in the email invitation. |
+
+Edit detailed options by id; add ones without an id; remove one with id and _destroy: true. Closed polls cannot be edited, and anonymous polls freeze options after the first vote.
+
+<AccordionGroup>
+<Accordion title="poll_options_attributes full type">
+
+```ts
+{
+  name?: string,
+  meaning?: string,
+  prompt?: string,
+  icon?: string,
+  priority?: number,
+  test_operator?: gte | lte | null,
+  test_percent?: number | null,
+  test_against?: score_percent | voter_percent | null,
+  id?: number,
+  _destroy?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `poll` | `object` | Yes | Poll record. The chosen options arrive in the related `poll_options` array and the current outcome in `outcomes`, matched by `current_outcome_id`. |
+
+<AccordionGroup>
+<Accordion title="poll full type">
+
+```ts
+{
+  id: number,
+  key?: string | null,
+  title?: string | null,
+  details?: string | null,
+  details_format?: string | null,
+  poll_type?: string | null,
+  poll_option_names?: string[] | null,
+  closing_at?: string | null,
+  closed_at?: string | null,
+  opening_at?: string | null,
+  opened_at?: string | null,
+  created_at?: string | null,
+  anonymous?: boolean | null,
+  hide_results?: string | null,
+  shuffle_options?: boolean | null,
+  specified_voters_only?: boolean | null,
+  stance_reason_required?: string | null,
+  reason_prompt?: string | null,
+  notify_on_closing_soon?: string | null,
+  notify_on_open?: boolean | null,
+  topic_id?: number | null,
+  group_id?: number | null,
+  author_id?: number | null,
+  discarded_at?: string | null,
+  discarded_by?: number | null,
+  vote_count_cast?: number | null,
+  vote_count_eligible?: number | null,
+  vote_count_uncast?: number | null,
+  participation_pct?: number | null,
+  total_score?: number | null,
+  quorum_pct?: number | null,
+  quorum_reached?: boolean | null,
+  quorum_threshold?: number | null,
+  quorum_shortfall?: number | null,
+  score_min?: number | null,
+  score_max?: number | null,
+  choice_count_min?: number | null,
+  choice_count_max?: number | null,
+  points_per_voter?: number | null,
+  meeting_duration?: number | null,
+  stv_seats?: number | null,
+  stv_method?: string | null,
+  stv_quota?: number | null,
+  chart_type?: string | null,
+  show_none_of_the_above?: boolean | null,
+  weighted_voting?: boolean | null,
+  current_outcome_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reports
+
+### get
+
+`reports.get`
+
+Generate a participation report (overview, per-person, or per-country counts) for the key user's groups
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.reports.get({ section: 'users', group_scope: 'custom', group_ids: [12], start_month: '2026-01', end_month: '2026-09' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `section` | `base \| users \| countries` | No | Report section; `users` gives per-person activity rows. |
+| `group_scope` | `custom \| my` | No | `my` (all your groups) or `custom` (the `group_ids`). |
+| `group_ids` | `number[]` | No | Groups to report on when `group_scope` is `custom`. |
+| `start_month` | `string` | No | First month (YYYY-MM); defaults to 12 months ago. |
+| `end_month` | `string` | No | Last month (YYYY-MM); defaults to this month. |
+| `interval` | `day \| week \| month \| year` | No | Interval for the `base` section. |
+| `member_type` | `delegate` | No | With `section: users`, return only current delegates. |
+
+group_ids outside the key user's memberships are ignored. Anonymous polls are left out of per-person voting counts.
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+## Search
+
+### query
+
+`search.query`
+
+Search visible discussions, comments, polls, votes, and outcomes; up to 20 results
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.search.query({ query: 'quarterly planning', types: ['Discussion'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | Search text; exact and fuzzy matches. |
+| `group_id` | `number` | No | Restrict to one visible group. |
+| `org_id` | `number` | No | Restrict to a parent group and its subgroups; 0 for direct discussions. |
+| `types` | `(Discussion \| Comment \| Poll \| Stance \| Outcome)[]` | No | Restrict to these result types. |
+| `tag` | `string` | No | Restrict to topics with this tag. |
+| `author_id` | `number` | No | Restrict to one author; without `query`, returns that author's recent activity. |
+| `order` | `authored_at_desc` | No | Order by authoring time, newest first. |
+| `compact` | `boolean` | No | Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations. |
+| `exclude_types` | `string[]` | No | Singular related record types to omit, e.g. ["group", "reaction"]. The primary records always stay. |
+
+Returns at most 20 results with no paging. author_id without a query returns that author's recent activity.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="search_results full type">
+
+```ts
+{
+  id?: number | string | null,
+  searchable_type?: string | null,
+  searchable_id?: number | null,
+  highlight?: string | null,
+  group_id?: number | null,
+  group_name?: string | null,
+  discussion_key?: string | null,
+  poll_key?: string | null,
+  author_id?: number | null,
+  author_name?: string | null,
+  authored_at?: string | null,
+  tags?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Server
+
+### groups.list
+
+`server.groups.list`
+
+Self-hosted Server API: list every group on the install, private ones included (server key)
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.server.groups.list({ limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page; default and maximum 50. |
+| `offset` | `number` | No | Records to skip for this page; Loomio defaults to 0. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groups` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  id: number,
+  key?: string | null,
+  name?: string | null,
+  handle?: string | null,
+  parent_id?: number | null,
+  group_privacy?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### memberships.list
+
+`server.memberships.list`
+
+Self-hosted Server API: list a group's memberships and pending invitations with emails (server key)
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.server.memberships.list({ group_id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | The group whose memberships to list. Required. |
+| `limit` | `number` | No | Records per page; default and maximum 50. |
+| `offset` | `number` | No | Records to skip for this page; Loomio defaults to 0. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memberships` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="memberships full type">
+
+```ts
+{
+  id: number,
+  group_id?: number | null,
+  user_id?: number | null,
+  user_email?: string | null,
+  user_name?: string | null,
+  admin?: boolean | null,
+  delegate?: boolean | null,
+  accepted_at?: string | null,
+  pending?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### memberships.revoke
+
+`server.memberships.revoke`
+
+Self-hosted Server API: revoke a membership in its group and subgroups (server key)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loomio.api.server.memberships.revoke({ id: 9 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The membership id to revoke. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+
+
+
+---
+
+### memberships.sync
+
+`server.memberships.sync`
+
+Self-hosted Server API: invite emails to a group and optionally revoke everyone not listed (server key)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loomio.api.server.memberships.sync({ group_id: 12, emails: ['ada@example.org'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | The group to sync. |
+| `emails` | `string[]` | Yes | Email addresses to invite. New addresses get unverified accounts and invitations. |
+| `remove_absent` | `boolean` | No | Revoke members (group and subgroups) whose email is not listed. An empty list removes everyone. |
+
+Self-hosted, server key. remove_absent: true revokes everyone not listed in the group and its subgroups; an empty list removes everyone.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `added_emails` | `string[] \| null` | No | — |
+| `removed_emails` | `string[] \| null` | No | — |
+
+
+
+---
+
+### memberships.update
+
+`server.memberships.update`
+
+Self-hosted Server API: grant or remove a member's admin and delegate roles (server key)
+
+**Risk:** `write`
+
+```ts
+await corsair.loomio.api.server.memberships.update({ id: 9, admin: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The membership id. |
+| `admin` | `boolean` | No | Grant or remove group admin. |
+| `delegate` | `boolean` | No | Grant or remove delegate. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `membership` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="membership full type">
+
+```ts
+{
+  id: number,
+  group_id?: number | null,
+  user_id?: number | null,
+  user_email?: string | null,
+  user_name?: string | null,
+  admin?: boolean | null,
+  delegate?: boolean | null,
+  accepted_at?: string | null,
+  pending?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### users.create
+
+`server.users.create`
+
+Self-hosted Server API: create an unverified account without sending an invitation (server key)
+
+**Risk:** `write`
+
+```ts
+await corsair.loomio.api.server.users.create({ email: 'ada@example.org', name: 'Ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | Email address. Required. |
+| `name` | `string` | No | Display name. |
+| `username` | `string` | No | Username; must be unique. |
+| `is_admin` | `boolean` | No | Make the user an instance admin. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  is_admin?: boolean | null,
+  active?: boolean | null,
+  deactivated_at?: string | null,
+  identities?: {
+    id: number,
+    identity_type?: string | null,
+    uid?: string | null,
+    email?: string | null,
+    name?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### users.deactivate
+
+`server.users.deactivate`
+
+Self-hosted Server API: deactivate a user, removing their access (server key)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loomio.api.server.users.deactivate({ id: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The user id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  is_admin?: boolean | null,
+  active?: boolean | null,
+  deactivated_at?: string | null,
+  identities?: {
+    id: number,
+    identity_type?: string | null,
+    uid?: string | null,
+    email?: string | null,
+    name?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### users.deactivateByIdentity
+
+`server.users.deactivateByIdentity`
+
+Self-hosted Server API: deactivate a user found by external identity (server key)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loomio.api.server.users.deactivateByIdentity({ identity_type: 'saml', uid: 'ada-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identity_type` | `string` | Yes | External identity provider, e.g. `saml` or `oauth`. |
+| `uid` | `string` | Yes | The user's id at that provider. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  is_admin?: boolean | null,
+  active?: boolean | null,
+  deactivated_at?: string | null,
+  identities?: {
+    id: number,
+    identity_type?: string | null,
+    uid?: string | null,
+    email?: string | null,
+    name?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### users.delete
+
+`server.users.delete`
+
+Self-hosted Server API: permanently delete a user and their records (server key)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loomio.api.server.users.delete({ id: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The user id. |
+
+Self-hosted, server key. Permanent: the user and associated records are deleted by a background job.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+
+
+
+---
+
+### users.deleteByIdentity
+
+`server.users.deleteByIdentity`
+
+Self-hosted Server API: permanently delete a user found by external identity (server key)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loomio.api.server.users.deleteByIdentity({ identity_type: 'saml', uid: 'ada-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identity_type` | `string` | Yes | External identity provider, e.g. `saml` or `oauth`. |
+| `uid` | `string` | Yes | The user's id at that provider. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+
+
+
+---
+
+### users.get
+
+`server.users.get`
+
+Self-hosted Server API: read one user account by id (server key)
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.server.users.get({ id: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The user id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  is_admin?: boolean | null,
+  active?: boolean | null,
+  deactivated_at?: string | null,
+  identities?: {
+    id: number,
+    identity_type?: string | null,
+    uid?: string | null,
+    email?: string | null,
+    name?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### users.getByIdentity
+
+`server.users.getByIdentity`
+
+Self-hosted Server API: find a user by external identity provider and uid (server key)
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.server.users.getByIdentity({ identity_type: 'saml', uid: 'ada-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identity_type` | `string` | Yes | External identity provider, e.g. `saml` or `oauth`. |
+| `uid` | `string` | Yes | The user's id at that provider. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  is_admin?: boolean | null,
+  active?: boolean | null,
+  deactivated_at?: string | null,
+  identities?: {
+    id: number,
+    identity_type?: string | null,
+    uid?: string | null,
+    email?: string | null,
+    name?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### users.list
+
+`server.users.list`
+
+Self-hosted Server API: list every user account with emails and identities (server key)
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.server.users.list({ is_admin: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_admin` | `boolean` | No | Only instance admins (true) or only non-admins (false). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `users` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="users full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  is_admin?: boolean | null,
+  active?: boolean | null,
+  deactivated_at?: string | null,
+  identities?: {
+    id: number,
+    identity_type?: string | null,
+    uid?: string | null,
+    email?: string | null,
+    name?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### users.reactivate
+
+`server.users.reactivate`
+
+Self-hosted Server API: reactivate a deactivated user (server key)
+
+**Risk:** `write`
+
+```ts
+await corsair.loomio.api.server.users.reactivate({ id: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The user id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  is_admin?: boolean | null,
+  active?: boolean | null,
+  deactivated_at?: string | null,
+  identities?: {
+    id: number,
+    identity_type?: string | null,
+    uid?: string | null,
+    email?: string | null,
+    name?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### users.reactivateByIdentity
+
+`server.users.reactivateByIdentity`
+
+Self-hosted Server API: reactivate a user found by external identity (server key)
+
+**Risk:** `write`
+
+```ts
+await corsair.loomio.api.server.users.reactivateByIdentity({ identity_type: 'saml', uid: 'ada-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identity_type` | `string` | Yes | External identity provider, e.g. `saml` or `oauth`. |
+| `uid` | `string` | Yes | The user's id at that provider. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  is_admin?: boolean | null,
+  active?: boolean | null,
+  deactivated_at?: string | null,
+  identities?: {
+    id: number,
+    identity_type?: string | null,
+    uid?: string | null,
+    email?: string | null,
+    name?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### users.redact
+
+`server.users.redact`
+
+Self-hosted Server API: irreversibly remove a user's identifying data, keeping their content (server key)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loomio.api.server.users.redact({ id: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The user id. |
+
+Self-hosted, server key. Irreversibly removes identifying data while keeping the user's contributions.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+
+
+
+---
+
+### users.redactByIdentity
+
+`server.users.redactByIdentity`
+
+Self-hosted Server API: irreversibly redact a user found by external identity (server key)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loomio.api.server.users.redactByIdentity({ identity_type: 'saml', uid: 'ada-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identity_type` | `string` | Yes | External identity provider, e.g. `saml` or `oauth`. |
+| `uid` | `string` | Yes | The user's id at that provider. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+
+
+
+---
+
+### users.update
+
+`server.users.update`
+
+Self-hosted Server API: change a user's name, username, email, or admin flag (server key)
+
+**Risk:** `write`
+
+```ts
+await corsair.loomio.api.server.users.update({ id: 5, name: 'Ada L.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The user id. |
+| `name` | `string` | No | Display name. |
+| `username` | `string` | No | Username; must be unique. |
+| `email` | `string` | No | Email address. |
+| `is_admin` | `boolean` | No | Instance admin flag. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  is_admin?: boolean | null,
+  active?: boolean | null,
+  deactivated_at?: string | null,
+  identities?: {
+    id: number,
+    identity_type?: string | null,
+    uid?: string | null,
+    email?: string | null,
+    name?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### users.updateByIdentity
+
+`server.users.updateByIdentity`
+
+Self-hosted Server API: update a user found by external identity (server key)
+
+**Risk:** `write`
+
+```ts
+await corsair.loomio.api.server.users.updateByIdentity({ identity_type: 'saml', uid: 'ada-1', name: 'Ada L.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identity_type` | `string` | Yes | External identity provider, e.g. `saml` or `oauth`. |
+| `uid` | `string` | Yes | The user's id at that provider. |
+| `name` | `string` | No | Display name. |
+| `username` | `string` | No | Username; must be unique. |
+| `email` | `string` | No | Email address. |
+| `is_admin` | `boolean` | No | Instance admin flag. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  username?: string | null,
+  email?: string | null,
+  is_admin?: boolean | null,
+  active?: boolean | null,
+  deactivated_at?: string | null,
+  identities?: {
+    id: number,
+    identity_type?: string | null,
+    uid?: string | null,
+    email?: string | null,
+    name?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Threads
+
+### get
+
+`threads.get`
+
+Read one thread record by topic id, with its discussion or poll in the related arrays
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.threads.get({ topic_id: 55 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic_id` | `number` | Yes | The thread id, which is its `topic_id`. |
+| `compact` | `boolean` | No | Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations. |
+| `exclude_types` | `string[]` | No | Singular related record types to omit, e.g. ["group", "reaction"]. The primary records always stay. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `thread` | `object` | Yes | Thread metadata. The thread title is not on this record; join the related `discussions` (or `polls`) array on `topicable_id`. |
+
+<AccordionGroup>
+<Accordion title="thread full type">
+
+```ts
+{
+  id: number,
+  group_id?: number | null,
+  items_count?: number | null,
+  replies_count?: number | null,
+  active_polls_count?: number | null,
+  last_activity_at?: string | null,
+  discarded_at?: string | null,
+  locked_at?: string | boolean | null,
+  locker_id?: number | null,
+  pinned_at?: string | boolean | null,
+  topicable_id?: number | null,
+  topicable_type?: string | null,
+  has_anonymous_polls?: boolean | null,
+  tags?: string[] | null,
+  topic_reader_id?: number | null,
+  last_read_at?: string | boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
 
 ### items
 
@@ -746,7 +2387,7 @@ Read one thread timeline in sequence order: comments, polls, votes, and outcomes
 **Risk:** `read`
 
 ```ts
-await corsair.loomio.api.threads.items({ topic_id: 55, limit: 100 });
+await corsair.loomio.api.threads.items({ topic_id: 55, limit: 100, compact: true });
 ```
 
 **Input**
@@ -756,6 +2397,8 @@ await corsair.loomio.api.threads.items({ topic_id: 55, limit: 100 });
 | `topic_id` | `number` | Yes | The thread id, which is its `topic_id`. |
 | `limit` | `number` | No | Records per page, capped at 500; Loomio defaults to 50 when omitted. |
 | `offset` | `number` | No | Records to skip for this page; Loomio defaults to 0. |
+| `compact` | `boolean` | No | Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations. |
+| `exclude_types` | `string[]` | No | Singular related record types to omit, e.g. ["group", "reaction"]. The primary records always stay. |
 
 Items come back in ascending sequence order and cap limit at 500. Comments, polls, votes, and outcomes ride in related arrays matched by itemable_id.
 
@@ -828,6 +2471,8 @@ await corsair.loomio.api.threads.list({ limit: 50 });
 |------|------|----------|-------------|
 | `limit` | `number` | No | Records per page; Loomio defaults to 50 when omitted. |
 | `offset` | `number` | No | Records to skip for this page; Loomio defaults to 0. |
+| `compact` | `boolean` | No | Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations. |
+| `exclude_types` | `string[]` | No | Singular related record types to omit, e.g. ["group", "reaction"]. The primary records always stay. |
 
 
 
@@ -906,6 +2551,246 @@ Requires export permission on the thread; the thread's whole visible content com
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `markdown` | `string` | Yes | — |
+
+
+
+---
+
+## Webhooks
+
+### check
+
+`webhooks.check`
+
+Send a test message to a webhook destination URL
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loomio.api.webhooks.check({ group_id: 12, server: 'https://hooks.example.org/loomio/unguessable-token' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | A group where the key user is an admin. |
+| `server` | `string` | Yes | Destination URL that receives the test message. |
+
+Sends a real test message to the URL. Loomio answers an empty 200; the plugin returns &#123; delivered: true &#125;.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `delivered` | `true` | Yes | — |
+
+
+
+---
+
+### create
+
+`webhooks.create`
+
+Create an outgoing webhook or chat integration that posts group events to a URL; group admin only
+
+**Risk:** `write`
+
+```ts
+await corsair.loomio.api.webhooks.create({ group_id: 12, name: 'Planning system', kind: 'webhook', webhook_kind: 'markdown', server: 'https://hooks.example.org/loomio/unguessable-token', event_kinds: ['new_discussion', 'outcome_created'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | The group; the key user must be a group admin. |
+| `name` | `string` | Yes | Admin-facing name. |
+| `kind` | `webhook \| matrix` | Yes | `webhook` for an outgoing webhook, `matrix` for Matrix. |
+| `webhook_kind` | `markdown \| slack \| discord \| microsoft \| webex` | No | Payload format; `markdown` suits a general endpoint. |
+| `server` | `string` | Yes | Destination URL; must be public HTTPS. Treat it as a secret. |
+| `event_kinds` | `(new_discussion \| discussion_edited \| new_comment \| poll_created \| poll_edited \| poll_closing_soon \| poll_expired \| poll_closed_by_user \| poll_reopened \| outcome_created \| outcome_updated \| outcome_review_due \| stance_created \| stance_updated)[]` | No | Events sent automatically. |
+| `notification_only` | `boolean` | No | Send only the notification headline. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chatbot` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="chatbot full type">
+
+```ts
+{
+  id: number,
+  group_id?: number | null,
+  name?: string | null,
+  kind?: string | null,
+  webhook_kind?: string | null,
+  server?: string | null,
+  channel?: string | null,
+  event_kinds?: string[] | null,
+  notification_only?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook or chat integration; future deliveries stop
+
+**Risk:** `destructive`
+
+```ts
+await corsair.loomio.api.webhooks.delete({ id: 456 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The webhook id to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| string` | Yes | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List a group's outgoing webhooks and chat integrations, with destination URLs; group admin only
+
+**Risk:** `read`
+
+```ts
+await corsair.loomio.api.webhooks.list({ group_id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | The group; the key user must be a group admin. |
+| `limit` | `number` | No | Records per page, capped at 500; Loomio defaults to 50 when omitted. |
+| `offset` | `number` | No | Records to skip for this page; Loomio defaults to 0. |
+
+Group admin only. The response includes destination URLs, which are secrets.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chatbots` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+| `next_offset` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="chatbots full type">
+
+```ts
+{
+  id: number,
+  group_id?: number | null,
+  name?: string | null,
+  kind?: string | null,
+  webhook_kind?: string | null,
+  server?: string | null,
+  channel?: string | null,
+  event_kinds?: string[] | null,
+  notification_only?: boolean | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  root?: string | null,
+  total?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Change a webhook's name, destination, format, or events; group admin only
+
+**Risk:** `write`
+
+```ts
+await corsair.loomio.api.webhooks.update({ id: 456, event_kinds: ['new_discussion'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The webhook id. |
+| `name` | `string` | No | Admin-facing name. |
+| `kind` | `webhook \| matrix` | No | `webhook` for an outgoing webhook, `matrix` for Matrix. |
+| `webhook_kind` | `markdown \| slack \| discord \| microsoft \| webex` | No | Payload format; `markdown` suits a general endpoint. |
+| `server` | `string` | No | Destination URL; must be public HTTPS. Treat it as a secret. |
+| `event_kinds` | `(new_discussion \| discussion_edited \| new_comment \| poll_created \| poll_edited \| poll_closing_soon \| poll_expired \| poll_closed_by_user \| poll_reopened \| outcome_created \| outcome_updated \| outcome_review_due \| stance_created \| stance_updated)[]` | No | Events sent automatically. |
+| `notification_only` | `boolean` | No | Send only the notification headline. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chatbot` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="chatbot full type">
+
+```ts
+{
+  id: number,
+  group_id?: number | null,
+  name?: string | null,
+  kind?: string | null,
+  webhook_kind?: string | null,
+  server?: string | null,
+  channel?: string | null,
+  event_kinds?: string[] | null,
+  notification_only?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
