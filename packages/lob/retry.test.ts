@@ -75,13 +75,12 @@ describe('rate-limit retries through createCorsair', () => {
 		}
 	}, 30_000);
 
-	it('gives up after three core retries and one handler retry', async () => {
+	it('gives up after three core retries', async () => {
 		const { corsair, testDb } = await createClient();
 		jest.useFakeTimers();
 		try {
-			// Core: 1 + 3 attempts per call. The handler runs the call once
-			// more, so 8 attempts in total.
-			for (let i = 0; i < 8; i += 1) {
+			// Core: 1 + 3 attempts. The handler does not run the call again.
+			for (let i = 0; i < 4; i += 1) {
 				respond(rateLimited, 429);
 			}
 
@@ -92,7 +91,7 @@ describe('rate-limit retries through createCorsair', () => {
 				await jest.advanceTimersByTimeAsync(5_000);
 			}
 			await expect(settled).resolves.toMatchObject({ status: 429 });
-			expect(fetchMock).toHaveBeenCalledTimes(8);
+			expect(fetchMock).toHaveBeenCalledTimes(4);
 		} finally {
 			jest.useRealTimers();
 			testDb.cleanup();

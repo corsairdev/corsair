@@ -34,12 +34,12 @@ describe('error handler matching', () => {
 		expect(run('RATE_LIMIT_ERROR', lobError('nope'))).toBe(false);
 	});
 
-	it('backs rate-limit retries off 5 seconds, from the documented window', async () => {
+	it('leaves 429 retries to core', async () => {
 		const plan = await outcome(
 			'RATE_LIMIT_ERROR',
 			lobError('Lob 429', { status: 429 }),
 		);
-		expect(plan).toMatchObject({ maxRetries: 1, headersRetryAfterMs: 5_000 });
+		expect(plan).toEqual({ maxRetries: 0 });
 	});
 
 	it('gives a real Retry-After from the error priority', async () => {

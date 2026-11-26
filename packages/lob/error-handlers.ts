@@ -18,17 +18,13 @@ function canReplay(info: LobRequestInfo | undefined): boolean {
 // spec's error code enum. The client throws core's ApiError (request body
 // stripped); a transport failure passes through as fetch threw it.
 export const errorHandlers = {
-	// Core already retried a 429 three times with backoff (1 s, 2 s, 4 s). Lob
-	// documents 150 requests per 5 seconds per key and endpoint, so one more
-	// wait of a full window is the last try.
+	// Core's request() already retried a 429 three times (1 s, 2 s, 4 s),
+	// which spans Lob's 5-second window (150 requests per 5 seconds per key
+	// and endpoint). PLUGIN_PR_RULES R8: the handler does not retry again.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) =>
 			statusOf(error) === 429 || lobErrorCode(error) === 'rate_limit_exceeded',
-		handler: async () => ({
-			maxRetries: 1,
-			// Lob's own 429 text asks for 5 seconds; there is no header to read.
-			headersRetryAfterMs: 5_000,
-		}),
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 401: missing or wrong key (`unauthorized`, `invalid_api_key`,
 	// `publishable_key_not_allowed` for a test-mode web key). 403: the key
