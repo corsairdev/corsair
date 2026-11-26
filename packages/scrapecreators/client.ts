@@ -114,8 +114,10 @@ const REDACTED = '[REDACTED]';
 const MAX_MESSAGE_LENGTH = 300;
 
 /**
- * Core keeps the sent body on `ApiError.request` and scrubs only the URL and
- * query; the POST form of a route carries the same handles, URLs and cursors.
+ * Core keeps the sent body and query on `ApiError.request` and scrubs only
+ * credential-like keys; the query and the POST body carry handles, URLs,
+ * search terms and Marketplace coordinates. Their values are dropped, along
+ * with the query string of the error's URL.
  * The error is rebuilt without it, keeping the status and rate-limit fields
  * that the error handlers and core's retries read. The message becomes
  * ScrapeCreators' own `message` plus its `error` code
@@ -134,9 +136,17 @@ function withoutRequestData(error: ApiError, hideBalance: boolean): ApiError {
 		{
 			...error.request,
 			body: error.request.body === undefined ? undefined : REDACTED,
+			// Handles, URLs, search terms and Marketplace coordinates: keep the
+			// keys so the error still shows what was sent, never the values.
+			query:
+				error.request.query === undefined
+					? undefined
+					: Object.fromEntries(
+							Object.keys(error.request.query).map((key) => [key, REDACTED]),
+						),
 		},
 		{
-			url: error.url,
+			url: error.url.split('?')[0] ?? error.url,
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,

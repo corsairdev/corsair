@@ -146,6 +146,26 @@ describe('errors through the plugin', () => {
 		expect(error.message).toBe('Bad cursor (bad_request)');
 	});
 
+	it('keeps query keys but drops their values and the URL query', async () => {
+		respondWith(400, {
+			success: false,
+			error: 'bad_request',
+			message: 'Bad location',
+		});
+		const api = createCorsair({
+			plugins: [scrapecreators({ key: 'sc_test_key' })],
+		}).scrapecreators.api;
+		const error = (await api.facebook
+			.marketplaceSearch({ lat: 30.2677, lng: -97.7475 })
+			.catch((e: unknown) => e)) as ApiError;
+		expect(error.request.query).toEqual({
+			lat: '[REDACTED]',
+			lng: '[REDACTED]',
+		});
+		expect(error.url).not.toContain('30.2677');
+		expect(JSON.stringify(error.request)).not.toContain('97.7475');
+	});
+
 	it('shortens a very long provider message', async () => {
 		respondWith(400, {
 			success: false,
