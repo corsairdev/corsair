@@ -44,16 +44,12 @@
     "id": "ord_0d6a16a3fff6318ac8f8008dc1"
   },
   "DELETE /templates/{tmpl_id}": {
-    "value": {
-      "deleted": true,
-      "id": "tmpl_123456789"
-    }
+    "deleted": true,
+    "id": "tmpl_123456789"
   },
   "DELETE /templates/{tmpl_id}/versions/{vrsn_id}": {
-    "value": {
-      "deleted": true,
-      "id": "vrsn_123456789"
-    }
+    "deleted": true,
+    "id": "vrsn_123456789"
   },
   "GET /accounts": {
     "balance": 0

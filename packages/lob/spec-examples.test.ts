@@ -119,6 +119,19 @@ describe("Lob's spec examples parse through the output schemas", () => {
 		);
 	});
 
+	// A wrapped example ({ value: {...} }) would still pass the lenient
+	// schemas while checking none of the deletion fields.
+	it.each(
+		Object.keys(OPERATION_BY_ROUTE).filter((route) =>
+			route.startsWith('DELETE '),
+		),
+	)('%s example holds id and deleted at the top level', (route) => {
+		expect(examples[route]).toMatchObject({
+			id: expect.any(String),
+			deleted: true,
+		});
+	});
+
 	it.each(Object.entries(OPERATION_BY_ROUTE))('%s -> %s', (route, op) => {
 		const result = LobEndpointOutputSchemas[op].safeParse(examples[route]);
 		if (!result.success) {
