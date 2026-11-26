@@ -1,5 +1,7 @@
+import { ApiError } from 'corsair/http';
 import { ZodError } from 'zod';
-import { LinklyAPIError } from './client';
+import type { LinklyRequestFacts } from './client';
+import { rememberRequestFacts } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { linklyError, rateLimited, validationError } from './test-fixtures';
 
@@ -25,44 +27,50 @@ function classify(error: Error): HandlerName {
 }
 
 async function strategy(error: Error) {
-	return errorHandlers[classify(error)].handler(error);
+	// Every builtin handler decides from the match alone, so none reads the error.
+	return errorHandlers[classify(error)].handler();
 }
 
 function apiError(
 	status: number,
 	body: unknown = {}, // unknown: each case passes one of Linkly's error bodies
-	options: { retryAfter?: number; method?: string; replaySafe?: boolean } = {},
+	facts: Partial<LinklyRequestFacts> = {},
 ) {
-	return new LinklyAPIError(`Linkly ${status}: failed`, {
-		status,
-		body,
-		...options,
+	const method = facts.method ?? 'GET';
+	const error = new ApiError(
+		{ method, url: '/api/v1/test' },
+		{
+			url: 'https://api.linklyhq.com/api/v1/test',
+			ok: false,
+			status,
+			statusText: 'x',
+			body,
+		},
+		`Linkly ${status}: failed`,
+	);
+	rememberRequestFacts(error, {
+		method,
+		replaySafe: facts.replaySafe ?? method === 'GET',
 	});
+	return error;
+}
+
+function transportError(error: Error, facts: LinklyRequestFacts) {
+	rememberRequestFacts(error, facts);
+	return error;
 }
 
 describe('Linkly error handlers', () => {
-	it('retries a 429 whose body names the limit', async () => {
+	it('leaves a 429 to core, which already retried it three times', async () => {
 		const error = apiError(429, rateLimited);
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
-		expect(await strategy(error)).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: undefined,
-			retryStrategy: 'exponential_backoff',
-		});
+		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
-	it('retries a gateway 429 that carries no Linkly body', async () => {
+	it('treats a gateway 429 with no Linkly body the same way', async () => {
 		const error = apiError(429);
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
-	});
-
-	it('honours a Retry-After header when a gateway sends one', async () => {
-		const error = apiError(429, {}, { retryAfter: 2000 });
-		expect(await strategy(error)).toEqual({
-			maxRetries: 3,
-			headersRetryAfterMs: 2000,
-			retryStrategy: 'exponential_backoff',
-		});
+		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it('does not retry a 401, which is a bad or revoked key', async () => {
@@ -118,8 +126,7 @@ describe('Linkly error handlers', () => {
 	});
 
 	it('retries a dropped connection on a read', async () => {
-		const error = new LinklyAPIError('fetch failed', {
-			cause: new TypeError('fetch failed'),
+		const error = transportError(new TypeError('fetch failed'), {
 			method: 'GET',
 			replaySafe: true,
 		});
@@ -133,8 +140,7 @@ describe('Linkly error handlers', () => {
 	it('does not replay a write that timed out', async () => {
 		const timeout = new Error('The operation timed out');
 		timeout.name = 'TimeoutError';
-		const error = new LinklyAPIError(timeout.message, {
-			cause: timeout,
+		const error = transportError(timeout, {
 			method: 'POST',
 			replaySafe: false,
 		});
@@ -142,14 +148,20 @@ describe('Linkly error handlers', () => {
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
-	it('classifies a rate-limit body code as a rate limit whatever the status', async () => {
-		// Only a 429 carries this body in practice; if a proxy re-wrapped it,
-		// treating it as a rate limit is still the safer reading.
+	it('does not let a rate-limit body code on a 500 skip the replay check', async () => {
+		// CodeRabbit thread on error-handlers.ts:25: a non-429 must fall through
+		// to SERVER_ERROR, which refuses to replay links.create.
 		const error = apiError(500, rateLimited, {
-			method: 'GET',
-			replaySafe: true,
+			method: 'POST',
+			replaySafe: false,
 		});
-		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
+		expect(classify(error)).toBe('DEFAULT');
+		expect(await strategy(error)).toEqual({ maxRetries: 0 });
+	});
+
+	it('classifies a 422 as validation', async () => {
+		const error = apiError(422, linklyError('Unprocessable', 'bad_request'));
+		expect(classify(error)).toBe('VALIDATION_ERROR');
 	});
 
 	it('falls back to DEFAULT for anything else', async () => {

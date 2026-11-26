@@ -1,7 +1,10 @@
+import { inspect } from 'node:util';
+import { ApiError } from 'corsair/http';
 import type { ApiBody } from './client';
 import {
 	describeLinklyError,
-	LinklyAPIError,
+	linklyErrorCode,
+	linklyRequestFacts,
 	makeLinklyRequest,
 	segment,
 } from './client';
@@ -12,6 +15,9 @@ import {
 	unauthorized,
 	validationError,
 } from './test-fixtures';
+
+// Core's 429 backoff sleeps 1 + 2 + 4 s before the last attempt.
+jest.setTimeout(30_000);
 
 const API_KEY = 'linkly-secret-test-key';
 
@@ -35,17 +41,21 @@ function respond(
 }
 
 // A rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<ApiBody>): Promise<LinklyAPIError> {
+async function failure(promise: Promise<ApiBody>): Promise<ApiError> {
 	// unknown: a promise can reject with any value, so the catch binds it as
 	// an opaque value before the instanceof check narrows it.
 	const error = await promise.catch((e: unknown) => e); // unknown: see above
-	expect(error).toBeInstanceOf(LinklyAPIError);
-	if (!(error instanceof LinklyAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// A call with no queued response throws instead of reaching Linkly
+	// (CodeRabbit nitpick on client.test.ts:48).
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('unmocked fetch in a unit test');
+	});
 });
 
 afterEach(() => {
@@ -143,9 +153,11 @@ describe('makeLinklyRequest', () => {
 			}),
 		);
 		expect(error.status).toBe(401);
-		expect(error.code).toBe('unauthorized');
-		expect(error.method).toBe('GET');
-		expect(error.replaySafe).toBe(true);
+		expect(linklyErrorCode(error.body)).toBe('unauthorized');
+		expect(linklyRequestFacts(error)).toEqual({
+			method: 'GET',
+			replaySafe: true,
+		});
 		expect(error.message).toBe('Linkly 401: Not authorized');
 	});
 
@@ -159,11 +171,11 @@ describe('makeLinklyRequest', () => {
 			}),
 		);
 		expect(error.message).toBe('Linkly 401: Not authorized');
-		expect(error.code).toBeUndefined();
+		expect(linklyErrorCode(error.body)).toBeUndefined();
 	});
 
-	it('keeps a 429 body code and treats it as a rate limit', async () => {
-		respond(rateLimited, 429);
+	it('leaves 429 retries to core, then throws its ApiError with the body', async () => {
+		for (let i = 0; i < 4; i += 1) respond(rateLimited, 429);
 
 		const error = await failure(
 			makeLinklyRequest(API_KEY, {
@@ -172,9 +184,11 @@ describe('makeLinklyRequest', () => {
 			}),
 		);
 		expect(error.status).toBe(429);
-		expect(error.code).toBe('rate_limit_exceeded');
-		expect(error.isRateLimit).toBe(true);
+		expect(linklyErrorCode(error.body)).toBe('rate_limit_exceeded');
+		expect(error.isRateLimitError()).toBe(true);
 		expect(error.body).toEqual(rateLimited);
+		// One attempt plus core's three retries.
+		expect(fetchMock).toHaveBeenCalledTimes(4);
 	});
 
 	it('keeps the field-keyed 400 validation body', async () => {
@@ -188,7 +202,7 @@ describe('makeLinklyRequest', () => {
 			}),
 		);
 		expect(error.status).toBe(400);
-		expect(error.code).toBeUndefined();
+		expect(linklyErrorCode(error.body)).toBeUndefined();
 		expect(error.body).toEqual(validationError);
 		expect(error.message).toBe('Linkly 400: slug: is invalid');
 	});
@@ -204,11 +218,32 @@ describe('makeLinklyRequest', () => {
 		);
 		expect(error.message).not.toContain(API_KEY);
 		expect(JSON.stringify(error)).not.toContain(API_KEY);
-		expect(error.cause).toBeUndefined();
+		expect(inspect(error, { depth: 10 })).not.toContain(API_KEY);
 	});
 
-	it('wraps a gateway 429 with no Linkly body', async () => {
-		respond('', 429);
+	it('drops the request body, so passwords and destinations stay out of the error', async () => {
+		respond(validationError, 400);
+
+		const error = await failure(
+			makeLinklyRequest(API_KEY, {
+				method: 'POST',
+				path: '/api/v1/link',
+				body: {
+					workspace_id: 42,
+					url: 'https://private.example.com/secret-offer',
+					password: 'hunter2-link-password',
+				},
+			}),
+		);
+		const dump = inspect(error, { depth: 10 });
+		expect(error.request.body).toBeUndefined();
+		expect(dump).not.toContain('hunter2-link-password');
+		expect(dump).not.toContain('secret-offer');
+		expect(error.request.method).toBe('POST');
+	});
+
+	it('throws a gateway 429 with no Linkly body after core retries', async () => {
+		for (let i = 0; i < 4; i += 1) respond('', 429);
 
 		const error = await failure(
 			makeLinklyRequest(API_KEY, {
@@ -217,25 +252,24 @@ describe('makeLinklyRequest', () => {
 			}),
 		);
 		expect(error.status).toBe(429);
-		expect(error.isRateLimit).toBe(true);
+		expect(error.isRateLimitError()).toBe(true);
 	});
 
-	it('wraps network failures and keeps the method and replay safety', async () => {
-		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+	it('rethrows network failures as they are, with the method and replay safety beside them', async () => {
+		const cause = new TypeError('fetch failed');
+		fetchMock.mockRejectedValueOnce(cause);
 
-		const error = await failure(
-			makeLinklyRequest(API_KEY, {
-				method: 'POST',
-				path: '/api/v1/link',
-				body: { workspace_id: 42, url: 'https://www.example.com' },
-				replaySafe: false,
-			}),
-		);
-		expect(error.message).toContain('fetch failed');
-		expect(error.status).toBeUndefined();
-		expect(error.method).toBe('POST');
-		expect(error.replaySafe).toBe(false);
-		expect(error.cause).toBeInstanceOf(TypeError);
+		const error = await makeLinklyRequest(API_KEY, {
+			method: 'POST',
+			path: '/api/v1/link',
+			body: { workspace_id: 42, url: 'https://www.example.com' },
+			replaySafe: false,
+		}).catch((e: unknown) => e); // unknown: any rejection value
+		expect(error).toBe(cause);
+		expect(linklyRequestFacts(error)).toEqual({
+			method: 'POST',
+			replaySafe: false,
+		});
 	});
 
 	it('marks a GET replay-safe by default', async () => {
@@ -247,7 +281,7 @@ describe('makeLinklyRequest', () => {
 				path: '/api/v1/workspaces',
 			}),
 		);
-		expect(error.replaySafe).toBe(true);
+		expect(linklyRequestFacts(error)?.replaySafe).toBe(true);
 	});
 });
 

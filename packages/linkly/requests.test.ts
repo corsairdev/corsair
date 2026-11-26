@@ -321,7 +321,11 @@ describe('Linkly request shapes', () => {
 
 		await expect(
 			endpoints.links.get(makeCtx(), { id: '999' }),
-		).rejects.toMatchObject({ status: 404, code: 'not_found' });
+		).rejects.toMatchObject({
+			status: 404,
+			body: { code: 'not_found' },
+			message: 'Linkly 404: Link not found',
+		});
 	});
 
 	it('keeps top_params key beside its value', async () => {
