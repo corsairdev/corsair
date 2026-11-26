@@ -2595,7 +2595,8 @@
                 "pages": [
                   "plugins/gitea/overview",
                   "plugins/gitea/api",
-                  "plugins/gitea/database"
+                  "plugins/gitea/database",
+                  "plugins/gitea/webhooks"
                 ]
               },
               {

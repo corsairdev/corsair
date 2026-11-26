@@ -16,6 +16,7 @@ import {
 	getGiteaOutputSchema,
 	giteaInputFields,
 	giteaOperationFor,
+	giteaOutputIsList,
 	MASKED_KEY,
 	maskedIssuePath,
 } from './openapi-schema';
@@ -376,6 +377,9 @@ export function createGiteaOperation<Id extends GiteaOperationId>(
 		} else {
 			let raw = await makeGiteaRequest(ctx, request);
 			if (operation.emptyOk) raw = decodeMaybeEmpty(id, raw);
+			// Go writes an empty list it never filled as `null` (issue templates
+			// on a repository without any, live 11-27): the same empty list.
+			if (raw === null && giteaOutputIsList(id)) raw = [];
 			if (raw === EMPTY) {
 				response = { success: true };
 			} else if (operation.paginated && Array.isArray(raw)) {

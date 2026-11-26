@@ -500,6 +500,12 @@ function buildOutputSchema(operation: GiteaOperationDefinition): z.ZodType {
 		: schema;
 }
 
+/** Whether the documented response is a list (a JSON array). */
+export function giteaOutputIsList(id: string): boolean {
+	const output = resolve(giteaOperationFor(id).output);
+	return isRecord(output) && output.type === 'array';
+}
+
 export function getGiteaOutputSchema(id: string): z.ZodType {
 	let schema = outputSchemaCache.get(id);
 	if (!schema) {

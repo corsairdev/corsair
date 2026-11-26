@@ -1,18 +1,54 @@
 ---
 title: "Gitea plugin"
 sidebarTitle: "Overview"
-description: "Git hosting platform behind gitea.com and most self-hosted Forgejo-style instances. This plugin manages repositories, branches, commits, issues, comments, releases and webhook registrations through each account's own instance. Webhook deliveries are not received here; the webhooks operations only create, list and delete the registrations, so point `config.url` at your own receiver."
+description: "Git hosting on Gitea, Forgejo and Codeberg (gitea.com or any self-hosted instance): repositories, branches and protections, commits and statuses, files, tags and releases, issues, comments, labels, milestones and time tracking, pull requests and reviews, wikis, projects, Actions (runs, jobs, artifacts, secrets, variables, runners, workflows), packages, organizations and teams, users, keys, notifications and site admin, plus signed webhooks for pushes, issues, pull requests, reviews and releases (530 operations)."
 ---
 
-Use **Gitea** through Corsair: one client, typed API calls.
+Use **Gitea** through Corsair: one client, typed API calls, and incoming webhooks.
 
-Gitea is self-hosted, so each connected account stores two things: the API token and the `instance_url` of the Gitea site it belongs to (for example `https://gitea.com` or a self-hosted `https://git.example.com`, with or without `/api/v1`). Tokens are created in the instance UI under `user/settings/applications` with `read:` and `write:` scopes over repository and issue, and are sent as `Authorization: token <api_key>`, the literal word `token` rather than Bearer. SDK users can pass `instanceUrl` in the plugin options instead of storing it. Calls fail with a connect prompt until both are set.
-Lists are paged with `page` (1-based) and `limit`; the server caps pages at 50 items, and the plugin sends 50 when `limit` is omitted, so each list result echoes the `page` and `limit` it fetched and callers page by stepping `page` until a page comes back short. `comments.list` is the one unpaged route and returns every comment on an issue. `commits.list` answers an error rather than an empty list on a repository with no commits. The issues list returns pull requests too; pass `type: 'issues'` to exclude them and read `pull_request` on each row to tell them apart.
-The webhooks operations manage registrations only: Gitea delivers events by POSTing to the `config.url` you register, and this plugin does not receive or verify those deliveries. Point the URL at your own receiver and verify its `X-Gitea-Signature` HMAC there.
+Gitea is self-hosted, so each account stores two things: an access token
+and the `instance_url` of the site it belongs to (`https://gitea.com`,
+`https://codeberg.org` or your own `https://git.example.com`, with or
+without `/api/v1`). Forgejo and Codeberg serve the same API v1, so the
+plugin works there too; a route an older or forked server lacks answers
+404 `page not found`. Create the token at
+`<instance>/user/settings/applications` with the scopes you need
+(read:/write: repository, issue, organization, user, notification,
+package, misc, and admin for the site-admin routes); it is sent as
+`Authorization: token <token>`. SDK users can pass `instanceUrl` in the
+plugin options instead of storing it.
+
+- **Repository routes** take `owner` and `repo`. Branches, refs, tags and
+file paths keep their slashes (`feature/login`, `docs/README.md`).
+- **Lists** page with `page` (1-based) and `limit`; Gitea caps a page at
+50 and the plugin sends 50 when `limit` is left out. Paged lists return
+`{ items, next_page }`, with `next_page` set while a page comes back full.
+- **Files.** `contents.get` returns a file's metadata and base64 content;
+`contents.raw`, `contents.media`, `repos.downloadArchive` and the Actions
+log and artifact downloads return the bytes as a file. Diffs, patches,
+signing keys and rendered markdown come back as `{ text }`.
+- **Risk.** Every delete is `destructive`, as are site-admin changes to
+users and organizations, merging a pull request, moving a branch to another
+commit (`branches.setCommit`), applying a patch, transfers, renaming an
+organization and overwriting Actions secrets. `admin.*` needs a site-admin
+token.
+- **Webhooks.** Register one with `webhooks.create` (or `orgs.hooks.create`,
+`user.hooks.create`, `admin.hooks.create`) using `type: gitea` and a
+`config.secret`, point it at your Corsair webhook URL, and give the plugin
+the same secret as `webhookSecret` (or store it as the account's webhook
+signature). Deliveries are checked against `X-Gitea-Signature` (HMAC-SHA256
+of the body) and routed by `X-Gitea-Event-Type` to `push`, `refCreated`,
+`refDeleted`, `fork`, `issues`, `issueComment`, `pullRequest`,
+`pullRequestReview`, `release`, `wiki`, `repository`, `status`,
+`workflowRun`, `workflowJob` and `package`.
+- Not wrapped: four routes the swagger marks deprecated (each has a
+replacement), and `users.tokens` list, create and delete, which Gitea only
+accepts with the account password (BasicAuth), not a token.
 
 **What you get:**
 
-- 18 typed API operations
+- 530 typed API operations
+- 15 incoming webhook event types
 
 ## Setup
 
@@ -121,11 +157,20 @@ await tenant.gitea.api.issues.create({
 
 See the full list on the [API](/plugins/gitea/api) page.
 
+## Webhooks
+
+This plugin registers **15** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/gitea/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/gitea/api">
     Every `gitea.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/gitea/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.

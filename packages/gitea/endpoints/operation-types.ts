@@ -2741,7 +2741,7 @@ export type GiteaOperationInputs = {
 		/** name of the repository */
 		repo: string;
 		/** id of the artifact */
-		artifact_id: string;
+		artifact_id: string | number;
 	};
 	'actions.artifacts.download': {
 		/** owner of the repo */
@@ -2749,7 +2749,7 @@ export type GiteaOperationInputs = {
 		/** name of the repository */
 		repo: string;
 		/** id of the artifact */
-		artifact_id: string;
+		artifact_id: string | number;
 	};
 	'actions.artifacts.get': {
 		/** owner of the repo */
@@ -2757,7 +2757,7 @@ export type GiteaOperationInputs = {
 		/** name of the repository */
 		repo: string;
 		/** id of the artifact */
-		artifact_id: string;
+		artifact_id: string | number;
 	};
 	'actions.artifacts.list': {
 		/** owner of the repo */
@@ -2781,7 +2781,7 @@ export type GiteaOperationInputs = {
 		/** name of the repository */
 		repo: string;
 		/** id of the job */
-		job_id: string;
+		job_id: string | number;
 	};
 	'actions.jobs.list': {
 		/** owner of the repo */
@@ -2811,7 +2811,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** id of the runner */
-		runner_id: string;
+		runner_id: string | number;
 	};
 	'actions.runners.get': {
 		/** owner of the repo */
@@ -2819,7 +2819,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** id of the runner */
-		runner_id: string;
+		runner_id: string | number;
 	};
 	'actions.runners.list': {
 		/** owner of the repo */
@@ -2835,7 +2835,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** id of the runner */
-		runner_id: string;
+		runner_id: string | number;
 		disabled: boolean;
 	};
 	'actions.runs.approve': {
@@ -3086,7 +3086,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** id of the workflow */
-		workflow_id: string;
+		workflow_id: string | number;
 	};
 	'actions.workflows.dispatch': {
 		/** owner of the repo */
@@ -3094,7 +3094,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** id of the workflow */
-		workflow_id: string;
+		workflow_id: string | number;
 		inputs?: Record<string, string>;
 		ref: string;
 		/** Whether the response should include the workflow run ID and URLs. */
@@ -3108,7 +3108,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** id of the workflow */
-		workflow_id: string;
+		workflow_id: string | number;
 	};
 	'actions.workflows.get': {
 		/** owner of the repo */
@@ -3116,7 +3116,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** id of the workflow */
-		workflow_id: string;
+		workflow_id: string | number;
 	};
 	'actions.workflows.list': {
 		/** owner of the repo */
@@ -3130,7 +3130,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** id of the workflow, must be the workflow file name (e.g. `build.yml`) */
-		workflow_id: string;
+		workflow_id: string | number;
 		/** workflow event name */
 		event?: string;
 		/** workflow branch */
@@ -3165,11 +3165,11 @@ export type GiteaOperationInputs = {
 	'admin.actions.runners.createRegistrationToken': Record<string, never>;
 	'admin.actions.runners.delete': {
 		/** id of the runner */
-		runner_id: string;
+		runner_id: string | number;
 	};
 	'admin.actions.runners.get': {
 		/** id of the runner */
-		runner_id: string;
+		runner_id: string | number;
 	};
 	'admin.actions.runners.list': {
 		/** filter by disabled status (true or false) */
@@ -3177,7 +3177,7 @@ export type GiteaOperationInputs = {
 	};
 	'admin.actions.runners.update': {
 		/** id of the runner */
-		runner_id: string;
+		runner_id: string | number;
 		disabled: boolean;
 	};
 	'admin.actions.runs.list': {
@@ -4317,7 +4317,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** index of the issue */
-		index: string;
+		index: string | number;
 		/** Number of the other issue. */
 		other_index?: number;
 		/** Owner of the other issue's repository. */
@@ -4331,7 +4331,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** index of the issue */
-		index: string;
+		index: string | number;
 		/** page number of results to return (1-based) */
 		page?: number;
 		/** page size of results */
@@ -4343,7 +4343,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** index of the issue */
-		index: string;
+		index: string | number;
 		/** Number of the other issue. */
 		other_index?: number;
 		/** Owner of the other issue's repository. */
@@ -4397,7 +4397,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** index of the issue */
-		index: string;
+		index: string | number;
 		/** Number of the other issue. */
 		other_index?: number;
 		/** Owner of the other issue's repository. */
@@ -4411,7 +4411,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** index of the issue */
-		index: string;
+		index: string | number;
 		/** page number of results to return (1-based) */
 		page?: number;
 		/** page size of results */
@@ -4423,7 +4423,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** index of the issue */
-		index: string;
+		index: string | number;
 		/** Number of the other issue. */
 		other_index?: number;
 		/** Owner of the other issue's repository. */
@@ -4872,7 +4872,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** the milestone to delete, identified by ID and if not available by name */
-		id: string;
+		id: string | number;
 	};
 	'milestones.get': {
 		/** owner of the repo */
@@ -4880,7 +4880,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** the milestone to get, identified by ID and if not available by name */
-		id: string;
+		id: string | number;
 	};
 	'milestones.list': {
 		/** owner of the repo */
@@ -4902,7 +4902,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** the milestone to edit, identified by ID and if not available by name */
-		id: string;
+		id: string | number;
 		/** Description provides updated details about the milestone */
 		description?: string;
 		/** Deadline is the due date for the milestone, use null or empty string to remove the deadline */
@@ -5027,11 +5027,11 @@ export type GiteaOperationInputs = {
 	};
 	'notifications.threads.get': {
 		/** id of notification thread */
-		id: string;
+		id: string | number;
 	};
 	'notifications.threads.markRead': {
 		/** id of notification thread */
-		id: string;
+		id: string | number;
 		/** Status to mark notifications as */
 		'to-status'?: string;
 	};
@@ -5053,13 +5053,13 @@ export type GiteaOperationInputs = {
 		/** name of the organization */
 		org: string;
 		/** id of the runner */
-		runner_id: string;
+		runner_id: string | number;
 	};
 	'orgs.actions.runners.get': {
 		/** name of the organization */
 		org: string;
 		/** id of the runner */
-		runner_id: string;
+		runner_id: string | number;
 	};
 	'orgs.actions.runners.list': {
 		/** name of the organization */
@@ -5071,7 +5071,7 @@ export type GiteaOperationInputs = {
 		/** name of the organization */
 		org: string;
 		/** id of the runner */
-		runner_id: string;
+		runner_id: string | number;
 		disabled: boolean;
 	};
 	'orgs.actions.runs.list': {
@@ -6691,7 +6691,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** id of the hook to get */
-		id: string;
+		id: string | number;
 	};
 	'repos.gitHooks.get': {
 		/** owner of the repo */
@@ -6699,7 +6699,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** id of the hook to get */
-		id: string;
+		id: string | number;
 	};
 	'repos.gitHooks.list': {
 		/** owner of the repo */
@@ -6713,7 +6713,7 @@ export type GiteaOperationInputs = {
 		/** name of the repo */
 		repo: string;
 		/** id of the hook to get */
-		id: string;
+		id: string | number;
 		/** Content is the new script content for the hook */
 		content?: string;
 	};
@@ -7303,11 +7303,11 @@ export type GiteaOperationInputs = {
 	'user.actions.runners.createRegistrationToken': Record<string, never>;
 	'user.actions.runners.delete': {
 		/** id of the runner */
-		runner_id: string;
+		runner_id: string | number;
 	};
 	'user.actions.runners.get': {
 		/** id of the runner */
-		runner_id: string;
+		runner_id: string | number;
 	};
 	'user.actions.runners.list': {
 		/** filter by disabled status (true or false) */
@@ -7315,7 +7315,7 @@ export type GiteaOperationInputs = {
 	};
 	'user.actions.runners.update': {
 		/** id of the runner */
-		runner_id: string;
+		runner_id: string | number;
 		disabled: boolean;
 	};
 	'user.actions.runs.list': {
@@ -7457,7 +7457,12 @@ export type GiteaOperationInputs = {
 		limit?: number;
 	};
 	'user.gpgKeys.verificationToken': Record<string, never>;
-	'user.gpgKeys.verify': Record<string, never>;
+	'user.gpgKeys.verify': {
+		/** Id of the GPG key to verify (`key_id` from user.gpgKeys.list). */
+		key_id: string;
+		/** The token from user.gpgKeys.verificationToken, signed with the key: `echo -n <token> | gpg -a --default-key <key_id> --detach-sig`. */
+		armored_signature: string;
+	};
 	'user.hooks.create': {
 		/** Whether the webhook should be active upon creation */
 		active?: boolean;
@@ -8029,7 +8034,7 @@ export type GiteaOperationInputs = {
 		/** optional commit message summarizing the change */
 		message?: string;
 		/** page title. leave empty to keep unchanged */
-		title?: string;
+		title: string;
 	};
 };
 
@@ -8045,8 +8050,8 @@ export type GiteaOperationOutputs = {
 	'actions.jobs.get': GiteaActionWorkflowJob;
 	'actions.jobs.list': GiteaActionWorkflowJobsResponse;
 	'actions.runners.createRegistrationToken': {
-		/** Gitea accepted the call; it answered with no body. */
-		success: true;
+		/** The token a runner registers with. */
+		token?: string | null;
 	};
 	'actions.runners.delete': {
 		/** Gitea accepted the call; it answered with no body. */
@@ -8128,8 +8133,8 @@ export type GiteaOperationOutputs = {
 	'actions.workflows.runs.list': GiteaActionWorkflowRunsResponse;
 	'admin.actions.jobs.list': GiteaActionWorkflowJobsResponse;
 	'admin.actions.runners.createRegistrationToken': {
-		/** Gitea accepted the call; it answered with no body. */
-		success: true;
+		/** The token a runner registers with. */
+		token?: string | null;
 	};
 	'admin.actions.runners.delete': {
 		/** Gitea accepted the call; it answered with no body. */
@@ -8554,14 +8559,26 @@ export type GiteaOperationOutputs = {
 		/** The page to ask for next, or null on the last page. */
 		next_page: number | null;
 	};
-	'notifications.markRead': Array<GiteaNotificationThread>;
-	'notifications.markReadForRepo': Array<GiteaNotificationThread>;
+	'notifications.markRead':
+		| Array<GiteaNotificationThread>
+		| {
+				/** Gitea accepted the call; it answered with no body. */ success: true;
+		  };
+	'notifications.markReadForRepo':
+		| Array<GiteaNotificationThread>
+		| {
+				/** Gitea accepted the call; it answered with no body. */ success: true;
+		  };
 	'notifications.threads.get': GiteaNotificationThread;
-	'notifications.threads.markRead': GiteaNotificationThread;
+	'notifications.threads.markRead':
+		| GiteaNotificationThread
+		| {
+				/** Gitea accepted the call; it answered with no body. */ success: true;
+		  };
 	'orgs.actions.jobs.list': GiteaActionWorkflowJobsResponse;
 	'orgs.actions.runners.createRegistrationToken': {
-		/** Gitea accepted the call; it answered with no body. */
-		success: true;
+		/** The token a runner registers with. */
+		token?: string | null;
 	};
 	'orgs.actions.runners.delete': {
 		/** Gitea accepted the call; it answered with no body. */
@@ -9185,8 +9202,8 @@ export type GiteaOperationOutputs = {
 	'teams.update': GiteaTeam;
 	'user.actions.jobs.list': GiteaActionWorkflowJobsResponse;
 	'user.actions.runners.createRegistrationToken': {
-		/** Gitea accepted the call; it answered with no body. */
-		success: true;
+		/** The token a runner registers with. */
+		token?: string | null;
 	};
 	'user.actions.runners.delete': {
 		/** Gitea accepted the call; it answered with no body. */
