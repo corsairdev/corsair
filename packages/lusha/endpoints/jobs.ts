@@ -19,7 +19,7 @@ export const getContactsEnrichJob: LushaEndpoints['jobsGetContactsEnrichJob'] =
 				method: 'GET',
 				path: `/v3/contacts/jobs/${encodeURIComponent(jobId)}`,
 				// Polling is free, so a 5xx here is safe to retry.
-				metered: false,
+				replayable: true,
 			}),
 			{
 				log: (_parsed, result) => ({

@@ -20,8 +20,8 @@ export const getAccountUsage: LushaEndpoints['accountGetAccountUsage'] = (
 		() => ({
 			method: 'GET',
 			path: '/v3/account/usage',
-			// Free, but Lusha caps it at 5 requests per minute.
-			metered: false,
+			// Free (capped at 5 requests per minute), so safe to repeat.
+			replayable: true,
 		}),
 		{
 			log: (_, result) => ({

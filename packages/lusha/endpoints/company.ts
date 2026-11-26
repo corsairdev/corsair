@@ -21,8 +21,6 @@ export const searchCompanies: LushaEndpoints['companySearchCompanies'] = (
 			method: 'POST',
 			path: '/v3/companies/search',
 			body: { companies, options, signals },
-			// Charged per matched result; a 5xx replay could charge twice.
-			metered: true,
 		}),
 		{ log: (_, result) => billingLog(result) },
 	);
@@ -43,7 +41,6 @@ export const enrichCompanies: LushaEndpoints['companyEnrichCompanies'] = (
 			method: 'POST',
 			path: '/v3/companies/enrich',
 			body: { ids, reveal, tableId },
-			metered: true,
 		}),
 		{ log: (_, result) => billingLog(result) },
 	);
@@ -62,7 +59,6 @@ export const searchAndEnrichCompanies: LushaEndpoints['companySearchAndEnrichCom
 				method: 'POST',
 				path: '/v3/companies/search-and-enrich',
 				body: { companies, reveal, options },
-				metered: true,
 			}),
 			{ log: (_, result) => billingLog(result) },
 		);

@@ -1,194 +1,160 @@
-import { LushaAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { makeLushaRequest } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
+import { outOfCreditsBody, rateLimitedBody } from './test-fixtures';
+import {
+	currentFetch,
+	installFetchMock,
+	jsonResponse,
+	mockFetch,
+	restoreFetchMock,
+} from './test-helpers';
 
 function handler(name: keyof typeof errorHandlers) {
 	return errorHandlers[name];
 }
 
-/** Builds an error the way client.ts does for an HTTP status. */
-function httpError(
-	message: string,
-	options: {
-		status?: number;
-		method?: string;
-		retryAfter?: number;
-		safeToReplay?: boolean;
-	},
-): LushaAPIError {
-	return new LushaAPIError(message, options);
+/** The first handler whose match passes, the way core picks one. */
+function pick(error: Error): string {
+	for (const [name, entry] of Object.entries(errorHandlers)) {
+		if (entry.match(error)) return name;
+	}
+	return 'none';
 }
 
+/** An error built the way client.ts builds it for an HTTP status. */
+// unknown: the response body is arbitrary JSON.
+async function httpError(
+	status: number,
+	body: unknown,
+	replayable = false,
+): Promise<Error> {
+	mockFetch(jsonResponse(body, { status }));
+	return makeLushaRequest('key', {
+		method: replayable ? 'GET' : 'POST',
+		path: '/v3/test',
+		body: replayable ? undefined : {},
+		replayable,
+	}).then(
+		() => {
+			throw new Error('expected a failure');
+		},
+		(caught: Error) => caught,
+	);
+}
+
+beforeEach(installFetchMock);
+afterEach(restoreFetchMock);
+
 describe('Lusha error handler matching', () => {
-	it('matches 402 to the fatal credit handler, not to a retry', () => {
-		const error = httpError(
-			'Lusha 402: Insufficient credits for this operation',
-			{ status: 402, method: 'POST' },
-		);
-		expect(handler('INSUFFICIENT_BALANCE_ERROR').match(error)).toBe(true);
-		expect(handler('RATE_LIMIT_ERROR').match(error)).toBe(false);
-		expect(handler('SERVER_ERROR').match(error)).toBe(false);
+	it('sends 402 to the fatal credit handler', async () => {
+		const error = await httpError(402, outOfCreditsBody);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(pick(error)).toBe('OUT_OF_CREDITS_ERROR');
+		await expect(
+			handler('OUT_OF_CREDITS_ERROR').handler(error),
+		).resolves.toEqual({ maxRetries: 0 });
 	});
 
-	it('matches the out-of-credits message even on another status', () => {
-		const error = httpError(
-			'Lusha 429: Insufficient credits for this operation',
-			{ status: 429 },
-		);
-		expect(handler('INSUFFICIENT_BALANCE_ERROR').match(error)).toBe(true);
-	});
-
-	it('matches 429 to the rate-limit handler and reads its Retry-After', async () => {
-		const error = httpError('Lusha 429: Too many requests', {
-			status: 429,
-			retryAfter: 5000,
-		});
-		expect(handler('RATE_LIMIT_ERROR').match(error)).toBe(true);
-		const plan = await handler('RATE_LIMIT_ERROR').handler(error);
-		expect(plan).toMatchObject({ maxRetries: 3, headersRetryAfterMs: 5000 });
-	});
-
-	it('falls back to the exponential strategy with no Retry-After header', async () => {
-		// Lusha documents no Retry-After for 429; the strategy's own delays
-		// (1s, 2s, 4s) are the fallback.
-		const error = httpError('Lusha 429: Too many requests', { status: 429 });
-		const plan = await handler('RATE_LIMIT_ERROR').handler(error);
-		expect(plan).toMatchObject({
-			maxRetries: 3,
-			headersRetryAfterMs: undefined,
-			retryStrategy: 'exponential_backoff',
-		});
-	});
-
-	it('matches 401 to auth and 403 to permission, separately', () => {
-		const unauthorized = httpError('Lusha 401: Missing API key', {
-			status: 401,
-		});
-		const forbidden = httpError('Lusha 403: Forbidden', { status: 403 });
-		expect(handler('AUTH_ERROR').match(unauthorized)).toBe(true);
-		expect(handler('PERMISSION_ERROR').match(unauthorized)).toBe(false);
-		expect(handler('PERMISSION_ERROR').match(forbidden)).toBe(true);
-		expect(handler('AUTH_ERROR').match(forbidden)).toBe(false);
-		for (const error of [unauthorized, forbidden]) {
-			expect(handler('VALIDATION_ERROR').match(error)).toBe(false);
+	it('does not retry a 429 again: core request() already retried it', async () => {
+		// Core makes four attempts (one plus three retries) before throwing.
+		for (let attempt = 0; attempt < 3; attempt++) {
+			mockFetch(jsonResponse(rateLimitedBody, { status: 429 }));
 		}
-	});
-
-	it('matches 400, 404, 409 and 451 to validation, which never retries', () => {
-		for (const status of [400, 404, 409, 451]) {
-			expect(
-				handler('VALIDATION_ERROR').match(
-					httpError(`Lusha ${status}`, { status }),
-				),
-			).toBe(true);
-		}
-		expect(handler('VALIDATION_ERROR').match(new SyntaxError('bad json'))).toBe(
-			false,
-		);
-	});
-
-	it('matches a ZodError to validation', () => {
-		const zodError = new Error('output parse failed');
-		zodError.name = 'ZodError';
-		expect(handler('VALIDATION_ERROR').match(zodError)).toBe(true);
-	});
-
-	it('retries a 503 on a free read (the job store case)', async () => {
-		const error = httpError('Lusha 503: Job store unavailable', {
-			status: 503,
-			method: 'GET',
-			safeToReplay: true,
+		const error = await httpError(429, rateLimitedBody, true);
+		expect(currentFetch()).toHaveBeenCalledTimes(4);
+		expect(pick(error)).toBe('RATE_LIMIT_ERROR');
+		await expect(handler('RATE_LIMIT_ERROR').handler(error)).resolves.toEqual({
+			maxRetries: 0,
 		});
-		expect(handler('SERVER_ERROR').match(error)).toBe(true);
-		const plan = await handler('SERVER_ERROR').handler(error);
-		expect(plan).toMatchObject({
+	}, 20_000);
+
+	it.each([
+		[401, 'AUTH_ERROR'],
+		[403, 'PERMISSION_ERROR'],
+		[400, 'VALIDATION_ERROR'],
+		[404, 'VALIDATION_ERROR'],
+		[409, 'VALIDATION_ERROR'],
+		[451, 'VALIDATION_ERROR'],
+	])('sends %i to %s with no retry', async (status, name) => {
+		const error = await httpError(status, { statusCode: status, message: 'x' });
+		expect(pick(error)).toBe(name);
+		await expect(
+			handler(name as keyof typeof errorHandlers).handler(error),
+		).resolves.toEqual({ maxRetries: 0 });
+	});
+
+	it('retries a 5xx only when the request was a free read', async () => {
+		const free = await httpError(503, { statusCode: 503 }, true);
+		const metered = await httpError(503, { statusCode: 503 }, false);
+		expect(pick(free)).toBe('SERVER_ERROR');
+		expect(pick(metered)).toBe('SERVER_ERROR');
+		await expect(handler('SERVER_ERROR').handler(free)).resolves.toMatchObject({
 			maxRetries: 2,
-			retryStrategy: 'exponential_backoff',
 		});
+		await expect(
+			handler('SERVER_ERROR').handler(metered),
+		).resolves.toMatchObject({ maxRetries: 0 });
 	});
 
-	it('never retries a 503 that a metered call produced', () => {
-		const error = httpError('Lusha 503: Unavailable', {
-			status: 503,
+	it('retries a network failure only when the request was a free read', async () => {
+		currentFetch().mockRejectedValueOnce(new TypeError('fetch failed'));
+		const free = await makeLushaRequest('key', {
+			method: 'GET',
+			path: '/v3/account/usage',
+			replayable: true,
+		}).catch((caught: Error) => caught);
+		currentFetch().mockRejectedValueOnce(new TypeError('fetch failed'));
+		const metered = await makeLushaRequest('key', {
 			method: 'POST',
-			safeToReplay: false,
-		});
-		expect(handler('SERVER_ERROR').match(error)).toBe(false);
-		// Nothing else but DEFAULT claims it, and DEFAULT never retries.
-		expect(handler('DEFAULT').match(error)).toBe(true);
+			path: '/v3/contacts/enrich',
+			body: { ids: ['1'] },
+		}).catch((caught: Error) => caught);
+		expect(pick(free as Error)).toBe('NETWORK_ERROR');
+		await expect(
+			handler('NETWORK_ERROR').handler(free as Error),
+		).resolves.toMatchObject({ maxRetries: 2 });
+		await expect(
+			handler('NETWORK_ERROR').handler(metered as Error),
+		).resolves.toMatchObject({ maxRetries: 0 });
 	});
 
-	it('retries a transport failure once, since it never reached Lusha', async () => {
-		const error = httpError('fetch failed', { safeToReplay: true });
-		expect(handler('TRANSPORT_ERROR').match(error)).toBe(true);
-		expect(handler('SERVER_ERROR').match(error)).toBe(false);
-		const plan = await handler('TRANSPORT_ERROR').handler(error);
-		expect(plan).toMatchObject({ maxRetries: 1 });
-	});
-
-	it('sends a 408 to the timeout handler and honours replay safety', async () => {
-		const safe = httpError('Lusha 408: timeout', {
-			status: 408,
-			safeToReplay: true,
-		});
-		const metered = httpError('Lusha 408: timeout', {
-			status: 408,
-			safeToReplay: false,
-		});
-		expect(handler('TIMEOUT_ERROR').match(safe)).toBe(true);
-		const safePlan = await handler('TIMEOUT_ERROR').handler(safe);
-		const meteredPlan = await handler('TIMEOUT_ERROR').handler(metered);
-		expect(safePlan).toMatchObject({ maxRetries: 1 });
-		expect(meteredPlan).toMatchObject({ maxRetries: 0 });
+	it('sends input validation errors to VALIDATION_ERROR', () => {
+		const error = new Error('bad input');
+		error.name = 'ZodError';
+		expect(pick(error)).toBe('VALIDATION_ERROR');
 	});
 });
 
 describe('mergeErrorHandlers', () => {
-	const builtin = errorHandlers;
-
-	it('keeps DEFAULT last and builtins intact when the caller adds a handler', () => {
-		const merged = mergeErrorHandlers(builtin, {
-			CUSTOM_451: {
-				match: (error: Error) => error.message.includes('451'),
-				handler: async () => ({ maxRetries: 0 }),
-			},
+	it('puts caller handlers first and keeps DEFAULT last', () => {
+		const custom = {
+			match: () => true,
+			handler: async () => ({ maxRetries: 5 }),
+		};
+		const merged = mergeErrorHandlers(errorHandlers, {
+			MY_HANDLER: custom,
 		});
-		const keys = Object.keys(merged);
-		expect(keys[keys.length - 1]).toBe('DEFAULT');
-		// The caller key exists and the builtins survive.
-		expect(keys).toContain('CUSTOM_451');
-		expect(keys).toContain('INSUFFICIENT_BALANCE_ERROR');
-		expect(keys).toContain('RATE_LIMIT_ERROR');
+		const names = Object.keys(merged);
+		expect(names[0]).toBe('MY_HANDLER');
+		expect(names[names.length - 1]).toBe('DEFAULT');
 	});
 
-	it('lets the caller override a builtin value by name', async () => {
-		const merged = mergeErrorHandlers(builtin, {
-			RATE_LIMIT_ERROR: {
-				match: (error: Error) =>
-					error instanceof LushaAPIError && error.isRateLimit,
-				handler: async () => ({ maxRetries: 1 }),
-			},
+	it('lets a caller replace a builtin and DEFAULT', () => {
+		const custom = {
+			match: () => true,
+			handler: async () => ({ maxRetries: 1 }),
+		};
+		const merged = mergeErrorHandlers(errorHandlers, {
+			AUTH_ERROR: custom,
+			DEFAULT: custom,
 		});
-		expect(merged.RATE_LIMIT_ERROR).toBeDefined();
-		const error = httpError('Lusha 429', { status: 429 });
-		// The caller's plan wins: one retry, not three.
-		const plan = await merged.RATE_LIMIT_ERROR!.handler(error, {
-			pluginId: 'lusha',
-			operation: 'test',
-			input: {},
-			originalError: error,
-		});
-		expect(plan).toMatchObject({ maxRetries: 1 });
+		expect(merged.AUTH_ERROR).toBe(custom);
+		expect(merged.DEFAULT).toBe(custom);
+		expect(Object.keys(merged).at(-1)).toBe('DEFAULT');
 	});
 
-	it('returns the builtins untouched when no caller handlers exist', () => {
-		expect(mergeErrorHandlers(builtin, undefined)).toBe(builtin);
-	});
-
-	it('prefers the caller DEFAULT over the builtin DEFAULT', () => {
-		const merged = mergeErrorHandlers(builtin, {
-			DEFAULT: { match: () => true, handler: async () => ({ maxRetries: 9 }) },
-		});
-		const keys = Object.keys(merged);
-		expect(keys[keys.length - 1]).toBe('DEFAULT');
+	it('returns the builtins unchanged with no caller handlers', () => {
+		expect(mergeErrorHandlers(errorHandlers, undefined)).toBe(errorHandlers);
 	});
 });

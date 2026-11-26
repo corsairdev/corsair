@@ -1,9 +1,5 @@
 import { asRecord } from 'corsair/core';
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export const LUSHA_API_BASE = 'https://api.lusha.com';
@@ -11,22 +7,33 @@ export const LUSHA_API_BASE = 'https://api.lusha.com';
 /** The message Lusha sends (per its error-codes page) when the account is out of credits. */
 const INSUFFICIENT_CREDITS_MESSAGE = 'insufficient credits';
 
+const REDACTED = '[REDACTED]';
+
+/** Query values the routes accept; undefined drops the parameter. */
+export type LushaQuery = Record<string, string | number | boolean | undefined>;
+
 export type LushaRequest = {
-	method: 'GET' | 'POST';
+	method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
 	path: string;
+	query?: LushaQuery;
 	// unknown: the endpoint's input schema has already validated the body.
 	body?: unknown;
 	/**
-	 * The call charges credits on success (every search and enrich call).
-	 * Lusha re-charges on every repeat, so a 5xx on a metered call is not
-	 * replayed: the first attempt may already have started work.
+	 * A free read that is safe to repeat. Only these are retried after a 5xx
+	 * or a network failure (R8): every other call either charges credits on
+	 * each run or changes data, and the first attempt may already have landed.
 	 */
-	metered?: boolean;
+	replayable?: boolean;
 };
 
-/** Encodes one path segment. */
-export function segment(value: string): string {
-	return encodeURIComponent(value);
+/** Errors from replayable requests; error-handlers.ts reads this. */
+const replayableErrors = new WeakSet<object>();
+
+/** True when the failed request was a free read that can be repeated. */
+export function isReplayable(error: unknown): boolean {
+	return typeof error === 'object' && error !== null
+		? replayableErrors.has(error)
+		: false;
 }
 
 // unknown: error bodies arrive as arbitrary JSON; the helpers narrow one
@@ -41,9 +48,10 @@ function readString(
 
 /**
  * Reads Lusha's error message. The documented shape is
- * `{statusCode, message, errors?}`, but the live 401 body instead carries
- * `error: "Unauthorized"` and `timestamp`, so every field is optional here.
+ * `{statusCode, message, errors?}`; the gateway's own 404 sends
+ * `{message, request_id}`, so every field is optional here.
  */
+// unknown: see readString.
 export function describeLushaError(
 	status: number | undefined,
 	body: unknown,
@@ -58,80 +66,19 @@ export function describeLushaError(
 		? errors.filter((item): item is string => typeof item === 'string')
 		: [];
 	const summary = `Lusha ${status ?? 'error'}: ${message}`;
-	return details.length > 0 ? `${summary} (${details.join('; ')})` : summary;
+	const text =
+		details.length > 0 ? `${summary} (${details.join('; ')})` : summary;
+	return text.length > 500 ? `${text.slice(0, 497)}...` : text;
 }
 
-/**
- * Lusha's error taxonomy: https://docs.lusha.com/docs/errors (402 out of
- * credits, 401 bad key, 403 plan restriction, 400 bad request, 429 rate
- * limited, 409 duplicate name, 451 legal block, 5xx server).
- */
-export class LushaAPIError extends Error {
-	readonly status?: number;
-	/** The HTTP method of the failed request, used to decide replay safety. */
-	readonly method?: string;
-	/** Milliseconds from a Retry-After header, when a gateway sent one. */
-	readonly retryAfter?: number;
-	/**
-	 * True when repeating the request cannot charge credits twice or repeat a
-	 * side effect. Transport failures are always safe: the request never
-	 * reached Lusha. A 5xx on a metered call is not, because the first attempt
-	 * may already have processed it.
-	 */
-	readonly safeToReplay: boolean;
-
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			method?: string;
-			retryAfter?: number;
-			safeToReplay?: boolean;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'LushaAPIError';
-		this.status = options.status;
-		this.method = options.method;
-		this.retryAfter = options.retryAfter;
-		this.safeToReplay = options.safeToReplay ?? false;
-	}
-
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
-
-	get isAuthError(): boolean {
-		return this.status === 401;
-	}
-
-	get isPermissionError(): boolean {
-		return this.status === 403;
-	}
-
-	/** 402, or the documented message (matched defensively in case the status differs). */
-	get outOfCredits(): boolean {
-		return (
-			this.status === 402 ||
-			this.message.toLowerCase().includes(INSUFFICIENT_CREDITS_MESSAGE)
-		);
-	}
+/** 402, or the documented message (matched in case the status differs). */
+export function isOutOfCredits(error: unknown): boolean {
+	if (!(error instanceof ApiError)) return false;
+	return (
+		error.status === 402 ||
+		error.message.toLowerCase().includes(INSUFFICIENT_CREDITS_MESSAGE)
+	);
 }
-
-// Lusha rate limits per account (25 requests/second default; account.usage 5
-// requests/minute) with `x-rate-limit-minute/hourly/daily` and
-// `x-*-requests-left/usage` response headers and no `Retry-After`, so backoff
-// is client-chosen and `corsair/http` cannot return those headers anyway.
-// error-handlers.ts owns retries, so the client makes one attempt and only
-// reads a Retry-After into the error if a gateway sends one.
-const LUSHA_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0, // retries belong to error-handlers.ts
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
-	headerNames: { retryAfter: 'retry-after' },
-};
 
 function configWith(apiKey: string): OpenAPIConfig {
 	return {
@@ -141,65 +88,69 @@ function configWith(apiKey: string): OpenAPIConfig {
 		CREDENTIALS: 'omit',
 		HEADERS: {
 			Accept: 'application/json',
-			'Content-Type': 'application/json',
-			// Lusha names the header exactly `api_key` (lowercase, underscore);
-			// any other spelling is rejected.
+			// Lusha names the header exactly `api_key` (lowercase, underscore).
 			api_key: apiKey,
 		},
 	};
 }
 
 /**
- * Sends one operation and returns the response body. Lusha reports failures
- * through HTTP status codes, so no envelope check is needed here; the per-item
- * soft miss (an `error` object inside a result) is documented data and is
- * parsed by the output schema.
+ * Core's ApiError keeps the request body and query, and Lusha requests carry
+ * the people being looked up (names, emails, LinkedIn URLs) or a table
+ * owner's email. R8 allows rebuilding the error to drop them; status,
+ * retryAfter and the response body stay.
  */
-// unknown: the return is untyped because callers parse it with the endpoint's
-// zod output schema, and `request` is generic over the same untyped body.
+function withoutRequestData(error: ApiError, method: string): ApiError {
+	return new ApiError(
+		{
+			method: error.request.method ?? (method as ApiRequestOptions['method']),
+			url: error.request.url,
+			query: error.request.query === undefined ? undefined : { [REDACTED]: '' },
+			body: error.request.body === undefined ? undefined : REDACTED,
+		},
+		{
+			// The query string can hold a table owner's email address.
+			url: error.url.split('?')[0] ?? error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		describeLushaError(error.status, error.body, error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
+/**
+ * Sends one operation and returns the response body. Core's request() retries
+ * a 429 three times with backoff (Lusha sends no Retry-After); everything
+ * else is decided by error-handlers.ts.
+ */
+// unknown: callers parse the body with the endpoint's zod output schema.
 export async function makeLushaRequest(
 	apiKey: string,
-	{ method, path, body, metered }: LushaRequest,
+	{ method, path, query, body, replayable }: LushaRequest,
 ): Promise<unknown> {
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: path,
+		query,
 		body,
 		mediaType: body === undefined ? undefined : 'application/json',
 	};
-
 	try {
-		return await request<unknown>(configWith(apiKey), requestOptions, {
-			rateLimitConfig: LUSHA_RATE_LIMIT_CONFIG,
-		});
+		return await request<unknown>(configWith(apiKey), requestOptions);
 	} catch (error) {
-		if (error instanceof LushaAPIError) throw error;
-		if (error instanceof ApiError) {
-			throw new LushaAPIError(
-				describeLushaError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					method,
-					retryAfter: error.retryAfter,
-					// A 5xx means the request reached Lusha; on a metered call the
-					// first attempt may already have charged or started a job, so a
-					// replay is not safe. Every other status is not retried anyway.
-					safeToReplay: !metered || (error.status ?? 0) < 500,
-					// The ApiError cause is dropped: it carries the raw body, and the
-					// key travels in a header that error messages must never quote.
-				},
-			);
+		const thrown =
+			error instanceof ApiError ? withoutRequestData(error, method) : error;
+		if (replayable && typeof thrown === 'object' && thrown !== null) {
+			replayableErrors.add(thrown);
 		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new LushaAPIError(error.message, {
-				cause: error instanceof Error ? error : undefined,
-				method,
-				// A transport failure never reached Lusha, so repeating cannot
-				// charge a second time (every operation here is a read).
-				safeToReplay: true,
-			});
-		}
-		throw new LushaAPIError('Unknown Lusha error', { method });
+		throw thrown;
 	}
 }

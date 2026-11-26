@@ -1,7 +1,15 @@
-import { LUSHA_API_BASE, LushaAPIError, makeLushaRequest } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	isOutOfCredits,
+	isReplayable,
+	LUSHA_API_BASE,
+	makeLushaRequest,
+} from './client';
 import {
 	accountUsageResponse,
 	contactSearchResponse,
+	outOfCreditsBody,
+	rateLimitedBody,
 	unauthorizedErrorBody,
 	validationErrorBody,
 } from './test-fixtures';
@@ -33,7 +41,6 @@ describe('Lusha client', () => {
 			method: 'POST',
 			path: '/v3/contacts/search',
 			body: { contacts: [{ id: '4389064654' }] },
-			metered: true,
 		});
 
 		expect(sentHeader('api_key')).toBe('key-123');
@@ -66,7 +73,19 @@ describe('Lusha client', () => {
 		expect(lastCall().init.body).toBeUndefined();
 	});
 
-	it('parses the documented error shape and folds errors[] into the message', async () => {
+	it('sends query parameters on GET routes', async () => {
+		mockFetch(jsonResponse({ data: [] }));
+
+		await makeLushaRequest('key-123', {
+			method: 'GET',
+			path: '/api/subscriptions',
+			query: { limit: 10, offset: 0, skipped: undefined },
+		});
+
+		expect(lastCall().url).toBe(`${BASE}/api/subscriptions?limit=10&offset=0`);
+	});
+
+	it('throws core ApiError with the documented message and errors[]', async () => {
 		mockFetch(jsonResponse(validationErrorBody, { status: 400 }));
 
 		const error = await captureError(
@@ -74,20 +93,19 @@ describe('Lusha client', () => {
 				method: 'POST',
 				path: '/v3/contacts/search',
 				body: { contacts: [] },
-				metered: true,
 			}),
 		);
 
-		expect(error).toBeInstanceOf(LushaAPIError);
-		const lushaError = error as LushaAPIError;
-		expect(lushaError.status).toBe(400);
-		expect(lushaError.message).toContain('Validation failed');
-		expect(lushaError.message).toContain('entityType must be one of');
+		expect(error).toBeInstanceOf(ApiError);
+		const apiError = error as ApiError;
+		expect(apiError.status).toBe(400);
+		expect(apiError.message).toContain('Validation failed');
+		expect(apiError.message).toContain('entityType must be one of');
 		// The key travels in a header; the error must never quote it.
 		expect(JSON.stringify(error)).not.toContain('key-123');
 	});
 
-	it('parses the live 401 shape, which has error and no errors[]', async () => {
+	it('parses the 401 shape', async () => {
 		mockFetch(jsonResponse(unauthorizedErrorBody, { status: 401 }));
 
 		const error = await captureError(
@@ -97,130 +115,99 @@ describe('Lusha client', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(LushaAPIError);
-		expect((error as LushaAPIError).status).toBe(401);
-		expect((error as LushaAPIError).isAuthError).toBe(true);
-		expect((error as LushaAPIError).message).toContain('Missing API key');
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(401);
+		expect((error as ApiError).message).toContain('Missing API key');
 	});
 
-	it('keeps a gateway Retry-After on the error', async () => {
-		mockFetch(
-			jsonResponse(
-				{ statusCode: 429, message: 'Too Many Requests' },
-				{
-					status: 429,
-					headers: { 'Retry-After': '7' },
-				},
-			),
-		);
+	it('drops the request body and query string from the error', async () => {
+		mockFetch(jsonResponse(validationErrorBody, { status: 400 }));
 
 		const error = await captureError(
 			makeLushaRequest('key-123', {
-				method: 'GET',
-				path: '/v3/account/usage',
-			}),
-		);
-
-		expect(error).toBeInstanceOf(LushaAPIError);
-		expect((error as LushaAPIError).retryAfter).toBe(7000);
-	});
-
-	it('marks a 5xx on a metered call not safe to replay', async () => {
-		mockFetch(jsonResponse({ statusCode: 500 }, { status: 500 }));
-
-		const error = await captureError(
-			makeLushaRequest('key-123', {
-				method: 'POST',
-				path: '/v3/contacts/enrich',
-				body: { ids: ['4389064654'] },
-				metered: true,
-			}),
-		);
-
-		expect((error as LushaAPIError).safeToReplay).toBe(false);
-	});
-
-	it('marks a 5xx on a free call safe to replay', async () => {
-		mockFetch(jsonResponse({ statusCode: 500 }, { status: 500 }));
-
-		const error = await captureError(
-			makeLushaRequest('key-123', {
-				method: 'GET',
-				path: '/v3/account/usage',
-			}),
-		);
-
-		expect((error as LushaAPIError).safeToReplay).toBe(true);
-	});
-
-	it('marks transport failures safe to replay and keeps the cause', async () => {
-		currentFetchRejects(new TypeError('fetch failed'));
-
-		const error = await captureError(
-			makeLushaRequest('key-123', {
-				method: 'POST',
-				path: '/v3/contacts/enrich',
-				body: { ids: ['4389064654'] },
-				metered: true,
-			}),
-		);
-
-		const lushaError = error as LushaAPIError;
-		expect(lushaError.safeToReplay).toBe(true);
-		expect(lushaError.status).toBeUndefined();
-		expect(lushaError.cause).toBeInstanceOf(TypeError);
-	});
-
-	it('flags the documented out-of-credits message from any status', () => {
-		const byStatus = new LushaAPIError(
-			'Lusha 402: Insufficient credits for this operation',
-			{
-				status: 402,
-			},
-		);
-		const byMessage = new LushaAPIError(
-			'Lusha 429: Insufficient credits for this operation',
-			{ status: 429 },
-		);
-		expect(byStatus.outOfCredits).toBe(true);
-		expect(byMessage.outOfCredits).toBe(true);
-		expect(
-			new LushaAPIError('Lusha 429: Too many requests', { status: 429 })
-				.outOfCredits,
-		).toBe(false);
-	});
-
-	// The key-hygiene check on the error surface: message and inspect output
-	// never carry the key or the raw body.
-	it('keeps the key and the raw body off the error surface', async () => {
-		mockFetch(
-			jsonResponse(
-				{
-					statusCode: 400,
-					message: 'Validation failed',
-					errors: ['contacts must be an array'],
-				},
-				{ status: 400 },
-			),
-		);
-
-		const error = await captureError(
-			makeLushaRequest('secret-key-value', {
 				method: 'POST',
 				path: '/v3/contacts/search',
-				body: { contacts: 'not-an-array' },
-				metered: true,
+				query: { email: 'owner@example.com' },
+				body: { contacts: [{ email: 'jane@example.com' }] },
 			}),
 		);
 
-		expect(JSON.stringify(error)).not.toContain('secret-key-value');
-		expect(JSON.stringify(error)).not.toContain('must be an array');
+		const text = JSON.stringify({
+			...(error as ApiError),
+			message: (error as ApiError).message,
+		});
+		expect(text).not.toContain('jane@example.com');
+		expect(text).not.toContain('owner@example.com');
+		expect((error as ApiError).url).toBe(`${BASE}/v3/contacts/search`);
+	});
+
+	it('marks errors from replayable requests only', async () => {
+		mockFetch(jsonResponse({ statusCode: 500 }, { status: 500 }));
+		const free = await captureError(
+			makeLushaRequest('key-123', {
+				method: 'GET',
+				path: '/v3/account/usage',
+				replayable: true,
+			}),
+		);
+		mockFetch(jsonResponse({ statusCode: 500 }, { status: 500 }));
+		const metered = await captureError(
+			makeLushaRequest('key-123', {
+				method: 'POST',
+				path: '/v3/contacts/enrich',
+				body: { ids: ['4389064654'] },
+			}),
+		);
+
+		expect(isReplayable(free)).toBe(true);
+		expect(isReplayable(metered)).toBe(false);
+	});
+
+	it('lets transport failures through unchanged', async () => {
+		const failure = new TypeError('fetch failed');
+		currentFetchRejects(failure);
+
+		const error = await captureError(
+			makeLushaRequest('key-123', {
+				method: 'GET',
+				path: '/v3/account/usage',
+				replayable: true,
+			}),
+		);
+
+		expect(error).toBe(failure);
+		expect(isReplayable(error)).toBe(true);
+	});
+
+	it('flags the out-of-credits status and message', async () => {
+		mockFetch(jsonResponse(outOfCreditsBody, { status: 402 }));
+		const byStatus = await captureError(
+			makeLushaRequest('key-123', { method: 'GET', path: '/v3/account/usage' }),
+		);
+		mockFetch(
+			jsonResponse(
+				{ statusCode: 403, message: 'Insufficient credits for this operation' },
+				{ status: 403 },
+			),
+		);
+		const byMessage = await captureError(
+			makeLushaRequest('key-123', { method: 'GET', path: '/v3/account/usage' }),
+		);
+		mockFetch(jsonResponse(rateLimitedBody, { status: 400 }));
+		const other = await captureError(
+			makeLushaRequest('key-123', { method: 'GET', path: '/v3/account/usage' }),
+		);
+
+		expect(isOutOfCredits(byStatus)).toBe(true);
+		expect(isOutOfCredits(byMessage)).toBe(true);
+		expect(isOutOfCredits(other)).toBe(false);
+		expect(isOutOfCredits(new Error('Insufficient credits'))).toBe(false);
 	});
 });
 
 /** Replaces the queued-response helper for tests that need a rejection. */
 // unknown: a rejection can be any value; the test asserts on the resulting
-// LushaAPIError's narrowed fields instead.
+// error's narrowed fields instead.
 function currentFetchRejects(reason: unknown): void {
 	currentFetch().mockRejectedValueOnce(reason);
 }

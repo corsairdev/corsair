@@ -2,25 +2,83 @@ import { AuthMissingError } from 'corsair/core';
 import type { LushaKeyBuilderContext } from './index';
 import { lusha, lushaEndpointSchemas } from './index';
 
-const OPERATIONS = [
-	'person.searchContacts',
-	'person.enrichContacts',
-	'person.searchAndEnrichContacts',
-	'company.searchCompanies',
-	'company.enrichCompanies',
-	'company.searchAndEnrichCompanies',
-	'account.getAccountUsage',
-	'jobs.getContactsEnrichJob',
-] as const;
+const RISK_LEVELS = {
+	'account.getAccountUsage': 'read',
+	'auditLogs.getStats': 'read',
+	'auditLogs.list': 'read',
+	'company.enrichCompanies': 'destructive',
+	'company.getCompanyFilterTypes': 'read',
+	'company.getCompanyFilterValues': 'read',
+	'company.getCompanyIcpFitScores': 'destructive',
+	'company.getCompanyLookalikes': 'destructive',
+	'company.getCompanyRecommendationFilters': 'read',
+	'company.getCompanyRecommendations': 'destructive',
+	'company.getCompanySignalFilterValues': 'read',
+	'company.getCompanySignalFilters': 'read',
+	'company.getCompanySignalScores': 'destructive',
+	'company.getCompanySignalTypes': 'read',
+	'company.getCompanySignals': 'destructive',
+	'company.getWebsiteVisits': 'destructive',
+	'company.prospectCompanies': 'destructive',
+	'company.searchAndEnrichCompanies': 'destructive',
+	'company.searchCompanies': 'destructive',
+	'companyTables.addEntities': 'destructive',
+	'companyTables.create': 'write',
+	'companyTables.delete': 'destructive',
+	'companyTables.get': 'read',
+	'companyTables.getColumnCatalog': 'read',
+	'companyTables.list': 'read',
+	'companyTables.listEntities': 'destructive',
+	'companyTables.removeColumn': 'destructive',
+	'companyTables.removeEntities': 'destructive',
+	'companyTables.runColumn': 'destructive',
+	'companyTables.update': 'write',
+	'contactTables.addColumns': 'write',
+	'contactTables.addEntities': 'write',
+	'contactTables.create': 'write',
+	'contactTables.delete': 'destructive',
+	'contactTables.get': 'read',
+	'contactTables.getColumnCatalog': 'read',
+	'contactTables.list': 'read',
+	'contactTables.listColumns': 'read',
+	'contactTables.listEntities': 'destructive',
+	'contactTables.removeColumn': 'destructive',
+	'contactTables.removeEntities': 'destructive',
+	'contactTables.runColumn': 'destructive',
+	'contactTables.update': 'write',
+	'conversations.getTranscript': 'destructive',
+	'conversations.search': 'destructive',
+	'icp.listProfiles': 'read',
+	'jobs.getContactsEnrichJob': 'read',
+	'person.enrichContacts': 'destructive',
+	'person.getBuyingGroup': 'destructive',
+	'person.getContactFilterTypes': 'read',
+	'person.getContactFilterValues': 'read',
+	'person.getContactIcpFitScores': 'destructive',
+	'person.getContactLookalikes': 'destructive',
+	'person.getContactRecommendationFilters': 'read',
+	'person.getContactRecommendations': 'destructive',
+	'person.getContactSignalScores': 'destructive',
+	'person.getContactSignalTypes': 'read',
+	'person.getContactSignals': 'destructive',
+	'person.prospectContacts': 'destructive',
+	'person.searchAndEnrichContacts': 'destructive',
+	'person.searchContacts': 'destructive',
+	'subscriptions.create': 'destructive',
+	'subscriptions.createOptOut': 'write',
+	'subscriptions.delete': 'destructive',
+	'subscriptions.get': 'read',
+	'subscriptions.list': 'read',
+	'subscriptions.test': 'write',
+	'subscriptions.update': 'write',
+} as const;
 
-const METERED = [
-	'person.searchContacts',
-	'person.enrichContacts',
-	'person.searchAndEnrichContacts',
-	'company.searchCompanies',
-	'company.enrichCompanies',
-	'company.searchAndEnrichCompanies',
-] as const;
+const OPERATIONS = Object.keys(RISK_LEVELS) as (keyof typeof RISK_LEVELS)[];
+
+/** Every operation that charges credits or changes Lusha data. */
+const DESTRUCTIVE = OPERATIONS.filter(
+	(name) => RISK_LEVELS[name] === 'destructive',
+);
 
 // unknown: only the keys are walked, so the endpoint function type is never used.
 type NestedMap = Record<string, Record<string, unknown>>;
@@ -84,17 +142,30 @@ describe('lusha plugin', () => {
 		}
 	});
 
-	it('marks every operation as a read', () => {
+	it('covers all 68 operations of the public reference', () => {
+		// 70 in docs.lusha.com/openapi.json, less the two that return the
+		// account's webhook signing secret.
+		expect(OPERATIONS).toHaveLength(68);
+	});
+
+	it('sets the risk level of every operation', () => {
 		for (const operation of OPERATIONS) {
-			expect(required(operation).riskLevel).toBe('read');
+			expect([operation, required(operation).riskLevel]).toEqual([
+				operation,
+				RISK_LEVELS[operation],
+			]);
 		}
 	});
 
-	it('names the credit cost on every metered operation', () => {
-		for (const operation of METERED) {
-			expect(required(operation).description).toMatch(
-				/charge|Metered|credits/i,
-			);
+	it('names the cost on every credit-charging operation', () => {
+		const charging = DESTRUCTIVE.filter(
+			(name) => !/\.(delete|remove\w*)$/.test(name),
+		);
+		for (const operation of charging) {
+			expect([operation, required(operation).description]).toEqual([
+				operation,
+				expect.stringMatching(/charge|credit|billing/i),
+			]);
 		}
 		// account.usage and the job poll are free, and say so.
 		expect(required('account.getAccountUsage').description).toMatch(/Free/);

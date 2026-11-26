@@ -4,8 +4,9 @@
  * poll for a nonexistent id. Every search and enrich call charges credits, so
  * none belongs in a smoke suite.
  */
+
+import { ApiError } from 'corsair/http';
 import { z } from 'zod';
-import { LushaAPIError } from './client';
 import { getAccountUsage } from './endpoints/account';
 import { getContactsEnrichJob } from './endpoints/jobs';
 import { LushaEndpointOutputSchemas as Outputs } from './endpoints/types';
@@ -44,7 +45,7 @@ describeLive('lusha live API', () => {
 		// to another account - not distinguished, per the docs.
 		await expect(
 			getContactsEnrichJob(ctx, { jobId: 'wf_doesnotexist123' }),
-		).rejects.toThrow(LushaAPIError);
+		).rejects.toBeInstanceOf(ApiError);
 		await expect(
 			getContactsEnrichJob(ctx, { jobId: 'wf_doesnotexist123' }),
 		).rejects.toMatchObject({ status: 404 });

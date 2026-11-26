@@ -21,8 +21,6 @@ export const searchContacts: LushaEndpoints['personSearchContacts'] = (
 			method: 'POST',
 			path: '/v3/contacts/search',
 			body: { contacts, options, signals },
-			// Charged per matched result; a 5xx replay could charge twice.
-			metered: true,
 		}),
 		{ log: (_, result) => billingLog(result) },
 	);
@@ -43,7 +41,6 @@ export const enrichContacts: LushaEndpoints['personEnrichContacts'] = (
 			method: 'POST',
 			path: '/v3/contacts/enrich',
 			body: { ids, reveal, waterfallEnabled, tableId },
-			metered: true,
 		}),
 		{ log: (_, result) => billingLog(result) },
 	);
@@ -62,7 +59,6 @@ export const searchAndEnrichContacts: LushaEndpoints['personSearchAndEnrichConta
 				method: 'POST',
 				path: '/v3/contacts/search-and-enrich',
 				body: { contacts, reveal, options },
-				metered: true,
 			}),
 			{ log: (_, result) => billingLog(result) },
 		);

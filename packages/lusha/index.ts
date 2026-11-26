@@ -13,6 +13,11 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { Account, Company, Jobs, Person } from './endpoints';
+import {
+	LushaSpecEndpoints,
+	lushaSpecEndpointSchemas,
+} from './endpoints/generated/spec-endpoints';
+import { LUSHA_SPEC_META } from './endpoints/generated/spec-ops';
 import type {
 	LushaEndpointInputs,
 	LushaEndpointOutputs,
@@ -63,12 +68,20 @@ const lushaEndpointsNested = {
 		searchContacts: Person.searchContacts,
 		enrichContacts: Person.enrichContacts,
 		searchAndEnrichContacts: Person.searchAndEnrichContacts,
+		...LushaSpecEndpoints.person,
 	},
 	company: {
 		searchCompanies: Company.searchCompanies,
 		enrichCompanies: Company.enrichCompanies,
 		searchAndEnrichCompanies: Company.searchAndEnrichCompanies,
+		...LushaSpecEndpoints.company,
 	},
+	contactTables: LushaSpecEndpoints.contactTables,
+	companyTables: LushaSpecEndpoints.companyTables,
+	icp: LushaSpecEndpoints.icp,
+	subscriptions: LushaSpecEndpoints.subscriptions,
+	auditLogs: LushaSpecEndpoints.auditLogs,
+	conversations: LushaSpecEndpoints.conversations,
 	account: {
 		getAccountUsage: Account.getAccountUsage,
 	},
@@ -110,6 +123,7 @@ export const lushaEndpointSchemas = {
 		input: LushaEndpointInputSchemas.jobsGetContactsEnrichJob,
 		output: LushaEndpointOutputSchemas.jobsGetContactsEnrichJob,
 	},
+	...lushaSpecEndpointSchemas,
 } as const satisfies RequiredPluginEndpointSchemas<typeof lushaEndpointsNested>;
 
 // enrichContacts can answer 200 with status 'partial' and a job: poll
@@ -129,33 +143,33 @@ const CONTACTS_ENRICH_JOB = {
 
 const lushaEndpointMeta = {
 	'person.searchContacts': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Look up up to 100 contacts by id, LinkedIn URL, email, or name plus company, and get previews that say which data points exist and what revealing them costs. Metered: Lusha charges credits per matched result.',
 	},
 	'person.enrichContacts': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Reveal emails and phone numbers for up to 100 contact ids from search results. Metered: charged per revealed data point, and every call re-charges. May answer status partial with a job; follow it with jobs.getContactsEnrichJob until it reports complete, expired or failed.',
 		job: CONTACTS_ENRICH_JOB,
 	},
 	'person.searchAndEnrichContacts': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Search up to 100 contacts by email, LinkedIn URL or name plus company and return their full enriched records in one call. Metered: charged per result and per revealed field.',
 	},
 	'company.searchCompanies': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Look up up to 100 companies by id, name or domain and get firmographic previews. Metered: Lusha charges credits per matched result.',
 	},
 	'company.enrichCompanies': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Reveal full firmographics for up to 100 company ids, including premium fields named in reveal (each charged separately per result). Omitting reveal returns base firmographics only. Metered, and every call re-charges.',
 	},
 	'company.searchAndEnrichCompanies': {
-		riskLevel: 'read',
+		riskLevel: 'destructive',
 		description:
 			'Search up to 100 companies by id, name or domain and return their full firmographics in one call. Metered: charged per result and per reveal field.',
 	},
@@ -169,6 +183,7 @@ const lushaEndpointMeta = {
 		description:
 			'Where a partial contacts enrich job stands: processing (poll again after retryAfter seconds), complete (contacts to merge by id plus creditsCharged), or the terminal expired and failed. Free.',
 	},
+	...LUSHA_SPEC_META,
 } as const satisfies RequiredPluginEndpointMeta<typeof lushaEndpointsNested>;
 
 export type BaseLushaPlugin<T extends LushaPluginOptions> = CorsairPlugin<
@@ -219,8 +234,6 @@ export function lusha<const T extends LushaPluginOptions>(
 		},
 	} satisfies InternalLushaPlugin;
 }
-
-export { LushaAPIError } from './client';
 
 export type {
 	AccountGetAccountUsageInput,

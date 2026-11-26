@@ -1,105 +1,76 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { LushaAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { isOutOfCredits, isReplayable } from './client';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof LushaAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 /**
  * Handler keys are ordered so the most specific match wins: core takes the
- * first key whose `match` passes, so `INSUFFICIENT_BALANCE_ERROR` must sit
- * before anything broad, and `DEFAULT` matches everything and stays last.
+ * first key whose `match` passes, so OUT_OF_CREDITS sits before anything
+ * broad, and DEFAULT matches everything and stays last.
  *
- * Status codes: https://docs.lusha.com/docs/errors - the docs say never retry
- * 400, 401, 402 or 403, retry 429 and 5xx.
+ * Status codes: https://docs.lusha.com/docs/errors (400 bad request, 401 bad
+ * key, 402 out of credits, 403 plan restriction, 404 unknown id or job, 409
+ * duplicate table name, 429 rate limited, 451 legal block, 5xx server).
  */
 export const errorHandlers = {
 	// 402 "Insufficient credits for this operation": the account pool is empty.
-	// Retrying burns three attempts on a permanent failure, so this is fatal
-	// and comes before any generic or rate-limit handler. The message is also
-	// matched in case the status ever differs.
-	INSUFFICIENT_BALANCE_ERROR: {
-		match: (error: Error) =>
-			error instanceof LushaAPIError && error.outOfCredits,
+	OUT_OF_CREDITS_ERROR: {
+		match: (error: Error) => isOutOfCredits(error),
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 429, per account (25 requests/second default; account.usage 5/minute).
-	// Lusha sends no Retry-After header, so the delay comes from the strategy.
-	// The docs endorse retrying a 429; a "trial account limit" message can also
-	// arrive inside one, and a bounded retry keeps that from looping forever.
+	// Core's request() already retried it three times with backoff, so this
+	// does not retry again (R8).
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof LushaAPIError && error.isRateLimit,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs:
-				error instanceof LushaAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		match: (error: Error) => statusOf(error) === 429,
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 401: missing or bad key, or the key was suspended by an admin.
 	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof LushaAPIError && error.isAuthError,
+		match: (error: Error) => statusOf(error) === 401,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 403: the plan does not cover the request, e.g. "excludeDnc is not
-	// available on your current plan". A different key cannot fix it.
+	// available on your current plan". A retry cannot fix it.
 	PERMISSION_ERROR: {
-		match: (error: Error) =>
-			error instanceof LushaAPIError && error.isPermissionError,
+		match: (error: Error) => statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 400 bad request, 404 a record or job id that does not exist (stop
-	// polling), 409
-	// duplicate table name, 451 legal block. Repeating sends the same request.
+	// 400, 404 (an id or job that does not exist: stop polling), 409, 422,
+	// 451, or our own input validation. Repeating sends the same request.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			const status = statusOf(error);
 			return (
 				error.name === 'ZodError' ||
-				status === 400 ||
-				status === 404 ||
-				status === 409 ||
-				status === 451
+				(status !== undefined && [400, 404, 409, 422, 451].includes(status))
 			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 408 (or a TimeoutError cause). The request reached Lusha, so a metered
-	// call is not replayed (see client.ts safeToReplay).
-	TIMEOUT_ERROR: {
-		match: (error: Error) =>
-			(error instanceof LushaAPIError && error.status === 408) ||
-			error.name === 'TimeoutError',
-		handler: async (error: Error) => ({
-			maxRetries: error instanceof LushaAPIError && error.safeToReplay ? 1 : 0,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
-	},
-	// 500, 502, 503 and 499; the docs say to retry a 500. A 503 on the job
-	// poll means the job store is unreachable and a retry is expected. Metered
-	// calls set safeToReplay false on a 5xx (client.ts), so only free reads
-	// (account.usage, the job poll) actually retry here.
+	// 5xx and 408: retried only for free reads (client.ts marks them). Every
+	// other call charges credits or changes data on each run, and the first
+	// attempt may already have landed (R8).
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof LushaAPIError &&
-			error.safeToReplay &&
-			(error.status ?? 0) >= 500,
-		handler: async () => ({
-			maxRetries: 2,
+		match: (error: Error) => {
+			const status = statusOf(error);
+			return status !== undefined && (status >= 500 || status === 408);
+		},
+		handler: async (error: Error) => ({
+			maxRetries: isReplayable(error) ? 2 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
-	// Transport failures (reset, DNS, abort) never reached Lusha, so the client
-	// marks them safeToReplay and a bounded retry is allowed even on metered
-	// calls. This must sit before DEFAULT or a dropped connection on a read
-	// never retries.
-	TRANSPORT_ERROR: {
+	// Transport failures (reset, DNS, timeout): same rule as a 5xx. The
+	// request may have reached Lusha before the connection dropped.
+	NETWORK_ERROR: {
 		match: (error: Error) =>
-			error instanceof LushaAPIError && error.status === undefined,
+			!(error instanceof ApiError) && error.name !== 'ZodError',
 		handler: async (error: Error) => ({
-			maxRetries: error instanceof LushaAPIError && error.safeToReplay ? 1 : 0,
+			maxRetries: isReplayable(error) ? 2 : 0,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},

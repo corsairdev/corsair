@@ -8,9 +8,9 @@ import {
 } from './test-fixtures';
 
 /**
- * error-handlers.ts decides retries: 402 is fatal, 429 backs off, and a 5xx
- * only replays when the call was not metered, because Lusha re-charges
- * credits on every repeat of a search or enrich call.
+ * Core's request() retries a 429 three times; error-handlers.ts adds no
+ * more. 402 is fatal, and a 5xx only replays on a free read, because a
+ * search or enrich call may already have charged credits.
  */
 async function createClient() {
 	const testDb = createTestDatabase();
