@@ -278,6 +278,30 @@ describe('Lusha input validation', () => {
 		).toBe(false);
 	});
 
+	it.each([
+		'companySearchCompanies',
+		'companySearchAndEnrichCompanies',
+	] as const)('%s rejects a company row with no id, name or domain', (op) => {
+		expect(
+			Inputs[op].safeParse({ companies: [{ clientReferenceId: 'row-1' }] })
+				.success,
+		).toBe(false);
+	});
+
+	it.each([
+		'companySearchCompanies',
+		'companySearchAndEnrichCompanies',
+	] as const)('%s accepts one or several company identifiers', (op) => {
+		const parse = (company: Record<string, string>) =>
+			Inputs[op].safeParse({ companies: [company] }).success;
+		expect(parse({ id: '16303253' })).toBe(true);
+		expect(parse({ name: 'Lusha' })).toBe(true);
+		expect(parse({ domain: 'lusha.com' })).toBe(true);
+		expect(
+			parse({ clientReferenceId: 'row-1', name: 'Lusha', domain: 'lusha.com' }),
+		).toBe(true);
+	});
+
 	it('rejects a malformed email', () => {
 		expect(
 			Inputs.personSearchContacts.safeParse({

@@ -490,15 +490,25 @@ export type PersonSearchAndEnrichContactsResponse = z.infer<
 
 // ── company.searchCompanies ───────────────────────────────────────────────
 
-const CompanySearchItemSchema = z.object({
-	clientReferenceId: z
-		.string()
-		.optional()
-		.describe('Your own reference, echoed back on the result.'),
-	id: z.string().optional().describe('A Lusha company id.'),
-	name: z.string().optional(),
-	domain: z.string().optional(),
-});
+const CompanySearchItemSchema = z
+	.object({
+		clientReferenceId: z
+			.string()
+			.optional()
+			.describe('Your own reference, echoed back on the result.'),
+		id: z.string().optional().describe('A Lusha company id.'),
+		name: z.string().optional(),
+		domain: z.string().optional(),
+	})
+	// Lusha requires at least one of id, name or domain per company (several
+	// are fine). Failing here saves the API call.
+	.refine(
+		(item) =>
+			item.id !== undefined ||
+			item.name !== undefined ||
+			item.domain !== undefined,
+		{ message: 'Each company needs at least one of id, name or domain.' },
+	);
 
 const SearchCompaniesInputSchema = z.object({
 	companies: z
