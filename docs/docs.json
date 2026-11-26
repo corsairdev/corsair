@@ -4656,6 +4656,15 @@
                 ]
               },
               {
+                "group": "Publora",
+                "pages": [
+                  "plugins/publora/overview",
+                  "plugins/publora/api",
+                  "plugins/publora/database",
+                  "plugins/publora/webhooks"
+                ]
+              },
+              {
                 "group": "Pushbullet",
                 "pages": [
                   "plugins/pushbullet/overview",
