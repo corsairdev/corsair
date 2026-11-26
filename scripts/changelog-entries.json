@@ -13156,5 +13156,32 @@
         "title": "Trim the approval base URL's trailing slashes without a regex"
       }
     ]
+  },
+  {
+    "date": "2026-11-26",
+    "package": "@corsair-dev/llamaindex",
+    "dir": "adapters/llamaindex",
+    "name": "llamaindex",
+    "version": "0.1.93",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-26",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.121",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-26",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.107",
+    "isNew": false,
+    "changes": []
   }
 ]
