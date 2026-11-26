@@ -356,7 +356,9 @@ const DiscussionsListInputSchema = z.object({
 	status: z
 		.enum(LOOMIO_DISCUSSION_STATUSES)
 		.optional()
-		.describe('Filter: `open` (default), `closed`, or `all`.'),
+		.describe(
+			'Filter: `open`, `closed`, or `all`. Omitted, Loomio returns open and closed discussions (the same as `all`).',
+		),
 	limit: PageLimitSchema,
 	offset: OffsetSchema,
 	...RelatedRecordControls,
@@ -448,7 +450,9 @@ const CommentsCreateInputSchema = z.object({
 		.int()
 		.positive()
 		.optional()
-		.describe('Reply to this comment id inside the discussion.'),
+		.describe(
+			"Reply to this comment id. Loomio posts the reply in the parent comment's discussion and ignores `discussion_id`, so pass a parent from the same discussion.",
+		),
 	body: z.string().min(1).describe('The comment text. Required.'),
 	body_format: z
 		.enum(LOOMIO_BODY_FORMATS)
@@ -510,7 +514,7 @@ const ThreadsItemsResponseSchema = z
 	})
 	.loose()
 	.describe(
-		'The thread timeline in ascending sequence order. Comments, polls, votes and outcomes ride along in related arrays, matched by `itemable_id`.',
+		'The thread timeline in ascending sequence order. Comments, polls, votes and outcomes ride along in related arrays: pick the array by `itemable_type`, then match `itemable_id` in it (ids repeat across types).',
 	);
 
 export type ThreadsItemsResponse = z.infer<typeof ThreadsItemsResponseSchema>;
@@ -949,7 +953,9 @@ export const MembershipSchema = z
 		user_email: z
 			.string()
 			.nullish()
-			.describe('Only for your own membership or when you are a group admin.'),
+			.describe(
+				'Only on memberships the key user invited, or in groups the key user administers.',
+			),
 	})
 	.loose();
 
@@ -1202,7 +1208,9 @@ const WebhookFields = {
 	name: z.string().min(1).describe('Admin-facing name.'),
 	kind: z
 		.enum(['webhook', 'matrix'])
-		.describe('`webhook` for an outgoing webhook, `matrix` for Matrix.'),
+		.describe(
+			'`webhook` for an outgoing webhook, `matrix` for Matrix (`server` is then the homeserver URL, with `access_token` and `channel`).',
+		),
 	webhook_kind: z
 		.enum(LOOMIO_WEBHOOK_FORMATS)
 		.optional()
@@ -1219,16 +1227,45 @@ const WebhookFields = {
 		.boolean()
 		.optional()
 		.describe('Send only the notification headline.'),
+	access_token: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'Matrix only: the bot account access token. A secret; Loomio never returns it.',
+		),
+	channel: z
+		.string()
+		.min(1)
+		.optional()
+		.describe(
+			'Matrix only: the room id to post in, e.g. `!abc123:matrix.org`.',
+		),
 };
 
-const WebhooksCreateInputSchema = z.object({
-	group_id: z
-		.number()
-		.int()
-		.positive()
-		.describe('The group; the key user must be a group admin.'),
-	...WebhookFields,
-});
+const WebhooksCreateInputSchema = z
+	.object({
+		group_id: z
+			.number()
+			.int()
+			.positive()
+			.describe('The group; the key user must be a group admin.'),
+		...WebhookFields,
+	})
+	.superRefine((value, ctx) => {
+		// Loomio sends Matrix messages with the token to the room in `channel`
+		// on the homeserver in `server`; without them the integration is dead.
+		if (value.kind !== 'matrix') return;
+		for (const field of ['access_token', 'channel'] as const) {
+			if (!value[field]) {
+				ctx.addIssue({
+					code: 'custom',
+					message: `A matrix integration needs ${field}.`,
+					path: [field],
+				});
+			}
+		}
+	});
 
 export type WebhooksCreateInput = z.input<typeof WebhooksCreateInputSchema>;
 
@@ -1240,6 +1277,8 @@ const WebhooksUpdateInputSchema = z.object({
 	server: WebhookFields.server.optional(),
 	event_kinds: WebhookFields.event_kinds,
 	notification_only: WebhookFields.notification_only,
+	access_token: WebhookFields.access_token,
+	channel: WebhookFields.channel,
 });
 
 export type WebhooksUpdateInput = z.input<typeof WebhooksUpdateInputSchema>;
@@ -1279,8 +1318,16 @@ const WebhooksCheckInputSchema = z.object({
 export type WebhooksCheckInput = z.input<typeof WebhooksCheckInputSchema>;
 
 const WebhooksCheckResponseSchema = z
-	.object({ delivered: z.literal(true) })
-	.describe('Loomio answers an empty 200 once the test message is sent.');
+	.object({
+		accepted: z
+			.literal(true)
+			.describe(
+				'Loomio answered its empty 200. It does not confirm delivery; check the destination.',
+			),
+	})
+	.describe(
+		'Loomio answers an empty 200 after attempting the test message, even when delivery failed.',
+	);
 
 export type WebhooksCheckResponse = z.infer<typeof WebhooksCheckResponseSchema>;
 

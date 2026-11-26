@@ -22,7 +22,7 @@ pnpm add @corsair-dev/loomio
 | `discussions.update` | `loomio.api.discussions.update` | `destructive` | Edit a discussion title or context; can notify the group and email invitations to recipient addresses |
 | `groups.get` | `loomio.api.groups.get` | `read` | Read one group by numeric id, url key, or handle, with its settings and member counts |
 | `groups.list` | `loomio.api.groups.list` | `read` | List the groups the key user belongs to, including subgroups, oldest first |
-| `memberships.list` | `loomio.api.memberships.list` | `read` | List a group's memberships with related users; emails only for group admins |
+| `memberships.list` | `loomio.api.memberships.list` | `read` | List a group's memberships with related users; emails only for members the key user invited or in groups it administers |
 | `memberships.manage` | `loomio.api.memberships.manage` | `destructive` | Invite email addresses to a group (Loomio emails them) and optionally remove every member not listed; group admin only |
 | `polls.create` | `loomio.api.polls.create` | `destructive` | Create a poll in a group or on a discussion; can invite the group to vote and email invitations to recipient addresses |
 | `polls.delete` | `loomio.api.polls.delete` | `destructive` | Soft-delete a poll; it disappears for voters and the API cannot restore it |
@@ -37,8 +37,8 @@ pnpm add @corsair-dev/loomio
 | `server.memberships.sync` | `loomio.api.server.memberships.sync` | `destructive` | Self-hosted Server API: invite emails to a group and optionally revoke everyone not listed (server key) |
 | `server.memberships.update` | `loomio.api.server.memberships.update` | `write` | Self-hosted Server API: grant or remove a member's admin and delegate roles (server key) |
 | `server.users.create` | `loomio.api.server.users.create` | `write` | Self-hosted Server API: create an unverified account without sending an invitation (server key) |
-| `server.users.deactivate` | `loomio.api.server.users.deactivate` | `destructive` | Self-hosted Server API: deactivate a user, removing their access (server key) |
-| `server.users.deactivateByIdentity` | `loomio.api.server.users.deactivateByIdentity` | `destructive` | Self-hosted Server API: deactivate a user found by external identity (server key) |
+| `server.users.deactivate` | `loomio.api.server.users.deactivate` | `destructive` | Self-hosted Server API: queue a user deactivation; success means queued, so read the user again and check active is false (server key) |
+| `server.users.deactivateByIdentity` | `loomio.api.server.users.deactivateByIdentity` | `destructive` | Self-hosted Server API: queue deactivation of a user found by external identity; read again and check active is false (server key) |
 | `server.users.delete` | `loomio.api.server.users.delete` | `destructive` | Self-hosted Server API: permanently delete a user and their records (server key) |
 | `server.users.deleteByIdentity` | `loomio.api.server.users.deleteByIdentity` | `destructive` | Self-hosted Server API: permanently delete a user found by external identity (server key) |
 | `server.users.get` | `loomio.api.server.users.get` | `read` | Self-hosted Server API: read one user account by id (server key) |
@@ -54,7 +54,7 @@ pnpm add @corsair-dev/loomio
 | `threads.items` | `loomio.api.threads.items` | `read` | Read one thread timeline in sequence order: comments, polls, votes, and outcomes as one event stream |
 | `threads.list` | `loomio.api.threads.list` | `read` | List the threads the key user can see, ordered by latest activity, across all groups |
 | `threads.markdown` | `loomio.api.threads.markdown` | `read` | Export one thread as a single markdown document; needs export permission on the thread |
-| `webhooks.check` | `loomio.api.webhooks.check` | `destructive` | Send a test message to a webhook destination URL |
+| `webhooks.check` | `loomio.api.webhooks.check` | `destructive` | Ask Loomio to send a test message to a webhook destination URL; success does not confirm delivery |
 | `webhooks.create` | `loomio.api.webhooks.create` | `write` | Create an outgoing webhook or chat integration that posts group events to a URL; group admin only |
 | `webhooks.delete` | `loomio.api.webhooks.delete` | `destructive` | Delete a webhook or chat integration; future deliveries stop |
 | `webhooks.list` | `loomio.api.webhooks.list` | `read` | List a group's outgoing webhooks and chat integrations, with destination URLs; group admin only |

@@ -27,11 +27,11 @@ await corsair.loomio.api.comments.create({ discussion_id: 88, body: 'Sounds good
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `discussion_id` | `number` | Yes | The discussion to comment on (its numeric discussion id). |
-| `parent_id` | `number` | No | Reply to this comment id inside the discussion. |
+| `parent_id` | `number` | No | Reply to this comment id. Loomio posts the reply in the parent comment's discussion and ignores `discussion_id`, so pass a parent from the same discussion. |
 | `body` | `string` | Yes | The comment text. Required. |
 | `body_format` | `md \| html` | No | Format of `body`; `md` (default) or `html`. |
 
-discussion_id is the numeric discussion id (not the topic id). Set parent_id to reply to a comment. body_format takes md (default) or html.
+discussion_id is the numeric discussion id (not the topic id). Set parent_id to reply to a comment: the reply goes to the parent comment's discussion and Loomio ignores discussion_id, so use a parent from the same discussion. body_format takes md (default) or html.
 
 
 
@@ -376,13 +376,13 @@ await corsair.loomio.api.discussions.list({ group_id: 12, limit: 20, compact: tr
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `group_id` | `number` | Yes | The group whose discussions to list. Required. |
-| `status` | `open \| closed \| all` | No | Filter: `open` (default), `closed`, or `all`. |
+| `status` | `open \| closed \| all` | No | Filter: `open`, `closed`, or `all`. Omitted, Loomio returns open and closed discussions (the same as `all`). |
 | `limit` | `number` | No | Records per page; Loomio defaults to 50 when omitted. |
 | `offset` | `number` | No | Records to skip for this page; Loomio defaults to 0. |
 | `compact` | `boolean` | No | Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations. |
 | `exclude_types` | `string[]` | No | Singular related record types to omit, e.g. ["group", "reaction"]. The primary records always stay. |
 
-group_id is required; Loomio answers a missing one with 404 &#123;"error":404&#125;. status takes open (default), closed, or all.
+group_id is required; Loomio answers a missing one with 404 &#123;"error":404&#125;. status takes open, closed, or all; without it Loomio returns open and closed discussions alike.
 
 
 
@@ -664,7 +664,7 @@ await corsair.loomio.api.groups.list({ limit: 50 });
 
 `memberships.list`
 
-List a group's memberships with related users; emails only for group admins
+List a group's memberships with related users; emails only for members the key user invited or in groups it administers
 
 **Risk:** `read`
 
@@ -682,7 +682,7 @@ await corsair.loomio.api.memberships.list({ group_id: 12, limit: 50 });
 | `compact` | `boolean` | No | Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations. |
 | `exclude_types` | `string[]` | No | Singular related record types to omit, e.g. ["group", "reaction"]. The primary records always stay. |
 
-Email addresses come back only for your own membership or when the key user is a group admin.
+user_email comes back on memberships the key user invited and on every membership in groups the key user administers; treat any response as possibly holding emails.
 
 
 
@@ -747,9 +747,9 @@ await corsair.loomio.api.memberships.manage({ group_id: 12, emails: ['new.member
 |------|------|----------|-------------|
 | `group_id` | `number` | Yes | The group to manage. The key user must be a group admin. |
 | `emails` | `string[]` | Yes | Email addresses to invite; Loomio emails each new address. |
-| `remove_absent` | `boolean` | No | Remove every current member whose email is not in `emails`. An empty list removes everyone. |
+| `remove_absent` | `boolean` | No | Remove every current member whose email is not in `emails`. An empty list removes everyone. The plugin first reads the group memberships so an address that differs only in letter case keeps its member. |
 
-Group admin only. remove_absent: true removes every member whose email is not listed, so an empty or partial list can empty the group.
+Group admin only. remove_absent: true removes every member whose email is not listed, so an empty or partial list can empty the group. With remove_absent the plugin first reads the group memberships and sends each listed address in its stored spelling, because Loomio compares the lists case-sensitively.
 
 
 
@@ -775,7 +775,7 @@ Create a poll in a group or on a discussion; can invite the group to vote and em
 **Risk:** `destructive`
 
 ```ts
-await corsair.loomio.api.polls.create({ discussion_id: 88, title: 'Which blue?', poll_type: 'poll', options: ['Sky blue', 'Navy'], closing_at: '2026-04-01T00:00:00.000Z' });
+await corsair.loomio.api.polls.create({ discussion_id: 88, title: 'Which blue?', poll_type: 'poll', options: ['Sky blue', 'Navy'], closing_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() });
 ```
 
 **Input**
@@ -793,7 +793,7 @@ await corsair.loomio.api.polls.create({ discussion_id: 88, title: 'Which blue?',
 | `closing_at` | `string \| null` | No | ISO 8601 close time. Omit or send null to keep the poll a draft with voting disabled. |
 | `specified_voters_only` | `boolean` | No | Restrict voting to invited voters. |
 | `hide_results` | `off \| until_vote \| until_closed` | No | Hide results until a vote is cast or until the poll closes. |
-| `anonymous` | `boolean` | No | Hide voter identities. Options freeze after the first ballot. |
+| `anonymous` | `boolean` | No | Hide voter identities. Needs closing_at (Loomio refuses anonymous drafts). Options freeze after the first ballot. |
 | `shuffle_options` | `boolean` | No | Show options in random order. |
 | `stance_reason_required` | `disabled \| optional \| required \| required_for_disagree_or_block \| required_for_block` | No | When a reason statement is required with a vote. |
 | `reason_prompt` | `string` | No | Question shown when a reason is requested. |
@@ -804,7 +804,7 @@ await corsair.loomio.api.polls.create({ discussion_id: 88, title: 'Which blue?',
 | `recipient_message` | `string` | No | Message sent to the notified recipients. |
 | `notify_recipients` | `boolean` | No | Send the invitation notification. |
 
-Provide group_id or discussion_id. Omit closing_at (or send null) to keep the poll a draft with voting disabled. For proposals, options default to agree, disagree, abstain, and block. notify_recipients: true emails everyone invited.
+Provide group_id or discussion_id. Omit closing_at (or send null) to keep the poll a draft with voting disabled; anonymous polls need closing_at, because Loomio refuses an anonymous draft with 403 after saving it. For proposals, options default to agree, disagree, abstain, and block. notify_recipients: true emails everyone invited.
 
 <AccordionGroup>
 <Accordion title="poll_options_attributes full type">
@@ -1184,7 +1184,7 @@ Edit a poll (title, details, options, closing time); can change existing votes a
 **Risk:** `destructive`
 
 ```ts
-await corsair.loomio.api.polls.update({ id: 63, closing_at: '2026-04-08T00:00:00.000Z' });
+await corsair.loomio.api.polls.update({ id: 63, closing_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString() });
 ```
 
 **Input**
@@ -1694,7 +1694,7 @@ await corsair.loomio.api.server.users.create({ email: 'ada@example.org', name: '
 
 `server.users.deactivate`
 
-Self-hosted Server API: deactivate a user, removing their access (server key)
+Self-hosted Server API: queue a user deactivation; success means queued, so read the user again and check active is false (server key)
 
 **Risk:** `destructive`
 
@@ -1707,6 +1707,8 @@ await corsair.loomio.api.server.users.deactivate({ id: 5 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | The user id. |
+
+Self-hosted, server key. Loomio queues the deactivation and answers before the job runs, so success: true and user.active: true can come back together. Read the user again and check active is false before treating offboarding as done.
 
 
 
@@ -1749,7 +1751,7 @@ await corsair.loomio.api.server.users.deactivate({ id: 5 });
 
 `server.users.deactivateByIdentity`
 
-Self-hosted Server API: deactivate a user found by external identity (server key)
+Self-hosted Server API: queue deactivation of a user found by external identity; read again and check active is false (server key)
 
 **Risk:** `destructive`
 
@@ -1763,6 +1765,8 @@ await corsair.loomio.api.server.users.deactivateByIdentity({ identity_type: 'sam
 |------|------|----------|-------------|
 | `identity_type` | `string` | Yes | External identity provider, e.g. `saml` or `oauth`. |
 | `uid` | `string` | Yes | The user's id at that provider. |
+
+Self-hosted, server key. Queued like server.users.deactivate: read the user again and check active is false.
 
 
 
@@ -2400,7 +2404,7 @@ await corsair.loomio.api.threads.items({ topic_id: 55, limit: 100, compact: true
 | `compact` | `boolean` | No | Send compact=1: omit bulky related topics, groups, parents, memberships, reactions, tags, and translations. |
 | `exclude_types` | `string[]` | No | Singular related record types to omit, e.g. ["group", "reaction"]. The primary records always stay. |
 
-Items come back in ascending sequence order and cap limit at 500. Comments, polls, votes, and outcomes ride in related arrays matched by itemable_id.
+Items come back in ascending sequence order and cap limit at 500. Comments, polls, votes, and outcomes ride in related arrays: choose the array by itemable_type, then match itemable_id within it (a comment and a poll can share an id).
 
 
 
@@ -2562,7 +2566,7 @@ Requires export permission on the thread; the thread's whole visible content com
 
 `webhooks.check`
 
-Send a test message to a webhook destination URL
+Ask Loomio to send a test message to a webhook destination URL; success does not confirm delivery
 
 **Risk:** `destructive`
 
@@ -2577,7 +2581,7 @@ await corsair.loomio.api.webhooks.check({ group_id: 12, server: 'https://hooks.e
 | `group_id` | `number` | Yes | A group where the key user is an admin. |
 | `server` | `string` | Yes | Destination URL that receives the test message. |
 
-Sends a real test message to the URL. Loomio answers an empty 200; the plugin returns &#123; delivered: true &#125;.
+Asks Loomio to send a test message (Slack format) to the URL. Loomio answers an empty 200 even when delivery fails, so the plugin returns &#123; accepted: true &#125;; confirm receipt at the destination.
 
 
 
@@ -2585,7 +2589,7 @@ Sends a real test message to the URL. Loomio answers an empty 200; the plugin re
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `delivered` | `true` | Yes | — |
+| `accepted` | `true` | Yes | Loomio answered its empty 200. It does not confirm delivery; check the destination. |
 
 
 
@@ -2609,11 +2613,15 @@ await corsair.loomio.api.webhooks.create({ group_id: 12, name: 'Planning system'
 |------|------|----------|-------------|
 | `group_id` | `number` | Yes | The group; the key user must be a group admin. |
 | `name` | `string` | Yes | Admin-facing name. |
-| `kind` | `webhook \| matrix` | Yes | `webhook` for an outgoing webhook, `matrix` for Matrix. |
+| `kind` | `webhook \| matrix` | Yes | `webhook` for an outgoing webhook, `matrix` for Matrix (`server` is then the homeserver URL, with `access_token` and `channel`). |
 | `webhook_kind` | `markdown \| slack \| discord \| microsoft \| webex` | No | Payload format; `markdown` suits a general endpoint. |
 | `server` | `string` | Yes | Destination URL; must be public HTTPS. Treat it as a secret. |
 | `event_kinds` | `(new_discussion \| discussion_edited \| new_comment \| poll_created \| poll_edited \| poll_closing_soon \| poll_expired \| poll_closed_by_user \| poll_reopened \| outcome_created \| outcome_updated \| outcome_review_due \| stance_created \| stance_updated)[]` | No | Events sent automatically. |
 | `notification_only` | `boolean` | No | Send only the notification headline. |
+| `access_token` | `string` | No | Matrix only: the bot account access token. A secret; Loomio never returns it. |
+| `channel` | `string` | No | Matrix only: the room id to post in, e.g. `!abc123:matrix.org`. |
+
+kind: matrix needs server (the homeserver URL), access_token and channel (the room id). Loomio never returns the access token.
 
 
 
@@ -2759,11 +2767,13 @@ await corsair.loomio.api.webhooks.update({ id: 456, event_kinds: ['new_discussio
 |------|------|----------|-------------|
 | `id` | `number` | Yes | The webhook id. |
 | `name` | `string` | No | Admin-facing name. |
-| `kind` | `webhook \| matrix` | No | `webhook` for an outgoing webhook, `matrix` for Matrix. |
+| `kind` | `webhook \| matrix` | No | `webhook` for an outgoing webhook, `matrix` for Matrix (`server` is then the homeserver URL, with `access_token` and `channel`). |
 | `webhook_kind` | `markdown \| slack \| discord \| microsoft \| webex` | No | Payload format; `markdown` suits a general endpoint. |
 | `server` | `string` | No | Destination URL; must be public HTTPS. Treat it as a secret. |
 | `event_kinds` | `(new_discussion \| discussion_edited \| new_comment \| poll_created \| poll_edited \| poll_closing_soon \| poll_expired \| poll_closed_by_user \| poll_reopened \| outcome_created \| outcome_updated \| outcome_review_due \| stance_created \| stance_updated)[]` | No | Events sent automatically. |
 | `notification_only` | `boolean` | No | Send only the notification headline. |
+| `access_token` | `string` | No | Matrix only: the bot account access token. A secret; Loomio never returns it. |
+| `channel` | `string` | No | Matrix only: the room id to post in, e.g. `!abc123:matrix.org`. |
 
 
 

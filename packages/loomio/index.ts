@@ -501,7 +501,7 @@ const loomioEndpointMeta = {
 	'memberships.list': {
 		riskLevel: 'read',
 		description:
-			"List a group's memberships with related users; emails only for group admins",
+			"List a group's memberships with related users; emails only for members the key user invited or in groups it administers",
 	},
 	'memberships.manage': {
 		riskLevel: 'destructive',
@@ -539,7 +539,8 @@ const loomioEndpointMeta = {
 	},
 	'webhooks.check': {
 		riskLevel: 'destructive',
-		description: 'Send a test message to a webhook destination URL',
+		description:
+			'Ask Loomio to send a test message to a webhook destination URL; success does not confirm delivery',
 	},
 	'server.groups.list': {
 		riskLevel: 'read',
@@ -594,7 +595,7 @@ const loomioEndpointMeta = {
 	'server.users.deactivate': {
 		riskLevel: 'destructive',
 		description:
-			'Self-hosted Server API: deactivate a user, removing their access (server key)',
+			'Self-hosted Server API: queue a user deactivation; success means queued, so read the user again and check active is false (server key)',
 	},
 	'server.users.reactivate': {
 		riskLevel: 'write',
@@ -624,7 +625,7 @@ const loomioEndpointMeta = {
 	'server.users.deactivateByIdentity': {
 		riskLevel: 'destructive',
 		description:
-			'Self-hosted Server API: deactivate a user found by external identity (server key)',
+			'Self-hosted Server API: queue deactivation of a user found by external identity; read again and check active is false (server key)',
 	},
 	'server.users.reactivateByIdentity': {
 		riskLevel: 'write',

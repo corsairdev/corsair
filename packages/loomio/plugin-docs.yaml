@@ -63,9 +63,9 @@ apiExamples:
   polls.get:
     call: "{ id: 63 }"
   polls.create:
-    call: "{ discussion_id: 88, title: 'Which blue?', poll_type: 'poll', options: ['Sky blue', 'Navy'], closing_at: '2026-04-01T00:00:00.000Z' }"
+    call: "{ discussion_id: 88, title: 'Which blue?', poll_type: 'poll', options: ['Sky blue', 'Navy'], closing_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() }"
   polls.update:
-    call: "{ id: 63, closing_at: '2026-04-08T00:00:00.000Z' }"
+    call: "{ id: 63, closing_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString() }"
   polls.delete:
     call: "{ id: 63 }"
   memberships.list:
@@ -128,27 +128,27 @@ apiNotes:
   groups.get:
     'The id accepts a numeric id, a url key, or a handle.'
   discussions.list:
-    'group_id is required; Loomio answers a missing one with 404 {"error":404}. status takes open (default), closed, or all.'
+    'group_id is required; Loomio answers a missing one with 404 {"error":404}. status takes open, closed, or all; without it Loomio returns open and closed discussions alike.'
   discussions.create:
     'recipient_audience: group notifies the whole group and recipient_emails emails invitations, so this is destructive. A permission denial answers the same 403 body a bad key does.'
   discussions.delete:
     'A soft delete: the record stays with discarded_at set, hidden from members. The API has no undo.'
   comments.create:
-    'discussion_id is the numeric discussion id (not the topic id). Set parent_id to reply to a comment. body_format takes md (default) or html.'
+    'discussion_id is the numeric discussion id (not the topic id). Set parent_id to reply to a comment: the reply goes to the parent comment''s discussion and Loomio ignores discussion_id, so use a parent from the same discussion. body_format takes md (default) or html.'
   threads.items:
-    'Items come back in ascending sequence order and cap limit at 500. Comments, polls, votes, and outcomes ride in related arrays matched by itemable_id.'
+    'Items come back in ascending sequence order and cap limit at 500. Comments, polls, votes, and outcomes ride in related arrays: choose the array by itemable_type, then match itemable_id within it (a comment and a poll can share an id).'
   threads.markdown:
     'Requires export permission on the thread; the thread''s whole visible content comes back as one document under markdown.'
   polls.create:
-    'Provide group_id or discussion_id. Omit closing_at (or send null) to keep the poll a draft with voting disabled. For proposals, options default to agree, disagree, abstain, and block. notify_recipients: true emails everyone invited.'
+    'Provide group_id or discussion_id. Omit closing_at (or send null) to keep the poll a draft with voting disabled; anonymous polls need closing_at, because Loomio refuses an anonymous draft with 403 after saving it. For proposals, options default to agree, disagree, abstain, and block. notify_recipients: true emails everyone invited.'
   polls.update:
     'Edit detailed options by id; add ones without an id; remove one with id and _destroy: true. Closed polls cannot be edited, and anonymous polls freeze options after the first vote.'
   polls.list:
     'status takes active (default), closed, or all. Current outcomes ride in the outcomes array; match current_outcome_id on each poll.'
   memberships.list:
-    'Email addresses come back only for your own membership or when the key user is a group admin.'
+    'user_email comes back on memberships the key user invited and on every membership in groups the key user administers; treat any response as possibly holding emails.'
   memberships.manage:
-    'Group admin only. remove_absent: true removes every member whose email is not listed, so an empty or partial list can empty the group.'
+    'Group admin only. remove_absent: true removes every member whose email is not listed, so an empty or partial list can empty the group. With remove_absent the plugin first reads the group memberships and sends each listed address in its stored spelling, because Loomio compares the lists case-sensitively.'
   reports.get:
     'group_ids outside the key user''s memberships are ignored. Anonymous polls are left out of per-person voting counts.'
   search.query:
@@ -156,9 +156,15 @@ apiNotes:
   webhooks.list:
     'Group admin only. The response includes destination URLs, which are secrets.'
   webhooks.check:
-    'Sends a real test message to the URL. Loomio answers an empty 200; the plugin returns { delivered: true }.'
+    'Asks Loomio to send a test message (Slack format) to the URL. Loomio answers an empty 200 even when delivery fails, so the plugin returns { accepted: true }; confirm receipt at the destination.'
+  webhooks.create:
+    'kind: matrix needs server (the homeserver URL), access_token and channel (the room id). Loomio never returns the access token.'
   server.memberships.sync:
     'Self-hosted, server key. remove_absent: true revokes everyone not listed in the group and its subgroups; an empty list removes everyone.'
+  server.users.deactivate:
+    'Self-hosted, server key. Loomio queues the deactivation and answers before the job runs, so success: true and user.active: true can come back together. Read the user again and check active is false before treating offboarding as done.'
+  server.users.deactivateByIdentity:
+    'Self-hosted, server key. Queued like server.users.deactivate: read the user again and check active is false.'
   server.users.delete:
     'Self-hosted, server key. Permanent: the user and associated records are deleted by a background job.'
   server.users.redact:

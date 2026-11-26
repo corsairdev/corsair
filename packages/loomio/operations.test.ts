@@ -617,7 +617,35 @@ describe('webhooks (/chatbots)', () => {
 			method: 'POST',
 			body: { group_id: 12, server: 'https://hooks.example.org/x' },
 		});
-		expect(checked).toEqual({ delivered: true });
+		expect(checked).toEqual({ accepted: true });
+	});
+
+	it('sends the Matrix token and room, and refuses a Matrix setup without them', async () => {
+		await expect(
+			invoke(Webhooks.create, {
+				group_id: 12,
+				name: 'Room',
+				kind: 'matrix',
+				server: 'https://matrix.example.org',
+			}),
+		).rejects.toThrow(/access_token/);
+		expect(fetchMock).not.toHaveBeenCalled();
+
+		respond({ chatbots: [{ ...hook, kind: 'matrix' }] });
+		await invoke(Webhooks.create, {
+			group_id: 12,
+			name: 'Room',
+			kind: 'matrix',
+			server: 'https://matrix.example.org',
+			access_token: 'syt_matrix_token',
+			channel: '!room:matrix.example.org',
+		});
+		expect(lastRequest().body).toMatchObject({
+			kind: 'matrix',
+			access_token: 'syt_matrix_token',
+			channel: '!room:matrix.example.org',
+		});
+		expect(JSON.stringify(mockLog.mock.calls)).not.toContain('syt_matrix');
 	});
 
 	it('refuses an unknown event kind before calling Loomio', async () => {

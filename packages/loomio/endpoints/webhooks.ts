@@ -94,8 +94,9 @@ export const check: LoomioEndpoints['webhooksCheck'] = (ctx, input) =>
 		input,
 		(parsed) => ({ method: 'POST', path: '/chatbots/check', body: parsed }),
 		{
-			// Loomio answers `head :ok` (an empty 200); errors have thrown already.
-			shape: () => ({ delivered: true }),
+			// Loomio answers `head :ok` (an empty 200) whether or not the
+			// destination took the message, so this is an acknowledgment only.
+			shape: () => ({ accepted: true }),
 			log: ({ group_id }) => ({ groupId: group_id }),
 		},
 	);
