@@ -206,6 +206,19 @@ export async function makeLoomioRequest(
 		if (error instanceof ApiError) {
 			throw withoutRequestData(error, resourceScoped);
 		}
+		// Node's Headers rejects a key with a stray newline and quotes the
+		// whole header value (the key) in its TypeError. Rebuild such errors
+		// without the key and without the cause that still holds it.
+		// Checked by shape, not instanceof: the TypeError can come from
+		// another realm (undici's), where instanceof Error is false.
+		const message = asRecord(error)?.message;
+		if (
+			connection.key.length > 0 &&
+			typeof message === 'string' &&
+			message.includes(connection.key)
+		) {
+			throw new TypeError(message.split(connection.key).join('[REDACTED]'));
+		}
 		throw error;
 	}
 }

@@ -329,6 +329,27 @@ describe('polls edit and delete', () => {
 		});
 	});
 
+	it('accepts decimal-string totals and a string STV quota', async () => {
+		respond({
+			polls: [
+				{
+					...poll,
+					total_score: '12.5',
+					quorum_threshold: '3.334',
+					quorum_shortfall: '-0.666',
+					stv_quota: 'droop',
+				},
+			],
+		});
+		const result = (await invoke(Polls.get, { id: 63 })) as {
+			poll: { total_score: string; stv_quota: string };
+		};
+		expect(result.poll).toMatchObject({
+			total_score: '12.5',
+			stv_quota: 'droop',
+		});
+	});
+
 	it('soft-deletes a poll', async () => {
 		respond({ polls: [poll] });
 		await invoke(Polls.remove, { id: 63 });

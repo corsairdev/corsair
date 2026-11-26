@@ -97,6 +97,16 @@ export function nextOffset(
 }
 
 /** Timestamps for unset state can arrive as false or null, not only strings. */
+/**
+ * Loomio computes some poll figures as Ruby BigDecimals (total_score, and the
+ * quorum figures on weighted polls), and Rails encodes a BigDecimal as a JSON
+ * string such as "12.5". Accept both forms.
+ */
+const DecimalSchema = z
+	.union([z.number(), z.string()])
+	.nullish()
+	.describe('A number, or a decimal string such as "12.5".');
+
 const SetAtSchema = z
 	.union([z.string(), z.boolean()])
 	.nullish()
@@ -266,11 +276,11 @@ export const PollSchema = z
 		vote_count_eligible: z.number().nullish(),
 		vote_count_uncast: z.number().nullish(),
 		participation_pct: z.number().nullish(),
-		total_score: z.number().nullish(),
+		total_score: DecimalSchema,
 		quorum_pct: z.number().nullish(),
 		quorum_reached: z.boolean().nullish(),
-		quorum_threshold: z.number().nullish(),
-		quorum_shortfall: z.number().nullish(),
+		quorum_threshold: DecimalSchema,
+		quorum_shortfall: DecimalSchema,
 		score_min: z.number().nullish(),
 		score_max: z.number().nullish(),
 		choice_count_min: z.number().nullish(),
@@ -279,7 +289,10 @@ export const PollSchema = z
 		meeting_duration: z.number().nullish(),
 		stv_seats: z.number().nullish(),
 		stv_method: z.string().nullish(),
-		stv_quota: z.number().nullish(),
+		stv_quota: z
+			.string()
+			.nullish()
+			.describe('STV quota method: `droop` or `hare`.'),
 		chart_type: z.string().nullish(),
 		show_none_of_the_above: z.boolean().nullish(),
 		weighted_voting: z.boolean().nullish(),

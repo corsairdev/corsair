@@ -213,6 +213,22 @@ describe('makeLoomioRequest', () => {
 		expect(error.message).toContain('Not Found');
 	});
 
+	it('keeps a malformed key out of a header-construction error', async () => {
+		fetchMock.mockRestore();
+		fetchMock = jest.spyOn(globalThis, 'fetch');
+		const key = '\nloomio-pasted-key';
+
+		const error = await makeLoomioRequest(
+			{ key },
+			{ method: 'GET', path: '/groups' },
+		).catch((caught: unknown) => caught);
+
+		expect(String(error)).toContain('[REDACTED]');
+		const printed = `${String(error)} ${inspect(error)}`;
+		expect(printed).not.toContain('loomio-pasted-key');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('lets transport failures through unchanged', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
