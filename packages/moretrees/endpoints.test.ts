@@ -295,6 +295,18 @@ describe('trees.plant', () => {
 		expect(raw).toContain(`"tree_id":${BIG_TREE_ID}`);
 	});
 
+	it('rejects a leading-zero ID before anything is sent', async () => {
+		await expect(
+			invoke(Trees.plant, {
+				test: true,
+				plant_for_others: false,
+				quantity: 1,
+				project_id: '00024',
+			}),
+		).rejects.toThrow('leading zero');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('takes the payment account from the stored account code', async () => {
 		respond(plantSelfResponse, 201);
 

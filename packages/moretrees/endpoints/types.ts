@@ -16,7 +16,11 @@ const IdOutput = z
 
 const IdInput = z
 	.union([
-		z.string().regex(/^\d+$/, 'IDs are digits'),
+		// Canonical digits only: the ID goes out as a bare JSON number, and
+		// `00024` is not valid JSON.
+		z
+			.string()
+			.regex(/^[1-9]\d*$/, 'IDs are digits with no leading zero'),
 		z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
 	])
 	.describe(
