@@ -4,13 +4,13 @@ import { lushaEndpointSchemas } from './index';
 
 /**
  * Every response example in docs.lusha.com/openapi.json, keyed by operation
- * (fixtures/spec-examples.json is written by the same generator as the
+ * (__fixtures__/spec-examples.json is written by the same generator as the
  * schemas). Each must parse with its operation's output schema: Lusha's own
  * examples are the closest thing to a live response without a key.
  */
 // unknown: the examples are arbitrary JSON; each is parsed by its schema.
 const fixtures = JSON.parse(
-	readFileSync(join(__dirname, 'fixtures', 'spec-examples.json'), 'utf8'),
+	readFileSync(join(__dirname, '__fixtures__', 'spec-examples.json'), 'utf8'),
 ) as { responses: Record<string, unknown[]> };
 const byOperation = fixtures.responses;
 // Spec keys for the hand-written operations.

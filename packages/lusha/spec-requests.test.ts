@@ -27,7 +27,7 @@ jest.mock('corsair/core', () => ({
  */
 // unknown: the fixtures are arbitrary JSON copied from the reference.
 const fixtures = JSON.parse(
-	readFileSync(join(__dirname, 'fixtures', 'spec-examples.json'), 'utf8'),
+	readFileSync(join(__dirname, '__fixtures__', 'spec-examples.json'), 'utf8'),
 ) as {
 	responses: Record<string, unknown[]>;
 	requests: Record<string, Record<string, unknown>[]>;
