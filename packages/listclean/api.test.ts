@@ -212,9 +212,15 @@ describeIfKey('Listclean live smoke', () => {
 				}
 				expect(status).toBe('COMPLETED');
 
+				// The rows can lag the COMPLETED status by a few seconds (live,
+				// 2026-11-26: a first read right after it answered no rows).
 				let rows = 0;
-				for (const type of ['clean', 'dirty', 'unknown'] as const) {
-					rows += (await api.lists.getListResults({ list_id, type })).length;
+				for (let poll = 0; poll < 12 && rows < 3; poll++) {
+					if (poll > 0) await new Promise((done) => setTimeout(done, 5_000));
+					rows = 0;
+					for (const type of ['clean', 'dirty', 'unknown'] as const) {
+						rows += (await api.lists.getListResults({ list_id, type })).length;
+					}
 				}
 				expect(rows).toBe(3);
 
