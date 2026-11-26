@@ -3887,6 +3887,14 @@
                 ]
               },
               {
+                "group": "More Trees",
+                "pages": [
+                  "plugins/moretrees/overview",
+                  "plugins/moretrees/api",
+                  "plugins/moretrees/database"
+                ]
+              },
+              {
                 "group": "Motion",
                 "pages": [
                   "plugins/motion/overview",
