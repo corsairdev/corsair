@@ -1,70 +1,90 @@
-import { z } from 'zod';
+import type { z } from 'zod';
+import { twitterInputSchemas, twitterOutputSchemas } from './openapi-schema';
+import type {
+	TwitterOperationInputs,
+	TwitterOperationOutputs,
+} from './operation-types';
+import type {
+	TweetsCreateInput,
+	TweetsCreateReplyInput,
+	TweetsCreateReplyResponse,
+	TweetsCreateResponse,
+} from './tweets';
+import {
+	TweetsCreateInputSchema,
+	TweetsCreateReplyInputSchema,
+	TweetsCreateReplyResponseSchema,
+	TweetsCreateResponseSchema,
+} from './tweets';
 
-// ── Input Schemas ─────────────────────────────────────────────────────────────
+// Inputs and outputs of every operation, keyed by its Corsair name
+// (`posts.search.recent`, `users.me`), plus the two legacy tweets.* endpoints.
 
-const TweetsCreateInputSchema = z.object({
-	text: z.string().describe('Tweet text content (max 280 weighted characters)'),
-	quoteTweetId: z.string().optional().describe('ID of the tweet to quote'),
-	mediaIds: z
-		.array(z.string())
-		.optional()
-		.describe('Up to 4 media IDs to attach'),
-	replySettings: z
-		.enum(['following', 'mentionedUsers', 'subscribers'])
-		.optional()
-		.describe('Restricts who can reply to this tweet'),
-});
+export type TwitterEndpointInputs = TwitterOperationInputs & {
+	'tweets.create': TweetsCreateInput;
+	'tweets.createReply': TweetsCreateReplyInput;
+	/** @deprecated The key before 0.2; use `'tweets.create'`. */
+	tweetsCreate: TweetsCreateInput;
+	/** @deprecated The key before 0.2; use `'tweets.createReply'`. */
+	tweetsCreateReply: TweetsCreateReplyInput;
+};
+export type TwitterEndpointOutputs = TwitterOperationOutputs & {
+	'tweets.create': TweetsCreateResponse;
+	'tweets.createReply': TweetsCreateReplyResponse;
+	/** @deprecated The key before 0.2; use `'tweets.create'`. */
+	tweetsCreate: TweetsCreateResponse;
+	/** @deprecated The key before 0.2; use `'tweets.createReply'`. */
+	tweetsCreateReply: TweetsCreateReplyResponse;
+};
 
-const TweetsCreateReplyInputSchema = z.object({
-	text: z.string().describe('Reply text content (max 280 weighted characters)'),
-	inReplyToTweetId: z.string().describe('ID of the tweet to reply to'),
-	excludeReplyUserIds: z
-		.array(z.string())
-		.optional()
-		.describe('User IDs to exclude from @mentioning in the reply'),
-});
+export type {
+	TwitterJsonValue,
+	TwitterOperationId,
+} from './operation-types';
+export type {
+	TweetsCreateInput,
+	TweetsCreateReplyInput,
+	TweetsCreateReplyResponse,
+	TweetsCreateResponse,
+} from './tweets';
 
-// ── Output Schemas ────────────────────────────────────────────────────────────
+/**
+ * Copies the lazy getters of the generated schema record (reading a
+ * descriptor doesn't build a schema) and adds the hand-written ones.
+ */
+function withExtra(
+	base: Readonly<Record<string, z.ZodType>>,
+	extra: Record<string, z.ZodType>,
+): Readonly<Record<string, z.ZodType>> {
+	return Object.defineProperties(
+		{},
+		{
+			...Object.getOwnPropertyDescriptors(base),
+			...Object.getOwnPropertyDescriptors(extra),
+		},
+	);
+}
 
-const TweetDataSchema = z.object({
-	id: z.string(),
-	text: z.string(),
-});
-
-const TweetsCreateResponseSchema = z.object({
-	data: TweetDataSchema.optional(),
-});
-
-const TweetsCreateReplyResponseSchema = z.object({
-	data: TweetDataSchema.optional(),
-});
-
-// ── Input/Output Maps ─────────────────────────────────────────────────────────
-
-export const TwitterEndpointInputSchemas = {
+/**
+ * Every operation's zod schemas by id. Each generated key is a getter that
+ * builds its schema on first read (see endpoints/openapi-schema.ts); the
+ * legacy tweets.* endpoints are listed under their dotted ids and, as before
+ * 0.2, as `tweetsCreate` and `tweetsCreateReply`.
+ */
+// `unknown` is necessary in the two casts below: TypeScript can't see the
+// getters Object.defineProperties adds. schema.test.ts checks every id is present.
+export const TwitterEndpointInputSchemas = withExtra(twitterInputSchemas, {
+	'tweets.create': TweetsCreateInputSchema,
+	'tweets.createReply': TweetsCreateReplyInputSchema,
 	tweetsCreate: TweetsCreateInputSchema,
 	tweetsCreateReply: TweetsCreateReplyInputSchema,
-} as const;
+}) as unknown as Readonly<Record<keyof TwitterEndpointInputs, z.ZodType>>;
 
-export const TwitterEndpointOutputSchemas = {
-	tweetsCreate: TweetsCreateResponseSchema,
-	tweetsCreateReply: TweetsCreateReplyResponseSchema,
-} as const;
-
-export type TwitterEndpointInputs = {
-	[K in keyof typeof TwitterEndpointInputSchemas]: z.infer<
-		(typeof TwitterEndpointInputSchemas)[K]
-	>;
-};
-
-export type TwitterEndpointOutputs = {
-	[K in keyof typeof TwitterEndpointOutputSchemas]: z.infer<
-		(typeof TwitterEndpointOutputSchemas)[K]
-	>;
-};
-
-export type TweetsCreateInput = TwitterEndpointInputs['tweetsCreate'];
-export type TweetsCreateResponse = TwitterEndpointOutputs['tweetsCreate'];
-export type TweetsCreateReplyInput = TwitterEndpointInputs['tweetsCreateReply'];
-export type TweetsCreateReplyResponse =
-	TwitterEndpointOutputs['tweetsCreateReply'];
+export const TwitterEndpointOutputSchemas =
+	// `unknown` because TypeScript can't see the getters Object.defineProperties adds (see above).
+	withExtra(twitterOutputSchemas, {
+		'tweets.create': TweetsCreateResponseSchema,
+		'tweets.createReply': TweetsCreateReplyResponseSchema,
+		tweetsCreate: TweetsCreateResponseSchema,
+		tweetsCreateReply: TweetsCreateReplyResponseSchema,
+	}) as unknown as Readonly<Record<keyof TwitterEndpointOutputs, z.ZodType>>;

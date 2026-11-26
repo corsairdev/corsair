@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/twitter",
-  "version": "0.1.4",
-  "description": "Twitter plugin for Corsair",
+  "version": "0.1.5",
+  "description": "X (Twitter) plugin for Corsair: the full X API v2 on api.x.com (posts, users, DMs, Chat, lists, Spaces, communities, trends, media, usage, compliance, webhooks) with OAuth 2.0 PKCE or app-only Bearer auth",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -16,7 +16,8 @@
   "scripts": {
     "build": "rm -rf dist && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=api\\.test\\.ts"
   },
   "peerDependencies": {
     "corsair": ">=0.1.0",
@@ -34,6 +35,8 @@
   "keywords": [
     "corsair",
     "twitter",
+    "x",
+    "x-api",
     "plugin"
   ],
   "author": "Corsair (https://corsair.dev)",

@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import {
 	DocumentsEndpoints,
 	SheetsEndpoints,
@@ -93,7 +94,7 @@ const googleDocsWebhooksNested = {
 } as const;
 
 export type GoogleDocsPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalGoogleDocsPlugin['hooks'];
 	webhookHooks?: InternalGoogleDocsPlugin['webhookHooks'];
@@ -318,6 +319,9 @@ export const googledocsAuthConfig = {
 	oauth_2: {
 		account: ['channel_id'] as const,
 	},
+	managed: {
+		account: ['channel_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseGoogleDocsPlugin<T extends GoogleDocsPluginOptions> =
@@ -383,6 +387,25 @@ export function googledocs<const T extends GoogleDocsPluginOptions>(
 					plugin: 'googledocs',
 					tokenUrl: 'https://oauth2.googleapis.com/token',
 				});
+			}
+
+			// Corsair's own Google app: Hub holds the client secret, so the token
+			// comes from (and refreshes through) Hub rather than Google directly.
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:googledocs:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'googledocs',
+					tenantId: ctx.tenantId,
+				};
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('googledocs', 'oauth_2');

@@ -60,7 +60,7 @@ password.
 | Cursor | Add `{"mcpServers": {"corsair": {"url": "<URL>"}}}` to `~/.cursor/mcp.json` |
 | VS Code | Add `{"servers": {"corsair": {"type": "http", "url": "<URL>"}}}` to `.vscode/mcp.json` |
 | Zed | Add `{"context_servers": {"corsair": {"url": "<URL>"}}}` to Zed settings |
-| Claude (app) | Tell your person: Customize → Connectors → Add custom connector, name it Corsair, paste the URL, Connect |
+| Claude (app) | Tell your person: Plugins → Add → Add custom connector, name it Corsair, paste the URL, Continue, keep the detected settings, Add, then sign in |
 | ChatGPT | Tell your person: add a custom MCP server with the URL and choose OAuth. Personal plans get the read tools only, so you can look things up but not make changes |
 
 Steps for 25+ more clients: https://corsair.dev/connect. Any client that
