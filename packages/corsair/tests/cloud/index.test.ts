@@ -679,3 +679,123 @@ describe('corsairCloud', () => {
 		);
 	});
 });
+
+// The project URL (`/<slug>/api/corsair`) now answers 404 "no route" for every
+// path under it, so the two deprecated project-level members answer from an
+// instance instead.
+describe('corsairCloud().manage.tenants and .permissions', () => {
+	afterEach(() => jest.restoreAllMocks());
+
+	const NO_ROUTE = { code: 'not_found', hop: 'internal', message: 'no route' };
+
+	function prodLike(instances: Array<[string, string]>) {
+		const calls: Array<{ method: string; url: string; body?: unknown }> = [];
+		let listed = 0;
+		const fetchMock = jest.fn(async (url: string, init: RequestInit) => {
+			const u = String(url);
+			calls.push({
+				method: init.method ?? 'GET',
+				url: u,
+				body: init.body ? JSON.parse(String(init.body)) : undefined,
+			});
+			if (u === 'https://vm/p/instances') {
+				listed++;
+				return new Response(
+					JSON.stringify({
+						instances: instances.map(([instanceKey, url]) => ({
+							instanceKey,
+							url,
+						})),
+					}),
+					{ status: 200 },
+				);
+			}
+			if (u.startsWith('https://vm/p/api/corsair')) {
+				return new Response(JSON.stringify(NO_ROUTE), { status: 404 });
+			}
+			if (u.endsWith('/tenants') && init.method === 'GET') {
+				return new Response(
+					JSON.stringify([{ id: 'acme', connectedPlugins: [] }]),
+					{
+						status: 200,
+					},
+				);
+			}
+			return new Response(JSON.stringify({ id: 'x' }), { status: 200 });
+		});
+		const corsair = corsairCloud({
+			apiKey: 'ck_cloud_p.secret',
+			url: 'https://vm/p/api/corsair',
+			fetch: fetchMock as unknown as typeof fetch,
+		});
+		return { corsair, calls, listings: () => listed };
+	}
+
+	it('routes to the only instance when the project has one', async () => {
+		const { corsair, calls } = prodLike([['main', 'https://vm/main']]);
+
+		const tenants = await corsair.manage.tenants.list();
+		await corsair.manage.tenants.create({ id: 'beta' });
+		await corsair.manage.tenants.get('a/b');
+		await corsair.manage.permissions.get({ id: 'perm_1' });
+		await corsair.manage.permissions.get({ token: 'tok_1' });
+
+		expect(tenants).toEqual([{ id: 'acme', connectedPlugins: [] }]);
+		expect(calls.map((c) => `${c.method} ${c.url}`)).toEqual([
+			'GET https://vm/p/instances',
+			'GET https://vm/main/tenants',
+			'POST https://vm/main/tenants',
+			'GET https://vm/main/tenants/a%2Fb',
+			'GET https://vm/main/permissions/perm_1',
+			'POST https://vm/main/permissions/lookup-by-token',
+		]);
+		expect(calls[2]!.body).toEqual({ id: 'beta' });
+	});
+
+	it('shares the listing with withInstance', async () => {
+		const { corsair, listings } = prodLike([['main', 'https://vm/main']]);
+		await corsair
+			.withInstance('main')
+			.connectionStatus.get({ tenantId: 'acme' });
+		await corsair.manage.tenants.list();
+		expect(listings()).toBe(1);
+	});
+
+	it('names withInstance and the instance keys when there are several', async () => {
+		const { corsair, calls, listings } = prodLike([
+			['billing', 'https://vm/billing'],
+			['support', 'https://vm/support'],
+		]);
+
+		await expect(corsair.manage.tenants.list()).rejects.toThrow(
+			'corsairCloud.manage.tenants: this project has 2 instances (billing, support), so there is no one place to answer. Tenants belong to an instance: use corsair.withInstance(key).tenants.',
+		);
+		await expect(
+			corsair.manage.permissions.get({ id: 'perm_1' }),
+		).rejects.toThrow(/corsair\.withInstance\(key\)\.permissions/);
+		// Never sent to the project URL, which answers nothing.
+		expect(
+			calls.some((c) => c.url.startsWith('https://vm/p/api/corsair')),
+		).toBe(false);
+		// Like a missing withInstance key, each refusal lists once more first, in
+		// case the project has dropped to one instance since: the first call
+		// lists twice, the second once more.
+		expect(listings()).toBe(3);
+	});
+
+	it('says so when the project has no instance', async () => {
+		const { corsair } = prodLike([]);
+		await expect(corsair.manage.tenants.list()).rejects.toThrow(
+			/this project has no instances/,
+		);
+	});
+
+	it('lets withInstance(key).permissions read a record on a chosen instance', async () => {
+		const { corsair, calls } = prodLike([
+			['billing', 'https://vm/billing'],
+			['support', 'https://vm/support'],
+		]);
+		await corsair.withInstance('support').permissions.get({ id: 'perm_1' });
+		expect(calls.at(-1)!.url).toBe('https://vm/support/permissions/perm_1');
+	});
+});
