@@ -195,22 +195,45 @@ function okStatusFailure(
 }
 
 /**
- * The result download answers a JSON stream as text; an HTML page (a wrong
- * route or id) must fail here rather than become an empty result list.
+ * The result download. The spec describes a bare JSON stream sent as text;
+ * the live API (2026-11-26) answers application/json with the envelope
+ * wrapping a second envelope (`data.success`, `data.data.result`). Both
+ * envelopes are checked, so a failure in either throws instead of reading as
+ * an empty result list. An HTML page (a wrong route or id) fails too.
  */
 // unknown: the body arrives as text or parsed JSON depending on the
 // content-type, so the download row's shape is the caller's output schema.
 function parseJsonDownload(options: ApiRequestOptions, raw: unknown): unknown {
-	if (typeof raw !== 'string') return raw;
-	try {
-		return JSON.parse(raw) as unknown;
-	} catch {
-		throw okStatusFailure(
-			options,
-			undefined,
-			'Listclean: the result download answered a body that is not JSON; an HTML page means the route or list id does not exist',
-		);
+	let parsed = raw;
+	if (typeof raw === 'string') {
+		try {
+			parsed = JSON.parse(raw) as unknown;
+		} catch {
+			throw okStatusFailure(
+				options,
+				undefined,
+				'Listclean: the result download answered a body that is not JSON; an HTML page means the route or list id does not exist',
+			);
+		}
 	}
+	const outer = asRecord(parsed);
+	if (!outer || !('success' in outer)) return parsed;
+	validateEnvelope(options, outer);
+	const inner = asRecord(outer.data);
+	if (inner && 'success' in inner) validateEnvelope(options, inner);
+	return parsed;
+}
+
+/**
+ * The rows of a result download: the bare array the spec describes, or
+ * `data.data.result` inside the double envelope the live API sends.
+ */
+// unknown: the output schema parses the rows.
+export function downloadRows(raw: unknown): unknown {
+	if (Array.isArray(raw)) return raw;
+	const inner = asRecord(asRecord(raw)?.data);
+	const payload = asRecord(inner?.data);
+	return payload?.result ?? inner?.result;
 }
 
 /**

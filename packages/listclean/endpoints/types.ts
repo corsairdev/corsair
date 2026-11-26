@@ -170,6 +170,10 @@ export const ListSchema = z
 		status: ListStatusSchema.nullish(),
 		// A string on this route, although the upload flow uses integer ids.
 		upload_id: z.string().nullish(),
+		// Sent by the live API (2026-11-26): "54 bytes", and 1 once the
+		// results can be downloaded.
+		size_for_human: z.string().nullish(),
+		allow_download: z.number().int().nullish(),
 		analytics: ListAnalyticsSchema,
 		cost: ListCostSchema,
 	})
@@ -400,9 +404,9 @@ const GetListInputSchema = z.object({ list_id: ListIdSchema });
 
 export type GetListInput = z.infer<typeof GetListInputSchema>;
 
-// Listclean answers with an array holding the one list, not an object. The
-// endpoint unwraps that one element into `list`, so callers read the bulk
-// job's status at `list.status` instead of an array index.
+// The spec shows an array holding the one list; the live API answers the
+// object. The endpoint puts the list under `list` either way, so callers read
+// the bulk job's status at `list.status`.
 const GetListResponseSchema = z
 	.object({
 		list: ListSchema.describe('The one list with this id.'),
@@ -425,10 +429,20 @@ const GetListResultsInputSchema = z.object({
 
 export type GetListResultsInput = z.infer<typeof GetListResultsInputSchema>;
 
+// The live download rows (2026-11-26) carry reason_code, reason, mx and the
+// uploaded columns in attributes, beside the verify result's fields.
+const ResultRowSchema = VerificationSchema.extend({
+	reason_code: z.string().nullish(),
+	reason: z.string().nullish(),
+	mx: z.string().nullish(),
+	// unknown: the columns of the caller's own uploaded file, by header name.
+	attributes: z.record(z.string(), z.unknown()).nullish(),
+});
+
 const GetListResultsResponseSchema = z
-	.array(VerificationSchema)
+	.array(ResultRowSchema)
 	.describe(
-		'The verified rows of that type, each shaped like a `verify.verifyEmail` result.',
+		'The verified rows of that type: email, status, reason_code and reason, the MX and mail provider, and the uploaded columns in attributes.',
 	);
 
 export type GetListResultsResponse = z.infer<

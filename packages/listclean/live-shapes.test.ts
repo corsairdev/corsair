@@ -5,13 +5,17 @@ jest.mock('corsair/core', () => {
 
 import {
 	LIVE_ANALYTICS,
+	LIVE_LIST,
 	LIVE_LISTS_EMPTY,
 	LIVE_LOGS,
+	LIVE_RESULTS_DIRTY,
 	LIVE_UPLOAD_ROW,
 } from './test-fixtures';
 import {
+	captureError,
 	endpoints,
 	installFetchMock,
+	jsonResponse,
 	makeCtx,
 	mockFetch,
 	ok,
@@ -72,5 +76,54 @@ describe('Listclean answers as the live API sends them', () => {
 		expect(result[0]?.id).toBe(2);
 		expect(result[0]?.status).toBe('success');
 		expect(result[0]?.total_records).toBe(100);
+	});
+
+	it('lists.getList reads the list object Listclean answers', async () => {
+		mockFetch(ok(LIVE_LIST));
+
+		const result = await endpoints.lists.getList(makeCtx(), {
+			list_id: 186819,
+		});
+
+		expect(result.list.list_id).toBe(186819);
+		expect(result.list.status).toBe('COMPLETED');
+		expect(result.list.allow_download).toBe(1);
+	});
+
+	it('lists.getListResults unwraps the rows from the double envelope', async () => {
+		mockFetch(jsonResponse(LIVE_RESULTS_DIRTY));
+
+		const result = await endpoints.lists.getListResults(makeCtx(), {
+			list_id: 186819,
+			type: 'dirty',
+		});
+
+		expect(result).toHaveLength(2);
+		expect(result[0]).toMatchObject({
+			email: 'corsair-test-1@example.com',
+			status: 'dirty',
+			reason_code: 'MX2',
+			reason: 'No MX record found',
+			attributes: { EMAIL: 'corsair-test-1@example.com' },
+		});
+	});
+
+	it('lists.getListResults fails when the inner envelope reports a failure', async () => {
+		mockFetch(
+			jsonResponse({
+				...LIVE_RESULTS_DIRTY,
+				data: { success: 0, error_code: 404, message: 'List not found' },
+			}),
+		);
+
+		const error = await captureError(
+			endpoints.lists.getListResults(makeCtx(), {
+				list_id: 186819,
+				type: 'dirty',
+			}),
+		);
+
+		expect((error as Error).name).toBe('ApiError');
+		expect((error as Error).message).toContain('List not found');
 	});
 });

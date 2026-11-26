@@ -59,7 +59,7 @@ export const LISTS_PAGE = {
 	lists: [LIST_ROW],
 } as const;
 
-/** The status read answers an array holding the one list, not an object. */
+/** The spec's status read: an array holding the one list. The live API answers the object (LIVE_LIST); both are read. */
 export const SINGLE_LIST = [LIST_ROW] as const;
 
 export const BATCH_ACCEPTED = {
@@ -189,4 +189,68 @@ export const LIVE_UPLOAD_ROW = {
 	email_column_index: null,
 	token_id: 0,
 	token_type: 'session',
+} as const;
+
+/** GET /lists/{list_id}: `data` is the list object itself, not an array (2026-11-26). */
+export const LIVE_LIST = {
+	list_id: 186819,
+	filename: 'corsair-plugin-test.csv',
+	request_time: '2026-11-26 17:56:20',
+	status: 'COMPLETED',
+	upload_id: 'Q1795695980-253279',
+	size_in_bytes: 54,
+	size_for_human: '54 bytes',
+	allow_download: 1,
+	analytics: {
+		summary: {
+			total: 2,
+			duplicate: 0,
+			dirty: { count: 2, perc: 100 },
+			clean: { count: 0, perc: 0 },
+			unknown: { count: 0, perc: 0 },
+		},
+		dirty_summary: [{ count: 2, perc: 100, dirty_type: 'No MX record found' }],
+	},
+	cost: { rate: { INR: 0, USD: 0 }, cost: { INR: 0, USD: 0 } },
+} as const;
+
+/**
+ * GET /downloads/json/{list_id}/dirty, the whole body: the envelope wraps a
+ * second envelope whose data holds the rows in `result` (2026-11-26).
+ */
+export const LIVE_RESULTS_DIRTY = {
+	success: 1,
+	error_code: 0,
+	message: 'List downloaded successfully.',
+	data: {
+		success: 1,
+		message: 'Data fetched successfully',
+		error_code: 200,
+		data: {
+			queue_name: 'Q1795695980-253279',
+			type: 'dirty',
+			sub_type: '',
+			total: 2,
+			result: [
+				{
+					email: 'corsair-test-1@example.com',
+					status: 'dirty',
+					reason_code: 'MX2',
+					reason: 'No MX record found',
+					mx: '[]',
+					msp: 'OTHERS',
+					attributes: { EMAIL: 'corsair-test-1@example.com' },
+				},
+				{
+					email: 'corsair-test-2@example.com',
+					status: 'dirty',
+					reason_code: 'MX2',
+					reason: 'No MX record found',
+					mx: '[]',
+					msp: 'OTHERS',
+					attributes: { EMAIL: 'corsair-test-2@example.com' },
+				},
+			],
+		},
+	},
 } as const;

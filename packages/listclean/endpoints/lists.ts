@@ -1,5 +1,11 @@
+import { asRecord } from 'corsair/core';
 import type { ListcleanEndpoints } from '..';
-import { envelopeData, envelopeMessage, segment } from '../client';
+import {
+	downloadRows,
+	envelopeData,
+	envelopeMessage,
+	segment,
+} from '../client';
 import { call } from './call';
 import {
 	ListcleanEndpointInputSchemas as Inputs,
@@ -28,14 +34,15 @@ export const listLists: ListcleanEndpoints['listsListLists'] = (ctx, input) =>
 	);
 
 /**
- * Listclean answers `data` as an array holding the one list for this id. The
- * endpoint unwraps that element into `list` before the output schema parses,
- * so the bulk job's status reads at the object path `list.status`.
+ * The spec shows `data` as an array holding the one list for this id; the
+ * live API (2026-11-26) answers the list object itself. Either way the
+ * endpoint puts the list under `list` before the output schema parses, so the
+ * bulk job's status reads at the object path `list.status`.
  */
 // unknown: the payload is the untyped envelope data until the output schema
 // validates the unwrapped list.
 export function firstList(raw: unknown): unknown {
-	const list = asRecordArray(raw)?.[0];
+	const list = asRecordArray(raw)?.[0] ?? asRecord(raw);
 	return { list };
 }
 
@@ -85,11 +92,13 @@ export const getListResults: ListcleanEndpoints['listsGetListResults'] = (
 		({ list_id, type }) => ({
 			method: 'GET',
 			path: `/downloads/json/${segment(list_id)}/${segment(type)}`,
-			// This route answers a bare JSON stream instead of the envelope.
+			// A double envelope live, a bare JSON stream in the spec; the client
+			// checks both envelopes and downloadRows reads the rows from either.
 			response: 'json',
 			replayable: true,
 		}),
 		{
+			shape: downloadRows,
 			log: ({ list_id, type }, result) => ({
 				listId: list_id,
 				type,
