@@ -21,12 +21,28 @@ export const errorHandlers = {
 		match: (error: Error) => isOutOfCredits(error),
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 429, per account (25 requests/second default; account.usage 5/minute).
-	// Core's request() already retried it three times with backoff, so this
-	// does not retry again (R8).
+	// 429 from a used-up daily quota (`x-daily-requests-left: 0`): no retry
+	// can succeed before the daily reset, so it is not retried (R8).
+	DAILY_QUOTA_ERROR: {
+		match: (error: Error) =>
+			error instanceof ApiError &&
+			error.status === 429 &&
+			error.rateLimitRemaining === 0,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	// Any other 429 (25 requests/second default; account.usage 5/minute):
+	// Lusha refused the request before running it, so any method can be
+	// retried. client.ts turns core's own 429 retries off so this is the only
+	// place that retries, three times with backoff or Retry-After.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async (error: Error) => ({
+			maxRetries: 3,
+			retryStrategy: 'exponential_backoff' as const,
+			...(error instanceof ApiError && error.retryAfter
+				? { headersRetryAfterMs: error.retryAfter }
+				: {}),
+		}),
 	},
 	// 401: missing or bad key, or the key was suspended by an admin.
 	AUTH_ERROR: {

@@ -85,14 +85,15 @@ export function isOutOfCredits(error: unknown): boolean {
 }
 
 /**
- * Core's defaults (three 429 retries with backoff), reading Lusha's own
- * headers. Lusha sends no Retry-After or reset time; `x-daily-requests-left`
- * lands on the error as rateLimitRemaining, so a 429 from a used-up daily
- * quota says so.
+ * Reads Lusha's own headers but leaves the retrying to error-handlers.ts
+ * (maxRetries 0 here). Core's request() would retry every 429 three times,
+ * including one from a used-up daily quota that cannot succeed until the
+ * reset. Lusha sends no Retry-After or reset time; `x-daily-requests-left`
+ * lands on the error as rateLimitRemaining, which the 429 handler reads.
  */
 const LUSHA_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 3,
+	maxRetries: 0,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: {
@@ -151,9 +152,8 @@ function withoutRequestData(error: ApiError, method: string): ApiError {
 }
 
 /**
- * Sends one operation and returns the response body. Core's request() retries
- * a 429 three times with backoff (Lusha sends no Retry-After); everything
- * else is decided by error-handlers.ts.
+ * Sends one operation once and returns the response body. Retries, 429s
+ * included, are decided by error-handlers.ts.
  */
 // unknown: callers parse the body with the endpoint's zod output schema.
 export async function makeLushaRequest(

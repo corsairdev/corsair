@@ -8,9 +8,10 @@ import {
 } from './test-fixtures';
 
 /**
- * Core's request() retries a 429 three times; error-handlers.ts adds no
- * more. 402 is fatal, and a 5xx only replays on a free read, because a
- * search or enrich call may already have charged credits.
+ * error-handlers.ts retries a 429 three times (core's request() makes one
+ * attempt), except one from a used-up daily quota. 402 is fatal, and a 5xx
+ * only replays on a free read, because a search or enrich call may already
+ * have charged credits.
  */
 async function createClient() {
 	const testDb = createTestDatabase();
@@ -69,18 +70,46 @@ afterEach(() => {
 });
 
 describe('retry behaviour through createCorsair', () => {
-	it('retries a 429 and honours a Retry-After header', async () => {
+	it('retries a 429 after the Retry-After wait, not the default backoff', async () => {
+		// setImmediate stays real so the test can wait for the first attempt
+		// to fail and the 3 s wait to be scheduled.
+		jest.useFakeTimers({ doNotFake: ['setImmediate', 'nextTick'] });
 		const { corsair, testDb } = await createClient();
 		try {
-			respond(rateLimitedBody, 429, { 'Retry-After': '0' });
+			respond(rateLimitedBody, 429, { 'Retry-After': '3' });
 			respond(accountUsageResponse);
 
-			await expect(
-				corsair.lusha.api.account.getAccountUsage({}),
-			).resolves.toMatchObject({
+			const pending = corsair.lusha.api.account.getAccountUsage({});
+			for (let tick = 0; tick < 1000 && jest.getTimerCount() === 0; tick++) {
+				await new Promise((resolve) => setImmediate(resolve));
+			}
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+
+			// The default backoff would retry at 1,000 ms.
+			await jest.advanceTimersByTimeAsync(2_999);
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+
+			await jest.advanceTimersByTimeAsync(1);
+			await expect(pending).resolves.toMatchObject({
 				credits: { remaining: 3800 },
 			});
 			expect(fetchMock).toHaveBeenCalledTimes(2);
+		} finally {
+			testDb.cleanup();
+			jest.useRealTimers();
+		}
+	});
+
+	it('does not retry a 429 that reports a used-up daily quota', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			respond(rateLimitedBody, 429, { 'x-daily-requests-left': '0' });
+
+			await expect(
+				corsair.lusha.api.account.getAccountUsage({}),
+			).rejects.toThrow('daily request quota used up');
+			// One attempt: no retry can succeed before the daily reset.
+			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
 			testDb.cleanup();
 		}
@@ -121,7 +150,7 @@ describe('retry behaviour through createCorsair', () => {
 			);
 
 			expect(error).toMatchObject({ status: 429 });
-			// One attempt plus the three the handler allows.
+			// One attempt plus the three RATE_LIMIT_ERROR allows.
 			expect(fetchMock).toHaveBeenCalledTimes(4);
 		} finally {
 			testDb.cleanup();

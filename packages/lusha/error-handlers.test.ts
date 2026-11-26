@@ -43,6 +43,16 @@ async function httpError(
 	);
 }
 
+/** The error a free GET throws for the queued response. */
+function getError(): Promise<Error> {
+	return makeLushaRequest('key', { method: 'GET', path: '/v3/test' }).then(
+		() => {
+			throw new Error('expected a failure');
+		},
+		(caught: Error) => caught,
+	);
+}
+
 beforeEach(installFetchMock);
 afterEach(restoreFetchMock);
 
@@ -56,18 +66,56 @@ describe('Lusha error handler matching', () => {
 		).resolves.toEqual({ maxRetries: 0 });
 	});
 
-	it('does not retry a 429 again: core request() already retried it', async () => {
-		// Core makes four attempts (one plus three retries) before throwing.
-		for (let attempt = 0; attempt < 3; attempt++) {
-			mockFetch(jsonResponse(rateLimitedBody, { status: 429 }));
-		}
-		const error = await httpError(429, rateLimitedBody, true);
-		expect(currentFetch()).toHaveBeenCalledTimes(4);
+	it('retries a 429 three times itself: core request() makes one attempt', async () => {
+		const error = await httpError(429, rateLimitedBody, false);
+		expect(currentFetch()).toHaveBeenCalledTimes(1);
 		expect(pick(error)).toBe('RATE_LIMIT_ERROR');
 		await expect(handler('RATE_LIMIT_ERROR').handler(error)).resolves.toEqual({
+			maxRetries: 3,
+			retryStrategy: 'exponential_backoff',
+		});
+	});
+
+	it('waits for Retry-After on a 429 when Lusha sends one', async () => {
+		mockFetch(
+			jsonResponse(rateLimitedBody, {
+				status: 429,
+				headers: { 'Retry-After': '3' },
+			}),
+		);
+		const error = await getError();
+		await expect(handler('RATE_LIMIT_ERROR').handler(error)).resolves.toEqual({
+			maxRetries: 3,
+			retryStrategy: 'exponential_backoff',
+			headersRetryAfterMs: 3000,
+		});
+	});
+
+	it('does not retry a 429 that reports a used-up daily quota', async () => {
+		mockFetch(
+			jsonResponse(rateLimitedBody, {
+				status: 429,
+				headers: { 'x-daily-requests-left': '0' },
+			}),
+		);
+		const error = await getError();
+		expect(currentFetch()).toHaveBeenCalledTimes(1);
+		expect(pick(error)).toBe('DAILY_QUOTA_ERROR');
+		await expect(handler('DAILY_QUOTA_ERROR').handler(error)).resolves.toEqual({
 			maxRetries: 0,
 		});
-	}, 20_000);
+	});
+
+	it('still retries a 429 while daily requests are left', async () => {
+		mockFetch(
+			jsonResponse(rateLimitedBody, {
+				status: 429,
+				headers: { 'x-daily-requests-left': '40' },
+			}),
+		);
+		const error = await getError();
+		expect(pick(error)).toBe('RATE_LIMIT_ERROR');
+	});
 
 	it.each([
 		[401, 'AUTH_ERROR'],
