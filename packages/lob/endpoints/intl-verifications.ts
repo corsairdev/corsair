@@ -3,7 +3,7 @@ import { call } from './call';
 import {
 	LobEndpointInputSchemas as Inputs,
 	LobEndpointOutputSchemas as Outputs,
-} from './types';
+} from './registry';
 
 export const verify: LobEndpoints['intlVerificationsVerify'] = (ctx, input) =>
 	call(

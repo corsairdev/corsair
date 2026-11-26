@@ -9,12 +9,15 @@ import { ApiError, request } from 'corsair/http';
 export const LOB_API_BASE = 'https://api.lob.com/v1';
 
 // unknown: the body is an untyped error envelope until asRecord narrows it.
-function readErrorBody(body: unknown): { code?: string; message?: string } {
+export function readErrorBody(body: unknown): {
+	code?: string;
+	message?: string;
+} {
 	const record = asRecord(body);
 	const error = asRecord(record?.error);
 	return {
-		// The newer uploads surface answers flat (`{ code: 403, message }`)
-		// where code is a number, so only the wrapped envelope yields a code.
+		// The uploads surface answers flat (`{ code: 403, message }`) where
+		// code is a number, so only the wrapped envelope yields a code.
 		code: typeof error?.code === 'string' ? error.code : undefined,
 		message:
 			typeof error?.message === 'string'
@@ -25,72 +28,51 @@ function readErrorBody(body: unknown): { code?: string; message?: string } {
 	};
 }
 
-// error-handlers.ts owns retries, so the client makes one attempt and only
-// tags the error. Lob documents no Retry-After header; it sends
-// X-Rate-Limit-Reset, which corsair/http cannot return alongside the body.
+// Core retries a 429 three times (1 s, 2 s, 4 s), which spans Lob's 5-second
+// window. A 429 means Lob refused the request before doing anything, so the
+// retry is safe for mail sends too. Lob sends no Retry-After header.
 const LOB_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 0,
+	maxRetries: 3,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
-	// Kept for the header contract even though Lob never sends the header.
+	// Lob's X-Rate-Limit-Reset marks the 5-second window; core's backoff
+	// already spans it, so only a gateway's Retry-After is read.
 	headerNames: { retryAfter: 'retry-after' },
 	isRateLimitError: (status, body) =>
 		status === 429 || readErrorBody(body).code === 'rate_limit_exceeded',
 };
 
-/**
- * Lob error bodies wrap one object: `{ error: { message, status_code, code } }`
- * with snake_case string codes. Rate limits answer 429 with code
- * `rate_limit_exceeded` and no Retry-After. The body is deliberately not kept
- * on the error: ApiError does not redact request bodies, and neither this
- * plugin's queries nor Lob's error bodies carry the API key, but keeping the
- * raw cause would print request headers through util.inspect.
- */
-export class LobAPIError extends Error {
-	readonly status?: number;
-	/** Machine-readable code from the body, e.g. `rate_limit_exceeded`. */
-	readonly code?: string;
-	/** Milliseconds from a Retry-After header, when a gateway sent one. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request. */
-	readonly method?: string;
+/** What the error handlers need to know about the request that failed. */
+export type LobRequestInfo = {
+	method: LobRequest['method'];
 	/** True when the request carried an Idempotency-Key, so a replay is safe. */
-	readonly hasIdempotency: boolean;
+	hasIdempotency: boolean;
 	/**
-	 * True when the request never reached Lob: connection reset, DNS failure,
-	 * abort. Such an error carries no status, so without this flag it would
-	 * fall through every handler to DEFAULT and a dropped read would never
-	 * retry.
+	 * True when the request never got an HTTP answer: connection reset, DNS
+	 * failure, timeout. Such an error has no status.
 	 */
-	readonly transportFailure: boolean;
+	transportFailure: boolean;
+};
 
-	constructor(
-		message: string,
-		options: {
-			status?: number;
-			code?: string;
-			retryAfter?: number;
-			method?: LobRequest['method'];
-			hasIdempotency?: boolean;
-			transportFailure?: boolean;
-			cause?: Error;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'LobAPIError';
-		this.status = options.status;
-		this.code = options.code;
-		this.retryAfter = options.retryAfter;
-		this.method = options.method;
-		this.hasIdempotency = options.hasIdempotency ?? false;
-		this.transportFailure = options.transportFailure ?? false;
-	}
+const requestInfo = new WeakMap<object, LobRequestInfo>();
 
-	/** A 429 by status or by body code; gateways may drop the body. */
-	get isRateLimit(): boolean {
-		return this.status === 429 || this.code === 'rate_limit_exceeded';
-	}
+/** Attaches the request facts to an error makeLobRequest throws. */
+export function recordLobRequestInfo(
+	error: object,
+	info: LobRequestInfo,
+): void {
+	requestInfo.set(error, info);
+}
+
+/** The request facts recorded for an error thrown by makeLobRequest. */
+export function lobRequestInfo(error: Error): LobRequestInfo | undefined {
+	return requestInfo.get(error);
+}
+
+/** Machine-readable code from Lob's error envelope, e.g. `rate_limit_exceeded`. */
+export function lobErrorCode(error: Error): string | undefined {
+	return error instanceof ApiError ? readErrorBody(error.body).code : undefined;
 }
 
 export function describeLobError(
@@ -105,21 +87,52 @@ export function describeLobError(
 	return label ? `Lob ${label}: ${text}` : text;
 }
 
-export type LobQuery = Record<string, string | number | boolean | undefined>;
+// unknown: scalar, array or one-level object values. Core writes arrays as
+// repeated keys and objects as `key[sub]=value` (Lob's deepObject filters).
+export type LobQuery = Record<string, unknown>;
 
 export type LobRequest = {
-	method: 'GET' | 'POST' | 'DELETE';
+	method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
 	path: string;
 	query?: LobQuery;
 	// unknown: the endpoint's input schema has already validated the body.
+	// A FormData body goes out as multipart (uploads, Informed Delivery).
 	body?: unknown;
-	/** Extra headers, currently only Idempotency-Key on mail sends. */
+	/** Extra headers: Idempotency-Key on mail sends, Lob-Version, x-lang-output. */
 	headers?: Record<string, string>;
 };
 
-/** Encodes one path segment. */
+/** Encodes one path segment; rejects values that would change the route. */
 export function segment(value: string): string {
+	if (value === '' || value === '.' || value === '..') {
+		throw new Error('Invalid Lob path value');
+	}
 	return encodeURIComponent(value);
+}
+
+/**
+ * Rebuilds core's ApiError without the request body: mailpiece bodies carry
+ * recipient names and street addresses, and bank account bodies carry account
+ * numbers. Status, Lob's error envelope and rate-limit facts stay.
+ */
+function withoutRequestData(error: ApiError, method: string): ApiError {
+	return new ApiError(
+		{ method: error.request.method ?? method, url: error.request.url },
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		describeLobError(error.status, error.body, error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
 }
 
 // unknown: callers parse the body with the endpoint's zod output schema. It is
@@ -139,50 +152,41 @@ export async function makeLobRequest(
 		HEADERS: {
 			Accept: 'application/json',
 			Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
-			...headers,
 		},
 	};
 
+	const isForm = body instanceof FormData;
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: path,
 		query,
 		body,
-		mediaType: body === undefined ? undefined : 'application/json',
+		headers,
+		// FormData sets its own multipart boundary.
+		mediaType: body === undefined || isForm ? undefined : 'application/json',
 	};
+
+	const info = (transportFailure: boolean): LobRequestInfo => ({
+		method,
+		hasIdempotency: Boolean(headers?.['Idempotency-Key']),
+		transportFailure,
+	});
 
 	try {
 		return await request<unknown>(config, requestOptions, {
 			rateLimitConfig: LOB_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		const hasIdempotency = Boolean(headers?.['Idempotency-Key']);
 		if (error instanceof ApiError) {
-			throw new LobAPIError(
-				describeLobError(error.status, error.body, error.message),
-				{
-					status: error.status,
-					code: readErrorBody(error.body).code,
-					retryAfter: error.retryAfter,
-					method,
-					hasIdempotency,
-				},
-			);
+			const rebuilt = withoutRequestData(error, method);
+			recordLobRequestInfo(rebuilt, info(false));
+			throw rebuilt;
 		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		// Transport failures never reached Lob, so the cause is kept for these.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new LobAPIError(error.message, {
-				cause: error instanceof Error ? error : undefined,
-				method,
-				hasIdempotency,
-				transportFailure: true,
-			});
+		// Transport failures (DOMException timeouts included) never got an HTTP
+		// answer; they pass through unchanged with the request facts attached.
+		if (error !== null && typeof error === 'object') {
+			recordLobRequestInfo(error, info(true));
 		}
-		throw new LobAPIError('Unknown Lob error', {
-			method,
-			hasIdempotency,
-			transportFailure: true,
-		});
+		throw error;
 	}
 }

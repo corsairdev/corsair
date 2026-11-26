@@ -1,10 +1,11 @@
 import type { LobEndpoints } from '..';
 import { segment } from '../client';
-import { call } from './call';
+import { call, idempotencyHeaders } from './call';
 import {
 	LobEndpointInputSchemas as Inputs,
 	LobEndpointOutputSchemas as Outputs,
-} from './types';
+} from './registry';
+import { omit } from './shared';
 
 // Sends real, billed mail that cannot be recalled once in production.
 export const send: LobEndpoints['lettersSend'] = (ctx, input) =>
@@ -16,44 +17,13 @@ export const send: LobEndpoints['lettersSend'] = (ctx, input) =>
 			output: Outputs.lettersSend,
 		},
 		input,
-		({
-			to,
-			from,
-			file,
-			color,
-			extra_service,
-			double_sided,
-			address_placement,
-			size,
-			use_type,
-			mail_type,
-			merge_variables,
-			send_date,
-			description,
-			metadata,
-			idempotency_key,
-		}) => ({
+		(parsed) => ({
 			method: 'POST',
 			path: '/letters',
-			body: {
-				to,
-				from,
-				file,
-				color,
-				extra_service,
-				double_sided,
-				address_placement,
-				size,
-				use_type,
-				mail_type,
-				merge_variables,
-				send_date,
-				description,
-				metadata,
-			},
-			headers: idempotency_key
-				? { 'Idempotency-Key': idempotency_key }
-				: undefined,
+			body: omit(parsed, 'idempotency_key', 'lob_version'),
+			headers: idempotencyHeaders(parsed.idempotency_key, {
+				'Lob-Version': parsed.lob_version,
+			}),
 		}),
 		{
 			log: (_, result) => ({

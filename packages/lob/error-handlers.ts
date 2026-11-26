@@ -1,42 +1,48 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { LobAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import type { LobRequestInfo } from './client';
+import { lobErrorCode, lobRequestInfo } from './client';
 
-function asLobError(error: Error): LobAPIError | undefined {
-	return error instanceof LobAPIError ? error : undefined;
+function statusOf(error: Error): number | undefined {
+	return error instanceof ApiError ? error.status : undefined;
 }
 
-// Mail sends dispatch physical print jobs, and verification posts spend
-// Lob Credits. A replay is safe only for reads, or for a send that carried an
+// Mail sends dispatch physical print jobs and verifications spend credits. A
+// replay is safe only for reads, or for a send that carried an
 // Idempotency-Key, which makes Lob return the original piece.
-function canReplay(error: LobAPIError): boolean {
-	return error.method === 'GET' || error.hasIdempotency;
+function canReplay(info: LobRequestInfo | undefined): boolean {
+	return info !== undefined && (info.method === 'GET' || info.hasIdempotency);
 }
 
 // Codes and statuses: https://docs.lob.com (error responses section) and the
-// spec's error code enum. Lob documents no Retry-After; the 429 body says to
-// wait 5 seconds and the window resets on X-Rate-Limit-Reset.
+// spec's error code enum. The client throws core's ApiError (request body
+// stripped); a transport failure passes through as fetch threw it.
 export const errorHandlers = {
-	// 150 requests per 5 seconds per key and endpoint (300 for the two
-	// verification endpoints). Both the plain 429 and the body-coded 429
-	// must match: a gateway 429 arrives without the Lob body.
+	// Core already retried a 429 three times with backoff (1 s, 2 s, 4 s). Lob
+	// documents 150 requests per 5 seconds per key and endpoint, so one more
+	// wait of a full window is the last try.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => error instanceof LobAPIError && error.isRateLimit,
+		match: (error: Error) =>
+			statusOf(error) === 429 || lobErrorCode(error) === 'rate_limit_exceeded',
 		handler: async () => ({
-			maxRetries: 2,
+			maxRetries: 1,
 			// Lob's own 429 text asks for 5 seconds; there is no header to read.
 			headersRetryAfterMs: 5_000,
 		}),
 	},
 	// 401: missing or wrong key (`unauthorized`, `invalid_api_key`,
-	// `publishable_key_not_allowed` for a test-mode web key).
+	// `publishable_key_not_allowed` for a test-mode web key). 403: the key
+	// lacks access to a feature (Campaigns, Informed Delivery, uploads).
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			const lob = asLobError(error);
+			const status = statusOf(error);
+			const code = lobErrorCode(error);
 			return (
-				lob?.status === 401 ||
-				lob?.code === 'unauthorized' ||
-				lob?.code === 'invalid_api_key' ||
-				lob?.code === 'publishable_key_not_allowed'
+				status === 401 ||
+				status === 403 ||
+				code === 'unauthorized' ||
+				code === 'invalid_api_key' ||
+				code === 'publishable_key_not_allowed'
 			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
@@ -46,7 +52,7 @@ export const errorHandlers = {
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			if (error.name === 'ZodError') return true;
-			const status = asLobError(error)?.status;
+			const status = statusOf(error);
 			return (
 				status === 400 || status === 404 || status === 413 || status === 422
 			);
@@ -55,50 +61,37 @@ export const errorHandlers = {
 	},
 	// 409 outside rate limits: Lob's `conflict` code.
 	CONFLICT_ERROR: {
-		match: (error: Error) => asLobError(error)?.status === 409,
+		match: (error: Error) => statusOf(error) === 409,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	// 408 and `request_timeout`: Lob timed the request out. Only replays a
 	// read or an idempotency-keyed send.
 	TIMEOUT_ERROR: {
-		match: (error: Error) => {
-			const lob = asLobError(error);
-			return lob?.status === 408 || lob?.code === 'request_timeout';
-		},
-		handler: async (error: Error) => {
-			const lob = asLobError(error);
-			return lob && canReplay(lob)
+		match: (error: Error) =>
+			statusOf(error) === 408 || lobErrorCode(error) === 'request_timeout',
+		handler: async (error: Error) =>
+			canReplay(lobRequestInfo(error))
 				? { maxRetries: 1, headersRetryAfterMs: 1_000 }
-				: { maxRetries: 0 };
-		},
+				: { maxRetries: 0 },
 	},
 	// 500 `internal_server_error` and 503 `service_unavailable`: Lob asks for
 	// a later retry. Only replays a read or an idempotency-keyed send.
 	SERVER_ERROR: {
-		match: (error: Error) => {
-			const status = asLobError(error)?.status ?? 0;
-			return status >= 500;
-		},
-		handler: async (error: Error) => {
-			const lob = asLobError(error);
-			return lob && canReplay(lob)
+		match: (error: Error) => (statusOf(error) ?? 0) >= 500,
+		handler: async (error: Error) =>
+			canReplay(lobRequestInfo(error))
 				? { maxRetries: 1, retryStrategy: 'exponential_backoff' as const }
-				: { maxRetries: 0 };
-		},
+				: { maxRetries: 0 },
 	},
-	// A dropped connection, reset or DNS failure: the request never reached
-	// Lob, so nothing above matches (no status, no body code). A read can be
-	// sent again as is; a send cannot, because Lob may have applied it before
-	// the connection dropped.
+	// A dropped connection, reset, DNS failure or timeout: no HTTP answer, so
+	// nothing above matches. A read can be sent again as is; a send cannot,
+	// because Lob may have applied it before the connection dropped.
 	TRANSPORT_ERROR: {
-		match: (error: Error) =>
-			error instanceof LobAPIError && error.transportFailure,
-		handler: async (error: Error) => {
-			const lob = asLobError(error);
-			return lob && canReplay(lob)
+		match: (error: Error) => lobRequestInfo(error)?.transportFailure === true,
+		handler: async (error: Error) =>
+			canReplay(lobRequestInfo(error))
 				? { maxRetries: 1, retryStrategy: 'exponential_backoff' as const }
-				: { maxRetries: 0 };
-		},
+				: { maxRetries: 0 },
 	},
 	DEFAULT: {
 		match: () => true,

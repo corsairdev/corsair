@@ -9,7 +9,7 @@ import { z } from 'zod';
 
 // The spec pins metadata with maxLength 500 and a pattern banning double
 // quotes and backslashes, applied to the serialized form.
-const MetadataInputSchema = z
+export const MetadataInputSchema = z
 	.record(z.string(), z.string())
 	.superRefine((value, ctx) => {
 		for (const [key, val] of Object.entries(value)) {
@@ -29,17 +29,17 @@ const MetadataInputSchema = z
 	})
 	.optional();
 
-const MetadataOutputSchema = z.record(z.string(), z.string()).nullish();
+export const MetadataOutputSchema = z.record(z.string(), z.string()).nullish();
 
 // unknown: Lob object fields of documented but loose shape (address
 // expansions, thumbnails, tracking events, failure details), passed through
 // as Lob sends them rather than re-validated field by field.
-const LooseRecord = z.record(z.string(), z.unknown());
+export const LooseRecord = z.record(z.string(), z.unknown());
 
 // merge_variables rides in the mailpiece body; the spec caps its serialized
 // form at 25,000 characters.
 // unknown: template variables are an arbitrary JSON map by design.
-const MergeVariablesSchema = z
+export const MergeVariablesSchema = z
 	.record(z.string(), z.unknown())
 	.superRefine((value, ctx) => {
 		if (JSON.stringify(value).length > 25_000) {
@@ -57,7 +57,7 @@ const UsZipInputSchema = z
 	.regex(/^\d{5}$/, 'Must be a 5-digit US ZIP code.')
 	.describe('A 5-digit US ZIP code, such as 94107.');
 
-const StateCodeSchema = z
+export const StateCodeSchema = z
 	.string()
 	.regex(/^[a-zA-Z]{2}$/, 'Must be a two-letter state code.')
 	.describe('Two-letter USPS state code, such as CA.');
@@ -307,13 +307,13 @@ export const LOB_INTL_COUNTRIES = [
 	'ZW',
 ] as const;
 
-const IntCountrySchema = z
+export const IntCountrySchema = z
 	.enum(LOB_INTL_COUNTRIES)
 	.describe(
 		'Two-letter ISO 3166-1 alpha-2 country code. Outside the US and US territories this selects international processing.',
 	);
 
-const CaseQuerySchema = z
+export const CaseQuerySchema = z
 	.enum(['upper', 'proper'])
 	.optional()
 	.describe(
@@ -419,23 +419,23 @@ const AdrIdSchema = z
 	.describe("An existing address's ID, prefixed with adr_.");
 
 // `to` on a mailpiece: a saved address ID or an inline address.
-const MailToSchema = z
+export const MailToSchema = z
 	.union([AdrIdSchema, InlineAddressInputSchema])
 	.describe('Recipient: an address ID (adr_...) or an inline address.');
 
 // Postcards mail from a US address only.
-const MailFromUsSchema = z
+export const MailFromUsSchema = z
 	.union([AdrIdSchema, InlineAddressInputSchema])
 	.describe('Return address: an address ID (adr_...) or an inline US address.');
 
-const MailFromAnySchema = z
+export const MailFromAnySchema = z
 	.union([AdrIdSchema, InlineAddressInputSchema])
 	.describe('Return address: an address ID (adr_...) or an inline address.');
 
 // Lob renders the artwork from an HTML string, a saved template ID, or a
 // hosted file. The spec's fourth form, a local file path, belongs to the
 // multipart upload this plugin does not use, so it is not offered.
-const ArtworkSchema = z
+export const ArtworkSchema = z
 	.union([
 		z
 			.string()
@@ -453,26 +453,26 @@ const ArtworkSchema = z
 		'HTML string (up to 10000 characters), tmpl_... template ID, or an https URL to an html, pdf, png or jpg file.',
 	);
 
-const MailTypeSchema = z
+export const MailTypeSchema = z
 	.enum(['usps_first_class', 'usps_standard'])
 	.optional()
 	.describe("Postage class. Defaults to 'usps_first_class'.");
 
-const SendDateSchema = z
+export const SendDateSchema = z
 	.string()
 	.optional()
 	.describe(
 		'ISO 8601 date (2026-01-01) or datetime; Lob schedules production after it, up to 180 days out.',
 	);
 
-const UseTypeSchema = z
+export const UseTypeSchema = z
 	.enum(['marketing', 'operational'])
 	.nullable()
 	.describe(
 		"The send's purpose for Lob's mail-use tracking: 'marketing' or 'operational'. Pass null for personal correspondence.",
 	);
 
-const IdempotencyKeySchema = z
+export const IdempotencyKeySchema = z
 	.string()
 	.min(1)
 	.max(256)
@@ -480,6 +480,39 @@ const IdempotencyKeySchema = z
 	.describe(
 		'Deduplication key, at most 256 characters. Lob replays within 24 hours return the original mailpiece instead of creating a duplicate.',
 	);
+
+export const BillingGroupIdSchema = z
+	.string()
+	.optional()
+	.describe('bg_ ID of the billing group to charge.');
+
+export const PrintSpeedSchema = z
+	.enum(['core'])
+	.optional()
+	.describe("Production speed. Only 'core' is offered.");
+
+export const FscSchema = z
+	.boolean()
+	.optional()
+	.describe('Print on FSC-certified paper.');
+
+export const QrCodeInputSchema = z
+	.object({
+		position: z.literal('relative').describe('Placement mode; only relative.'),
+		redirect_url: z.string().optional(),
+		width: z.string().describe('Width in inches, such as "2".'),
+		top: z.string().optional(),
+		right: z.string().optional(),
+		left: z.string().optional(),
+		bottom: z.string().optional(),
+		pages: z
+			.string()
+			.optional()
+			.describe('Pages or sides to print on, such as "1,2" or "front".'),
+	})
+	.loose()
+	.optional()
+	.describe('Print a tracked QR code on the piece.');
 
 // ── reusable output shapes ────────────────────────────────────────────────
 
@@ -606,7 +639,9 @@ export const UsVerificationSchema = z
 		secondary_line: z.string().nullish(),
 		urbanization: z.string().nullish(),
 		last_line: z.string().nullish(),
-		deliverability: z.enum(LOB_US_DELIVERABILITIES).nullish(),
+		// Known values: LOB_US_DELIVERABILITIES. A string, so a new value Lob
+		// adds does not fail a verification that was already billed.
+		deliverability: z.string().nullish(),
 		valid_address: z.boolean().nullish(),
 		// unknown: 25 documented component fields of mostly US-specific enums,
 		// passed through as Lob sends them.
@@ -679,7 +714,7 @@ export const UsBulkVerificationResponseSchema = z.object({
 		.describe(
 			"One result per input, in order: a verification, or a row error whose 'error' object carries message and code.",
 		),
-	errors: z.boolean().describe('True when at least one row failed.'),
+	errors: z.boolean().nullish().describe('True when at least one row failed.'),
 });
 
 export type UsBulkVerificationResponse = z.infer<
@@ -747,8 +782,9 @@ export const IntlVerificationSchema = z
 		secondary_line: z.string().nullish(),
 		last_line: z.string().nullish(),
 		country: z.string().nullish(),
-		coverage: z.enum(LOB_INTL_COVERAGES).nullish(),
-		deliverability: z.enum(LOB_INTL_DELIVERABILITIES).nullish(),
+		// Known values: LOB_INTL_COVERAGES and LOB_INTL_DELIVERABILITIES.
+		coverage: z.string().nullish(),
+		deliverability: z.string().nullish(),
 		status: z.string().nullish(),
 		// unknown: parsed international components, passed through.
 		components: LooseRecord.nullish(),
@@ -789,10 +825,10 @@ export const AutocompleteResponseSchema = z.object({
 		.array(
 			z
 				.object({
-					primary_line: z.string(),
-					city: z.string(),
-					state: z.string(),
-					zip_code: z.string(),
+					primary_line: z.string().nullish(),
+					city: z.string().nullish(),
+					state: z.string().nullish(),
+					zip_code: z.string().nullish(),
 					object: z.string().nullish(),
 				})
 				.loose(),
@@ -813,16 +849,16 @@ export type ZipLookupInput = z.input<typeof ZipLookupInputSchema>;
 
 export const ZipLookupResponseSchema = z.object({
 	id: z.string().nullish(),
-	zip_code: z.string(),
+	zip_code: z.string().nullish(),
 	cities: z
 		.array(
 			z
 				.object({
-					city: z.string(),
-					state: z.string(),
-					county: z.string(),
-					county_fips: z.string(),
-					preferred: z.boolean(),
+					city: z.string().nullish(),
+					state: z.string().nullish(),
+					county: z.string().nullish(),
+					county_fips: z.string().nullish(),
+					preferred: z.boolean().nullish(),
 				})
 				.loose(),
 		)
@@ -961,6 +997,10 @@ const PostcardSendInputSchema = z.object({
 	send_date: SendDateSchema,
 	description: z.string().max(255).optional(),
 	metadata: MetadataInputSchema,
+	billing_group_id: BillingGroupIdSchema,
+	qr_code: QrCodeInputSchema,
+	fsc: FscSchema,
+	print_speed: PrintSpeedSchema,
 	idempotency_key: IdempotencyKeySchema,
 });
 
@@ -975,8 +1015,8 @@ export const LobPostcardSchema = z
 		to: LooseRecord.nullish(),
 		from: LooseRecord.nullish(),
 		carrier: z.string().nullish(),
-		// unknown: small/medium/large signed thumbnail URLs.
-		thumbnails: LooseRecord.nullish(),
+		// unknown: an array of {small, medium, large} signed thumbnail URLs.
+		thumbnails: z.array(LooseRecord).nullish(),
 		expected_delivery_date: z.string().nullish(),
 		url: z
 			.string()
@@ -1053,6 +1093,37 @@ const LetterSendInputSchema = z.object({
 	send_date: SendDateSchema,
 	description: z.string().max(255).optional(),
 	metadata: MetadataInputSchema,
+	return_envelope: z
+		.union([z.boolean(), z.string()])
+		.optional()
+		.describe(
+			'Include a return envelope: true for the standard one, or a custom envelope ID.',
+		),
+	perforated_page: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Page to perforate for a tear-off; needs return_envelope.'),
+	custom_envelope: z
+		.string()
+		.optional()
+		.describe('env_ ID of a custom envelope.'),
+	cards: z
+		.array(z.string())
+		.max(1)
+		.optional()
+		.describe('card_ IDs of cards to insert (one per letter).'),
+	billing_group_id: BillingGroupIdSchema,
+	qr_code: QrCodeInputSchema,
+	fsc: FscSchema,
+	print_speed: PrintSpeedSchema,
+	lob_version: z
+		.string()
+		.optional()
+		.describe(
+			"Sent as the Lob-Version header, such as '2024-01-01'; letter size needs 2024-01-01 or newer.",
+		),
 	idempotency_key: IdempotencyKeySchema,
 });
 
@@ -1066,7 +1137,8 @@ export const LobLetterSchema = z
 		to: LooseRecord.nullish(),
 		from: LooseRecord.nullish(),
 		carrier: z.string().nullish(),
-		thumbnails: LooseRecord.nullish(),
+		// unknown: an array of {small, medium, large} signed thumbnail URLs.
+		thumbnails: z.array(LooseRecord).nullish(),
 		expected_delivery_date: z.string().nullish(),
 		url: z.string().nullish(),
 		template_id: z.string().nullish(),
@@ -1077,7 +1149,8 @@ export const LobLetterSchema = z
 			.nullish()
 			.describe('Present on certified and registered mail.'),
 		extra_service: z.string().nullish(),
-		return_address: LooseRecord.nullish(),
+		// unknown: an address ID or the expanded address object.
+		return_address: z.unknown().optional(),
 		campaign_id: z.string().nullish(),
 		use_type: z.string().nullish(),
 		fsc: z.boolean().nullish(),
@@ -1087,7 +1160,13 @@ export const LobLetterSchema = z
 		double_sided: z.boolean().nullish(),
 		address_placement: z.string().nullish(),
 		perforated_page: z.number().nullish(),
-		return_envelope: z.boolean().nullish(),
+		// unknown: true/false, or the custom return envelope object.
+		return_envelope: z.unknown().optional(),
+		// unknown: the custom envelope object, when one was used.
+		custom_envelope: z.unknown().optional(),
+		// unknown: card and buckslip objects inserted with the letter.
+		cards: z.unknown().optional(),
+		buckslips: z.unknown().optional(),
 		mail_type: z.string().nullish(),
 		merge_variables: LooseRecord.nullish(),
 		send_date: z.string().nullish(),
@@ -1121,7 +1200,7 @@ export type GetBalanceResponse = z.infer<typeof GetBalanceResponseSchema>;
 
 // ── Registry ──────────────────────────────────────────────────────────────
 
-export type LobEndpointInputs = {
+export type LobBaseEndpointInputs = {
 	usVerificationsVerify: UsVerificationInput;
 	usVerificationsBulk: UsBulkVerificationInput;
 	intlVerificationsVerify: IntlVerificationInput;
@@ -1138,7 +1217,7 @@ export type LobEndpointInputs = {
 	accountGetBalance: GetBalanceInput;
 };
 
-export type LobEndpointOutputs = {
+export type LobBaseEndpointOutputs = {
 	usVerificationsVerify: UsVerification;
 	usVerificationsBulk: UsBulkVerificationResponse;
 	intlVerificationsVerify: IntlVerification;
@@ -1155,7 +1234,7 @@ export type LobEndpointOutputs = {
 	accountGetBalance: GetBalanceResponse;
 };
 
-export const LobEndpointInputSchemas = {
+export const LobBaseInputSchemas = {
 	usVerificationsVerify: UsVerificationInputSchema,
 	usVerificationsBulk: UsBulkVerificationInputSchema,
 	intlVerificationsVerify: IntlVerificationInputSchema,
@@ -1172,7 +1251,7 @@ export const LobEndpointInputSchemas = {
 	accountGetBalance: GetBalanceInputSchema,
 } as const;
 
-export const LobEndpointOutputSchemas = {
+export const LobBaseOutputSchemas = {
 	usVerificationsVerify: UsVerificationResponseSchema,
 	usVerificationsBulk: UsBulkVerificationResponseSchema,
 	intlVerificationsVerify: IntlVerificationSchema,

@@ -3,7 +3,7 @@ import { call } from './call';
 import {
 	LobEndpointInputSchemas as Inputs,
 	LobEndpointOutputSchemas as Outputs,
-} from './types';
+} from './registry';
 
 // GET /accounts per the spec. Lob's spec code sample uses the alias
 // /accounts/credits_balance; both were live (401 unauthenticated) when

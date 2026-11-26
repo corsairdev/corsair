@@ -1,7 +1,9 @@
 import { inspect } from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
 	describeLobError,
-	LobAPIError,
+	lobErrorCode,
+	lobRequestInfo,
 	makeLobRequest,
 	segment,
 } from './client';
@@ -35,11 +37,38 @@ function respond(
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<LobAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(LobAPIError);
-	if (!(error instanceof LobAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
+}
+
+// unknown: a rejection can be any value until the checks narrow it. A
+// DOMException from fetch is not an Error in jest's realm, so only the
+// shape is checked.
+async function transportFailure(promise: Promise<unknown>): Promise<Error> {
+	const error = await promise.catch((caught: unknown) => caught);
+	expect(error).not.toBeInstanceOf(ApiError);
+	if (error === null || typeof error !== 'object' || !('message' in error)) {
+		throw error;
+	}
+	return error as Error;
+}
+
+// Core retries a 429 three times with 1 s, 2 s and 4 s waits; fake timers
+// run those waits instantly.
+async function withRetries<T>(promise: Promise<T>): Promise<T> {
+	// Settle-handlers go on first, so a rejection while timers advance is
+	// never reported as unhandled.
+	const settled = promise.then(
+		(value) => ({ ok: true as const, value }),
+		(error: unknown) => ({ ok: false as const, error }),
+	);
+	for (let i = 0; i < 4; i++) await jest.advanceTimersByTimeAsync(5_000);
+	const outcome = await settled;
+	if (outcome.ok) return outcome.value;
+	throw outcome.error;
 }
 
 beforeEach(() => {
@@ -122,7 +151,7 @@ describe('makeLobRequest', () => {
 		expect(new Headers(init.headers).get('Idempotency-Key')).toBe('abc-123');
 	});
 
-	it('reads message and code from the wrapped error envelope', async () => {
+	it('throws core ApiError with message and code from the wrapped envelope', async () => {
 		respond(unauthorized, 401);
 
 		const error = await failure(
@@ -132,65 +161,98 @@ describe('makeLobRequest', () => {
 			}),
 		);
 		expect(error.status).toBe(401);
-		expect(error.code).toBe('unauthorized');
-		expect(error.method).toBe('GET');
-		expect(error.hasIdempotency).toBe(false);
-		expect(error.isRateLimit).toBe(false);
+		expect(lobErrorCode(error)).toBe('unauthorized');
+		expect(lobRequestInfo(error)).toEqual({
+			method: 'GET',
+			hasIdempotency: false,
+			transportFailure: false,
+		});
 		expect(error.message).toBe('Lob 401 unauthorized: Missing authentication');
 	});
 
-	it('treats a plain 429 and a body-coded 429 as rate limits', async () => {
-		respond({}, 429);
-		const plain = await failure(
-			makeLobRequest(API_KEY, { method: 'GET', path: '/addresses' }),
-		);
-		expect(plain.isRateLimit).toBe(true);
-		expect(plain.code).toBeUndefined();
-
-		respond(rateLimited, 429);
-		const coded = await failure(
-			makeLobRequest(API_KEY, { method: 'POST', path: '/postcards', body: {} }),
-		);
-		expect(coded.isRateLimit).toBe(true);
-		expect(coded.code).toBe('rate_limit_exceeded');
-	});
-
-	it('marks an idempotency-keyed send as replay-safe', async () => {
-		respond(rateLimited, 429);
+	it('drops the request body from the error', async () => {
+		respond({ error: { message: 'bad', code: 'invalid' } }, 422);
 
 		const error = await failure(
 			makeLobRequest(API_KEY, {
 				method: 'POST',
-				path: '/postcards',
-				body: {},
-				headers: { 'Idempotency-Key': 'abc-123' },
+				path: '/addresses',
+				body: { name: 'Jordan Lee', address_line1: '210 King St' },
 			}),
 		);
-		expect(error.hasIdempotency).toBe(true);
+		expect(error.status).toBe(422);
+		expect(error.request.body).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('Jordan');
+		expect(inspect(error)).not.toContain('Jordan');
 	});
 
-	it('keeps the cause on a transport failure, where no body was sent', async () => {
+	describe('rate limits', () => {
+		beforeEach(() => jest.useFakeTimers());
+		afterEach(() => jest.useRealTimers());
+
+		it('retries a 429 through core, then throws it', async () => {
+			for (let i = 0; i < 4; i++) respond({}, 429);
+			const plain = await failure(
+				withRetries(
+					makeLobRequest(API_KEY, { method: 'GET', path: '/addresses' }),
+				),
+			);
+			expect(fetchMock).toHaveBeenCalledTimes(4);
+			expect(plain.status).toBe(429);
+			expect(lobErrorCode(plain)).toBeUndefined();
+		});
+
+		it('recovers when a retry succeeds', async () => {
+			respond(rateLimited, 429);
+			respond(addressOk, 200);
+			const result = await withRetries(
+				makeLobRequest(API_KEY, { method: 'GET', path: '/addresses/adr_1' }),
+			);
+			expect(result).toEqual(addressOk);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		});
+
+		it('keeps the body code and the idempotency flag on a keyed send', async () => {
+			for (let i = 0; i < 4; i++) respond(rateLimited, 429);
+			const error = await failure(
+				withRetries(
+					makeLobRequest(API_KEY, {
+						method: 'POST',
+						path: '/postcards',
+						body: {},
+						headers: { 'Idempotency-Key': 'abc-123' },
+					}),
+				),
+			);
+			expect(lobErrorCode(error)).toBe('rate_limit_exceeded');
+			expect(lobRequestInfo(error)?.hasIdempotency).toBe(true);
+		});
+	});
+
+	it('passes a transport failure through, tagged as one', async () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
-		const error = await failure(
+		const error = await transportFailure(
 			makeLobRequest(API_KEY, {
 				method: 'GET',
 				path: '/addresses',
 			}),
 		);
+		expect(error).toBeInstanceOf(TypeError);
 		expect(error.message).toContain('fetch failed');
-		expect(error.status).toBeUndefined();
-		expect(error.method).toBe('GET');
-		expect(error.hasIdempotency).toBe(false);
-		expect(error.cause).toBeInstanceOf(TypeError);
+		expect(lobRequestInfo(error)).toEqual({
+			method: 'GET',
+			hasIdempotency: false,
+			transportFailure: true,
+		});
 	});
 
-	it('wraps a fetch timeout', async () => {
+	it('tags a fetch timeout as a transport failure', async () => {
 		fetchMock.mockRejectedValueOnce(
 			new DOMException('The operation timed out', 'TimeoutError'),
 		);
 
-		const error = await failure(
+		const error = await transportFailure(
 			makeLobRequest(API_KEY, {
 				method: 'POST',
 				path: '/postcards',
@@ -198,7 +260,23 @@ describe('makeLobRequest', () => {
 			}),
 		);
 		expect(error.message).toContain('timed out');
-		expect(error.status).toBeUndefined();
+		expect(lobRequestInfo(error)?.transportFailure).toBe(true);
+	});
+
+	it('sends a FormData body as multipart without a JSON content type', async () => {
+		respond({ message: 'File uploaded successfully', filename: 'a.csv' }, 202);
+		const form = new FormData();
+		form.append('file', new Blob(['name\n'], { type: 'text/csv' }), 'a.csv');
+
+		await makeLobRequest(API_KEY, {
+			method: 'POST',
+			path: '/uploads/upl_1/file',
+			body: form,
+		});
+
+		const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(init.body).toBeInstanceOf(FormData);
+		expect(new Headers(init.headers).get('content-type')).toBeNull();
 	});
 
 	it('leaves the API key out of errors', async () => {
@@ -235,5 +313,10 @@ describe('describeLobError', () => {
 describe('segment', () => {
 	it('encodes a value for one path segment', () => {
 		expect(segment('a/b?c')).toBe('a%2Fb%3Fc');
+	});
+
+	it('refuses values that would climb out of the route', () => {
+		expect(() => segment('..')).toThrow('Invalid Lob path value');
+		expect(() => segment('')).toThrow('Invalid Lob path value');
 	});
 });

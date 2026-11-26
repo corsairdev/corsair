@@ -3,7 +3,7 @@ import { call } from './call';
 import {
 	LobEndpointInputSchemas as Inputs,
 	LobEndpointOutputSchemas as Outputs,
-} from './types';
+} from './registry';
 
 export const usAutocomplete: LobEndpoints['autocompleteUsAutocomplete'] = (
 	ctx,

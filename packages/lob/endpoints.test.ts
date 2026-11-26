@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import {
 	addressDeleted,
 	addressListOk,
@@ -7,7 +8,6 @@ import {
 	intlVerificationOk,
 	letterOk,
 	postcardOk,
-	rateLimited,
 	usRowError,
 	usVerificationOk,
 	zipLookupOk,
@@ -45,13 +45,14 @@ describe('output parsing', () => {
 		expect(result.components).toMatchObject({ street_name: 'KING' });
 	});
 
-	it('rejects an unknown deliverability value on a us verification', async () => {
+	it('accepts a deliverability value Lob adds later, since the call was billed', async () => {
 		mockFetch(
 			jsonResponse({ ...usVerificationOk, deliverability: 'sort_of_ok' }),
 		);
-		await expectParseFailure(
-			endpoints.usVerifications.verify(makeCtx(), { address: 'x' }),
-		);
+		const result = await endpoints.usVerifications.verify(makeCtx(), {
+			address: 'x',
+		});
+		expect(result.deliverability).toBe('sort_of_ok');
 	});
 
 	it('parses a bulk verification whose rows mix successes and row errors', async () => {
@@ -72,13 +73,12 @@ describe('output parsing', () => {
 		expect(second.error).toMatchObject({ code: 'bad_request' });
 	});
 
-	it('rejects a bulk response without the errors flag', async () => {
+	it('accepts a bulk response without the errors flag', async () => {
 		mockFetch(jsonResponse({ addresses: [] }));
-		await expectParseFailure(
-			endpoints.usVerifications.bulk(makeCtx(), {
-				addresses: [{ primary_line: 'x', zip_code: '94107' }],
-			}),
-		);
+		const result = await endpoints.usVerifications.bulk(makeCtx(), {
+			addresses: [{ primary_line: 'x', zip_code: '94107' }],
+		});
+		expect(result.errors).toBeUndefined();
 	});
 
 	it('parses an intl verification', async () => {
@@ -98,7 +98,7 @@ describe('output parsing', () => {
 		expect(result.suggestions[0]?.zip_code).toBe('55070');
 	});
 
-	it('rejects a suggestion row missing its city', async () => {
+	it('accepts a suggestion row missing its city', async () => {
 		mockFetch(
 			jsonResponse({
 				id: 'us_auto_6dc3c810e7f9',
@@ -106,11 +106,10 @@ describe('output parsing', () => {
 				object: 'us_autocompletion',
 			}),
 		);
-		await expectParseFailure(
-			endpoints.autocomplete.usAutocomplete(makeCtx(), {
-				address_prefix: '185 Industrial P',
-			}),
-		);
+		const result = await endpoints.autocomplete.usAutocomplete(makeCtx(), {
+			address_prefix: '185 Industrial P',
+		});
+		expect(result.suggestions[0]?.city).toBeUndefined();
 	});
 
 	it('parses a zip lookup', async () => {
@@ -365,13 +364,27 @@ describe('input rejection before a request is sent', () => {
 });
 
 describe('error mapping through an endpoint', () => {
-	it('surfaces the Lob code and status on a rate limit', async () => {
-		mockFetch(jsonResponse(rateLimited, { status: 429 }));
-		await expect(
-			endpoints.account.getBalance(makeCtx(), {}),
-		).rejects.toMatchObject({
-			status: 429,
-			code: 'rate_limit_exceeded',
+	it('surfaces the status and Lob envelope on a core ApiError', async () => {
+		mockFetch(
+			jsonResponse(
+				{
+					error: {
+						message: 'address_line1 is required',
+						status_code: 422,
+						code: 'invalid',
+					},
+				},
+				{ status: 422 },
+			),
+		);
+		const error = await endpoints.account
+			.getBalance(makeCtx(), {})
+			.catch((caught: unknown) => caught);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({
+			status: 422,
+			message: 'Lob 422 invalid: address_line1 is required',
+			body: { error: { code: 'invalid' } },
 		});
 	});
 });

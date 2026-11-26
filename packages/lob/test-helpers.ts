@@ -1,3 +1,6 @@
+import { ApiError } from 'corsair/http';
+import type { LobRequest } from './client';
+import { recordLobRequestInfo } from './client';
 import type { LobContext } from './index';
 import { lob } from './index';
 
@@ -82,4 +85,56 @@ export function currentFetch(): jest.SpyInstance {
 /** Queues one response on the single fetch spy. */
 export function mockFetch(response: Response): void {
 	currentFetch().mockResolvedValueOnce(response);
+}
+
+/**
+ * An error shaped like the ones makeLobRequest throws: core's ApiError for an
+ * HTTP answer (with Lob's `{ error: { code, message } }` envelope), or a plain
+ * Error for a transport failure, tagged with the request facts.
+ */
+export function lobError(
+	message: string,
+	options: {
+		status?: number;
+		code?: string;
+		retryAfter?: number;
+		method?: LobRequest['method'];
+		hasIdempotency?: boolean;
+		transportFailure?: boolean;
+	} = {},
+): Error {
+	const method = options.method ?? 'GET';
+	const error =
+		options.transportFailure || options.status === undefined
+			? options.code === undefined
+				? new Error(message)
+				: new ApiError(
+						{ method, url: '/x' },
+						{
+							url: `${BASE}/x`,
+							ok: false,
+							status: 0,
+							statusText: '',
+							body: { error: { message, code: options.code } },
+						},
+						message,
+					)
+			: new ApiError(
+					{ method, url: '/x' },
+					{
+						url: `${BASE}/x`,
+						ok: false,
+						status: options.status,
+						statusText: '',
+						body: { error: { message, code: options.code } },
+					},
+					message,
+					{ retryAfter: options.retryAfter },
+				);
+	recordLobRequestInfo(error, {
+		method,
+		hasIdempotency: options.hasIdempotency ?? false,
+		transportFailure: options.transportFailure ?? false,
+	});
+	return error;
 }

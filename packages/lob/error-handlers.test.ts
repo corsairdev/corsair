@@ -1,5 +1,6 @@
-import { LobAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
+import { lobError } from './test-helpers';
 
 // unknown: CorsairErrorHandler allows caller-defined keys, so the builtin map
 // is indexed here as a plain record of match/handler entries.
@@ -22,45 +23,43 @@ function outcome(name: string, error: Error) {
 describe('error handler matching', () => {
 	it('matches a plain 429 and a body-coded 429 as rate limits', () => {
 		expect(
-			run(
-				'RATE_LIMIT_ERROR',
-				new LobAPIError('Lob 429: too many', { status: 429 }),
-			),
+			run('RATE_LIMIT_ERROR', lobError('Lob 429: too many', { status: 429 })),
 		).toBe(true);
 		expect(
 			run(
 				'RATE_LIMIT_ERROR',
-				new LobAPIError('coded', { code: 'rate_limit_exceeded' }),
+				lobError('coded', { code: 'rate_limit_exceeded' }),
 			),
 		).toBe(true);
-		expect(run('RATE_LIMIT_ERROR', new LobAPIError('nope'))).toBe(false);
+		expect(run('RATE_LIMIT_ERROR', lobError('nope'))).toBe(false);
 	});
 
 	it('backs rate-limit retries off 5 seconds, from the documented window', async () => {
 		const plan = await outcome(
 			'RATE_LIMIT_ERROR',
-			new LobAPIError('Lob 429', { status: 429 }),
+			lobError('Lob 429', { status: 429 }),
 		);
-		expect(plan).toMatchObject({ maxRetries: 2, headersRetryAfterMs: 5_000 });
+		expect(plan).toMatchObject({ maxRetries: 1, headersRetryAfterMs: 5_000 });
 	});
 
 	it('gives a real Retry-After from the error priority', async () => {
 		// Core applies headersRetryAfterMs verbatim; when Lob itself (or a
 		// gateway) sends Retry-After, the client copies it onto the error and
 		// core's own header path wins over the fallback.
-		const error = new LobAPIError('Lob 429', {
+		const error = lobError('Lob 429', {
 			status: 429,
 			retryAfter: 1_500,
 		});
-		expect(error.retryAfter).toBe(1_500);
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).retryAfter).toBe(1_500);
 	});
 
 	it('matches auth failures on 401 and the three auth codes', async () => {
 		for (const error of [
-			new LobAPIError('a', { status: 401 }),
-			new LobAPIError('a', { code: 'unauthorized' }),
-			new LobAPIError('a', { code: 'invalid_api_key' }),
-			new LobAPIError('a', { code: 'publishable_key_not_allowed' }),
+			lobError('a', { status: 401 }),
+			lobError('a', { code: 'unauthorized' }),
+			lobError('a', { code: 'invalid_api_key' }),
+			lobError('a', { code: 'publishable_key_not_allowed' }),
 		]) {
 			expect(run('AUTH_ERROR', error)).toBe(true);
 			expect(await outcome('AUTH_ERROR', error)).toMatchObject({
@@ -71,7 +70,7 @@ describe('error handler matching', () => {
 
 	it('never retries validation failures', async () => {
 		for (const status of [400, 404, 413, 422]) {
-			const error = new LobAPIError('bad', { status });
+			const error = lobError('bad', { status });
 			expect(run('VALIDATION_ERROR', error)).toBe(true);
 			expect(await outcome('VALIDATION_ERROR', error)).toMatchObject({
 				maxRetries: 0,
@@ -84,27 +83,25 @@ describe('error handler matching', () => {
 	});
 
 	it('matches conflicts on 409', () => {
-		expect(run('CONFLICT_ERROR', new LobAPIError('c', { status: 409 }))).toBe(
-			true,
-		);
+		expect(run('CONFLICT_ERROR', lobError('c', { status: 409 }))).toBe(true);
 	});
 
 	it('retries a timeout only for a replay-safe request', async () => {
 		const read = await outcome(
 			'TIMEOUT_ERROR',
-			new LobAPIError('t', { status: 408, method: 'GET' }),
+			lobError('t', { status: 408, method: 'GET' }),
 		);
 		expect(read).toMatchObject({ maxRetries: 1 });
 
 		const write = await outcome(
 			'TIMEOUT_ERROR',
-			new LobAPIError('t', { status: 408, method: 'POST' }),
+			lobError('t', { status: 408, method: 'POST' }),
 		);
 		expect(write).toMatchObject({ maxRetries: 0 });
 
 		const keyed = await outcome(
 			'TIMEOUT_ERROR',
-			new LobAPIError('t', {
+			lobError('t', {
 				status: 408,
 				method: 'POST',
 				hasIdempotency: true,
@@ -117,20 +114,20 @@ describe('error handler matching', () => {
 		for (const status of [500, 503]) {
 			const read = await outcome(
 				'SERVER_ERROR',
-				new LobAPIError('s', { status, method: 'GET' }),
+				lobError('s', { status, method: 'GET' }),
 			);
 			expect(read).toMatchObject({ maxRetries: 1 });
 		}
 
 		const write = await outcome(
 			'SERVER_ERROR',
-			new LobAPIError('s', { status: 500, method: 'POST' }),
+			lobError('s', { status: 500, method: 'POST' }),
 		);
 		expect(write).toMatchObject({ maxRetries: 0 });
 
 		const keyedSend = await outcome(
 			'SERVER_ERROR',
-			new LobAPIError('s', {
+			lobError('s', {
 				status: 500,
 				method: 'POST',
 				hasIdempotency: true,
@@ -140,7 +137,7 @@ describe('error handler matching', () => {
 	});
 
 	it('retries a transport failure for a read, never for a keyless send', async () => {
-		const dropped = new LobAPIError('fetch failed', {
+		const dropped = lobError('fetch failed', {
 			method: 'GET',
 			transportFailure: true,
 		});
@@ -151,7 +148,7 @@ describe('error handler matching', () => {
 
 		const keyedSend = await outcome(
 			'TRANSPORT_ERROR',
-			new LobAPIError('fetch failed', {
+			lobError('fetch failed', {
 				method: 'POST',
 				hasIdempotency: true,
 				transportFailure: true,
@@ -161,7 +158,7 @@ describe('error handler matching', () => {
 
 		const keylessSend = await outcome(
 			'TRANSPORT_ERROR',
-			new LobAPIError('fetch failed', {
+			lobError('fetch failed', {
 				method: 'POST',
 				transportFailure: true,
 			}),
@@ -172,7 +169,7 @@ describe('error handler matching', () => {
 		expect(
 			run(
 				'TRANSPORT_ERROR',
-				new LobAPIError('Lob 400', { status: 400, method: 'GET' }),
+				lobError('Lob 400', { status: 400, method: 'GET' }),
 			),
 		).toBe(false);
 		// No builtin above TRANSPORT_ERROR claims a statusless error, but the
@@ -189,7 +186,7 @@ describe('error handler matching', () => {
 	it('leaves a caller handler for an uncovered status ahead of DEFAULT', () => {
 		const builtin = mergeErrorHandlers(errorHandlers, {
 			PERMISSION_ERROR: {
-				match: (error) => error instanceof LobAPIError && error.status === 403,
+				match: (error) => error instanceof ApiError && error.status === 403,
 				handler: async () => ({ maxRetries: 0 }),
 			},
 		});
@@ -207,12 +204,12 @@ describe('error handler matching', () => {
 		// never run even though its value is present.
 		const merged = mergeErrorHandlers(errorHandlers, {
 			UPSTREAM_ERROR: {
-				match: (error) => error instanceof LobAPIError && error.status === 503,
+				match: (error) => error instanceof ApiError && error.status === 503,
 				handler: async () => ({ maxRetries: 7 }),
 			},
 		});
 		const entries = merged as Record<string, HandlerEntry>;
-		const error = new LobAPIError('Lob 503', { status: 503, method: 'GET' });
+		const error = lobError('Lob 503', { status: 503, method: 'GET' });
 		const firstMatch = Object.entries(entries).find(([, entry]) =>
 			entry.match(error),
 		)?.[0];
@@ -223,13 +220,13 @@ describe('error handler matching', () => {
 	it('lets a caller override a builtin handler and keeps the fallback', async () => {
 		const builtin = mergeErrorHandlers(errorHandlers, {
 			RATE_LIMIT_ERROR: {
-				match: (error) => error instanceof LobAPIError && error.isRateLimit,
+				match: (error) => error instanceof ApiError && error.status === 429,
 				handler: async () => ({ maxRetries: 9 }),
 			},
 		});
 		// A merged entry is a Partial, so the handler takes both arguments.
 		const plan = await builtin.RATE_LIMIT_ERROR?.handler(
-			new LobAPIError('x', { status: 429 }),
+			lobError('x', { status: 429 }),
 			{} as never,
 		);
 		expect(plan).toMatchObject({ maxRetries: 9 });

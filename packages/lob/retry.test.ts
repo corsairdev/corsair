@@ -4,10 +4,9 @@ import { lob } from './index';
 import { balanceOk, postcardOk, rateLimited } from './test-fixtures';
 
 /**
- * `endpoints.test.ts` calls the HTTP client, which is built with
- * `maxRetries: 0` so only `error-handlers.ts` decides what is retried. This
- * file goes through `createCorsair` to prove that layer actually runs: it is
- * the only place a 429 can be retried at all.
+ * Two layers retry. Core's HTTP client retries a 429 three times (1 s, 2 s,
+ * 4 s) inside one call; `error-handlers.ts` then decides whether the whole
+ * call runs again. This file goes through `createCorsair` to prove both run.
  *
  * The mail sends dispatch physical pieces, so a 5xx replay is gated on the
  * Idempotency-Key: without one nothing is retried, with one the send may
@@ -76,24 +75,31 @@ describe('rate-limit retries through createCorsair', () => {
 		}
 	}, 30_000);
 
-	it('gives up after the builtin retry budget', async () => {
+	it('gives up after three core retries and one handler retry', async () => {
 		const { corsair, testDb } = await createClient();
+		jest.useFakeTimers();
 		try {
-			// The handler allows 2 retries, so 3 attempts in total.
-			for (let i = 0; i < 3; i += 1) {
+			// Core: 1 + 3 attempts per call. The handler runs the call once
+			// more, so 8 attempts in total.
+			for (let i = 0; i < 8; i += 1) {
 				respond(rateLimited, 429);
 			}
 
-			await expect(
-				corsair.lob.api.account.getBalance({}),
-			).rejects.toMatchObject({ status: 429 });
-			expect(fetchMock).toHaveBeenCalledTimes(3);
+			const settled = corsair.lob.api.account
+				.getBalance({})
+				.catch((caught: unknown) => caught);
+			for (let i = 0; i < 10; i += 1) {
+				await jest.advanceTimersByTimeAsync(5_000);
+			}
+			await expect(settled).resolves.toMatchObject({ status: 429 });
+			expect(fetchMock).toHaveBeenCalledTimes(8);
 		} finally {
+			jest.useRealTimers();
 			testDb.cleanup();
 		}
-	}, 30_000);
+	});
 
-	it('waits the documented 5 seconds before the retry', async () => {
+	it('waits 1 second before the first core retry', async () => {
 		const { corsair, testDb } = await createClient();
 		jest.useFakeTimers();
 		try {
@@ -102,7 +108,7 @@ describe('rate-limit retries through createCorsair', () => {
 
 			const promise = corsair.lob.api.account.getBalance({});
 
-			await jest.advanceTimersByTimeAsync(4_999);
+			await jest.advanceTimersByTimeAsync(999);
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 
 			await jest.advanceTimersByTimeAsync(1);
@@ -213,9 +219,9 @@ describe('transport-failure retries through createCorsair', () => {
 			// The handler allows 1 retry, so 2 attempts in total.
 			fetchMock.mockRejectedValue(new TypeError('fetch failed'));
 
-			await expect(
-				corsair.lob.api.account.getBalance({}),
-			).rejects.toMatchObject({ transportFailure: true });
+			await expect(corsair.lob.api.account.getBalance({})).rejects.toThrow(
+				'fetch failed',
+			);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();
@@ -229,7 +235,7 @@ describe('transport-failure retries through createCorsair', () => {
 
 			await expect(
 				corsair.lob.api.postcards.send(postcardInput),
-			).rejects.toMatchObject({ transportFailure: true });
+			).rejects.toThrow('fetch failed');
 			// Exactly one attempt: Lob may have applied the send before the
 			// connection dropped.
 			expect(fetchMock).toHaveBeenCalledTimes(1);
