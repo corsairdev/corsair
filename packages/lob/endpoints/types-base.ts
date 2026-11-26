@@ -491,6 +491,13 @@ export const PrintSpeedSchema = z
 	.optional()
 	.describe("Production speed. Only 'core' is offered.");
 
+export const ServiceRequestNumberSchema = z
+	.string()
+	.nullish()
+	.describe(
+		'SR# of an approved USPS promotion to apply. Top-level only: Lob ignores it inside merge_variables.',
+	);
+
 export const FscSchema = z
 	.boolean()
 	.optional()
@@ -1001,6 +1008,7 @@ const PostcardSendInputSchema = z.object({
 	qr_code: QrCodeInputSchema,
 	fsc: FscSchema,
 	print_speed: PrintSpeedSchema,
+	service_request_number: ServiceRequestNumberSchema,
 	idempotency_key: IdempotencyKeySchema,
 });
 
@@ -1118,6 +1126,7 @@ const LetterSendInputSchema = z.object({
 	qr_code: QrCodeInputSchema,
 	fsc: FscSchema,
 	print_speed: PrintSpeedSchema,
+	service_request_number: ServiceRequestNumberSchema,
 	lob_version: z
 		.string()
 		.optional()

@@ -19,6 +19,7 @@ import {
 	PrintSpeedSchema,
 	QrCodeInputSchema,
 	SendDateSchema,
+	ServiceRequestNumberSchema,
 	UseTypeSchema,
 } from './types-base';
 
@@ -245,7 +246,7 @@ const CheckSendInputSchema = z
 		attachment: ArtworkSchema.optional().describe(
 			'Artwork for a page attached after the check.',
 		),
-		service_request_number: z.string().optional(),
+		service_request_number: ServiceRequestNumberSchema,
 	})
 	.loose()
 	.superRefine((value, ctx) => {
@@ -274,7 +275,7 @@ const SelfMailerSendInputSchema = z
 			.describe("Self mailer size. Defaults to '6x18_bifold'."),
 		qr_code: QrCodeInputSchema,
 		fsc: FscSchema,
-		service_request_number: z.string().optional(),
+		service_request_number: ServiceRequestNumberSchema,
 	})
 	.loose();
 

@@ -259,6 +259,40 @@ describe('Lob request shapes', () => {
 		expect(sentHeader('Idempotency-Key')).toBe('send-42');
 	});
 
+	it('sends service_request_number at the top level of postcards and letters', async () => {
+		mockFetch(ok(postcardOk));
+		await endpoints.postcards.send(makeCtx(), {
+			to: 'adr_210a8d4b0b76d77b',
+			front: '<html>Front</html>',
+			back: '<html>Back</html>',
+			use_type: 'marketing',
+			service_request_number: '12345678',
+		});
+		expect(sentBody()).toMatchObject({ service_request_number: '12345678' });
+
+		mockFetch(ok(letterOk));
+		await endpoints.letters.send(makeCtx(), {
+			to: 'adr_210a8d4b0b76d77b',
+			from: 'adr_fa64eaa6b3f335',
+			file: '<html>Letter</html>',
+			color: false,
+			use_type: 'operational',
+			service_request_number: '12345678',
+		});
+		expect(sentBody()).toMatchObject({ service_request_number: '12345678' });
+	});
+
+	it('leaves service_request_number out when the caller omits it', async () => {
+		mockFetch(ok(postcardOk));
+		await endpoints.postcards.send(makeCtx(), {
+			to: 'adr_210a8d4b0b76d77b',
+			front: '<html>Front</html>',
+			back: '<html>Back</html>',
+			use_type: 'marketing',
+		});
+		expect(sentBody()).not.toHaveProperty('service_request_number');
+	});
+
 	it('reads a postcard with GET /postcards/{psc_id}', async () => {
 		mockFetch(ok(postcardOk));
 
