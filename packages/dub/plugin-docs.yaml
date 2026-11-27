@@ -1,0 +1,101 @@
+displayName: Dub
+description: Dub (dub.co) short links for Corsair - create, update, upsert and delete links, read click and conversion analytics and raw events, generate SVG QR codes, and manage tags, domains, folders and customers.
+domain: dub.co
+recommendedAuth: api_key
+overviewNote: |
+  Create a key at https://app.dub.co/settings/tokens (workspace Settings, API Keys, Create).
+  The key is tied to one workspace, so no operation takes a workspaceId. Things to know:
+
+  - **Deleting is permanent.** Deleted links, tags, domains, folders and customers cannot be
+    restored, and a recreated link starts with zero analytics.
+  - **Tracking cannot be undone.** `track.lead` and `track.sale` append conversion data with no
+    delete; `invoiceId` on `track.sale` is the only duplicate guard (one sale per invoice ID).
+  - **Retries.** Dub rate limits per key (60-3000 requests/minute by plan, separate per-second
+    caps on analytics). A 429 is retried up to three times, honouring `Retry-After`. Writes are
+    never replayed on a 5xx because Dub has no idempotency keys; `links.upsert` is the exception,
+    as it is create-or-update by domain and slug.
+  - **Paging.** `links.list` and `customers.list` page by cursor: pass `nextCursor` as
+    `startingAfter`. `events.list`, `tags.list`, `domains.list` and `folders.list` page by page
+    number, and a full last page leads to one empty page.
+  - **Analytics shapes.** `analytics.retrieve` returns a count object for `groupBy: 'count'` and
+    an array of rows for every other groupBy.
+  - **QR codes.** `qr.get` returns the SVG document as a string. PNG is not exposed, and the
+    `logo` parameters need a paid plan.
+  - **Out of scope.** The Dub Partners program (partners, commissions, payouts, discount codes,
+    bounties, messages, program applications), `domains.register` (it buys a domain) and
+    `domains.status` are not exposed by this plugin.
+examples:
+  read:
+    path: links.list
+    title: List the workspace links
+    args: {}
+  write:
+    path: links.create
+    title: Create a short link
+    args:
+      url: https://dub.co
+      domain: dub.sh
+      key: try
+apiExamples:
+  links.create:
+    call: "{ url: 'https://dub.co', domain: 'dub.sh', key: 'try' }"
+  links.list:
+    call: "{ search: 'try', pageSize: 50 }"
+  links.get:
+    call: "{ linkId: 'link_1KAP4CQ4Y1' }"
+  links.update:
+    call: "{ linkId: 'link_1KAP4CQ4Y1', archived: true }"
+  links.upsert:
+    call: "{ url: 'https://dub.co', domain: 'dub.sh', key: 'try' }"
+  links.count:
+    call: "{ groupBy: 'domain' }"
+  links.delete:
+    call: "{ linkId: 'link_1KAP4CQ4Y1' }"
+  links.bulkCreate:
+    call: "[{ url: 'https://dub.co', key: 'try' }, { url: 'https://dub.co/help', key: 'help' }]"
+  links.bulkUpdate:
+    call: "{ linkIds: ['link_1KAP4CQ4Y1'], data: { archived: true } }"
+  links.bulkDelete:
+    call: "{ linkIds: ['link_1KAP4CQ4Y1'] }"
+  analytics.retrieve:
+    call: "{ groupBy: 'countries', interval: '7d' }"
+  events.list:
+    call: "{ event: 'clicks', limit: 100 }"
+  qr.get:
+    call: "{ url: 'https://dub.sh/try', size: 512 }"
+  tags.create:
+    call: "{ name: 'Announcement', color: 'red' }"
+  tags.list:
+    call: "{ search: 'ann', pageSize: 50 }"
+  tags.update:
+    call: "{ id: 'tag_1KAP4C9G2F', name: 'Launch' }"
+  tags.delete:
+    call: "{ id: 'tag_1KAP4C9G2F' }"
+  domains.create:
+    call: "{ slug: 'acme.link' }"
+  domains.list:
+    call: "{ archived: false }"
+  domains.update:
+    call: "{ slug: 'acme.link', newSlug: 'acme.io' }"
+  domains.delete:
+    call: "{ slug: 'acme.link' }"
+  folders.create:
+    call: "{ name: 'Campaigns' }"
+  folders.list:
+    call: "{ search: 'camp' }"
+  folders.update:
+    call: "{ id: 'fold_1KAP4CZF3T', name: 'Q4' }"
+  folders.delete:
+    call: "{ id: 'fold_1KAP4CZF3T' }"
+  track.lead:
+    call: "{ clickId: 'click_1KAP4CD1E2', eventName: 'Sign up', customerExternalId: 'ext_123456' }"
+  track.sale:
+    call: "{ customerExternalId: 'ext_123456', amount: 4900, eventName: 'Invoice paid' }"
+  customers.list:
+    call: "{ search: 'jordan', pageSize: 50 }"
+  customers.get:
+    call: "{ id: 'cus_1KAP4CXQ2W' }"
+  customers.update:
+    call: "{ id: 'cus_1KAP4CXQ2W', name: 'Jordan Lee' }"
+  customers.delete:
+    call: "{ id: 'cus_1KAP4CXQ2W' }"
