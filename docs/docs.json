@@ -4816,6 +4816,14 @@
                 ]
               },
               {
+                "group": "Railway",
+                "pages": [
+                  "plugins/railway/overview",
+                  "plugins/railway/api",
+                  "plugins/railway/database"
+                ]
+              },
+              {
                 "group": "Raisely",
                 "pages": [
                   "plugins/raisely/overview",

@@ -1,0 +1,841 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from Railway's GraphQL schema;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Railway
+domain: railway.com
+description: "Projects, environments, services and service instances, deployments with logs, deploy, redeploy, restart and rollback, variables, domains and TCP proxies, volumes and backups, buckets, databases, templates, GitHub repo deploys, workspaces, members, invitations and tokens, notification rules, observability dashboards, metrics, HTTP logs and traces, usage limits, sandboxes and cloud agents (394 operations over Railway's public GraphQL API)."
+recommendedAuth: api_key
+overviewNote: |
+  Connect with a Railway token from railway.com/account/tokens: an account
+  token reaches every workspace you are in, a workspace token one workspace.
+  Both go out as `Authorization: Bearer <token>`. A project token (from a
+  project's settings) works with `tokenKind: 'project'` in the plugin
+  options and reaches only that project's environment.
+
+  - **One operation per GraphQL field.** Every query and mutation of
+  Railway's public API (`backboard.railway.com/graphql/v2`) is an operation;
+  its input is the field's arguments, mostly an `input` object for mutations.
+  The plugin sends a fixed document per operation that selects the result's
+  scalar and enum fields and the scalars of each nested object. Fields that
+  need arguments, connections inside a result (a project's services come
+  from their own list operation) and fields API tokens can't read
+  (`User.platformFeatureFlags`) are left out.
+  - **Lists.** Relay connections (projects, deployments, environments, ...)
+  take `first`/`after` (or `last`/`before`) and return `{ items, pageInfo }`;
+  pass `pageInfo.endCursor` as `after` for the next page. A few lists page
+  their own way (`cloudAgentTasks.list` returns `nextCursor` and takes
+  `cursor`): their output says which fields to use.
+  - **Errors.** Railway answers most failures with HTTP 200 and a GraphQL
+  `errors` list; the plugin raises them as `RailwayGraphQLError` with a
+  status (403 for "Not Authorized", 404 for a missing record, 429 for
+  "too many requests" or "too quickly", 400 otherwise). When the only
+  errors are inside the result (an audit log entry whose project was
+  deleted), the call succeeds and those nested fields come back null.
+  - **Risk.** Queries are `read`. Deletes, deploys, redeploys, restarts,
+  rollbacks, template and repo deploys, new services, environments,
+  volumes, buckets, sandboxes and cloud agents (all use credits), tokens and
+  credential resets, invitations (they send email), billing and usage limits,
+  restores and transfers are `destructive`; other mutations are `write`.
+  - Not wrapped: Railway's CLI telemetry and login-session fields, its staff
+  and careers fields, the dashboard's landing and X-agent claim state, email
+  change and second-factor/passkey setup (they need a person at the
+  dashboard), and fields Railway marks deprecated. Railway's project
+  webhooks are not signed, so the plugin has no webhook handlers.
+examples:
+  read:
+    path: projects.list
+    title: List projects
+    args: {"first": 20}
+  write:
+    path: variables.upsert
+    title: Set a service variable
+    args: {"input": {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17", "name": "API_URL", "value": "https://api.example.com"}}
+apiExamples:
+  accessGroupMembers.add:
+    args: {"input": {"accessGroupId": "example", "userId": "00000009-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  accessGroupMembers.remove:
+    args: {"input": {"accessGroupId": "example", "userId": "00000009-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  accessGroupProjects.attach:
+    args: {"input": {"accessGroupId": "example", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  accessGroupProjects.detach:
+    args: {"input": {"accessGroupId": "example", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  accessGroups.create:
+    args: {"input": {"name": "api", "role": "MEMBER", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  accessGroups.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  accessGroups.update:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {}}
+  agentUsage.get:
+    args: {"workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  agentUsage.setLimit:
+    args: {"input": {"hardLimitCents": 1, "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  apiTokens.create:
+    args: {"input": {"name": "api"}}
+  apiTokens.current:
+    args: {}
+  apiTokens.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  apiTokens.list:
+    args: {}
+  auditLogs.eventTypes:
+    args: {}
+  auditLogs.get:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  auditLogs.list:
+    args: {"workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  billing.createFreePlanSubscription:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  billing.togglePayoutsToCredits:
+    args: {"customerId": "example", "input": {"isWithdrawingToCredits": true}}
+  botScopeBindings.list:
+    args: {}
+  botScopeBindings.remove:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  buckets.create:
+    args: {"input": {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  buckets.instanceDetails:
+    args: {"bucketId": "0000000a-5c1e-4d8a-9f43-2b6e1c0a9d17", "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  buckets.resetCredentials:
+    args: {"bucketId": "0000000a-5c1e-4d8a-9f43-2b6e1c0a9d17", "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  buckets.s3Credentials:
+    args: {"bucketId": "0000000a-5c1e-4d8a-9f43-2b6e1c0a9d17", "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  buckets.update:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {"name": "api"}}
+  canvasViews.merge:
+    args: {"sourceEnvironmentId": "example", "targetEnvironmentId": "example"}
+  canvasViews.mergePreview:
+    args: {"sourceEnvironmentId": "example", "targetEnvironmentId": "example"}
+  clearanceTokens.create:
+    args: {"input": {"name": "api", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  clearanceTokens.revoke:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  cloudAgentCheckpoints.create:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  cloudAgentCheckpoints.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  cloudAgentCheckpoints.get:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  cloudAgentCheckpoints.list:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  cloudAgentConsoleSessions.list:
+    args: {"cloudAgentId": "0000000c-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  cloudAgentTasks.cancel:
+    args: {"taskId": "example"}
+  cloudAgentTasks.dispatch:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "prompt": "example"}}
+  cloudAgentTasks.get:
+    args: {"cloudAgentId": "0000000c-5c1e-4d8a-9f43-2b6e1c0a9d17", "sessionId": "example"}
+  cloudAgentTasks.list:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  cloudAgentTasks.models:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  cloudAgentTasks.recover:
+    args: {"cloudAgentId": "0000000c-5c1e-4d8a-9f43-2b6e1c0a9d17", "sessionId": "example"}
+  cloudAgentTasks.respond:
+    args: {"input": {"action": "ACCEPT", "requestId": "example", "taskId": "example"}}
+  cloudAgents.archive:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  cloudAgents.create:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  cloudAgents.createDashboardFeedback:
+    args: {"input": {}}
+  cloudAgents.createFeedback:
+    args: {"input": {"activeTools": ["example"], "agentVersion": "example", "cloudAgentId": "0000000c-5c1e-4d8a-9f43-2b6e1c0a9d17", "description": "Corsair example", "model": "example", "reportId": "example", "reportedAtMs": 1, "sessionId": "example", "state": "example", "steps": 1, "tuiVersion": "example"}}
+  cloudAgents.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  cloudAgents.deploy:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  cloudAgents.fork:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  cloudAgents.get:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  cloudAgents.list:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  cloudAgents.listMine:
+    args: {}
+  cloudAgents.markSeen:
+    args: {"cloudAgentId": "0000000c-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  cloudAgents.renameSession:
+    args: {"cloudAgentId": "0000000c-5c1e-4d8a-9f43-2b6e1c0a9d17", "sessionId": "example", "title": "api"}
+  cloudAgents.sleep:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  cloudAgents.unarchive:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  cloudAgents.wake:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  customDomains.create:
+    args: {"input": {"domain": "api.example.com", "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  customDomains.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  customDomains.get:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  customDomains.isAvailable:
+    args: {"domain": "api.example.com"}
+  customDomains.issueCertificate:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  customDomains.update:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  databases.cancelPitrHaWorkflow:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "rootServiceId": "example"}
+  databases.clearPitrHaWorkflowProgress:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "rootServiceId": "example"}
+  databases.disablePitrForHaCluster:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "rootServiceId": "example"}}
+  databases.enablePitrForHaCluster:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "rootServiceId": "example"}}
+  databases.mysqlPitrRestorableWindow:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  databases.passwordRotationProgress:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  databases.pitrHaClusterReplicationHealth:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "rootServiceId": "example"}
+  databases.pitrHaWorkflowProgress:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "rootServiceId": "example"}
+  databases.postgresHaClusterUptime:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  databases.resetPassword:
+    args: {"input": {"databaseType": "example", "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  deploymentTriggers.create:
+    args: {"input": {"branch": "main", "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "provider": "example", "repository": "example", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  deploymentTriggers.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  deploymentTriggers.list:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  deploymentTriggers.update:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {}}
+  deployments.approve:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  deployments.buildLogs:
+    args: {"deploymentId": "00000005-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  deployments.cancel:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  deployments.createInstanceExecution:
+    args: {"input": {"serviceInstanceId": "example"}}
+  deployments.events:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  deployments.get:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  deployments.instanceExecutions:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  deployments.list:
+    args: {"input": {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}, "first": 10}
+  deployments.logs:
+    args: {"deploymentId": "00000005-5c1e-4d8a-9f43-2b6e1c0a9d17", "limit": 100}
+  deployments.redeploy:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  deployments.remove:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  deployments.restart:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  deployments.rollback:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  deployments.snapshot:
+    args: {"deploymentId": "00000005-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  deployments.stop:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  dnsQueryLogs.list:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  dockerCompose.import:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "yaml": "example"}
+  domains.list:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  egressGateways.clearAssociations:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  egressGateways.createAssociation:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  egressGateways.haMigrationPreview:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  egressGateways.haPreview:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  egressGateways.legacyPreview:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  egressGateways.list:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  egressGateways.rollbackFromHa:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  egressGateways.upgradeToHa:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  environmentPatches.commit:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  environmentPatches.commitStaged:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  environmentPatches.dismissFailure:
+    args: {"patchId": "example"}
+  environmentPatches.get:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  environmentPatches.list:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  environmentPatches.restage:
+    args: {"patchId": "example"}
+  environments.applyChangeSet:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {}}
+  environments.changeSetApplyStatus:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  environments.create:
+    args: {"input": {"name": "api", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  environments.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  environments.get:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  environments.hasLegacyStaticEgress:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  environments.history:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  environments.iacPartialRelease:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "partial": "example"}
+  environments.iacPartialTransfer:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "fromPartial": "example", "toPartial": "example"}
+  environments.list:
+    args: {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  environments.logs:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  environments.overrideBase:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {}}
+  environments.pendingWork:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  environments.previewChangeSet:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {}}
+  environments.rename:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {"name": "api"}}
+  environments.stageChanges:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {}}
+  environments.stagedChanges:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  environments.triggerDeploys:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  environments.unskipService:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  environments.updateClearanceDefault:
+    args: {"input": {"enabled": true, "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  environments.upsertConfigPlanComment:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "githubOidcToken": "example", "plan": "example", "prNumber": 1}}
+  events.list:
+    args: {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  featureFlags.add:
+    args: {"input": {"flag": "AGENT_BYOK"}}
+  featureFlags.listPlatform:
+    args: {}
+  featureFlags.remove:
+    args: {"input": {"flag": "AGENT_BYOK"}}
+  functionRuntimes.get:
+    args: {"name": "bun"}
+  functionRuntimes.list:
+    args: {}
+  github.prInfo:
+    args: {"prNumber": 1, "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  github.prInfoResult:
+    args: {"prNumber": 1, "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  github.repoAccessAvailable:
+    args: {"fullRepoName": "example"}
+  github.repos.branches:
+    args: {"owner": "example", "repo": "acme/api"}
+  github.repos.deploy:
+    args: {"input": {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "repo": "acme/api"}}
+  github.repos.get:
+    args: {"fullRepoName": "example"}
+  github.repos.isNameAvailable:
+    args: {"fullRepoName": "example"}
+  github.repos.list:
+    args: {}
+  github.repos.update:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  github.sshKeys:
+    args: {}
+  github.writableScopes:
+    args: {}
+  httpLogs.list:
+    args: {"deploymentId": "00000005-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  httpMetrics.duration:
+    args: {"endDate": "2026-04-09T10:00:00Z", "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17", "startDate": "2026-04-09T10:00:00Z"}
+  httpMetrics.get:
+    args: {"endDate": "2026-04-09T10:00:00Z", "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17", "startDate": "2026-04-09T10:00:00Z"}
+  httpMetrics.groupedByStatus:
+    args: {"endDate": "2026-04-09T10:00:00Z", "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17", "startDate": "2026-04-09T10:00:00Z"}
+  inviteCodes.get:
+    args: {"code": "postgres"}
+  inviteCodes.use:
+    args: {"code": "postgres"}
+  me.get:
+    args: {}
+  metrics.get:
+    args: {"measurements": ["AGENT_CACHE_READ_TOKENS"], "startDate": "2026-04-09T10:00:00Z"}
+  networkFlowLogs.list:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  notificationDeliveries.get:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  notificationDeliveries.list:
+    args: {}
+  notificationDeliveries.markAsRead:
+    args: {"deliveryIds": ["example"]}
+  notificationRules.create:
+    args: {"input": {"channelConfigs": ["example"], "eventTypes": ["example"], "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  notificationRules.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  notificationRules.list:
+    args: {"workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  notificationRules.update:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {}}
+  notificationRules.upsertSlackChannel:
+    args: {"workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  observabilityDashboardMonitors.create:
+    args: {"dashboardItemId": "example", "input": {"config": {"type": "threshold"}}}
+  observabilityDashboardMonitors.remove:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  observabilityDashboardMonitors.update:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {"config": {"type": "threshold"}}}
+  observabilityDashboards.create:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  observabilityDashboards.list:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  observabilityDashboards.reset:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  observabilityDashboards.update:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": [{"dashboardItem": {"config": {}, "id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "name": "api", "type": "DNS_LOGS_ITEM"}, "displayConfig": "example", "id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}]}
+  passkeys.list:
+    args: {}
+  platform.stats:
+    args: {}
+  platform.status:
+    args: {}
+  preferences.get:
+    args: {}
+  preferences.update:
+    args: {"input": {}}
+  privateNetworkEndpoints.get:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "privateNetworkId": "example", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  privateNetworkEndpoints.isNameAvailable:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "prefix": "example", "privateNetworkId": "example"}
+  privateNetworkEndpoints.rename:
+    args: {"dnsName": "example", "id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "privateNetworkId": "example"}
+  privateNetworks.list:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projectFavorites.list:
+    args: {"workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projectFavorites.set:
+    args: {"favorite": true, "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projectInvitations.accept:
+    args: {"code": "postgres"}
+  projectInvitations.create:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {"email": "ada@example.com", "role": "MEMBER"}}
+  projectInvitations.createInviteCode:
+    args: {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "role": "MEMBER"}
+  projectInvitations.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projectInvitations.get:
+    args: {"code": "postgres"}
+  projectInvitations.inviteCode:
+    args: {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "role": "MEMBER"}
+  projectInvitations.list:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projectInvitations.resend:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projectMembers.add:
+    args: {"input": {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "role": "MEMBER", "userId": "00000009-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  projectMembers.list:
+    args: {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projectMembers.remove:
+    args: {"input": {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "userId": "00000009-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  projectMembers.update:
+    args: {"input": {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "role": "MEMBER", "userId": "00000009-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  projectTokens.create:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "name": "api", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  projectTokens.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projectTokens.get:
+    args: {}
+  projectTokens.list:
+    args: {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projects.addFeatureFlag:
+    args: {"input": {"flag": "LEGACY_CONFIG_AS_CODE", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  projects.cancelScheduledDelete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projects.claim:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projects.compliance:
+    args: {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projects.confirmTransfer:
+    args: {"input": {"ownershipTransferId": "example", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  projects.create:
+    args: {"input": {"name": "acme-api", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  projects.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projects.forceScheduledDelete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projects.get:
+    args: {"id": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projects.initiateTransfer:
+    args: {"input": {"memberId": "example", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  projects.leave:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projects.list:
+    args: {"first": 20}
+  projects.listByIds:
+    args: {"ids": ["00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"]}
+  projects.removeFeatureFlag:
+    args: {"input": {"flag": "LEGACY_CONFIG_AS_CODE", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  projects.resourceAccess:
+    args: {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projects.scheduleDelete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projects.serviceUsage:
+    args: {"endDate": "2026-04-09T10:00:00Z", "measurements": ["AGENT_CACHE_READ_TOKENS"], "startDate": "2026-04-09T10:00:00Z", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projects.transfer:
+    args: {"input": {"workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}, "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  projects.update:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {}}
+  projects.updateClearanceDefault:
+    args: {"input": {"enabled": true, "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  projects.workspaceMembers:
+    args: {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  railwayDomainDnsRecords.create:
+    args: {"input": {"answer": "example", "domain": "api.example.com", "host": "example", "type": "A", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  railwayDomainDnsRecords.delete:
+    args: {"input": {"domain": "api.example.com", "recordId": 1, "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  railwayDomainDnsRecords.list:
+    args: {"domain": "api.example.com", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  railwayDomainDnsRecords.update:
+    args: {"input": {"answer": "example", "domain": "api.example.com", "host": "example", "recordId": 1, "type": "A", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  railwayDomainEmailForwardingRules.create:
+    args: {"input": {"alias": "example", "destination": "example", "domain": "api.example.com", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  railwayDomainEmailForwardingRules.delete:
+    args: {"input": {"alias": "example", "domain": "api.example.com", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  railwayDomainEmailForwardingRules.list:
+    args: {"domain": "api.example.com", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  railwayDomainEmailForwardingRules.removeAll:
+    args: {"input": {"domain": "api.example.com", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  railwayDomainEmailForwardingRules.sendTest:
+    args: {"input": {"alias": "example", "domain": "api.example.com", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  railwayDomainEmailForwardingRules.update:
+    args: {"input": {"alias": "example", "destination": "example", "domain": "api.example.com", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  railwayDomains.emailForwardingEligibility:
+    args: {"domain": "api.example.com", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  railwayDomains.emailForwardingLimits:
+    args: {}
+  railwayDomains.get:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  railwayDomains.getByName:
+    args: {"domain": "api.example.com", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  railwayDomains.list:
+    args: {"workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  railwayDomains.setNameservers:
+    args: {"input": {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "nameservers": ["example"]}}
+  railwayDomains.update:
+    args: {"input": {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  referral.get:
+    args: {"workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  referral.update:
+    args: {"input": {"code": "postgres", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  regions.list:
+    args: {}
+  resourceAccess.get:
+    args: {"explicitResourceOwner": {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  sandboxCheckpoints.create:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "name": "api", "sandboxId": "0000000d-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sandboxCheckpoints.delete:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sandboxCheckpoints.list:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sandboxCheckpoints.rename:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "name": "api"}
+  sandboxSessions.list:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sandboxes.buildTemplate:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {}}
+  sandboxes.create:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  sandboxes.destroy:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sandboxes.get:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sandboxes.heartbeat:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sandboxes.list:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sandboxes.templateBuild:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  serviceDomains.create:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  serviceDomains.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  serviceDomains.isAvailable:
+    args: {"domain": "api.example.com"}
+  serviceDomains.update:
+    args: {"input": {"domain": "api.example.com", "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceDomainId": "0000000f-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  serviceInstances.autoDeployStatus:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  serviceInstances.clearAutoUpdateSnooze:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  serviceInstances.deploy:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  serviceInstances.deployV2:
+    args: {"serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17", "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  serviceInstances.dismissVulnRemediation:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  serviceInstances.get:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  serviceInstances.isUpdatable:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  serviceInstances.limitOverride:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  serviceInstances.limits:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  serviceInstances.patchVulnNow:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  serviceInstances.redeploy:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  serviceInstances.snoozeAutoUpdate:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  serviceInstances.update:
+    args: {"input": {}, "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  serviceInstances.updateAutoDeploy:
+    args: {"input": {"enabled": true, "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  serviceInstances.updateAutoUpdateSchedule:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "schedule": [{"day": 1, "endHour": 1, "startHour": 1}], "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  serviceInstances.updateClearance:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  serviceInstances.updateLimits:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  services.acknowledgeTakedown:
+    args: {"input": {"acknowledgmentId": "example", "statement": "example"}}
+  services.addFeatureFlag:
+    args: {"input": {"flag": "COPY_VOLUME_TO_ENVIRONMENT", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  services.connect:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {}}
+  services.create:
+    args: {"input": {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "name": "web", "source": {"image": "nginx:alpine"}}}
+  services.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  services.disableCdn:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  services.disconnect:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  services.enableCdn:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  services.generateShellToken:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "instanceId": "example", "scope": "example"}}
+  services.get:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  services.purgeCache:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "scope": "ALL", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  services.removeFeatureFlag:
+    args: {"input": {"flag": "COPY_VOLUME_TO_ENVIRONMENT", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  services.removeUpstreamUrl:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  services.setUnderAttackMode:
+    args: {"input": {"enabled": true, "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  services.update:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {}}
+  services.updateEdgeConfig:
+    args: {"input": {"config": {}, "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  services.updateEdgeRules:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  services.updateKind:
+    args: {"input": {"serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  services.validateEdgeRules:
+    args: {"input": {"edgeRules": "example", "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  sessions.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sessions.list:
+    args: {}
+  sharedVariables.configure:
+    args: {"input": {"disabledServiceIds": ["example"], "enabledServiceIds": ["example"], "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "name": "api", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  signals.changes:
+    args: {"name": "api"}
+  signals.create:
+    args: {"input": {"default": "example", "name": "api", "owner": "example", "type": "bool"}}
+  signals.delete:
+    args: {"input": {"name": "api", "owner": "example"}}
+  signals.evaluate:
+    args: {"context": {}, "name": "api"}
+  signals.get:
+    args: {"name": "api"}
+  signals.list:
+    args: {}
+  signals.replace:
+    args: {"input": {"default": "example", "name": "api", "owner": "example", "type": "bool"}}
+  signals.rollback:
+    args: {"input": {"name": "api", "owner": "example", "seq": 1}}
+  signals.setDefault:
+    args: {"input": {"default": "example", "name": "api", "owner": "example"}}
+  signals.setRule:
+    args: {"input": {"expression": "example", "name": "api", "owner": "example", "ruleId": "example", "value": "https://api.example.com"}}
+  signals.unsetRule:
+    args: {"input": {"name": "api", "owner": "example", "ruleId": "example"}}
+  sshPublicKeys.approveSignup:
+    args: {"code": "postgres"}
+  sshPublicKeys.create:
+    args: {"input": {"name": "api", "publicKey": "example"}}
+  sshPublicKeys.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sshPublicKeys.list:
+    args: {}
+  sshPublicKeys.signupInfo:
+    args: {"code": "postgres"}
+  tcpProxies.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  tcpProxies.list:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  templates.clone:
+    args: {"input": {"code": "postgres"}}
+  templates.count:
+    args: {}
+  templates.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {}}
+  templates.deploy:
+    args: {"input": {"serializedConfig": "example", "templateId": "0000000b-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  templates.ejectServiceSource:
+    args: {"input": {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "repoName": "example", "repoOwner": "example", "serviceIds": ["00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"], "upstreamUrl": "example"}}
+  templates.generate:
+    args: {"input": {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  templates.get:
+    args: {"code": "postgres"}
+  templates.list:
+    args: {}
+  templates.metrics:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  templates.publish:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {"category": "example", "description": "Corsair example", "readme": "example"}}
+  templates.revert:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "rootServiceId": "example", "templateCode": "example"}}
+  templates.search:
+    args: {"query": "example"}
+  templates.sourceForProject:
+    args: {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  templates.unpublish:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  templates.updateVolume:
+    args: {"serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17", "templateId": "0000000b-5c1e-4d8a-9f43-2b6e1c0a9d17", "volumeId": "00000007-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  traces.get:
+    args: {"traceId": "4bf92f3577b34da6a3ce929d0e0e4736", "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  traces.list:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  traces.status:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  trustedDomains.create:
+    args: {"input": {"domainName": "example", "role": "MEMBER", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  trustedDomains.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  trustedDomains.list:
+    args: {"workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  trustedDomains.retriggerVerification:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  trustedDomains.update:
+    args: {"input": {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  twoFactor.get:
+    args: {}
+  usage.estimated:
+    args: {"measurements": ["AGENT_CACHE_READ_TOKENS"]}
+  usage.get:
+    args: {"measurements": ["AGENT_CACHE_READ_TOKENS"]}
+  usage.removeLimit:
+    args: {"input": {"customerId": "example"}}
+  usage.setLimit:
+    args: {"input": {"customerId": "example", "softLimitDollars": 1}}
+  user.agreeToFairUse:
+    args: {"agree": true}
+  user.delete:
+    args: {}
+  user.disconnectDiscord:
+    args: {}
+  user.pendingEmailChange:
+    args: {}
+  user.removeProviderAuth:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  user.updateTerms:
+    args: {}
+  userProfile.get:
+    args: {"username": "example"}
+  userProfile.update:
+    args: {"input": {"isPublic": true}}
+  variables.delete:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "name": "api", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  variables.forServiceDeployment:
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  variables.list:
+    args: {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  variables.upsert:
+    args: {"input": {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17", "name": "API_URL", "value": "https://api.example.com"}}
+  variables.upsertMany:
+    args: {"input": {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17", "variables": {}}}
+  volumeInstanceBackupSchedules.list:
+    args: {"volumeInstanceId": "00000008-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  volumeInstanceBackupSchedules.update:
+    args: {"kinds": ["DAILY"], "volumeInstanceId": "00000008-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  volumeInstanceBackups.create:
+    args: {"volumeInstanceId": "00000008-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  volumeInstanceBackups.delete:
+    args: {"volumeInstanceBackupId": "example", "volumeInstanceId": "00000008-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  volumeInstanceBackups.list:
+    args: {"volumeInstanceId": "00000008-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  volumeInstanceBackups.lock:
+    args: {"volumeInstanceBackupId": "example", "volumeInstanceId": "00000008-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  volumeInstanceBackups.restore:
+    args: {"volumeInstanceBackupId": "example", "volumeInstanceId": "00000008-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  volumeInstances.get:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  volumeInstances.pitrRestore:
+    args: {"targetTimestamp": "2026-04-09T10:00:00Z", "volumeInstanceId": "00000008-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  volumeInstances.pitrRestoreEstimate:
+    args: {"targetTimestamp": "2026-04-09T10:00:00Z", "volumeInstanceId": "00000008-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  volumeInstances.update:
+    args: {"input": {}, "volumeId": "00000007-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  volumes.create:
+    args: {"input": {"mountPath": "example", "projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  volumes.delete:
+    args: {"volumeId": "00000007-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  volumes.update:
+    args: {"input": {}, "volumeId": "00000007-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  webhooks.test:
+    args: {"payload": "example", "url": "https://example.com/railway/webhook"}
+  workflows.status:
+    args: {"workflowId": "example"}
+  workspaceApiTokens.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  workspaceApiTokens.list:
+    args: {"workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  workspaceMembers.changeRole:
+    args: {"input": {"role": "MEMBER", "userId": "00000009-5c1e-4d8a-9f43-2b6e1c0a9d17", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
+  workspaceMembers.invite:
+    args: {"input": {"code": "postgres", "email": "ada@example.com"}, "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  workspaceMembers.remove:
+    args: {"input": {"userId": "00000009-5c1e-4d8a-9f43-2b6e1c0a9d17"}, "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  workspacePolicies.addDeploySource:
+    args: {"sourceId": "example", "sourceType": "GITHUB_ORG", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  workspacePolicies.get:
+    args: {"workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  workspacePolicies.removeDeploySource:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  workspacePolicies.selectableDeploySources:
+    args: {"sourceType": "GITHUB_ORG", "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  workspacePolicies.updateItem:
+    args: {"workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  workspaceTemplates.list:
+    args: {"workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  workspaces.complianceAgreements:
+    args: {"workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  workspaces.createInviteCode:
+    args: {"input": {"role": "MEMBER"}, "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  workspaces.delete:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  workspaces.get:
+    args: {"workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  workspaces.getByCode:
+    args: {"code": "postgres"}
+  workspaces.identityProviders:
+    args: {"workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  workspaces.leave:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  workspaces.listExternal:
+    args: {}
+  workspaces.setRestrictProjectVisibilityToGroups:
+    args: {"enabled": true, "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  workspaces.update:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {}}
+  workspaces.updateTwoFactorEnforcement:
+    args: {"enabled": true, "workspaceId": "00000006-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  workspaces.upsertSlackChannel:
+    args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  workspaces.usageTotals:
+    args: {"measurements": ["AGENT_CACHE_READ_TOKENS"]}
+  workspaces.useInviteCode:
+    args: {"code": "postgres"}

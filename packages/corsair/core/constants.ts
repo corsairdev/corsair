@@ -581,6 +581,7 @@ export const BaseProviders = [
 	'radar',
 	'ragic',
 	'raisely',
+	'railway',
 	'ramp',
 	'razorpay',
 	'realphonevalidation',
@@ -1389,6 +1390,7 @@ export const ProviderDisplayNames = {
 	radar: 'Radar',
 	ragic: 'Ragic',
 	raisely: 'Raisely',
+	railway: 'Railway',
 	ramp: 'Ramp',
 	razorpay: 'Razorpay',
 	realphonevalidation: 'RealPhoneValidation',
@@ -2204,6 +2206,7 @@ export type AllProviders =
 	| 'radar'
 	| 'ragic'
 	| 'raisely'
+	| 'railway'
 	| 'ramp'
 	| 'razorpay'
 	| 'realphonevalidation'
