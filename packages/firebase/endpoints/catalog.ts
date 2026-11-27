@@ -457,14 +457,8 @@ export const firebaseEndpointsNested = {
 			},
 			undelete: op('management.androidApps.undelete'),
 		},
-		availableLocations: {
-			list: op('management.availableLocations.list'),
-		},
 		availableProjects: {
 			list: op('management.availableProjects.list'),
-		},
-		defaultLocation: {
-			finalize: op('management.defaultLocation.finalize'),
 		},
 		iosApps: {
 			create: op('management.iosApps.create'),
@@ -1438,14 +1432,8 @@ export const firebaseEndpointSchemas = {
 	'management.androidApps.undelete': firebaseSchemaEntry(
 		'management.androidApps.undelete',
 	),
-	'management.availableLocations.list': firebaseSchemaEntry(
-		'management.availableLocations.list',
-	),
 	'management.availableProjects.list': firebaseSchemaEntry(
 		'management.availableProjects.list',
-	),
-	'management.defaultLocation.finalize': firebaseSchemaEntry(
-		'management.defaultLocation.finalize',
 	),
 	'management.iosApps.create': firebaseSchemaEntry('management.iosApps.create'),
 	'management.iosApps.get': firebaseSchemaEntry('management.iosApps.get'),
@@ -2279,7 +2267,7 @@ export const firebaseEndpointMeta = {
 		description: 'Finishes enrolling a second factor for the user',
 	},
 	'authAdmin.accounts.mfaEnrollment.start': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Step one of the MFA enrollment process. In SMS case, this sends an SMS verification code to the user',
 	},
@@ -2293,7 +2281,7 @@ export const firebaseEndpointMeta = {
 		description: 'Verifies the MFA challenge and performs sign-in',
 	},
 	'authAdmin.accounts.mfaSignIn.start': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Sends the MFA challenge',
 	},
 	'authAdmin.accounts.revokeToken': {
@@ -2615,7 +2603,8 @@ export const firebaseEndpointMeta = {
 		description: 'Updates a backup schedule',
 	},
 	'firestore.databases.bulkDeleteDocuments': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Bulk deletes a subset of documents from Google Cloud Firestore. Documents created or updated after the underlying system starts to process the request will not be deleted',
 	},
@@ -3098,20 +3087,10 @@ export const firebaseEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Restores the specified AndroidApp to the FirebaseProject',
 	},
-	'management.availableLocations.list': {
-		riskLevel: 'read',
-		description:
-			'**DECOMMISSIONED.** **If called, this endpoint will return a 404 error.** _Instead, use the applicable resource-specific REST API (or associated documentation, as needed) to determine valid locations for each resource used in your Project._ Lists the valid ["locations for default Google Cloud resources"](https://firebase.google.com/docs/projects/locations#default-cloud-location) for the... (paged with pageToken / nextPageToken)',
-	},
 	'management.availableProjects.list': {
 		riskLevel: 'read',
 		description:
 			'Lists each [Google Cloud `Project`](https://cloud.google.com/resource-manager/reference/rest/v1/projects) that can have Firebase resources added and Firebase services enabled. A Project will only be listed if: - The caller has sufficient [Google IAM](https://cloud.google.com/iam) permissions to call AddFirebase. - The Project is not already a FirebaseProject. - The Project is not in an... (paged with pageToken / nextPageToken)',
-	},
-	'management.defaultLocation.finalize': {
-		riskLevel: 'write',
-		description:
-			'**DECOMMISSIONED.** **If called, this endpoint will return a 404 error.** _Instead, use the applicable resource-specific REST API to set the location for each resource used in your Project._ Sets the ["location for default Google Cloud resources"](https://firebase.google.com/docs/projects/locations#default-cloud-location) for the specified FirebaseProject. This method creates a Google App...',
 	},
 	'management.iosApps.create': {
 		riskLevel: 'write',
@@ -3183,7 +3162,7 @@ export const firebaseEndpointMeta = {
 	'management.projects.patch': {
 		riskLevel: 'write',
 		description:
-			'Updates the attributes of the specified FirebaseProject. All [query parameters](#query-parameters) are required',
+			'Updates the attributes of the specified FirebaseProject. All query parameters are required',
 	},
 	'management.projects.removeAnalytics': {
 		riskLevel: 'destructive',
@@ -3514,7 +3493,8 @@ export const firebaseEndpointMeta = {
 			'Retrieves a list of buckets for a given project (paged with pageToken / nextPageToken)',
 	},
 	'storage.buckets.lockRetentionPolicy': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description: 'Locks retention policy on a bucket',
 	},
 	'storage.buckets.operations.advanceRelocateBucket': {

@@ -76,89 +76,138 @@ describeIfLive('firebase live', () => {
 	(live ? it : it.skip)(
 		'manages the project, a web app, Hosting, Rules, Remote Config and FCM',
 		async () => {
-			const info = await api.management.projects.get({ name: projectName });
-			expect(info.projectId).toBe(project);
-			const sdk = await api.management.projects.getAdminSdkConfig({
-				name: `${projectName}/adminSdkConfig`,
-			});
-			expect(sdk.projectId).toBe(project);
+			// Everything created is undone at the end, even after a failure
+			// (a project has at most 36 Hosting sites); one failed cleanup
+			// doesn't stop the others.
+			const cleanup: Array<() => Promise<unknown>> = [];
+			try {
+				const info = await api.management.projects.get({ name: projectName });
+				expect(info.projectId).toBe(project);
+				const sdk = await api.management.projects.getAdminSdkConfig({
+					name: `${projectName}/adminSdkConfig`,
+				});
+				expect(sdk.projectId).toBe(project);
 
-			const op = await api.management.webApps.create({
-				parent: projectName,
-				displayName: `corsair-live-${STAMP}`,
-			});
-			let appName: string | undefined;
-			for (let i = 0; i < 15 && op.name && !appName; i++) {
-				const done = await api.management.operations.get({ name: op.name });
-				if (done.done) appName = String(done.response?.name);
-				else await new Promise((resolve) => setTimeout(resolve, 2000));
+				const op = await api.management.webApps.create({
+					parent: projectName,
+					displayName: `corsair-live-${STAMP}`,
+				});
+				let appName: string | undefined;
+				for (let i = 0; i < 15 && op.name && !appName; i++) {
+					const done = await api.management.operations.get({ name: op.name });
+					if (done.done) appName = String(done.response?.name);
+					else await new Promise((resolve) => setTimeout(resolve, 2000));
+				}
+				expect(appName).toMatch(/\/webApps\//);
+				const app = String(appName);
+				let appRemoved = false;
+				cleanup.push(() =>
+					appRemoved
+						? Promise.resolve()
+						: api.management.webApps.remove({ name: app, immediate: true }),
+				);
+				const config = await api.management.webApps.getConfig({
+					name: `${app}/config`,
+				});
+				expect(config.projectId).toBe(project);
+				await api.management.webApps.patch({
+					name: app,
+					updateMask: 'displayName',
+					displayName: `corsair-live-${STAMP}-2`,
+				});
+				await api.management.webApps.remove({ name: app, immediate: true });
+				appRemoved = true;
+
+				const site = await api.hosting.sites.create({
+					parent: projectName,
+					siteId: `corsair-live-${STAMP}`,
+				});
+				const siteName = String(site.name);
+				let siteDeleted = false;
+				cleanup.push(() =>
+					siteDeleted
+						? Promise.resolve()
+						: api.hosting.sites.delete({ name: siteName }),
+				);
+				const version = await api.hosting.sites.versions.create({
+					parent: siteName,
+					config: {
+						headers: [{ glob: '**', headers: { 'X-Corsair': 'live' } }],
+					},
+				});
+				expect(version.status).toBe('CREATED');
+				await api.hosting.sites.versions.delete({ name: String(version.name) });
+				await expect(
+					api.hosting.sites.delete({ name: siteName }),
+				).resolves.toEqual({ success: true });
+				siteDeleted = true;
+
+				const ruleset = await api.rules.rulesets.create({
+					name: projectName,
+					source: {
+						files: [
+							{
+								name: 'storage.rules',
+								content:
+									"rules_version = '2';\nservice firebase.storage { match /b/{bucket}/o { match /{all=**} { allow read, write: if false; } } }",
+							},
+						],
+					},
+				});
+				let rulesetDeleted = false;
+				cleanup.push(() =>
+					rulesetDeleted
+						? Promise.resolve()
+						: api.rules.rulesets.delete({ name: String(ruleset.name) }),
+				);
+				expect(ruleset.metadata?.services).toContain('firebase.storage');
+				await api.rules.rulesets.delete({ name: String(ruleset.name) });
+				rulesetDeleted = true;
+
+				const template = await api.remoteConfig.projects.getRemoteConfig({
+					project: projectName,
+				});
+				expect(template.etag).toBeTruthy();
+				const draft = await api.remoteConfig.projects.updateRemoteConfig({
+					project: projectName,
+					ifMatch: String(template.etag),
+					validateOnly: true,
+					parameters: { corsair_live: { defaultValue: { value: 'on' } } },
+				});
+				expect(draft.parameters?.corsair_live).toBeDefined();
+
+				// validateOnly: FCM checks the message and delivers nothing.
+				const sent = await api.messaging.messages.send({
+					parent: projectName,
+					validateOnly: true,
+					message: {
+						topic: 'corsair-live',
+						notification: { title: 'Live run' },
+					},
+				});
+				expect(sent.name).toContain(`${projectName}/messages/`);
+			} finally {
+				for (const undo of cleanup.reverse()) {
+					await undo().catch((error: unknown) =>
+						console.warn('Firebase live: cleanup failed', error),
+					);
+				}
 			}
-			expect(appName).toMatch(/\/webApps\//);
-			const app = String(appName);
-			const config = await api.management.webApps.getConfig({
-				name: `${app}/config`,
-			});
-			expect(config.projectId).toBe(project);
-			await api.management.webApps.patch({
-				name: app,
-				updateMask: 'displayName',
-				displayName: `corsair-live-${STAMP}-2`,
-			});
-			await api.management.webApps.remove({ name: app, immediate: true });
-
-			const site = await api.hosting.sites.create({
-				parent: projectName,
-				siteId: `corsair-live-${STAMP}`,
-			});
-			const siteName = String(site.name);
-			const version = await api.hosting.sites.versions.create({
-				parent: siteName,
-				config: { headers: [{ glob: '**', headers: { 'X-Corsair': 'live' } }] },
-			});
-			expect(version.status).toBe('CREATED');
-			await api.hosting.sites.versions.delete({ name: String(version.name) });
-			await expect(
-				api.hosting.sites.delete({ name: siteName }),
-			).resolves.toEqual({ success: true });
-
-			const ruleset = await api.rules.rulesets.create({
-				name: projectName,
-				source: {
-					files: [
-						{
-							name: 'storage.rules',
-							content:
-								"rules_version = '2';\nservice firebase.storage { match /b/{bucket}/o { match /{all=**} { allow read, write: if false; } } }",
-						},
-					],
-				},
-			});
-			expect(ruleset.metadata?.services).toContain('firebase.storage');
-			await api.rules.rulesets.delete({ name: String(ruleset.name) });
-
-			await api.remoteConfig.projects.getRemoteConfig({ project: projectName });
-			const draft = await api.remoteConfig.projects.updateRemoteConfig({
-				project: projectName,
-				ifMatch: '*',
-				validateOnly: true,
-				parameters: { corsair_live: { defaultValue: { value: 'on' } } },
-			});
-			expect(draft.parameters?.corsair_live).toBeDefined();
-
-			// validateOnly: FCM checks the message and delivers nothing.
-			const sent = await api.messaging.messages.send({
-				parent: projectName,
-				validateOnly: true,
-				message: { topic: 'corsair-live', notification: { title: 'Live run' } },
-			});
-			expect(sent.name).toContain(`${projectName}/messages/`);
 		},
 	);
 
 	it('writes, reads, queries and deletes a Firestore document', async () => {
 		if (live) {
 			try {
-				await api.firestore.databases.list({ parent: projectName });
+				const databases = await api.firestore.databases.list({
+					parent: projectName,
+				});
+				const hasDefault = (databases.databases ?? []).some(
+					(database) => database.name === `${projectName}/databases/(default)`,
+				);
+				if (!hasDefault) {
+					return skip('Firestore', 'the project has no (default) database');
+				}
 			} catch (error) {
 				const why = notSetUp(error);
 				if (why) return skip('Firestore', why);
@@ -172,16 +221,26 @@ describeIfLive('firebase live', () => {
 			documentId: STAMP,
 			fields: { n: { integerValue: '1' } },
 		});
-		const doc = await api.firestore.databases.documents.get({ name });
-		expect(doc.fields?.n).toEqual({ integerValue: '1' });
-		const results = await api.firestore.databases.documents.runQuery({
-			parent: docs,
-			structuredQuery: { from: [{ collectionId: 'corsair-live' }] },
-		});
-		expect(results.some((r) => r.document?.name === name)).toBe(true);
-		await expect(
-			api.firestore.databases.documents.delete({ name }),
-		).resolves.toEqual({ success: true });
+		let deleted = false;
+		try {
+			const doc = await api.firestore.databases.documents.get({ name });
+			expect(doc.fields?.n).toEqual({ integerValue: '1' });
+			const results = await api.firestore.databases.documents.runQuery({
+				parent: docs,
+				structuredQuery: { from: [{ collectionId: 'corsair-live' }] },
+			});
+			expect(results.some((r) => r.document?.name === name)).toBe(true);
+			await expect(
+				api.firestore.databases.documents.delete({ name }),
+			).resolves.toEqual({ success: true });
+			deleted = true;
+		} finally {
+			if (!deleted) {
+				await api.firestore.databases.documents
+					.delete({ name })
+					.catch(() => {});
+			}
+		}
 	});
 
 	it('writes and reads a Realtime Database path', async () => {
@@ -203,15 +262,15 @@ describeIfLive('firebase live', () => {
 				throw error;
 			}
 		}
-		await api.database.set({
-			databaseUrl,
-			path: `corsair-live/${STAMP}`,
-			data: { ok: true },
-		});
-		await expect(
-			api.database.get({ databaseUrl, path: `corsair-live/${STAMP}` }),
-		).resolves.toEqual({ ok: true });
-		await api.database.delete({ databaseUrl, path: `corsair-live/${STAMP}` });
+		const path = `corsair-live/${STAMP}`;
+		await api.database.set({ databaseUrl, path, data: { ok: true } });
+		try {
+			await expect(api.database.get({ databaseUrl, path })).resolves.toEqual({
+				ok: true,
+			});
+		} finally {
+			await api.database.delete({ databaseUrl, path });
+		}
 	});
 
 	it('creates, looks up and deletes an Authentication user', async () => {
@@ -231,14 +290,17 @@ describeIfLive('firebase live', () => {
 			email: `corsair-${STAMP}@example.com`,
 			password: 'correct-horse-battery-staple',
 		});
-		const found = await api.auth.projects.accounts.lookup({
-			targetProjectId: String(project),
-			localId: [String(user.localId)],
-		});
-		expect(found.users?.[0]?.email).toBe(`corsair-${STAMP}@example.com`);
-		await api.auth.projects.accounts.delete({
-			targetProjectId: String(project),
-			localId: String(user.localId),
-		});
+		try {
+			const found = await api.auth.projects.accounts.lookup({
+				targetProjectId: String(project),
+				localId: [String(user.localId)],
+			});
+			expect(found.users?.[0]?.email).toBe(`corsair-${STAMP}@example.com`);
+		} finally {
+			await api.auth.projects.accounts.delete({
+				targetProjectId: String(project),
+				localId: String(user.localId),
+			});
+		}
 	});
 });

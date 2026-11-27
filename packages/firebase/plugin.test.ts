@@ -13,7 +13,7 @@ describe('firebase plugin', () => {
 		const plugin = firebase();
 		expect(plugin.id).toBe('firebase');
 		expect(plugin.authConfig).toEqual({ api_key: {} });
-		expect(Object.keys(plugin.endpointMeta as object)).toHaveLength(407);
+		expect(Object.keys(plugin.endpointMeta as object)).toHaveLength(405);
 		expect(plugin.webhooks).toEqual({});
 	});
 

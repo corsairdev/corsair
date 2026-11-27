@@ -1,6 +1,6 @@
 # @corsair-dev/firebase
 
-Firebase integration for Corsair: Cloud Firestore documents, queries, transactions, indexes, backups and import/export; Authentication users, sign-in, tenants, providers and project config; Realtime Database data, rules and instances; Cloud Storage objects and buckets; Hosting sites, versions, releases, channels and domains; Remote Config; Cloud Messaging; App Distribution; Security Rules; App Check; and the Firebase Management API for projects and apps (407 operations).
+Firebase integration for Corsair: Cloud Firestore documents, queries, transactions, indexes, backups and import/export; Authentication users, sign-in, tenants, providers and project config; Realtime Database data, rules and instances; Cloud Storage objects and buckets; Hosting sites, versions, releases, channels and domains; Remote Config; Cloud Messaging; App Distribution; Security Rules; App Check; and the Firebase Management API for projects and apps (405 operations).
 
 ## Install
 

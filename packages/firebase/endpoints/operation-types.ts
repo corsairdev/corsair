@@ -300,9 +300,7 @@ export const FIREBASE_OPERATION_IDS = [
 	'management.androidApps.sha.delete',
 	'management.androidApps.sha.list',
 	'management.androidApps.undelete',
-	'management.availableLocations.list',
 	'management.availableProjects.list',
-	'management.defaultLocation.finalize',
 	'management.iosApps.create',
 	'management.iosApps.get',
 	'management.iosApps.getConfig',
@@ -442,7 +440,7 @@ export type FirebaseAggregationInput = {
 	avg?: FirebaseAvgInput;
 	/** Count aggregator. */
 	count?: FirebaseCountInput;
-	/** Optional. Optional name of the field to store the result of the aggregation into. If not provided, Firestore will pick a default name following the format `field_`. For example: ``` AGGREGATE COUNT_UP_TO(1) AS count_up_to_1, COUNT_UP_TO(2), COUNT_UP_TO(3) AS count_up_to_3, COUNT(*) OVER ( ... );… */
+	/** Optional. Optional name of the field to store the result of the aggregation into. If not provided, Firestore will pick a default name following the format `field_`. For example: ``` AGGREGATE COUNT_UP_TO(1) AS count_up_to_1, COUNT_UP_TO(2), COUNT_UP_TO(3) AS count_up_to_3, COUNT(*) OVER ( ... */
 	alias?: string;
 };
 
@@ -454,11 +452,11 @@ export type FirebaseAndroidBackgroundSyncMessageInput = Record<
 
 /** Android specific options for messages sent through [FCM connection server](https://goo.gl/4GLdUl). */
 export type FirebaseAndroidConfigInput = {
-	/** How long (in seconds) the message should be kept in FCM storage if the device is offline. The maximum time to live supported is 4 weeks, and the default value is 4 weeks if not set. Set it to 0 if want to send the message immediately. In JSON format, the Duration type is encoded as a string… */
+	/** How long (in seconds) the message should be kept in FCM storage if the device is offline. The maximum time to live supported is 4 weeks, and the default value is 4 weeks if not set. Set it to 0 if want to send the message immediately. */
 	ttl?: string;
 	/** Notification to send to Android devices. */
 	notification?: FirebaseAndroidNotificationInput;
-	/** Optional. If set to true, messages will be allowed to be delivered to the app while the device is connected over a restricted satellite network. This should only be enabled for messages that can be handled over a restricted satellite network and only for apps that are enabled to work over a… */
+	/** Optional. If set to true, messages will be allowed to be delivered to the app while the device is connected over a restricted satellite network. */
 	restrictedSatelliteOk?: boolean;
 	/** Message priority. Can take "normal" and "high" values. For more information, see [Setting the priority of a message](https://firebase.google.com/docs/cloud-messaging/customize-messages/setting-message-priority). */
 	priority?: 'NORMAL' | 'HIGH';
@@ -480,7 +478,7 @@ export type FirebaseAndroidConfigInput = {
 export type FirebaseAndroidConfigV2Input = {
 	/** Options for features provided by the FCM SDK for Android. If present, it will override google.firebase.fcm.v1.Message.fcm_options. */
 	fcmOptions?: FirebaseAndroidFcmOptionsInput;
-	/** Optional. If set to true, messages will be allowed to be delivered to the app while the device is connected over a restricted satellite network. This should only be enabled for messages that can be handled over a restricted satellite network and only for apps that are enabled to work over a… */
+	/** Optional. If set to true, messages will be allowed to be delivered to the app while the device is connected over a restricted satellite network. */
 	restrictedSatelliteOk?: boolean;
 	/** Optional. User-facing notification to send to Android devices. These messages are delivered immediately and are not delayed by battery optimizations. */
 	remoteNotification?: FirebaseAndroidRemoteNotificationInput;
@@ -492,7 +490,7 @@ export type FirebaseAndroidConfigV2Input = {
 	backgroundSync?: FirebaseAndroidBackgroundSyncMessageInput;
 	/** Package name of the application where the registration token must match in order to receive the message. */
 	restrictedPackageName?: string;
-	/** How long (in seconds) the message should be kept in FCM storage if the device is offline. The maximum time to live supported is 4 weeks, and the default value is 4 weeks if not set. Set it to 0 if want to send the message immediately. In JSON format, the Duration type is encoded as a string… */
+	/** How long (in seconds) the message should be kept in FCM storage if the device is offline. The maximum time to live supported is 4 weeks, and the default value is 4 weeks if not set. Set it to 0 if want to send the message immediately. */
 	ttl?: string;
 	/** Optional. If set to true, messages will be allowed to be delivered to the app while the device is in bandwidth constrained mode. This should only be enabled when the app has been tested to properly handle messages in bandwidth constrained mode. */
 	bandwidthConstrainedOk?: boolean;
@@ -510,11 +508,11 @@ export type FirebaseAndroidFcmOptionsInput = {
 export type FirebaseAndroidNotificationInput = {
 	/** Settings to control the notification's LED blinking rate and color if LED is available on the device. The total blinking time is controlled by the OS. */
 	lightSettings?: FirebaseLightSettingsInput;
-	/** Set whether or not this notification is relevant only to the current device. Some notifications can be bridged to other devices for remote display, such as a Wear OS watch. This hint can be set to recommend this notification not be bridged. See [Wear OS… */
+	/** Set whether or not this notification is relevant only to the current device. Some notifications can be bridged to other devices for remote display, such as a Wear OS watch. This hint can be set to recommend this notification not be bridged. */
 	localOnly?: boolean;
 	/** The notification's title. If present, it will override google.firebase.fcm.v1.Notification.title. */
 	title?: string;
-	/** If set to true, use the Android framework's default LED light settings for the notification. Default values are specified in [config.xml](https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/config.xml). If `default_light_settings` is set to true and… */
+	/** If set to true, use the Android framework's default LED light settings for the notification. Default values are specified in [config.xml](https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/config.xml). */
 	defaultLightSettings?: boolean;
 	/** Optional. If set, display notifications delivered to the device will be handled by the app instead of the proxy. */
 	bypassProxyNotification?: boolean;
@@ -524,7 +522,7 @@ export type FirebaseAndroidNotificationInput = {
 	bodyLocArgs?: Array<string>;
 	/** Sets the "ticker" text, which is sent to accessibility services. Prior to API level 21 (`Lollipop`), sets the text that is displayed in the status bar when the notification first arrives. */
 	ticker?: string;
-	/** If set to true, use the Android framework's default vibrate pattern for the notification. Default values are specified in [config.xml](https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/config.xml). If `default_vibrate_timings` is set to true and… */
+	/** If set to true, use the Android framework's default vibrate pattern for the notification. Default values are specified in [config.xml](https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/config.xml). */
 	defaultVibrateTimings?: boolean;
 	/** Contains the URL of an image that is going to be displayed in a notification. If present, it will override google.firebase.fcm.v1.Notification.image. */
 	image?: string;
@@ -546,9 +544,9 @@ export type FirebaseAndroidNotificationInput = {
 	titleLocKey?: string;
 	/** The notification's body text. If present, it will override google.firebase.fcm.v1.Notification.body. */
 	body?: string;
-	/** The [notification's channel id](https://developer.android.com/guide/topics/ui/notifiers/notifications#ManageChannels) (new in Android O). The app must create a channel with this channel ID before any notification with this channel ID is received. If you don't send this channel ID in the request,… */
+	/** The [notification's channel id](https://developer.android.com/guide/topics/ui/notifiers/notifications#ManageChannels) (new in Android O). The app must create a channel with this channel ID before any notification with this channel ID is received. */
 	channelId?: string;
-	/** Set the relative priority for this notification. Priority is an indication of how much of the user's attention should be consumed by this notification. Low-priority notifications may be hidden from the user in certain situations, while the user might be interrupted for a higher-priority… */
+	/** Set the relative priority for this notification. Priority is an indication of how much of the user's attention should be consumed by this notification. */
 	notificationPriority?:
 		| 'PRIORITY_UNSPECIFIED'
 		| 'PRIORITY_MIN'
@@ -556,7 +554,7 @@ export type FirebaseAndroidNotificationInput = {
 		| 'PRIORITY_DEFAULT'
 		| 'PRIORITY_HIGH'
 		| 'PRIORITY_MAX';
-	/** Sets the number of items this notification represents. May be displayed as a badge count for launchers that support badging. See [Notification Badge](https://developer.android.com/training/notify-user/badges). For example, this might be useful if you're using just one notification to represent… */
+	/** Sets the number of items this notification represents. May be displayed as a badge count for launchers that support badging. See [Notification Badge](https://developer.android.com/training/notify-user/badges). */
 	notificationCount?: number;
 	/** The notification's icon color, expressed in #rrggbb format. */
 	color?: string;
@@ -564,7 +562,7 @@ export type FirebaseAndroidNotificationInput = {
 	icon?: string;
 	/** The key to the body string in the app's string resources to use to localize the body text to the user's current localization. See [String Resources](https://goo.gl/NdFZGI) for more information. */
 	bodyLocKey?: string;
-	/** Set the vibration pattern to use. Pass in an array of [protobuf.Duration](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Duration) to turn on or off the vibrator. The first value indicates the `Duration` to wait before turning the vibrator on. The… */
+	/** Set the vibration pattern to use. Pass in an array of [protobuf.Duration](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Duration) to turn on or off the vibrator. The first value indicates the `Duration` to wait before turning the vibrator on. */
 	vibrateTimings?: Array<string>;
 	/** Variable string values to be used in place of the format specifiers in title_loc_key to use to localize the title text to the user's current localization. See [Formatting and Styling](https://goo.gl/MalYE3) for more information. */
 	titleLocArgs?: Array<string>;
@@ -572,13 +570,13 @@ export type FirebaseAndroidNotificationInput = {
 
 /** Notification v2 to send to Android devices. This is a v2 version of the AndroidNotification message and will replace it in the v2 API. */
 export type FirebaseAndroidNotificationV2Input = {
-	/** The [notification's channel id](https://developer.android.com/guide/topics/ui/notifiers/notifications#ManageChannels) (new in Android O). The app must create a channel with this channel ID before any notification with this channel ID is received. If you don't send this channel ID in the request,… */
+	/** The [notification's channel id](https://developer.android.com/guide/topics/ui/notifiers/notifications#ManageChannels) (new in Android O). The app must create a channel with this channel ID before any notification with this channel ID is received. */
 	channelId?: string;
 	/** Settings to control the notification's LED blinking rate and color if LED is available on the device. The total blinking time is controlled by the OS. */
 	lightSettings?: FirebaseGoogleFirebaseFcmV1AndroidNotificationV2LightSettingsInput;
 	/** The notification's icon color, expressed in #rrggbb format. */
 	color?: string;
-	/** Set the relative priority for this notification. Priority is an indication of how much of the user's attention should be consumed by this notification. Low-priority notifications may be hidden from the user in certain situations, while the user might be interrupted for a higher-priority… */
+	/** Set the relative priority for this notification. Priority is an indication of how much of the user's attention should be consumed by this notification. */
 	notificationPriority?:
 		| 'PRIORITY_UNSPECIFIED'
 		| 'PRIORITY_MIN'
@@ -588,7 +586,7 @@ export type FirebaseAndroidNotificationV2Input = {
 		| 'PRIORITY_MAX';
 	/** When set to false or unset, the notification is automatically dismissed when the user clicks it in the panel. When set to true, the notification persists even when the user clicks it. */
 	sticky?: boolean;
-	/** Optional. Identifier used to replace existing notifications in the notification drawer. It is used in conjunction with `tag` to form a unique identifier `(tag, id)` within the app. If not specified, each request creates a new notification. If specified and a notification with the same `(tag,… */
+	/** Optional. Identifier used to replace existing notifications in the notification drawer. It is used in conjunction with `tag` to form a unique identifier `(tag, id)` within the app. If not specified, each request creates a new notification. */
 	id?: number;
 	/** Variable string values to be used in place of the format specifiers in body_loc_key to use to localize the body text to the user's current localization. See [Formatting and Styling](https://goo.gl/MalYE3) for more information. */
 	bodyLocArgs?: Array<string>;
@@ -596,7 +594,7 @@ export type FirebaseAndroidNotificationV2Input = {
 	eventTime?: string;
 	/** The sound to play when the device receives the notification. Supports "default" or the filename of a sound resource bundled in the app. Sound files must reside in /res/raw/. */
 	sound?: string;
-	/** Sets the number of items this notification represents. May be displayed as a badge count for launchers that support badging. See [Notification Badge](https://developer.android.com/training/notify-user/badges). For example, this might be useful if you're using just one notification to represent… */
+	/** Sets the number of items this notification represents. May be displayed as a badge count for launchers that support badging. See [Notification Badge](https://developer.android.com/training/notify-user/badges). */
 	notificationCount?: number;
 	/** An HTTPS URL of an image to display in the notification. If present, it overrides google.firebase.fcm.v1.Notification.image. */
 	image?: string;
@@ -606,11 +604,11 @@ export type FirebaseAndroidNotificationV2Input = {
 	body?: string;
 	/** Variable string values to be used in place of the format specifiers in title_loc_key to use to localize the title text to the user's current localization. See [Formatting and Styling](https://goo.gl/MalYE3) for more information. */
 	titleLocArgs?: Array<string>;
-	/** If set to true, use the Android framework's default vibrate pattern for the notification. Default values are specified in [config.xml](https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/config.xml). If `default_vibrate_timings` is set to true and… */
+	/** If set to true, use the Android framework's default vibrate pattern for the notification. Default values are specified in [config.xml](https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/config.xml). */
 	defaultVibrateTimings?: boolean;
 	/** The key to the title string in the app's string resources to use to localize the title text to the user's current localization. See [String Resources](https://goo.gl/NdFZGI) for more information. */
 	titleLocKey?: string;
-	/** Identifier used to replace existing notifications in the notification drawer. It is used in conjunction with `id` to form a unique identifier `(tag, id)` within the app. If not specified, each request creates a new notification. If specified and a notification with the same `(tag, id)` is… */
+	/** Identifier used to replace existing notifications in the notification drawer. It is used in conjunction with `id` to form a unique identifier `(tag, id)` within the app. If not specified, each request creates a new notification. */
 	tag?: string;
 	/** The action associated with a user click on the notification. If specified, an activity with a matching intent filter is launched when a user clicks on the notification. */
 	clickAction?: string;
@@ -618,7 +616,7 @@ export type FirebaseAndroidNotificationV2Input = {
 	title?: string;
 	/** The notification's icon. Sets the notification icon to myicon for drawable resource myicon. If you don't send this key in the request, FCM displays the launcher icon specified in your app manifest. */
 	icon?: string;
-	/** If set to true, use the Android framework's default LED light settings for the notification. Default values are specified in [config.xml](https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/config.xml). If `default_light_settings` is set to true and… */
+	/** If set to true, use the Android framework's default LED light settings for the notification. Default values are specified in [config.xml](https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/config.xml). */
 	defaultLightSettings?: boolean;
 	/** If set to true, use the Android framework's default sound for the notification. Default values are specified in [config.xml](https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/config.xml). */
 	defaultSound?: boolean;
@@ -626,15 +624,15 @@ export type FirebaseAndroidNotificationV2Input = {
 	ticker?: string;
 	/** Set the [Notification.visibility](https://developer.android.com/reference/android/app/Notification.html#visibility) of the notification. */
 	visibility?: 'VISIBILITY_UNSPECIFIED' | 'PRIVATE' | 'PUBLIC' | 'SECRET';
-	/** Set the vibration pattern to use. Pass in an array of [protobuf.Duration](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Duration) to turn on or off the vibrator. The first value indicates the `Duration` to wait before turning the vibrator on. The… */
+	/** Set the vibration pattern to use. Pass in an array of [protobuf.Duration](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Duration) to turn on or off the vibrator. The first value indicates the `Duration` to wait before turning the vibrator on. */
 	vibrateTimings?: Array<string>;
-	/** Set whether or not this notification is relevant only to the current device. Some notifications can be bridged to other devices for remote display, such as a Wear OS watch. This hint can be set to recommend this notification not be bridged. See [Wear OS… */
+	/** Set whether or not this notification is relevant only to the current device. Some notifications can be bridged to other devices for remote display, such as a Wear OS watch. This hint can be set to recommend this notification not be bridged. */
 	localOnly?: boolean;
 };
 
 /** A Remote Notification message that is sent to Android devices. */
 export type FirebaseAndroidRemoteNotificationInput = {
-	/** Optional. If set to `true`, this RemoteNotification message will be delivered to legacy V1 clients as a data message by omitting the google.firebase.fcm.v1.AndroidRemoteNotification.notification. This should only be enabled when migrating from legacy V1 data messages. Note that by default (when… */
+	/** Optional. If set to `true`, this RemoteNotification message will be delivered to legacy V1 clients as a data message by omitting the google.firebase.fcm.v1.AndroidRemoteNotification.notification. This should only be enabled when migrating from legacy V1 data messages. */
 	useAsV1DataMessage?: boolean;
 	/** Optional. If set to true, the notification content can be updated by the app after the notification is received on the device. */
 	mutableContent?: boolean;
@@ -644,13 +642,13 @@ export type FirebaseAndroidRemoteNotificationInput = {
 
 /** [Apple Push Notification Service](https://goo.gl/MXRTPa) specific options. */
 export type FirebaseApnsConfigInput = {
-	/** Optional. [Apple Live Activity](https://developer.apple.com/design/human-interface-guidelines/live-activities) token to send updates to. This token can either be a push token or [push-to-start](https://developer.apple.com/documentation/activitykit/activity/pushtostarttoken) token from Apple. To… */
+	/** Optional. [Apple Live Activity](https://developer.apple.com/design/human-interface-guidelines/live-activities) token to send updates to. This token can either be a push token or [push-to-start](https://developer.apple.com/documentation/activitykit/activity/pushtostarttoken) token from Apple. */
 	liveActivityToken?: string;
 	/** Options for features provided by the FCM SDK for iOS. */
 	fcmOptions?: FirebaseApnsFcmOptionsInput;
 	/** HTTP request headers defined in Apple Push Notification Service. Refer to [APNs request headers](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/sending_notification_requests_to_apns) for supported headers such as `apns-expiration` and… */
 	headers?: Record<string, string>;
-	/** APNs payload as a JSON object, including both `aps` dictionary and custom payload. See [Payload Key Reference](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification). If present, it overrides… */
+	/** APNs payload as a JSON object, including both `aps` dictionary and custom payload. See [Payload Key Reference](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification). */
 	payload?: Record<string, FirebaseJsonValue>;
 };
 
@@ -676,7 +674,7 @@ export type FirebaseArrayValueInput = {
 	values?: Array<FirebaseValueInput>;
 };
 
-/** Average of the values of the requested field. * Only numeric values will be aggregated. All non-numeric values including `NULL` are skipped. * If the aggregated values contain `NaN`, returns `NaN`. Infinity math follows IEEE-754 standards. * If the aggregated value set is empty, returns `NULL`.… */
+/** Average of the values of the requested field. * Only numeric values will be aggregated. All non-numeric values including `NULL` are skipped. * If the aggregated values contain `NaN`, returns `NaN`. Infinity math follows IEEE-754 standards. * If the aggregated value set is empty, returns `NULL`. */
 export type FirebaseAvgInput = {
 	/** The field to aggregate on. */
 	field?: FirebaseFieldReferenceInput;
@@ -690,7 +688,7 @@ export type FirebaseBucketAccessControlInput = {
 	domain?: string;
 	/** The email address associated with the entity, if any. */
 	email?: string;
-	/** The entity holding the permission, in one of the following forms: - user-userId - user-email - group-groupId - group-email - domain-domain - project-team-projectId - allUsers - allAuthenticatedUsers Examples: - The user liz@example.com would be user-liz@example.com. - The group… */
+	/** The entity holding the permission, in one of the following forms: - user-userId - user-email - group-groupId - group-email - domain-domain - project-team-projectId - allUsers - allAuthenticatedUsers Examples: - The user liz@example.com would be user-liz@example.com. */
 	entity?: string;
 	/** The ID for the entity, if any. */
 	entityId?: string;
@@ -729,7 +727,7 @@ export type FirebaseCertHttpChallengeInput = {
 	path?: string;
 };
 
-/** A configured rewrite that directs requests to a Cloud Run service. If the Cloud Run service does not exist when setting or updating your Firebase Hosting configuration, then the request fails. Any errors from the Cloud Run service are passed to the end user (for example, if you delete a service,… */
+/** A configured rewrite that directs requests to a Cloud Run service. If the Cloud Run service does not exist when setting or updating your Firebase Hosting configuration, then the request fails. */
 export type FirebaseCloudRunRewriteInput = {
 	/** Optional. User-provided region where the Cloud Run service is hosted. Defaults to `us-central1` if not supplied. */
 	region?: string;
@@ -747,13 +745,13 @@ export type FirebaseCollectionSelectorInput = {
 	collectionId?: string;
 };
 
-/** Represents a color in the RGBA color space. This representation is designed for simplicity of conversion to and from color representations in various languages over compactness. For example, the fields of this representation can be trivially provided to the constructor of `java.awt.Color` in… */
+/** Represents a color in the RGBA color space. This representation is designed for simplicity of conversion to and from color representations in various languages over compactness. */
 export type FirebaseColorInput = {
 	/** The amount of blue in the color as a value in the interval [0, 1]. */
 	blue?: number;
 	/** The amount of green in the color as a value in the interval [0, 1]. */
 	green?: number;
-	/** The fraction of this color that should be applied to the pixel. That is, the final pixel color is defined by the equation: `pixel color = alpha * (this color) + (1.0 - alpha) * (background color)` This means that a value of 1.0 corresponds to a solid color, whereas a value of 0.0 corresponds to… */
+	/** The fraction of this color that should be applied to the pixel. That is, the final pixel color is defined by the equation: `pixel color = alpha * (this color) + (1.0 - alpha) * (background color)` This means that a value of 1.0 corresponds to a solid color, whereas a value of 0.0 corresponds to a… */
 	alpha?: number;
 	/** The amount of red in the color as a value in the interval [0, 1]. */
 	red?: number;
@@ -769,7 +767,7 @@ export type FirebaseCompositeFilterInput = {
 
 /** Count of documents that match the query. The `COUNT(*)` aggregation function operates on the entire document so it does not require a field reference. */
 export type FirebaseCountInput = {
-	/** Optional. Optional constraint on the maximum number of documents to count. This provides a way to set an upper bound on the number of documents to scan, limiting latency, and cost. Unspecified is interpreted as no bound. High-Level Example: ``` AGGREGATE COUNT_UP_TO(1000) OVER ( SELECT * FROM k… */
+	/** Optional. Optional constraint on the maximum number of documents to count. This provides a way to set an upper bound on the number of documents to scan, limiting latency, and cost. Unspecified is interpreted as no bound. */
 	upTo?: string | number;
 };
 
@@ -795,7 +793,7 @@ export type FirebaseDocumentInput = {
 	updateTime?: string;
 	/** Output only. The time at which the document was created. This value increases monotonically when a document is deleted then recreated. It can also be compared to values from other documents and the `read_time` of a query. */
 	createTime?: string;
-	/** The document's fields. The map keys represent field names. Field names matching the regular expression `__.*__` are reserved. Reserved field names are forbidden except in certain documented contexts. The field names, represented as UTF-8, must not exceed 1,500 bytes and cannot be empty. Field… */
+	/** The document's fields. The map keys represent field names. Field names matching the regular expression `__.*__` are reserved. Reserved field names are forbidden except in certain documented contexts. The field names, represented as UTF-8, must not exceed 1,500 bytes and cannot be empty. */
 	fields?: Record<string, FirebaseValueInput>;
 };
 
@@ -927,19 +925,19 @@ export type FirebaseFieldReferenceInput = {
 
 /** A transformation of a field of the document. */
 export type FirebaseFieldTransformInput = {
-	/** Adds the given value to the field's current value. This must be an integer or a double value. If the field is not an integer or double, or if the field does not yet exist, the transformation will set the field to the given value. If either of the given value or the current field value are… */
+	/** Adds the given value to the field's current value. This must be an integer or a double value. If the field is not an integer or double, or if the field does not yet exist, the transformation will set the field to the given value. */
 	increment?: FirebaseValueInput;
 	/** Sets the field to the given server value. */
 	setToServerValue?: 'SERVER_VALUE_UNSPECIFIED' | 'REQUEST_TIME';
-	/** Sets the field to the minimum of its current value and the given value. This must be an integer or a double value. If the field is not an integer or double, or if the field does not yet exist, the transformation will set the field to the input value. If a minimum operation is applied where the… */
+	/** Sets the field to the minimum of its current value and the given value. This must be an integer or a double value. If the field is not an integer or double, or if the field does not yet exist, the transformation will set the field to the input value. */
 	minimum?: FirebaseValueInput;
 	/** The path of the field. See Document.fields for the field path syntax reference. */
 	fieldPath?: string;
-	/** Sets the field to the maximum of its current value and the given value. This must be an integer or a double value. If the field is not an integer or double, or if the field does not yet exist, the transformation will set the field to the given value. If a maximum operation is applied where the… */
+	/** Sets the field to the maximum of its current value and the given value. This must be an integer or a double value. If the field is not an integer or double, or if the field does not yet exist, the transformation will set the field to the given value. */
 	maximum?: FirebaseValueInput;
-	/** Remove all of the given elements from the array in the field. If the field is not an array, or if the field does not yet exist, it is set to the empty array. Equivalent numbers of the different types (e.g. 3L and 3.0) are considered equal when deciding whether an element should be removed. NaN… */
+	/** Remove all of the given elements from the array in the field. If the field is not an array, or if the field does not yet exist, it is set to the empty array. Equivalent numbers of the different types (e.g. 3L and 3.0) are considered equal when deciding whether an element should be removed. */
 	removeAllFromArray?: FirebaseArrayValueInput;
-	/** Append the given elements in order if they are not already present in the current field value. If the field is not an array, or if the field does not yet exist, it is first set to the empty array. Equivalent numbers of different types (e.g. 3L and 3.0) are considered equal when checking if a… */
+	/** Append the given elements in order if they are not already present in the current field value. If the field is not an array, or if the field does not yet exist, it is first set to the empty array. Equivalent numbers of different types (e.g. */
 	appendMissingElements?: FirebaseArrayValueInput;
 };
 
@@ -973,7 +971,7 @@ export type FirebaseFindNearestInput = {
 	vectorField?: FirebaseFieldReferenceInput;
 	/** Required. The query vector that we are searching on. Must be a vector of no more than 2048 dimensions. */
 	queryVector?: FirebaseValueInput;
-	/** Optional. Option to specify a threshold for which no less similar documents will be returned. The behavior of the specified `distance_measure` will affect the meaning of the distance threshold. Since DOT_PRODUCT distances increase when the vectors are more similar, the comparison is inverted. *… */
+	/** Optional. Option to specify a threshold for which no less similar documents will be returned. The behavior of the specified `distance_measure` will affect the meaning of the distance threshold. Since DOT_PRODUCT distances increase when the vectors are more similar, the comparison is inverted. */
 	distanceThreshold?: number;
 	/** Required. The distance measure to use, required. */
 	distanceMeasure?:
@@ -983,7 +981,7 @@ export type FirebaseFindNearestInput = {
 		| 'DOT_PRODUCT';
 };
 
-/** Mock function definition. Mocks must refer to a function declared by the target service. The type of the function args and result will be inferred at test time. If either the arg or result values are not compatible with function type declaration, the request will be considered invalid. More than… */
+/** Mock function definition. Mocks must refer to a function declared by the target service. The type of the function args and result will be inferred at test time. If either the arg or result values are not compatible with function type declaration, the request will be considered invalid. */
 export type FirebaseFunctionMockInput = {
 	/** The list of `Arg` values to match. The order in which the arguments are provided is the order in which they must appear in the function invocation. */
 	args?: Array<FirebaseArgInput>;
@@ -1015,7 +1013,7 @@ export type FirebaseGdataBlobstore2InfoInput = {
 export type FirebaseGdataCompositeMediaInput = {
 	/** MD5 hash for the payload. (base64) */
 	md5Hash?: string;
-	/** A binary data reference for a media download. Serves as a technology-agnostic binary reference in some Google infrastructure. This value is a serialized storage_cosmo.BinaryReference proto. Storing it as bytes is a hack to get around the fact that the cosmo proto (as well as others it includes)… */
+	/** A binary data reference for a media download. Serves as a technology-agnostic binary reference in some Google infrastructure. This value is a serialized storage_cosmo.BinaryReference proto. */
 	cosmoBinaryReference?: string;
 	/** crc32.c hash for the payload. */
 	crc32cHash?: number;
@@ -1042,7 +1040,7 @@ export type FirebaseGdataCompositeMediaInput = {
 	blobstore2Info?: FirebaseGdataBlobstore2InfoInput;
 };
 
-/** Detailed Content-Type information from Scotty. The Content-Type of the media will typically be filled in by the header or Scotty's best_guess, but this extended information provides the backend with more information so that it can make a better decision if needed. This is only used on media… */
+/** Detailed Content-Type information from Scotty. The Content-Type of the media will typically be filled in by the header or Scotty's best_guess, but this extended information provides the backend with more information so that it can make a better decision if needed. */
 export type FirebaseGdataContentTypeInfoInput = {
 	/** The content type of the file derived from the file extension of the URL path. The URL path is assumed to represent a file name (which is typically only true for agents that are providing a REST API). */
 	fromUrlPath?: string;
@@ -1064,7 +1062,7 @@ export type FirebaseGdataContentTypeInfoInput = {
 export type FirebaseGdataDiffChecksumsResponseInput = {
 	/** If set, calculate the checksums based on the contents and return them to the caller. */
 	objectLocation?: FirebaseGdataCompositeMediaInput;
-	/** Exactly one of these fields must be populated. If checksums_location is filled, the server will return the corresponding contents to the user. If object_location is filled, the server will calculate the checksums based on the content there and return that to the user. For details on the format… */
+	/** Exactly one of these fields must be populated. If checksums_location is filled, the server will return the corresponding contents to the user. If object_location is filled, the server will calculate the checksums based on the content there and return that to the user. */
 	checksumsLocation?: FirebaseGdataCompositeMediaInput;
 	/** The chunk size of checksums. Must be a multiple of 256KB. */
 	chunkSizeBytes?: string | number;
@@ -1138,9 +1136,9 @@ export type FirebaseGdataMediaInput = {
 	sha1Hash?: string;
 	/** A unique fingerprint/version id for the media data */
 	token?: string;
-	/** |is_potential_retry| is set false only when Scotty is certain that it has not sent the request before. When a client resumes an upload, this field must be set true in agent calls, because Scotty cannot be certain that it has never sent the request before due to potential failure in the session… */
+	/** |is_potential_retry| is set false only when Scotty is certain that it has not sent the request before. */
 	isPotentialRetry?: boolean;
-	/** A binary data reference for a media download. Serves as a technology-agnostic binary reference in some Google infrastructure. This value is a serialized storage_cosmo.BinaryReference proto. Storing it as bytes is a hack to get around the fact that the cosmo proto (as well as others it includes)… */
+	/** A binary data reference for a media download. Serves as a technology-agnostic binary reference in some Google infrastructure. This value is a serialized storage_cosmo.BinaryReference proto. */
 	cosmoBinaryReference?: string;
 	/** Size of the data, in bytes */
 	length?: string | number;
@@ -1177,11 +1175,11 @@ export type FirebaseGdataMediaInput = {
 		| 'DIFF_UPLOAD_RESPONSE'
 		| 'COSMO_BINARY_REFERENCE'
 		| 'ARBITRARY_BYTES';
-	/** Deprecated, use one of explicit hash type fields instead. These two hash related fields will only be populated on Scotty based media uploads and will contain the content of the hash group in the NotificationRequest:… */
+	/** Deprecated, use one of explicit hash type fields instead. These two hash related fields will only be populated on Scotty based media uploads and will contain the content of the hash group in the NotificationRequest… */
 	hash?: string;
 	/** Media id to forward to the operation GetMedia. Can be set if reference_type is GET_MEDIA. (base64) */
 	mediaId?: string;
-	/** For Scotty Uploads: Scotty-provided hashes for uploads For Scotty Downloads: (WARNING: DO NOT USE WITHOUT PERMISSION FROM THE SCOTTY TEAM.) A Hash provided by the agent to be used to verify the data being downloaded. Currently only supported for inline payloads. Further, only crc32c_hash is… */
+	/** For Scotty Uploads: Scotty-provided hashes for uploads For Scotty Downloads: (WARNING: DO NOT USE WITHOUT PERMISSION FROM THE SCOTTY TEAM.) A Hash provided by the agent to be used to verify the data being downloaded. Currently only supported for inline payloads. */
 	crc32cHash?: number;
 	/** Set if reference_type is DIFF_VERSION_RESPONSE. */
 	diffVersionResponse?: FirebaseGdataDiffVersionResponseInput;
@@ -1305,11 +1303,11 @@ export type FirebaseGoogleCloudIdentitytoolkitAdminV2EmailInput = {
 
 /** Configuration for settings related to email privacy and public visibility. Settings in this config protect against email enumeration, but may make some trade-offs in user-friendliness. */
 export type FirebaseGoogleCloudIdentitytoolkitAdminV2EmailPrivacyConfigInput = {
-	/** Migrates the project to a state of improved email privacy. For example certain error codes are more generic to avoid giving away information on whether the account exists. In addition, this disables certain features that as a side-effect allow user enumeration. Enabling this toggle disables the… */
+	/** Migrates the project to a state of improved email privacy. For example certain error codes are more generic to avoid giving away information on whether the account exists. In addition, this disables certain features that as a side-effect allow user enumeration. */
 	enableImprovedEmailPrivacy?: boolean;
 };
 
-/** Email template. The subject and body fields can contain the following placeholders which will be replaced with the appropriate values: %LINK% - The link to use to redeem the send OOB code. %EMAIL% - The email where the email is being sent. %NEW_EMAIL% - The new email being set for the account… */
+/** Email template. The subject and body fields can contain the following placeholders which will be replaced with the appropriate values: %LINK% - The link to use to redeem the send OOB code. %EMAIL% - The email where the email is being sent. */
 export type FirebaseGoogleCloudIdentitytoolkitAdminV2EmailTemplateInput = {
 	/** Email body format */
 	bodyFormat?: 'BODY_FORMAT_UNSPECIFIED' | 'PLAIN_TEXT' | 'HTML';
@@ -1392,7 +1390,7 @@ export type FirebaseGoogleCloudIdentitytoolkitAdminV2MultiFactorAuthConfigInput 
 
 /** Configuration related to multi-tenant functionality. */
 export type FirebaseGoogleCloudIdentitytoolkitAdminV2MultiTenantConfigInput = {
-	/** The default cloud parent org or folder that the tenant project should be created under. The parent resource name should be in the format of "/", such as "folders/123" or "organizations/456". If the value is not set, the tenant will be created under the same organization or folder as the agent… */
+	/** The default cloud parent org or folder that the tenant project should be created under. The parent resource name should be in the format of "/", such as "folders/123" or "organizations/456". */
 	defaultTenantLocation?: string;
 	/** Whether this project can have tenants or not. */
 	allowTenants?: boolean;
@@ -1408,7 +1406,7 @@ export type FirebaseGoogleCloudIdentitytoolkitAdminV2NotificationConfigInput = {
 	defaultLocale?: string;
 };
 
-/** The response type to request for in the OAuth authorization flow. You can set either `id_token` or `code` to true, but not both. Setting both types to be simultaneously true (`{code: true, id_token: true}`) is not yet supported. See… */
+/** The response type to request for in the OAuth authorization flow. You can set either `id_token` or `code` to true, but not both. Setting both types to be simultaneously true (`{code: true, id_token: true}`) is not yet supported. */
 export type FirebaseGoogleCloudIdentitytoolkitAdminV2OAuthResponseTypeInput = {
 	/** If true, ID token is returned from IdP's authorization endpoint. */
 	idToken?: boolean;
@@ -1510,14 +1508,14 @@ export type FirebaseGoogleCloudIdentitytoolkitAdminV2RecaptchaManagedRuleInput =
 	{
 		/** The action taken if the reCAPTCHA score of a request is within the interval [start_score, end_score]. */
 		action?: 'RECAPTCHA_ACTION_UNSPECIFIED' | 'BLOCK';
-		/** The end score (inclusive) of the score range for an action. Must be a value between 0.0 and 1.0, at 11 discrete values; e.g. 0, 0.1, 0.2, 0.3, ... 0.9, 1.0. A score of 0.0 indicates the riskiest request (likely a bot), whereas 1.0 indicates the safest request (likely a human). See… */
+		/** The end score (inclusive) of the score range for an action. Must be a value between 0.0 and 1.0, at 11 discrete values; e.g. 0, 0.1, 0.2, 0.3, ... 0.9, 1.0. A score of 0.0 indicates the riskiest request (likely a bot), whereas 1.0 indicates the safest request (likely a human). */
 		endScore?: number;
 	};
 
 /** The config for a reCAPTCHA toll fraud assessment managed rule. Models a single interval [start_score, end_score]. The end_score is implicit. It is either the closest smaller end_score (if one is available) or 0. Intervals in aggregate span [0, 1] without overlapping. */
 export type FirebaseGoogleCloudIdentitytoolkitAdminV2RecaptchaTollFraudManagedRuleInput =
 	{
-		/** The start score (inclusive) for an action. Must be a value between 0.0 and 1.0, at 11 discrete values; e.g. 0, 0.1, 0.2, 0.3, ... 0.9, 1.0. A score of 0.0 indicates the safest request (likely legitimate), whereas 1.0 indicates the riskiest request (likely toll fraud). See… */
+		/** The start score (inclusive) for an action. Must be a value between 0.0 and 1.0, at 11 discrete values; e.g. 0, 0.1, 0.2, 0.3, ... 0.9, 1.0. A score of 0.0 indicates the safest request (likely legitimate), whereas 1.0 indicates the riskiest request (likely toll fraud). */
 		startScore?: number;
 		/** The action taken if the reCAPTCHA score of a request is within the interval [start_score, end_score]. */
 		action?: 'RECAPTCHA_ACTION_UNSPECIFIED' | 'BLOCK';
@@ -1660,7 +1658,7 @@ export type FirebaseGoogleCloudIdentitytoolkitV1EmailInfoInput = {
 export type FirebaseGoogleCloudIdentitytoolkitV1FederatedUserIdentifierInput = {
 	/** The user ID of the account at the third-party Identity Provider specified by `provider_id`. */
 	rawId?: string;
-	/** The ID of supported identity providers. This should be a provider ID enabled for sign-in, which is either from the list of [default supported IdPs](https://cloud.google.com/identity-platform/docs/reference/rest/v2/defaultSupportedIdps/list), or of the format `oidc.*` or `saml.*`. Some examples… */
+	/** The ID of supported identity providers. This should be a provider ID enabled for sign-in, which is either from the list of [default supported IdPs](https://cloud.google.com/identity-platform/docs/reference/rest/v2/defaultSupportedIdps/list), or of the format `oidc.*` or `saml.*`. */
 	providerId?: string;
 };
 
@@ -1853,25 +1851,25 @@ export type FirebaseGoogleFirebaseAppcheckV1GeneratePlayIntegrityChallengeReques
 
 /** Configuration for a limited-use App Check token. */
 export type FirebaseGoogleFirebaseAppcheckV1LimitedUseConfigInput = {
-	/** Optional. Specifies the desired `jti` claim (Section 4.1.7 of RFC 7519) in the returned App Check token. Limited-use App Check tokens with the same `jti` will be counted as the same token for the purposes of replay protection. The size of this field is limited to 250 bytes. If specified, its… */
+	/** Optional. Specifies the desired `jti` claim (Section 4.1.7 of RFC 7519) in the returned App Check token. Limited-use App Check tokens with the same `jti` will be counted as the same token for the purposes of replay protection. The size of this field is limited to 250 bytes. */
 	jti?: string;
 };
 
-/** A settings object specifying account requirements for Android devices running your app. These settings correspond to requirements on the [**account details** field](https://developer.android.com/google/play/integrity/verdicts#account-details-field) obtained from the Play Integrity API. See the… */
+/** A settings object specifying account requirements for Android devices running your app. These settings correspond to requirements on the [**account details** field](https://developer.android.com/google/play/integrity/verdicts#account-details-field) obtained from the Play Integrity API. */
 export type FirebaseGoogleFirebaseAppcheckV1PlayIntegrityConfigAccountDetailsInput =
 	{
-		/** Specifies whether the caller must have received the [`LICENSED` verdict](https://developer.android.com/google/play/integrity/verdicts#account-details-field). For additional details about scenarios where your users will receive this `LICENSED` label, see [the default responses… */
+		/** Specifies whether the caller must have received the [`LICENSED` verdict](https://developer.android.com/google/play/integrity/verdicts#account-details-field). */
 		requireLicensed?: boolean;
 	};
 
-/** A settings object specifying application integrity requirements for Android devices running your app. These settings correspond to requirements on the [**application integrity** field](https://developer.android.com/google/play/integrity/verdicts#application-integrity-field) obtained from the… */
+/** A settings object specifying application integrity requirements for Android devices running your app. These settings correspond to requirements on the [**application integrity** field](https://developer.android.com/google/play/integrity/verdicts#application-integrity-field) obtained from the Play… */
 export type FirebaseGoogleFirebaseAppcheckV1PlayIntegrityConfigAppIntegrityInput =
 	{
-		/** Specifies whether your running app is allowed to have the `UNRECOGNIZED_VERSION` [app recognition verdict](https://developer.android.com/google/play/integrity/verdicts#application-integrity-field). Note that the app recognition verdict `PLAY_RECOGNIZED` is a strong, comprehensive integrity… */
+		/** Specifies whether your running app is allowed to have the `UNRECOGNIZED_VERSION` [app recognition verdict](https://developer.android.com/google/play/integrity/verdicts#application-integrity-field). */
 		allowUnrecognizedVersion?: boolean;
 	};
 
-/** A settings object specifying device integrity requirements for Android devices running your app. These settings correspond to requirements on the [**device integrity** field](https://developer.android.com/google/play/integrity/verdicts#device-integrity-field) obtained from the Play Integrity… */
+/** A settings object specifying device integrity requirements for Android devices running your app. These settings correspond to requirements on the [**device integrity** field](https://developer.android.com/google/play/integrity/verdicts#device-integrity-field) obtained from the Play Integrity API. */
 export type FirebaseGoogleFirebaseAppcheckV1PlayIntegrityConfigDeviceIntegrityInput =
 	{
 		/** Specifies the minimum device integrity level in order for the device to be considered valid. Any device with a device recognition verdict lower than this level will be rejected. If this is unspecified, the default level is `NO_INTEGRITY`. */
@@ -1892,7 +1890,7 @@ export type FirebaseGoogleFirebaseAppcheckV1RecaptchaEnterpriseConfigRiskAnalysi
 
 /** App Check enforcement policy for a specific resource of a Google service supported by App Check. Note that this policy will override the service-level configuration. */
 export type FirebaseGoogleFirebaseAppcheckV1ResourcePolicyInput = {
-	/** Required. Identifier. The relative name of the resource policy object, in the format: ``` projects/{project_number}/services/{service_id}/resourcePolicies/{resource_policy_id} ``` Note that the `service_id` element must be a supported service ID. Currently, the following service IDs are… */
+	/** Required. Identifier. The relative name of the resource policy object, in the format: ``` projects/{project_number}/services/{service_id}/resourcePolicies/{resource_policy_id} ``` Note that the `service_id` element must be a supported service ID. */
 	name?: string;
 	/** Required. The baseline protection EnforcementMode for this resource. This will override the service-level baseline protection EnforcementMode. */
 	enforcementMode?: 'OFF' | 'UNENFORCED' | 'ENFORCED';
@@ -1906,11 +1904,11 @@ export type FirebaseGoogleFirebaseAppcheckV1ResourcePolicyInput = {
 export type FirebaseGoogleFirebaseAppcheckV1ServiceInput = {
 	/** Required. The baseline protection EnforcementMode for this service. */
 	enforcementMode?: 'OFF' | 'UNENFORCED' | 'ENFORCED';
-	/** Required. The relative resource name of the service configuration object, in the format: ``` projects/{project_number}/services/{service_id} ``` Note that the `service_id` element must be a supported service ID. Currently, the following service IDs are supported. Firebase and Google Cloud… */
+	/** Required. The relative resource name of the service configuration object, in the format: ``` projects/{project_number}/services/{service_id} ``` Note that the `service_id` element must be a supported service ID. Currently, the following service IDs are supported. */
 	name?: string;
 	/** Optional. This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding. This etag is strongly validated as defined by RFC 7232. */
 	etag?: string;
-	/** Optional. The replay protection EnforcementMode for this service. Note that this field cannot be set to a level higher than that of baseline protection. For example, if the enforcement mode for baseline protection is set to `UNENFORCED`, this field cannot be set to `ENFORCED`. In order to… */
+	/** Optional. The replay protection EnforcementMode for this service. Note that this field cannot be set to a level higher than that of baseline protection. For example, if the enforcement mode for baseline protection is set to `UNENFORCED`, this field cannot be set to `ENFORCED`. */
 	replayProtection?: 'OFF' | 'UNENFORCED' | 'ENFORCED';
 };
 
@@ -1918,7 +1916,7 @@ export type FirebaseGoogleFirebaseAppcheckV1ServiceInput = {
 export type FirebaseGoogleFirebaseAppcheckV1UpdateResourcePolicyRequestInput = {
 	/** Required. A comma-separated list of names of fields in the ResourcePolicy to update. Example: `enforcement_mode`. */
 	updateMask?: string;
-	/** Required. The ResourcePolicy to update. The ResourcePolicy's `name` field is used to identify the ResourcePolicy to be updated, in the format: ``` projects/{project_number}/services/{service_id}/resourcePolicies/{resource_policy_id} ``` Note that the `service_id` element must be a supported… */
+	/** Required. The ResourcePolicy to update. The ResourcePolicy's `name` field is used to identify the ResourcePolicy to be updated, in the format: ``` projects/{project_number}/services/{service_id}/resourcePolicies/{resource_policy_id} ``` Note that the `service_id` element must be a supported service… */
 	resourcePolicy?: FirebaseGoogleFirebaseAppcheckV1ResourcePolicyInput;
 };
 
@@ -1926,7 +1924,7 @@ export type FirebaseGoogleFirebaseAppcheckV1UpdateResourcePolicyRequestInput = {
 export type FirebaseGoogleFirebaseAppcheckV1UpdateServiceRequestInput = {
 	/** Required. A comma-separated list of names of fields in the Service to update. Example: `enforcement_mode`. */
 	updateMask?: string;
-	/** Required. The Service to update. The Service's `name` field is used to identify the Service to be updated, in the format: ``` projects/{project_number}/services/{service_id} ``` Note that the `service_id` element must be a supported service ID. Consult the Service.name field for a list of… */
+	/** Required. The Service to update. The Service's `name` field is used to identify the Service to be updated, in the format: ``` projects/{project_number}/services/{service_id} ``` Note that the `service_id` element must be a supported service ID. */
 	service?: FirebaseGoogleFirebaseAppcheckV1ServiceInput;
 };
 
@@ -1949,7 +1947,7 @@ export type FirebaseGoogleFirebaseFcmV1AndroidNotificationV2LightSettingsInput =
 
 /** The CMEK (Customer Managed Encryption Key) configuration for a Firestore database. If not present, the database is secured by the default Google encryption key. */
 export type FirebaseGoogleFirestoreAdminV1CmekConfigInput = {
-	/** Required. Only keys in the same location as this database are allowed to be used for encryption. For Firestore's nam5 multi-region, this corresponds to Cloud KMS multi-region us. For Firestore's eur3 multi-region, this corresponds to Cloud KMS multi-region europe. See… */
+	/** Required. Only keys in the same location as this database are allowed to be used for encryption. For Firestore's nam5 multi-region, this corresponds to Cloud KMS multi-region us. For Firestore's eur3 multi-region, this corresponds to Cloud KMS multi-region europe. */
 	kmsKeyName?: string;
 };
 
@@ -1962,7 +1960,7 @@ export type FirebaseGoogleFirestoreAdminV1CollectionGroupScopeInput = {
 /** The configuration options for using CMEK (Customer Managed Encryption Key) encryption. */
 export type FirebaseGoogleFirestoreAdminV1CustomerManagedEncryptionOptionsInput =
 	{
-		/** Required. Only keys in the same location as the database are allowed to be used for encryption. For Firestore's nam5 multi-region, this corresponds to Cloud KMS multi-region us. For Firestore's eur3 multi-region, this corresponds to Cloud KMS multi-region europe. See… */
+		/** Required. Only keys in the same location as the database are allowed to be used for encryption. For Firestore's nam5 multi-region, this corresponds to Cloud KMS multi-region us. For Firestore's eur3 multi-region, this corresponds to Cloud KMS multi-region europe. */
 		kmsKeyName?: string;
 	};
 
@@ -2010,19 +2008,19 @@ export type FirebaseGoogleFirestoreAdminV1FlatIndexInput = Record<
 export type FirebaseGoogleFirestoreAdminV1GoogleDefaultEncryptionOptionsInput =
 	Record<string, FirebaseJsonValue>;
 
-/** Cloud Firestore indexes enable simple and complex queries against documents in a database. In Standard edition databases, single-field indexes are managed using the google.firestore.admin.v1.Field resource, and composite indexes are managed using the google.firestore.admin.v1.Index resource. In… */
+/** Cloud Firestore indexes enable simple and complex queries against documents in a database. In Standard edition databases, single-field indexes are managed using the google.firestore.admin.v1.Field resource, and composite indexes are managed using the google.firestore.admin.v1.Index resource. */
 export type FirebaseGoogleFirestoreAdminV1IndexInput = {
 	/** Immutable. The density configuration of the index. */
 	density?: 'DENSITY_UNSPECIFIED' | 'SPARSE_ALL' | 'SPARSE_ANY' | 'DENSE';
 	/** Optional. Options for search indexes that are at the index definition level. This field is only currently supported for indexes with MONGODB_COMPATIBLE_API ApiScope. */
 	searchIndexOptions?: FirebaseGoogleFirestoreAdminV1SearchIndexOptionsInput;
-	/** Optional. Whether the index is multikey. By default, the index is not multikey. For non-multikey indexes, none of the paths in the index definition reach or traverse an array, except via an explicit array index. For multikey indexes, at most one of the paths in the index definition reach or… */
+	/** Optional. Whether the index is multikey. By default, the index is not multikey. For non-multikey indexes, none of the paths in the index definition reach or traverse an array, except via an explicit array index. */
 	multikey?: boolean;
 	/** Output only. The serving state of the index. */
 	state?: 'STATE_UNSPECIFIED' | 'CREATING' | 'READY' | 'NEEDS_REPAIR';
 	/** Optional. Whether it is an unique index. Unique index ensures all values for the indexed field(s) are unique across documents. */
 	unique?: boolean;
-	/** Indexes with a collection query scope specified allow queries against a collection that is the child of a specific document, specified at query time, and that has the same collection ID. Indexes with a collection group query scope specified allow queries against all collections descended from a… */
+	/** Indexes with a collection query scope specified allow queries against a collection that is the child of a specific document, specified at query time, and that has the same collection ID. */
 	queryScope?:
 		| 'QUERY_SCOPE_UNSPECIFIED'
 		| 'COLLECTION'
@@ -2030,11 +2028,11 @@ export type FirebaseGoogleFirestoreAdminV1IndexInput = {
 		| 'COLLECTION_RECURSIVE';
 	/** The API scope supported by this index. */
 	apiScope?: 'ANY_API' | 'DATASTORE_MODE_API' | 'MONGODB_COMPATIBLE_API';
-	/** A server-defined name for this index. Output only. When used in the google.firestore.admin.v1.Index resource, the value is of the form: `projects/{project_id}/databases/{database_id}/collectionGroups/{collection_id}/indexes/{index_id}` When used in the google.firestore.admin.v1.Field resource,… */
+	/** A server-defined name for this index. Output only. When used in the google.firestore.admin.v1.Index resource, the value is of the form: `projects/{project_id}/databases/{database_id}/collectionGroups/{collection_id}/indexes/{index_id}` When used in the google.firestore.admin.v1.Field resource, the… */
 	name?: string;
-	/** Optional. The number of physical shards for the index. In Cloud Firestore, data and index entries are stored in contiguous, ordered key ranges called splits. While document keys within a collection are hashed to distribute write traffic across splits, secondary index entries are ordered… */
+	/** Optional. The number of physical shards for the index. In Cloud Firestore, data and index entries are stored in contiguous, ordered key ranges called splits. */
 	shardCount?: number;
-	/** The fields supported by this index. At most 100 fields may be specified. In Standard edition databases only: - At least 2 fields must be specified. - The last field entry is always for the field path `__name__`. If, on creation, `__name__` was not specified as the last field, it will be added… */
+	/** The fields supported by this index. At most 100 fields may be specified. In Standard edition databases only: - At least 2 fields must be specified. - The last field entry is always for the field path `__name__`. */
 	fields?: Array<FirebaseGoogleFirestoreAdminV1IndexFieldInput>;
 };
 
@@ -2064,7 +2062,7 @@ export type FirebaseGoogleFirestoreAdminV1IndexFieldInput = {
 	arrayConfig?: 'ARRAY_CONFIG_UNSPECIFIED' | 'CONTAINS';
 };
 
-/** A consistent snapshot of a database at a specific point in time. A PITR (Point-in-time recovery) snapshot with previous versions of a database's data is available for every minute up to the associated database's data retention period. If the PITR feature is enabled, the retention period is 7… */
+/** A consistent snapshot of a database at a specific point in time. A PITR (Point-in-time recovery) snapshot with previous versions of a database's data is available for every minute up to the associated database's data retention period. */
 export type FirebaseGoogleFirestoreAdminV1PitrSnapshotInput = {
 	/** Required. Snapshot time of the database. */
 	snapshotTime?: string;
@@ -2100,7 +2098,7 @@ export type FirebaseGoogleFirestoreAdminV1SearchGeoSpecInput = {
 export type FirebaseGoogleFirestoreAdminV1SearchIndexOptionsInput = {
 	/** Optional. The field in the document that specifies which language to use for that specific document. For indexes with MONGODB_COMPATIBLE_API ApiScope: if unspecified, the language is taken from the "language" field if it exists or from `text_language` if it does not. */
 	textLanguageOverrideFieldPath?: string;
-	/** Optional. The language to use for text search indexes. Used as the default language if not overridden at the document level by specifying the `text_language_override_field`. The language is specified as a BCP 47 language code. For indexes with MONGODB_COMPATIBLE_API ApiScope: If unspecified, the… */
+	/** Optional. The language to use for text search indexes. Used as the default language if not overridden at the document level by specifying the `text_language_override_field`. The language is specified as a BCP 47 language code. */
 	textLanguage?: string;
 };
 
@@ -2124,9 +2122,9 @@ export type FirebaseGoogleFirestoreAdminV1SourceEncryptionOptionsInput = Record<
 	FirebaseJsonValue
 >;
 
-/** The TTL (time-to-live) configuration for documents that have this `Field` set. A timestamp stored in a TTL-enabled field will be used to determine the expiration time of the document. The expiration time is the sum of the timestamp value and the `expiration_offset`. For Enterprise edition… */
+/** The TTL (time-to-live) configuration for documents that have this `Field` set. A timestamp stored in a TTL-enabled field will be used to determine the expiration time of the document. The expiration time is the sum of the timestamp value and the `expiration_offset`. */
 export type FirebaseGoogleFirestoreAdminV1TtlConfigInput = {
-	/** Optional. The offset, relative to the timestamp value from the TTL-enabled field, used to determine the document's expiration time. `expiration_offset.seconds` must be between 0 and 2,147,483,647 inclusive. Values more precise than seconds are rejected. If unset, defaults to 0, in which case the… */
+	/** Optional. The offset, relative to the timestamp value from the TTL-enabled field, used to determine the document's expiration time. `expiration_offset.seconds` must be between 0 and 2,147,483,647 inclusive. Values more precise than seconds are rejected. */
 	expirationOffset?: string;
 };
 
@@ -2152,7 +2150,7 @@ export type FirebaseGoogleFirestoreAdminV1WeeklyRecurrenceInput = {
 		| 'SUNDAY';
 };
 
-/** Specifies the audit configuration for a service. The configuration determines which permission types are logged, and what identities, if any, are exempted from logging. An AuditConfig must have one or more AuditLogConfigs. If there are AuditConfigs for both `allServices` and a specific service,… */
+/** Specifies the audit configuration for a service. The configuration determines which permission types are logged, and what identities, if any, are exempted from logging. An AuditConfig must have one or more AuditLogConfigs. */
 export type FirebaseGoogleIamV1AuditConfigInput = {
 	/** Specifies a service that will be enabled for audit logging. For example, `storage.googleapis.com`, `cloudsql.googleapis.com`. `allServices` is a special value that covers all services. */
 	service?: string;
@@ -2160,7 +2158,7 @@ export type FirebaseGoogleIamV1AuditConfigInput = {
 	auditLogConfigs?: Array<FirebaseGoogleIamV1AuditLogConfigInput>;
 };
 
-/** Provides the configuration for logging a type of permissions. Example: { "audit_log_configs": [ { "log_type": "DATA_READ", "exempted_members": [ "user:jose@example.com" ] }, { "log_type": "DATA_WRITE" } ] } This enables 'DATA_READ' and 'DATA_WRITE' logging, while exempting jose@example.com from… */
+/** Provides the configuration for logging a type of permissions. Example: { "audit_log_configs": [ { "log_type": "DATA_READ", "exempted_members"… */
 export type FirebaseGoogleIamV1AuditLogConfigInput = {
 	/** The log type that this config enables. */
 	logType?: 'LOG_TYPE_UNSPECIFIED' | 'ADMIN_READ' | 'DATA_WRITE' | 'DATA_READ';
@@ -2170,33 +2168,33 @@ export type FirebaseGoogleIamV1AuditLogConfigInput = {
 
 /** Associates `members`, or principals, with a `role`. */
 export type FirebaseGoogleIamV1BindingInput = {
-	/** The condition that is associated with this binding. If the condition evaluates to `true`, then this binding applies to the current request. If the condition evaluates to `false`, then this binding does not apply to the current request. However, a different role binding might grant the same role… */
+	/** The condition that is associated with this binding. If the condition evaluates to `true`, then this binding applies to the current request. If the condition evaluates to `false`, then this binding does not apply to the current request. */
 	condition?: FirebaseGoogleTypeExprInput;
-	/** Role that is assigned to the list of `members`, or principals. For example, `roles/viewer`, `roles/editor`, or `roles/owner`. For an overview of the IAM roles and permissions, see the [IAM documentation](https://cloud.google.com/iam/docs/roles-overview). For a list of the available pre-defined… */
+	/** Role that is assigned to the list of `members`, or principals. For example, `roles/viewer`, `roles/editor`, or `roles/owner`. For an overview of the IAM roles and permissions, see the [IAM documentation](https://cloud.google.com/iam/docs/roles-overview). */
 	role?: string;
-	/** Specifies the principals requesting access for a Google Cloud resource. `members` can have the following values: * `allUsers`: A special identifier that represents anyone who is on the internet; with or without a Google account. * `allAuthenticatedUsers`: A special identifier that represents… */
+	/** Specifies the principals requesting access for a Google Cloud resource. `members` can have the following values: * `allUsers`: A special identifier that represents anyone who is on the internet; with or without a Google account. */
 	members?: Array<string>;
 };
 
 /** Encapsulates settings provided to GetIamPolicy. */
 export type FirebaseGoogleIamV1GetPolicyOptionsInput = {
-	/** Optional. The maximum policy version that will be used to format the policy. Valid values are 0, 1, and 3. Requests specifying an invalid value will be rejected. Requests for policies with any conditional role bindings must specify version 3. Policies with no conditional role bindings may… */
+	/** Optional. The maximum policy version that will be used to format the policy. Valid values are 0, 1, and 3. Requests specifying an invalid value will be rejected. Requests for policies with any conditional role bindings must specify version 3. */
 	requestedPolicyVersion?: number;
 };
 
-/** An Identity and Access Management (IAM) policy, which specifies access controls for Google Cloud resources. A `Policy` is a collection of `bindings`. A `binding` binds one or more `members`, or principals, to a single `role`. Principals can be user accounts, service accounts, Google groups, and… */
+/** An Identity and Access Management (IAM) policy, which specifies access controls for Google Cloud resources. A `Policy` is a collection of `bindings`. A `binding` binds one or more `members`, or principals, to a single `role`. */
 export type FirebaseGoogleIamV1PolicyInput = {
 	/** Specifies cloud audit logging configuration for this policy. */
 	auditConfigs?: Array<FirebaseGoogleIamV1AuditConfigInput>;
-	/** Specifies the format of the policy. Valid values are `0`, `1`, and `3`. Requests that specify an invalid value are rejected. Any operation that affects conditional role bindings must specify version `3`. This requirement applies to the following operations: * Getting a policy that includes a… */
+	/** Specifies the format of the policy. Valid values are `0`, `1`, and `3`. Requests that specify an invalid value are rejected. Any operation that affects conditional role bindings must specify version `3`. */
 	version?: number;
-	/** Associates a list of `members`, or principals, with a `role`. Optionally, may specify a `condition` that determines how and when the `bindings` are applied. Each of the `bindings` must contain at least one principal. The `bindings` in a `Policy` can refer to up to 1,500 principals; up to 250 of… */
+	/** Associates a list of `members`, or principals, with a `role`. Optionally, may specify a `condition` that determines how and when the `bindings` are applied. Each of the `bindings` must contain at least one principal. */
 	bindings?: Array<FirebaseGoogleIamV1BindingInput>;
-	/** `etag` is used for optimistic concurrency control as a way to help prevent simultaneous updates of a policy from overwriting each other. It is strongly suggested that systems make use of the `etag` in the read-modify-write cycle to perform policy updates in order to avoid race conditions: An… */
+	/** `etag` is used for optimistic concurrency control as a way to help prevent simultaneous updates of a policy from overwriting each other. */
 	etag?: string;
 };
 
-/** Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. Example (Comparison): title: "Summary size limit" description: "Determines if a summary is… */
+/** Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. */
 export type FirebaseGoogleTypeExprInput = {
 	/** Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI. */
 	description?: string;
@@ -2252,7 +2250,7 @@ export type FirebaseMessageInput = {
 	android?: FirebaseAndroidConfigInput;
 	/** Input only. [Webpush protocol](https://tools.ietf.org/html/rfc8030) options. */
 	webpush?: FirebaseWebpushConfigInput;
-	/** Input only. Arbitrary key/value payload, which must be UTF-8 encoded. The key should not be a reserved word ("from", "message_type", or any word starting with "google." or "gcm.notification."). When sending payloads containing only data fields to iOS devices, only normal priority… */
+	/** Input only. Arbitrary key/value payload, which must be UTF-8 encoded. The key should not be a reserved word ("from", "message_type", or any word starting with "google." or "gcm.notification."). */
 	data?: Record<string, string>;
 	/** Input only. [Apple Push Notification Service](https://goo.gl/MXRTPa) specific options. */
 	apns?: FirebaseApnsConfigInput;
@@ -2262,7 +2260,7 @@ export type FirebaseMessageInput = {
 	token?: string;
 	/** Topic name to send a message to, e.g. "weather". Note: "/topics/" prefix should not be provided. */
 	topic?: string;
-	/** [Firebase Installation ID (FID)](/docs/cloud-messaging/android/get-started#access-firebase-installation-id) to send a message to. */
+	/** Firebase Installation ID (FID) to send a message to. */
 	fid?: string;
 	/** Condition to send a message to, e.g. "'foo' in topics && 'bar' in topics". */
 	condition?: string;
@@ -2301,7 +2299,7 @@ export type FirebaseObjectInput = {
 	};
 	/** HTTP 1.1 Entity tag for the object. */
 	etag?: string;
-	/** Whether an object is under event-based hold. Event-based hold is a way to retain objects until an event occurs, which is signified by the hold's release (i.e. this value is set to false). After being released (set to false), such objects will be subject to bucket-level retention (if any). One… */
+	/** Whether an object is under event-based hold. Event-based hold is a way to retain objects until an event occurs, which is signified by the hold's release (i.e. this value is set to false). After being released (set to false), such objects will be subject to bucket-level retention (if any). */
 	eventBasedHold?: boolean;
 	/** The content generation of this object. Used for object versioning. */
 	generation?: string | number;
@@ -2315,8 +2313,8 @@ export type FirebaseObjectInput = {
 	md5Hash?: string;
 	/** Media download link. */
 	mediaLink?: string;
-	/** User-provided metadata, in key/value pairs. */
-	metadata?: Record<string, string>;
+	/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. */
+	metadata?: Record<string, string | null>;
 	/** User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. */
 	contexts?: {
 		/** User-defined object contexts. */
@@ -2335,7 +2333,7 @@ export type FirebaseObjectInput = {
 		/** The ID for the entity. */
 		entityId?: string;
 	};
-	/** A server-determined value that specifies the earliest time that the object's retention period expires. This value is in RFC 3339 format. Note 1: This field is not provided for objects with an active event-based hold, since retention expiration is unknown until the hold is removed. Note 2: This… */
+	/** A server-determined value that specifies the earliest time that the object's retention period expires. This value is in RFC 3339 format. Note 1: This field is not provided for objects with an active event-based hold, since retention expiration is unknown until the hold is removed. */
 	retentionExpirationTime?: string;
 	/** A collection of object level retention parameters. */
 	retention?: {
@@ -2350,7 +2348,7 @@ export type FirebaseObjectInput = {
 	size?: string | number;
 	/** Storage class of the object. */
 	storageClass?: string;
-	/** Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites. A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. Note that unlike event-based hold,… */
+	/** Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites. A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. */
 	temporaryHold?: boolean;
 	/** The creation time of the object in RFC 3339 format. */
 	timeCreated?: string;
@@ -2364,7 +2362,7 @@ export type FirebaseObjectInput = {
 	hardDeleteTime?: string;
 	/** The time at which the object's storage class was last changed. When the object is initially created, it will be set to timeCreated. */
 	timeStorageClassUpdated?: string;
-	/** The modification time of the object metadata in RFC 3339 format. Set initially to object creation time and then updated whenever any metadata of the object changes. This includes changes made by a requester, such as modifying custom metadata, as well as changes made by Cloud Storage on behalf of… */
+	/** The modification time of the object metadata in RFC 3339 format. Set initially to object creation time and then updated whenever any metadata of the object changes. */
 	updated?: string;
 	/** Information about the object's availability in Rapid Cache Ultra (RCU) zonal caches. This field will only populate once the object is loaded into the cache. */
 	zonalAvailabilityInfo?: {
@@ -2381,7 +2379,7 @@ export type FirebaseObjectAccessControlInput = {
 	domain?: string;
 	/** The email address associated with the entity, if any. */
 	email?: string;
-	/** The entity holding the permission, in one of the following forms: - user-userId - user-email - group-groupId - group-email - domain-domain - project-team-projectId - allUsers - allAuthenticatedUsers Examples: - The user liz@example.com would be user-liz@example.com. - The group… */
+	/** The entity holding the permission, in one of the following forms: - user-userId - user-email - group-groupId - group-email - domain-domain - project-team-projectId - allUsers - allAuthenticatedUsers Examples: - The user liz@example.com would be user-liz@example.com. */
 	entity?: string;
 	/** The ID for the entity, if any. */
 	entityId?: string;
@@ -2470,7 +2468,7 @@ export type FirebaseReadOnlyInput = {
 export type FirebaseReadWriteInput = {
 	/** An optional transaction to retry. (base64) */
 	retryTransaction?: string;
-	/** Optional. The concurrency control mode to use for this transaction. A database is able to use different concurrency modes for different transactions simultaneously. 3rd party auth requests are only allowed to create optimistic read-write transactions and must specify that here even if the… */
+	/** Optional. The concurrency control mode to use for this transaction. A database is able to use different concurrency modes for different transactions simultaneously. */
 	concurrencyMode?:
 		| 'CONCURRENCY_MODE_UNSPECIFIED'
 		| 'OPTIMISTIC'
@@ -2483,7 +2481,7 @@ export type FirebaseRedirectInput = {
 	glob?: string;
 	/** Required. The status HTTP code to return in the response. It must be a valid 3xx status code. */
 	statusCode?: number;
-	/** Required. The value to put in the HTTP location header of the response. The location can contain capture group values from the pattern using a `:` prefix to identify the segment and an optional `*` to capture the rest of the URL. For example: "glob": "/:capture*", "statusCode": 301, "location":… */
+	/** Required. The value to put in the HTTP location header of the response. The location can contain capture group values from the pattern using a `:` prefix to identify the segment and an optional `*` to capture the rest of the URL. */
 	location?: string;
 	/** The user-supplied RE2 regular expression to match against the request URL path. */
 	regex?: string;
@@ -2497,7 +2495,7 @@ export type FirebaseReenableDatabaseInstanceRequestInput = Record<
 
 /** A condition targeting a specific group of users. A list of these conditions make up part of a RemoteConfig object. */
 export type FirebaseRemoteConfigConditionInput = {
-	/** Required. The logic of this condition. See the documentation regarding [Condition Expressions](/docs/remote-config/condition-reference) for the expected syntax of this field. */
+	/** Required. The logic of this condition. See the documentation regarding Condition Expressions for the expected syntax of this field. */
 	expression?: string;
 	/** Required. Identifier. A non-empty and unique name of this condition. Format: projects/{project}/namespaces/{namespace}/remoteConfigConditions/{remote_config_condition} When used within RemoteConfig.conditions, this field may contain just the condition name. */
 	name?: string;
@@ -2542,7 +2540,7 @@ export type FirebaseRemoteConfigParameterInput = {
 
 /** A named group of parameters. Grouping parameters is only for management purposes and does not affect client-side fetching of parameter values. */
 export type FirebaseRemoteConfigParameterGroupInput = {
-	/** Optional. Map of parameter keys to their optional default values and optional conditional values for parameters that belong to this group. A parameter only appears once per RemoteConfig: an ungrouped parameter appears at the top level; a parameter organized within a group appears within its… */
+	/** Optional. Map of parameter keys to their optional default values and optional conditional values for parameters that belong to this group. */
 	parameters?: Record<string, FirebaseRemoteConfigParameterInput>;
 	/** Optional. A description for the group. Its length must be less than or equal to 256 characters. A description may contain any Unicode characters. */
 	description?: string;
@@ -2584,7 +2582,7 @@ export type FirebaseRemoveFirebaseRequestInput = Record<
 
 /** Options for a request. */
 export type FirebaseRequestOptionsInput = {
-	/** Optional. The request tags for the request. Request tags are user-provided strings used for usage monitoring, cost management, and observability. Callers can associate custom application context (such as component, microservice, feature name, or operation type) with database requests. These tags… */
+	/** Optional. The request tags for the request. Request tags are user-provided strings used for usage monitoring, cost management, and observability. Callers can associate custom application context (such as component, microservice, feature name, or operation type) with database requests. */
 	requestTags?: Array<string>;
 };
 
@@ -2624,7 +2622,7 @@ export type FirebaseRolloutValueInput = {
 	rolloutId?: string;
 };
 
-/** The configuration for how incoming requests to a site should be routed and processed before serving content. The URL request paths are matched against the specified URL patterns in the configuration, then Hosting applies the applicable configuration according to a specific [priority… */
+/** The configuration for how incoming requests to a site should be routed and processed before serving content. */
 export type FirebaseServingConfigInput = {
 	/** Defines how to handle a trailing slash in the URL path. */
 	trailingSlashBehavior?:
@@ -2651,7 +2649,7 @@ export type FirebaseSourceInput = {
 	files?: Array<FirebaseFileInput>;
 };
 
-/** A single operation within a pipeline. A stage is made up of a unique name, and a list of arguments. The exact number of arguments & types is dependent on the stage type. To give an example, the stage `filter(state = "MD")` would be encoded as: ``` name: "filter" args { function_value { name:… */
+/** A single operation within a pipeline. A stage is made up of a unique name, and a list of arguments. The exact number of arguments & types is dependent on the stage type. */
 export type FirebaseStageInput = {
 	/** Optional. Ordered list of arguments the given stage expects. */
 	args?: Array<FirebaseValueInput>;
@@ -2681,7 +2679,7 @@ export type FirebaseStructuredPipelineInput = {
 export type FirebaseStructuredQueryInput = {
 	/** A potential prefix of a position in the result set to end the query at. This is similar to `START_AT` but with it controlling the end position rather than the start position. Requires: * The number of values cannot be greater than the number of fields specified in the `ORDER BY` clause. */
 	endAt?: FirebaseCursorInput;
-	/** A potential prefix of a position in the result set to start the query at. The ordering of the result set is based on the `ORDER BY` clause of the original query. ``` SELECT * FROM k WHERE a = 1 AND b > 2 ORDER BY b ASC, __name__ ASC; ``` This query's results are ordered by `(b ASC, __name__… */
+	/** A potential prefix of a position in the result set to start the query at. The ordering of the result set is based on the `ORDER BY` clause of the original query. ``` SELECT * FROM k WHERE a = 1 AND b > 2 ORDER BY b ASC, __name__ ASC; ``` This query's results are ordered by `(b ASC, __name__ ASC)`. */
 	startAt?: FirebaseCursorInput;
 	/** The collections to query. */
 	from?: Array<FirebaseCollectionSelectorInput>;
@@ -2691,7 +2689,7 @@ export type FirebaseStructuredQueryInput = {
 	where?: FirebaseFilterInput;
 	/** Optional sub-set of the fields to return. This acts as a DocumentMask over the documents returned from a query. When not set, assumes that the caller wants all fields returned. */
 	select?: FirebaseProjectionInput;
-	/** The order to apply to the query results. Callers can provide a full ordering, a partial ordering, or no ordering at all. While Firestore will always respect the provided order, the behavior for queries without a full ordering is different per database edition: In Standard edition, Firestore… */
+	/** The order to apply to the query results. Callers can provide a full ordering, a partial ordering, or no ordering at all. */
 	orderBy?: Array<FirebaseOrderInput>;
 	/** The maximum number of results to return. Applies after all other constraints. Requires: * The value must be greater than or equal to zero if specified. */
 	limit?: number;
@@ -2699,17 +2697,17 @@ export type FirebaseStructuredQueryInput = {
 	findNearest?: FirebaseFindNearestInput;
 };
 
-/** Sum of the values of the requested field. * Only numeric values will be aggregated. All non-numeric values including `NULL` are skipped. * If the aggregated values contain `NaN`, returns `NaN`. Infinity math follows IEEE-754 standards. * If the aggregated value set is empty, returns 0. * Returns… */
+/** Sum of the values of the requested field. * Only numeric values will be aggregated. All non-numeric values including `NULL` are skipped. * If the aggregated values contain `NaN`, returns `NaN`. Infinity math follows IEEE-754 standards. * If the aggregated value set is empty, returns 0. */
 export type FirebaseSumInput = {
 	/** The field to aggregate on. */
 	field?: FirebaseFieldReferenceInput;
 };
 
-/** `TestCase` messages provide the request context and an expectation as to whether the given context will be allowed or denied. Test cases may specify the `request`, `resource`, and `function_mocks` to mock a function call to a service-provided function. The `request` object represents context… */
+/** `TestCase` messages provide the request context and an expectation as to whether the given context will be allowed or denied. Test cases may specify the `request`, `resource`, and `function_mocks` to mock a function call to a service-provided function. */
 export type FirebaseTestCaseInput = {
 	/** Test expectation. */
 	expectation?: 'EXPECTATION_UNSPECIFIED' | 'ALLOW' | 'DENY';
-	/** Request context. The exact format of the request context is service-dependent. See the appropriate service documentation for information about the supported fields and types on the request. Minimally, all services support the following fields and types: Request field | Type… */
+	/** Request context. The exact format of the request context is service-dependent. See the appropriate service documentation for information about the supported fields and types on the request. */
 	request?: FirebaseJsonValue;
 	/** Specifies whether paths (such as request.path) are encoded and how. */
 	pathEncoding?: 'ENCODING_UNSPECIFIED' | 'URL_ENCODED' | 'PLAIN';
@@ -2770,9 +2768,9 @@ export type FirebaseValueInput = {
 	mapValue?: Record<string, FirebaseJsonValue>;
 	/** A null value. */
 	nullValue?: 'NULL_VALUE';
-	/** A double value. */
-	doubleValue?: number;
-	/** A bytes value. In Standard edition databases: * The value must not exceed 1 MiB - 89 bytes. * Only the first 1,500 bytes are considered by queries. In Enterprise edition databases, there is no limit on the size of the value. However, it is still subject to document and index entry size limits.… */
+	/** A double value: a number, or "NaN", "Infinity" or "-Infinity". */
+	doubleValue?: number | 'NaN' | 'Infinity' | '-Infinity';
+	/** A bytes value. In Standard edition databases: * The value must not exceed 1 MiB - 89 bytes. * Only the first 1,500 bytes are considered by queries. In Enterprise edition databases, there is no limit on the size of the value. However, it is still subject to document and index entry size limits. */
 	bytesValue?: string;
 	/** An array value: { values: Value[] }. */
 	arrayValue?: Record<string, FirebaseJsonValue>;
@@ -2782,7 +2780,7 @@ export type FirebaseValueInput = {
 	timestampValue?: string;
 	/** An integer value. */
 	integerValue?: string | number;
-	/** A string value. In Standard edition databases: * The string, represented as UTF-8, must not exceed 1 MiB - 89 bytes. * Only the first 1,500 bytes of the UTF-8 representation are considered by queries. In Enterprise edition databases, there is no limit on the size of the value. However, it is… */
+	/** A string value. In Standard edition databases: * The string, represented as UTF-8, must not exceed 1 MiB - 89 bytes. * Only the first 1,500 bytes of the UTF-8 representation are considered by queries. In Enterprise edition databases, there is no limit on the size of the value. */
 	stringValue?: string;
 	/** Pointer to a variable defined elsewhere in a pipeline. Unlike `field_reference_value` which references a field within a document, this refers to a variable, defined in a separate namespace than the fields of a document. */
 	variableReferenceValue?: string;
@@ -2796,7 +2794,7 @@ export type FirebaseWebpushConfigInput = {
 	fcmOptions?: FirebaseWebpushFcmOptionsInput;
 	/** HTTP headers defined in webpush protocol. Refer to [Webpush protocol](https://tools.ietf.org/html/rfc8030#section-5) for supported headers, e.g. "TTL": "15". */
 	headers?: Record<string, string>;
-	/** Web Notification options as a JSON object. Supports Notification instance properties as defined in [Web Notification API](https://developer.mozilla.org/en-US/docs/Web/API/Notification). If present, "title" and "body" fields override [google.firebase.fcm.v1.Notification.title] and… */
+	/** Web Notification options as a JSON object. Supports Notification instance properties as defined in [Web Notification API](https://developer.mozilla.org/en-US/docs/Web/API/Notification). */
 	notification?: Record<string, FirebaseJsonValue>;
 };
 
@@ -2816,7 +2814,7 @@ export type FirebaseWriteInput = {
 	update?: FirebaseDocumentInput;
 	/** The transforms to perform after update. This field can be set only when the operation is `update`. If present, this write is equivalent to performing `update` and `transform` to the same document atomically and in order. */
 	updateTransforms?: Array<FirebaseFieldTransformInput>;
-	/** The fields to update in this write. This field can be set only when the operation is `update`. If the mask is not set for an `update` and the document exists, any existing data will be overwritten. If the mask is set and the document on the server has fields not covered by the mask, they are… */
+	/** The fields to update in this write. This field can be set only when the operation is `update`. If the mask is not set for an `update` and the document exists, any existing data will be overwritten. */
 	updateMask?: FirebaseDocumentMaskInput;
 	/** A document name to delete. In the format: `projects/{project_id}/databases/{database_id}/documents/{document_path}`. */
 	delete?: string;
@@ -2836,7 +2834,7 @@ export type FirebaseFirestoreGoogleLongrunningCancelOperationRequestInput =
 export type FirebaseHostingVersionInput = {
 	/** Output only. Identifies the user who created the version. */
 	createUser?: FirebaseActingUserInput;
-	/** The deploy status of the version. For a successful deploy, call [`CreateVersion`](sites.versions/create) to make a new version (`CREATED` status), [upload all desired files](sites.versions/populateFiles) to the version, then [update](sites.versions/patch) the version to the `FINALIZED` status.… */
+	/** The deploy status of the version. For a successful deploy, call `CreateVersion` to make a new version (`CREATED` status), upload all desired files to the version, then update the version to the `FINALIZED` status. */
 	status?:
 		| 'VERSION_STATUS_UNSPECIFIED'
 		| 'CREATED'
@@ -2851,7 +2849,7 @@ export type FirebaseHostingVersionInput = {
 	deleteTime?: string;
 	/** Output only. The time at which the version was created. */
 	createTime?: string;
-	/** The fully-qualified resource name for the version, in the format: sites/ SITE_ID/versions/VERSION_ID This name is provided in the response body when you call [`CreateVersion`](sites.versions/create). */
+	/** The fully-qualified resource name for the version, in the format: sites/ SITE_ID/versions/VERSION_ID This name is provided in the response body when you call `CreateVersion`. */
 	name?: string;
 	/** Output only. The total number of files associated with the version. This value is calculated after a version is `FINALIZED`. */
 	fileCount?: string | number;
@@ -2869,7 +2867,7 @@ export type FirebaseHostingVersionInput = {
 
 /** Basic notification template to use across all platforms. */
 export type FirebaseMessagingNotificationInput = {
-	/** Contains the URL of an image that is going to be downloaded on the device and displayed in a notification. JPEG, PNG, BMP have full support across platforms. Animated GIF and video only work on iOS. WebP and HEIF have varying levels of support across platforms and platform versions. Android has… */
+	/** Contains the URL of an image that is going to be downloaded on the device and displayed in a notification. JPEG, PNG, BMP have full support across platforms. Animated GIF and video only work on iOS. WebP and HEIF have varying levels of support across platforms and platform versions. */
 	image?: string;
 	/** The notification's body text. */
 	body?: string;
@@ -2932,18 +2930,18 @@ export type FirebaseActingUser = {
 
 /** An event which triggers the start of the experiment. This can be qualified with zero or more event parameters. */
 export type FirebaseActivationEvent = {
-	/** Optional. The Analytics event which indicates that the user has seen an experiment. This is case-sensitive and must be 0-32 characters long. It may only contain alphanumeric characters and underscores, and must start with an alphabetic character. The "firebase_" prefix is reserved and should not… */
+	/** Optional. The Analytics event which indicates that the user has seen an experiment. This is case-sensitive and must be 0-32 characters long. It may only contain alphanumeric characters and underscores, and must start with an alphabetic character. */
 	event?: string | null;
 };
 
 export type FirebaseAdminSdkConfig = {
-	/** **DEPRECATED.** _Instead, use product-specific REST APIs to find the location of each resource in a Project. This field may not be populated, especially for newly provisioned projects after October 30, 2024._ The ID of the Project's ["location for default Google Cloud… */
+	/** **DEPRECATED.** _Instead, use product-specific REST APIs to find the location of each resource in a Project. */
 	locationId?: string | null;
-	/** **DEPRECATED.** _Instead, find the URL of the default Realtime Database instance using the [list endpoint](https://firebase.google.com/docs/reference/rest/database/database-management/rest/v1beta/projects.locations.instances/list) within the Firebase Realtime Database REST API. If the default… */
+	/** **DEPRECATED.** _Instead, find the URL of the default Realtime Database instance using the [list endpoint](https://firebase.google.com/docs/reference/rest/database/database-management/rest/v1beta/projects.locations.instances/list) within the Firebase Realtime Database REST API. */
 	databaseURL?: string | null;
 	/** Immutable. A user-assigned unique identifier for the `FirebaseProject`. This identifier may appear in URLs or names for some Firebase resources associated with the Project, but it should generally be treated as a convenience alias to reference the Project. */
 	projectId?: string | null;
-	/** **DEPRECATED.** _Instead, find the name of the default Cloud Storage for Firebase bucket using the [list endpoint](https://firebase.google.com/docs/reference/rest/storage/rest/v1beta/projects.buckets/list) within the Cloud Storage for Firebase REST API. If the default bucket for the Project has… */
+	/** **DEPRECATED.** _Instead, find the name of the default Cloud Storage for Firebase bucket using the [list endpoint](https://firebase.google.com/docs/reference/rest/storage/rest/v1beta/projects.buckets/list) within the Cloud Storage for Firebase REST API. */
 	storageBucket?: string | null;
 };
 
@@ -2954,7 +2952,7 @@ export type FirebaseAggregationResult = {
 };
 
 export type FirebaseAnalyticsDetails = {
-	/** - For `AndroidApps` and `IosApps`: a map of `app` to `streamId` for each Firebase App in the specified `FirebaseProject`. Each `app` and `streamId` appears only once. - For `WebApps`: a map of `app` to `streamId` and `measurementId` for each `WebApp` in the specified `FirebaseProject`. Each… */
+	/** - For `AndroidApps` and `IosApps`: a map of `app` to `streamId` for each Firebase App in the specified `FirebaseProject`. Each `app` and `streamId` appears only once. - For `WebApps`: a map of `app` to `streamId` and `measurementId` for each `WebApp` in the specified `FirebaseProject`. */
 	streamMappings?: Array<FirebaseStreamMapping> | null;
 	/** The Analytics Property object associated with the specified `FirebaseProject`. This object contains the details of the Google Analytics property associated with the Project. */
 	analyticsProperty?: FirebaseAnalyticsProperty | null;
@@ -2966,7 +2964,7 @@ export type FirebaseAnalyticsProperty = {
 	analyticsAccountId?: string | null;
 	/** The display name of the Google Analytics property associated with the specified `FirebaseProject`. */
 	displayName?: string | null;
-	/** The globally unique, Google-assigned identifier of the Google Analytics property associated with the specified `FirebaseProject`. If you called [`AddGoogleAnalytics`](../../v1beta1/projects/addGoogleAnalytics) to link the `FirebaseProject` with a Google Analytics account, the value in this `id`… */
+	/** The globally unique, Google-assigned identifier of the Google Analytics property associated with the specified `FirebaseProject`. */
 	id?: string | null;
 };
 
@@ -2982,17 +2980,17 @@ export type FirebaseAndroidApp = {
 	appId?: string | null;
 	/** Output only. If the App has been removed from the Project, this is the timestamp of when the App is considered expired and will be permanently deleted. After this time, the App cannot be undeleted (that is, restored to the Project). This value is only provided if the App is in the `DELETED` state. */
 	expireTime?: string | null;
-	/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the `AndroidApp`. Be aware that this value is the UID of the API key, _not_ the [`keyString`](https://cloud.google.com/api-keys/docs/reference/rest/v2/projects.locations.keys#Key.FIELDS.key_string) of… */
+	/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the `AndroidApp`. */
 	apiKeyId?: string | null;
 	/** The user-assigned display name for the `AndroidApp`. */
 	displayName?: string | null;
-	/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources).… */
+	/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources). */
 	etag?: string | null;
 	/** Output only. The lifecycle state of the App. */
 	state?: string | null;
 	/** The SHA1 certificate hashes for the AndroidApp. */
 	sha1Hashes?: Array<string> | null;
-	/** The resource name of the AndroidApp, in the format: projects/ PROJECT_IDENTIFIER/androidApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's [`ProjectNumber`](../projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its… */
+	/** The resource name of the AndroidApp, in the format: projects/ PROJECT_IDENTIFIER/androidApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's `ProjectNumber` ***(recommended)*** or its `ProjectId`. */
 	name?: string | null;
 	/** Immutable. The canonical package name of the Android app as would appear in the Google Play Developer Console. */
 	packageName?: string | null;
@@ -3018,11 +3016,11 @@ export type FirebaseAndroidBackgroundSyncMessage = Record<
 
 /** Android specific options for messages sent through [FCM connection server](https://goo.gl/4GLdUl). */
 export type FirebaseAndroidConfig = {
-	/** How long (in seconds) the message should be kept in FCM storage if the device is offline. The maximum time to live supported is 4 weeks, and the default value is 4 weeks if not set. Set it to 0 if want to send the message immediately. In JSON format, the Duration type is encoded as a string… */
+	/** How long (in seconds) the message should be kept in FCM storage if the device is offline. The maximum time to live supported is 4 weeks, and the default value is 4 weeks if not set. Set it to 0 if want to send the message immediately. */
 	ttl?: string | null;
 	/** Notification to send to Android devices. */
 	notification?: FirebaseAndroidNotification | null;
-	/** Optional. If set to true, messages will be allowed to be delivered to the app while the device is connected over a restricted satellite network. This should only be enabled for messages that can be handled over a restricted satellite network and only for apps that are enabled to work over a… */
+	/** Optional. If set to true, messages will be allowed to be delivered to the app while the device is connected over a restricted satellite network. */
 	restrictedSatelliteOk?: boolean | null;
 	/** Message priority. Can take "normal" and "high" values. For more information, see [Setting the priority of a message](https://firebase.google.com/docs/cloud-messaging/customize-messages/setting-message-priority). */
 	priority?: string | null;
@@ -3044,7 +3042,7 @@ export type FirebaseAndroidConfig = {
 export type FirebaseAndroidConfigV2 = {
 	/** Options for features provided by the FCM SDK for Android. If present, it will override google.firebase.fcm.v1.Message.fcm_options. */
 	fcmOptions?: FirebaseAndroidFcmOptions | null;
-	/** Optional. If set to true, messages will be allowed to be delivered to the app while the device is connected over a restricted satellite network. This should only be enabled for messages that can be handled over a restricted satellite network and only for apps that are enabled to work over a… */
+	/** Optional. If set to true, messages will be allowed to be delivered to the app while the device is connected over a restricted satellite network. */
 	restrictedSatelliteOk?: boolean | null;
 	/** Optional. User-facing notification to send to Android devices. These messages are delivered immediately and are not delayed by battery optimizations. */
 	remoteNotification?: FirebaseAndroidRemoteNotification | null;
@@ -3056,7 +3054,7 @@ export type FirebaseAndroidConfigV2 = {
 	backgroundSync?: FirebaseAndroidBackgroundSyncMessage | null;
 	/** Package name of the application where the registration token must match in order to receive the message. */
 	restrictedPackageName?: string | null;
-	/** How long (in seconds) the message should be kept in FCM storage if the device is offline. The maximum time to live supported is 4 weeks, and the default value is 4 weeks if not set. Set it to 0 if want to send the message immediately. In JSON format, the Duration type is encoded as a string… */
+	/** How long (in seconds) the message should be kept in FCM storage if the device is offline. The maximum time to live supported is 4 weeks, and the default value is 4 weeks if not set. Set it to 0 if want to send the message immediately. */
 	ttl?: string | null;
 	/** Optional. If set to true, messages will be allowed to be delivered to the app while the device is in bandwidth constrained mode. This should only be enabled when the app has been tested to properly handle messages in bandwidth constrained mode. */
 	bandwidthConstrainedOk?: boolean | null;
@@ -3074,11 +3072,11 @@ export type FirebaseAndroidFcmOptions = {
 export type FirebaseAndroidNotification = {
 	/** Settings to control the notification's LED blinking rate and color if LED is available on the device. The total blinking time is controlled by the OS. */
 	lightSettings?: FirebaseLightSettings | null;
-	/** Set whether or not this notification is relevant only to the current device. Some notifications can be bridged to other devices for remote display, such as a Wear OS watch. This hint can be set to recommend this notification not be bridged. See [Wear OS… */
+	/** Set whether or not this notification is relevant only to the current device. Some notifications can be bridged to other devices for remote display, such as a Wear OS watch. This hint can be set to recommend this notification not be bridged. */
 	localOnly?: boolean | null;
 	/** The notification's title. If present, it will override google.firebase.fcm.v1.Notification.title. */
 	title?: string | null;
-	/** If set to true, use the Android framework's default LED light settings for the notification. Default values are specified in [config.xml](https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/config.xml). If `default_light_settings` is set to true and… */
+	/** If set to true, use the Android framework's default LED light settings for the notification. Default values are specified in [config.xml](https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/config.xml). */
 	defaultLightSettings?: boolean | null;
 	/** Optional. If set, display notifications delivered to the device will be handled by the app instead of the proxy. */
 	bypassProxyNotification?: boolean | null;
@@ -3088,7 +3086,7 @@ export type FirebaseAndroidNotification = {
 	bodyLocArgs?: Array<string> | null;
 	/** Sets the "ticker" text, which is sent to accessibility services. Prior to API level 21 (`Lollipop`), sets the text that is displayed in the status bar when the notification first arrives. */
 	ticker?: string | null;
-	/** If set to true, use the Android framework's default vibrate pattern for the notification. Default values are specified in [config.xml](https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/config.xml). If `default_vibrate_timings` is set to true and… */
+	/** If set to true, use the Android framework's default vibrate pattern for the notification. Default values are specified in [config.xml](https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/config.xml). */
 	defaultVibrateTimings?: boolean | null;
 	/** Contains the URL of an image that is going to be displayed in a notification. If present, it will override google.firebase.fcm.v1.Notification.image. */
 	image?: string | null;
@@ -3110,11 +3108,11 @@ export type FirebaseAndroidNotification = {
 	titleLocKey?: string | null;
 	/** The notification's body text. If present, it will override google.firebase.fcm.v1.Notification.body. */
 	body?: string | null;
-	/** The [notification's channel id](https://developer.android.com/guide/topics/ui/notifiers/notifications#ManageChannels) (new in Android O). The app must create a channel with this channel ID before any notification with this channel ID is received. If you don't send this channel ID in the request,… */
+	/** The [notification's channel id](https://developer.android.com/guide/topics/ui/notifiers/notifications#ManageChannels) (new in Android O). The app must create a channel with this channel ID before any notification with this channel ID is received. */
 	channelId?: string | null;
-	/** Set the relative priority for this notification. Priority is an indication of how much of the user's attention should be consumed by this notification. Low-priority notifications may be hidden from the user in certain situations, while the user might be interrupted for a higher-priority… */
+	/** Set the relative priority for this notification. Priority is an indication of how much of the user's attention should be consumed by this notification. */
 	notificationPriority?: string | null;
-	/** Sets the number of items this notification represents. May be displayed as a badge count for launchers that support badging. See [Notification Badge](https://developer.android.com/training/notify-user/badges). For example, this might be useful if you're using just one notification to represent… */
+	/** Sets the number of items this notification represents. May be displayed as a badge count for launchers that support badging. See [Notification Badge](https://developer.android.com/training/notify-user/badges). */
 	notificationCount?: number | null;
 	/** The notification's icon color, expressed in #rrggbb format. */
 	color?: string | null;
@@ -3122,7 +3120,7 @@ export type FirebaseAndroidNotification = {
 	icon?: string | null;
 	/** The key to the body string in the app's string resources to use to localize the body text to the user's current localization. See [String Resources](https://goo.gl/NdFZGI) for more information. */
 	bodyLocKey?: string | null;
-	/** Set the vibration pattern to use. Pass in an array of [protobuf.Duration](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Duration) to turn on or off the vibrator. The first value indicates the `Duration` to wait before turning the vibrator on. The… */
+	/** Set the vibration pattern to use. Pass in an array of [protobuf.Duration](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Duration) to turn on or off the vibrator. The first value indicates the `Duration` to wait before turning the vibrator on. */
 	vibrateTimings?: Array<string> | null;
 	/** Variable string values to be used in place of the format specifiers in title_loc_key to use to localize the title text to the user's current localization. See [Formatting and Styling](https://goo.gl/MalYE3) for more information. */
 	titleLocArgs?: Array<string> | null;
@@ -3130,17 +3128,17 @@ export type FirebaseAndroidNotification = {
 
 /** Notification v2 to send to Android devices. This is a v2 version of the AndroidNotification message and will replace it in the v2 API. */
 export type FirebaseAndroidNotificationV2 = {
-	/** The [notification's channel id](https://developer.android.com/guide/topics/ui/notifiers/notifications#ManageChannels) (new in Android O). The app must create a channel with this channel ID before any notification with this channel ID is received. If you don't send this channel ID in the request,… */
+	/** The [notification's channel id](https://developer.android.com/guide/topics/ui/notifiers/notifications#ManageChannels) (new in Android O). The app must create a channel with this channel ID before any notification with this channel ID is received. */
 	channelId?: string | null;
 	/** Settings to control the notification's LED blinking rate and color if LED is available on the device. The total blinking time is controlled by the OS. */
 	lightSettings?: FirebaseGoogleFirebaseFcmV1AndroidNotificationV2LightSettings | null;
 	/** The notification's icon color, expressed in #rrggbb format. */
 	color?: string | null;
-	/** Set the relative priority for this notification. Priority is an indication of how much of the user's attention should be consumed by this notification. Low-priority notifications may be hidden from the user in certain situations, while the user might be interrupted for a higher-priority… */
+	/** Set the relative priority for this notification. Priority is an indication of how much of the user's attention should be consumed by this notification. */
 	notificationPriority?: string | null;
 	/** When set to false or unset, the notification is automatically dismissed when the user clicks it in the panel. When set to true, the notification persists even when the user clicks it. */
 	sticky?: boolean | null;
-	/** Optional. Identifier used to replace existing notifications in the notification drawer. It is used in conjunction with `tag` to form a unique identifier `(tag, id)` within the app. If not specified, each request creates a new notification. If specified and a notification with the same `(tag,… */
+	/** Optional. Identifier used to replace existing notifications in the notification drawer. It is used in conjunction with `tag` to form a unique identifier `(tag, id)` within the app. If not specified, each request creates a new notification. */
 	id?: number | null;
 	/** Variable string values to be used in place of the format specifiers in body_loc_key to use to localize the body text to the user's current localization. See [Formatting and Styling](https://goo.gl/MalYE3) for more information. */
 	bodyLocArgs?: Array<string> | null;
@@ -3148,7 +3146,7 @@ export type FirebaseAndroidNotificationV2 = {
 	eventTime?: string | null;
 	/** The sound to play when the device receives the notification. Supports "default" or the filename of a sound resource bundled in the app. Sound files must reside in /res/raw/. */
 	sound?: string | null;
-	/** Sets the number of items this notification represents. May be displayed as a badge count for launchers that support badging. See [Notification Badge](https://developer.android.com/training/notify-user/badges). For example, this might be useful if you're using just one notification to represent… */
+	/** Sets the number of items this notification represents. May be displayed as a badge count for launchers that support badging. See [Notification Badge](https://developer.android.com/training/notify-user/badges). */
 	notificationCount?: number | null;
 	/** An HTTPS URL of an image to display in the notification. If present, it overrides google.firebase.fcm.v1.Notification.image. */
 	image?: string | null;
@@ -3158,11 +3156,11 @@ export type FirebaseAndroidNotificationV2 = {
 	body?: string | null;
 	/** Variable string values to be used in place of the format specifiers in title_loc_key to use to localize the title text to the user's current localization. See [Formatting and Styling](https://goo.gl/MalYE3) for more information. */
 	titleLocArgs?: Array<string> | null;
-	/** If set to true, use the Android framework's default vibrate pattern for the notification. Default values are specified in [config.xml](https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/config.xml). If `default_vibrate_timings` is set to true and… */
+	/** If set to true, use the Android framework's default vibrate pattern for the notification. Default values are specified in [config.xml](https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/config.xml). */
 	defaultVibrateTimings?: boolean | null;
 	/** The key to the title string in the app's string resources to use to localize the title text to the user's current localization. See [String Resources](https://goo.gl/NdFZGI) for more information. */
 	titleLocKey?: string | null;
-	/** Identifier used to replace existing notifications in the notification drawer. It is used in conjunction with `id` to form a unique identifier `(tag, id)` within the app. If not specified, each request creates a new notification. If specified and a notification with the same `(tag, id)` is… */
+	/** Identifier used to replace existing notifications in the notification drawer. It is used in conjunction with `id` to form a unique identifier `(tag, id)` within the app. If not specified, each request creates a new notification. */
 	tag?: string | null;
 	/** The action associated with a user click on the notification. If specified, an activity with a matching intent filter is launched when a user clicks on the notification. */
 	clickAction?: string | null;
@@ -3170,7 +3168,7 @@ export type FirebaseAndroidNotificationV2 = {
 	title?: string | null;
 	/** The notification's icon. Sets the notification icon to myicon for drawable resource myicon. If you don't send this key in the request, FCM displays the launcher icon specified in your app manifest. */
 	icon?: string | null;
-	/** If set to true, use the Android framework's default LED light settings for the notification. Default values are specified in [config.xml](https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/config.xml). If `default_light_settings` is set to true and… */
+	/** If set to true, use the Android framework's default LED light settings for the notification. Default values are specified in [config.xml](https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/config.xml). */
 	defaultLightSettings?: boolean | null;
 	/** If set to true, use the Android framework's default sound for the notification. Default values are specified in [config.xml](https://android.googlesource.com/platform/frameworks/base/+/master/core/res/res/values/config.xml). */
 	defaultSound?: boolean | null;
@@ -3178,15 +3176,15 @@ export type FirebaseAndroidNotificationV2 = {
 	ticker?: string | null;
 	/** Set the [Notification.visibility](https://developer.android.com/reference/android/app/Notification.html#visibility) of the notification. */
 	visibility?: string | null;
-	/** Set the vibration pattern to use. Pass in an array of [protobuf.Duration](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Duration) to turn on or off the vibrator. The first value indicates the `Duration` to wait before turning the vibrator on. The… */
+	/** Set the vibration pattern to use. Pass in an array of [protobuf.Duration](https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Duration) to turn on or off the vibrator. The first value indicates the `Duration` to wait before turning the vibrator on. */
 	vibrateTimings?: Array<string> | null;
-	/** Set whether or not this notification is relevant only to the current device. Some notifications can be bridged to other devices for remote display, such as a Wear OS watch. This hint can be set to recommend this notification not be bridged. See [Wear OS… */
+	/** Set whether or not this notification is relevant only to the current device. Some notifications can be bridged to other devices for remote display, such as a Wear OS watch. This hint can be set to recommend this notification not be bridged. */
 	localOnly?: boolean | null;
 };
 
 /** A Remote Notification message that is sent to Android devices. */
 export type FirebaseAndroidRemoteNotification = {
-	/** Optional. If set to `true`, this RemoteNotification message will be delivered to legacy V1 clients as a data message by omitting the google.firebase.fcm.v1.AndroidRemoteNotification.notification. This should only be enabled when migrating from legacy V1 data messages. Note that by default (when… */
+	/** Optional. If set to `true`, this RemoteNotification message will be delivered to legacy V1 clients as a data message by omitting the google.firebase.fcm.v1.AndroidRemoteNotification.notification. This should only be enabled when migrating from legacy V1 data messages. */
 	useAsV1DataMessage?: boolean | null;
 	/** Optional. If set to true, the notification content can be updated by the app after the notification is received on the device. */
 	mutableContent?: boolean | null;
@@ -3196,13 +3194,13 @@ export type FirebaseAndroidRemoteNotification = {
 
 /** [Apple Push Notification Service](https://goo.gl/MXRTPa) specific options. */
 export type FirebaseApnsConfig = {
-	/** Optional. [Apple Live Activity](https://developer.apple.com/design/human-interface-guidelines/live-activities) token to send updates to. This token can either be a push token or [push-to-start](https://developer.apple.com/documentation/activitykit/activity/pushtostarttoken) token from Apple. To… */
+	/** Optional. [Apple Live Activity](https://developer.apple.com/design/human-interface-guidelines/live-activities) token to send updates to. This token can either be a push token or [push-to-start](https://developer.apple.com/documentation/activitykit/activity/pushtostarttoken) token from Apple. */
 	liveActivityToken?: string | null;
 	/** Options for features provided by the FCM SDK for iOS. */
 	fcmOptions?: FirebaseApnsFcmOptions | null;
 	/** HTTP request headers defined in Apple Push Notification Service. Refer to [APNs request headers](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/sending_notification_requests_to_apns) for supported headers such as `apns-expiration` and… */
 	headers?: Record<string, string> | null;
-	/** APNs payload as a JSON object, including both `aps` dictionary and custom payload. See [Payload Key Reference](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification). If present, it overrides… */
+	/** APNs payload as a JSON object, including both `aps` dictionary and custom payload. See [Payload Key Reference](https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/generating_a_remote_notification). */
 	payload?: Record<string, FirebaseJsonValue> | null;
 };
 
@@ -3248,7 +3246,7 @@ export type FirebaseBucketAccessControl = {
 	domain?: string | null;
 	/** The email address associated with the entity, if any. */
 	email?: string | null;
-	/** The entity holding the permission, in one of the following forms: - user-userId - user-email - group-groupId - group-email - domain-domain - project-team-projectId - allUsers - allAuthenticatedUsers Examples: - The user liz@example.com would be user-liz@example.com. - The group… */
+	/** The entity holding the permission, in one of the following forms: - user-userId - user-email - group-groupId - group-email - domain-domain - project-team-projectId - allUsers - allAuthenticatedUsers Examples: - The user liz@example.com would be user-liz@example.com. */
 	entity?: string | null;
 	/** The ID for the entity, if any. */
 	entityId?: string | null;
@@ -3336,11 +3334,11 @@ export type FirebaseCertVerification = {
 
 /** An SSL certificate used to provide end-to-end encryption for requests against your domain name. A `Certificate` can be an actual SSL certificate or, for newly-created custom domains, Hosting's intent to create one. */
 export type FirebaseCertificate = {
-	/** Output only. The state of the certificate. Only the `CERT_ACTIVE` and `CERT_EXPIRING_SOON` states provide SSL coverage for a domain name. If the state is `PROPAGATING` and Hosting had an active cert for the domain name before, that formerly-active cert provides SSL coverage for the domain name… */
+	/** Output only. The state of the certificate. Only the `CERT_ACTIVE` and `CERT_EXPIRING_SOON` states provide SSL coverage for a domain name. */
 	state?: string | null;
 	/** Output only. A set of errors Hosting encountered when attempting to create a cert for your domain name. Resolve these issues to ensure Hosting is able to provide secure communication with your site's visitors. */
 	issues?: Array<FirebaseHostingStatus> | null;
-	/** Output only. A set of ACME challenges you can add to your DNS records or existing, non-Hosting hosting provider to allow Hosting to create an SSL certificate for your domain name before you point traffic toward hosting. You can use thse challenges as part of a zero downtime transition from your… */
+	/** Output only. A set of ACME challenges you can add to your DNS records or existing, non-Hosting hosting provider to allow Hosting to create an SSL certificate for your domain name before you point traffic toward hosting. */
 	verification?: FirebaseCertVerification | null;
 	/** Output only. The certificate's type. */
 	type?: string | null;
@@ -3368,11 +3366,11 @@ export type FirebaseChannel = {
 	labels?: Record<string, string> | null;
 	/** Output only. The current release for the channel, if any. */
 	release?: FirebaseHostingRelease | null;
-	/** Output only. The URL at which the content of this channel's current release can be viewed. This URL is a Firebase-provided subdomain of `web.app`. The content of this channel's current release can also be viewed at the Firebase-provided subdomain of `firebaseapp.com`. If this channel is the… */
+	/** Output only. The URL at which the content of this channel's current release can be viewed. This URL is a Firebase-provided subdomain of `web.app`. The content of this channel's current release can also be viewed at the Firebase-provided subdomain of `firebaseapp.com`. */
 	url?: string | null;
 };
 
-/** A configured rewrite that directs requests to a Cloud Run service. If the Cloud Run service does not exist when setting or updating your Firebase Hosting configuration, then the request fails. Any errors from the Cloud Run service are passed to the end user (for example, if you delete a service,… */
+/** A configured rewrite that directs requests to a Cloud Run service. If the Cloud Run service does not exist when setting or updating your Firebase Hosting configuration, then the request fails. */
 export type FirebaseCloudRunRewrite = {
 	/** Optional. User-provided region where the Cloud Run service is hosted. Defaults to `us-central1` if not supplied. */
 	region?: string | null;
@@ -3382,13 +3380,13 @@ export type FirebaseCloudRunRewrite = {
 	serviceId?: string | null;
 };
 
-/** Represents a color in the RGBA color space. This representation is designed for simplicity of conversion to and from color representations in various languages over compactness. For example, the fields of this representation can be trivially provided to the constructor of `java.awt.Color` in… */
+/** Represents a color in the RGBA color space. This representation is designed for simplicity of conversion to and from color representations in various languages over compactness. */
 export type FirebaseColor = {
 	/** The amount of blue in the color as a value in the interval [0, 1]. */
 	blue?: number | null;
 	/** The amount of green in the color as a value in the interval [0, 1]. */
 	green?: number | null;
-	/** The fraction of this color that should be applied to the pixel. That is, the final pixel color is defined by the equation: `pixel color = alpha * (this color) + (1.0 - alpha) * (background color)` This means that a value of 1.0 corresponds to a solid color, whereas a value of 0.0 corresponds to… */
+	/** The fraction of this color that should be applied to the pixel. That is, the final pixel color is defined by the equation: `pixel color = alpha * (this color) + (1.0 - alpha) * (background color)` This means that a value of 1.0 corresponds to a solid color, whereas a value of 0.0 corresponds to a… */
 	alpha?: number | null;
 	/** The amount of red in the color as a value in the interval [0, 1]. */
 	red?: number | null;
@@ -3444,7 +3442,7 @@ export type FirebaseCustomDomain = {
 	requiredDnsUpdates?: FirebaseDnsUpdates | null;
 	/** Output only. The SSL certificate Hosting has for this custom domain's domain name. For new custom domains, this often represents Hosting's intent to create a certificate, rather than an actual cert. Check the `state` field for more. */
 	cert?: FirebaseCertificate | null;
-	/** Output only. A field that, if true, indicates that Hosting's systems are attmepting to make the custom domain's state match your preferred state. This is most frequently `true` when initially provisioning a `CustomDomain` after a `CreateCustomDomain` request or when creating a new SSL… */
+	/** Output only. A field that, if true, indicates that Hosting's systems are attmepting to make the custom domain's state match your preferred state. */
 	reconciling?: boolean | null;
 	/** Output only. The time the `CustomDomain` was deleted; null for custom domains that haven't been deleted. Deleted custom domains persist for approximately 30 days, after which time Hosting removes them completely. To restore a deleted custom domain, make an `UndeleteCustomDomain` request. */
 	deleteTime?: string | null;
@@ -3472,15 +3470,15 @@ export type FirebaseCustomDomain = {
 export type FirebaseCustomObjectiveDetails = {
 	/** Required. Which count_type is used to measure this objective. Always set to "NO_EVENT_USERS" for "app_crashes" and "app_exception" objectives. */
 	countType?: string | null;
-	/** Required. The name of the user-defined Firebase Analytics event to optimize. The event name is case-sensitive and must be 0-32 characters long. It may only contain alphanumeric characters and underscores, and must start with an alphabetic character. The "firebase_" prefix is reserved and should… */
+	/** Required. The name of the user-defined Firebase Analytics event to optimize. The event name is case-sensitive and must be 0-32 characters long. It may only contain alphanumeric characters and underscores, and must start with an alphabetic character. */
 	event?: string | null;
 };
 
-/** A condition that compares a developer-defined custom signal to a target value. NOTE: Developers provide custom signals via the Admin SDK. These signals can be a string, number, or numeric version (aka semantic version). For numeric interpretation of custom signal values. This will be a numeric… */
+/** A condition that compares a developer-defined custom signal to a target value. NOTE: Developers provide custom signals via the Admin SDK. These signals can be a string, number, or numeric version (aka semantic version). For numeric interpretation of custom signal values. */
 export type FirebaseCustomSignalCondition = {
 	/** Required. The choice of custom signal operator to determine how to compare targets to actual values. */
 	customSignalOperator?: string | null;
-	/** Required. A list of at most 100 target custom signal values. For numeric operators: this list must have exactly ONE target signal value that is of a valid numeric format specified above. For string operators, this is a list of target custom signal values, where each value conforms to the length… */
+	/** Required. A list of at most 100 target custom signal values. For numeric operators: this list must have exactly ONE target signal value that is of a valid numeric format specified above. */
 	targetCustomSignalValues?: Array<string> | null;
 	/** Required. The custom signal name. This must match what is provided in the EvaluationContext in the Admin SDK. */
 	customSignalKey?: string | null;
@@ -3512,21 +3510,21 @@ export type FirebaseDefaultBucket = {
 	storageClass?: string | null;
 };
 
-/** **DEPRECATED.** _Auto-provisioning of these resources is changing, so this object no longer reliably provides information about the resources within the Project. Instead, retrieve information about each resource directly from its resource-specific API._ The default auto-provisioned resources… */
+/** **DEPRECATED.** _Auto-provisioning of these resources is changing, so this object no longer reliably provides information about the resources within the Project. */
 export type FirebaseDefaultResources = {
-	/** Output only. **DEPRECATED.** _Instead, find the name of the default Firebase Hosting site using [ListSites](https://firebase.google.com/docs/reference/hosting/rest/v1beta1/projects.sites/list) within the Firebase Hosting REST API. If the default Hosting site for the Project has not yet been… */
+	/** Output only. **DEPRECATED.** _Instead, find the name of the default Firebase Hosting site using [ListSites](https://firebase.google.com/docs/reference/hosting/rest/v1beta1/projects.sites/list) within the Firebase Hosting REST API. */
 	hostingSite?: string | null;
-	/** Output only. **DEPRECATED.** _Instead, use product-specific REST APIs to find the location of each resource in a Project. This field may not be populated, especially for newly provisioned projects after October 30, 2024._ The ID of the Project's ["location for default Google Cloud… */
+	/** Output only. **DEPRECATED.** _Instead, use product-specific REST APIs to find the location of each resource in a Project. */
 	locationId?: string | null;
-	/** Output only. **DEPRECATED.** _Instead, find the name of the default Realtime Database instance using the [list endpoint](https://firebase.google.com/docs/reference/rest/database/database-management/rest/v1beta/projects.locations.instances/list) within the Firebase Realtime Database REST API. If… */
+	/** Output only. **DEPRECATED.** _Instead, find the name of the default Realtime Database instance using the [list endpoint](https://firebase.google.com/docs/reference/rest/database/database-management/rest/v1beta/projects.locations.instances/list) within the Firebase Realtime Database REST API. */
 	realtimeDatabaseInstance?: string | null;
-	/** Output only. **DEPRECATED.** _Instead, find the name of the default Cloud Storage for Firebase bucket using the [list endpoint](https://firebase.google.com/docs/reference/rest/storage/rest/v1beta/projects.buckets/list) within the Cloud Storage for Firebase REST API. If the default bucket for the… */
+	/** Output only. **DEPRECATED.** _Instead, find the name of the default Cloud Storage for Firebase bucket using the [list endpoint](https://firebase.google.com/docs/reference/rest/storage/rest/v1beta/projects.buckets/list) within the Cloud Storage for Firebase REST API. */
 	storageBucket?: string | null;
 };
 
-/** DNS records are resource records that define how systems and services should behave when handling requests for a domain name. For example, when you add `A` records to your domain name's DNS records, you're informing other systems (such as your users' web browsers) to contact those IPv4 addresses… */
+/** DNS records are resource records that define how systems and services should behave when handling requests for a domain name. */
 export type FirebaseDnsRecord = {
-	/** Output only. The data of the record. The meaning of the value depends on record type: - A and AAAA: IP addresses for the domain name. - CNAME: Another domain to check for records. - TXT: Arbitrary text strings associated with the domain name. Hosting uses TXT records to determine which Firebase… */
+	/** Output only. The data of the record. The meaning of the value depends on record type: - A and AAAA: IP addresses for the domain name. - CNAME: Another domain to check for records. - TXT: Arbitrary text strings associated with the domain name. */
 	rdata?: string | null;
 	/** Output only. The record's type, which determines what data the record contains. */
 	type?: string | null;
@@ -3546,7 +3544,7 @@ export type FirebaseDnsRecordSet = {
 	checkError?: FirebaseHostingStatus | null;
 };
 
-/** A set of DNS record updates that you should make to allow Hosting to serve secure content in response to requests against your domain name. These updates present the current state of your domain name's DNS records when Hosting last queried them, and the desired set of records that Hosting needs… */
+/** A set of DNS record updates that you should make to allow Hosting to serve secure content in response to requests against your domain name. */
 export type FirebaseDnsUpdates = {
 	/** The set of DNS records Hosting needs to serve secure content on the domain. */
 	desired?: Array<FirebaseDnsRecordSet> | null;
@@ -3564,7 +3562,7 @@ export type FirebaseDocument = {
 	updateTime?: string | null;
 	/** Output only. The time at which the document was created. This value increases monotonically when a document is deleted then recreated. It can also be compared to values from other documents and the `read_time` of a query. */
 	createTime?: string | null;
-	/** The document's fields. The map keys represent field names. Field names matching the regular expression `__.*__` are reserved. Reserved field names are forbidden except in certain documented contexts. The field names, represented as UTF-8, must not exceed 1,500 bytes and cannot be empty. Field… */
+	/** The document's fields. The map keys represent field names. Field names matching the regular expression `__.*__` are reserved. Reserved field names are forbidden except in certain documented contexts. The field names, represented as UTF-8, must not exceed 1,500 bytes and cannot be empty. */
 	fields?: Record<string, FirebaseValue> | null;
 };
 
@@ -3628,17 +3626,17 @@ export type FirebaseEventObjective = {
 export type FirebaseExecutePipelineResponse = {
 	/** Newly created transaction identifier. This field is only specified as part of the first response from the server, alongside the `results` field when the original request specified ExecuteRequest.new_transaction. (base64) */
 	transaction?: string | null;
-	/** The time at which the results are valid. This is a (not strictly) monotonically increasing value across multiple responses in the same stream. The API guarantees that all previously returned results are still valid at the latest `execution_time`. This allows the API consumer to treat the query… */
+	/** The time at which the results are valid. This is a (not strictly) monotonically increasing value across multiple responses in the same stream. The API guarantees that all previously returned results are still valid at the latest `execution_time`. */
 	executionTime?: string | null;
 	/** Query explain stats. This is present on the **last** response if the request configured explain to run in 'analyze' or 'explain' mode in the pipeline options. If the query does not return any results, a response with `explain_stats` and no `results` will still be sent. */
 	explainStats?: FirebaseExplainStats | null;
-	/** An ordered batch of results returned executing a pipeline. The batch size is variable, and can even be zero for when only a partial progress message is returned. The fields present in the returned documents are only those that were explicitly requested in the pipeline, this includes those like… */
+	/** An ordered batch of results returned executing a pipeline. The batch size is variable, and can even be zero for when only a partial progress message is returned. */
 	results?: Array<FirebaseDocument> | null;
 };
 
 /** Execution statistics for the query. */
 export type FirebaseExecutionStats = {
-	/** Debugging statistics from the execution of the query. Note that the debugging stats are subject to change as Firestore evolves. It could include: { "indexes_entries_scanned": "1000", "documents_scanned": "20", "billing_details" : { "documents_billable": "20", "index_entries_billable": "1000",… */
+	/** Debugging statistics from the execution of the query. Note that the debugging stats are subject to change as Firestore evolves. */
 	debugStats?: Record<string, FirebaseJsonValue> | null;
 	/** Total billable read operations. */
 	readOperations?: (string | number) | null;
@@ -3718,7 +3716,7 @@ export type FirebaseExperimentValue = {
 
 /** A variant of an experiment. */
 export type FirebaseExperimentVariant = {
-	/** Action weight proportional to other Actions. This number should be a whole number in the range [1-100] inclusive. If a weight is not specified, this value will be treated as 1. Example: if Action 1 has a weight of 1 and Action 2 has a weight of 2, Action 2 is twice as likely to be assigned to an… */
+	/** Action weight proportional to other Actions. This number should be a whole number in the range… */
 	weight?: number | null;
 	/** Identifier. The name of the variant. Eg: "Notification A", "Control". Variant names must be unique for a single experiment. */
 	name?: string | null;
@@ -3817,21 +3815,21 @@ export type FirebaseFirebaseAppInfo = {
 	platform?: string | null;
 	/** The user-assigned display name of the Firebase App. */
 	displayName?: string | null;
-	/** Output only. Immutable. The platform-specific identifier of the App. *Note:* For most use cases, use `appId`, which is the canonical, globally unique identifier for referencing an App. This string is derived from a native identifier for each platform: `packageName` for an `AndroidApp`,… */
+	/** Output only. Immutable. The platform-specific identifier of the App. *Note:* For most use cases, use `appId`, which is the canonical, globally unique identifier for referencing an App. */
 	namespace?: string | null;
 	/** Output only. If the App has been removed from the Project, this is the timestamp of when the App is considered expired and will be permanently deleted. After this time, the App cannot be undeleted (that is, restored to the Project). This value is only provided if the App is in the `DELETED` state. */
 	expireTime?: string | null;
-	/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the App. Be aware that this value is the UID of the API key, _not_ the [`keyString`](https://cloud.google.com/api-keys/docs/reference/rest/v2/projects.locations.keys#Key.FIELDS.key_string) of the API… */
+	/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the App. Be aware that this value is the UID of the API key, _not_ the [`keyString`](https://cloud.google.com/api-keys/docs/reference/rest/v2/projects.locations.keys#Key.FIELDS.key_string) of the API key. */
 	apiKeyId?: string | null;
 	/** Output only. Immutable. The globally unique, Firebase-assigned identifier for the `WebApp`. This identifier should be treated as an opaque token, as the data format is not specified. */
 	appId?: string | null;
 };
 
-/** A `FirebaseProject` is the top-level Firebase entity. It is the container for Firebase Apps, Firebase Hosting sites, storage systems (Firebase Realtime Database, Cloud Firestore, Cloud Storage buckets), and other Firebase and Google Cloud resources. You create a `FirebaseProject` by calling… */
+/** A `FirebaseProject` is the top-level Firebase entity. It is the container for Firebase Apps, Firebase Hosting sites, storage systems (Firebase Realtime Database, Cloud Firestore, Cloud Storage buckets), and other Firebase and Google Cloud resources. */
 export type FirebaseFirebaseProject = {
 	/** Output only. Immutable. The globally unique, Google-assigned canonical identifier for the Project. Use this identifier when configuring integrations and/or making API calls to Firebase or third-party services. */
 	projectNumber?: (string | number) | null;
-	/** The resource name of the Project, in the format: projects/PROJECT_IDENTIFIER PROJECT_IDENTIFIER: the Project's [`ProjectNumber`](../projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its [`ProjectId`](../projects#FirebaseProject.FIELDS.project_id). Learn more about using… */
+	/** The resource name of the Project, in the format: projects/PROJECT_IDENTIFIER PROJECT_IDENTIFIER: the Project's `ProjectNumber` ***(recommended)*** or its `ProjectId`. Learn more about using project identifiers in Google's [AIP 2510 standard](https://google.aip.dev/cloud/2510). */
 	name?: string | null;
 	/** Output only. The lifecycle state of the Project. */
 	state?: string | null;
@@ -3839,11 +3837,11 @@ export type FirebaseFirebaseProject = {
 	projectId?: string | null;
 	/** The user-assigned display name of the Project. */
 	displayName?: string | null;
-	/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources).… */
+	/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources). */
 	etag?: string | null;
 	/** A set of user-defined annotations for the FirebaseProject. Learn more about annotations in Google's [AIP-128 standard](https://google.aip.dev/128#annotations). These annotations are intended solely for developers and client-side tools. Firebase services will not mutate this annotations set. */
 	annotations?: Record<string, string> | null;
-	/** Output only. **DEPRECATED.** _Auto-provisioning of these resources is changing, so this object no longer reliably provides information about the Project. Instead, retrieve information about each resource directly from its resource-specific API._ The default Firebase resources associated with the… */
+	/** Output only. **DEPRECATED.** _Auto-provisioning of these resources is changing, so this object no longer reliably provides information about the Project. */
 	resources?: FirebaseDefaultResources | null;
 };
 
@@ -4045,11 +4043,11 @@ export type FirebaseGoogleCloudIdentitytoolkitAdminV2Email = {
 
 /** Configuration for settings related to email privacy and public visibility. Settings in this config protect against email enumeration, but may make some trade-offs in user-friendliness. */
 export type FirebaseGoogleCloudIdentitytoolkitAdminV2EmailPrivacyConfig = {
-	/** Migrates the project to a state of improved email privacy. For example certain error codes are more generic to avoid giving away information on whether the account exists. In addition, this disables certain features that as a side-effect allow user enumeration. Enabling this toggle disables the… */
+	/** Migrates the project to a state of improved email privacy. For example certain error codes are more generic to avoid giving away information on whether the account exists. In addition, this disables certain features that as a side-effect allow user enumeration. */
 	enableImprovedEmailPrivacy?: boolean | null;
 };
 
-/** Email template. The subject and body fields can contain the following placeholders which will be replaced with the appropriate values: %LINK% - The link to use to redeem the send OOB code. %EMAIL% - The email where the email is being sent. %NEW_EMAIL% - The new email being set for the account… */
+/** Email template. The subject and body fields can contain the following placeholders which will be replaced with the appropriate values: %LINK% - The link to use to redeem the send OOB code. %EMAIL% - The email where the email is being sent. */
 export type FirebaseGoogleCloudIdentitytoolkitAdminV2EmailTemplate = {
 	/** Email body format */
 	bodyFormat?: string | null;
@@ -4202,7 +4200,7 @@ export type FirebaseGoogleCloudIdentitytoolkitAdminV2MultiFactorAuthConfig = {
 
 /** Configuration related to multi-tenant functionality. */
 export type FirebaseGoogleCloudIdentitytoolkitAdminV2MultiTenantConfig = {
-	/** The default cloud parent org or folder that the tenant project should be created under. The parent resource name should be in the format of "/", such as "folders/123" or "organizations/456". If the value is not set, the tenant will be created under the same organization or folder as the agent… */
+	/** The default cloud parent org or folder that the tenant project should be created under. The parent resource name should be in the format of "/", such as "folders/123" or "organizations/456". */
 	defaultTenantLocation?: string | null;
 	/** Whether this project can have tenants or not. */
 	allowTenants?: boolean | null;
@@ -4236,7 +4234,7 @@ export type FirebaseGoogleCloudIdentitytoolkitAdminV2OAuthIdpConfig = {
 	enabled?: boolean | null;
 };
 
-/** The response type to request for in the OAuth authorization flow. You can set either `id_token` or `code` to true, but not both. Setting both types to be simultaneously true (`{code: true, id_token: true}`) is not yet supported. See… */
+/** The response type to request for in the OAuth authorization flow. You can set either `id_token` or `code` to true, but not both. Setting both types to be simultaneously true (`{code: true, id_token: true}`) is not yet supported. */
 export type FirebaseGoogleCloudIdentitytoolkitAdminV2OAuthResponseType = {
 	/** If true, ID token is returned from IdP's authorization endpoint. */
 	idToken?: boolean | null;
@@ -4328,14 +4326,14 @@ export type FirebaseGoogleCloudIdentitytoolkitAdminV2RecaptchaKey = {
 export type FirebaseGoogleCloudIdentitytoolkitAdminV2RecaptchaManagedRule = {
 	/** The action taken if the reCAPTCHA score of a request is within the interval [start_score, end_score]. */
 	action?: string | null;
-	/** The end score (inclusive) of the score range for an action. Must be a value between 0.0 and 1.0, at 11 discrete values; e.g. 0, 0.1, 0.2, 0.3, ... 0.9, 1.0. A score of 0.0 indicates the riskiest request (likely a bot), whereas 1.0 indicates the safest request (likely a human). See… */
+	/** The end score (inclusive) of the score range for an action. Must be a value between 0.0 and 1.0, at 11 discrete values; e.g. 0, 0.1, 0.2, 0.3, ... 0.9, 1.0. A score of 0.0 indicates the riskiest request (likely a bot), whereas 1.0 indicates the safest request (likely a human). */
 	endScore?: number | null;
 };
 
 /** The config for a reCAPTCHA toll fraud assessment managed rule. Models a single interval [start_score, end_score]. The end_score is implicit. It is either the closest smaller end_score (if one is available) or 0. Intervals in aggregate span [0, 1] without overlapping. */
 export type FirebaseGoogleCloudIdentitytoolkitAdminV2RecaptchaTollFraudManagedRule =
 	{
-		/** The start score (inclusive) for an action. Must be a value between 0.0 and 1.0, at 11 discrete values; e.g. 0, 0.1, 0.2, 0.3, ... 0.9, 1.0. A score of 0.0 indicates the safest request (likely legitimate), whereas 1.0 indicates the riskiest request (likely toll fraud). See… */
+		/** The start score (inclusive) for an action. Must be a value between 0.0 and 1.0, at 11 discrete values; e.g. 0, 0.1, 0.2, 0.3, ... 0.9, 1.0. A score of 0.0 indicates the safest request (likely legitimate), whereas 1.0 indicates the riskiest request (likely toll fraud). */
 		startScore?: number | null;
 		/** The action taken if the reCAPTCHA score of a request is within the interval [start_score, end_score]. */
 		action?: string | null;
@@ -4467,7 +4465,7 @@ export type FirebaseGoogleCloudIdentitytoolkitAdminV2Tenant = {
 	client?: FirebaseGoogleCloudIdentitytoolkitAdminV2ClientPermissionConfig | null;
 	/** Specify the settings that the tenant could inherit. */
 	inheritance?: FirebaseGoogleCloudIdentitytoolkitAdminV2Inheritance | null;
-	/** Output only. Hash config information of a tenant for display on Pantheon. This can only be displayed on Pantheon to avoid the sensitive information to get accidentally leaked. Only returned in GetTenant response to restrict reading of this information. Requires firebaseauth.configs.getHashConfig… */
+	/** Output only. Hash config information of a tenant for display on Pantheon. This can only be displayed on Pantheon to avoid the sensitive information to get accidentally leaked. Only returned in GetTenant response to restrict reading of this information. */
 	hashConfig?: FirebaseGoogleCloudIdentitytoolkitAdminV2HashConfig | null;
 	/** Whether to enable anonymous user authentication. */
 	enableAnonymousUser?: boolean | null;
@@ -4530,7 +4528,7 @@ export type FirebaseGoogleCloudIdentitytoolkitV1CreateAuthUriResponse = {
 	authUri?: string | null;
 	/** Whether the email identifier represents an existing account. Present only when an email identifier is set in the request. */
 	registered?: boolean | null;
-	/** The list of sign-in methods that the user has previously used. Each element is one of `password`, `emailLink`, or the provider ID of an IdP. Present only when a registered email identifier is set in the request. If [email enumeration… */
+	/** The list of sign-in methods that the user has previously used. Each element is one of `password`, `emailLink`, or the provider ID of an IdP. Present only when a registered email identifier is set in the request. */
 	signinMethods?: Array<string> | null;
 	/** Whether a CAPTCHA is needed because there have been too many failed login attempts by the user. Present only when a registered email identifier is set in the request. */
 	captchaRequired?: boolean | null;
@@ -4924,7 +4922,7 @@ export type FirebaseGoogleCloudIdentitytoolkitV1SignInWithIdpResponse = {
 	expiresIn?: (string | number) | null;
 	/** Whether or not a new Identity Platform account was created for the authenticated user. */
 	isNewUser?: boolean | null;
-	/** Whether or not there is an existing Identity Platform user account with the same email address as the current account signed in at the IdP, and the account's email address is not verified at the IdP. The user will need to sign in to the existing Identity Platform account and then link the… */
+	/** Whether or not there is an existing Identity Platform user account with the same email address as the current account signed in at the IdP, and the account's email address is not verified at the IdP. */
 	needConfirmation?: boolean | null;
 	/** An Identity Platform ID token for the authenticated user. */
 	idToken?: string | null;
@@ -5215,7 +5213,7 @@ export type FirebaseGoogleCloudIdentitytoolkitV2StartMfaTotpEnrollmentResponseIn
 	{
 		/** The length of the verification code that needs to be generated. */
 		verificationCodeLength?: number | null;
-		/** A base 32 encoded string that represents the shared TOTP secret. The base 32 encoding is the one specified by [RFC4648#section-6](https://datatracker.ietf.org/doc/html/rfc4648#section-6). (This is the same as the base 32 encoding from… */
+		/** A base 32 encoded string that represents the shared TOTP secret. The base 32 encoding is the one specified by [RFC4648#section-6](https://datatracker.ietf.org/doc/html/rfc4648#section-6). */
 		sharedSecretKey?: string | null;
 		/** The hashing algorithm used to generate the verification code. */
 		hashingAlgorithm?: string | null;
@@ -5235,7 +5233,7 @@ export type FirebaseGoogleCloudIdentitytoolkitV2WithdrawMfaResponse = {
 	refreshToken?: string | null;
 };
 
-/** An app's App Attest configuration object. This configuration controls certain properties of the `AppCheckToken` returned by ExchangeAppAttestAttestation and ExchangeAppAttestAssertion, such as its ttl. Note that the Team ID registered with your app is used as part of the validation process.… */
+/** An app's App Attest configuration object. This configuration controls certain properties of the `AppCheckToken` returned by ExchangeAppAttestAttestation and ExchangeAppAttestAssertion, such as its ttl. Note that the Team ID registered with your app is used as part of the validation process. */
 export type FirebaseGoogleFirebaseAppcheckV1AppAttestConfig = {
 	/** Required. The relative resource name of the App Attest configuration object, in the format: ``` projects/{project_number}/apps/{app_id}/appAttestConfig ``` */
 	name?: string | null;
@@ -5247,7 +5245,7 @@ export type FirebaseGoogleFirebaseAppcheckV1AppAttestConfig = {
 export type FirebaseGoogleFirebaseAppcheckV1AppCheckToken = {
 	/** The duration from the time this token is minted until its expiration. This field is intended to ease client-side token management, since the client may have clock skew, but is still able to accurately measure a duration. */
 	ttl?: string | null;
-	/** The App Check token. App Check tokens are signed [JWTs](https://www.rfc-editor.org/info/rfc7519/) containing claims that identify the attested app and GCP project. This token is used to access Google services protected by App Check. These tokens can also be [verified by your own custom… */
+	/** The App Check token. App Check tokens are signed [JWTs](https://www.rfc-editor.org/info/rfc7519/) containing claims that identify the attested app and GCP project. This token is used to access Google services protected by App Check. */
 	token?: string | null;
 };
 
@@ -5304,7 +5302,7 @@ export type FirebaseGoogleFirebaseAppcheckV1DebugToken = {
 	displayName?: string | null;
 	/** Required. The relative resource name of the debug token, in the format: ``` projects/{project_number}/apps/{app_id}/debugTokens/{debug_token_id} ``` */
 	name?: string | null;
-	/** Required. Input only. Immutable. The secret token itself. Must be provided during creation, and must be a UUID4, case insensitive. This field is immutable once set, and cannot be provided during a UpdateDebugToken request. You can, however, delete this debug token using DeleteDebugToken to… */
+	/** Required. Input only. Immutable. The secret token itself. Must be provided during creation, and must be a UUID4, case insensitive. This field is immutable once set, and cannot be provided during a UpdateDebugToken request. */
 	token?: string | null;
 	/** Optional. This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding. This etag is strongly validated as defined by RFC 7232. */
 	etag?: string | null;
@@ -5312,7 +5310,7 @@ export type FirebaseGoogleFirebaseAppcheckV1DebugToken = {
 	updateTime?: string | null;
 };
 
-/** An app's DeviceCheck configuration object. This configuration is used by ExchangeDeviceCheckToken to validate device tokens issued to apps by DeviceCheck. It also controls certain properties of the returned `AppCheckToken`, such as its ttl. Note that the Team ID registered with your app is used… */
+/** An app's DeviceCheck configuration object. This configuration is used by ExchangeDeviceCheckToken to validate device tokens issued to apps by DeviceCheck. It also controls certain properties of the returned `AppCheckToken`, such as its ttl. */
 export type FirebaseGoogleFirebaseAppcheckV1DeviceCheckConfig = {
 	/** Required. The relative resource name of the DeviceCheck configuration object, in the format: ``` projects/{project_number}/apps/{app_id}/deviceCheckConfig ``` */
 	name?: string | null;
@@ -5357,7 +5355,7 @@ export type FirebaseGoogleFirebaseAppcheckV1GeneratePlayIntegrityChallengeRespon
 export type FirebaseGoogleFirebaseAppcheckV1ListDebugTokensResponse = {
 	/** The DebugTokens retrieved. */
 	debugTokens?: Array<FirebaseGoogleFirebaseAppcheckV1DebugToken> | null;
-	/** If the result list is too large to fit in a single response, then a token is returned. If the string is empty or omitted, then this response is the last page of results. This token can be used in a subsequent call to ListDebugTokens to find the next group of DebugTokens. Page tokens are… */
+	/** If the result list is too large to fit in a single response, then a token is returned. If the string is empty or omitted, then this response is the last page of results. This token can be used in a subsequent call to ListDebugTokens to find the next group of DebugTokens. */
 	nextPageToken?: string | null;
 };
 
@@ -5365,7 +5363,7 @@ export type FirebaseGoogleFirebaseAppcheckV1ListDebugTokensResponse = {
 export type FirebaseGoogleFirebaseAppcheckV1ListResourcePoliciesResponse = {
 	/** The ResourcePolicy objects retrieved. */
 	resourcePolicies?: Array<FirebaseGoogleFirebaseAppcheckV1ResourcePolicy> | null;
-	/** If the result list is too large to fit in a single response, then a token is returned. If the string is empty or omitted, then this response is the last page of results. This token can be used in a subsequent call to ListResourcePolicies to find the next group of ResourcePolicy objects. Page… */
+	/** If the result list is too large to fit in a single response, then a token is returned. If the string is empty or omitted, then this response is the last page of results. This token can be used in a subsequent call to ListResourcePolicies to find the next group of ResourcePolicy objects. */
 	nextPageToken?: string | null;
 };
 
@@ -5373,46 +5371,46 @@ export type FirebaseGoogleFirebaseAppcheckV1ListResourcePoliciesResponse = {
 export type FirebaseGoogleFirebaseAppcheckV1ListServicesResponse = {
 	/** The Services retrieved. */
 	services?: Array<FirebaseGoogleFirebaseAppcheckV1Service> | null;
-	/** If the result list is too large to fit in a single response, then a token is returned. If the string is empty or omitted, then this response is the last page of results. This token can be used in a subsequent call to ListServices to find the next group of Services. Page tokens are short-lived… */
+	/** If the result list is too large to fit in a single response, then a token is returned. If the string is empty or omitted, then this response is the last page of results. This token can be used in a subsequent call to ListServices to find the next group of Services. */
 	nextPageToken?: string | null;
 };
 
 /** Response message for the MintAppCheckToken method. */
 export type FirebaseGoogleFirebaseAppcheckV1MintAppCheckTokenResponse = {
-	/** The App Check token, used to access backend services protected by App Check. App Check tokens are signed [JWTs](https://tools.ietf.org/html/rfc7519) containing claims that identify the attested app and GCP project. This token is used to access Google services protected by App Check. These tokens… */
+	/** The App Check token, used to access backend services protected by App Check. App Check tokens are signed [JWTs](https://tools.ietf.org/html/rfc7519) containing claims that identify the attested app and GCP project. This token is used to access Google services protected by App Check. */
 	token?: string | null;
 	/** The duration from the time this token is minted until its expiration. This field is intended to ease client-side token management, since the client may have clock skew, but is still able to accurately measure a duration. */
 	ttl?: string | null;
 };
 
-/** An app's Play Integrity configuration object. This configuration controls certain properties of the `AppCheckToken` returned by ExchangePlayIntegrityToken, such as its ttl. Note that your registered SHA-256 certificate fingerprints are used to validate tokens issued by the Play Integrity API;… */
+/** An app's Play Integrity configuration object. This configuration controls certain properties of the `AppCheckToken` returned by ExchangePlayIntegrityToken, such as its ttl. */
 export type FirebaseGoogleFirebaseAppcheckV1PlayIntegrityConfig = {
 	/** Specifies the duration for which App Check tokens exchanged from Play Integrity tokens will be valid. If unset, a default value of 1 hour is assumed. Must be between 30 minutes and 7 days, inclusive. */
 	tokenTtl?: string | null;
-	/** Specifies application integrity requirements for Android devices running your app. These settings correspond to requirements on the [**application integrity** field](https://developer.android.com/google/play/integrity/verdicts#application-integrity-field) obtained from the Play Integrity API.… */
+	/** Specifies application integrity requirements for Android devices running your app. These settings correspond to requirements on the [**application integrity** field](https://developer.android.com/google/play/integrity/verdicts#application-integrity-field) obtained from the Play Integrity API. */
 	appIntegrity?: FirebaseGoogleFirebaseAppcheckV1PlayIntegrityConfigAppIntegrity | null;
-	/** Specifies account requirements for Android devices running your app. These settings correspond to requirements on the [**account details** field](https://developer.android.com/google/play/integrity/verdicts#account-details-field) obtained from the Play Integrity API. See the [default responses… */
+	/** Specifies account requirements for Android devices running your app. These settings correspond to requirements on the [**account details** field](https://developer.android.com/google/play/integrity/verdicts#account-details-field) obtained from the Play Integrity API. */
 	accountDetails?: FirebaseGoogleFirebaseAppcheckV1PlayIntegrityConfigAccountDetails | null;
-	/** Specifies device integrity requirements for Android devices running your app. These settings correspond to requirements on the [**device integrity** field](https://developer.android.com/google/play/integrity/verdicts#device-integrity-field) obtained from the Play Integrity API. See the [default… */
+	/** Specifies device integrity requirements for Android devices running your app. These settings correspond to requirements on the [**device integrity** field](https://developer.android.com/google/play/integrity/verdicts#device-integrity-field) obtained from the Play Integrity API. */
 	deviceIntegrity?: FirebaseGoogleFirebaseAppcheckV1PlayIntegrityConfigDeviceIntegrity | null;
 	/** Required. The relative resource name of the Play Integrity configuration object, in the format: ``` projects/{project_number}/apps/{app_id}/playIntegrityConfig ``` */
 	name?: string | null;
 };
 
-/** A settings object specifying account requirements for Android devices running your app. These settings correspond to requirements on the [**account details** field](https://developer.android.com/google/play/integrity/verdicts#account-details-field) obtained from the Play Integrity API. See the… */
+/** A settings object specifying account requirements for Android devices running your app. These settings correspond to requirements on the [**account details** field](https://developer.android.com/google/play/integrity/verdicts#account-details-field) obtained from the Play Integrity API. */
 export type FirebaseGoogleFirebaseAppcheckV1PlayIntegrityConfigAccountDetails =
 	{
-		/** Specifies whether the caller must have received the [`LICENSED` verdict](https://developer.android.com/google/play/integrity/verdicts#account-details-field). For additional details about scenarios where your users will receive this `LICENSED` label, see [the default responses… */
+		/** Specifies whether the caller must have received the [`LICENSED` verdict](https://developer.android.com/google/play/integrity/verdicts#account-details-field). */
 		requireLicensed?: boolean | null;
 	};
 
-/** A settings object specifying application integrity requirements for Android devices running your app. These settings correspond to requirements on the [**application integrity** field](https://developer.android.com/google/play/integrity/verdicts#application-integrity-field) obtained from the… */
+/** A settings object specifying application integrity requirements for Android devices running your app. These settings correspond to requirements on the [**application integrity** field](https://developer.android.com/google/play/integrity/verdicts#application-integrity-field) obtained from the Play… */
 export type FirebaseGoogleFirebaseAppcheckV1PlayIntegrityConfigAppIntegrity = {
-	/** Specifies whether your running app is allowed to have the `UNRECOGNIZED_VERSION` [app recognition verdict](https://developer.android.com/google/play/integrity/verdicts#application-integrity-field). Note that the app recognition verdict `PLAY_RECOGNIZED` is a strong, comprehensive integrity… */
+	/** Specifies whether your running app is allowed to have the `UNRECOGNIZED_VERSION` [app recognition verdict](https://developer.android.com/google/play/integrity/verdicts#application-integrity-field). */
 	allowUnrecognizedVersion?: boolean | null;
 };
 
-/** A settings object specifying device integrity requirements for Android devices running your app. These settings correspond to requirements on the [**device integrity** field](https://developer.android.com/google/play/integrity/verdicts#device-integrity-field) obtained from the Play Integrity… */
+/** A settings object specifying device integrity requirements for Android devices running your app. These settings correspond to requirements on the [**device integrity** field](https://developer.android.com/google/play/integrity/verdicts#device-integrity-field) obtained from the Play Integrity API. */
 export type FirebaseGoogleFirebaseAppcheckV1PlayIntegrityConfigDeviceIntegrity =
 	{
 		/** Specifies the minimum device integrity level in order for the device to be considered valid. Any device with a device recognition verdict lower than this level will be rejected. If this is unspecified, the default level is `NO_INTEGRITY`. */
@@ -5443,9 +5441,9 @@ export type FirebaseGoogleFirebaseAppcheckV1PublicJwkSet = {
 
 /** An app's reCAPTCHA Enterprise configuration object. This configuration is used by ExchangeRecaptchaEnterpriseToken to validate reCAPTCHA tokens issued to apps by reCAPTCHA Enterprise. It also controls certain properties of the returned `AppCheckToken`, such as its ttl. */
 export type FirebaseGoogleFirebaseAppcheckV1RecaptchaEnterpriseConfig = {
-	/** Specifies risk tolerance and requirements for your application. These settings correspond to requirements on the [**`riskAnalysis`**](https://cloud.google.com/recaptcha/docs/interpret-assessment-website#interpret_assessment) tuple in the assessment obtained from reCAPTCHA Enterprise. The default… */
+	/** Specifies risk tolerance and requirements for your application. These settings correspond to requirements on the [**`riskAnalysis`**](https://cloud.google.com/recaptcha/docs/interpret-assessment-website#interpret_assessment) tuple in the assessment obtained from reCAPTCHA Enterprise. */
 	riskAnalysis?: FirebaseGoogleFirebaseAppcheckV1RecaptchaEnterpriseConfigRiskAnalysis | null;
-	/** The score-based site key [created in reCAPTCHA Enterprise](https://cloud.google.com/recaptcha-enterprise/docs/create-key#creating_a_site_key) used to [invoke reCAPTCHA and generate the reCAPTCHA tokens](https://cloud.google.com/recaptcha-enterprise/docs/instrument-web-pages) for your… */
+	/** The score-based site key [created in reCAPTCHA Enterprise](https://cloud.google.com/recaptcha-enterprise/docs/create-key#creating_a_site_key) used to [invoke reCAPTCHA and generate the reCAPTCHA tokens](https://cloud.google.com/recaptcha-enterprise/docs/instrument-web-pages) for your application. */
 	siteKey?: string | null;
 	/** Specifies the duration for which App Check tokens exchanged from reCAPTCHA Enterprise tokens will be valid. If unset, a default value of 1 hour is assumed. Must be between 30 minutes and 7 days, inclusive. */
 	tokenTtl?: string | null;
@@ -5476,7 +5474,7 @@ export type FirebaseGoogleFirebaseAppcheckV1RecaptchaV3Config = {
 
 /** App Check enforcement policy for a specific resource of a Google service supported by App Check. Note that this policy will override the service-level configuration. */
 export type FirebaseGoogleFirebaseAppcheckV1ResourcePolicy = {
-	/** Required. Identifier. The relative name of the resource policy object, in the format: ``` projects/{project_number}/services/{service_id}/resourcePolicies/{resource_policy_id} ``` Note that the `service_id` element must be a supported service ID. Currently, the following service IDs are… */
+	/** Required. Identifier. The relative name of the resource policy object, in the format: ``` projects/{project_number}/services/{service_id}/resourcePolicies/{resource_policy_id} ``` Note that the `service_id` element must be a supported service ID. */
 	name?: string | null;
 	/** Required. The baseline protection EnforcementMode for this resource. This will override the service-level baseline protection EnforcementMode. */
 	enforcementMode?: string | null;
@@ -5492,11 +5490,11 @@ export type FirebaseGoogleFirebaseAppcheckV1ResourcePolicy = {
 export type FirebaseGoogleFirebaseAppcheckV1Service = {
 	/** Required. The baseline protection EnforcementMode for this service. */
 	enforcementMode?: string | null;
-	/** Required. The relative resource name of the service configuration object, in the format: ``` projects/{project_number}/services/{service_id} ``` Note that the `service_id` element must be a supported service ID. Currently, the following service IDs are supported. Firebase and Google Cloud… */
+	/** Required. The relative resource name of the service configuration object, in the format: ``` projects/{project_number}/services/{service_id} ``` Note that the `service_id` element must be a supported service ID. Currently, the following service IDs are supported. */
 	name?: string | null;
 	/** Optional. This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding. This etag is strongly validated as defined by RFC 7232. */
 	etag?: string | null;
-	/** Optional. The replay protection EnforcementMode for this service. Note that this field cannot be set to a level higher than that of baseline protection. For example, if the enforcement mode for baseline protection is set to `UNENFORCED`, this field cannot be set to `ENFORCED`. In order to… */
+	/** Optional. The replay protection EnforcementMode for this service. Note that this field cannot be set to a level higher than that of baseline protection. For example, if the enforcement mode for baseline protection is set to `UNENFORCED`, this field cannot be set to `ENFORCED`. */
 	replayProtection?: string | null;
 	/** Output only. Timestamp when this service configuration object was most recently updated. */
 	updateTime?: string | null;
@@ -5678,7 +5676,7 @@ export type FirebaseGoogleFirestoreAdminV1Backup = {
 	snapshotTime?: string | null;
 	/** Output only. The current state of the backup. */
 	state?: string | null;
-	/** Output only. The unique resource name of the Backup. Format is `projects/{project}/locations/{location}/backups/{backup}`. The location in the name will be the Standard Managed Multi-Region (SMMR) location (e.g. `us`) if the backup was created with an SMMR location, or the Google Managed… */
+	/** Output only. The unique resource name of the Backup. Format is `projects/{project}/locations/{location}/backups/{backup}`. The location in the name will be the Standard Managed Multi-Region (SMMR) location (e.g. */
 	name?: string | null;
 	/** Output only. The timestamp at which this backup expires. */
 	expireTime?: string | null;
@@ -5732,9 +5730,9 @@ export type FirebaseGoogleFirestoreAdminV1ChangeStream = {
 
 /** The CMEK (Customer Managed Encryption Key) configuration for a Firestore database. If not present, the database is secured by the default Google encryption key. */
 export type FirebaseGoogleFirestoreAdminV1CmekConfig = {
-	/** Output only. Currently in-use [KMS key versions](https://cloud.google.com/kms/docs/resource-hierarchy#key_versions). During [key rotation](https://cloud.google.com/kms/docs/key-rotation), there can be multiple in-use key versions. The expected format is… */
+	/** Output only. Currently in-use [KMS key versions](https://cloud.google.com/kms/docs/resource-hierarchy#key_versions). During [key rotation](https://cloud.google.com/kms/docs/key-rotation), there can be multiple in-use key versions. */
 	activeKeyVersion?: Array<string> | null;
-	/** Required. Only keys in the same location as this database are allowed to be used for encryption. For Firestore's nam5 multi-region, this corresponds to Cloud KMS multi-region us. For Firestore's eur3 multi-region, this corresponds to Cloud KMS multi-region europe. See… */
+	/** Required. Only keys in the same location as this database are allowed to be used for encryption. For Firestore's nam5 multi-region, this corresponds to Cloud KMS multi-region us. For Firestore's eur3 multi-region, this corresponds to Cloud KMS multi-region europe. */
 	kmsKeyName?: string | null;
 };
 
@@ -5756,11 +5754,11 @@ export type FirebaseGoogleFirestoreAdminV1Database = {
 	uid?: string | null;
 	/** Optional. The Firestore API data access mode to use for this database. If not set on write: - the default value is DATA_ACCESS_MODE_DISABLED for Enterprise edition. - the default value is DATA_ACCESS_MODE_ENABLED for Standard edition. */
 	firestoreDataAccessMode?: string | null;
-	/** Output only. The earliest timestamp at which older versions of the data can be read from the database. See [version_retention_period] above; this field is populated with `now - version_retention_period`. This value is continuously updated, and becomes stale the moment it is queried. If you are… */
+	/** Output only. The earliest timestamp at which older versions of the data can be read from the database. */
 	earliestVersionTime?: string | null;
 	/** Output only. The timestamp at which this database was created. Databases created before 2016 do not populate create_time. */
 	createTime?: string | null;
-	/** The default concurrency control mode to use for this database. If unspecified in a CreateDatabase request, this will default based on the database edition: Optimistic for Enterprise and Pessimistic for all other databases. While transactions can explicitly specify their own concurrency mode,… */
+	/** The default concurrency control mode to use for this database. If unspecified in a CreateDatabase request, this will default based on the database edition: Optimistic for Enterprise and Pessimistic for all other databases. */
 	concurrencyMode?: string | null;
 	/** This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding. */
 	etag?: string | null;
@@ -5772,11 +5770,11 @@ export type FirebaseGoogleFirestoreAdminV1Database = {
 	databaseEdition?: string | null;
 	/** Required. The location of the database. Available locations are listed at https://cloud.google.com/firestore/docs/locations. */
 	locationId?: string | null;
-	/** Output only. Background: Free tier is the ability of a Firestore database to use a small amount of resources every day without being charged. Once usage exceeds the free tier limit further usage is charged. Whether this database can make use of the free tier. Only one database per project can be… */
+	/** Output only. Background: Free tier is the ability of a Firestore database to use a small amount of resources every day without being charged. Once usage exceeds the free tier limit further usage is charged. Whether this database can make use of the free tier. */
 	freeTier?: boolean | null;
 	/** Immutable. The default Realtime Updates mode to use for this database. */
 	realtimeUpdatesMode?: string | null;
-	/** Output only. The key_prefix for this database. This key_prefix is used, in combination with the project ID ("~") to construct the application ID that is returned from the Cloud Datastore APIs in Google App Engine first generation runtimes. This value may be empty in which case the appid to use… */
+	/** Output only. The key_prefix for this database. This key_prefix is used, in combination with the project ID ("~") to construct the application ID that is returned from the Cloud Datastore APIs in Google App Engine first generation runtimes. */
 	keyPrefix?: string | null;
 	/** Output only. The timestamp at which this database was deleted. Only set if the database has been deleted. */
 	deleteTime?: string | null;
@@ -5784,7 +5782,7 @@ export type FirebaseGoogleFirestoreAdminV1Database = {
 	tags?: Record<string, string> | null;
 	/** Optional. Presence indicates CMEK is enabled for this database. */
 	cmekConfig?: FirebaseGoogleFirestoreAdminV1CmekConfig | null;
-	/** Output only. The period during which past versions of data are retained in the database. Any read or query can specify a `read_time` within this window, and will read the state of the database at that time. If the PITR feature is enabled, the retention period is 7 days. Otherwise, the retention… */
+	/** Output only. The period during which past versions of data are retained in the database. Any read or query can specify a `read_time` within this window, and will read the state of the database at that time. If the PITR feature is enabled, the retention period is 7 days. */
 	versionRetentionPeriod?: string | null;
 	/** Required. The type of the database. See https://cloud.google.com/datastore/docs/firestore-or-datastore for information about how to choose. */
 	type?: string | null;
@@ -5814,7 +5812,7 @@ export type FirebaseGoogleFirestoreAdminV1Field = {
 	ttlConfig?: FirebaseGoogleFirestoreAdminV1TtlConfig | null;
 	/** The index configuration for this field. If unset, field indexing will revert to the configuration defined by the `ancestor_field`. To explicitly remove all indexes for this field, specify an index config with an empty list of indexes. */
 	indexConfig?: FirebaseGoogleFirestoreAdminV1IndexConfig | null;
-	/** Required. A field name of the form: `projects/{project_id}/databases/{database_id}/collectionGroups/{collection_id}/fields/{field_path}` A field path can be a simple field name, e.g. `address` or a path to fields within `map_value` , e.g. `address.city`, or a special field path. The only valid… */
+	/** Required. A field name of the form: `projects/{project_id}/databases/{database_id}/collectionGroups/{collection_id}/fields/{field_path}` A field path can be a simple field name, e.g. `address` or a path to fields within `map_value` , e.g. `address.city`, or a special field path. */
 	name?: string | null;
 };
 
@@ -5824,27 +5822,27 @@ export type FirebaseGoogleFirestoreAdminV1FlatIndex = Record<
 	FirebaseJsonValue
 >;
 
-/** Cloud Firestore indexes enable simple and complex queries against documents in a database. In Standard edition databases, single-field indexes are managed using the google.firestore.admin.v1.Field resource, and composite indexes are managed using the google.firestore.admin.v1.Index resource. In… */
+/** Cloud Firestore indexes enable simple and complex queries against documents in a database. In Standard edition databases, single-field indexes are managed using the google.firestore.admin.v1.Field resource, and composite indexes are managed using the google.firestore.admin.v1.Index resource. */
 export type FirebaseGoogleFirestoreAdminV1Index = {
 	/** Immutable. The density configuration of the index. */
 	density?: string | null;
 	/** Optional. Options for search indexes that are at the index definition level. This field is only currently supported for indexes with MONGODB_COMPATIBLE_API ApiScope. */
 	searchIndexOptions?: FirebaseGoogleFirestoreAdminV1SearchIndexOptions | null;
-	/** Optional. Whether the index is multikey. By default, the index is not multikey. For non-multikey indexes, none of the paths in the index definition reach or traverse an array, except via an explicit array index. For multikey indexes, at most one of the paths in the index definition reach or… */
+	/** Optional. Whether the index is multikey. By default, the index is not multikey. For non-multikey indexes, none of the paths in the index definition reach or traverse an array, except via an explicit array index. */
 	multikey?: boolean | null;
 	/** Output only. The serving state of the index. */
 	state?: string | null;
 	/** Optional. Whether it is an unique index. Unique index ensures all values for the indexed field(s) are unique across documents. */
 	unique?: boolean | null;
-	/** Indexes with a collection query scope specified allow queries against a collection that is the child of a specific document, specified at query time, and that has the same collection ID. Indexes with a collection group query scope specified allow queries against all collections descended from a… */
+	/** Indexes with a collection query scope specified allow queries against a collection that is the child of a specific document, specified at query time, and that has the same collection ID. */
 	queryScope?: string | null;
 	/** The API scope supported by this index. */
 	apiScope?: string | null;
-	/** A server-defined name for this index. Output only. When used in the google.firestore.admin.v1.Index resource, the value is of the form: `projects/{project_id}/databases/{database_id}/collectionGroups/{collection_id}/indexes/{index_id}` When used in the google.firestore.admin.v1.Field resource,… */
+	/** A server-defined name for this index. Output only. When used in the google.firestore.admin.v1.Index resource, the value is of the form: `projects/{project_id}/databases/{database_id}/collectionGroups/{collection_id}/indexes/{index_id}` When used in the google.firestore.admin.v1.Field resource, the… */
 	name?: string | null;
-	/** Optional. The number of physical shards for the index. In Cloud Firestore, data and index entries are stored in contiguous, ordered key ranges called splits. While document keys within a collection are hashed to distribute write traffic across splits, secondary index entries are ordered… */
+	/** Optional. The number of physical shards for the index. In Cloud Firestore, data and index entries are stored in contiguous, ordered key ranges called splits. */
 	shardCount?: number | null;
-	/** The fields supported by this index. At most 100 fields may be specified. In Standard edition databases only: - At least 2 fields must be specified. - The last field entry is always for the field path `__name__`. If, on creation, `__name__` was not specified as the last field, it will be added… */
+	/** The fields supported by this index. At most 100 fields may be specified. In Standard edition databases only: - At least 2 fields must be specified. - The last field entry is always for the field path `__name__`. */
 	fields?: Array<FirebaseGoogleFirestoreAdminV1IndexField> | null;
 };
 
@@ -5884,7 +5882,7 @@ export type FirebaseGoogleFirestoreAdminV1ListBackupSchedulesResponse = {
 export type FirebaseGoogleFirestoreAdminV1ListBackupsResponse = {
 	/** List of all backups for the project. */
 	backups?: Array<FirebaseGoogleFirestoreAdminV1Backup> | null;
-	/** List of locations that existing backups were not able to be fetched from. Instead of failing the entire requests when a single location is unreachable, this response returns a partial result set and list of locations unable to be reached here. The request can be retried against a single location… */
+	/** List of locations that existing backups were not able to be fetched from. Instead of failing the entire requests when a single location is unreachable, this response returns a partial result set and list of locations unable to be reached here. */
 	unreachable?: Array<string> | null;
 };
 
@@ -5896,7 +5894,7 @@ export type FirebaseGoogleFirestoreAdminV1ListChangeStreamsResponse = {
 
 /** The list of databases for a project. */
 export type FirebaseGoogleFirestoreAdminV1ListDatabasesResponse = {
-	/** In the event that data about individual databases cannot be listed they will be recorded here. An example entry might be: projects/some_project/locations/some_location This can happen if the Cloud Region that the Database resides in is currently unavailable. In this case we can't fetch all the… */
+	/** In the event that data about individual databases cannot be listed they will be recorded here. An example entry might be: projects/some_project/locations/some_location This can happen if the Cloud Region that the Database resides in is currently unavailable. */
 	unreachable?: Array<string> | null;
 	/** The databases in the project. */
 	databases?: Array<FirebaseGoogleFirestoreAdminV1Database> | null;
@@ -5948,7 +5946,7 @@ export type FirebaseGoogleFirestoreAdminV1SearchGeoSpec = {
 export type FirebaseGoogleFirestoreAdminV1SearchIndexOptions = {
 	/** Optional. The field in the document that specifies which language to use for that specific document. For indexes with MONGODB_COMPATIBLE_API ApiScope: if unspecified, the language is taken from the "language" field if it exists or from `text_language` if it does not. */
 	textLanguageOverrideFieldPath?: string | null;
-	/** Optional. The language to use for text search indexes. Used as the default language if not overridden at the document level by specifying the `text_language_override_field`. The language is specified as a BCP 47 language code. For indexes with MONGODB_COMPATIBLE_API ApiScope: If unspecified, the… */
+	/** Optional. The language to use for text search indexes. Used as the default language if not overridden at the document level by specifying the `text_language_override_field`. The language is specified as a BCP 47 language code. */
 	textLanguage?: string | null;
 };
 
@@ -5984,9 +5982,9 @@ export type FirebaseGoogleFirestoreAdminV1Stats = {
 	documentCount?: (string | number) | null;
 };
 
-/** The TTL (time-to-live) configuration for documents that have this `Field` set. A timestamp stored in a TTL-enabled field will be used to determine the expiration time of the document. The expiration time is the sum of the timestamp value and the `expiration_offset`. For Enterprise edition… */
+/** The TTL (time-to-live) configuration for documents that have this `Field` set. A timestamp stored in a TTL-enabled field will be used to determine the expiration time of the document. The expiration time is the sum of the timestamp value and the `expiration_offset`. */
 export type FirebaseGoogleFirestoreAdminV1TtlConfig = {
-	/** Optional. The offset, relative to the timestamp value from the TTL-enabled field, used to determine the document's expiration time. `expiration_offset.seconds` must be between 0 and 2,147,483,647 inclusive. Values more precise than seconds are rejected. If unset, defaults to 0, in which case the… */
+	/** Optional. The offset, relative to the timestamp value from the TTL-enabled field, used to determine the document's expiration time. `expiration_offset.seconds` must be between 0 and 2,147,483,647 inclusive. Values more precise than seconds are rejected. */
 	expirationOffset?: string | null;
 	/** Output only. The state of the TTL configuration. */
 	state?: string | null;
@@ -6022,7 +6020,7 @@ export type FirebaseGoogleFirestoreAdminV1WeeklyRecurrence = {
 	day?: string | null;
 };
 
-/** Specifies the audit configuration for a service. The configuration determines which permission types are logged, and what identities, if any, are exempted from logging. An AuditConfig must have one or more AuditLogConfigs. If there are AuditConfigs for both `allServices` and a specific service,… */
+/** Specifies the audit configuration for a service. The configuration determines which permission types are logged, and what identities, if any, are exempted from logging. An AuditConfig must have one or more AuditLogConfigs. */
 export type FirebaseGoogleIamV1AuditConfig = {
 	/** Specifies a service that will be enabled for audit logging. For example, `storage.googleapis.com`, `cloudsql.googleapis.com`. `allServices` is a special value that covers all services. */
 	service?: string | null;
@@ -6030,7 +6028,7 @@ export type FirebaseGoogleIamV1AuditConfig = {
 	auditLogConfigs?: Array<FirebaseGoogleIamV1AuditLogConfig> | null;
 };
 
-/** Provides the configuration for logging a type of permissions. Example: { "audit_log_configs": [ { "log_type": "DATA_READ", "exempted_members": [ "user:jose@example.com" ] }, { "log_type": "DATA_WRITE" } ] } This enables 'DATA_READ' and 'DATA_WRITE' logging, while exempting jose@example.com from… */
+/** Provides the configuration for logging a type of permissions. Example: { "audit_log_configs": [ { "log_type": "DATA_READ", "exempted_members"… */
 export type FirebaseGoogleIamV1AuditLogConfig = {
 	/** The log type that this config enables. */
 	logType?: string | null;
@@ -6040,23 +6038,23 @@ export type FirebaseGoogleIamV1AuditLogConfig = {
 
 /** Associates `members`, or principals, with a `role`. */
 export type FirebaseGoogleIamV1Binding = {
-	/** The condition that is associated with this binding. If the condition evaluates to `true`, then this binding applies to the current request. If the condition evaluates to `false`, then this binding does not apply to the current request. However, a different role binding might grant the same role… */
+	/** The condition that is associated with this binding. If the condition evaluates to `true`, then this binding applies to the current request. If the condition evaluates to `false`, then this binding does not apply to the current request. */
 	condition?: FirebaseGoogleTypeExpr | null;
-	/** Role that is assigned to the list of `members`, or principals. For example, `roles/viewer`, `roles/editor`, or `roles/owner`. For an overview of the IAM roles and permissions, see the [IAM documentation](https://cloud.google.com/iam/docs/roles-overview). For a list of the available pre-defined… */
+	/** Role that is assigned to the list of `members`, or principals. For example, `roles/viewer`, `roles/editor`, or `roles/owner`. For an overview of the IAM roles and permissions, see the [IAM documentation](https://cloud.google.com/iam/docs/roles-overview). */
 	role?: string | null;
-	/** Specifies the principals requesting access for a Google Cloud resource. `members` can have the following values: * `allUsers`: A special identifier that represents anyone who is on the internet; with or without a Google account. * `allAuthenticatedUsers`: A special identifier that represents… */
+	/** Specifies the principals requesting access for a Google Cloud resource. `members` can have the following values: * `allUsers`: A special identifier that represents anyone who is on the internet; with or without a Google account. */
 	members?: Array<string> | null;
 };
 
-/** An Identity and Access Management (IAM) policy, which specifies access controls for Google Cloud resources. A `Policy` is a collection of `bindings`. A `binding` binds one or more `members`, or principals, to a single `role`. Principals can be user accounts, service accounts, Google groups, and… */
+/** An Identity and Access Management (IAM) policy, which specifies access controls for Google Cloud resources. A `Policy` is a collection of `bindings`. A `binding` binds one or more `members`, or principals, to a single `role`. */
 export type FirebaseGoogleIamV1Policy = {
 	/** Specifies cloud audit logging configuration for this policy. */
 	auditConfigs?: Array<FirebaseGoogleIamV1AuditConfig> | null;
-	/** Specifies the format of the policy. Valid values are `0`, `1`, and `3`. Requests that specify an invalid value are rejected. Any operation that affects conditional role bindings must specify version `3`. This requirement applies to the following operations: * Getting a policy that includes a… */
+	/** Specifies the format of the policy. Valid values are `0`, `1`, and `3`. Requests that specify an invalid value are rejected. Any operation that affects conditional role bindings must specify version `3`. */
 	version?: number | null;
-	/** Associates a list of `members`, or principals, with a `role`. Optionally, may specify a `condition` that determines how and when the `bindings` are applied. Each of the `bindings` must contain at least one principal. The `bindings` in a `Policy` can refer to up to 1,500 principals; up to 250 of… */
+	/** Associates a list of `members`, or principals, with a `role`. Optionally, may specify a `condition` that determines how and when the `bindings` are applied. Each of the `bindings` must contain at least one principal. */
 	bindings?: Array<FirebaseGoogleIamV1Binding> | null;
-	/** `etag` is used for optimistic concurrency control as a way to help prevent simultaneous updates of a policy from overwriting each other. It is strongly suggested that systems make use of the `etag` in the read-modify-write cycle to perform policy updates in order to avoid race conditions: An… */
+	/** `etag` is used for optimistic concurrency control as a way to help prevent simultaneous updates of a policy from overwriting each other. */
 	etag?: string | null;
 };
 
@@ -6066,7 +6064,7 @@ export type FirebaseGoogleIamV1TestIamPermissionsResponse = {
 	permissions?: Array<string> | null;
 };
 
-/** Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. Example (Comparison): title: "Summary size limit" description: "Determines if a summary is… */
+/** Represents a textual expression in the Common Expression Language (CEL) syntax. CEL is a C-like expression language. The syntax and semantics of CEL are documented at https://github.com/google/cel-spec. */
 export type FirebaseGoogleTypeExpr = {
 	/** Optional. Description of the expression. This is a longer text which describes the expression, e.g. when hovered over it in a UI. */
 	description?: string | null;
@@ -6086,16 +6084,6 @@ export type FirebaseHeader = {
 	headers?: Record<string, string> | null;
 	/** The user-supplied RE2 regular expression to match against the request URL path. */
 	regex?: string | null;
-};
-
-/** Message that represents an arbitrary HTTP body. It should only be used for payload formats that can't be represented as JSON, such as raw binary or an HTML page. This message can be used both in streaming and non-streaming API methods in the request as well as the response. It can be used as a… */
-export type FirebaseHttpBody = {
-	/** The HTTP request/response body as raw binary. (base64) */
-	data?: string | null;
-	/** The HTTP Content-Type header value specifying the content type of the body. */
-	contentType?: string | null;
-	/** Application specific response metadata. Must be set in the first response for streaming APIs. */
-	extensions?: Array<Record<string, FirebaseJsonValue>> | null;
 };
 
 /** A file you can add to your existing, non-Hosting hosting service that confirms your intent to allow Hosting's Certificate Authorities to create an SSL certificate for your domain. */
@@ -6122,7 +6110,7 @@ export type FirebaseI18nConfig = {
 export type FirebaseIosApp = {
 	/** Output only. If the App has been removed from the Project, this is the timestamp of when the App is considered expired and will be permanently deleted. After this time, the App cannot be undeleted (that is, restored to the Project). This value is only provided if the App is in the `DELETED` state. */
 	expireTime?: string | null;
-	/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources).… */
+	/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources). */
 	etag?: string | null;
 	/** Immutable. The canonical bundle ID of the iOS app as it would appear in the iOS AppStore. */
 	bundleId?: string | null;
@@ -6136,9 +6124,9 @@ export type FirebaseIosApp = {
 	displayName?: string | null;
 	/** Output only. Immutable. The globally unique, Firebase-assigned identifier for the `IosApp`. This identifier should be treated as an opaque token, as the data format is not specified. */
 	appId?: string | null;
-	/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the `IosApp`. Be aware that this value is the UID of the API key, _not_ the [`keyString`](https://cloud.google.com/api-keys/docs/reference/rest/v2/projects.locations.keys#Key.FIELDS.key_string) of the… */
+	/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the `IosApp`. */
 	apiKeyId?: string | null;
-	/** The resource name of the IosApp, in the format: projects/PROJECT_IDENTIFIER /iosApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's [`ProjectNumber`](../projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its [`ProjectId`](../projects#FirebaseProject.FIELDS.project_id).… */
+	/** The resource name of the IosApp, in the format: projects/PROJECT_IDENTIFIER /iosApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's `ProjectNumber` ***(recommended)*** or its `ProjectId`. */
 	name?: string | null;
 	/** Output only. The lifecycle state of the App. */
 	state?: string | null;
@@ -6181,21 +6169,14 @@ export type FirebaseLightSettings = {
 };
 
 export type FirebaseListAndroidAppsResponse = {
-	/** If the result list is too large to fit in a single response, then a token is returned. If the string is empty, then this response is the last page of results. This token can be used in a subsequent call to `ListAndroidApps` to find the next group of Apps. Page tokens are short-lived and should… */
+	/** If the result list is too large to fit in a single response, then a token is returned. If the string is empty, then this response is the last page of results. This token can be used in a subsequent call to `ListAndroidApps` to find the next group of Apps. */
 	nextPageToken?: string | null;
 	/** List of each `AndroidApp` associated with the specified `FirebaseProject`. */
 	apps?: Array<FirebaseAndroidApp> | null;
 };
 
-export type FirebaseListAvailableLocationsResponse = {
-	/** One page of results from a call to `ListAvailableLocations`. */
-	locations?: Array<FirebaseManagementLocation> | null;
-	/** If the result list is too large to fit in a single response, then a token is returned. If the string is empty, then this response is the last page of results and all available locations have been listed. This token can be used in a subsequent call to `ListAvailableLocations` to find more… */
-	nextPageToken?: string | null;
-};
-
 export type FirebaseListAvailableProjectsResponse = {
-	/** If the result list is too large to fit in a single response, then a token is returned. If the string is empty, then this response is the last page of results. This token can be used in a subsequent calls to `ListAvailableProjects` to find the next group of Projects. Page tokens are short-lived… */
+	/** If the result list is too large to fit in a single response, then a token is returned. If the string is empty, then this response is the last page of results. This token can be used in a subsequent calls to `ListAvailableProjects` to find the next group of Projects. */
 	nextPageToken?: string | null;
 	/** The list of Google Cloud `Projects` which can have Firebase resources added to them. */
 	projectInfo?: Array<FirebaseProjectInfo> | null;
@@ -6236,7 +6217,7 @@ export type FirebaseListCustomDomainsResponse = {
 export type FirebaseListDatabaseInstancesResponse = {
 	/** List of each DatabaseInstance that is in the parent Firebase project. */
 	instances?: Array<FirebaseDatabaseInstance> | null;
-	/** If the result list is too large to fit in a single response, then a token is returned. If the string is empty, then this response is the last page of results. This token can be used in a subsequent call to `ListDatabaseInstances` to find the next group of database instances. Page tokens are… */
+	/** If the result list is too large to fit in a single response, then a token is returned. If the string is empty, then this response is the last page of results. This token can be used in a subsequent call to `ListDatabaseInstances` to find the next group of database instances. */
 	nextPageToken?: string | null;
 };
 
@@ -6265,7 +6246,7 @@ export type FirebaseListExperimentsResponse = {
 };
 
 export type FirebaseListFirebaseProjectsResponse = {
-	/** If the result list is too large to fit in a single response, then a token is returned. If the string is empty, then this response is the last page of results. This token can be used in a subsequent calls to `ListFirebaseProjects` to find the next group of Projects. Page tokens are short-lived… */
+	/** If the result list is too large to fit in a single response, then a token is returned. If the string is empty, then this response is the last page of results. This token can be used in a subsequent calls to `ListFirebaseProjects` to find the next group of Projects. */
 	nextPageToken?: string | null;
 	/** One page of the list of Projects that are accessible to the caller. */
 	results?: Array<FirebaseFirebaseProject> | null;
@@ -6274,7 +6255,7 @@ export type FirebaseListFirebaseProjectsResponse = {
 export type FirebaseListIosAppsResponse = {
 	/** List of each `IosApp` associated with the specified `FirebaseProject`. */
 	apps?: Array<FirebaseIosApp> | null;
-	/** If the result list is too large to fit in a single response, then a token is returned. If the string is empty, then this response is the last page of results. This token can be used in a subsequent call to `ListIosApps` to find the next group of Apps. Page tokens are short-lived and should not… */
+	/** If the result list is too large to fit in a single response, then a token is returned. If the string is empty, then this response is the last page of results. This token can be used in a subsequent call to `ListIosApps` to find the next group of Apps. */
 	nextPageToken?: string | null;
 };
 
@@ -6374,7 +6355,7 @@ export type FirebaseListVersionFilesResponse = {
 export type FirebaseListWebAppsResponse = {
 	/** List of each `WebApp` associated with the specified `FirebaseProject`. */
 	apps?: Array<FirebaseWebApp> | null;
-	/** If the result list is too large to fit in a single response, then a token is returned. If the string is empty, then this response is the last page of results. This token can be used in a subsequent call to `ListWebApps` to find the next group of Apps. Page tokens are short-lived and should not… */
+	/** If the result list is too large to fit in a single response, then a token is returned. If the string is empty, then this response is the last page of results. This token can be used in a subsequent call to `ListWebApps` to find the next group of Apps. */
 	nextPageToken?: string | null;
 };
 
@@ -6388,7 +6369,7 @@ export type FirebaseMessage = {
 	android?: FirebaseAndroidConfig | null;
 	/** Input only. [Webpush protocol](https://tools.ietf.org/html/rfc8030) options. */
 	webpush?: FirebaseWebpushConfig | null;
-	/** Input only. Arbitrary key/value payload, which must be UTF-8 encoded. The key should not be a reserved word ("from", "message_type", or any word starting with "google." or "gcm.notification."). When sending payloads containing only data fields to iOS devices, only normal priority… */
+	/** Input only. Arbitrary key/value payload, which must be UTF-8 encoded. The key should not be a reserved word ("from", "message_type", or any word starting with "google." or "gcm.notification."). */
 	data?: Record<string, string> | null;
 	/** Input only. [Apple Push Notification Service](https://goo.gl/MXRTPa) specific options. */
 	apns?: FirebaseApnsConfig | null;
@@ -6398,7 +6379,7 @@ export type FirebaseMessage = {
 	token?: string | null;
 	/** Topic name to send a message to, e.g. "weather". Note: "/topics/" prefix should not be provided. */
 	topic?: string | null;
-	/** [Firebase Installation ID (FID)](/docs/cloud-messaging/android/get-started#access-firebase-installation-id) to send a message to. */
+	/** Firebase Installation ID (FID) to send a message to. */
 	fid?: string | null;
 	/** Condition to send a message to, e.g. "'foo' in topics && 'bar' in topics". */
 	condition?: string | null;
@@ -6457,7 +6438,7 @@ export type FirebaseObject = {
 	} | null;
 	/** HTTP 1.1 Entity tag for the object. */
 	etag?: string | null;
-	/** Whether an object is under event-based hold. Event-based hold is a way to retain objects until an event occurs, which is signified by the hold's release (i.e. this value is set to false). After being released (set to false), such objects will be subject to bucket-level retention (if any). One… */
+	/** Whether an object is under event-based hold. Event-based hold is a way to retain objects until an event occurs, which is signified by the hold's release (i.e. this value is set to false). After being released (set to false), such objects will be subject to bucket-level retention (if any). */
 	eventBasedHold?: boolean | null;
 	/** The content generation of this object. Used for object versioning. */
 	generation?: (string | number) | null;
@@ -6471,8 +6452,8 @@ export type FirebaseObject = {
 	md5Hash?: string | null;
 	/** Media download link. */
 	mediaLink?: string | null;
-	/** User-provided metadata, in key/value pairs. */
-	metadata?: Record<string, string> | null;
+	/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. */
+	metadata?: Record<string, string | null> | null;
 	/** User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. */
 	contexts?: {
 		/** User-defined object contexts. */
@@ -6491,7 +6472,7 @@ export type FirebaseObject = {
 		/** The ID for the entity. */
 		entityId?: string | null;
 	} | null;
-	/** A server-determined value that specifies the earliest time that the object's retention period expires. This value is in RFC 3339 format. Note 1: This field is not provided for objects with an active event-based hold, since retention expiration is unknown until the hold is removed. Note 2: This… */
+	/** A server-determined value that specifies the earliest time that the object's retention period expires. This value is in RFC 3339 format. Note 1: This field is not provided for objects with an active event-based hold, since retention expiration is unknown until the hold is removed. */
 	retentionExpirationTime?: string | null;
 	/** A collection of object level retention parameters. */
 	retention?: {
@@ -6506,7 +6487,7 @@ export type FirebaseObject = {
 	size?: (string | number) | null;
 	/** Storage class of the object. */
 	storageClass?: string | null;
-	/** Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites. A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. Note that unlike event-based hold,… */
+	/** Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites. A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. */
 	temporaryHold?: boolean | null;
 	/** The creation time of the object in RFC 3339 format. */
 	timeCreated?: string | null;
@@ -6520,7 +6501,7 @@ export type FirebaseObject = {
 	hardDeleteTime?: string | null;
 	/** The time at which the object's storage class was last changed. When the object is initially created, it will be set to timeCreated. */
 	timeStorageClassUpdated?: string | null;
-	/** The modification time of the object metadata in RFC 3339 format. Set initially to object creation time and then updated whenever any metadata of the object changes. This includes changes made by a requester, such as modifying custom metadata, as well as changes made by Cloud Storage on behalf of… */
+	/** The modification time of the object metadata in RFC 3339 format. Set initially to object creation time and then updated whenever any metadata of the object changes. */
 	updated?: string | null;
 	/** Information about the object's availability in Rapid Cache Ultra (RCU) zonal caches. This field will only populate once the object is loaded into the cache. */
 	zonalAvailabilityInfo?: {
@@ -6537,7 +6518,7 @@ export type FirebaseObjectAccessControl = {
 	domain?: string | null;
 	/** The email address associated with the entity, if any. */
 	email?: string | null;
-	/** The entity holding the permission, in one of the following forms: - user-userId - user-email - group-groupId - group-email - domain-domain - project-team-projectId - allUsers - allAuthenticatedUsers Examples: - The user liz@example.com would be user-liz@example.com. - The group… */
+	/** The entity holding the permission, in one of the following forms: - user-userId - user-email - group-groupId - group-email - domain-domain - project-team-projectId - allUsers - allAuthenticatedUsers Examples: - The user liz@example.com would be user-liz@example.com. */
 	entity?: string | null;
 	/** The ID for the entity, if any. */
 	entityId?: string | null;
@@ -6614,13 +6595,13 @@ export type FirebaseOrCondition = {
 
 /** The response for Firestore.PartitionQuery. */
 export type FirebasePartitionQueryResponse = {
-	/** Partition results. Each partition is a split point that can be used by RunQuery as a starting or end point for the query results. The RunQuery requests must be made with the same query supplied to this PartitionQuery request. The partition cursors will be ordered according to same ordering as… */
+	/** Partition results. Each partition is a split point that can be used by RunQuery as a starting or end point for the query results. The RunQuery requests must be made with the same query supplied to this PartitionQuery request. */
 	partitions?: Array<FirebaseCursor> | null;
 	/** A page token that may be used to request an additional set of results, up to the number specified by `partition_count` in the PartitionQuery request. If blank, there are no more results. */
 	nextPageToken?: string | null;
 };
 
-/** ---------- Primitive Conditions (Atoms) A condition that compares the instance pseudo-random percentile to a given limit. NOTE: Developers provide an ID via the Admin SDK. This ID is hashed to a random percentile. The function is consistent and repeatable and will give the same result for… */
+/** ---------- Primitive Conditions (Atoms) A condition that compares the instance pseudo-random percentile to a given limit. NOTE: Developers provide an ID via the Admin SDK. This ID is hashed to a random percentile. */
 export type FirebasePercentCondition = {
 	/** Required. The choice of percent operator to determine how to compare targets to percent(s). */
 	percentOperator?: string | null;
@@ -6662,16 +6643,16 @@ export type FirebasePolicy = {
 	bindings?: Array<{
 		/** The condition that is associated with this binding. NOTE: an unsatisfied condition will not allow user access via current binding. Different bindings, including their conditions, are examined independently. */
 		condition?: FirebaseExpr | null;
-		/** A collection of identifiers for members who may assume the provided role. Recognized identifiers are as follows: - allUsers - A special identifier that represents anyone on the internet; with or without a Google account. - allAuthenticatedUsers - A special identifier that represents anyone who… */
+		/** A collection of identifiers for members who may assume the provided role. Recognized identifiers are as follows: - allUsers - A special identifier that represents anyone on the internet; with or without a Google account. */
 		members?: Array<string> | null;
-		/** The role to which members belong. Two types of roles are supported: new IAM roles, which grant permissions that do not map directly to those provided by ACLs, and legacy IAM roles, which do map directly to ACL permissions. All roles are of the format roles/storage.specificRole. The new IAM roles… */
+		/** The role to which members belong. Two types of roles are supported: new IAM roles, which grant permissions that do not map directly to those provided by ACLs, and legacy IAM roles, which do map directly to ACL permissions. All roles are of the format roles/storage.specificRole. */
 		role?: string | null;
 	}> | null;
 	/** HTTP 1.1 Entity tag for the policy. (base64) */
 	etag?: string | null;
 	/** The kind of item this is. For policies, this is always storage#policy. This field is ignored on input. */
 	kind?: string | null;
-	/** The ID of the resource to which this policy belongs. Will be of the form projects/_/buckets/bucket for buckets, projects/_/buckets/bucket/objects/object for objects, and projects/_/buckets/bucket/managedFolders/managedFolder. A specific generation may be specified by appending #generationNumber… */
+	/** The ID of the resource to which this policy belongs. Will be of the form projects/_/buckets/bucket for buckets, projects/_/buckets/bucket/objects/object for objects, and projects/_/buckets/bucket/managedFolders/managedFolder. */
 	resourceId?: string | null;
 	/** The IAM policy format version. */
 	version?: number | null;
@@ -6686,9 +6667,9 @@ export type FirebasePopulateVersionFilesResponse = {
 
 /** A reference to a Google Cloud `Project`. */
 export type FirebaseProjectInfo = {
-	/** The resource name of the Google Cloud `Project` to which Firebase resources can be added, in the format: projects/PROJECT_IDENTIFIER Refer to the `FirebaseProject` [`name`](../projects#FirebaseProject.FIELDS.name) field for details about PROJECT_IDENTIFIER values. */
+	/** The resource name of the Google Cloud `Project` to which Firebase resources can be added, in the format: projects/PROJECT_IDENTIFIER Refer to the `FirebaseProject` `name` field for details about PROJECT_IDENTIFIER values. */
 	project?: string | null;
-	/** **DEPRECATED** _Instead, use product-specific REST APIs to work with the location of each resource in a Project. This field may not be populated, especially for newly provisioned projects after October 30, 2024._ The ID of the Project's ["location for default Google Cloud… */
+	/** **DEPRECATED** _Instead, use product-specific REST APIs to work with the location of each resource in a Project. */
 	locationId?: string | null;
 	/** The user-assigned display name of the Google Cloud `Project`, for example: `My App`. */
 	displayName?: string | null;
@@ -6700,27 +6681,29 @@ export type FirebaseRedirect = {
 	glob?: string | null;
 	/** Required. The status HTTP code to return in the response. It must be a valid 3xx status code. */
 	statusCode?: number | null;
-	/** Required. The value to put in the HTTP location header of the response. The location can contain capture group values from the pattern using a `:` prefix to identify the segment and an optional `*` to capture the rest of the URL. For example: "glob": "/:capture*", "statusCode": 301, "location":… */
+	/** Required. The value to put in the HTTP location header of the response. The location can contain capture group values from the pattern using a `:` prefix to identify the segment and an optional `*` to capture the rest of the URL. */
 	location?: string | null;
 	/** The user-supplied RE2 regular expression to match against the request URL path. */
 	regex?: string | null;
 };
 
-/** * A RemoteConfig represents a Remote Config template. A project's Remote Config template is evaluated during each application instance's fetch. Note: Server templates currently support percentage conditions. Publishing a server template with unsupported conditional values will return a… */
+/** * A RemoteConfig represents a Remote Config template. A project's Remote Config template is evaluated during each application instance's fetch. Note: Server templates currently support percentage conditions. */
 export type FirebaseRemoteConfig = {
 	/** A list of conditions in descending order by priority. The values of the google.firebase.remoteconfig.v1.RemoteConfigCondition.name entries must be unique. */
 	conditions?: Array<FirebaseRemoteConfigCondition> | null;
-	/** Map of parameter group names to their descriptions and grouped parameters. A group's name is mutable but must be unique among groups in the config. The name is limited to 256 characters and intended to be human-readable. Any Unicode characters are allowed. Groups have a list of parameters which… */
+	/** Map of parameter group names to their descriptions and grouped parameters. A group's name is mutable but must be unique among groups in the config. The name is limited to 256 characters and intended to be human-readable. Any Unicode characters are allowed. */
 	parameterGroups?: Record<string, FirebaseRemoteConfigParameterGroup> | null;
 	/** Output only, except for the version description. Metadata associated with a particular version of a template. A version's description field may be specified in UpdateRemoteConfig calls. */
 	version?: FirebaseRemoteConfigVersion | null;
 	/** Map of parameter keys to their optional default values and optional conditional values. */
 	parameters?: Record<string, FirebaseRemoteConfigParameter> | null;
+	/** The ETag of this template (from the response header). Pass it as `ifMatch` to publish a change, so a publish made in between is not overwritten. */
+	etag?: string | null;
 };
 
 /** A condition targeting a specific group of users. A list of these conditions make up part of a RemoteConfig object. */
 export type FirebaseRemoteConfigCondition = {
-	/** Required. The logic of this condition. See the documentation regarding [Condition Expressions](/docs/remote-config/condition-reference) for the expected syntax of this field. */
+	/** Required. The logic of this condition. See the documentation regarding Condition Expressions for the expected syntax of this field. */
 	expression?: string | null;
 	/** Required. Identifier. A non-empty and unique name of this condition. Format: projects/{project}/namespaces/{namespace}/remoteConfigConditions/{remote_config_condition} When used within RemoteConfig.conditions, this field may contain just the condition name. */
 	name?: string | null;
@@ -6748,7 +6731,7 @@ export type FirebaseRemoteConfigParameter = {
 
 /** A named group of parameters. Grouping parameters is only for management purposes and does not affect client-side fetching of parameter values. */
 export type FirebaseRemoteConfigParameterGroup = {
-	/** Optional. Map of parameter keys to their optional default values and optional conditional values for parameters that belong to this group. A parameter only appears once per RemoteConfig: an ungrouped parameter appears at the top level; a parameter organized within a group appears within its… */
+	/** Optional. Map of parameter keys to their optional default values and optional conditional values for parameters that belong to this group. */
 	parameters?: Record<string, FirebaseRemoteConfigParameter> | null;
 	/** Optional. A description for the group. Its length must be less than or equal to 256 characters. A description may contain any Unicode characters. */
 	description?: string | null;
@@ -6830,7 +6813,7 @@ export type FirebaseRollout = {
 	definition?: FirebaseRolloutDefinition | null;
 	/** Identifier. The name of the rollout to get. Format: projects/{project}/namespaces/{namespace}/rollouts/{rollout_id} */
 	name?: string | null;
-	/** Etag for the Experiment which is generated using hash of update_time. Can be filled during call to UpdateRollout to ensure that the correct version of the experiment is updated. This will ensure that there are no conflicting writes. If no `etag` is provided, then the update will over-write the… */
+	/** Etag for the Experiment which is generated using hash of update_time. Can be filled during call to UpdateRollout to ensure that the correct version of the experiment is updated. This will ensure that there are no conflicting writes. */
 	etag?: string | null;
 	/** Output only. Start time of the rollout experiment. It is always the same as the create_time. */
 	startTime?: string | null;
@@ -6888,7 +6871,7 @@ export type FirebaseRunAggregationQueryResponse = {
 	explainMetrics?: FirebaseExplainMetrics | null;
 	/** The transaction that was started as part of this request. Only present on the first response when the request requested to start a new transaction. (base64) */
 	transaction?: string | null;
-	/** The time at which the aggregate result was computed. This is always monotonically increasing; in this case, the previous AggregationResult in the result stream are guaranteed not to have changed between their `read_time` and this one. If the query returns no results, a response with `read_time`… */
+	/** The time at which the aggregate result was computed. This is always monotonically increasing; in this case, the previous AggregationResult in the result stream are guaranteed not to have changed between their `read_time` and this one. */
 	readTime?: string | null;
 	/** A single aggregation result. Not present when reporting partial progress. */
 	result?: FirebaseAggregationResult | null;
@@ -6904,7 +6887,7 @@ export type FirebaseRunQueryResponse = {
 	skippedResults?: number | null;
 	/** A query result, not set when reporting partial progress. */
 	document?: FirebaseDocument | null;
-	/** The time at which the document was read. This may be monotonically increasing; in this case, the previous documents in the result stream are guaranteed not to have changed between their `read_time` and this one. If the query returns no results, a response with `read_time` and no `document` will… */
+	/** The time at which the document was read. This may be monotonically increasing; in this case, the previous documents in the result stream are guaranteed not to have changed between their `read_time` and this one. */
 	readTime?: string | null;
 	/** If present, Firestore has completely finished the request and no more documents will be returned. */
 	done?: boolean | null;
@@ -6954,7 +6937,7 @@ export type FirebaseServerRemoteConfigParameterValue = {
 	useInAppDefault?: boolean | null;
 };
 
-/** The configuration for how incoming requests to a site should be routed and processed before serving content. The URL request paths are matched against the specified URL patterns in the configuration, then Hosting applies the applicable configuration according to a specific [priority… */
+/** The configuration for how incoming requests to a site should be routed and processed before serving content. */
 export type FirebaseServingConfig = {
 	/** Defines how to handle a trailing slash in the URL path. */
 	trailingSlashBehavior?: string | null;
@@ -6978,7 +6961,7 @@ export type FirebaseShaCertificate = {
 	shaHash?: string | null;
 	/** The type of SHA certificate encoded in the hash. */
 	certType?: string | null;
-	/** The resource name of the ShaCertificate for the AndroidApp, in the format: projects/PROJECT_IDENTIFIER/androidApps/APP_ID/sha/SHA_HASH * PROJECT_IDENTIFIER: the parent Project's [`ProjectNumber`](../projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its… */
+	/** The resource name of the ShaCertificate for the AndroidApp, in the format: projects/PROJECT_IDENTIFIER/androidApps/APP_ID/sha/SHA_HASH * PROJECT_IDENTIFIER: the parent Project's `ProjectNumber` ***(recommended)*** or its `ProjectId`. */
 	name?: string | null;
 };
 
@@ -7000,7 +6983,7 @@ export type FirebaseSite = {
 export type FirebaseSiteConfig = {
 	/** Whether or not web requests made by site visitors are logged via Cloud Logging. */
 	cloudLoggingEnabled?: boolean | null;
-	/** The number of FINALIZED versions that will be held for a site before automatic deletion. When a new version is deployed, content for versions in storage in excess of this number will be deleted, and will no longer be billed for storage usage. Oldest versions will be deleted first; sites are… */
+	/** The number of FINALIZED versions that will be held for a site before automatic deletion. When a new version is deployed, content for versions in storage in excess of this number will be deleted, and will no longer be billed for storage usage. */
 	maxVersions?: (string | number) | null;
 };
 
@@ -7026,17 +7009,17 @@ export type FirebaseSourcePosition = {
 
 /** A mapping of a Firebase App to a Google Analytics data stream */
 export type FirebaseStreamMapping = {
-	/** Applicable for Firebase Web Apps only. The unique Google-assigned identifier of the Google Analytics web stream associated with the Firebase Web App. Firebase SDKs use this ID to interact with Google Analytics APIs. Learn more about this ID and Google Analytics web streams in the [Analytics… */
+	/** Applicable for Firebase Web Apps only. The unique Google-assigned identifier of the Google Analytics web stream associated with the Firebase Web App. Firebase SDKs use this ID to interact with Google Analytics APIs. */
 	measurementId?: string | null;
 	/** The unique Google-assigned identifier of the Google Analytics data stream associated with the Firebase App. Learn more about Google Analytics data streams in the [Analytics documentation](https://support.google.com/analytics/answer/9303323). */
 	streamId?: (string | number) | null;
-	/** The resource name of the Firebase App associated with the Google Analytics data stream, in the format: projects/PROJECT_IDENTIFIER/androidApps/APP_ID or projects/PROJECT_IDENTIFIER/iosApps/APP_ID or projects/PROJECT_IDENTIFIER /webApps/APP_ID Refer to the `FirebaseProject`… */
+	/** The resource name of the Firebase App associated with the Google Analytics data stream, in the format: projects/PROJECT_IDENTIFIER/androidApps/APP_ID or projects/PROJECT_IDENTIFIER/iosApps/APP_ID or projects/PROJECT_IDENTIFIER /webApps/APP_ID Refer to the `FirebaseProject` `name` field for details… */
 	app?: string | null;
 };
 
 /** A pre-defined system objective. */
 export type FirebaseSystemObjectiveDetails = {
-	/** Required. One of the predefined system objective names, such as purchase_revenue. The name determines what to measure and how to count it. For example, app_exception measures the number of app_exception event, while unique_user:app_exception measures the number of unique users who have had at… */
+	/** Required. One of the predefined system objective names, such as purchase_revenue. The name determines what to measure and how to count it. */
 	objective?: string | null;
 };
 
@@ -7044,19 +7027,19 @@ export type FirebaseSystemObjectiveDetails = {
 export type FirebaseTestIamPermissionsResponse = {
 	/** The kind of item this is. */
 	kind?: string | null;
-	/** The permissions held by the caller. Permissions are always of the format storage.resource.capability, where resource is one of buckets, objects, or managedFolders. The supported permissions are as follows: - storage.buckets.delete - Delete bucket. - storage.buckets.get - Read bucket metadata. -… */
+	/** The permissions held by the caller. Permissions are always of the format storage.resource.capability, where resource is one of buckets, objects, or managedFolders. The supported permissions are as follows: - storage.buckets.delete - Delete bucket. - storage.buckets.get - Read bucket metadata. */
 	permissions?: Array<string> | null;
 };
 
 /** Test result message containing the state of the test as well as a description and source position for test failures. */
 export type FirebaseTestResult = {
-	/** Position in the `Source` or `Ruleset` where the principle runtime error occurs. Evaluation of an expression may result in an error. Rules are deny by default, so a `DENY` expectation when an error is generated is valid. When there is a `DENY` with an error, the `SourcePosition` is returned. E.g.… */
+	/** Position in the `Source` or `Ruleset` where the principle runtime error occurs. Evaluation of an expression may result in an error. Rules are deny by default, so a `DENY` expectation when an error is generated is valid. When there is a `DENY` with an error, the `SourcePosition` is returned. E.g. */
 	errorPosition?: FirebaseSourcePosition | null;
 	/** The set of function calls made to service-defined methods. Function calls are included in the order in which they are encountered during evaluation, are provided for both mocked and unmocked functions, and included on the response regardless of the test `state`. */
 	functionCalls?: Array<FirebaseFunctionCall> | null;
 	/** Debug messages related to test execution issues encountered during evaluation. Debug messages may be related to too many or too few invocations of function mocks or to runtime errors that occur during evaluation. For example: ```Unable to read variable [name: "resource"]``` */
 	debugMessages?: Array<string> | null;
-	/** The set of visited permission expressions for a given test. This returns the positions and evaluation results of all visited permission expressions which were relevant to the test case, e.g. ``` match /path { allow read if: } ``` For a detailed report of the intermediate evaluation states, see… */
+	/** The set of visited permission expressions for a given test. This returns the positions and evaluation results of all visited permission expressions which were relevant to the test case, e.g. */
 	visitedExpressions?: Array<FirebaseVisitedExpression> | null;
 	/** State of the test. */
 	state?: string | null;
@@ -7098,9 +7081,9 @@ export type FirebaseValue = {
 	mapValue?: Record<string, FirebaseJsonValue> | null;
 	/** A null value. */
 	nullValue?: string | null;
-	/** A double value. */
-	doubleValue?: number | null;
-	/** A bytes value. In Standard edition databases: * The value must not exceed 1 MiB - 89 bytes. * Only the first 1,500 bytes are considered by queries. In Enterprise edition databases, there is no limit on the size of the value. However, it is still subject to document and index entry size limits.… */
+	/** A double value: a number, or "NaN", "Infinity" or "-Infinity". */
+	doubleValue?: (number | string) | null;
+	/** A bytes value. In Standard edition databases: * The value must not exceed 1 MiB - 89 bytes. * Only the first 1,500 bytes are considered by queries. In Enterprise edition databases, there is no limit on the size of the value. However, it is still subject to document and index entry size limits. */
 	bytesValue?: string | null;
 	/** An array value: { values: Value[] }. */
 	arrayValue?: Record<string, FirebaseJsonValue> | null;
@@ -7110,7 +7093,7 @@ export type FirebaseValue = {
 	timestampValue?: string | null;
 	/** An integer value. */
 	integerValue?: (string | number) | null;
-	/** A string value. In Standard edition databases: * The string, represented as UTF-8, must not exceed 1 MiB - 89 bytes. * Only the first 1,500 bytes of the UTF-8 representation are considered by queries. In Enterprise edition databases, there is no limit on the size of the value. However, it is… */
+	/** A string value. In Standard edition databases: * The string, represented as UTF-8, must not exceed 1 MiB - 89 bytes. * Only the first 1,500 bytes of the UTF-8 representation are considered by queries. In Enterprise edition databases, there is no limit on the size of the value. */
 	stringValue?: string | null;
 	/** Pointer to a variable defined elsewhere in a pipeline. Unlike `field_reference_value` which references a field within a document, this refers to a variable, defined in a separate namespace than the fields of a document. */
 	variableReferenceValue?: string | null;
@@ -7148,21 +7131,21 @@ export type FirebaseWebApp = {
 	projectId?: string | null;
 	/** The URLs where the `WebApp` is hosted. */
 	appUrls?: Array<string> | null;
-	/** Optional. Set of labels assigned to the `WebApp`. Valid label keys have two segments: an optional prefix and a name, separated by a slash (`/`). `firebase.*\/` prefixes are reserved for Firebase-service use, and `express.cloud/` is reserved for Google Cloud Express. In update requests, `labels`… */
+	/** Optional. Set of labels assigned to the `WebApp`. Valid label keys have two segments: an optional prefix and a name, separated by a slash (`/`). `firebase.*\/` prefixes are reserved for Firebase-service use, and `express.cloud/` is reserved for Google Cloud Express. */
 	labels?: Record<string, string> | null;
-	/** The resource name of the WebApp, in the format: projects/PROJECT_IDENTIFIER /webApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's [`ProjectNumber`](../projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its [`ProjectId`](../projects#FirebaseProject.FIELDS.project_id).… */
+	/** The resource name of the WebApp, in the format: projects/PROJECT_IDENTIFIER /webApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's `ProjectNumber` ***(recommended)*** or its `ProjectId`. */
 	name?: string | null;
 	/** Output only. Immutable. The globally unique, Firebase-assigned identifier for the `WebApp`. This identifier should be treated as an opaque token, as the data format is not specified. */
 	appId?: string | null;
-	/** Output only. Immutable. A unique, Firebase-assigned identifier for the `WebApp`. This identifier is only used to populate the `namespace` value for the `WebApp`. For most use cases, use `appId` to identify or reference the App. The `webId` value is only unique within a `FirebaseProject` and its… */
+	/** Output only. Immutable. A unique, Firebase-assigned identifier for the `WebApp`. This identifier is only used to populate the `namespace` value for the `WebApp`. For most use cases, use `appId` to identify or reference the App. */
 	webId?: string | null;
-	/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the `WebApp`. Be aware that this value is the UID of the API key, _not_ the [`keyString`](https://cloud.google.com/api-keys/docs/reference/rest/v2/projects.locations.keys#Key.FIELDS.key_string) of the… */
+	/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the `WebApp`. */
 	apiKeyId?: string | null;
 	/** Output only. If the App has been removed from the Project, this is the timestamp of when the App is considered expired and will be permanently deleted. After this time, the App cannot be undeleted (that is, restored to the Project). This value is only provided if the App is in the `DELETED` state. */
 	expireTime?: string | null;
 	/** Output only. The lifecycle state of the App. */
 	state?: string | null;
-	/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources).… */
+	/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources). */
 	etag?: string | null;
 	/** The user-assigned display name for the `WebApp`. */
 	displayName?: string | null;
@@ -7174,19 +7157,19 @@ export type FirebaseWebAppConfig = {
 	projectId?: string | null;
 	/** Version of the config specification. */
 	version?: string | null;
-	/** **DEPRECATED.** _Instead, find the name of the default Cloud Storage for Firebase bucket using the [list endpoint](https://firebase.google.com/docs/reference/rest/storage/rest/v1beta/projects.buckets/list) within the Cloud Storage for Firebase REST API. If the default bucket for the Project has… */
+	/** **DEPRECATED.** _Instead, find the name of the default Cloud Storage for Firebase bucket using the [list endpoint](https://firebase.google.com/docs/reference/rest/storage/rest/v1beta/projects.buckets/list) within the Cloud Storage for Firebase REST API. */
 	storageBucket?: string | null;
 	/** Immutable. The globally unique, Firebase-assigned identifier for the `WebApp`. */
 	appId?: string | null;
-	/** The [`keyString`](https://cloud.google.com/api-keys/docs/reference/rest/v2/projects.locations.keys#Key.FIELDS.key_string) of the API key associated with the `WebApp`. Note that this value is _not_ the [`apiKeyId`](../projects.webApps#WebApp.FIELDS.api_key_id) (the UID) of the API key associated… */
+	/** The [`keyString`](https://cloud.google.com/api-keys/docs/reference/rest/v2/projects.locations.keys#Key.FIELDS.key_string) of the API key associated with the `WebApp`. Note that this value is _not_ the `apiKeyId` (the UID) of the API key associated with the `WebApp`. */
 	apiKey?: string | null;
-	/** **DEPRECATED.** _Instead, use product-specific REST APIs to find the location of each resource in a Project. This field may not be populated, especially for newly provisioned projects after October 30, 2024._ The ID of the Project's ["location for default Google Cloud… */
+	/** **DEPRECATED.** _Instead, use product-specific REST APIs to find the location of each resource in a Project. */
 	locationId?: string | null;
 	/** The domain Firebase Auth configures for OAuth redirects, in the format: PROJECT_ID.firebaseapp.com */
 	authDomain?: string | null;
 	/** The sender ID for use with Firebase Cloud Messaging. */
 	messagingSenderId?: string | null;
-	/** **DEPRECATED.** _Instead, find the URL of the default Realtime Database instance using the [list endpoint](https://firebase.google.com/docs/reference/rest/database/database-management/rest/v1beta/projects.locations.instances/list) within the Firebase Realtime Database REST API. If the default… */
+	/** **DEPRECATED.** _Instead, find the URL of the default Realtime Database instance using the [list endpoint](https://firebase.google.com/docs/reference/rest/database/database-management/rest/v1beta/projects.locations.instances/list) within the Firebase Realtime Database REST API. */
 	databaseURL?: string | null;
 	/** Output only. Immutable. The globally unique, Google-assigned canonical identifier for the Project. Use this identifier when configuring integrations and/or making API calls to Google Cloud or third-party services. */
 	projectNumber?: string | null;
@@ -7194,7 +7177,7 @@ export type FirebaseWebAppConfig = {
 	recaptchaSiteKey?: string | null;
 	/** Optional. Duplicate field for the URL of the default Realtime Database instances (if the default instance has been provisioned). If the request asks for the V2 config format, this field will be populated instead of `realtime_database_instance_uri`. */
 	realtimeDatabaseUrl?: string | null;
-	/** The unique Google-assigned identifier of the Google Analytics web stream associated with the `WebApp`. Firebase SDKs use this ID to interact with Google Analytics APIs. This field is only present if the `WebApp` is linked to a web stream in a Google Analytics App + Web property. Learn more about… */
+	/** The unique Google-assigned identifier of the Google Analytics web stream associated with the `WebApp`. Firebase SDKs use this ID to interact with Google Analytics APIs. This field is only present if the `WebApp` is linked to a web stream in a Google Analytics App + Web property. */
 	measurementId?: string | null;
 };
 
@@ -7206,7 +7189,7 @@ export type FirebaseWebpushConfig = {
 	fcmOptions?: FirebaseWebpushFcmOptions | null;
 	/** HTTP headers defined in webpush protocol. Refer to [Webpush protocol](https://tools.ietf.org/html/rfc8030#section-5) for supported headers, e.g. "TTL": "15". */
 	headers?: Record<string, string> | null;
-	/** Web Notification options as a JSON object. Supports Notification instance properties as defined in [Web Notification API](https://developer.mozilla.org/en-US/docs/Web/API/Notification). If present, "title" and "body" fields override [google.firebase.fcm.v1.Notification.title] and… */
+	/** Web Notification options as a JSON object. Supports Notification instance properties as defined in [Web Notification API](https://developer.mozilla.org/en-US/docs/Web/API/Notification). */
 	notification?: Record<string, FirebaseJsonValue> | null;
 };
 
@@ -7252,7 +7235,7 @@ export type FirebaseAppDistributionGoogleLongrunningOperation = {
 	done?: boolean | null;
 	/** The error result of the operation in case of failure or cancellation. */
 	error?: FirebaseAppDistributionGoogleRpcStatus | null;
-	/** The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should… */
+	/** The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. */
 	response?: Record<string, FirebaseJsonValue> | null;
 };
 
@@ -7262,7 +7245,7 @@ export type FirebaseAppDistributionGoogleProtobufEmpty = Record<
 	FirebaseJsonValue
 >;
 
-/** The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can… */
+/** The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. */
 export type FirebaseAppDistributionGoogleRpcStatus = {
 	/** A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client. */
 	message?: string | null;
@@ -7290,7 +7273,7 @@ export type FirebaseFirestoreGoogleLongrunningListOperationsResponse = {
 
 /** This resource represents a long-running operation that is the result of a network API call. */
 export type FirebaseFirestoreGoogleLongrunningOperation = {
-	/** The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should… */
+	/** The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. */
 	response?: Record<string, FirebaseJsonValue> | null;
 	/** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the `name` should be a resource name ending with `operations/{unique_id}`. */
 	name?: string | null;
@@ -7316,7 +7299,7 @@ export type FirebaseFirestoreLocation = {
 	name?: string | null;
 };
 
-/** The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can… */
+/** The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. */
 export type FirebaseFirestoreStatus = {
 	/** A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the google.rpc.Status.details field, or localized by the client. */
 	message?: string | null;
@@ -7350,13 +7333,13 @@ export type FirebaseHostingOperation = {
 	name?: string | null;
 	/** Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any. */
 	metadata?: Record<string, FirebaseJsonValue> | null;
-	/** The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should… */
+	/** The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. */
 	response?: Record<string, FirebaseJsonValue> | null;
 };
 
-/** A `Release` is a particular [collection of configurations and files](sites.versions) that is set to be public at a particular time. */
+/** A `Release` is a particular collection of configurations and files that is set to be public at a particular time. */
 export type FirebaseHostingRelease = {
-	/** Output only. The unique identifier for the release, in either of the following formats: - sites/SITE_ID/releases/RELEASE_ID - sites/SITE_ID/channels/CHANNEL_ID/releases/RELEASE_ID This name is provided in the response body when you call [`releases.create`](sites.releases/create) or… */
+	/** Output only. The unique identifier for the release, in either of the following formats: - sites/SITE_ID/releases/RELEASE_ID - sites/SITE_ID/channels/CHANNEL_ID/releases/RELEASE_ID This name is provided in the response body when you call `releases.create` or `channels.releases.create`. */
 	name?: string | null;
 	/** Output only. The configuration and content that was released. */
 	version?: FirebaseHostingVersion | null;
@@ -7370,7 +7353,7 @@ export type FirebaseHostingRelease = {
 	type?: string | null;
 };
 
-/** The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can… */
+/** The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. */
 export type FirebaseHostingStatus = {
 	/** A list of messages that carry the error details. There is a common set of message types for APIs to use. */
 	details?: Array<Record<string, FirebaseJsonValue>> | null;
@@ -7384,7 +7367,7 @@ export type FirebaseHostingStatus = {
 export type FirebaseHostingVersion = {
 	/** Output only. Identifies the user who created the version. */
 	createUser?: FirebaseActingUser | null;
-	/** The deploy status of the version. For a successful deploy, call [`CreateVersion`](sites.versions/create) to make a new version (`CREATED` status), [upload all desired files](sites.versions/populateFiles) to the version, then [update](sites.versions/patch) the version to the `FINALIZED` status.… */
+	/** The deploy status of the version. For a successful deploy, call `CreateVersion` to make a new version (`CREATED` status), upload all desired files to the version, then update the version to the `FINALIZED` status. */
 	status?: string | null;
 	/** The labels used for extra metadata and/or filtering. */
 	labels?: Record<string, string> | null;
@@ -7392,7 +7375,7 @@ export type FirebaseHostingVersion = {
 	deleteTime?: string | null;
 	/** Output only. The time at which the version was created. */
 	createTime?: string | null;
-	/** The fully-qualified resource name for the version, in the format: sites/ SITE_ID/versions/VERSION_ID This name is provided in the response body when you call [`CreateVersion`](sites.versions/create). */
+	/** The fully-qualified resource name for the version, in the format: sites/ SITE_ID/versions/VERSION_ID This name is provided in the response body when you call `CreateVersion`. */
 	name?: string | null;
 	/** Output only. The total number of files associated with the version. This value is calculated after a version is `FINALIZED`. */
 	fileCount?: (string | number) | null;
@@ -7408,16 +7391,6 @@ export type FirebaseHostingVersion = {
 	config?: FirebaseServingConfig | null;
 };
 
-/** **DEPRECATED.** _This Location is no longer used to determine Firebase resource locations. Instead, consult product documentation to determine valid locations for each resource used in your Project._ A ["location for default Google Cloud… */
-export type FirebaseManagementLocation = {
-	/** Indicates whether the location for default Google Cloud resources is a [regional or multi-regional location](https://firebase.google.com/docs/projects/locations#types) for data replication. */
-	type?: string | null;
-	/** Products and services that are available in the location for default Google Cloud resources. */
-	features?: Array<string> | null;
-	/** The ID of the Project's location for default Google Cloud resources. It will be one of the available [Google App Engine locations](https://cloud.google.com/about/locations#region). */
-	locationId?: string | null;
-};
-
 /** This resource represents a long-running operation that is the result of a network API call. */
 export type FirebaseManagementOperation = {
 	/** If the value is `false`, it means the operation is still in progress. If `true`, the operation is completed, and either `error` or `response` is available. */
@@ -7428,11 +7401,11 @@ export type FirebaseManagementOperation = {
 	name?: string | null;
 	/** Service-specific metadata associated with the operation. It typically contains progress information and common metadata such as create time. Some services might not provide such metadata. Any method that returns a long-running operation should document the metadata type, if any. */
 	metadata?: Record<string, FirebaseJsonValue> | null;
-	/** The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. For other methods, the response should… */
+	/** The normal, successful response of the operation. If the original method returns no data on success, such as `Delete`, the response is `google.protobuf.Empty`. If the original method is standard `Get`/`Create`/`Update`, the response should be the resource. */
 	response?: Record<string, FirebaseJsonValue> | null;
 };
 
-/** The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can… */
+/** The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. */
 export type FirebaseManagementStatus = {
 	/** A list of messages that carry the error details. There is a common set of message types for APIs to use. */
 	details?: Array<Record<string, FirebaseJsonValue>> | null;
@@ -7444,7 +7417,7 @@ export type FirebaseManagementStatus = {
 
 /** Basic notification template to use across all platforms. */
 export type FirebaseMessagingNotification = {
-	/** Contains the URL of an image that is going to be downloaded on the device and displayed in a notification. JPEG, PNG, BMP have full support across platforms. Animated GIF and video only work on iOS. WebP and HEIF have varying levels of support across platforms and platform versions. Android has… */
+	/** Contains the URL of an image that is going to be downloaded on the device and displayed in a notification. JPEG, PNG, BMP have full support across platforms. Animated GIF and video only work on iOS. WebP and HEIF have varying levels of support across platforms and platform versions. */
 	image?: string | null;
 	/** The notification's body text. */
 	body?: string | null;
@@ -7525,7 +7498,7 @@ export type FirebaseStorageBucket = {
 		/** The list of regional locations in which data is placed. */
 		dataLocations?: Array<string> | null;
 	} | null;
-	/** The default value for event-based hold on newly created objects in this bucket. Event-based hold is a way to retain objects indefinitely until an event occurs, signified by the hold's release. After being released, such objects will be subject to bucket-level retention (if any). One sample use… */
+	/** The default value for event-based hold on newly created objects in this bucket. Event-based hold is a way to retain objects indefinitely until an event occurs, signified by the hold's release. After being released, such objects will be subject to bucket-level retention (if any). */
 	defaultEventBasedHold?: boolean | null;
 	/** Default access controls to apply to new objects when no ACL is provided. */
 	defaultObjectAcl?: Array<FirebaseObjectAccessControl> | null;
@@ -7564,7 +7537,7 @@ export type FirebaseStorageBucket = {
 	} | null;
 	/** The bucket's IAM configuration. */
 	iamConfiguration?: {
-		/** The bucket's uniform bucket-level access configuration. The feature was formerly known as Bucket Policy Only. For backward compatibility, this field will be populated with identical information as the uniformBucketLevelAccess field. We recommend using the uniformBucketLevelAccess field to enable… */
+		/** The bucket's uniform bucket-level access configuration. The feature was formerly known as Bucket Policy Only. For backward compatibility, this field will be populated with identical information as the uniformBucketLevelAccess field. */
 		bucketPolicyOnly?: {
 			/** If set, access is controlled only by bucket-level or above IAM policies. */
 			enabled?: boolean | null;
@@ -7629,11 +7602,11 @@ export type FirebaseStorageBucket = {
 				customTimeBefore?: string | null;
 				/** Number of days elapsed since the user-specified timestamp set on an object. The condition is satisfied if the days elapsed is at least this number. If no custom timestamp is specified on an object, the condition does not apply. */
 				daysSinceCustomTime?: number | null;
-				/** Number of days elapsed since the noncurrent timestamp of an object. The condition is satisfied if the days elapsed is at least this number. This condition is relevant only for versioned objects. The value of the field must be a nonnegative integer. If it's zero, the object version will become… */
+				/** Number of days elapsed since the noncurrent timestamp of an object. The condition is satisfied if the days elapsed is at least this number. This condition is relevant only for versioned objects. The value of the field must be a nonnegative integer. */
 				daysSinceNoncurrentTime?: number | null;
 				/** Relevant only for versioned objects. If the value is true, this condition matches live objects; if the value is false, it matches archived objects. */
 				isLive?: boolean | null;
-				/** A regular expression that satisfies the RE2 syntax. This condition is satisfied when the name of the object matches the RE2 pattern. Note: This feature is currently in the "Early Access" launch stage and is only available to a whitelisted set of users; that means that this feature may be changed… */
+				/** A regular expression that satisfies the RE2 syntax. This condition is satisfied when the name of the object matches the RE2 pattern. */
 				matchesPattern?: string | null;
 				/** List of object name prefixes. This condition will be satisfied when at least one of the prefixes exactly matches the beginning of the object name. */
 				matchesPrefix?: Array<string> | null;
@@ -7689,7 +7662,7 @@ export type FirebaseStorageBucket = {
 	} | null;
 	/** The project number of the project the bucket belongs to. */
 	projectNumber?: (string | number) | null;
-	/** The bucket's retention policy. The retention policy enforces a minimum retention time for all objects contained in the bucket, based on their creation time. Any attempt to overwrite or delete objects younger than the retention period will result in a PERMISSION_DENIED error. An unlocked… */
+	/** The bucket's retention policy. The retention policy enforces a minimum retention time for all objects contained in the bucket, based on their creation time. Any attempt to overwrite or delete objects younger than the retention period will result in a PERMISSION_DENIED error. */
 	retentionPolicy?: {
 		/** Server-determined value that indicates the time from which policy was enforced and effective. This value is in RFC 3339 format. */
 		effectiveTime?: string | null;
@@ -7721,7 +7694,7 @@ export type FirebaseStorageBucket = {
 			effectiveTime?: string | null;
 		} | null;
 	} | null;
-	/** The bucket's default storage class, used whenever no storageClass is specified for a newly-created object. This defines how objects in the bucket are stored and determines the SLA and the cost of storage. Values include MULTI_REGIONAL, REGIONAL, STANDARD, NEARLINE, COLDLINE, ARCHIVE, and… */
+	/** The bucket's default storage class, used whenever no storageClass is specified for a newly-created object. This defines how objects in the bucket are stored and determines the SLA and the cost of storage. */
 	storageClass?: string | null;
 	/** The creation time of the bucket in RFC 3339 format. */
 	timeCreated?: string | null;
@@ -7769,7 +7742,7 @@ export type FirebaseStorageGoogleLongrunningOperation = {
 	metadata?: Record<string, FirebaseJsonValue> | null;
 	/** The server-assigned name, which is only unique within the same service that originally returns it. If you use the default HTTP mapping, the "name" should be a resource name ending with "operations/{operationId}". */
 	name?: string | null;
-	/** The normal response of the operation in case of success. If the original method returns no data on success, such as "Delete", the response is google.protobuf.Empty. If the original method is standard Get/Create/Update, the response should be the resource. For other methods, the response should… */
+	/** The normal response of the operation in case of success. If the original method returns no data on success, such as "Delete", the response is google.protobuf.Empty. If the original method is standard Get/Create/Update, the response should be the resource. */
 	response?: Record<string, FirebaseJsonValue> | null;
 	/** The link to this long running operation. */
 	selfLink?: string | null;
@@ -7777,7 +7750,7 @@ export type FirebaseStorageGoogleLongrunningOperation = {
 	kind?: string | null;
 };
 
-/** The "Status" type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each "Status" message contains three pieces of data: error code, error message, and error details. You can… */
+/** The "Status" type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each "Status" message contains three pieces of data: error code, error message, and error details. */
 export type FirebaseStorageGoogleRpcStatus = {
 	/** The status code, which should be an enum value of google.rpc.Code. */
 	code?: number | null;
@@ -7798,7 +7771,7 @@ export type FirebaseOperationInputs = {
 		/** Required. The parent project name shared by all AppAttestConfigs being retrieved, in the format ``` projects/{project_number} ``` The parent collection in the `name` field of any resource being retrieved must match this field, or the entire batch fails. Format: `projects/<id>`. */
 		parent: string;
 		/** Required. The relative resource names of the AppAttestConfigs to retrieve, in the format ``` projects/{project_number}/apps/{app_id}/appAttestConfig ``` A maximum of 100 objects can be retrieved in a batch. */
-		names?: Array<string>;
+		names: Array<string>;
 	};
 	'appCheck.apps.appAttestConfig.get': {
 		/** Required. The relative resource name of the AppAttestConfig, in the format: ``` projects/{project_number}/apps/{app_id}/appAttestConfig ``` Format: `projects/<id>/apps/<id>/appAttestConfig`. */
@@ -7808,7 +7781,7 @@ export type FirebaseOperationInputs = {
 		/** Required. The relative resource name of the App Attest configuration object, in the format: ``` projects/{project_number}/apps/{app_id}/appAttestConfig ``` Format: `projects/<id>/apps/<id>/appAttestConfig`. */
 		name: string;
 		/** Required. A comma-separated list of names of fields in the AppAttestConfig to update. Example: `token_ttl`. */
-		updateMask?: string;
+		updateMask: string;
 		/** Required. The relative resource name of the App Attest configuration object, in the format: ``` projects/{project_number}/apps/{app_id}/appAttestConfig ``` */
 		body_name?: string;
 		/** Specifies the duration for which App Check tokens exchanged from App Attest artifacts will be valid. If unset, a default value of 1 hour is assumed. Must be between 30 minutes and 7 days, inclusive. */
@@ -7821,7 +7794,7 @@ export type FirebaseOperationInputs = {
 		displayName?: string;
 		/** Required. The relative resource name of the debug token, in the format: ``` projects/{project_number}/apps/{app_id}/debugTokens/{debug_token_id} ``` */
 		name?: string;
-		/** Required. Input only. Immutable. The secret token itself. Must be provided during creation, and must be a UUID4, case insensitive. This field is immutable once set, and cannot be provided during a UpdateDebugToken request. You can, however, delete this debug token using DeleteDebugToken to… */
+		/** Required. Input only. Immutable. The secret token itself. Must be provided during creation, and must be a UUID4, case insensitive. This field is immutable once set, and cannot be provided during a UpdateDebugToken request. */
 		token?: string;
 		/** Optional. This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding. This etag is strongly validated as defined by RFC 7232. */
 		etag?: string;
@@ -7829,7 +7802,7 @@ export type FirebaseOperationInputs = {
 	'appCheck.apps.debugTokens.delete': {
 		/** Required. The relative resource name of the DebugToken to delete, in the format: ``` projects/{project_number}/apps/{app_id}/debugTokens/{debug_token_id} ``` Format: `projects/<id>/apps/<id>/debugTokens/<id>`. */
 		name: string;
-		/** Optional. The checksum to be validated against the current DebugToken, to ensure the client has an up-to-date value before proceeding. This checksum is computed by the server based on the values of fields in the DebugToken object, and can be obtained from the DebugToken object received from the… */
+		/** Optional. The checksum to be validated against the current DebugToken, to ensure the client has an up-to-date value before proceeding. */
 		etag?: string;
 	};
 	'appCheck.apps.debugTokens.get': {
@@ -7839,7 +7812,7 @@ export type FirebaseOperationInputs = {
 	'appCheck.apps.debugTokens.list': {
 		/** Required. The relative resource name of the parent app for which to list each associated DebugToken, in the format: ``` projects/{project_number}/apps/{app_id} ``` Format: `projects/<id>/apps/<id>`. */
 		parent: string;
-		/** Token returned from a previous call to ListDebugTokens indicating where in the set of DebugTokens to resume listing. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to ListDebugTokens must match the call that provided the page token; if they do not… */
+		/** Token returned from a previous call to ListDebugTokens indicating where in the set of DebugTokens to resume listing. Provide this to retrieve the subsequent page. */
 		pageToken?: string;
 		/** The maximum number of DebugTokens to return in the response. Note that an app can have at most 20 debug tokens. The server may return fewer than this at its own discretion. If no value is specified (or too large a value is specified), the server will impose its own limit. */
 		pageSize?: number;
@@ -7848,19 +7821,19 @@ export type FirebaseOperationInputs = {
 		/** Required. The relative resource name of the debug token, in the format: ``` projects/{project_number}/apps/{app_id}/debugTokens/{debug_token_id} ``` Format: `projects/<id>/apps/<id>/debugTokens/<id>`. */
 		name: string;
 		/** Required. A comma-separated list of names of fields in the DebugToken to update. Example: `display_name`. */
-		updateMask?: string;
+		updateMask: string;
 		/** Required. A human readable display name used to identify this debug token. */
 		displayName?: string;
 		/** Required. The relative resource name of the debug token, in the format: ``` projects/{project_number}/apps/{app_id}/debugTokens/{debug_token_id} ``` */
 		body_name?: string;
-		/** Required. Input only. Immutable. The secret token itself. Must be provided during creation, and must be a UUID4, case insensitive. This field is immutable once set, and cannot be provided during a UpdateDebugToken request. You can, however, delete this debug token using DeleteDebugToken to… */
+		/** Required. Input only. Immutable. The secret token itself. Must be provided during creation, and must be a UUID4, case insensitive. This field is immutable once set, and cannot be provided during a UpdateDebugToken request. */
 		token?: string;
 		/** Optional. This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding. This etag is strongly validated as defined by RFC 7232. */
 		etag?: string;
 	};
 	'appCheck.apps.deviceCheckConfig.batchGet': {
 		/** Required. The relative resource names of the DeviceCheckConfigs to retrieve, in the format ``` projects/{project_number}/apps/{app_id}/deviceCheckConfig ``` A maximum of 100 objects can be retrieved in a batch. */
-		names?: Array<string>;
+		names: Array<string>;
 		/** Required. The parent project name shared by all DeviceCheckConfigs being retrieved, in the format ``` projects/{project_number} ``` The parent collection in the `name` field of any resource being retrieved must match this field, or the entire batch fails. Format: `projects/<id>`. */
 		parent: string;
 	};
@@ -7870,7 +7843,7 @@ export type FirebaseOperationInputs = {
 	};
 	'appCheck.apps.deviceCheckConfig.patch': {
 		/** Required. A comma-separated list of names of fields in the DeviceCheckConfig to update. Example: `key_id,private_key`. */
-		updateMask?: string;
+		updateMask: string;
 		/** Required. The relative resource name of the DeviceCheck configuration object, in the format: ``` projects/{project_number}/apps/{app_id}/deviceCheckConfig ``` Format: `projects/<id>/apps/<id>/deviceCheckConfig`. */
 		name: string;
 		/** Required. The relative resource name of the DeviceCheck configuration object, in the format: ``` projects/{project_number}/apps/{app_id}/deviceCheckConfig ``` */
@@ -7883,7 +7856,7 @@ export type FirebaseOperationInputs = {
 		privateKey?: string;
 	};
 	'appCheck.apps.exchangeAppAttestAssertion': {
-		/** Required. The relative resource name of the iOS app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. Learn more about using project identifiers in Google's [AIP… */
+		/** Required. The relative resource name of the iOS app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. */
 		app: string;
 		/** Required. A one-time challenge returned by an immediately prior call to GenerateAppAttestChallenge. (base64) */
 		challenge?: string;
@@ -7895,7 +7868,7 @@ export type FirebaseOperationInputs = {
 		artifact?: string;
 	};
 	'appCheck.apps.exchangeAppAttestAttestation': {
-		/** Required. The relative resource name of the iOS app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. Learn more about using project identifiers in Google's [AIP… */
+		/** Required. The relative resource name of the iOS app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. */
 		app: string;
 		/** Specifies whether this attestation is for use in a *limited use* (`true`) or *session based* (`false`) context. To enable this attestation to be used with the *replay protection* feature, set this to `true`. The default value is `false`. */
 		limitedUse?: boolean;
@@ -7907,17 +7880,17 @@ export type FirebaseOperationInputs = {
 		challenge?: string;
 	};
 	'appCheck.apps.exchangeCustomToken': {
-		/** Required. The relative resource name of the app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. Learn more about using project identifiers in Google's [AIP… */
+		/** Required. The relative resource name of the app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. */
 		app: string;
 		/** Specifies whether this attestation is for use in a *limited use* (`true`) or *session based* (`false`) context. To enable this attestation to be used with the *replay protection* feature, set this to `true`. The default value is `false`. */
 		limitedUse?: boolean;
 		/** Required. A custom token signed using your project's Admin SDK service account credentials. */
 		customToken?: string;
-		/** Optional. When `limited_use` is set to `true`, this field specifies the desired `jti` claim (Section 4.1.7 of RFC 7519) in the returned App Check token. *Limited use* App Check tokens with the same `jti` will be counted as the same token for the purposes of replay protection. An error is… */
+		/** Optional. When `limited_use` is set to `true`, this field specifies the desired `jti` claim (Section 4.1.7 of RFC 7519) in the returned App Check token. *Limited use* App Check tokens with the same `jti` will be counted as the same token for the purposes of replay protection. */
 		jti?: string;
 	};
 	'appCheck.apps.exchangeDebugToken': {
-		/** Required. The relative resource name of the app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. Learn more about using project identifiers in Google's [AIP… */
+		/** Required. The relative resource name of the app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. */
 		app: string;
 		/** Required. A debug token secret. This string must match a debug token secret previously created using CreateDebugToken. */
 		debugToken?: string;
@@ -7925,7 +7898,7 @@ export type FirebaseOperationInputs = {
 		limitedUse?: boolean;
 	};
 	'appCheck.apps.exchangeDeviceCheckToken': {
-		/** Required. The relative resource name of the iOS app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. Learn more about using project identifiers in Google's [AIP… */
+		/** Required. The relative resource name of the iOS app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. */
 		app: string;
 		/** Required. The `device_token` as returned by Apple's client-side [DeviceCheck API](https://developer.apple.com/documentation/devicecheck/dcdevice). This is the base64 encoded `Data` (Swift) or `NSData` (ObjC) object. */
 		deviceToken?: string;
@@ -7933,7 +7906,7 @@ export type FirebaseOperationInputs = {
 		limitedUse?: boolean;
 	};
 	'appCheck.apps.exchangePlayIntegrityToken': {
-		/** Required. The relative resource name of the Android app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. Learn more about using project identifiers in Google's [AIP… */
+		/** Required. The relative resource name of the Android app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. */
 		app: string;
 		/** Required. The [integrity verdict response token from Play Integrity](https://developer.android.com/google/play/integrity/verdict#decrypt-verify) issued to your app. */
 		playIntegrityToken?: string;
@@ -7941,7 +7914,7 @@ export type FirebaseOperationInputs = {
 		limitedUse?: boolean;
 	};
 	'appCheck.apps.exchangeRecaptchaEnterpriseToken': {
-		/** Required. The relative resource name of the web app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. Learn more about using project identifiers in Google's [AIP… */
+		/** Required. The relative resource name of the web app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. */
 		app: string;
 		/** Required. The reCAPTCHA token as returned by the [reCAPTCHA Enterprise JavaScript API](https://cloud.google.com/recaptcha-enterprise/docs/instrument-web-pages). */
 		recaptchaEnterpriseToken?: string;
@@ -7949,7 +7922,7 @@ export type FirebaseOperationInputs = {
 		limitedUse?: boolean;
 	};
 	'appCheck.apps.exchangeRecaptchaV3Token': {
-		/** Required. The relative resource name of the web app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. Learn more about using project identifiers in Google's [AIP… */
+		/** Required. The relative resource name of the web app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. */
 		app: string;
 		/** Required. The reCAPTCHA token as returned by the [reCAPTCHA v3 JavaScript API](https://developers.google.com/recaptcha/docs/v3). */
 		recaptchaV3Token?: string;
@@ -7957,17 +7930,17 @@ export type FirebaseOperationInputs = {
 		limitedUse?: boolean;
 	};
 	'appCheck.apps.generateAppAttestChallenge': {
-		/** Required. The relative resource name of the iOS app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. Learn more about using project identifiers in Google's [AIP… */
+		/** Required. The relative resource name of the iOS app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. */
 		app: string;
 		body?: FirebaseGoogleFirebaseAppcheckV1GenerateAppAttestChallengeRequestInput;
 	};
 	'appCheck.apps.generatePlayIntegrityChallenge': {
-		/** Required. The relative resource name of the app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. Learn more about using project identifiers in Google's [AIP… */
+		/** Required. The relative resource name of the app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. */
 		app: string;
 		body?: FirebaseGoogleFirebaseAppcheckV1GeneratePlayIntegrityChallengeRequestInput;
 	};
 	'appCheck.apps.mintAppCheckToken': {
-		/** Required. The relative resource name of the app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. Learn more about using project identifiers in Google's [AIP… */
+		/** Required. The relative resource name of the app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. */
 		app: string;
 		/** Optional. If specified, the returned App Check token will be a limited-use token minted according to the specified configuration options. */
 		limitedUseConfig?: FirebaseGoogleFirebaseAppcheckV1LimitedUseConfigInput;
@@ -7976,7 +7949,7 @@ export type FirebaseOperationInputs = {
 	};
 	'appCheck.apps.playIntegrityConfig.batchGet': {
 		/** Required. The relative resource names of the PlayIntegrityConfigs to retrieve, in the format ``` projects/{project_number}/apps/{app_id}/playIntegrityConfig ``` A maximum of 100 objects can be retrieved in a batch. */
-		names?: Array<string>;
+		names: Array<string>;
 		/** Required. The parent project name shared by all PlayIntegrityConfigs being retrieved, in the format ``` projects/{project_number} ``` The parent collection in the `name` field of any resource being retrieved must match this field, or the entire batch fails. Format: `projects/<id>`. */
 		parent: string;
 	};
@@ -7988,14 +7961,14 @@ export type FirebaseOperationInputs = {
 		/** Required. The relative resource name of the Play Integrity configuration object, in the format: ``` projects/{project_number}/apps/{app_id}/playIntegrityConfig ``` Format: `projects/<id>/apps/<id>/playIntegrityConfig`. */
 		name: string;
 		/** Required. A comma-separated list of names of fields in the PlayIntegrityConfig to update. Example: `token_ttl`. */
-		updateMask?: string;
+		updateMask: string;
 		/** Specifies the duration for which App Check tokens exchanged from Play Integrity tokens will be valid. If unset, a default value of 1 hour is assumed. Must be between 30 minutes and 7 days, inclusive. */
 		tokenTtl?: string;
-		/** Specifies application integrity requirements for Android devices running your app. These settings correspond to requirements on the [**application integrity** field](https://developer.android.com/google/play/integrity/verdicts#application-integrity-field) obtained from the Play Integrity API.… */
+		/** Specifies application integrity requirements for Android devices running your app. These settings correspond to requirements on the [**application integrity** field](https://developer.android.com/google/play/integrity/verdicts#application-integrity-field) obtained from the Play Integrity API. */
 		appIntegrity?: FirebaseGoogleFirebaseAppcheckV1PlayIntegrityConfigAppIntegrityInput;
-		/** Specifies account requirements for Android devices running your app. These settings correspond to requirements on the [**account details** field](https://developer.android.com/google/play/integrity/verdicts#account-details-field) obtained from the Play Integrity API. See the [default responses… */
+		/** Specifies account requirements for Android devices running your app. These settings correspond to requirements on the [**account details** field](https://developer.android.com/google/play/integrity/verdicts#account-details-field) obtained from the Play Integrity API. */
 		accountDetails?: FirebaseGoogleFirebaseAppcheckV1PlayIntegrityConfigAccountDetailsInput;
-		/** Specifies device integrity requirements for Android devices running your app. These settings correspond to requirements on the [**device integrity** field](https://developer.android.com/google/play/integrity/verdicts#device-integrity-field) obtained from the Play Integrity API. See the [default… */
+		/** Specifies device integrity requirements for Android devices running your app. These settings correspond to requirements on the [**device integrity** field](https://developer.android.com/google/play/integrity/verdicts#device-integrity-field) obtained from the Play Integrity API. */
 		deviceIntegrity?: FirebaseGoogleFirebaseAppcheckV1PlayIntegrityConfigDeviceIntegrityInput;
 		/** Required. The relative resource name of the Play Integrity configuration object, in the format: ``` projects/{project_number}/apps/{app_id}/playIntegrityConfig ``` */
 		body_name?: string;
@@ -8004,7 +7977,7 @@ export type FirebaseOperationInputs = {
 		/** Required. The parent project name shared by all RecaptchaEnterpriseConfigs being retrieved, in the format ``` projects/{project_number} ``` The parent collection in the `name` field of any resource being retrieved must match this field, or the entire batch fails. Format: `projects/<id>`. */
 		parent: string;
 		/** Required. The relative resource names of the RecaptchaEnterpriseConfigs to retrieve, in the format: ``` projects/{project_number}/apps/{app_id}/recaptchaEnterpriseConfig ``` A maximum of 100 objects can be retrieved in a batch. */
-		names?: Array<string>;
+		names: Array<string>;
 	};
 	'appCheck.apps.recaptchaEnterpriseConfig.get': {
 		/** Required. The relative resource name of the RecaptchaEnterpriseConfig, in the format: ``` projects/{project_number}/apps/{app_id}/recaptchaEnterpriseConfig ``` Format: `projects/<id>/apps/<id>/recaptchaEnterpriseConfig`. */
@@ -8014,10 +7987,10 @@ export type FirebaseOperationInputs = {
 		/** Required. The relative resource name of the reCAPTCHA Enterprise configuration object, in the format: ``` projects/{project_number}/apps/{app_id}/recaptchaEnterpriseConfig ``` Format: `projects/<id>/apps/<id>/recaptchaEnterpriseConfig`. */
 		name: string;
 		/** Required. A comma-separated list of names of fields in the RecaptchaEnterpriseConfig to update. Example: `site_key`. */
-		updateMask?: string;
-		/** Specifies risk tolerance and requirements for your application. These settings correspond to requirements on the [**`riskAnalysis`**](https://cloud.google.com/recaptcha/docs/interpret-assessment-website#interpret_assessment) tuple in the assessment obtained from reCAPTCHA Enterprise. The default… */
+		updateMask: string;
+		/** Specifies risk tolerance and requirements for your application. These settings correspond to requirements on the [**`riskAnalysis`**](https://cloud.google.com/recaptcha/docs/interpret-assessment-website#interpret_assessment) tuple in the assessment obtained from reCAPTCHA Enterprise. */
 		riskAnalysis?: FirebaseGoogleFirebaseAppcheckV1RecaptchaEnterpriseConfigRiskAnalysisInput;
-		/** The score-based site key [created in reCAPTCHA Enterprise](https://cloud.google.com/recaptcha-enterprise/docs/create-key#creating_a_site_key) used to [invoke reCAPTCHA and generate the reCAPTCHA tokens](https://cloud.google.com/recaptcha-enterprise/docs/instrument-web-pages) for your… */
+		/** The score-based site key [created in reCAPTCHA Enterprise](https://cloud.google.com/recaptcha-enterprise/docs/create-key#creating_a_site_key) used to [invoke reCAPTCHA and generate the reCAPTCHA tokens](https://cloud.google.com/recaptcha-enterprise/docs/instrument-web-pages) for your application. */
 		siteKey?: string;
 		/** Specifies the duration for which App Check tokens exchanged from reCAPTCHA Enterprise tokens will be valid. If unset, a default value of 1 hour is assumed. Must be between 30 minutes and 7 days, inclusive. */
 		tokenTtl?: string;
@@ -8026,7 +7999,7 @@ export type FirebaseOperationInputs = {
 	};
 	'appCheck.apps.recaptchaV3Config.batchGet': {
 		/** Required. The relative resource names of the RecaptchaV3Configs to retrieve, in the format: ``` projects/{project_number}/apps/{app_id}/recaptchaV3Config ``` A maximum of 100 objects can be retrieved in a batch. */
-		names?: Array<string>;
+		names: Array<string>;
 		/** Required. The parent project name shared by all RecaptchaV3Configs being retrieved, in the format ``` projects/{project_number} ``` The parent collection in the `name` field of any resource being retrieved must match this field, or the entire batch fails. Format: `projects/<id>`. */
 		parent: string;
 	};
@@ -8036,7 +8009,7 @@ export type FirebaseOperationInputs = {
 	};
 	'appCheck.apps.recaptchaV3Config.patch': {
 		/** Required. A comma-separated list of names of fields in the RecaptchaV3Config to update. Example: `site_secret`. */
-		updateMask?: string;
+		updateMask: string;
 		/** Required. The relative resource name of the reCAPTCHA v3 configuration object, in the format: ``` projects/{project_number}/apps/{app_id}/recaptchaV3Config ``` Format: `projects/<id>/apps/<id>/recaptchaV3Config`. */
 		name: string;
 		/** Specifies the duration for which App Check tokens exchanged from reCAPTCHA tokens will be valid. If unset, a default value of 1 day is assumed. Must be between 30 minutes and 7 days, inclusive. */
@@ -8053,7 +8026,7 @@ export type FirebaseOperationInputs = {
 		name: string;
 	};
 	'appCheck.oauthClients.exchangeAppAttestAssertion': {
-		/** Required. The relative resource name of the iOS app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. Learn more about using project identifiers in Google's [AIP… */
+		/** Required. The relative resource name of the iOS app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. */
 		app: string;
 		/** Required. A one-time challenge returned by an immediately prior call to GenerateAppAttestChallenge. (base64) */
 		challenge?: string;
@@ -8065,7 +8038,7 @@ export type FirebaseOperationInputs = {
 		artifact?: string;
 	};
 	'appCheck.oauthClients.exchangeAppAttestAttestation': {
-		/** Required. The relative resource name of the iOS app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. Learn more about using project identifiers in Google's [AIP… */
+		/** Required. The relative resource name of the iOS app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. */
 		app: string;
 		/** Specifies whether this attestation is for use in a *limited use* (`true`) or *session based* (`false`) context. To enable this attestation to be used with the *replay protection* feature, set this to `true`. The default value is `false`. */
 		limitedUse?: boolean;
@@ -8077,7 +8050,7 @@ export type FirebaseOperationInputs = {
 		challenge?: string;
 	};
 	'appCheck.oauthClients.exchangeDebugToken': {
-		/** Required. The relative resource name of the app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. Learn more about using project identifiers in Google's [AIP… */
+		/** Required. The relative resource name of the app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. */
 		app: string;
 		/** Required. A debug token secret. This string must match a debug token secret previously created using CreateDebugToken. */
 		debugToken?: string;
@@ -8085,7 +8058,7 @@ export type FirebaseOperationInputs = {
 		limitedUse?: boolean;
 	};
 	'appCheck.oauthClients.generateAppAttestChallenge': {
-		/** Required. The relative resource name of the iOS app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. Learn more about using project identifiers in Google's [AIP… */
+		/** Required. The relative resource name of the iOS app, in the format: ``` projects/{project_number}/apps/{app_id} ``` If necessary, the `project_number` element can be replaced with the project ID of the Firebase project. */
 		app: string;
 		body?: FirebaseGoogleFirebaseAppcheckV1GenerateAppAttestChallengeRequestInput;
 	};
@@ -8098,7 +8071,7 @@ export type FirebaseOperationInputs = {
 		requests?: Array<FirebaseGoogleFirebaseAppcheckV1UpdateServiceRequestInput>;
 	};
 	'appCheck.services.get': {
-		/** Required. The relative resource name of the Service to retrieve, in the format: ``` projects/{project_number}/services/{service_id} ``` Note that the `service_id` element must be a supported service ID. Consult the Service.name field for a list of supported service IDs. Format:… */
+		/** Required. The relative resource name of the Service to retrieve, in the format: ``` projects/{project_number}/services/{service_id} ``` Note that the `service_id` element must be a supported service ID. Consult the Service.name field for a list of supported service IDs. */
 		name: string;
 	};
 	'appCheck.services.list': {
@@ -8106,35 +8079,35 @@ export type FirebaseOperationInputs = {
 		parent: string;
 		/** The maximum number of Services to return in the response. Only explicitly configured services are returned. The server may return fewer than this at its own discretion. If no value is specified (or too large a value is specified), the server will impose its own limit. */
 		pageSize?: number;
-		/** Token returned from a previous call to ListServices indicating where in the set of Services to resume listing. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to ListServices must match the call that provided the page token; if they do not match, the… */
+		/** Token returned from a previous call to ListServices indicating where in the set of Services to resume listing. Provide this to retrieve the subsequent page. */
 		pageToken?: string;
 	};
 	'appCheck.services.patch': {
-		/** Required. The relative resource name of the service configuration object, in the format: ``` projects/{project_number}/services/{service_id} ``` Note that the `service_id` element must be a supported service ID. Currently, the following service IDs are supported. Firebase and Google Cloud… */
+		/** Required. The relative resource name of the service configuration object, in the format: ``` projects/{project_number}/services/{service_id} ``` Note that the `service_id` element must be a supported service ID. Currently, the following service IDs are supported. */
 		name: string;
 		/** Required. A comma-separated list of names of fields in the Service to update. Example: `enforcement_mode`. */
-		updateMask?: string;
+		updateMask: string;
 		/** Required. The baseline protection EnforcementMode for this service. */
 		enforcementMode?: 'OFF' | 'UNENFORCED' | 'ENFORCED';
-		/** Required. The relative resource name of the service configuration object, in the format: ``` projects/{project_number}/services/{service_id} ``` Note that the `service_id` element must be a supported service ID. Currently, the following service IDs are supported. Firebase and Google Cloud… */
+		/** Required. The relative resource name of the service configuration object, in the format: ``` projects/{project_number}/services/{service_id} ``` Note that the `service_id` element must be a supported service ID. Currently, the following service IDs are supported. */
 		body_name?: string;
 		/** Optional. This checksum is computed by the server based on the value of other fields, and may be sent on update and delete requests to ensure the client has an up-to-date value before proceeding. This etag is strongly validated as defined by RFC 7232. */
 		etag?: string;
-		/** Optional. The replay protection EnforcementMode for this service. Note that this field cannot be set to a level higher than that of baseline protection. For example, if the enforcement mode for baseline protection is set to `UNENFORCED`, this field cannot be set to `ENFORCED`. In order to… */
+		/** Optional. The replay protection EnforcementMode for this service. Note that this field cannot be set to a level higher than that of baseline protection. For example, if the enforcement mode for baseline protection is set to `UNENFORCED`, this field cannot be set to `ENFORCED`. */
 		replayProtection?: 'OFF' | 'UNENFORCED' | 'ENFORCED';
 	};
 	'appCheck.services.resourcePolicies.batchUpdate': {
 		/** Required. The parent service name, in the format ``` projects/{project_number}/services/{service_id} ``` The parent collection in the `name` field of any resource being updated must match this field, or the entire batch fails. Format: `projects/<id>/services/<id>`. */
 		parent: string;
-		/** Optional. A comma-separated list of names of fields in the ResourcePolicy objects to update. Example: `enforcement_mode`. If this field is present, the `update_mask` field in the UpdateResourcePolicyRequest messages must all match this field, or the entire batch fails and no updates will be… */
+		/** Optional. A comma-separated list of names of fields in the ResourcePolicy objects to update. Example: `enforcement_mode`. */
 		updateMask?: string;
 		/** Required. The request messages specifying the ResourcePolicy objects to update. A maximum of 100 objects can be updated in a batch. */
 		requests?: Array<FirebaseGoogleFirebaseAppcheckV1UpdateResourcePolicyRequestInput>;
 	};
 	'appCheck.services.resourcePolicies.create': {
-		/** Required. The relative resource name of the parent Service in which the specified ResourcePolicy will be created, in the format: ``` projects/{project_number}/services/{service_id} ``` Note that the `service_id` element must be a supported service ID. Consult the ResourcePolicy.name field for a… */
+		/** Required. The relative resource name of the parent Service in which the specified ResourcePolicy will be created, in the format: ``` projects/{project_number}/services/{service_id} ``` Note that the `service_id` element must be a supported service ID. */
 		parent: string;
-		/** Required. Identifier. The relative name of the resource policy object, in the format: ``` projects/{project_number}/services/{service_id}/resourcePolicies/{resource_policy_id} ``` Note that the `service_id` element must be a supported service ID. Currently, the following service IDs are… */
+		/** Required. Identifier. The relative name of the resource policy object, in the format: ``` projects/{project_number}/services/{service_id}/resourcePolicies/{resource_policy_id} ``` Note that the `service_id` element must be a supported service ID. */
 		name?: string;
 		/** Required. The baseline protection EnforcementMode for this resource. This will override the service-level baseline protection EnforcementMode. */
 		enforcementMode?: 'OFF' | 'UNENFORCED' | 'ENFORCED';
@@ -8144,31 +8117,31 @@ export type FirebaseOperationInputs = {
 		targetResource?: string;
 	};
 	'appCheck.services.resourcePolicies.delete': {
-		/** The checksum to be validated against the current ResourcePolicy, to ensure the client has an up-to-date value before proceeding. This checksum is computed by the server based on the values of fields in the ResourcePolicy object, and can be obtained from the ResourcePolicy object received from… */
+		/** The checksum to be validated against the current ResourcePolicy, to ensure the client has an up-to-date value before proceeding. */
 		etag?: string;
 		/** Required. The relative resource name of the ResourcePolicy to delete, in the format: ``` projects/{project_number}/services/{service_id}/resourcePolicies/{resource_policy_id} ``` Format: `projects/<id>/services/<id>/resourcePolicies/<id>`. */
 		name: string;
 	};
 	'appCheck.services.resourcePolicies.get': {
-		/** Required. The relative resource name of the ResourcePolicy to retrieve, in the format: ``` projects/{project_number}/services/{service_id}/resourcePolicies/{resource_policy_id} ``` Note that the `service_id` element must be a supported service ID. Consult the ResourcePolicy.name field for a list… */
+		/** Required. The relative resource name of the ResourcePolicy to retrieve, in the format: ``` projects/{project_number}/services/{service_id}/resourcePolicies/{resource_policy_id} ``` Note that the `service_id` element must be a supported service ID. */
 		name: string;
 	};
 	'appCheck.services.resourcePolicies.list': {
-		/** Optional. Filters the results by the specified rule. For the exact syntax of this field, please consult the [AIP-160](https://google.aip.dev/160) standard. Currently, since the only fields in the ResourcePolicy resource are the scalar fields `enforcement_mode` and `target_resource`, this method… */
+		/** Optional. Filters the results by the specified rule. For the exact syntax of this field, please consult the [AIP-160](https://google.aip.dev/160) standard. */
 		filter?: string;
 		/** The maximum number of ResourcePolicy objects to return in the response. The server may return fewer than this at its own discretion. If no value is specified (or too large a value is specified), the server will impose its own limit. */
 		pageSize?: number;
-		/** Required. The relative resource name of the parent Service for which to list each associated ResourcePolicy, in the format: ``` projects/{project_number}/services/{service_id} ``` Note that the `service_id` element must be a supported service ID. Consult the ResourcePolicy.name field for a list… */
+		/** Required. The relative resource name of the parent Service for which to list each associated ResourcePolicy, in the format: ``` projects/{project_number}/services/{service_id} ``` Note that the `service_id` element must be a supported service ID. */
 		parent: string;
-		/** Token returned from a previous call to ListResourcePolicies indicating where in the set of ResourcePolicy objects to resume listing. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to ListResourcePolicies must match the call that provided the page… */
+		/** Token returned from a previous call to ListResourcePolicies indicating where in the set of ResourcePolicy objects to resume listing. Provide this to retrieve the subsequent page. */
 		pageToken?: string;
 	};
 	'appCheck.services.resourcePolicies.patch': {
-		/** Required. Identifier. The relative name of the resource policy object, in the format: ``` projects/{project_number}/services/{service_id}/resourcePolicies/{resource_policy_id} ``` Note that the `service_id` element must be a supported service ID. Currently, the following service IDs are… */
+		/** Required. Identifier. The relative name of the resource policy object, in the format: ``` projects/{project_number}/services/{service_id}/resourcePolicies/{resource_policy_id} ``` Note that the `service_id` element must be a supported service ID. */
 		name: string;
 		/** Required. A comma-separated list of names of fields in the ResourcePolicy to update. Example: `enforcement_mode`. */
-		updateMask?: string;
-		/** Required. Identifier. The relative name of the resource policy object, in the format: ``` projects/{project_number}/services/{service_id}/resourcePolicies/{resource_policy_id} ``` Note that the `service_id` element must be a supported service ID. Currently, the following service IDs are… */
+		updateMask: string;
+		/** Required. Identifier. The relative name of the resource policy object, in the format: ``` projects/{project_number}/services/{service_id}/resourcePolicies/{resource_policy_id} ``` Note that the `service_id` element must be a supported service ID. */
 		body_name?: string;
 		/** Required. The baseline protection EnforcementMode for this resource. This will override the service-level baseline protection EnforcementMode. */
 		enforcementMode?: 'OFF' | 'UNENFORCED' | 'ENFORCED';
@@ -8218,11 +8191,11 @@ export type FirebaseOperationInputs = {
 	'appDistribution.apps.releases.list': {
 		/** Optional. The maximum number of releases to return. The service may return fewer than this value. The valid range is [1-100]; If unspecified (0), at most 25 releases are returned. Values above 100 are coerced to 100. */
 		pageSize?: number;
-		/** Optional. The expression to filter releases listed in the response. To learn more about filtering, refer to the [AIP-160 standard](http://aip.dev/160). Supported fields: - Time fields supporting `<`, `<=`, `>` and `>=`; expecting an RFC-3339 formatted string: - `create_time` (or `createTime`) -… */
+		/** Optional. The expression to filter releases listed in the response. To learn more about filtering, refer to the [AIP-160 standard](http://aip.dev/160). */
 		filter?: string;
 		/** Required. The name of the app resource, which is the parent of the release resources. Format: `projects/{project_number}/apps/{app}` Format: `projects/<id>/apps/<id>`. */
 		parent: string;
-		/** Optional. The fields used to order releases. Supported fields: - `create_time` (or `createTime`) - `update_time` (or `updateTime`) - `expire_time` (or `expireTime`) To specify descending order for a field, append a "desc" suffix, for example, `createTime desc`. If this parameter is not set,… */
+		/** Optional. The fields used to order releases. Supported fields: - `create_time` (or `createTime`) - `update_time` (or `updateTime`) - `expire_time` (or `expireTime`) To specify descending order for a field, append a "desc" suffix, for example, `createTime desc`. */
 		orderBy?: string;
 		/** Optional. A page token, received from a previous `ListReleases` call. Provide this to retrieve the subsequent page. When paginating, all other parameters provided to `ListReleases` must match the call that provided the page token. */
 		pageToken?: string;
@@ -8241,7 +8214,7 @@ export type FirebaseOperationInputs = {
 		name: string;
 	};
 	'appDistribution.apps.releases.operations.list': {
-		/** When set to `true`, operations that are reachable are returned as normal, and those that are unreachable are returned in the ListOperationsResponse.unreachable field. This can only be `true` when reading across collections. For example, when `parent` is set to `"projects/example/locations/-"`.… */
+		/** When set to `true`, operations that are reachable are returned as normal, and those that are unreachable are returned in the ListOperationsResponse.unreachable field. This can only be `true` when reading across collections. For example, when `parent` is set to `"projects/example/locations/-"`. */
 		returnPartialSuccess?: boolean;
 		/** The name of the operation's parent resource. Format: `projects/<id>/apps/<id>/releases/<id>`. */
 		name: string;
@@ -8285,7 +8258,7 @@ export type FirebaseOperationInputs = {
 	'appDistribution.groups.create': {
 		/** Required. The name of the project resource, which is the parent of the group resource. Format: `projects/{project_number}` Format: `projects/<id>`. */
 		parent: string;
-		/** Optional. The "alias" to use for the group, which will become the final component of the group's resource name. This value must be unique per project. The field is named `groupId` to comply with AIP guidance for user-specified IDs. This value should be 4-63 characters, and valid characters are… */
+		/** Optional. The "alias" to use for the group, which will become the final component of the group's resource name. This value must be unique per project. The field is named `groupId` to comply with AIP guidance for user-specified IDs. */
 		groupId?: string;
 		/** Required. The display name of the group. */
 		displayName?: string;
@@ -8339,7 +8312,7 @@ export type FirebaseOperationInputs = {
 		emails?: Array<string>;
 	};
 	'appDistribution.testers.list': {
-		/** Optional. The expression to filter testers listed in the response. To learn more about filtering, refer to [Google's AIP-160 standard](http://aip.dev/160). Supported fields: - `name` - `displayName` - `groups` Example: - `name = "projects/-/testers/*@example.com"` - `displayName = "Joe Sixpack"`… */
+		/** Optional. The expression to filter testers listed in the response. To learn more about filtering, refer to [Google's AIP-160 standard](http://aip.dev/160). */
 		filter?: string;
 		/** Optional. The maximum number of testers to return. The service may return fewer than this value. The valid range is [1-1000]; If unspecified (0), at most 10 testers are returned. Values above 1000 are coerced to 1000. */
 		pageSize?: number;
@@ -8376,15 +8349,17 @@ export type FirebaseOperationInputs = {
 		/** A session ID that can be verified against in SignInWithIdp to prevent session fixation attacks. If absent, a random string will be generated and returned as the session ID. */
 		sessionId?: string;
 		oauthConsumerKey?: string;
-		/** The provider ID of the IdP for the user to sign in with. This should be a provider ID enabled for sign-in, which is either from the list of [default supported IdPs](https://cloud.google.com/identity-platform/docs/reference/rest/v2/defaultSupportedIdps/list), or of the format `oidc.*` or… */
+		/** The provider ID of the IdP for the user to sign in with. This should be a provider ID enabled for sign-in, which is either from the list of [default supported IdPs](https://cloud.google.com/identity-platform/docs/reference/rest/v2/defaultSupportedIdps/list), or of the format `oidc.*` or `saml.*`. */
 		providerId?: string;
 		/** An opaque string used to maintain contextual information between the authentication request and the callback from the IdP. */
 		context?: string;
-		/** The email identifier of the user account to fetch associated providers for. At least one of the fields `identifier` and `provider_id` must be set. The length of the email address should be less than 256 characters and in the format of `name@domain.tld`. The email address should also match the… */
+		/** The email identifier of the user account to fetch associated providers for. At least one of the fields `identifier` and `provider_id` must be set. The length of the email address should be less than 256 characters and in the format of `name@domain.tld`. */
 		identifier?: string;
 		openidRealm?: string;
-		/** Additional customized query parameters to be added to the authorization URI. The following parameters are reserved and cannot be added: `client_id`, `response_type`, `scope`, `redirect_uri`, `state`. For the Microsoft provider, the Azure AD tenant to sign-in to can be specified in the `tenant`… */
+		/** Additional customized query parameters to be added to the authorization URI. The following parameters are reserved and cannot be added: `client_id`, `response_type`, `scope`, `redirect_uri`, `state`. */
 		customParameter?: Record<string, string>;
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
 	};
 	'auth.accounts.delete': {
 		delegatedProjectNumber?: string | number;
@@ -8396,25 +8371,29 @@ export type FirebaseOperationInputs = {
 		tenantId?: string;
 		/** The ID of user account to delete. Specifying this field requires a Google OAuth 2.0 credential with proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). Requests from users lacking the credential should pass an ID token instead. */
 		localId?: string;
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
 	};
 	'auth.accounts.issueSamlResponse': {
 		/** The Identity Platform ID token. It will be verified and then converted to a new SAMLResponse. */
 		idToken?: string;
-		/** SAML app entity id specified in Google Admin Console for each app. If developers want to redirect to a third-party app rather than a G Suite app, they'll probably they need this. When it's used, we'll return a RelayState. This includes a SAMLRequest, which can be used to trigger a SP-initiated… */
+		/** SAML app entity id specified in Google Admin Console for each app. If developers want to redirect to a third-party app rather than a G Suite app, they'll probably they need this. When it's used, we'll return a RelayState. */
 		samlAppEntityId?: string;
 		/** Relying Party identifier, which is the audience of issued SAMLResponse. */
 		rpId?: string;
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
 	};
 	'auth.accounts.lookup': {
 		/** The phone number of one or more accounts to fetch. Should only be specified by authenticated requests from a developer and should be in E.164 format, for example, +15555555555. */
 		phoneNumber?: Array<string>;
 		/** The ID of the tenant that the account belongs to. Should only be specified by authenticated requests from a developer. */
 		tenantId?: string;
-		/** The initial email of one or more accounts to fetch. The length of email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. Should only be specified by authenticated… */
+		/** The initial email of one or more accounts to fetch. The length of email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. */
 		initialEmail?: Array<string>;
 		/** The ID of the Google Cloud project that the account or the Identity Platform tenant specified by `tenant_id` belongs to. Should only be specified by authenticated requests bearing a Google OAuth 2.0 credential with proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). */
 		targetProjectId?: string;
-		/** The email address of one or more accounts to fetch. The length of email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. Should only be specified by authenticated… */
+		/** The email address of one or more accounts to fetch. The length of email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. */
 		email?: Array<string>;
 		delegatedProjectNumber?: string | number;
 		/** The ID of one or more accounts to fetch. Should only be specified by authenticated requests bearing a Google OAuth 2.0 credential with proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). */
@@ -8423,6 +8402,8 @@ export type FirebaseOperationInputs = {
 		idToken?: string;
 		/** The federated user identifier of one or more accounts to fetch. Should only be specified by authenticated requests bearing a Google OAuth 2.0 credential with proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). */
 		federatedUserId?: Array<FirebaseGoogleCloudIdentitytoolkitV1FederatedUserIdentifierInput>;
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
 	};
 	'auth.accounts.resetPassword': {
 		/** An out-of-band (OOB) code generated by GetOobCode request. Specify only this parameter (or only this parameter and a tenant ID) to get the out-of-band code's type in the response without mutating the account's state. Only a PASSWORD_RESET out-of-band code can be consumed via this method. */
@@ -8435,11 +8416,13 @@ export type FirebaseOperationInputs = {
 		email?: string;
 		/** Optional. The tenant ID of the Identity Platform tenant the account belongs to. */
 		tenantId?: string;
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
 	};
 	'auth.accounts.sendOobCode': {
 		/** For a PASSWORD_RESET request, a reCaptcha response is required when the system detects possible abuse activity. In those cases, this is the response from the reCaptcha challenge used to verify the caller. */
 		captchaResp?: string;
-		/** The account's email address to send the OOB code to, and generally the email address of the account that needs to be updated. Required for PASSWORD_RESET, EMAIL_SIGNIN, and VERIFY_EMAIL. Only required for VERIFY_AND_CHANGE_EMAIL requests when return_oob_link is set to true. In this case, it is… */
+		/** The account's email address to send the OOB code to, and generally the email address of the account that needs to be updated. Required for PASSWORD_RESET, EMAIL_SIGNIN, and VERIFY_EMAIL. Only required for VERIFY_AND_CHANGE_EMAIL requests when return_oob_link is set to true. */
 		email?: string;
 		/** The client type: web, Android or iOS. Required when reCAPTCHA Enterprise protection is enabled. */
 		clientType?:
@@ -8455,7 +8438,7 @@ export type FirebaseOperationInputs = {
 		tenantId?: string;
 		/** If an associated android app can handle the OOB code, the minimum version of the app. If the version on the device is lower than this version then the user is taken to Google Play Store to upgrade the app. */
 		androidMinimumVersion?: string;
-		/** In order to ensure that the url used can be easily opened up in iOS or android, we create a [Firebase Dynamic Link](https://firebase.google.com/docs/dynamic-links). Most Identity Platform projects will only have one Dynamic Link domain enabled, and can leave this field blank. This field contains… */
+		/** In order to ensure that the url used can be easily opened up in iOS or android, we create a [Firebase Dynamic Link](https://firebase.google.com/docs/dynamic-links). Most Identity Platform projects will only have one Dynamic Link domain enabled, and can leave this field blank. */
 		dynamicLinkDomain?: string;
 		/** An ID token for the account. It is required for VERIFY_AND_CHANGE_EMAIL and VERIFY_EMAIL requests unless return_oob_link is set to true. */
 		idToken?: string;
@@ -8481,7 +8464,7 @@ export type FirebaseOperationInputs = {
 		iOSAppStoreId?: string;
 		/** The reCAPTCHA version of the reCAPTCHA token in the captcha_response. */
 		recaptchaVersion?: 'RECAPTCHA_VERSION_UNSPECIFIED' | 'RECAPTCHA_ENTERPRISE';
-		/** If an associated android app can handle the OOB code, the Android package name of the android app that will handle the callback when this OOB code is used. This will allow the correct app to open if it is already installed, or allow Google Play Store to open to the correct app if it is not yet… */
+		/** If an associated android app can handle the OOB code, the Android package name of the android app that will handle the callback when this OOB code is used. */
 		androidPackageName?: string;
 		/** The IP address of the caller. Required only for PASSWORD_RESET requests. */
 		userIp?: string;
@@ -8489,19 +8472,21 @@ export type FirebaseOperationInputs = {
 		linkDomain?: string;
 		/** If an associated android app can handle the OOB code, whether or not to install the android app on the device where the link is opened if the app is not already installed. */
 		androidInstallApp?: boolean;
-		/** Whether the confirmation link containing the OOB code should be returned in the response (no email is sent). Used when a developer wants to construct the email template and send it on their own. By default this is false; to specify this field, and to set it to true, it requires a Google OAuth… */
+		/** Whether the confirmation link containing the OOB code should be returned in the response (no email is sent). Used when a developer wants to construct the email template and send it on their own. */
 		returnOobLink?: boolean;
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
 	};
 	'auth.accounts.sendVerificationCode': {
 		/** Optional. The reCAPTCHA version of the reCAPTCHA token in the captcha_response. Required when reCAPTCHA Enterprise is enabled. */
 		recaptchaVersion?: 'RECAPTCHA_VERSION_UNSPECIFIED' | 'RECAPTCHA_ENTERPRISE';
-		/** Android only. Used to assert application identity in place of a recaptcha token (and safety_net_token). At least one of (`ios_receipt` and `ios_secret`), `recaptcha_token`, , or `play_integrity_token` must be specified to verify the verification code is being sent on behalf of a real app and not… */
+		/** Android only. Used to assert application identity in place of a recaptcha token (and safety_net_token). */
 		playIntegrityToken?: string;
 		/** Android only. Used by Google Play Services to identify the app for auto-retrieval. */
 		autoRetrievalInfo?: FirebaseGoogleCloudIdentitytoolkitV1AutoRetrievalInfoInput;
 		/** Optional. The reCAPTCHA Enterprise token provided by the reCAPTCHA client-side integration. Required when reCAPTCHA enterprise is enabled. */
 		captchaResponse?: string;
-		/** Recaptcha token for app verification. At least one of (`ios_receipt` and `ios_secret`), `recaptcha_token`, or `play_integrity_token` must be specified to verify the verification code is being sent on behalf of a real app and not an emulator, if 'captcha_response' is not used (reCAPTCHA… */
+		/** Recaptcha token for app verification. At least one of (`ios_receipt` and `ios_secret`), `recaptcha_token`, or `play_integrity_token` must be specified to verify the verification code is being sent on behalf of a real app and not an emulator, if 'captcha_response' is not used (reCAPTCHA enterprise… */
 		recaptchaToken?: string;
 		/** The phone number to send the verification code to in E.164 format. */
 		phoneNumber?: string;
@@ -8519,6 +8504,8 @@ export type FirebaseOperationInputs = {
 		tenantId?: string;
 		/** Secret delivered to iOS app as a push notification. Should be passed with an `ios_receipt` as well as the `x-ios-bundle-identifier` header. */
 		iosSecret?: string;
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
 	};
 	'auth.accounts.signInWithCustomToken': {
 		/** The ID of the Identity Platform tenant the user is signing in to. If present, the ID should match the tenant_id in the token. */
@@ -8527,8 +8514,10 @@ export type FirebaseOperationInputs = {
 		returnSecureToken?: boolean;
 		instanceId?: string;
 		delegatedProjectNumber?: string | number;
-		/** Required. The custom Auth token asserted by the developer. The token should be a [JSON Web Token (JWT)](https://tools.ietf.org/html/rfc7519) that includes the claims listed in the [API reference](https://cloud.google.com/identity-platform/docs/reference/rest/client/) under the "Custom Token… */
+		/** Required. The custom Auth token asserted by the developer. The token should be a [JSON Web Token (JWT)](https://tools.ietf.org/html/rfc7519) that includes the claims listed in the [API reference](https://cloud.google.com/identity-platform/docs/reference/rest/client/) under the "Custom Token Claims"… */
 		token?: string;
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
 	};
 	'auth.accounts.signInWithEmailLink': {
 		/** Required. The email address the sign-in link was sent to. The length of email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. */
@@ -8539,6 +8528,8 @@ export type FirebaseOperationInputs = {
 		tenantId?: string;
 		/** A valid ID token for an Identity Platform account. If passed, this request will link the email address to the user represented by this ID token and enable sign-in with email link on the account for the future. */
 		idToken?: string;
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
 	};
 	'auth.accounts.signInWithGameCenter': {
 		/** Required. A random string used to generate the given signature. */
@@ -8561,6 +8552,8 @@ export type FirebaseOperationInputs = {
 		displayName?: string;
 		/** The user's Game Center team player ID. A unique identifier for a player of all the games that you distribute using your developer account. https://developer.apple.com/documentation/gamekit/gkplayer/3174857-teamplayerid */
 		teamPlayerId?: string;
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
 	};
 	'auth.accounts.signInWithIdp': {
 		/** A valid Identity Platform ID token. If passed, the user's account at the IdP will be linked to the account represented by this ID token. */
@@ -8571,7 +8564,7 @@ export type FirebaseOperationInputs = {
 		/** Required. The URL to which the IdP redirects the user back. This can be set to `http://localhost` if the user is signing in with a manually provided IdP credential. */
 		requestUri?: string;
 		autoCreate?: boolean;
-		/** If the user is signing in with an authorization response obtained via a previous CreateAuthUri authorization request, this is the body of the HTTP POST callback from the IdP, if present. Otherwise, if the user is signing in with a manually provided IdP credential, this should be a URL-encoded… */
+		/** If the user is signing in with an authorization response obtained via a previous CreateAuthUri authorization request, this is the body of the HTTP POST callback from the IdP, if present. */
 		postBody?: string;
 		/** The ID of the Identity Platform tenant the user is signing in to. If not set, the user will sign in to the default Identity Platform project. */
 		tenantId?: string;
@@ -8579,11 +8572,13 @@ export type FirebaseOperationInputs = {
 		returnSecureToken?: boolean;
 		/** Whether or not to return OAuth credentials from the IdP on the following errors: `FEDERATED_USER_ID_ALREADY_LINKED` and `EMAIL_EXISTS`. */
 		returnIdpCredential?: boolean;
-		/** An opaque string from a previous SignInWithIdp response. If set, it can be used to repeat the sign-in operation from the previous SignInWithIdp operation. This may be present if the user needs to confirm their account information as part of a previous federated login attempt, or perform account… */
+		/** An opaque string from a previous SignInWithIdp response. If set, it can be used to repeat the sign-in operation from the previous SignInWithIdp operation. */
 		pendingToken?: string;
 		/** Whether or not to return the OAuth refresh token from the IdP, if available. */
 		returnRefreshToken?: boolean;
 		pendingIdToken?: string;
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
 	};
 	'auth.accounts.signInWithPassword': {
 		idToken?: string;
@@ -8609,6 +8604,8 @@ export type FirebaseOperationInputs = {
 		/** Required. The password the user provides to sign in to the account. */
 		password?: string;
 		pendingIdToken?: string;
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
 	};
 	'auth.accounts.signInWithPhoneNumber': {
 		/** Encrypted session information from the response of sendVerificationCode. In the case of authenticating with an SMS code this must be specified, but in the case of using a temporary proof it can be unspecified. */
@@ -8631,6 +8628,8 @@ export type FirebaseOperationInputs = {
 		temporaryProof?: string;
 		/** The ID of the Identity Platform tenant the user is signing in to. If not set, the user will sign in to the default Identity Platform project. */
 		tenantId?: string;
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
 	};
 	'auth.accounts.signUp': {
 		/** The email to assign to the created user. The length of the email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. An anonymous user will be created if not provided. */
@@ -8640,7 +8639,7 @@ export type FirebaseOperationInputs = {
 		/** The profile photo url of the user to create. */
 		photoUrl?: string;
 		instanceId?: string;
-		/** The project ID of the project which the user should belong to. Specifying this field requires a Google OAuth 2.0 credential with the proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). If this is not set, the target project is inferred from the scope associated… */
+		/** The project ID of the project which the user should belong to. Specifying this field requires a Google OAuth 2.0 credential with the proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). */
 		targetProjectId?: string;
 		/** The ID of the user to create. The ID must be unique within the project that the user is being created under. Specifying this field requires a Google OAuth 2.0 credential with the proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). */
 		localId?: string;
@@ -8669,15 +8668,17 @@ export type FirebaseOperationInputs = {
 		captchaResponse?: string;
 		/** The phone number of the user to create. Specifying this field requires a Google OAuth 2.0 credential with the proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). */
 		phoneNumber?: string;
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
 	};
 	'auth.accounts.update': {
 		/** Whether the user's email has been verified. Specifying this field requires a Google OAuth 2.0 credential with proper [permissions] (https://cloud.google.com/identity-platform/docs/access-control). */
 		emailVerified?: boolean;
-		/** The user's new email to be updated in the account's attributes. The length of email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. If [email enumeration… */
+		/** The user's new email to be updated in the account's attributes. The length of email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. */
 		email?: string;
 		/** The ID of the user. Specifying this field requires a Google OAuth 2.0 credential with proper [permissions] (https://cloud.google.com/identity-platform/docs/access-control). For requests from end-users, an ID token should be passed instead. */
 		localId?: string;
-		/** The multi-factor authentication related information to be set on the user's account. This will overwrite any previous multi-factor related information on the account. Specifying this field requires a Google OAuth 2.0 credential with proper [permissions]… */
+		/** The multi-factor authentication related information to be set on the user's account. This will overwrite any previous multi-factor related information on the account. */
 		mfa?: FirebaseGoogleCloudIdentitytoolkitV1MfaInfoInput;
 		captchaChallenge?: string;
 		/** The phone number to be updated in the account's attributes. */
@@ -8730,12 +8731,16 @@ export type FirebaseOperationInputs = {
 		linkProviderUserInfo?: FirebaseGoogleCloudIdentitytoolkitV1ProviderUserInfoInput;
 		/** If true, marks the account as disabled, meaning the user will no longer be able to sign-in. */
 		disableUser?: boolean;
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
 	};
 	'auth.accounts.verifyIosClient': {
 		/** A device token that the iOS client gets after registering to APNs (Apple Push Notification service). */
 		appToken?: string;
 		/** Whether the app token is in the iOS sandbox. If false, the app token is in the production environment. */
 		isSandbox?: boolean;
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
 	};
 	'auth.getProjects': {
 		/** The Firebase app ID, for applications that use Firebase. This can be found in the Firebase console for your project. If set, a check will be performed to ensure that the app ID is valid for the retrieved project. If not valid, the request will be rejected with a client error. */
@@ -8754,10 +8759,21 @@ export type FirebaseOperationInputs = {
 		returnDynamicLink?: boolean;
 		/** Project number of the configuration to retrieve. This field is deprecated and should not be used by new integrations. */
 		projectNumber?: string | number;
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
 	};
-	'auth.getPublicKeys': Record<string, never>;
-	'auth.getRecaptchaParams': Record<string, never>;
-	'auth.getSessionCookiePublicKeys': Record<string, never>;
+	'auth.getPublicKeys': {
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
+	};
+	'auth.getRecaptchaParams': {
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
+	};
+	'auth.getSessionCookiePublicKeys': {
+		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
+		apiKey?: string;
+	};
 	'auth.projects.accounts.batchCreate': {
 		/** The Project ID of the Identity Platform project which the account belongs to. Format: `<id>`. */
 		targetProjectId: string;
@@ -8780,7 +8796,7 @@ export type FirebaseOperationInputs = {
 		users?: Array<FirebaseGoogleCloudIdentitytoolkitV1UserInfoInput>;
 		/** The signer key used to hash the password. Required for the following hashing functions: * SCRYPT, * HMAC_MD5, * HMAC_SHA1, * HMAC_SHA256, * HMAC_SHA512 (base64) */
 		signerKey?: string;
-		/** If true, the service will do the following list of checks before an account is uploaded: * Duplicate emails * Duplicate federated IDs * Federated ID provider validation If the duplication exists within the list of accounts to be uploaded, it will prevent the entire list from being uploaded. If… */
+		/** If true, the service will do the following list of checks before an account is uploaded: * Duplicate emails * Duplicate federated IDs * Federated ID provider validation If the duplication exists within the list of accounts to be uploaded, it will prevent the entire list from being uploaded. */
 		sanityCheck?: boolean;
 		/** The number of rounds used for hash calculation. Only required for the following hashing functions: * MD5 * SHA1 * SHA256 * SHA512 * PBKDF_SHA1 * PBKDF2_SHA256 * SCRYPT */
 		rounds?: number;
@@ -8818,7 +8834,7 @@ export type FirebaseOperationInputs = {
 		delegatedProjectNumber?: string | number;
 	};
 	'auth.projects.accounts.create': {
-		/** The project ID of the project which the user should belong to. Specifying this field requires a Google OAuth 2.0 credential with the proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). If this is not set, the target project is inferred from the scope associated… */
+		/** The project ID of the project which the user should belong to. Specifying this field requires a Google OAuth 2.0 credential with the proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). */
 		targetProjectId: string;
 		/** The email to assign to the created user. The length of the email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. An anonymous user will be created if not provided. */
 		email?: string;
@@ -8827,7 +8843,7 @@ export type FirebaseOperationInputs = {
 		/** The profile photo url of the user to create. */
 		photoUrl?: string;
 		instanceId?: string;
-		/** The project ID of the project which the user should belong to. Specifying this field requires a Google OAuth 2.0 credential with the proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). If this is not set, the target project is inferred from the scope associated… */
+		/** The project ID of the project which the user should belong to. Specifying this field requires a Google OAuth 2.0 credential with the proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). */
 		body_targetProjectId?: string;
 		/** The ID of the user to create. The ID must be unique within the project that the user is being created under. Specifying this field requires a Google OAuth 2.0 credential with the proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). */
 		localId?: string;
@@ -8871,17 +8887,17 @@ export type FirebaseOperationInputs = {
 		localId?: string;
 	};
 	'auth.projects.accounts.lookup': {
-		/** The ID of the Google Cloud project that the account or the Identity Platform tenant specified by `tenant_id` belongs to. Should only be specified by authenticated requests bearing a Google OAuth 2.0 credential with proper… */
+		/** The ID of the Google Cloud project that the account or the Identity Platform tenant specified by `tenant_id` belongs to. */
 		targetProjectId: string;
 		/** The phone number of one or more accounts to fetch. Should only be specified by authenticated requests from a developer and should be in E.164 format, for example, +15555555555. */
 		phoneNumber?: Array<string>;
 		/** The ID of the tenant that the account belongs to. Should only be specified by authenticated requests from a developer. */
 		tenantId?: string;
-		/** The initial email of one or more accounts to fetch. The length of email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. Should only be specified by authenticated… */
+		/** The initial email of one or more accounts to fetch. The length of email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. */
 		initialEmail?: Array<string>;
 		/** The ID of the Google Cloud project that the account or the Identity Platform tenant specified by `tenant_id` belongs to. Should only be specified by authenticated requests bearing a Google OAuth 2.0 credential with proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). */
 		body_targetProjectId?: string;
-		/** The email address of one or more accounts to fetch. The length of email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. Should only be specified by authenticated… */
+		/** The email address of one or more accounts to fetch. The length of email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. */
 		email?: Array<string>;
 		delegatedProjectNumber?: string | number;
 		/** The ID of one or more accounts to fetch. Should only be specified by authenticated requests bearing a Google OAuth 2.0 credential with proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). */
@@ -8920,7 +8936,7 @@ export type FirebaseOperationInputs = {
 		targetProjectId: string;
 		/** For a PASSWORD_RESET request, a reCaptcha response is required when the system detects possible abuse activity. In those cases, this is the response from the reCaptcha challenge used to verify the caller. */
 		captchaResp?: string;
-		/** The account's email address to send the OOB code to, and generally the email address of the account that needs to be updated. Required for PASSWORD_RESET, EMAIL_SIGNIN, and VERIFY_EMAIL. Only required for VERIFY_AND_CHANGE_EMAIL requests when return_oob_link is set to true. In this case, it is… */
+		/** The account's email address to send the OOB code to, and generally the email address of the account that needs to be updated. Required for PASSWORD_RESET, EMAIL_SIGNIN, and VERIFY_EMAIL. Only required for VERIFY_AND_CHANGE_EMAIL requests when return_oob_link is set to true. */
 		email?: string;
 		/** The client type: web, Android or iOS. Required when reCAPTCHA Enterprise protection is enabled. */
 		clientType?:
@@ -8936,7 +8952,7 @@ export type FirebaseOperationInputs = {
 		tenantId?: string;
 		/** If an associated android app can handle the OOB code, the minimum version of the app. If the version on the device is lower than this version then the user is taken to Google Play Store to upgrade the app. */
 		androidMinimumVersion?: string;
-		/** In order to ensure that the url used can be easily opened up in iOS or android, we create a [Firebase Dynamic Link](https://firebase.google.com/docs/dynamic-links). Most Identity Platform projects will only have one Dynamic Link domain enabled, and can leave this field blank. This field contains… */
+		/** In order to ensure that the url used can be easily opened up in iOS or android, we create a [Firebase Dynamic Link](https://firebase.google.com/docs/dynamic-links). Most Identity Platform projects will only have one Dynamic Link domain enabled, and can leave this field blank. */
 		dynamicLinkDomain?: string;
 		/** An ID token for the account. It is required for VERIFY_AND_CHANGE_EMAIL and VERIFY_EMAIL requests unless return_oob_link is set to true. */
 		idToken?: string;
@@ -8962,7 +8978,7 @@ export type FirebaseOperationInputs = {
 		iOSAppStoreId?: string;
 		/** The reCAPTCHA version of the reCAPTCHA token in the captcha_response. */
 		recaptchaVersion?: 'RECAPTCHA_VERSION_UNSPECIFIED' | 'RECAPTCHA_ENTERPRISE';
-		/** If an associated android app can handle the OOB code, the Android package name of the android app that will handle the callback when this OOB code is used. This will allow the correct app to open if it is already installed, or allow Google Play Store to open to the correct app if it is not yet… */
+		/** If an associated android app can handle the OOB code, the Android package name of the android app that will handle the callback when this OOB code is used. */
 		androidPackageName?: string;
 		/** The IP address of the caller. Required only for PASSWORD_RESET requests. */
 		userIp?: string;
@@ -8970,19 +8986,19 @@ export type FirebaseOperationInputs = {
 		linkDomain?: string;
 		/** If an associated android app can handle the OOB code, whether or not to install the android app on the device where the link is opened if the app is not already installed. */
 		androidInstallApp?: boolean;
-		/** Whether the confirmation link containing the OOB code should be returned in the response (no email is sent). Used when a developer wants to construct the email template and send it on their own. By default this is false; to specify this field, and to set it to true, it requires a Google OAuth… */
+		/** Whether the confirmation link containing the OOB code should be returned in the response (no email is sent). Used when a developer wants to construct the email template and send it on their own. */
 		returnOobLink?: boolean;
 	};
 	'auth.projects.accounts.update': {
-		/** The project ID for the project that the account belongs to. Specifying this field requires Google OAuth 2.0 credential with proper [permissions] (https://cloud.google.com/identity-platform/docs/access-control). Requests from end users should pass an Identity Platform ID token instead. Format:… */
+		/** The project ID for the project that the account belongs to. Specifying this field requires Google OAuth 2.0 credential with proper [permissions] (https://cloud.google.com/identity-platform/docs/access-control). Requests from end users should pass an Identity Platform ID token instead. */
 		targetProjectId: string;
 		/** Whether the user's email has been verified. Specifying this field requires a Google OAuth 2.0 credential with proper [permissions] (https://cloud.google.com/identity-platform/docs/access-control). */
 		emailVerified?: boolean;
-		/** The user's new email to be updated in the account's attributes. The length of email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. If [email enumeration… */
+		/** The user's new email to be updated in the account's attributes. The length of email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. */
 		email?: string;
 		/** The ID of the user. Specifying this field requires a Google OAuth 2.0 credential with proper [permissions] (https://cloud.google.com/identity-platform/docs/access-control). For requests from end-users, an ID token should be passed instead. */
 		localId?: string;
-		/** The multi-factor authentication related information to be set on the user's account. This will overwrite any previous multi-factor related information on the account. Specifying this field requires a Google OAuth 2.0 credential with proper [permissions]… */
+		/** The multi-factor authentication related information to be set on the user's account. This will overwrite any previous multi-factor related information on the account. */
 		mfa?: FirebaseGoogleCloudIdentitytoolkitV1MfaInfoInput;
 		captchaChallenge?: string;
 		/** The phone number to be updated in the account's attributes. */
@@ -9094,7 +9110,7 @@ export type FirebaseOperationInputs = {
 		users?: Array<FirebaseGoogleCloudIdentitytoolkitV1UserInfoInput>;
 		/** The signer key used to hash the password. Required for the following hashing functions: * SCRYPT, * HMAC_MD5, * HMAC_SHA1, * HMAC_SHA256, * HMAC_SHA512 (base64) */
 		signerKey?: string;
-		/** If true, the service will do the following list of checks before an account is uploaded: * Duplicate emails * Duplicate federated IDs * Federated ID provider validation If the duplication exists within the list of accounts to be uploaded, it will prevent the entire list from being uploaded. If… */
+		/** If true, the service will do the following list of checks before an account is uploaded: * Duplicate emails * Duplicate federated IDs * Federated ID provider validation If the duplication exists within the list of accounts to be uploaded, it will prevent the entire list from being uploaded. */
 		sanityCheck?: boolean;
 		/** The number of rounds used for hash calculation. Only required for the following hashing functions: * MD5 * SHA1 * SHA256 * SHA512 * PBKDF_SHA1 * PBKDF2_SHA256 * SCRYPT */
 		rounds?: number;
@@ -9134,7 +9150,7 @@ export type FirebaseOperationInputs = {
 		tenantId: string;
 	};
 	'auth.projects.tenants.accounts.create': {
-		/** The project ID of the project which the user should belong to. Specifying this field requires a Google OAuth 2.0 credential with the proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). If this is not set, the target project is inferred from the scope associated… */
+		/** The project ID of the project which the user should belong to. Specifying this field requires a Google OAuth 2.0 credential with the proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). */
 		targetProjectId: string;
 		/** The ID of the Identity Platform tenant to create a user under. If not set, the user will be created under the default Identity Platform project. Format: `<id>`. */
 		tenantId: string;
@@ -9145,7 +9161,7 @@ export type FirebaseOperationInputs = {
 		/** The profile photo url of the user to create. */
 		photoUrl?: string;
 		instanceId?: string;
-		/** The project ID of the project which the user should belong to. Specifying this field requires a Google OAuth 2.0 credential with the proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). If this is not set, the target project is inferred from the scope associated… */
+		/** The project ID of the project which the user should belong to. Specifying this field requires a Google OAuth 2.0 credential with the proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). */
 		body_targetProjectId?: string;
 		/** The ID of the user to create. The ID must be unique within the project that the user is being created under. Specifying this field requires a Google OAuth 2.0 credential with the proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). */
 		localId?: string;
@@ -9191,7 +9207,7 @@ export type FirebaseOperationInputs = {
 		localId?: string;
 	};
 	'auth.projects.tenants.accounts.lookup': {
-		/** The ID of the Google Cloud project that the account or the Identity Platform tenant specified by `tenant_id` belongs to. Should only be specified by authenticated requests bearing a Google OAuth 2.0 credential with proper… */
+		/** The ID of the Google Cloud project that the account or the Identity Platform tenant specified by `tenant_id` belongs to. */
 		targetProjectId: string;
 		/** The ID of the tenant that the account belongs to. Should only be specified by authenticated requests from a developer. Format: `<id>`. */
 		tenantId: string;
@@ -9199,11 +9215,11 @@ export type FirebaseOperationInputs = {
 		phoneNumber?: Array<string>;
 		/** The ID of the tenant that the account belongs to. Should only be specified by authenticated requests from a developer. */
 		body_tenantId?: string;
-		/** The initial email of one or more accounts to fetch. The length of email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. Should only be specified by authenticated… */
+		/** The initial email of one or more accounts to fetch. The length of email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. */
 		initialEmail?: Array<string>;
 		/** The ID of the Google Cloud project that the account or the Identity Platform tenant specified by `tenant_id` belongs to. Should only be specified by authenticated requests bearing a Google OAuth 2.0 credential with proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). */
 		body_targetProjectId?: string;
-		/** The email address of one or more accounts to fetch. The length of email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. Should only be specified by authenticated… */
+		/** The email address of one or more accounts to fetch. The length of email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. */
 		email?: Array<string>;
 		delegatedProjectNumber?: string | number;
 		/** The ID of one or more accounts to fetch. Should only be specified by authenticated requests bearing a Google OAuth 2.0 credential with proper [permissions](https://cloud.google.com/identity-platform/docs/access-control). */
@@ -9246,7 +9262,7 @@ export type FirebaseOperationInputs = {
 		tenantId: string;
 		/** For a PASSWORD_RESET request, a reCaptcha response is required when the system detects possible abuse activity. In those cases, this is the response from the reCaptcha challenge used to verify the caller. */
 		captchaResp?: string;
-		/** The account's email address to send the OOB code to, and generally the email address of the account that needs to be updated. Required for PASSWORD_RESET, EMAIL_SIGNIN, and VERIFY_EMAIL. Only required for VERIFY_AND_CHANGE_EMAIL requests when return_oob_link is set to true. In this case, it is… */
+		/** The account's email address to send the OOB code to, and generally the email address of the account that needs to be updated. Required for PASSWORD_RESET, EMAIL_SIGNIN, and VERIFY_EMAIL. Only required for VERIFY_AND_CHANGE_EMAIL requests when return_oob_link is set to true. */
 		email?: string;
 		/** The client type: web, Android or iOS. Required when reCAPTCHA Enterprise protection is enabled. */
 		clientType?:
@@ -9262,7 +9278,7 @@ export type FirebaseOperationInputs = {
 		body_tenantId?: string;
 		/** If an associated android app can handle the OOB code, the minimum version of the app. If the version on the device is lower than this version then the user is taken to Google Play Store to upgrade the app. */
 		androidMinimumVersion?: string;
-		/** In order to ensure that the url used can be easily opened up in iOS or android, we create a [Firebase Dynamic Link](https://firebase.google.com/docs/dynamic-links). Most Identity Platform projects will only have one Dynamic Link domain enabled, and can leave this field blank. This field contains… */
+		/** In order to ensure that the url used can be easily opened up in iOS or android, we create a [Firebase Dynamic Link](https://firebase.google.com/docs/dynamic-links). Most Identity Platform projects will only have one Dynamic Link domain enabled, and can leave this field blank. */
 		dynamicLinkDomain?: string;
 		/** An ID token for the account. It is required for VERIFY_AND_CHANGE_EMAIL and VERIFY_EMAIL requests unless return_oob_link is set to true. */
 		idToken?: string;
@@ -9288,7 +9304,7 @@ export type FirebaseOperationInputs = {
 		iOSAppStoreId?: string;
 		/** The reCAPTCHA version of the reCAPTCHA token in the captcha_response. */
 		recaptchaVersion?: 'RECAPTCHA_VERSION_UNSPECIFIED' | 'RECAPTCHA_ENTERPRISE';
-		/** If an associated android app can handle the OOB code, the Android package name of the android app that will handle the callback when this OOB code is used. This will allow the correct app to open if it is already installed, or allow Google Play Store to open to the correct app if it is not yet… */
+		/** If an associated android app can handle the OOB code, the Android package name of the android app that will handle the callback when this OOB code is used. */
 		androidPackageName?: string;
 		/** The IP address of the caller. Required only for PASSWORD_RESET requests. */
 		userIp?: string;
@@ -9296,21 +9312,21 @@ export type FirebaseOperationInputs = {
 		linkDomain?: string;
 		/** If an associated android app can handle the OOB code, whether or not to install the android app on the device where the link is opened if the app is not already installed. */
 		androidInstallApp?: boolean;
-		/** Whether the confirmation link containing the OOB code should be returned in the response (no email is sent). Used when a developer wants to construct the email template and send it on their own. By default this is false; to specify this field, and to set it to true, it requires a Google OAuth… */
+		/** Whether the confirmation link containing the OOB code should be returned in the response (no email is sent). Used when a developer wants to construct the email template and send it on their own. */
 		returnOobLink?: boolean;
 	};
 	'auth.projects.tenants.accounts.update': {
 		/** The tenant ID of the Identity Platform tenant that the account belongs to. Requests from end users should pass an Identity Platform ID token rather than setting this field. Format: `<id>`. */
 		tenantId: string;
-		/** The project ID for the project that the account belongs to. Specifying this field requires Google OAuth 2.0 credential with proper [permissions] (https://cloud.google.com/identity-platform/docs/access-control). Requests from end users should pass an Identity Platform ID token instead. Format:… */
+		/** The project ID for the project that the account belongs to. Specifying this field requires Google OAuth 2.0 credential with proper [permissions] (https://cloud.google.com/identity-platform/docs/access-control). Requests from end users should pass an Identity Platform ID token instead. */
 		targetProjectId: string;
 		/** Whether the user's email has been verified. Specifying this field requires a Google OAuth 2.0 credential with proper [permissions] (https://cloud.google.com/identity-platform/docs/access-control). */
 		emailVerified?: boolean;
-		/** The user's new email to be updated in the account's attributes. The length of email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. If [email enumeration… */
+		/** The user's new email to be updated in the account's attributes. The length of email should be less than 256 characters and in the format of `name@domain.tld`. The email should also match the [RFC 822](https://tools.ietf.org/html/rfc822) addr-spec production. */
 		email?: string;
 		/** The ID of the user. Specifying this field requires a Google OAuth 2.0 credential with proper [permissions] (https://cloud.google.com/identity-platform/docs/access-control). For requests from end-users, an ID token should be passed instead. */
 		localId?: string;
-		/** The multi-factor authentication related information to be set on the user's account. This will overwrite any previous multi-factor related information on the account. Specifying this field requires a Google OAuth 2.0 credential with proper [permissions]… */
+		/** The multi-factor authentication related information to be set on the user's account. This will overwrite any previous multi-factor related information on the account. */
 		mfa?: FirebaseGoogleCloudIdentitytoolkitV1MfaInfoInput;
 		captchaChallenge?: string;
 		/** The phone number to be updated in the account's attributes. */
@@ -9938,14 +9954,14 @@ export type FirebaseOperationInputs = {
 		databaseUrl: string;
 		/** The location in the database, `users/ada` (empty for the root). */
 		path?: string;
-		/** Order by "$key", "$value", "$priority" or a child key (""height"", with the JSON quotes). Needs an index rule for child keys. */
+		/** Order by "$key", "$value", "$priority" or a child key ("height"); the plugin adds the JSON quotes. Needs an index rule for child keys. */
 		orderBy?: string;
-		/** Start at this value of orderBy (JSON-encoded: ""a"" or 5). */
-		startAt?: FirebaseJsonValue;
-		/** End at this value of orderBy (JSON-encoded). */
-		endAt?: FirebaseJsonValue;
-		/** Only values equal to this (JSON-encoded). */
-		equalTo?: FirebaseJsonValue;
+		/** Start at this value of orderBy (a string, number or boolean; the plugin JSON-encodes it). */
+		startAt?: string | number | boolean;
+		/** End at this value of orderBy (the plugin JSON-encodes it). */
+		endAt?: string | number | boolean;
+		/** Only values equal to this (the plugin JSON-encodes it). */
+		equalTo?: string | number | boolean;
 		limitToFirst?: number;
 		limitToLast?: number;
 		/** Return only the keys below the path, each as true. */
@@ -9982,8 +9998,8 @@ export type FirebaseOperationInputs = {
 		databaseUrl: string;
 		/** The location in the database, `users/ada` (empty for the root). */
 		path?: string;
-		/** Any JSON value: an object, a list, a string, a number, a boolean or null. */
-		data: FirebaseJsonValue;
+		/** The children to write: { "<child or child/path>": value }. Children not named stay as they are; a null value deletes that child. */
+		data: Record<string, FirebaseJsonValue>;
 	};
 	'databaseInstances.locations.instances.create': {
 		/** Required. The parent project for which to create a database instance, in the form: `projects/{project-number}/locations/{location-id}`. Format: `projects/<id>/locations/<id>`. */
@@ -10010,7 +10026,7 @@ export type FirebaseOperationInputs = {
 		body?: FirebaseDisableDatabaseInstanceRequestInput;
 	};
 	'databaseInstances.locations.instances.get': {
-		/** Required. The fully qualified resource name of the database instance, in the form: `projects/{project-number}/locations/{location-id}/instances/{database-id}`. `database-id` is a globally unique identifier across all parent collections. For convenience, this method allows you to supply `-` as a… */
+		/** Required. The fully qualified resource name of the database instance, in the form: `projects/{project-number}/locations/{location-id}/instances/{database-id}`. `database-id` is a globally unique identifier across all parent collections. */
 		name: string;
 	};
 	'databaseInstances.locations.instances.list': {
@@ -10072,11 +10088,11 @@ export type FirebaseOperationInputs = {
 		name: string;
 		/** Optional. IDs of the collection groups to delete. Unspecified means all collection groups. Each collection group in this list must be unique. */
 		collectionIds?: Array<string>;
-		/** Optional. Namespaces to delete. An empty list means all namespaces. This is the recommended usage for databases that don't use namespaces. An empty string element represents the default namespace. This should be used if the database has data in non-default namespaces, but doesn't want to delete… */
+		/** Optional. Namespaces to delete. An empty list means all namespaces. This is the recommended usage for databases that don't use namespaces. An empty string element represents the default namespace. */
 		namespaceIds?: Array<string>;
 	};
 	'firestore.databases.changeStreams.create': {
-		/** Required. The ID to use for the change stream, which will become the final component of the change stream's resource name. This value should be 4-63 characters. Valid characters are lowercase letters, numbers, and hyphens. The first character must be a letter, and the last character must be a… */
+		/** Required. The ID to use for the change stream, which will become the final component of the change stream's resource name. This value should be 4-63 characters. Valid characters are lowercase letters, numbers, and hyphens. */
 		changeStreamId?: string;
 		/** Required. The parent database to create the change stream for. Format is `projects/{project}/databases/{database}`. Format: `projects/<id>/databases/<id>`. */
 		parent: string;
@@ -10108,7 +10124,7 @@ export type FirebaseOperationInputs = {
 	'firestore.databases.clone': {
 		/** Required. The project to clone the database in. Format is `projects/{project_id}`. Format: `projects/<id>`. */
 		parent: string;
-		/** Required. The ID to use for the database, which will become the final component of the database's resource name. This database ID must not be associated with an existing database. This value should be 4-63 characters. Valid characters are /a-z-/ with first character a letter and the last a… */
+		/** Required. The ID to use for the database, which will become the final component of the database's resource name. This database ID must not be associated with an existing database. This value should be 4-63 characters. */
 		databaseId?: string;
 		/** Required. Specification of the PITR data to clone from. The source database must exist. The cloned database will be created in the same location as the source database. */
 		pitrSnapshot?: FirebaseGoogleFirestoreAdminV1PitrSnapshotInput;
@@ -10134,13 +10150,13 @@ export type FirebaseOperationInputs = {
 	'firestore.databases.collectionGroups.fields.patch': {
 		/** A mask, relative to the field. If specified, only configuration specified by this field_mask will be updated in the field. */
 		updateMask?: string;
-		/** Required. A field name of the form: `projects/{project_id}/databases/{database_id}/collectionGroups/{collection_id}/fields/{field_path}` A field path can be a simple field name, e.g. `address` or a path to fields within `map_value` , e.g. `address.city`, or a special field path. The only valid… */
+		/** Required. A field name of the form: `projects/{project_id}/databases/{database_id}/collectionGroups/{collection_id}/fields/{field_path}` A field path can be a simple field name, e.g. `address` or a path to fields within `map_value` , e.g. `address.city`, or a special field path. */
 		name: string;
 		/** The TTL configuration for this `Field`. Setting or unsetting this will enable or disable the TTL for documents that have this `Field`. */
 		ttlConfig?: FirebaseGoogleFirestoreAdminV1TtlConfigInput;
 		/** The index configuration for this field. If unset, field indexing will revert to the configuration defined by the `ancestor_field`. To explicitly remove all indexes for this field, specify an index config with an empty list of indexes. */
 		indexConfig?: FirebaseGoogleFirestoreAdminV1IndexConfigInput;
-		/** Required. A field name of the form: `projects/{project_id}/databases/{database_id}/collectionGroups/{collection_id}/fields/{field_path}` A field path can be a simple field name, e.g. `address` or a path to fields within `map_value` , e.g. `address.city`, or a special field path. The only valid… */
+		/** Required. A field name of the form: `projects/{project_id}/databases/{database_id}/collectionGroups/{collection_id}/fields/{field_path}` A field path can be a simple field name, e.g. `address` or a path to fields within `map_value` , e.g. `address.city`, or a special field path. */
 		body_name?: string;
 	};
 	'firestore.databases.collectionGroups.indexes.create': {
@@ -10150,13 +10166,13 @@ export type FirebaseOperationInputs = {
 		density?: 'DENSITY_UNSPECIFIED' | 'SPARSE_ALL' | 'SPARSE_ANY' | 'DENSE';
 		/** Optional. Options for search indexes that are at the index definition level. This field is only currently supported for indexes with MONGODB_COMPATIBLE_API ApiScope. */
 		searchIndexOptions?: FirebaseGoogleFirestoreAdminV1SearchIndexOptionsInput;
-		/** Optional. Whether the index is multikey. By default, the index is not multikey. For non-multikey indexes, none of the paths in the index definition reach or traverse an array, except via an explicit array index. For multikey indexes, at most one of the paths in the index definition reach or… */
+		/** Optional. Whether the index is multikey. By default, the index is not multikey. For non-multikey indexes, none of the paths in the index definition reach or traverse an array, except via an explicit array index. */
 		multikey?: boolean;
 		/** Output only. The serving state of the index. */
 		state?: 'STATE_UNSPECIFIED' | 'CREATING' | 'READY' | 'NEEDS_REPAIR';
 		/** Optional. Whether it is an unique index. Unique index ensures all values for the indexed field(s) are unique across documents. */
 		unique?: boolean;
-		/** Indexes with a collection query scope specified allow queries against a collection that is the child of a specific document, specified at query time, and that has the same collection ID. Indexes with a collection group query scope specified allow queries against all collections descended from a… */
+		/** Indexes with a collection query scope specified allow queries against a collection that is the child of a specific document, specified at query time, and that has the same collection ID. */
 		queryScope?:
 			| 'QUERY_SCOPE_UNSPECIFIED'
 			| 'COLLECTION'
@@ -10164,11 +10180,11 @@ export type FirebaseOperationInputs = {
 			| 'COLLECTION_RECURSIVE';
 		/** The API scope supported by this index. */
 		apiScope?: 'ANY_API' | 'DATASTORE_MODE_API' | 'MONGODB_COMPATIBLE_API';
-		/** A server-defined name for this index. Output only. When used in the google.firestore.admin.v1.Index resource, the value is of the form: `projects/{project_id}/databases/{database_id}/collectionGroups/{collection_id}/indexes/{index_id}` When used in the google.firestore.admin.v1.Field resource,… */
+		/** A server-defined name for this index. Output only. When used in the google.firestore.admin.v1.Index resource, the value is of the form: `projects/{project_id}/databases/{database_id}/collectionGroups/{collection_id}/indexes/{index_id}` When used in the google.firestore.admin.v1.Field resource, the… */
 		name?: string;
-		/** Optional. The number of physical shards for the index. In Cloud Firestore, data and index entries are stored in contiguous, ordered key ranges called splits. While document keys within a collection are hashed to distribute write traffic across splits, secondary index entries are ordered… */
+		/** Optional. The number of physical shards for the index. In Cloud Firestore, data and index entries are stored in contiguous, ordered key ranges called splits. */
 		shardCount?: number;
-		/** The fields supported by this index. At most 100 fields may be specified. In Standard edition databases only: - At least 2 fields must be specified. - The last field entry is always for the field path `__name__`. If, on creation, `__name__` was not specified as the last field, it will be added… */
+		/** The fields supported by this index. At most 100 fields may be specified. In Standard edition databases only: - At least 2 fields must be specified. - The last field entry is always for the field path `__name__`. */
 		fields?: Array<FirebaseGoogleFirestoreAdminV1IndexFieldInput>;
 	};
 	'firestore.databases.collectionGroups.indexes.delete': {
@@ -10192,14 +10208,14 @@ export type FirebaseOperationInputs = {
 	'firestore.databases.create': {
 		/** Required. A parent name of the form `projects/{project_id}` Format: `projects/<id>`. */
 		parent: string;
-		/** Required. The ID to use for the database, which will become the final component of the database's resource name. This value should be 4-63 characters. Valid characters are /a-z-/ with first character a letter and the last a letter or a number. Must not be UUID-like… */
+		/** Required. The ID to use for the database, which will become the final component of the database's resource name. This value should be 4-63 characters. Valid characters are /a-z-/ with first character a letter and the last a letter or a number. */
 		databaseId?: string;
 		/** Optional. The Firestore API data access mode to use for this database. If not set on write: - the default value is DATA_ACCESS_MODE_DISABLED for Enterprise edition. - the default value is DATA_ACCESS_MODE_ENABLED for Standard edition. */
 		firestoreDataAccessMode?:
 			| 'DATA_ACCESS_MODE_UNSPECIFIED'
 			| 'DATA_ACCESS_MODE_ENABLED'
 			| 'DATA_ACCESS_MODE_DISABLED';
-		/** The default concurrency control mode to use for this database. If unspecified in a CreateDatabase request, this will default based on the database edition: Optimistic for Enterprise and Pessimistic for all other databases. While transactions can explicitly specify their own concurrency mode,… */
+		/** The default concurrency control mode to use for this database. If unspecified in a CreateDatabase request, this will default based on the database edition: Optimistic for Enterprise and Pessimistic for all other databases. */
 		concurrencyMode?:
 			| 'CONCURRENCY_MODE_UNSPECIFIED'
 			| 'OPTIMISTIC'
@@ -10303,7 +10319,7 @@ export type FirebaseOperationInputs = {
 		parent: string;
 		/** The list of field paths in the mask. See Document.fields for a field path syntax reference. */
 		'mask.fieldPaths'?: Array<string>;
-		/** Optional. The request tags for the request. Request tags are user-provided strings used for usage monitoring, cost management, and observability. Callers can associate custom application context (such as component, microservice, feature name, or operation type) with database requests. These tags… */
+		/** Optional. The request tags for the request. Request tags are user-provided strings used for usage monitoring, cost management, and observability. Callers can associate custom application context (such as component, microservice, feature name, or operation type) with database requests. */
 		'requestOptions.requestTags'?: Array<string>;
 		/** The client-assigned document ID to use for this document. Optional. If not specified, an ID will be assigned by the service. */
 		documentId?: string;
@@ -10315,7 +10331,7 @@ export type FirebaseOperationInputs = {
 		updateTime?: string;
 		/** Output only. The time at which the document was created. This value increases monotonically when a document is deleted then recreated. It can also be compared to values from other documents and the `read_time` of a query. */
 		createTime?: string;
-		/** The document's fields. The map keys represent field names. Field names matching the regular expression `__.*__` are reserved. Reserved field names are forbidden except in certain documented contexts. The field names, represented as UTF-8, must not exceed 1,500 bytes and cannot be empty. Field… */
+		/** The document's fields. The map keys represent field names. Field names matching the regular expression `__.*__` are reserved. Reserved field names are forbidden except in certain documented contexts. The field names, represented as UTF-8, must not exceed 1,500 bytes and cannot be empty. */
 		fields?: Record<string, FirebaseValueInput>;
 	};
 	'firestore.databases.documents.delete': {
@@ -10325,7 +10341,7 @@ export type FirebaseOperationInputs = {
 		name: string;
 		/** When set, the target document must exist and have been last updated at that time. Timestamp must be microsecond aligned. */
 		'currentDocument.updateTime'?: string;
-		/** Optional. The request tags for the request. Request tags are user-provided strings used for usage monitoring, cost management, and observability. Callers can associate custom application context (such as component, microservice, feature name, or operation type) with database requests. These tags… */
+		/** Optional. The request tags for the request. Request tags are user-provided strings used for usage monitoring, cost management, and observability. Callers can associate custom application context (such as component, microservice, feature name, or operation type) with database requests. */
 		'requestOptions.requestTags'?: Array<string>;
 	};
 	'firestore.databases.documents.executePipeline': {
@@ -10347,7 +10363,7 @@ export type FirebaseOperationInputs = {
 	'firestore.databases.documents.get': {
 		/** The list of field paths in the mask. See Document.fields for a field path syntax reference. */
 		'mask.fieldPaths'?: Array<string>;
-		/** Optional. The request tags for the request. Request tags are user-provided strings used for usage monitoring, cost management, and observability. Callers can associate custom application context (such as component, microservice, feature name, or operation type) with database requests. These tags… */
+		/** Optional. The request tags for the request. Request tags are user-provided strings used for usage monitoring, cost management, and observability. Callers can associate custom application context (such as component, microservice, feature name, or operation type) with database requests. */
 		'requestOptions.requestTags'?: Array<string>;
 		/** Reads the version of the document at the given time. This must be a microsecond precision timestamp within the past one hour, or if Point-in-Time Recovery is enabled, can additionally be a whole minute timestamp within the past 7 days. */
 		readTime?: string;
@@ -10369,19 +10385,19 @@ export type FirebaseOperationInputs = {
 		'mask.fieldPaths'?: Array<string>;
 		/** Optional. The collection ID, relative to `parent`, to list. For example: `chatrooms` or `messages`. This is optional, and when not provided, Firestore will list documents from all collections under the provided `parent`. */
 		collectionId: string;
-		/** If the list should show missing documents. A document is missing if it does not exist, but there are sub-documents nested underneath it. When true, such missing documents will be returned with a key but will not have fields, `create_time`, or `update_time` set. Requests with `show_missing` may… */
+		/** If the list should show missing documents. A document is missing if it does not exist, but there are sub-documents nested underneath it. When true, such missing documents will be returned with a key but will not have fields, `create_time`, or `update_time` set. */
 		showMissing?: boolean;
-		/** Optional. The request tags for the request. Request tags are user-provided strings used for usage monitoring, cost management, and observability. Callers can associate custom application context (such as component, microservice, feature name, or operation type) with database requests. These tags… */
+		/** Optional. The request tags for the request. Request tags are user-provided strings used for usage monitoring, cost management, and observability. Callers can associate custom application context (such as component, microservice, feature name, or operation type) with database requests. */
 		'requestOptions.requestTags'?: Array<string>;
 		/** Optional. The optional ordering of the documents to return. For example: `priority desc, __name__ desc`. This mirrors the `ORDER BY` used in Firestore queries but in a string representation. When absent, documents are ordered based on `__name__ ASC`. */
 		orderBy?: string;
-		/** Optional. If the list should recursively include all documents nested under the parent at any level. If the request specifies a `collection_id`, then the list will include all nested documents in the collection under the parent. This is optional, and when not provided, Firestore will only list… */
+		/** Optional. If the list should recursively include all documents nested under the parent at any level. If the request specifies a `collection_id`, then the list will include all nested documents in the collection under the parent. */
 		recursive?: boolean;
-		/** Required. The parent resource name. In the format: `projects/{project_id}/databases/{database_id}/documents` or `projects/{project_id}/databases/{database_id}/documents/{document_path}`. For example: `projects/my-project/databases/my-database/documents` or… */
+		/** Required. The parent resource name. In the format: `projects/{project_id}/databases/{database_id}/documents` or `projects/{project_id}/databases/{database_id}/documents/{document_path}`. */
 		parent: string;
 	};
 	'firestore.databases.documents.listCollectionIds': {
-		/** Required. The parent document. In the format: `projects/{project_id}/databases/{database_id}/documents/{document_path}`. For example: `projects/my-project/databases/my-database/documents/chatrooms/my-chatroom` Use `projects/{project_id}/databases/{database_id}/documents` to list top-level… */
+		/** Required. The parent document. In the format: `projects/{project_id}/databases/{database_id}/documents/{document_path}`. */
 		parent: string;
 		/** The maximum number of results to return. */
 		pageSize?: number;
@@ -10399,17 +10415,17 @@ export type FirebaseOperationInputs = {
 		collectionId: string;
 		/** Optional. The optional ordering of the documents to return. For example: `priority desc, __name__ desc`. This mirrors the `ORDER BY` used in Firestore queries but in a string representation. When absent, documents are ordered based on `__name__ ASC`. */
 		orderBy?: string;
-		/** If the list should show missing documents. A document is missing if it does not exist, but there are sub-documents nested underneath it. When true, such missing documents will be returned with a key but will not have fields, `create_time`, or `update_time` set. Requests with `show_missing` may… */
+		/** If the list should show missing documents. A document is missing if it does not exist, but there are sub-documents nested underneath it. When true, such missing documents will be returned with a key but will not have fields, `create_time`, or `update_time` set. */
 		showMissing?: boolean;
 		/** Optional. A page token, received from a previous `ListDocuments` response. Provide this to retrieve the subsequent page. When paginating, all other parameters (with the exception of `page_size`) must match the values set in the request that generated the page token. */
 		pageToken?: string;
-		/** Required. The parent resource name. In the format: `projects/{project_id}/databases/{database_id}/documents` or `projects/{project_id}/databases/{database_id}/documents/{document_path}`. For example: `projects/my-project/databases/my-database/documents` or… */
+		/** Required. The parent resource name. In the format: `projects/{project_id}/databases/{database_id}/documents` or `projects/{project_id}/databases/{database_id}/documents/{document_path}`. */
 		parent: string;
 		/** Perform the read at the provided time. This must be a microsecond precision timestamp within the past one hour, or if Point-in-Time Recovery is enabled, can additionally be a whole minute timestamp within the past 7 days. */
 		readTime?: string;
-		/** Optional. The request tags for the request. Request tags are user-provided strings used for usage monitoring, cost management, and observability. Callers can associate custom application context (such as component, microservice, feature name, or operation type) with database requests. These tags… */
+		/** Optional. The request tags for the request. Request tags are user-provided strings used for usage monitoring, cost management, and observability. Callers can associate custom application context (such as component, microservice, feature name, or operation type) with database requests. */
 		'requestOptions.requestTags'?: Array<string>;
-		/** Optional. If the list should recursively include all documents nested under the parent at any level. If the request specifies a `collection_id`, then the list will include all nested documents in the collection under the parent. This is optional, and when not provided, Firestore will only list… */
+		/** Optional. If the list should recursively include all documents nested under the parent at any level. If the request specifies a `collection_id`, then the list will include all nested documents in the collection under the parent. */
 		recursive?: boolean;
 		/** Perform the read as part of an already active transaction. */
 		transaction?: string;
@@ -10419,17 +10435,17 @@ export type FirebaseOperationInputs = {
 	'firestore.databases.documents.partitionQuery': {
 		/** Required. The parent resource name. In the format: `projects/{project_id}/databases/{database_id}/documents`. Document resource names are not supported; only database resource names can be specified. Format: `projects/<id>/databases/<id>/documents/<id>/<path>`. */
 		parent: string;
-		/** The `next_page_token` value returned from a previous call to PartitionQuery that may be used to get an additional set of results. There are no ordering guarantees between sets of results. Thus, using multiple sets of results will require merging the different result sets. For example, two… */
+		/** The `next_page_token` value returned from a previous call to PartitionQuery that may be used to get an additional set of results. There are no ordering guarantees between sets of results. Thus, using multiple sets of results will require merging the different result sets. */
 		pageToken?: string;
 		/** A structured query. Query must specify collection with all descendants and be ordered by name ascending. Other filters, order bys, limits, offsets, and start/end cursors are not supported. */
 		structuredQuery?: FirebaseStructuredQueryInput;
-		/** The maximum number of partitions to return in this call, subject to `partition_count`. For example, if `partition_count` = 10 and `page_size` = 8, the first call to PartitionQuery will return up to 8 partitions and a `next_page_token` if more results exist. A second call to PartitionQuery will… */
+		/** The maximum number of partitions to return in this call, subject to `partition_count`. For example, if `partition_count` = 10 and `page_size` = 8, the first call to PartitionQuery will return up to 8 partitions and a `next_page_token` if more results exist. */
 		pageSize?: number;
 		/** Optional. The request options for the request. */
 		requestOptions?: FirebaseRequestOptionsInput;
 		/** Reads documents as they were at the given time. This must be a microsecond precision timestamp within the past one hour, or if Point-in-Time Recovery is enabled, can additionally be a whole minute timestamp within the past 7 days. */
 		readTime?: string;
-		/** The desired maximum number of partition points. The partitions may be returned across multiple pages of results. The number must be positive. The actual number of partitions returned may be fewer. For example, this may be set to one fewer than the number of parallel queries to be run, or in… */
+		/** The desired maximum number of partition points. The partitions may be returned across multiple pages of results. The number must be positive. The actual number of partitions returned may be fewer. */
 		partitionCount?: string | number;
 	};
 	'firestore.databases.documents.patch': {
@@ -10441,7 +10457,7 @@ export type FirebaseOperationInputs = {
 		'currentDocument.exists'?: boolean;
 		/** The resource name of the document, for example `projects/{project_id}/databases/{database_id}/documents/{document_path}`. Format: `projects/<id>/databases/<id>/documents/<id>/<path>`. */
 		name: string;
-		/** Optional. The request tags for the request. Request tags are user-provided strings used for usage monitoring, cost management, and observability. Callers can associate custom application context (such as component, microservice, feature name, or operation type) with database requests. These tags… */
+		/** Optional. The request tags for the request. Request tags are user-provided strings used for usage monitoring, cost management, and observability. Callers can associate custom application context (such as component, microservice, feature name, or operation type) with database requests. */
 		'requestOptions.requestTags'?: Array<string>;
 		/** The list of field paths in the mask. See Document.fields for a field path syntax reference. */
 		'mask.fieldPaths'?: Array<string>;
@@ -10451,7 +10467,7 @@ export type FirebaseOperationInputs = {
 		updateTime?: string;
 		/** Output only. The time at which the document was created. This value increases monotonically when a document is deleted then recreated. It can also be compared to values from other documents and the `read_time` of a query. */
 		createTime?: string;
-		/** The document's fields. The map keys represent field names. Field names matching the regular expression `__.*__` are reserved. Reserved field names are forbidden except in certain documented contexts. The field names, represented as UTF-8, must not exceed 1,500 bytes and cannot be empty. Field… */
+		/** The document's fields. The map keys represent field names. Field names matching the regular expression `__.*__` are reserved. Reserved field names are forbidden except in certain documented contexts. The field names, represented as UTF-8, must not exceed 1,500 bytes and cannot be empty. */
 		fields?: Record<string, FirebaseValueInput>;
 	};
 	'firestore.databases.documents.rollback': {
@@ -10463,7 +10479,7 @@ export type FirebaseOperationInputs = {
 		requestOptions?: FirebaseRequestOptionsInput;
 	};
 	'firestore.databases.documents.runAggregationQuery': {
-		/** Required. The parent resource name. In the format: `projects/{project_id}/databases/{database_id}/documents` or `projects/{project_id}/databases/{database_id}/documents/{document_path}`. For example: `projects/my-project/databases/my-database/documents` or… */
+		/** Required. The parent resource name. In the format: `projects/{project_id}/databases/{database_id}/documents` or `projects/{project_id}/databases/{database_id}/documents/{document_path}`. */
 		parent: string;
 		/** Run the aggregation within an already active transaction. The value here is the opaque transaction ID to execute the query in. (base64) */
 		transaction?: string;
@@ -10479,7 +10495,7 @@ export type FirebaseOperationInputs = {
 		structuredAggregationQuery?: FirebaseStructuredAggregationQueryInput;
 	};
 	'firestore.databases.documents.runQuery': {
-		/** Required. The parent resource name. In the format: `projects/{project_id}/databases/{database_id}/documents` or `projects/{project_id}/databases/{database_id}/documents/{document_path}`. For example: `projects/my-project/databases/my-database/documents` or… */
+		/** Required. The parent resource name. In the format: `projects/{project_id}/databases/{database_id}/documents` or `projects/{project_id}/databases/{database_id}/documents/{document_path}`. */
 		parent: string;
 		/** A structured query. */
 		structuredQuery?: FirebaseStructuredQueryInput;
@@ -10499,11 +10515,11 @@ export type FirebaseOperationInputs = {
 		name: string;
 		/** IDs of the collection groups to export. Unspecified means all collection groups. Each collection group in this list must be unique. */
 		collectionIds?: Array<string>;
-		/** The timestamp that corresponds to the version of the database to be exported. The timestamp must be in the past, rounded to the minute and not older than earliestVersionTime. If specified, then the exported documents will represent a consistent view of the database at the provided time.… */
+		/** The timestamp that corresponds to the version of the database to be exported. The timestamp must be in the past, rounded to the minute and not older than earliestVersionTime. If specified, then the exported documents will represent a consistent view of the database at the provided time. */
 		snapshotTime?: string;
-		/** The output URI. Currently only supports Google Cloud Storage URIs of the form: `gs://BUCKET_NAME[/NAMESPACE_PATH]`, where `BUCKET_NAME` is the name of the Google Cloud Storage bucket and `NAMESPACE_PATH` is an optional Google Cloud Storage namespace path. When choosing a name, be sure to… */
+		/** The output URI. Currently only supports Google Cloud Storage URIs of the form… */
 		outputUriPrefix?: string;
-		/** An empty list represents all namespaces. This is the preferred usage for databases that don't use namespaces. An empty string element represents the default namespace. This should be used if the database has data in non-default namespaces, but doesn't want to include them. Each namespace in this… */
+		/** An empty list represents all namespaces. This is the preferred usage for databases that don't use namespaces. An empty string element represents the default namespace. This should be used if the database has data in non-default namespaces, but doesn't want to include them. */
 		namespaceIds?: Array<string>;
 	};
 	'firestore.databases.get': {
@@ -10517,7 +10533,7 @@ export type FirebaseOperationInputs = {
 		collectionIds?: Array<string>;
 		/** Location of the exported files. This must match the output_uri_prefix of an ExportDocumentsResponse from an export that has completed successfully. See: google.firestore.admin.v1.ExportDocumentsResponse.output_uri_prefix. */
 		inputUriPrefix?: string;
-		/** An empty list represents all namespaces. This is the preferred usage for databases that don't use namespaces. An empty string element represents the default namespace. This should be used if the database has data in non-default namespaces, but doesn't want to include them. Each namespace in this… */
+		/** An empty list represents all namespaces. This is the preferred usage for databases that don't use namespaces. An empty string element represents the default namespace. This should be used if the database has data in non-default namespaces, but doesn't want to include them. */
 		namespaceIds?: Array<string>;
 	};
 	'firestore.databases.list': {
@@ -10548,7 +10564,7 @@ export type FirebaseOperationInputs = {
 		name: string;
 		/** The standard list page token. */
 		pageToken?: string;
-		/** When set to `true`, operations that are reachable are returned as normal, and those that are unreachable are returned in the ListOperationsResponse.unreachable field. This can only be `true` when reading across collections. For example, when `parent` is set to `"projects/example/locations/-"`.… */
+		/** When set to `true`, operations that are reachable are returned as normal, and those that are unreachable are returned in the ListOperationsResponse.unreachable field. This can only be `true` when reading across collections. For example, when `parent` is set to `"projects/example/locations/-"`. */
 		returnPartialSuccess?: boolean;
 	};
 	'firestore.databases.patch': {
@@ -10561,7 +10577,7 @@ export type FirebaseOperationInputs = {
 			| 'DATA_ACCESS_MODE_UNSPECIFIED'
 			| 'DATA_ACCESS_MODE_ENABLED'
 			| 'DATA_ACCESS_MODE_DISABLED';
-		/** The default concurrency control mode to use for this database. If unspecified in a CreateDatabase request, this will default based on the database edition: Optimistic for Enterprise and Pessimistic for all other databases. While transactions can explicitly specify their own concurrency mode,… */
+		/** The default concurrency control mode to use for this database. If unspecified in a CreateDatabase request, this will default based on the database edition: Optimistic for Enterprise and Pessimistic for all other databases. */
 		concurrencyMode?:
 			| 'CONCURRENCY_MODE_UNSPECIFIED'
 			| 'OPTIMISTIC'
@@ -10617,7 +10633,7 @@ export type FirebaseOperationInputs = {
 		backup?: string;
 		/** Optional. Immutable. Tags to be bound to the restored database. The tags should be provided in the format of `tagKeys/{tag_key_id} -> tagValues/{tag_value_id}`. */
 		tags?: Record<string, string>;
-		/** Required. The ID to use for the database, which will become the final component of the database's resource name. This database ID must not be associated with an existing database. This value should be 4-63 characters. Valid characters are /a-z-/ with first character a letter and the last a… */
+		/** Required. The ID to use for the database, which will become the final component of the database's resource name. This database ID must not be associated with an existing database. This value should be 4-63 characters. */
 		databaseId?: string;
 		/** Optional. Encryption configuration for the restored database. If this field is not specified, the restored database will use the same encryption configuration as the backup, namely use_source_encryption. */
 		encryptionConfig?: FirebaseGoogleFirestoreAdminV1EncryptionConfigInput;
@@ -10625,7 +10641,7 @@ export type FirebaseOperationInputs = {
 	'firestore.databases.userCreds.create': {
 		/** Required. A parent name of the form `projects/{project_id}/databases/{database_id}` Format: `projects/<id>/databases/<id>`. */
 		parent: string;
-		/** Required. The ID to use for the user creds, which will become the final component of the user creds's resource name. This value should be 4-63 characters. Valid characters are /a-z-/ with first character a letter and the last a letter or a number. Must not be UUID-like… */
+		/** Required. The ID to use for the user creds, which will become the final component of the user creds's resource name. This value should be 4-63 characters. Valid characters are /a-z-/ with first character a letter and the last a letter or a number. */
 		userCredsId?: string;
 		/** Identifier. The resource name of the UserCreds. Format: `projects/{project}/databases/{database}/userCreds/{user_creds}` */
 		name?: string;
@@ -10670,7 +10686,7 @@ export type FirebaseOperationInputs = {
 	'firestore.locations.backups.list': {
 		/** Required. The location to list backups from. Format is `projects/{project}/locations/{location}`. Use `{location} = '-'` to list backups from all locations for the given project. This allows listing backups from a single location or from all locations. Format: `projects/<id>/locations/<id>`. */
 		parent: string;
-		/** An expression that filters the list of returned backups. A filter expression consists of a field name, a comparison operator, and a value for filtering. The value must be a string, a number, or a boolean. The comparison operator must be one of: `<`, `>`, `<=`, `>=`, `!=`, `=`, or `:`. Colon `:`… */
+		/** An expression that filters the list of returned backups. A filter expression consists of a field name, a comparison operator, and a value for filtering. The value must be a string, a number, or a boolean. The comparison operator must be one of: `<`, `>`, `<=`, `>=`, `!=`, `=`, or `:`. */
 		filter?: string;
 	};
 	'firestore.locations.get': {
@@ -10746,7 +10762,7 @@ export type FirebaseOperationInputs = {
 		parent: string;
 		/** The unique identifier for a version, in the format: sites/SITE_ID/versions/ VERSION_ID The SITE_ID in this version identifier must match the SITE_ID in the `parent` parameter. This query parameter must be empty if the `type` field in the request body is `SITE_DISABLE`. */
 		versionName?: string;
-		/** Output only. The unique identifier for the release, in either of the following formats: - sites/SITE_ID/releases/RELEASE_ID - sites/SITE_ID/channels/CHANNEL_ID/releases/RELEASE_ID This name is provided in the response body when you call [`releases.create`](sites.releases/create) or… */
+		/** Output only. The unique identifier for the release, in either of the following formats: - sites/SITE_ID/releases/RELEASE_ID - sites/SITE_ID/channels/CHANNEL_ID/releases/RELEASE_ID This name is provided in the response body when you call `releases.create` or `channels.releases.create`. */
 		name?: string;
 		/** Output only. The configuration and content that was released. */
 		version?: FirebaseHostingVersionInput;
@@ -10776,7 +10792,7 @@ export type FirebaseOperationInputs = {
 		validateOnly?: boolean;
 		/** Required. Immutable. A globally unique identifier for the Hosting site. This identifier is used to construct the Firebase-provisioned subdomains for the site, so it must also be a valid domain name label. */
 		siteId?: string;
-		/** Required. The Firebase project in which to create a Hosting site, in the format: projects/PROJECT_IDENTIFIER Refer to the `Site` [`name`](../projects#Site.FIELDS.name) field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
+		/** Required. The Firebase project in which to create a Hosting site, in the format: projects/PROJECT_IDENTIFIER Refer to the `Site` `name` field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
 		parent: string;
 		/** Optional. User-specified labels for the Hosting site. */
 		labels?: Record<string, string>;
@@ -10843,7 +10859,7 @@ export type FirebaseOperationInputs = {
 		name: string;
 		/** The standard list page token. */
 		pageToken?: string;
-		/** When set to `true`, operations that are reachable are returned as normal, and those that are unreachable are returned in the ListOperationsResponse.unreachable field. This can only be `true` when reading across collections. For example, when `parent` is set to `"projects/example/locations/-"`.… */
+		/** When set to `true`, operations that are reachable are returned as normal, and those that are unreachable are returned in the ListOperationsResponse.unreachable field. This can only be `true` when reading across collections. For example, when `parent` is set to `"projects/example/locations/-"`. */
 		returnPartialSuccess?: boolean;
 	};
 	'hosting.sites.customDomains.patch': {
@@ -10880,7 +10896,7 @@ export type FirebaseOperationInputs = {
 		etag?: string;
 	};
 	'hosting.sites.delete': {
-		/** Required. The fully-qualified resource name for the Hosting site, in the format: projects/PROJECT_IDENTIFIER/sites/SITE_ID Refer to the `Site` [`name`](../projects#Site.FIELDS.name) field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>/sites/<id>`. */
+		/** Required. The fully-qualified resource name for the Hosting site, in the format: projects/PROJECT_IDENTIFIER/sites/SITE_ID Refer to the `Site` `name` field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>/sites/<id>`. */
 		name: string;
 	};
 	'hosting.sites.domains.create': {
@@ -10942,7 +10958,7 @@ export type FirebaseOperationInputs = {
 		site?: string;
 	};
 	'hosting.sites.get': {
-		/** Required. The fully-qualified resource name for the Hosting site, in the format: projects/PROJECT_IDENTIFIER/sites/SITE_ID Refer to the `Site` [`name`](../projects#Site.FIELDS.name) field for details about PROJECT_IDENTIFIER values. Since a SITE_ID is a globally unique identifier, you can also… */
+		/** Required. The fully-qualified resource name for the Hosting site, in the format: projects/PROJECT_IDENTIFIER/sites/SITE_ID Refer to the `Site` `name` field for details about PROJECT_IDENTIFIER values. */
 		name: string;
 	};
 	'hosting.sites.getConfig': {
@@ -10952,7 +10968,7 @@ export type FirebaseOperationInputs = {
 	'hosting.sites.list': {
 		/** Optional. The maximum number of sites to return. The service may return a lower number if fewer sites exist than this maximum number. If unspecified, defaults to 40. */
 		pageSize?: number;
-		/** Required. The Firebase project for which to list sites, in the format: projects/PROJECT_IDENTIFIER Refer to the `Site` [`name`](../projects#Site.FIELDS.name) field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
+		/** Required. The Firebase project for which to list sites, in the format: projects/PROJECT_IDENTIFIER Refer to the `Site` `name` field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
 		parent: string;
 		/** Optional. A token from a previous call to `ListSites` that tells the server where to resume listing. */
 		pageToken?: string;
@@ -10972,7 +10988,7 @@ export type FirebaseOperationInputs = {
 		parent: string;
 		/** The unique identifier for a version, in the format: sites/SITE_ID/versions/ VERSION_ID The SITE_ID in this version identifier must match the SITE_ID in the `parent` parameter. This query parameter must be empty if the `type` field in the request body is `SITE_DISABLE`. */
 		versionName?: string;
-		/** Output only. The unique identifier for the release, in either of the following formats: - sites/SITE_ID/releases/RELEASE_ID - sites/SITE_ID/channels/CHANNEL_ID/releases/RELEASE_ID This name is provided in the response body when you call [`releases.create`](sites.releases/create) or… */
+		/** Output only. The unique identifier for the release, in either of the following formats: - sites/SITE_ID/releases/RELEASE_ID - sites/SITE_ID/channels/CHANNEL_ID/releases/RELEASE_ID This name is provided in the response body when you call `releases.create` or `channels.releases.create`. */
 		name?: string;
 		/** Output only. The configuration and content that was released. */
 		version?: FirebaseHostingVersionInput;
@@ -11000,11 +11016,11 @@ export type FirebaseOperationInputs = {
 	'hosting.sites.updateConfig': {
 		/** Required. The site for which to update the SiteConfig, in the format: sites/ site-name/config Format: `sites/<id>/config`. */
 		name: string;
-		/** A set of field names from your [site configuration](../sites.SiteConfig) that you want to update. A field will be overwritten if, and only if, it's in the mask. If a mask is not provided then a default mask of only [`max_versions`](../sites.SiteConfig.max_versions) will be used. */
+		/** A set of field names from your site configuration that you want to update. A field will be overwritten if, and only if, it's in the mask. If a mask is not provided then a default mask of only `max_versions` will be used. */
 		updateMask?: string;
 		/** Whether or not web requests made by site visitors are logged via Cloud Logging. */
 		cloudLoggingEnabled?: boolean;
-		/** The number of FINALIZED versions that will be held for a site before automatic deletion. When a new version is deployed, content for versions in storage in excess of this number will be deleted, and will no longer be billed for storage usage. Oldest versions will be deleted first; sites are… */
+		/** The number of FINALIZED versions that will be held for a site before automatic deletion. When a new version is deployed, content for versions in storage in excess of this number will be deleted, and will no longer be billed for storage usage. */
 		maxVersions?: string | number;
 	};
 	'hosting.sites.versions.clone': {
@@ -11014,7 +11030,7 @@ export type FirebaseOperationInputs = {
 		sourceVersion?: string;
 		/** If provided, only paths that match one or more RegEx values in this list will be included in the new version. */
 		include?: FirebasePathFilterInput;
-		/** If true, the call to `CloneVersion` immediately finalizes the version after cloning is complete. If false, the cloned version will have a status of `CREATED`. Use [`UpdateVersion`](patch) to set the status of the version to `FINALIZED`. */
+		/** If true, the call to `CloneVersion` immediately finalizes the version after cloning is complete. If false, the cloned version will have a status of `CREATED`. Use `UpdateVersion` to set the status of the version to `FINALIZED`. */
 		finalize?: boolean;
 		/** If provided, only paths that do not match any of the RegEx values in this list will be included in the new version. */
 		exclude?: FirebasePathFilterInput;
@@ -11028,7 +11044,7 @@ export type FirebaseOperationInputs = {
 		parent: string;
 		/** Output only. Identifies the user who created the version. */
 		createUser?: FirebaseActingUserInput;
-		/** The deploy status of the version. For a successful deploy, call [`CreateVersion`](sites.versions/create) to make a new version (`CREATED` status), [upload all desired files](sites.versions/populateFiles) to the version, then [update](sites.versions/patch) the version to the `FINALIZED` status.… */
+		/** The deploy status of the version. For a successful deploy, call `CreateVersion` to make a new version (`CREATED` status), upload all desired files to the version, then update the version to the `FINALIZED` status. */
 		status?:
 			| 'VERSION_STATUS_UNSPECIFIED'
 			| 'CREATED'
@@ -11043,7 +11059,7 @@ export type FirebaseOperationInputs = {
 		deleteTime?: string;
 		/** Output only. The time at which the version was created. */
 		createTime?: string;
-		/** The fully-qualified resource name for the version, in the format: sites/ SITE_ID/versions/VERSION_ID This name is provided in the response body when you call [`CreateVersion`](sites.versions/create). */
+		/** The fully-qualified resource name for the version, in the format: sites/ SITE_ID/versions/VERSION_ID This name is provided in the response body when you call `CreateVersion`. */
 		name?: string;
 		/** Output only. The total number of files associated with the version. This value is calculated after a version is `FINALIZED`. */
 		fileCount?: string | number;
@@ -11087,13 +11103,13 @@ export type FirebaseOperationInputs = {
 		pageToken?: string;
 	};
 	'hosting.sites.versions.patch': {
-		/** A set of field names from your [version](../sites.versions) that you want to update. A field will be overwritten if, and only if, it's in the mask. If a mask is not provided then a default mask of only [`status`](../sites.versions#Version.FIELDS.status) will be used. */
+		/** A set of field names from your version that you want to update. A field will be overwritten if, and only if, it's in the mask. If a mask is not provided then a default mask of only `status` will be used. */
 		updateMask?: string;
-		/** The fully-qualified resource name for the version, in the format: sites/ SITE_ID/versions/VERSION_ID This name is provided in the response body when you call [`CreateVersion`](sites.versions/create). Format: `sites/<id>/versions/<id>`. */
+		/** The fully-qualified resource name for the version, in the format: sites/ SITE_ID/versions/VERSION_ID This name is provided in the response body when you call `CreateVersion`. Format: `sites/<id>/versions/<id>`. */
 		name: string;
 		/** Output only. Identifies the user who created the version. */
 		createUser?: FirebaseActingUserInput;
-		/** The deploy status of the version. For a successful deploy, call [`CreateVersion`](sites.versions/create) to make a new version (`CREATED` status), [upload all desired files](sites.versions/populateFiles) to the version, then [update](sites.versions/patch) the version to the `FINALIZED` status.… */
+		/** The deploy status of the version. For a successful deploy, call `CreateVersion` to make a new version (`CREATED` status), upload all desired files to the version, then update the version to the `FINALIZED` status. */
 		status?:
 			| 'VERSION_STATUS_UNSPECIFIED'
 			| 'CREATED'
@@ -11108,7 +11124,7 @@ export type FirebaseOperationInputs = {
 		deleteTime?: string;
 		/** Output only. The time at which the version was created. */
 		createTime?: string;
-		/** The fully-qualified resource name for the version, in the format: sites/ SITE_ID/versions/VERSION_ID This name is provided in the response body when you call [`CreateVersion`](sites.versions/create). */
+		/** The fully-qualified resource name for the version, in the format: sites/ SITE_ID/versions/VERSION_ID This name is provided in the response body when you call `CreateVersion`. */
 		body_name?: string;
 		/** Output only. The total number of files associated with the version. This value is calculated after a version is `FINALIZED`. */
 		fileCount?: string | number;
@@ -11130,17 +11146,17 @@ export type FirebaseOperationInputs = {
 		files?: Record<string, string>;
 	};
 	'management.androidApps.create': {
-		/** The resource name of the parent FirebaseProject in which to create an AndroidApp, in the format: projects/PROJECT_IDENTIFIER/androidApps Refer to the `FirebaseProject` [`name`](../projects#FirebaseProject.FIELDS.name) field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
+		/** The resource name of the parent FirebaseProject in which to create an AndroidApp, in the format: projects/PROJECT_IDENTIFIER/androidApps Refer to the `FirebaseProject` `name` field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
 		parent: string;
-		/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the `AndroidApp`. Be aware that this value is the UID of the API key, _not_ the [`keyString`](https://cloud.google.com/api-keys/docs/reference/rest/v2/projects.locations.keys#Key.FIELDS.key_string) of… */
+		/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the `AndroidApp`. */
 		apiKeyId?: string;
 		/** The user-assigned display name for the `AndroidApp`. */
 		displayName?: string;
-		/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources).… */
+		/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources). */
 		etag?: string;
 		/** The SHA1 certificate hashes for the AndroidApp. */
 		sha1Hashes?: Array<string>;
-		/** The resource name of the AndroidApp, in the format: projects/ PROJECT_IDENTIFIER/androidApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's [`ProjectNumber`](../projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its… */
+		/** The resource name of the AndroidApp, in the format: projects/ PROJECT_IDENTIFIER/androidApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's `ProjectNumber` ***(recommended)*** or its `ProjectId`. */
 		name?: string;
 		/** Immutable. The canonical package name of the Android app as would appear in the Google Play Developer Console. */
 		packageName?: string;
@@ -11148,11 +11164,11 @@ export type FirebaseOperationInputs = {
 		sha256Hashes?: Array<string>;
 	};
 	'management.androidApps.get': {
-		/** The resource name of the AndroidApp, in the format: projects/ PROJECT_IDENTIFIER/androidApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/androidApps/APP_ID Refer to the `AndroidApp`… */
+		/** The resource name of the AndroidApp, in the format: projects/ PROJECT_IDENTIFIER/androidApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/androidApps/APP_ID Refer to the `AndroidApp` `name` field… */
 		name: string;
 	};
 	'management.androidApps.getConfig': {
-		/** The resource name of the AndroidApp configuration to download, in the format: projects/PROJECT_IDENTIFIER/androidApps/APP_ID/config Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/androidApps/APP_ID Refer… */
+		/** The resource name of the AndroidApp configuration to download, in the format: projects/PROJECT_IDENTIFIER/androidApps/APP_ID/config Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/androidApps/APP_ID Refer to… */
 		name: string;
 	};
 	'management.androidApps.list': {
@@ -11162,23 +11178,23 @@ export type FirebaseOperationInputs = {
 		pageSize?: number;
 		/** Token returned from a previous call to `ListAndroidApps` indicating where in the set of Apps to resume listing. */
 		pageToken?: string;
-		/** The resource name of the parent FirebaseProject for which to list each associated AndroidApp, in the format: projects/PROJECT_IDENTIFIER /androidApps Refer to the `FirebaseProject` [`name`](../projects#FirebaseProject.FIELDS.name) field for details about PROJECT_IDENTIFIER values. Format:… */
+		/** The resource name of the parent FirebaseProject for which to list each associated AndroidApp, in the format: projects/PROJECT_IDENTIFIER /androidApps Refer to the `FirebaseProject` `name` field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
 		parent: string;
 	};
 	'management.androidApps.patch': {
 		/** Specifies which fields of the AndroidApp to update. Note that the following fields are immutable: `name`, `app_id`, `project_id`, and `package_name`. To update `state`, use any of the following endpoints: RemoveAndroidApp or UndeleteAndroidApp. */
 		updateMask?: string;
-		/** The resource name of the AndroidApp, in the format: projects/ PROJECT_IDENTIFIER/androidApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's [`ProjectNumber`](../projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its… */
+		/** The resource name of the AndroidApp, in the format: projects/ PROJECT_IDENTIFIER/androidApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's `ProjectNumber` ***(recommended)*** or its `ProjectId`. */
 		name: string;
-		/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the `AndroidApp`. Be aware that this value is the UID of the API key, _not_ the [`keyString`](https://cloud.google.com/api-keys/docs/reference/rest/v2/projects.locations.keys#Key.FIELDS.key_string) of… */
+		/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the `AndroidApp`. */
 		apiKeyId?: string;
 		/** The user-assigned display name for the `AndroidApp`. */
 		displayName?: string;
-		/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources).… */
+		/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources). */
 		etag?: string;
 		/** The SHA1 certificate hashes for the AndroidApp. */
 		sha1Hashes?: Array<string>;
-		/** The resource name of the AndroidApp, in the format: projects/ PROJECT_IDENTIFIER/androidApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's [`ProjectNumber`](../projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its… */
+		/** The resource name of the AndroidApp, in the format: projects/ PROJECT_IDENTIFIER/androidApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's `ProjectNumber` ***(recommended)*** or its `ProjectId`. */
 		body_name?: string;
 		/** Immutable. The canonical package name of the Android app as would appear in the Google Play Developer Console. */
 		packageName?: string;
@@ -11186,50 +11202,42 @@ export type FirebaseOperationInputs = {
 		sha256Hashes?: Array<string>;
 	};
 	'management.androidApps.remove': {
-		/** Required. The resource name of the AndroidApp, in the format: projects/ PROJECT_IDENTIFIER/androidApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/androidApps/APP_ID Refer to the AndroidApp… */
+		/** Required. The resource name of the AndroidApp, in the format: projects/ PROJECT_IDENTIFIER/androidApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/androidApps/APP_ID Refer to the AndroidApp name… */
 		name: string;
 		/** If set to true, the request is only validated. The App will _not_ be removed. */
 		validateOnly?: boolean;
 		/** If set to true, and the App is not found, the request will succeed but no action will be taken on the server. */
 		allowMissing?: boolean;
-		/** Determines whether to _immediately_ delete the AndroidApp. If set to true, the App is immediately deleted from the Project and cannot be undeleted (that is, restored to the Project). If not set, defaults to false, which means the App will be set to expire in 30 days. Within the 30 days, the App… */
+		/** Determines whether to _immediately_ delete the AndroidApp. If set to true, the App is immediately deleted from the Project and cannot be undeleted (that is, restored to the Project). If not set, defaults to false, which means the App will be set to expire in 30 days. */
 		immediate?: boolean;
 		/** Checksum provided in the AndroidApp resource. If provided, this checksum ensures that the client has an up-to-date value before proceeding. */
 		etag?: string;
 	};
 	'management.androidApps.sha.create': {
-		/** The resource name of the parent AndroidApp to which to add a ShaCertificate, in the format: projects/PROJECT_IDENTIFIER/androidApps/ APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format:… */
+		/** The resource name of the parent AndroidApp to which to add a ShaCertificate, in the format: projects/PROJECT_IDENTIFIER/androidApps/ APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/androidApps/APP_ID… */
 		parent: string;
 		/** The certificate hash for the `AndroidApp`. */
 		shaHash?: string;
 		/** The type of SHA certificate encoded in the hash. */
 		certType?: 'SHA_CERTIFICATE_TYPE_UNSPECIFIED' | 'SHA_1' | 'SHA_256';
-		/** The resource name of the ShaCertificate for the AndroidApp, in the format: projects/PROJECT_IDENTIFIER/androidApps/APP_ID/sha/SHA_HASH * PROJECT_IDENTIFIER: the parent Project's [`ProjectNumber`](../projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its… */
+		/** The resource name of the ShaCertificate for the AndroidApp, in the format: projects/PROJECT_IDENTIFIER/androidApps/APP_ID/sha/SHA_HASH * PROJECT_IDENTIFIER: the parent Project's `ProjectNumber` ***(recommended)*** or its `ProjectId`. */
 		name?: string;
 	};
 	'management.androidApps.sha.delete': {
-		/** The resource name of the ShaCertificate to remove from the parent AndroidApp, in the format: projects/PROJECT_IDENTIFIER/androidApps/APP_ID /sha/SHA_HASH Refer to the `ShaCertificate` [`name`](../projects.androidApps.sha#ShaCertificate.FIELDS.name) field for details about PROJECT_IDENTIFIER,… */
+		/** The resource name of the ShaCertificate to remove from the parent AndroidApp, in the format: projects/PROJECT_IDENTIFIER/androidApps/APP_ID /sha/SHA_HASH Refer to the `ShaCertificate` `name` field for details about PROJECT_IDENTIFIER, APP_ID, and SHA_HASH values. */
 		name: string;
 	};
 	'management.androidApps.sha.list': {
-		/** The resource name of the parent AndroidApp for which to list each associated ShaCertificate, in the format: projects/PROJECT_IDENTIFIER /androidApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format:… */
+		/** The resource name of the parent AndroidApp for which to list each associated ShaCertificate, in the format: projects/PROJECT_IDENTIFIER /androidApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format… */
 		parent: string;
 	};
 	'management.androidApps.undelete': {
-		/** Required. The resource name of the AndroidApp, in the format: projects/ PROJECT_IDENTIFIER/androidApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/androidApps/APP_ID Refer to the AndroidApp… */
+		/** Required. The resource name of the AndroidApp, in the format: projects/ PROJECT_IDENTIFIER/androidApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/androidApps/APP_ID Refer to the AndroidApp name… */
 		name: string;
 		/** Checksum provided in the AndroidApp resource. If provided, this checksum ensures that the client has an up-to-date value before proceeding. */
 		etag?: string;
 		/** If set to true, the request is only validated. The App will _not_ be undeleted. */
 		validateOnly?: boolean;
-	};
-	'management.availableLocations.list': {
-		/** The FirebaseProject for which to list [locations for default Google Cloud resources](https://firebase.google.com/docs/projects/locations#default-cloud-location), in the format: projects/PROJECT_IDENTIFIER Refer to the `FirebaseProject` [`name`](../projects#FirebaseProject.FIELDS.name) field for… */
-		parent: string;
-		/** Token returned from a previous call to `ListAvailableLocations` indicating where in the list of locations to resume listing. */
-		pageToken?: string;
-		/** The maximum number of locations to return in the response. The server may return fewer than this value at its discretion. If no value is specified (or too large a value is specified), then the server will impose its own limit. This value cannot be negative. */
-		pageSize?: number;
 	};
 	'management.availableProjects.list': {
 		/** Token returned from a previous call to `ListAvailableProjects` indicating where in the set of Projects to resume listing. */
@@ -11237,16 +11245,10 @@ export type FirebaseOperationInputs = {
 		/** The maximum number of Projects to return in the response. The server may return fewer than this value at its discretion. If no value is specified (or too large a value is specified), the server will impose its own limit. This value cannot be negative. */
 		pageSize?: number;
 	};
-	'management.defaultLocation.finalize': {
-		/** The resource name of the FirebaseProject for which the ["location for default Google Cloud resources"](https://firebase.google.com/docs/projects/locations#default-cloud-location) will be set, in the format: projects/PROJECT_IDENTIFIER Refer to the `FirebaseProject`… */
-		parent: string;
-		/** **DEPRECATED** The ID of the Project's ["location for default Google Cloud resources"](https://firebase.google.com/docs/projects/locations#default-cloud-location), which are resources associated with Google App Engine. The location must be one of the available [Google App Engine… */
-		locationId?: string;
-	};
 	'management.iosApps.create': {
-		/** The resource name of the parent FirebaseProject in which to create an IosApp, in the format: projects/PROJECT_IDENTIFIER/iosApps Refer to the `FirebaseProject` [`name`](../projects#FirebaseProject.FIELDS.name) field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
+		/** The resource name of the parent FirebaseProject in which to create an IosApp, in the format: projects/PROJECT_IDENTIFIER/iosApps Refer to the `FirebaseProject` `name` field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
 		parent: string;
-		/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources).… */
+		/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources). */
 		etag?: string;
 		/** Immutable. The canonical bundle ID of the iOS app as it would appear in the iOS AppStore. */
 		bundleId?: string;
@@ -11256,13 +11258,13 @@ export type FirebaseOperationInputs = {
 		teamId?: string;
 		/** The user-assigned display name for the `IosApp`. */
 		displayName?: string;
-		/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the `IosApp`. Be aware that this value is the UID of the API key, _not_ the [`keyString`](https://cloud.google.com/api-keys/docs/reference/rest/v2/projects.locations.keys#Key.FIELDS.key_string) of the… */
+		/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the `IosApp`. */
 		apiKeyId?: string;
-		/** The resource name of the IosApp, in the format: projects/PROJECT_IDENTIFIER /iosApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's [`ProjectNumber`](../projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its [`ProjectId`](../projects#FirebaseProject.FIELDS.project_id).… */
+		/** The resource name of the IosApp, in the format: projects/PROJECT_IDENTIFIER /iosApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's `ProjectNumber` ***(recommended)*** or its `ProjectId`. */
 		name?: string;
 	};
 	'management.iosApps.get': {
-		/** The resource name of the IosApp, in the format: projects/PROJECT_IDENTIFIER /iosApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/iosApps/APP_ID Refer to the `IosApp`… */
+		/** The resource name of the IosApp, in the format: projects/PROJECT_IDENTIFIER /iosApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/iosApps/APP_ID Refer to the `IosApp` `name` field for details about… */
 		name: string;
 	};
 	'management.iosApps.getConfig': {
@@ -11276,15 +11278,15 @@ export type FirebaseOperationInputs = {
 		showDeleted?: boolean;
 		/** Token returned from a previous call to `ListIosApps` indicating where in the set of Apps to resume listing. */
 		pageToken?: string;
-		/** The resource name of the parent FirebaseProject for which to list each associated IosApp, in the format: projects/PROJECT_IDENTIFIER/iosApps Refer to the `FirebaseProject` [`name`](../projects#FirebaseProject.FIELDS.name) field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
+		/** The resource name of the parent FirebaseProject for which to list each associated IosApp, in the format: projects/PROJECT_IDENTIFIER/iosApps Refer to the `FirebaseProject` `name` field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
 		parent: string;
 	};
 	'management.iosApps.patch': {
-		/** The resource name of the IosApp, in the format: projects/PROJECT_IDENTIFIER /iosApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's [`ProjectNumber`](../projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its [`ProjectId`](../projects#FirebaseProject.FIELDS.project_id).… */
+		/** The resource name of the IosApp, in the format: projects/PROJECT_IDENTIFIER /iosApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's `ProjectNumber` ***(recommended)*** or its `ProjectId`. */
 		name: string;
 		/** Specifies which fields of the IosApp to update. Note that the following fields are immutable: `name`, `app_id`, `project_id`, and `bundle_id`. To update `state`, use any of the following endpoints: RemoveIosApp or UndeleteIosApp. */
 		updateMask?: string;
-		/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources).… */
+		/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources). */
 		etag?: string;
 		/** Immutable. The canonical bundle ID of the iOS app as it would appear in the iOS AppStore. */
 		bundleId?: string;
@@ -11294,13 +11296,13 @@ export type FirebaseOperationInputs = {
 		teamId?: string;
 		/** The user-assigned display name for the `IosApp`. */
 		displayName?: string;
-		/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the `IosApp`. Be aware that this value is the UID of the API key, _not_ the [`keyString`](https://cloud.google.com/api-keys/docs/reference/rest/v2/projects.locations.keys#Key.FIELDS.key_string) of the… */
+		/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the `IosApp`. */
 		apiKeyId?: string;
-		/** The resource name of the IosApp, in the format: projects/PROJECT_IDENTIFIER /iosApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's [`ProjectNumber`](../projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its [`ProjectId`](../projects#FirebaseProject.FIELDS.project_id).… */
+		/** The resource name of the IosApp, in the format: projects/PROJECT_IDENTIFIER /iosApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's `ProjectNumber` ***(recommended)*** or its `ProjectId`. */
 		body_name?: string;
 	};
 	'management.iosApps.remove': {
-		/** Required. The resource name of the IosApp, in the format: projects/ PROJECT_IDENTIFIER/iosApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/iosApps/APP_ID Refer to the IosApp… */
+		/** Required. The resource name of the IosApp, in the format: projects/ PROJECT_IDENTIFIER/iosApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/iosApps/APP_ID Refer to the IosApp name field for details… */
 		name: string;
 		/** If set to true, the request is only validated. The App will _not_ be removed. */
 		validateOnly?: boolean;
@@ -11308,11 +11310,11 @@ export type FirebaseOperationInputs = {
 		etag?: string;
 		/** If set to true, and the App is not found, the request will succeed but no action will be taken on the server. */
 		allowMissing?: boolean;
-		/** Determines whether to _immediately_ delete the IosApp. If set to true, the App is immediately deleted from the Project and cannot be undeleted (that is, restored to the Project). If not set, defaults to false, which means the App will be set to expire in 30 days. Within the 30 days, the App may… */
+		/** Determines whether to _immediately_ delete the IosApp. If set to true, the App is immediately deleted from the Project and cannot be undeleted (that is, restored to the Project). If not set, defaults to false, which means the App will be set to expire in 30 days. */
 		immediate?: boolean;
 	};
 	'management.iosApps.undelete': {
-		/** Required. The resource name of the IosApp, in the format: projects/ PROJECT_IDENTIFIER/iosApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/iosApps/APP_ID Refer to the IosApp… */
+		/** Required. The resource name of the IosApp, in the format: projects/ PROJECT_IDENTIFIER/iosApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/iosApps/APP_ID Refer to the IosApp name field for details… */
 		name: string;
 		/** Checksum provided in the IosApp resource. If provided, this checksum ensures that the client has an up-to-date value before proceeding. */
 		etag?: string;
@@ -11324,13 +11326,13 @@ export type FirebaseOperationInputs = {
 		name: string;
 	};
 	'management.projects.addFirebase': {
-		/** The resource name of the Google Cloud `Project` in which Firebase resources will be added and Firebase services enabled, in the format: projects/ PROJECT_IDENTIFIER Refer to the `FirebaseProject` [`name`](../projects#FirebaseProject.FIELDS.name) field for details about PROJECT_IDENTIFIER values.… */
+		/** The resource name of the Google Cloud `Project` in which Firebase resources will be added and Firebase services enabled, in the format: projects/ PROJECT_IDENTIFIER Refer to the `FirebaseProject` `name` field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
 		project: string;
-		/** **DEPRECATED.** _Instead, use product-specific REST APIs to work with the location of each resource in a Project. This field may be ignored, especially for newly provisioned projects after October 30, 2024._ The ID of the Project's ["location for default Google Cloud… */
+		/** **DEPRECATED.** _Instead, use product-specific REST APIs to work with the location of each resource in a Project. */
 		locationId?: string;
 	};
 	'management.projects.addGoogleAnalytics': {
-		/** The resource name of the FirebaseProject to link to an existing Google Analytics account, in the format: projects/PROJECT_IDENTIFIER Refer to the `FirebaseProject` [`name`](../projects#FirebaseProject.FIELDS.name) field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
+		/** The resource name of the FirebaseProject to link to an existing Google Analytics account, in the format: projects/PROJECT_IDENTIFIER Refer to the `FirebaseProject` `name` field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
 		parent: string;
 		/** The ID for the existing [Google Analytics account](http://www.google.com/analytics/) that you want to link with the `FirebaseProject`. Specifying this field will provision a new Google Analytics property in your Google Analytics account and associate the new property with the `FirebaseProject`. */
 		analyticsAccountId?: string;
@@ -11338,15 +11340,15 @@ export type FirebaseOperationInputs = {
 		analyticsPropertyId?: string;
 	};
 	'management.projects.get': {
-		/** The resource name of the FirebaseProject, in the format: projects/ PROJECT_IDENTIFIER Refer to the `FirebaseProject` [`name`](../projects#FirebaseProject.FIELDS.name) field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
+		/** The resource name of the FirebaseProject, in the format: projects/ PROJECT_IDENTIFIER Refer to the `FirebaseProject` `name` field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
 		name: string;
 	};
 	'management.projects.getAdminSdkConfig': {
-		/** The resource name of the FirebaseProject, in the format: projects/ PROJECT_IDENTIFIER/adminSdkConfig Refer to the `FirebaseProject` [`name`](../projects#FirebaseProject.FIELDS.name) field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>/adminSdkConfig`. */
+		/** The resource name of the FirebaseProject, in the format: projects/ PROJECT_IDENTIFIER/adminSdkConfig Refer to the `FirebaseProject` `name` field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>/adminSdkConfig`. */
 		name: string;
 	};
 	'management.projects.getAnalyticsDetails': {
-		/** The resource name of the FirebaseProject, in the format: projects/ PROJECT_IDENTIFIER/analyticsDetails Refer to the `FirebaseProject` [`name`](../projects#FirebaseProject.FIELDS.name) field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>/analyticsDetails`. */
+		/** The resource name of the FirebaseProject, in the format: projects/ PROJECT_IDENTIFIER/analyticsDetails Refer to the `FirebaseProject` `name` field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>/analyticsDetails`. */
 		name: string;
 	};
 	'management.projects.list': {
@@ -11358,29 +11360,29 @@ export type FirebaseOperationInputs = {
 		showDeleted?: boolean;
 	};
 	'management.projects.patch': {
-		/** Specifies which fields of the FirebaseProject to update. Note that the following fields are immutable: `name`, `project_id`, and `project_number`. To update `state`, use any of the following Google Cloud endpoints:… */
+		/** Specifies which fields of the FirebaseProject to update. Note that the following fields are immutable: `name`, `project_id`, and `project_number`. */
 		updateMask?: string;
-		/** The resource name of the Project, in the format: projects/PROJECT_IDENTIFIER PROJECT_IDENTIFIER: the Project's [`ProjectNumber`](../projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its [`ProjectId`](../projects#FirebaseProject.FIELDS.project_id). Learn more about using… */
+		/** The resource name of the Project, in the format: projects/PROJECT_IDENTIFIER PROJECT_IDENTIFIER: the Project's `ProjectNumber` ***(recommended)*** or its `ProjectId`. Learn more about using project identifiers in Google's [AIP 2510 standard](https://google.aip.dev/cloud/2510). */
 		name: string;
-		/** The resource name of the Project, in the format: projects/PROJECT_IDENTIFIER PROJECT_IDENTIFIER: the Project's [`ProjectNumber`](../projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its [`ProjectId`](../projects#FirebaseProject.FIELDS.project_id). Learn more about using… */
+		/** The resource name of the Project, in the format: projects/PROJECT_IDENTIFIER PROJECT_IDENTIFIER: the Project's `ProjectNumber` ***(recommended)*** or its `ProjectId`. Learn more about using project identifiers in Google's [AIP 2510 standard](https://google.aip.dev/cloud/2510). */
 		body_name?: string;
 		/** The user-assigned display name of the Project. */
 		displayName?: string;
-		/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources).… */
+		/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources). */
 		etag?: string;
 		/** A set of user-defined annotations for the FirebaseProject. Learn more about annotations in Google's [AIP-128 standard](https://google.aip.dev/128#annotations). These annotations are intended solely for developers and client-side tools. Firebase services will not mutate this annotations set. */
 		annotations?: Record<string, string>;
 	};
 	'management.projects.removeAnalytics': {
-		/** The resource name of the FirebaseProject to unlink from its Google Analytics account, in the format: projects/PROJECT_IDENTIFIER Refer to the `FirebaseProject` [`name`](../projects#FirebaseProject.FIELDS.name) field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
+		/** The resource name of the FirebaseProject to unlink from its Google Analytics account, in the format: projects/PROJECT_IDENTIFIER Refer to the `FirebaseProject` `name` field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
 		parent: string;
-		/** Optional. The ID of the Google Analytics property associated with the specified `FirebaseProject`. - If not set, then the Google Analytics property that is currently associated with the specified `FirebaseProject` is removed. - If set, and the specified `FirebaseProject` is currently associated… */
+		/** Optional. The ID of the Google Analytics property associated with the specified `FirebaseProject`. - If not set, then the Google Analytics property that is currently associated with the specified `FirebaseProject` is removed. */
 		analyticsPropertyId?: string;
 	};
 	'management.projects.searchApps': {
-		/** The parent FirebaseProject for which to list Apps, in the format: projects/ PROJECT_IDENTIFIER Refer to the `FirebaseProject` [`name`](../projects#FirebaseProject.FIELDS.name) field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
+		/** The parent FirebaseProject for which to list Apps, in the format: projects/ PROJECT_IDENTIFIER Refer to the `FirebaseProject` `name` field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
 		parent: string;
-		/** A query string compatible with Google's [AIP-160 standard](https://google.aip.dev/160). Use any of the following fields in a query: * [`app_id`](../projects/searchApps#FirebaseAppInfo.FIELDS.app_id) * [`namespace`](../projects/searchApps#FirebaseAppInfo.FIELDS.namespace) *… */
+		/** A query string compatible with Google's [AIP-160 standard](https://google.aip.dev/160). Use any of the following fields in a query: * `app_id` * `namespace` * `platform` This query also supports the following "virtual" fields. */
 		filter?: string;
 		/** Token returned from a previous call to `SearchFirebaseApps` indicating where in the set of Apps to resume listing. */
 		pageToken?: string;
@@ -11390,27 +11392,27 @@ export type FirebaseOperationInputs = {
 		pageSize?: number;
 	};
 	'management.webApps.create': {
-		/** The resource name of the parent FirebaseProject in which to create a WebApp, in the format: projects/PROJECT_IDENTIFIER/webApps Refer to the `FirebaseProject` [`name`](../projects#FirebaseProject.FIELDS.name) field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
+		/** The resource name of the parent FirebaseProject in which to create a WebApp, in the format: projects/PROJECT_IDENTIFIER/webApps Refer to the `FirebaseProject` `name` field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
 		parent: string;
 		/** The URLs where the `WebApp` is hosted. */
 		appUrls?: Array<string>;
-		/** Optional. Set of labels assigned to the `WebApp`. Valid label keys have two segments: an optional prefix and a name, separated by a slash (`/`). `firebase.*\/` prefixes are reserved for Firebase-service use, and `express.cloud/` is reserved for Google Cloud Express. In update requests, `labels`… */
+		/** Optional. Set of labels assigned to the `WebApp`. Valid label keys have two segments: an optional prefix and a name, separated by a slash (`/`). `firebase.*\/` prefixes are reserved for Firebase-service use, and `express.cloud/` is reserved for Google Cloud Express. */
 		labels?: Record<string, string>;
-		/** The resource name of the WebApp, in the format: projects/PROJECT_IDENTIFIER /webApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's [`ProjectNumber`](../projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its [`ProjectId`](../projects#FirebaseProject.FIELDS.project_id).… */
+		/** The resource name of the WebApp, in the format: projects/PROJECT_IDENTIFIER /webApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's `ProjectNumber` ***(recommended)*** or its `ProjectId`. */
 		name?: string;
-		/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the `WebApp`. Be aware that this value is the UID of the API key, _not_ the [`keyString`](https://cloud.google.com/api-keys/docs/reference/rest/v2/projects.locations.keys#Key.FIELDS.key_string) of the… */
+		/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the `WebApp`. */
 		apiKeyId?: string;
-		/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources).… */
+		/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources). */
 		etag?: string;
 		/** The user-assigned display name for the `WebApp`. */
 		displayName?: string;
 	};
 	'management.webApps.get': {
-		/** The resource name of the WebApp, in the format: projects/PROJECT_IDENTIFIER /webApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/webApps/APP_ID Refer to the `WebApp`… */
+		/** The resource name of the WebApp, in the format: projects/PROJECT_IDENTIFIER /webApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/webApps/APP_ID Refer to the `WebApp` `name` field for details about… */
 		name: string;
 	};
 	'management.webApps.getConfig': {
-		/** The resource name of the WebApp configuration to download, in the format: projects/PROJECT_IDENTIFIER/webApps/APP_ID/config Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/webApps/APP_ID Refer to the… */
+		/** The resource name of the WebApp configuration to download, in the format: projects/PROJECT_IDENTIFIER/webApps/APP_ID/config Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/webApps/APP_ID Refer to the `WebApp`… */
 		name: string;
 	};
 	'management.webApps.list': {
@@ -11418,33 +11420,33 @@ export type FirebaseOperationInputs = {
 		showDeleted?: boolean;
 		/** Token returned from a previous call to `ListWebApps` indicating where in the set of Apps to resume listing. */
 		pageToken?: string;
-		/** The resource name of the parent FirebaseProject for which to list each associated WebApp, in the format: projects/PROJECT_IDENTIFIER/webApps Refer to the `FirebaseProject` [`name`](../projects#FirebaseProject.FIELDS.name) field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
+		/** The resource name of the parent FirebaseProject for which to list each associated WebApp, in the format: projects/PROJECT_IDENTIFIER/webApps Refer to the `FirebaseProject` `name` field for details about PROJECT_IDENTIFIER values. Format: `projects/<id>`. */
 		parent: string;
 		/** The maximum number of Apps to return in the response. The server may return fewer than this value at its discretion. If no value is specified (or too large a value is specified), then the server will impose its own limit. */
 		pageSize?: number;
 	};
 	'management.webApps.patch': {
-		/** The resource name of the WebApp, in the format: projects/PROJECT_IDENTIFIER /webApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's [`ProjectNumber`](../projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its [`ProjectId`](../projects#FirebaseProject.FIELDS.project_id).… */
+		/** The resource name of the WebApp, in the format: projects/PROJECT_IDENTIFIER /webApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's `ProjectNumber` ***(recommended)*** or its `ProjectId`. */
 		name: string;
 		/** Specifies which fields of the WebApp to update. Note that the following fields are immutable: `name`, `app_id`, and `project_id`. To update `state`, use any of the following endpoints: RemoveWebApp or UndeleteWebApp. */
 		updateMask?: string;
 		/** The URLs where the `WebApp` is hosted. */
 		appUrls?: Array<string>;
-		/** Optional. Set of labels assigned to the `WebApp`. Valid label keys have two segments: an optional prefix and a name, separated by a slash (`/`). `firebase.*\/` prefixes are reserved for Firebase-service use, and `express.cloud/` is reserved for Google Cloud Express. In update requests, `labels`… */
+		/** Optional. Set of labels assigned to the `WebApp`. Valid label keys have two segments: an optional prefix and a name, separated by a slash (`/`). `firebase.*\/` prefixes are reserved for Firebase-service use, and `express.cloud/` is reserved for Google Cloud Express. */
 		labels?: Record<string, string>;
-		/** The resource name of the WebApp, in the format: projects/PROJECT_IDENTIFIER /webApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's [`ProjectNumber`](../projects#FirebaseProject.FIELDS.project_number) ***(recommended)*** or its [`ProjectId`](../projects#FirebaseProject.FIELDS.project_id).… */
+		/** The resource name of the WebApp, in the format: projects/PROJECT_IDENTIFIER /webApps/APP_ID * PROJECT_IDENTIFIER: the parent Project's `ProjectNumber` ***(recommended)*** or its `ProjectId`. */
 		body_name?: string;
-		/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the `WebApp`. Be aware that this value is the UID of the API key, _not_ the [`keyString`](https://cloud.google.com/api-keys/docs/reference/rest/v2/projects.locations.keys#Key.FIELDS.key_string) of the… */
+		/** The globally unique, Google-assigned identifier (UID) for the Firebase API key associated with the `WebApp`. */
 		apiKeyId?: string;
-		/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources).… */
+		/** This checksum is computed by the server based on the value of other fields, and it may be sent with update requests to ensure the client has an up-to-date value before proceeding. Learn more about `etag` in Google's [AIP-154 standard](https://google.aip.dev/154#declarative-friendly-resources). */
 		etag?: string;
 		/** The user-assigned display name for the `WebApp`. */
 		displayName?: string;
 	};
 	'management.webApps.remove': {
-		/** Required. The resource name of the WebApp, in the format: projects/ PROJECT_IDENTIFIER/webApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/webApps/APP_ID Refer to the WebApp… */
+		/** Required. The resource name of the WebApp, in the format: projects/ PROJECT_IDENTIFIER/webApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/webApps/APP_ID Refer to the WebApp name field for details… */
 		name: string;
-		/** Determines whether to _immediately_ delete the WebApp. If set to true, the App is immediately deleted from the Project and cannot be undeleted (that is, restored to the Project). If not set, defaults to false, which means the App will be set to expire in 30 days. Within the 30 days, the App may… */
+		/** Determines whether to _immediately_ delete the WebApp. If set to true, the App is immediately deleted from the Project and cannot be undeleted (that is, restored to the Project). If not set, defaults to false, which means the App will be set to expire in 30 days. */
 		immediate?: boolean;
 		/** Checksum provided in the WebApp resource. If provided, this checksum ensures that the client has an up-to-date value before proceeding. */
 		etag?: string;
@@ -11454,7 +11456,7 @@ export type FirebaseOperationInputs = {
 		validateOnly?: boolean;
 	};
 	'management.webApps.undelete': {
-		/** Required. The resource name of the WebApp, in the format: projects/ PROJECT_IDENTIFIER/webApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/webApps/APP_ID Refer to the WebApp… */
+		/** Required. The resource name of the WebApp, in the format: projects/ PROJECT_IDENTIFIER/webApps/APP_ID Since an APP_ID is a unique identifier, the Unique Resource from Sub-Collection access pattern may be used here, in the format: projects/-/webApps/APP_ID Refer to the WebApp name field for details… */
 		name: string;
 		/** If set to true, the request is only validated. The App will _not_ be undeleted. */
 		validateOnly?: boolean;
@@ -11530,7 +11532,7 @@ export type FirebaseOperationInputs = {
 		appId?: string;
 		/** Optional - If omitted and the template has any conditions that depend on app_version, they will be evaluated as false. App version, using the native app version format on the client's OS. Examples: 0, 123, 0123, 1.2.3, 001.33.043.321.55 . */
 		appVersion?: string;
-		/** Optional - If omitted and the template has any conditions that depend on app_build, they will be evaluated as false. * On Android, this is the Version Code, which is a positive integer, e.g., 42. * On iOS, this is the CFBundleVersion, which is a string comprised of three non-negative,… */
+		/** Optional - If omitted and the template has any conditions that depend on app_build, they will be evaluated as false. * On Android, this is the Version Code, which is a positive integer, e.g., 42. */
 		appBuild?: string;
 		/** Required. The instance id token of the app, which is retrieved using the default scope. If specified incorrectly, and if the template has any percentile conditions, they will be evaluated to false. If omitted, fetch can lead to a 400 response code (Bad Request). */
 		appInstanceIdToken?: string;
@@ -11596,7 +11598,7 @@ export type FirebaseOperationInputs = {
 		project?: string;
 		/** Optional. The next_page_token value returned from a previous List request, if any. */
 		pageToken?: string;
-		/** Optional. The resource name of the RemoteConfig to list versions for. Format: projects/{project}/namespaces/{namespace}/remoteConfig Project is a Firebase project ID or project number. Namespace is the namespace ID (e.g.: 'firebase' or 'firebase-server') Format:… */
+		/** Optional. The resource name of the RemoteConfig to list versions for. Format: projects/{project}/namespaces/{namespace}/remoteConfig Project is a Firebase project ID or project number. */
 		parent: string;
 		/** Optional. The maximum number of items to return per page. */
 		pageSize?: number;
@@ -11624,7 +11626,7 @@ export type FirebaseOperationInputs = {
 		parent: string;
 		/** Required. The ID to use for the new condition. */
 		remoteConfigConditionId?: string;
-		/** Required. The logic of this condition. See the documentation regarding [Condition Expressions](/docs/remote-config/condition-reference) for the expected syntax of this field. */
+		/** Required. The logic of this condition. See the documentation regarding Condition Expressions for the expected syntax of this field. */
 		expression?: string;
 		/** Required. Identifier. A non-empty and unique name of this condition. Format: projects/{project}/namespaces/{namespace}/remoteConfigConditions/{remote_config_condition} When used within RemoteConfig.conditions, this field may contain just the condition name. */
 		name?: string;
@@ -11668,13 +11670,13 @@ export type FirebaseOperationInputs = {
 	'remoteConfig.namespaces.remoteConfigConditions.patch': {
 		/** Optional. When set to true, the request is validated but not executed. */
 		validateOnly?: boolean;
-		/** Required. Identifier. A non-empty and unique name of this condition. Format: projects/{project}/namespaces/{namespace}/remoteConfigConditions/{remote_config_condition} When used within RemoteConfig.conditions, this field may contain just the condition name. Format:… */
+		/** Required. Identifier. A non-empty and unique name of this condition. Format: projects/{project}/namespaces/{namespace}/remoteConfigConditions/{remote_config_condition} When used within RemoteConfig.conditions, this field may contain just the condition name. */
 		name: string;
 		/** Optional. If set to true, and the condition is not found, a new condition will be created. */
 		allowMissing?: boolean;
 		/** Optional. Field mask specifying which fields to update. */
 		updateMask?: string;
-		/** Required. The logic of this condition. See the documentation regarding [Condition Expressions](/docs/remote-config/condition-reference) for the expected syntax of this field. */
+		/** Required. The logic of this condition. See the documentation regarding Condition Expressions for the expected syntax of this field. */
 		expression?: string;
 		/** Required. Identifier. A non-empty and unique name of this condition. Format: projects/{project}/namespaces/{namespace}/remoteConfigConditions/{remote_config_condition} When used within RemoteConfig.conditions, this field may contain just the condition name. */
 		body_name?: string;
@@ -11702,7 +11704,7 @@ export type FirebaseOperationInputs = {
 		validateOnly?: boolean;
 		/** Required. The parent namespace in which to create the parameter group. Format: projects/{project}/namespaces/{namespace} Format: `projects/<id>/namespaces/<id>`. */
 		parent: string;
-		/** Optional. Map of parameter keys to their optional default values and optional conditional values for parameters that belong to this group. A parameter only appears once per RemoteConfig: an ungrouped parameter appears at the top level; a parameter organized within a group appears within its… */
+		/** Optional. Map of parameter keys to their optional default values and optional conditional values for parameters that belong to this group. */
 		parameters?: Record<string, FirebaseRemoteConfigParameterInput>;
 		/** Optional. A description for the group. Its length must be less than or equal to 256 characters. A description may contain any Unicode characters. */
 		description?: string;
@@ -11740,7 +11742,7 @@ export type FirebaseOperationInputs = {
 		name: string;
 		/** Optional. When set to true, the request is validated but not executed. */
 		validateOnly?: boolean;
-		/** Optional. Map of parameter keys to their optional default values and optional conditional values for parameters that belong to this group. A parameter only appears once per RemoteConfig: an ungrouped parameter appears at the top level; a parameter organized within a group appears within its… */
+		/** Optional. Map of parameter keys to their optional default values and optional conditional values for parameters that belong to this group. */
 		parameters?: Record<string, FirebaseRemoteConfigParameterInput>;
 		/** Optional. A description for the group. Its length must be less than or equal to 256 characters. A description may contain any Unicode characters. */
 		description?: string;
@@ -11799,7 +11801,7 @@ export type FirebaseOperationInputs = {
 		validateOnly?: boolean;
 		/** Optional. Field mask specifying which fields to update. */
 		updateMask?: string;
-		/** Optional. Identifier. The resource name of the parameter. Format: projects/{project}/namespaces/{namespace}/remoteConfigParameters/{remote_config_parameter} NOTE: Retained as field number 5 to preserve strict backwards wire-compatibility with existing RemoteConfig.parameters map definitions.… */
+		/** Optional. Identifier. The resource name of the parameter. Format: projects/{project}/namespaces/{namespace}/remoteConfigParameters/{remote_config_parameter} NOTE: Retained as field number 5 to preserve strict backwards wire-compatibility with existing RemoteConfig.parameters map definitions. */
 		name: string;
 		/** Optional. If set to true, and the parameter is not found, a new parameter will be created. */
 		allowMissing?: boolean;
@@ -11858,16 +11860,18 @@ export type FirebaseOperationInputs = {
 		project?: string;
 		/** Optional. The name of the RemoteConfig to update. Format: projects/{project}/namespaces/{namespace}/remoteConfig Project is a Firebase project ID or project number. Namespace is the namespace ID (e.g.: firebase or firebase-server) Format: `projects/<id>/namespaces/<id>/remoteConfig`. */
 		name: string;
-		/** Optional. Defaults to `false`. If `true`, the server will only attempt to validate the RemoteConfig. If validation succeeds, the RemoteConfig is not written to the Remote Config server, instead a `200 OK` response is returned. If validation fails, a validation error is returned. Note: other… */
+		/** Optional. Defaults to `false`. If `true`, the server will only attempt to validate the RemoteConfig. If validation succeeds, the RemoteConfig is not written to the Remote Config server, instead a `200 OK` response is returned. If validation fails, a validation error is returned. */
 		validateOnly?: boolean;
 		/** A list of conditions in descending order by priority. The values of the google.firebase.remoteconfig.v1.RemoteConfigCondition.name entries must be unique. */
 		conditions?: Array<FirebaseRemoteConfigConditionInput>;
-		/** Map of parameter group names to their descriptions and grouped parameters. A group's name is mutable but must be unique among groups in the config. The name is limited to 256 characters and intended to be human-readable. Any Unicode characters are allowed. Groups have a list of parameters which… */
+		/** Map of parameter group names to their descriptions and grouped parameters. A group's name is mutable but must be unique among groups in the config. The name is limited to 256 characters and intended to be human-readable. Any Unicode characters are allowed. */
 		parameterGroups?: Record<string, FirebaseRemoteConfigParameterGroupInput>;
 		/** Output only, except for the version description. Metadata associated with a particular version of a template. A version's description field may be specified in UpdateRemoteConfig calls. */
 		version?: FirebaseRemoteConfigVersionInput;
 		/** Map of parameter keys to their optional default values and optional conditional values. */
 		parameters?: Record<string, FirebaseRemoteConfigParameterInput>;
+		/** The ETag of the template being replaced (`etag` from remoteConfig.namespaces.getRemoteConfig), or `*` to replace whatever is published. */
+		ifMatch: string;
 	};
 	'remoteConfig.projects.getRemoteConfig': {
 		/** Optional. The name of the RemoteConfig to get. Format: projects/{project}/namespaces/{namespace}/remoteConfig Project is a Firebase project ID or project number. Namespace is the namespace ID (e.g.: 'firebase' or 'firebase-server') */
@@ -11880,19 +11884,19 @@ export type FirebaseOperationInputs = {
 	'remoteConfig.projects.updateRemoteConfig': {
 		/** The Firebase project's Project ID or Project Number, prefixed with "projects/". This field is required if the `name` field is not provided. Format: `projects/<id>`. */
 		project: string;
-		/** Optional. Defaults to `false`. If `true`, the server will only attempt to validate the RemoteConfig. If validation succeeds, the RemoteConfig is not written to the Remote Config server, instead a `200 OK` response is returned. If validation fails, a validation error is returned. Note: other… */
+		/** Optional. Defaults to `false`. If `true`, the server will only attempt to validate the RemoteConfig. If validation succeeds, the RemoteConfig is not written to the Remote Config server, instead a `200 OK` response is returned. If validation fails, a validation error is returned. */
 		validateOnly?: boolean;
 		/** Optional. The name of the RemoteConfig to update. Format: projects/{project}/namespaces/{namespace}/remoteConfig Project is a Firebase project ID or project number. Namespace is the namespace ID (e.g.: firebase or firebase-server) */
 		name?: string;
 		/** A list of conditions in descending order by priority. The values of the google.firebase.remoteconfig.v1.RemoteConfigCondition.name entries must be unique. */
 		conditions?: Array<FirebaseRemoteConfigConditionInput>;
-		/** Map of parameter group names to their descriptions and grouped parameters. A group's name is mutable but must be unique among groups in the config. The name is limited to 256 characters and intended to be human-readable. Any Unicode characters are allowed. Groups have a list of parameters which… */
+		/** Map of parameter group names to their descriptions and grouped parameters. A group's name is mutable but must be unique among groups in the config. The name is limited to 256 characters and intended to be human-readable. Any Unicode characters are allowed. */
 		parameterGroups?: Record<string, FirebaseRemoteConfigParameterGroupInput>;
 		/** Output only, except for the version description. Metadata associated with a particular version of a template. A version's description field may be specified in UpdateRemoteConfig calls. */
 		version?: FirebaseRemoteConfigVersionInput;
 		/** Map of parameter keys to their optional default values and optional conditional values. */
 		parameters?: Record<string, FirebaseRemoteConfigParameterInput>;
-		/** The ETag of the template being replaced (from the Remote Config console or a previous publish), or `*` to replace whatever is published. */
+		/** The ETag of the template being replaced (`etag` from remoteConfig.projects.getRemoteConfig), or `*` to replace whatever is published. */
 		ifMatch: string;
 	};
 	'remoteConfig.remoteConfig.downloadDefaults': {
@@ -11930,7 +11934,7 @@ export type FirebaseOperationInputs = {
 		name?: string;
 	};
 	'rules.projects.test': {
-		/** Required. Tests may either provide `source` or a `Ruleset` resource name. For tests against `source`, the resource name must refer to the project: Format: `projects/{project_id}` For tests against a `Ruleset`, this must be the `Ruleset` resource name: Format:… */
+		/** Required. Tests may either provide `source` or a `Ruleset` resource name. For tests against `source`, the resource name must refer to the project: Format: `projects/{project_id}` For tests against a `Ruleset`, this must be the `Ruleset` resource name: Format… */
 		name: string;
 		/** Required. The tests to execute against the `Source`. When `Source` is provided inline, the test cases will only be run if the `Source` is syntactically and semantically valid. Inline `TestSuite` to run. */
 		testSuite?: FirebaseTestSuiteInput;
@@ -11963,7 +11967,7 @@ export type FirebaseOperationInputs = {
 			| 'FIREBASE_RULES_EXECUTABLE_V2';
 	};
 	'rules.releases.list': {
-		/** Optional. `Release` filter. The list method supports filters with restrictions on the `Release.name`, and `Release.ruleset_name`. Example 1: A filter of 'name=prod*' might return `Release`s with names within 'projects/foo' prefixed with 'prod': Name -> Ruleset Name: * projects/foo/releases/prod… */
+		/** Optional. `Release` filter. The list method supports filters with restrictions on the `Release.name`, and `Release.ruleset_name`. */
 		filter?: string;
 		/** Optional. Page size to load. Maximum of 100. Defaults to 10. Note: `page_size` is just a hint and the service may choose to load fewer than `page_size` results due to the size of the output. To traverse all of the releases, the caller should iterate until the `page_token` on the response is empty. */
 		pageSize?: number;
@@ -12001,7 +12005,7 @@ export type FirebaseOperationInputs = {
 		pageToken?: string;
 		/** Optional. Page size to load. Maximum of 100. Defaults to 10. Note: `page_size` is just a hint and the service may choose to load less than `page_size` due to the size of the output. To traverse all of the releases, caller should iterate until the `page_token` is empty. */
 		pageSize?: number;
-		/** Optional. `Ruleset` filter. The list method supports filters with restrictions on `Ruleset.name`. Filters on `Ruleset.create_time` should use the `date` function which parses strings that conform to the RFC 3339 date/time specifications. Example: `create_time > date("2017-01-01T00:00:00Z") AND… */
+		/** Optional. `Ruleset` filter. The list method supports filters with restrictions on `Ruleset.name`. Filters on `Ruleset.create_time` should use the `date` function which parses strings that conform to the RFC 3339 date/time specifications. */
 		filter?: string;
 		/** Required. Resource name for the project. Format: `projects/{project_id}` Format: `projects/<id>`. */
 		name: string;
@@ -12093,7 +12097,7 @@ export type FirebaseOperationInputs = {
 			/** The list of regional locations in which data is placed. */
 			dataLocations?: Array<string>;
 		};
-		/** The default value for event-based hold on newly created objects in this bucket. Event-based hold is a way to retain objects indefinitely until an event occurs, signified by the hold's release. After being released, such objects will be subject to bucket-level retention (if any). One sample use… */
+		/** The default value for event-based hold on newly created objects in this bucket. Event-based hold is a way to retain objects indefinitely until an event occurs, signified by the hold's release. After being released, such objects will be subject to bucket-level retention (if any). */
 		defaultEventBasedHold?: boolean;
 		/** Default access controls to apply to new objects when no ACL is provided. */
 		defaultObjectAcl?: Array<FirebaseObjectAccessControlInput>;
@@ -12132,7 +12136,7 @@ export type FirebaseOperationInputs = {
 		};
 		/** The bucket's IAM configuration. */
 		iamConfiguration?: {
-			/** The bucket's uniform bucket-level access configuration. The feature was formerly known as Bucket Policy Only. For backward compatibility, this field will be populated with identical information as the uniformBucketLevelAccess field. We recommend using the uniformBucketLevelAccess field to enable… */
+			/** The bucket's uniform bucket-level access configuration. The feature was formerly known as Bucket Policy Only. For backward compatibility, this field will be populated with identical information as the uniformBucketLevelAccess field. */
 			bucketPolicyOnly?: {
 				/** If set, access is controlled only by bucket-level or above IAM policies. */
 				enabled?: boolean;
@@ -12197,11 +12201,11 @@ export type FirebaseOperationInputs = {
 					customTimeBefore?: string;
 					/** Number of days elapsed since the user-specified timestamp set on an object. The condition is satisfied if the days elapsed is at least this number. If no custom timestamp is specified on an object, the condition does not apply. */
 					daysSinceCustomTime?: number;
-					/** Number of days elapsed since the noncurrent timestamp of an object. The condition is satisfied if the days elapsed is at least this number. This condition is relevant only for versioned objects. The value of the field must be a nonnegative integer. If it's zero, the object version will become… */
+					/** Number of days elapsed since the noncurrent timestamp of an object. The condition is satisfied if the days elapsed is at least this number. This condition is relevant only for versioned objects. The value of the field must be a nonnegative integer. */
 					daysSinceNoncurrentTime?: number;
 					/** Relevant only for versioned objects. If the value is true, this condition matches live objects; if the value is false, it matches archived objects. */
 					isLive?: boolean;
-					/** A regular expression that satisfies the RE2 syntax. This condition is satisfied when the name of the object matches the RE2 pattern. Note: This feature is currently in the "Early Access" launch stage and is only available to a whitelisted set of users; that means that this feature may be changed… */
+					/** A regular expression that satisfies the RE2 syntax. This condition is satisfied when the name of the object matches the RE2 pattern. */
 					matchesPattern?: string;
 					/** List of object name prefixes. This condition will be satisfied when at least one of the prefixes exactly matches the beginning of the object name. */
 					matchesPrefix?: Array<string>;
@@ -12257,7 +12261,7 @@ export type FirebaseOperationInputs = {
 		};
 		/** The project number of the project the bucket belongs to. */
 		projectNumber?: string | number;
-		/** The bucket's retention policy. The retention policy enforces a minimum retention time for all objects contained in the bucket, based on their creation time. Any attempt to overwrite or delete objects younger than the retention period will result in a PERMISSION_DENIED error. An unlocked… */
+		/** The bucket's retention policy. The retention policy enforces a minimum retention time for all objects contained in the bucket, based on their creation time. Any attempt to overwrite or delete objects younger than the retention period will result in a PERMISSION_DENIED error. */
 		retentionPolicy?: {
 			/** Server-determined value that indicates the time from which policy was enforced and effective. This value is in RFC 3339 format. */
 			effectiveTime?: string;
@@ -12289,7 +12293,7 @@ export type FirebaseOperationInputs = {
 				effectiveTime?: string;
 			};
 		};
-		/** The bucket's default storage class, used whenever no storageClass is specified for a newly-created object. This defines how objects in the bucket are stored and determines the SLA and the cost of storage. Values include MULTI_REGIONAL, REGIONAL, STANDARD, NEARLINE, COLDLINE, ARCHIVE, and… */
+		/** The bucket's default storage class, used whenever no storageClass is specified for a newly-created object. This defines how objects in the bucket are stored and determines the SLA and the cost of storage. */
 		storageClass?: string;
 		/** The creation time of the bucket in RFC 3339 format. */
 		timeCreated?: string;
@@ -12423,7 +12427,7 @@ export type FirebaseOperationInputs = {
 			/** The list of regional locations in which data is placed. */
 			dataLocations?: Array<string>;
 		};
-		/** The default value for event-based hold on newly created objects in this bucket. Event-based hold is a way to retain objects indefinitely until an event occurs, signified by the hold's release. After being released, such objects will be subject to bucket-level retention (if any). One sample use… */
+		/** The default value for event-based hold on newly created objects in this bucket. Event-based hold is a way to retain objects indefinitely until an event occurs, signified by the hold's release. After being released, such objects will be subject to bucket-level retention (if any). */
 		defaultEventBasedHold?: boolean;
 		/** Default access controls to apply to new objects when no ACL is provided. */
 		defaultObjectAcl?: Array<FirebaseObjectAccessControlInput>;
@@ -12462,7 +12466,7 @@ export type FirebaseOperationInputs = {
 		};
 		/** The bucket's IAM configuration. */
 		iamConfiguration?: {
-			/** The bucket's uniform bucket-level access configuration. The feature was formerly known as Bucket Policy Only. For backward compatibility, this field will be populated with identical information as the uniformBucketLevelAccess field. We recommend using the uniformBucketLevelAccess field to enable… */
+			/** The bucket's uniform bucket-level access configuration. The feature was formerly known as Bucket Policy Only. For backward compatibility, this field will be populated with identical information as the uniformBucketLevelAccess field. */
 			bucketPolicyOnly?: {
 				/** If set, access is controlled only by bucket-level or above IAM policies. */
 				enabled?: boolean;
@@ -12527,11 +12531,11 @@ export type FirebaseOperationInputs = {
 					customTimeBefore?: string;
 					/** Number of days elapsed since the user-specified timestamp set on an object. The condition is satisfied if the days elapsed is at least this number. If no custom timestamp is specified on an object, the condition does not apply. */
 					daysSinceCustomTime?: number;
-					/** Number of days elapsed since the noncurrent timestamp of an object. The condition is satisfied if the days elapsed is at least this number. This condition is relevant only for versioned objects. The value of the field must be a nonnegative integer. If it's zero, the object version will become… */
+					/** Number of days elapsed since the noncurrent timestamp of an object. The condition is satisfied if the days elapsed is at least this number. This condition is relevant only for versioned objects. The value of the field must be a nonnegative integer. */
 					daysSinceNoncurrentTime?: number;
 					/** Relevant only for versioned objects. If the value is true, this condition matches live objects; if the value is false, it matches archived objects. */
 					isLive?: boolean;
-					/** A regular expression that satisfies the RE2 syntax. This condition is satisfied when the name of the object matches the RE2 pattern. Note: This feature is currently in the "Early Access" launch stage and is only available to a whitelisted set of users; that means that this feature may be changed… */
+					/** A regular expression that satisfies the RE2 syntax. This condition is satisfied when the name of the object matches the RE2 pattern. */
 					matchesPattern?: string;
 					/** List of object name prefixes. This condition will be satisfied when at least one of the prefixes exactly matches the beginning of the object name. */
 					matchesPrefix?: Array<string>;
@@ -12587,7 +12591,7 @@ export type FirebaseOperationInputs = {
 		};
 		/** The project number of the project the bucket belongs to. */
 		projectNumber?: string | number;
-		/** The bucket's retention policy. The retention policy enforces a minimum retention time for all objects contained in the bucket, based on their creation time. Any attempt to overwrite or delete objects younger than the retention period will result in a PERMISSION_DENIED error. An unlocked… */
+		/** The bucket's retention policy. The retention policy enforces a minimum retention time for all objects contained in the bucket, based on their creation time. Any attempt to overwrite or delete objects younger than the retention period will result in a PERMISSION_DENIED error. */
 		retentionPolicy?: {
 			/** Server-determined value that indicates the time from which policy was enforced and effective. This value is in RFC 3339 format. */
 			effectiveTime?: string;
@@ -12619,7 +12623,7 @@ export type FirebaseOperationInputs = {
 				effectiveTime?: string;
 			};
 		};
-		/** The bucket's default storage class, used whenever no storageClass is specified for a newly-created object. This defines how objects in the bucket are stored and determines the SLA and the cost of storage. Values include MULTI_REGIONAL, REGIONAL, STANDARD, NEARLINE, COLDLINE, ARCHIVE, and… */
+		/** The bucket's default storage class, used whenever no storageClass is specified for a newly-created object. This defines how objects in the bucket are stored and determines the SLA and the cost of storage. */
 		storageClass?: string;
 		/** The creation time of the bucket in RFC 3339 format. */
 		timeCreated?: string;
@@ -12680,16 +12684,16 @@ export type FirebaseOperationInputs = {
 		bindings?: Array<{
 			/** The condition that is associated with this binding. NOTE: an unsatisfied condition will not allow user access via current binding. Different bindings, including their conditions, are examined independently. */
 			condition?: FirebaseExprInput;
-			/** A collection of identifiers for members who may assume the provided role. Recognized identifiers are as follows: - allUsers - A special identifier that represents anyone on the internet; with or without a Google account. - allAuthenticatedUsers - A special identifier that represents anyone who… */
+			/** A collection of identifiers for members who may assume the provided role. Recognized identifiers are as follows: - allUsers - A special identifier that represents anyone on the internet; with or without a Google account. */
 			members?: Array<string>;
-			/** The role to which members belong. Two types of roles are supported: new IAM roles, which grant permissions that do not map directly to those provided by ACLs, and legacy IAM roles, which do map directly to ACL permissions. All roles are of the format roles/storage.specificRole. The new IAM roles… */
+			/** The role to which members belong. Two types of roles are supported: new IAM roles, which grant permissions that do not map directly to those provided by ACLs, and legacy IAM roles, which do map directly to ACL permissions. All roles are of the format roles/storage.specificRole. */
 			role?: string;
 		}>;
 		/** HTTP 1.1 Entity tag for the policy. (base64) */
 		etag?: string;
 		/** The kind of item this is. For policies, this is always storage#policy. This field is ignored on input. */
 		kind?: string;
-		/** The ID of the resource to which this policy belongs. Will be of the form projects/_/buckets/bucket for buckets, projects/_/buckets/bucket/objects/object for objects, and projects/_/buckets/bucket/managedFolders/managedFolder. A specific generation may be specified by appending #generationNumber… */
+		/** The ID of the resource to which this policy belongs. Will be of the form projects/_/buckets/bucket for buckets, projects/_/buckets/bucket/objects/object for objects, and projects/_/buckets/bucket/managedFolders/managedFolder. */
 		resourceId?: string;
 		/** The IAM policy format version. */
 		version?: number;
@@ -12751,7 +12755,7 @@ export type FirebaseOperationInputs = {
 			/** The list of regional locations in which data is placed. */
 			dataLocations?: Array<string>;
 		};
-		/** The default value for event-based hold on newly created objects in this bucket. Event-based hold is a way to retain objects indefinitely until an event occurs, signified by the hold's release. After being released, such objects will be subject to bucket-level retention (if any). One sample use… */
+		/** The default value for event-based hold on newly created objects in this bucket. Event-based hold is a way to retain objects indefinitely until an event occurs, signified by the hold's release. After being released, such objects will be subject to bucket-level retention (if any). */
 		defaultEventBasedHold?: boolean;
 		/** Default access controls to apply to new objects when no ACL is provided. */
 		defaultObjectAcl?: Array<FirebaseObjectAccessControlInput>;
@@ -12790,7 +12794,7 @@ export type FirebaseOperationInputs = {
 		};
 		/** The bucket's IAM configuration. */
 		iamConfiguration?: {
-			/** The bucket's uniform bucket-level access configuration. The feature was formerly known as Bucket Policy Only. For backward compatibility, this field will be populated with identical information as the uniformBucketLevelAccess field. We recommend using the uniformBucketLevelAccess field to enable… */
+			/** The bucket's uniform bucket-level access configuration. The feature was formerly known as Bucket Policy Only. For backward compatibility, this field will be populated with identical information as the uniformBucketLevelAccess field. */
 			bucketPolicyOnly?: {
 				/** If set, access is controlled only by bucket-level or above IAM policies. */
 				enabled?: boolean;
@@ -12855,11 +12859,11 @@ export type FirebaseOperationInputs = {
 					customTimeBefore?: string;
 					/** Number of days elapsed since the user-specified timestamp set on an object. The condition is satisfied if the days elapsed is at least this number. If no custom timestamp is specified on an object, the condition does not apply. */
 					daysSinceCustomTime?: number;
-					/** Number of days elapsed since the noncurrent timestamp of an object. The condition is satisfied if the days elapsed is at least this number. This condition is relevant only for versioned objects. The value of the field must be a nonnegative integer. If it's zero, the object version will become… */
+					/** Number of days elapsed since the noncurrent timestamp of an object. The condition is satisfied if the days elapsed is at least this number. This condition is relevant only for versioned objects. The value of the field must be a nonnegative integer. */
 					daysSinceNoncurrentTime?: number;
 					/** Relevant only for versioned objects. If the value is true, this condition matches live objects; if the value is false, it matches archived objects. */
 					isLive?: boolean;
-					/** A regular expression that satisfies the RE2 syntax. This condition is satisfied when the name of the object matches the RE2 pattern. Note: This feature is currently in the "Early Access" launch stage and is only available to a whitelisted set of users; that means that this feature may be changed… */
+					/** A regular expression that satisfies the RE2 syntax. This condition is satisfied when the name of the object matches the RE2 pattern. */
 					matchesPattern?: string;
 					/** List of object name prefixes. This condition will be satisfied when at least one of the prefixes exactly matches the beginning of the object name. */
 					matchesPrefix?: Array<string>;
@@ -12915,7 +12919,7 @@ export type FirebaseOperationInputs = {
 		};
 		/** The project number of the project the bucket belongs to. */
 		projectNumber?: string | number;
-		/** The bucket's retention policy. The retention policy enforces a minimum retention time for all objects contained in the bucket, based on their creation time. Any attempt to overwrite or delete objects younger than the retention period will result in a PERMISSION_DENIED error. An unlocked… */
+		/** The bucket's retention policy. The retention policy enforces a minimum retention time for all objects contained in the bucket, based on their creation time. Any attempt to overwrite or delete objects younger than the retention period will result in a PERMISSION_DENIED error. */
 		retentionPolicy?: {
 			/** Server-determined value that indicates the time from which policy was enforced and effective. This value is in RFC 3339 format. */
 			effectiveTime?: string;
@@ -12947,7 +12951,7 @@ export type FirebaseOperationInputs = {
 				effectiveTime?: string;
 			};
 		};
-		/** The bucket's default storage class, used whenever no storageClass is specified for a newly-created object. This defines how objects in the bucket are stored and determines the SLA and the cost of storage. Values include MULTI_REGIONAL, REGIONAL, STANDARD, NEARLINE, COLDLINE, ARCHIVE, and… */
+		/** The bucket's default storage class, used whenever no storageClass is specified for a newly-created object. This defines how objects in the bucket are stored and determines the SLA and the cost of storage. */
 		storageClass?: string;
 		/** The creation time of the bucket in RFC 3339 format. */
 		timeCreated?: string;
@@ -12977,7 +12981,7 @@ export type FirebaseOperationInputs = {
 	'storage.objects.bulkRestore': {
 		/** Name of the bucket in which the object resides. */
 		bucket: string;
-		/** If false (default), the restore will not overwrite live objects with the same name at the destination. This means some deleted objects may be skipped. If true, live objects will be overwritten resulting in a noncurrent object (if versioning is enabled). If versioning is not enabled, overwriting… */
+		/** If false (default), the restore will not overwrite live objects with the same name at the destination. This means some deleted objects may be skipped. If true, live objects will be overwritten resulting in a noncurrent object (if versioning is enabled). */
 		allowOverwrite?: boolean;
 		/** Restores only the objects that were soft-deleted after this time. */
 		softDeletedAfterTime?: string;
@@ -13005,7 +13009,7 @@ export type FirebaseOperationInputs = {
 			| 'private'
 			| 'projectPrivate'
 			| 'publicRead';
-		/** Specifies which object context groups to drop from the source object(s) during a compose operation. The accepted value is 'custom'. Destination contexts behave as follows: - When request body contexts are provided, they override all source contexts. - When no request body contexts are provided,… */
+		/** Specifies which object context groups to drop from the source object(s) during a compose operation. The accepted value is 'custom'. Destination contexts behave as follows: - When request body contexts are provided, they override all source contexts. */
 		dropContextGroups?: Array<string>;
 		/** Makes the operation conditional on whether the object's current generation matches the given value. Setting to 0 makes the operation succeed only if there are no live versions of the object. */
 		ifGenerationMatch?: string | number;
@@ -13104,7 +13108,7 @@ export type FirebaseOperationInputs = {
 		};
 		/** HTTP 1.1 Entity tag for the object. */
 		etag?: string;
-		/** Whether an object is under event-based hold. Event-based hold is a way to retain objects until an event occurs, which is signified by the hold's release (i.e. this value is set to false). After being released (set to false), such objects will be subject to bucket-level retention (if any). One… */
+		/** Whether an object is under event-based hold. Event-based hold is a way to retain objects until an event occurs, which is signified by the hold's release (i.e. this value is set to false). After being released (set to false), such objects will be subject to bucket-level retention (if any). */
 		eventBasedHold?: boolean;
 		/** The content generation of this object. Used for object versioning. */
 		generation?: string | number;
@@ -13118,8 +13122,8 @@ export type FirebaseOperationInputs = {
 		md5Hash?: string;
 		/** Media download link. */
 		mediaLink?: string;
-		/** User-provided metadata, in key/value pairs. */
-		metadata?: Record<string, string>;
+		/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. */
+		metadata?: Record<string, string | null>;
 		/** User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. */
 		contexts?: {
 			/** User-defined object contexts. */
@@ -13138,7 +13142,7 @@ export type FirebaseOperationInputs = {
 			/** The ID for the entity. */
 			entityId?: string;
 		};
-		/** A server-determined value that specifies the earliest time that the object's retention period expires. This value is in RFC 3339 format. Note 1: This field is not provided for objects with an active event-based hold, since retention expiration is unknown until the hold is removed. Note 2: This… */
+		/** A server-determined value that specifies the earliest time that the object's retention period expires. This value is in RFC 3339 format. Note 1: This field is not provided for objects with an active event-based hold, since retention expiration is unknown until the hold is removed. */
 		retentionExpirationTime?: string;
 		/** A collection of object level retention parameters. */
 		retention?: {
@@ -13153,7 +13157,7 @@ export type FirebaseOperationInputs = {
 		size?: string | number;
 		/** Storage class of the object. */
 		storageClass?: string;
-		/** Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites. A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. Note that unlike event-based hold,… */
+		/** Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites. A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. */
 		temporaryHold?: boolean;
 		/** The creation time of the object in RFC 3339 format. */
 		timeCreated?: string;
@@ -13167,7 +13171,7 @@ export type FirebaseOperationInputs = {
 		hardDeleteTime?: string;
 		/** The time at which the object's storage class was last changed. When the object is initially created, it will be set to timeCreated. */
 		timeStorageClassUpdated?: string;
-		/** The modification time of the object metadata in RFC 3339 format. Set initially to object creation time and then updated whenever any metadata of the object changes. This includes changes made by a requester, such as modifying custom metadata, as well as changes made by Cloud Storage on behalf of… */
+		/** The modification time of the object metadata in RFC 3339 format. Set initially to object creation time and then updated whenever any metadata of the object changes. */
 		updated?: string;
 		/** Information about the object's availability in Rapid Cache Ultra (RCU) zonal caches. This field will only populate once the object is loaded into the cache. */
 		zonalAvailabilityInfo?: {
@@ -13214,7 +13218,7 @@ export type FirebaseOperationInputs = {
 		userProject?: string;
 		/** If true, only soft-deleted object versions will be listed. The default is false. For more information, see [Soft Delete](https://cloud.google.com/storage/docs/soft-delete). */
 		softDeleted?: boolean;
-		/** Restore token used to differentiate soft-deleted objects with the same name and generation. Only applicable for hierarchical namespace buckets and if softDeleted is set to true. This parameter is optional, and is only required in the rare case when there are multiple soft-deleted objects with… */
+		/** Restore token used to differentiate soft-deleted objects with the same name and generation. Only applicable for hierarchical namespace buckets and if softDeleted is set to true. */
 		restoreToken?: string;
 	};
 	'storage.objects.get': {
@@ -13238,7 +13242,7 @@ export type FirebaseOperationInputs = {
 		userProject?: string;
 		/** If true, only soft-deleted object versions will be listed. The default is false. For more information, see [Soft Delete](https://cloud.google.com/storage/docs/soft-delete). */
 		softDeleted?: boolean;
-		/** Restore token used to differentiate soft-deleted objects with the same name and generation. Only applicable for hierarchical namespace buckets and if softDeleted is set to true. This parameter is optional, and is only required in the rare case when there are multiple soft-deleted objects with… */
+		/** Restore token used to differentiate soft-deleted objects with the same name and generation. Only applicable for hierarchical namespace buckets and if softDeleted is set to true. */
 		restoreToken?: string;
 	};
 	'storage.objects.getIamPolicy': {
@@ -13309,7 +13313,7 @@ export type FirebaseOperationInputs = {
 		};
 		/** HTTP 1.1 Entity tag for the object. */
 		etag?: string;
-		/** Whether an object is under event-based hold. Event-based hold is a way to retain objects until an event occurs, which is signified by the hold's release (i.e. this value is set to false). After being released (set to false), such objects will be subject to bucket-level retention (if any). One… */
+		/** Whether an object is under event-based hold. Event-based hold is a way to retain objects until an event occurs, which is signified by the hold's release (i.e. this value is set to false). After being released (set to false), such objects will be subject to bucket-level retention (if any). */
 		eventBasedHold?: boolean;
 		/** The content generation of this object. Used for object versioning. */
 		generation?: string | number;
@@ -13323,8 +13327,8 @@ export type FirebaseOperationInputs = {
 		md5Hash?: string;
 		/** Media download link. */
 		mediaLink?: string;
-		/** User-provided metadata, in key/value pairs. */
-		metadata?: Record<string, string>;
+		/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. */
+		metadata?: Record<string, string | null>;
 		/** User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. */
 		contexts?: {
 			/** User-defined object contexts. */
@@ -13343,7 +13347,7 @@ export type FirebaseOperationInputs = {
 			/** The ID for the entity. */
 			entityId?: string;
 		};
-		/** A server-determined value that specifies the earliest time that the object's retention period expires. This value is in RFC 3339 format. Note 1: This field is not provided for objects with an active event-based hold, since retention expiration is unknown until the hold is removed. Note 2: This… */
+		/** A server-determined value that specifies the earliest time that the object's retention period expires. This value is in RFC 3339 format. Note 1: This field is not provided for objects with an active event-based hold, since retention expiration is unknown until the hold is removed. */
 		retentionExpirationTime?: string;
 		/** A collection of object level retention parameters. */
 		retention?: {
@@ -13358,7 +13362,7 @@ export type FirebaseOperationInputs = {
 		size?: string | number;
 		/** Storage class of the object. */
 		storageClass?: string;
-		/** Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites. A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. Note that unlike event-based hold,… */
+		/** Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites. A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. */
 		temporaryHold?: boolean;
 		/** The creation time of the object in RFC 3339 format. */
 		timeCreated?: string;
@@ -13372,7 +13376,7 @@ export type FirebaseOperationInputs = {
 		hardDeleteTime?: string;
 		/** The time at which the object's storage class was last changed. When the object is initially created, it will be set to timeCreated. */
 		timeStorageClassUpdated?: string;
-		/** The modification time of the object metadata in RFC 3339 format. Set initially to object creation time and then updated whenever any metadata of the object changes. This includes changes made by a requester, such as modifying custom metadata, as well as changes made by Cloud Storage on behalf of… */
+		/** The modification time of the object metadata in RFC 3339 format. Set initially to object creation time and then updated whenever any metadata of the object changes. */
 		updated?: string;
 		/** Information about the object's availability in Rapid Cache Ultra (RCU) zonal caches. This field will only populate once the object is loaded into the cache. */
 		zonalAvailabilityInfo?: {
@@ -13385,7 +13389,7 @@ export type FirebaseOperationInputs = {
 	'storage.objects.list': {
 		/** Name of the bucket in which to look for objects. */
 		bucket: string;
-		/** Returns results in a directory-like mode. items will contain only objects whose names, aside from the prefix, do not contain delimiter. Objects whose names, aside from the prefix, contain delimiter will have their name, truncated after the delimiter, returned in prefixes. Duplicate prefixes are… */
+		/** Returns results in a directory-like mode. items will contain only objects whose names, aside from the prefix, do not contain delimiter. Objects whose names, aside from the prefix, contain delimiter will have their name, truncated after the delimiter, returned in prefixes. */
 		delimiter?: string;
 		/** Filter results to objects whose names are lexicographically before endOffset. If startOffset is also set, the objects listed will have names between startOffset (inclusive) and endOffset (exclusive). */
 		endOffset?: string;
@@ -13429,9 +13433,9 @@ export type FirebaseOperationInputs = {
 		ifSourceMetagenerationMatch?: string | number;
 		/** Makes the operation conditional on whether the source object's current metageneration does not match the given value. `ifSourceMetagenerationMatch` and `ifSourceMetagenerationNotMatch` conditions are mutually exclusive: it's an error for both of them to be set in the request. */
 		ifSourceMetagenerationNotMatch?: string | number;
-		/** Makes the operation conditional on whether the destination object's current generation matches the given value. Setting to 0 makes the operation succeed only if there are no live versions of the object. `ifGenerationMatch` and `ifGenerationNotMatch` conditions are mutually exclusive: it's an… */
+		/** Makes the operation conditional on whether the destination object's current generation matches the given value. Setting to 0 makes the operation succeed only if there are no live versions of the object. */
 		ifGenerationMatch?: string | number;
-		/** Makes the operation conditional on whether the destination object's current generation does not match the given value. If no live object exists, the precondition fails. Setting to 0 makes the operation succeed only if there is a live version of the object.`ifGenerationMatch` and… */
+		/** Makes the operation conditional on whether the destination object's current generation does not match the given value. If no live object exists, the precondition fails. */
 		ifGenerationNotMatch?: string | number;
 		/** Makes the operation conditional on whether the destination object's current metageneration matches the given value. `ifMetagenerationMatch` and `ifMetagenerationNotMatch` conditions are mutually exclusive: it's an error for both of them to be set in the request. */
 		ifMetagenerationMatch?: string | number;
@@ -13500,7 +13504,7 @@ export type FirebaseOperationInputs = {
 		};
 		/** HTTP 1.1 Entity tag for the object. */
 		etag?: string;
-		/** Whether an object is under event-based hold. Event-based hold is a way to retain objects until an event occurs, which is signified by the hold's release (i.e. this value is set to false). After being released (set to false), such objects will be subject to bucket-level retention (if any). One… */
+		/** Whether an object is under event-based hold. Event-based hold is a way to retain objects until an event occurs, which is signified by the hold's release (i.e. this value is set to false). After being released (set to false), such objects will be subject to bucket-level retention (if any). */
 		eventBasedHold?: boolean;
 		/** The content generation of this object. Used for object versioning. */
 		body_generation?: string | number;
@@ -13514,8 +13518,8 @@ export type FirebaseOperationInputs = {
 		md5Hash?: string;
 		/** Media download link. */
 		mediaLink?: string;
-		/** User-provided metadata, in key/value pairs. */
-		metadata?: Record<string, string>;
+		/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. */
+		metadata?: Record<string, string | null>;
 		/** User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. */
 		contexts?: {
 			/** User-defined object contexts. */
@@ -13534,7 +13538,7 @@ export type FirebaseOperationInputs = {
 			/** The ID for the entity. */
 			entityId?: string;
 		};
-		/** A server-determined value that specifies the earliest time that the object's retention period expires. This value is in RFC 3339 format. Note 1: This field is not provided for objects with an active event-based hold, since retention expiration is unknown until the hold is removed. Note 2: This… */
+		/** A server-determined value that specifies the earliest time that the object's retention period expires. This value is in RFC 3339 format. Note 1: This field is not provided for objects with an active event-based hold, since retention expiration is unknown until the hold is removed. */
 		retentionExpirationTime?: string;
 		/** A collection of object level retention parameters. */
 		retention?: {
@@ -13549,7 +13553,7 @@ export type FirebaseOperationInputs = {
 		size?: string | number;
 		/** Storage class of the object. */
 		storageClass?: string;
-		/** Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites. A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. Note that unlike event-based hold,… */
+		/** Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites. A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. */
 		temporaryHold?: boolean;
 		/** The creation time of the object in RFC 3339 format. */
 		timeCreated?: string;
@@ -13563,7 +13567,7 @@ export type FirebaseOperationInputs = {
 		hardDeleteTime?: string;
 		/** The time at which the object's storage class was last changed. When the object is initially created, it will be set to timeCreated. */
 		timeStorageClassUpdated?: string;
-		/** The modification time of the object metadata in RFC 3339 format. Set initially to object creation time and then updated whenever any metadata of the object changes. This includes changes made by a requester, such as modifying custom metadata, as well as changes made by Cloud Storage on behalf of… */
+		/** The modification time of the object metadata in RFC 3339 format. Set initially to object creation time and then updated whenever any metadata of the object changes. */
 		updated?: string;
 		/** Information about the object's availability in Rapid Cache Ultra (RCU) zonal caches. This field will only populate once the object is loaded into the cache. */
 		zonalAvailabilityInfo?: {
@@ -13600,7 +13604,7 @@ export type FirebaseOperationInputs = {
 		destinationBucket: string;
 		/** Resource name of the Cloud KMS key, of the form projects/my-project/locations/global/keyRings/my-kr/cryptoKeys/my-key, that will be used to encrypt the object. Overrides the object metadata's kms_key_name value, if any. */
 		destinationKmsKeyName?: string;
-		/** Name of the new object. Required when the object metadata is not otherwise provided. Overrides the object metadata's name value, if any. For information about how to URL encode object names to be path safe, see [Encoding URI Path… */
+		/** Name of the new object. Required when the object metadata is not otherwise provided. Overrides the object metadata's name value, if any. */
 		destinationObject: string;
 		/** Apply a predefined set of access controls to the destination object. */
 		destinationPredefinedAcl?:
@@ -13610,7 +13614,7 @@ export type FirebaseOperationInputs = {
 			| 'private'
 			| 'projectPrivate'
 			| 'publicRead';
-		/** Specifies which object context groups to drop from the source object during a copy operation. The accepted value is 'custom'. Destination contexts behave as follows: - When request body contexts are provided, they override all source contexts. - When no request body contexts are provided, source… */
+		/** Specifies which object context groups to drop from the source object during a copy operation. The accepted value is 'custom'. Destination contexts behave as follows: - When request body contexts are provided, they override all source contexts. */
 		dropContextGroups?: Array<string>;
 		/** Makes the operation conditional on whether the object's current generation matches the given value. Setting to 0 makes the operation succeed only if there are no live versions of the object. */
 		ifGenerationMatch?: string | number;
@@ -13628,11 +13632,11 @@ export type FirebaseOperationInputs = {
 		ifSourceMetagenerationMatch?: string | number;
 		/** Makes the operation conditional on whether the source object's current metageneration does not match the given value. */
 		ifSourceMetagenerationNotMatch?: string | number;
-		/** The maximum number of bytes that will be rewritten per rewrite request. Most callers shouldn't need to specify this parameter - it is primarily in place to support testing. If specified the value must be an integral multiple of 1 MiB (1048576). Also, this only applies to requests where the… */
+		/** The maximum number of bytes that will be rewritten per rewrite request. Most callers shouldn't need to specify this parameter - it is primarily in place to support testing. If specified the value must be an integral multiple of 1 MiB (1048576). */
 		maxBytesRewrittenPerCall?: string | number;
 		/** Set of properties to return. Defaults to noAcl, unless the object resource specifies the acl property, when it defaults to full. */
 		projection?: 'full' | 'noAcl';
-		/** Include this field (from the previous rewrite response) on each rewrite request after the first one, until the rewrite response 'done' flag is true. Calls that provide a rewriteToken can omit all other request fields, but if included those fields must match the values provided in the first… */
+		/** Include this field (from the previous rewrite response) on each rewrite request after the first one, until the rewrite response 'done' flag is true. */
 		rewriteToken?: string;
 		/** Name of the bucket in which to find the source object. */
 		sourceBucket: string;
@@ -13671,7 +13675,7 @@ export type FirebaseOperationInputs = {
 		};
 		/** HTTP 1.1 Entity tag for the object. */
 		etag?: string;
-		/** Whether an object is under event-based hold. Event-based hold is a way to retain objects until an event occurs, which is signified by the hold's release (i.e. this value is set to false). After being released (set to false), such objects will be subject to bucket-level retention (if any). One… */
+		/** Whether an object is under event-based hold. Event-based hold is a way to retain objects until an event occurs, which is signified by the hold's release (i.e. this value is set to false). After being released (set to false), such objects will be subject to bucket-level retention (if any). */
 		eventBasedHold?: boolean;
 		/** The content generation of this object. Used for object versioning. */
 		generation?: string | number;
@@ -13685,8 +13689,8 @@ export type FirebaseOperationInputs = {
 		md5Hash?: string;
 		/** Media download link. */
 		mediaLink?: string;
-		/** User-provided metadata, in key/value pairs. */
-		metadata?: Record<string, string>;
+		/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. */
+		metadata?: Record<string, string | null>;
 		/** User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. */
 		contexts?: {
 			/** User-defined object contexts. */
@@ -13705,7 +13709,7 @@ export type FirebaseOperationInputs = {
 			/** The ID for the entity. */
 			entityId?: string;
 		};
-		/** A server-determined value that specifies the earliest time that the object's retention period expires. This value is in RFC 3339 format. Note 1: This field is not provided for objects with an active event-based hold, since retention expiration is unknown until the hold is removed. Note 2: This… */
+		/** A server-determined value that specifies the earliest time that the object's retention period expires. This value is in RFC 3339 format. Note 1: This field is not provided for objects with an active event-based hold, since retention expiration is unknown until the hold is removed. */
 		retentionExpirationTime?: string;
 		/** A collection of object level retention parameters. */
 		retention?: {
@@ -13720,7 +13724,7 @@ export type FirebaseOperationInputs = {
 		size?: string | number;
 		/** Storage class of the object. */
 		storageClass?: string;
-		/** Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites. A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. Note that unlike event-based hold,… */
+		/** Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites. A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. */
 		temporaryHold?: boolean;
 		/** The creation time of the object in RFC 3339 format. */
 		timeCreated?: string;
@@ -13734,7 +13738,7 @@ export type FirebaseOperationInputs = {
 		hardDeleteTime?: string;
 		/** The time at which the object's storage class was last changed. When the object is initially created, it will be set to timeCreated. */
 		timeStorageClassUpdated?: string;
-		/** The modification time of the object metadata in RFC 3339 format. Set initially to object creation time and then updated whenever any metadata of the object changes. This includes changes made by a requester, such as modifying custom metadata, as well as changes made by Cloud Storage on behalf of… */
+		/** The modification time of the object metadata in RFC 3339 format. Set initially to object creation time and then updated whenever any metadata of the object changes. */
 		updated?: string;
 		/** Information about the object's availability in Rapid Cache Ultra (RCU) zonal caches. This field will only populate once the object is loaded into the cache. */
 		zonalAvailabilityInfo?: {
@@ -13755,16 +13759,16 @@ export type FirebaseOperationInputs = {
 		bindings?: Array<{
 			/** The condition that is associated with this binding. NOTE: an unsatisfied condition will not allow user access via current binding. Different bindings, including their conditions, are examined independently. */
 			condition?: FirebaseExprInput;
-			/** A collection of identifiers for members who may assume the provided role. Recognized identifiers are as follows: - allUsers - A special identifier that represents anyone on the internet; with or without a Google account. - allAuthenticatedUsers - A special identifier that represents anyone who… */
+			/** A collection of identifiers for members who may assume the provided role. Recognized identifiers are as follows: - allUsers - A special identifier that represents anyone on the internet; with or without a Google account. */
 			members?: Array<string>;
-			/** The role to which members belong. Two types of roles are supported: new IAM roles, which grant permissions that do not map directly to those provided by ACLs, and legacy IAM roles, which do map directly to ACL permissions. All roles are of the format roles/storage.specificRole. The new IAM roles… */
+			/** The role to which members belong. Two types of roles are supported: new IAM roles, which grant permissions that do not map directly to those provided by ACLs, and legacy IAM roles, which do map directly to ACL permissions. All roles are of the format roles/storage.specificRole. */
 			role?: string;
 		}>;
 		/** HTTP 1.1 Entity tag for the policy. (base64) */
 		etag?: string;
 		/** The kind of item this is. For policies, this is always storage#policy. This field is ignored on input. */
 		kind?: string;
-		/** The ID of the resource to which this policy belongs. Will be of the form projects/_/buckets/bucket for buckets, projects/_/buckets/bucket/objects/object for objects, and projects/_/buckets/bucket/managedFolders/managedFolder. A specific generation may be specified by appending #generationNumber… */
+		/** The ID of the resource to which this policy belongs. Will be of the form projects/_/buckets/bucket for buckets, projects/_/buckets/bucket/objects/object for objects, and projects/_/buckets/bucket/managedFolders/managedFolder. */
 		resourceId?: string;
 		/** The IAM policy format version. */
 		version?: number;
@@ -13839,7 +13843,7 @@ export type FirebaseOperationInputs = {
 		};
 		/** HTTP 1.1 Entity tag for the object. */
 		etag?: string;
-		/** Whether an object is under event-based hold. Event-based hold is a way to retain objects until an event occurs, which is signified by the hold's release (i.e. this value is set to false). After being released (set to false), such objects will be subject to bucket-level retention (if any). One… */
+		/** Whether an object is under event-based hold. Event-based hold is a way to retain objects until an event occurs, which is signified by the hold's release (i.e. this value is set to false). After being released (set to false), such objects will be subject to bucket-level retention (if any). */
 		eventBasedHold?: boolean;
 		/** The content generation of this object. Used for object versioning. */
 		body_generation?: string | number;
@@ -13853,8 +13857,8 @@ export type FirebaseOperationInputs = {
 		md5Hash?: string;
 		/** Media download link. */
 		mediaLink?: string;
-		/** User-provided metadata, in key/value pairs. */
-		metadata?: Record<string, string>;
+		/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. */
+		metadata?: Record<string, string | null>;
 		/** User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. */
 		contexts?: {
 			/** User-defined object contexts. */
@@ -13873,7 +13877,7 @@ export type FirebaseOperationInputs = {
 			/** The ID for the entity. */
 			entityId?: string;
 		};
-		/** A server-determined value that specifies the earliest time that the object's retention period expires. This value is in RFC 3339 format. Note 1: This field is not provided for objects with an active event-based hold, since retention expiration is unknown until the hold is removed. Note 2: This… */
+		/** A server-determined value that specifies the earliest time that the object's retention period expires. This value is in RFC 3339 format. Note 1: This field is not provided for objects with an active event-based hold, since retention expiration is unknown until the hold is removed. */
 		retentionExpirationTime?: string;
 		/** A collection of object level retention parameters. */
 		retention?: {
@@ -13888,7 +13892,7 @@ export type FirebaseOperationInputs = {
 		size?: string | number;
 		/** Storage class of the object. */
 		storageClass?: string;
-		/** Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites. A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. Note that unlike event-based hold,… */
+		/** Whether an object is under temporary hold. While this flag is set to true, the object is protected against deletion and overwrites. A common use case of this flag is regulatory investigations where objects need to be retained while the investigation is ongoing. */
 		temporaryHold?: boolean;
 		/** The creation time of the object in RFC 3339 format. */
 		timeCreated?: string;
@@ -13902,7 +13906,7 @@ export type FirebaseOperationInputs = {
 		hardDeleteTime?: string;
 		/** The time at which the object's storage class was last changed. When the object is initially created, it will be set to timeCreated. */
 		timeStorageClassUpdated?: string;
-		/** The modification time of the object metadata in RFC 3339 format. Set initially to object creation time and then updated whenever any metadata of the object changes. This includes changes made by a requester, such as modifying custom metadata, as well as changes made by Cloud Storage on behalf of… */
+		/** The modification time of the object metadata in RFC 3339 format. Set initially to object creation time and then updated whenever any metadata of the object changes. */
 		updated?: string;
 		/** Information about the object's availability in Rapid Cache Ultra (RCU) zonal caches. This field will only populate once the object is loaded into the cache. */
 		zonalAvailabilityInfo?: {
@@ -14054,10 +14058,7 @@ export type FirebaseOperationOutputs = {
 	'auth.accounts.update': FirebaseGoogleCloudIdentitytoolkitV1SetAccountInfoResponse;
 	'auth.accounts.verifyIosClient': FirebaseGoogleCloudIdentitytoolkitV1VerifyIosClientResponse;
 	'auth.getProjects': FirebaseGoogleCloudIdentitytoolkitV1GetProjectConfigResponse;
-	'auth.getPublicKeys': {
-		/** Firebase accepted the call; it answered with no body (or an empty object). */
-		success: true;
-	};
+	'auth.getPublicKeys': Record<string, string>;
 	'auth.getRecaptchaParams': FirebaseGoogleCloudIdentitytoolkitV1GetRecaptchaParamResponse;
 	'auth.getSessionCookiePublicKeys': FirebaseGoogleCloudIdentitytoolkitV1GetSessionCookiePublicKeysResponse;
 	'auth.projects.accounts.batchCreate': FirebaseGoogleCloudIdentitytoolkitV1UploadAccountResponse;
@@ -14140,8 +14141,14 @@ export type FirebaseOperationOutputs = {
 		/** The generated key. */
 		name?: string | null;
 	};
-	'database.rules.get': Record<string, FirebaseJsonValue>;
-	'database.rules.set': Record<string, FirebaseJsonValue>;
+	'database.rules.get': {
+		/** The rules: ".read", ".write", ".validate" and ".indexOn" entries, nested by path. */
+		rules?: Record<string, FirebaseJsonValue> | null;
+	};
+	'database.rules.set': {
+		/** The rules: ".read", ".write", ".validate" and ".indexOn" entries, nested by path. */
+		rules?: Record<string, FirebaseJsonValue> | null;
+	};
 	'database.set': FirebaseJsonValue;
 	'database.update': FirebaseJsonValue;
 	'databaseInstances.locations.instances.create': FirebaseDatabaseInstance;
@@ -14301,9 +14308,7 @@ export type FirebaseOperationOutputs = {
 	};
 	'management.androidApps.sha.list': FirebaseListShaCertificatesResponse;
 	'management.androidApps.undelete': FirebaseManagementOperation;
-	'management.availableLocations.list': FirebaseListAvailableLocationsResponse;
 	'management.availableProjects.list': FirebaseListAvailableProjectsResponse;
-	'management.defaultLocation.finalize': FirebaseManagementOperation;
 	'management.iosApps.create': FirebaseManagementOperation;
 	'management.iosApps.get': FirebaseIosApp;
 	'management.iosApps.getConfig': FirebaseIosAppConfig;
@@ -14352,7 +14357,7 @@ export type FirebaseOperationOutputs = {
 	'remoteConfig.namespaces.getRemoteConfig': FirebaseRemoteConfig;
 	'remoteConfig.namespaces.getServerRemoteConfig': FirebaseServerRemoteConfig;
 	'remoteConfig.namespaces.list': FirebaseListNamespacesResponse;
-	'remoteConfig.namespaces.remoteConfig.downloadDefaults': FirebaseHttpBody;
+	'remoteConfig.namespaces.remoteConfig.downloadDefaults': FileOutput;
 	'remoteConfig.namespaces.remoteConfig.listVersions': FirebaseRemoteConfigListVersionsResponse;
 	'remoteConfig.namespaces.remoteConfig.rollback': FirebaseRemoteConfig;
 	'remoteConfig.namespaces.remoteConfigConditions.create': FirebaseRemoteConfigCondition;
@@ -14389,7 +14394,7 @@ export type FirebaseOperationOutputs = {
 	'remoteConfig.namespaces.updateRemoteConfig': FirebaseRemoteConfig;
 	'remoteConfig.projects.getRemoteConfig': FirebaseRemoteConfig;
 	'remoteConfig.projects.updateRemoteConfig': FirebaseRemoteConfig;
-	'remoteConfig.remoteConfig.downloadDefaults': FirebaseHttpBody;
+	'remoteConfig.remoteConfig.downloadDefaults': FileOutput;
 	'remoteConfig.remoteConfig.listVersions': FirebaseRemoteConfigListVersionsResponse;
 	'remoteConfig.remoteConfig.rollback': FirebaseRemoteConfig;
 	'rules.projects.test': FirebaseTestRulesetResponse;

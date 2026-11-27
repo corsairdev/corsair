@@ -181,6 +181,71 @@ describe('auth', () => {
 		).rejects.toMatchObject({ name: 'AuthMissingError' });
 	});
 
+	it('keys the cached token by the private key and keeps OAuth text out of errors', async () => {
+		const other = generateKeyPairSync('rsa', {
+			modulusLength: 2048,
+			privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+			publicKeyEncoding: { type: 'spki', format: 'pem' },
+		});
+		const rotated = JSON.stringify({
+			...JSON.parse(SERVICE_ACCOUNT),
+			private_key: other.privateKey,
+		});
+		replies(
+			{ status: 200, body: { access_token: 'ya29.first', expires_in: 3600 } },
+			{ status: 200, body: { projectId: 'demo-project' } },
+			{
+				status: 400,
+				body: {
+					error: 'invalid_grant',
+					error_description:
+						'Invalid JWT for corsair@demo-project.iam.gserviceaccount.com',
+				},
+			},
+		);
+		await endpointFor('management.projects.get')(ctx(SERVICE_ACCOUNT), {
+			name: 'projects/demo-project',
+		});
+		const error = (await endpointFor('management.projects.get')(ctx(rotated), {
+			name: 'projects/demo-project',
+		}).catch((e: unknown) => e)) as Error;
+		expect(error.name).toBe('AuthMissingError');
+		expect(error.message).toContain('invalid_grant');
+		expect(error.message).not.toContain('@');
+	});
+
+	it("doesn't cache a token an exchange brings back after a clear", async () => {
+		let release: (() => void) | undefined;
+		const gate = new Promise<void>((resolve) => {
+			release = resolve;
+		});
+		jest.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
+			const target = String(input);
+			if (target.includes('oauth2')) {
+				await gate;
+				return Response.json({ access_token: 'ya29.stale', expires_in: 3600 });
+			}
+			return Response.json({ projectId: 'demo-project' });
+		});
+		const pending = endpointFor('management.projects.get')(
+			ctx(SERVICE_ACCOUNT),
+			{
+				name: 'projects/demo-project',
+			},
+		);
+		await new Promise((resolve) => setTimeout(resolve, 10));
+		clearFirebaseTokenCache();
+		release?.();
+		await pending;
+		await endpointFor('management.projects.get')(ctx(SERVICE_ACCOUNT), {
+			name: 'projects/demo-project',
+		});
+		const exchanges = (
+			globalThis.fetch as unknown as jest.Mock
+		).mock.calls.filter(([target]) => String(target).includes('oauth2'));
+		expect(exchanges).toHaveLength(2);
+	});
+
 	it('refuses a JSON key without client_email or private_key', () => {
 		expect(() => parseFirebaseKey('{"type":"service_account"}')).toThrow(
 			/client_email and private_key/,
@@ -291,6 +356,78 @@ describe('requests', () => {
 		expect(calls[0]?.method).toBe('DELETE');
 	});
 
+	it('refuses an Empty route answering with a body', async () => {
+		reply(200, { unexpected: true });
+		await expect(
+			endpointFor('firestore.databases.documents.delete')(ctx(), {
+				name: `${DOCS}/users/ada`,
+			}),
+		).rejects.toThrow(/a body where none is documented/);
+	});
+
+	it('refuses metadata next to a file, and uploads App Distribution builds raw', async () => {
+		await expect(
+			endpointFor('storage.objects.insert')(ctx(), {
+				bucket: 'demo-project.appspot.com',
+				name: 'a/b.txt',
+				metadata: { owner: 'ada' },
+				file: { base64: Buffer.from('hi').toString('base64') },
+			}),
+		).rejects.toThrow(/takes only the bytes/);
+		reply(200, { name: 'operations/upload-1' });
+		await endpointFor('appDistribution.media.upload')(ctx(), {
+			app: 'projects/123/apps/1:123:android:abc',
+			file: {
+				base64: Buffer.from('apk').toString('base64'),
+				filename: 'app-release.apk',
+			},
+		});
+		expect(url().pathname).toBe(
+			'/upload/v1/projects/123/apps/1:123:android:abc/releases:upload',
+		);
+		expect(url().searchParams.get('uploadType')).toBeNull();
+		expect(calls[0]?.headers['x-goog-upload-protocol']).toBe('raw');
+		expect(calls[0]?.headers['x-goog-upload-file-name']).toBe(
+			'app-release.apk',
+		);
+	});
+
+	it('returns the Remote Config ETag with the template, read first', async () => {
+		jest
+			.spyOn(globalThis, 'fetch')
+			.mockImplementation(async () =>
+				Response.json(
+					{ parameters: { flag: { defaultValue: { value: 'on' } } } },
+					{ headers: { etag: 'etag-123-7' } },
+				),
+			);
+		const template = (await endpointFor(
+			'remoteConfig.projects.getRemoteConfig',
+		)(ctx(), { project: 'projects/demo-project' })) as {
+			etag?: string;
+			parameters?: unknown;
+		};
+		expect(template.etag).toBe('etag-123-7');
+		expect(template.parameters).toBeDefined();
+	});
+
+	it('returns the certificates from auth.getPublicKeys and sends the Web API key', async () => {
+		reply(200, { kid1: '-----BEGIN CERTIFICATE-----' });
+		await expect(
+			endpointFor('auth.getPublicKeys')(ctx(), { apiKey: 'AIza-test' }),
+		).resolves.toEqual({ kid1: '-----BEGIN CERTIFICATE-----' });
+		expect(url().searchParams.get('key')).toBe('AIza-test');
+	});
+
+	it('keeps the emulator placeholder key away from Google hosts', async () => {
+		await expect(
+			endpointFor('management.projects.get')(
+				ctx('emulator', { auth: 'http://127.0.0.1:9099/' }),
+				{ name: 'projects/demo-project' },
+			),
+		).rejects.toMatchObject({ name: 'AuthMissingError' });
+	});
+
 	it('points a group at an emulator with Bearer owner', async () => {
 		reply(200, { localId: 'u1' });
 		await endpointFor('auth.projects.accounts.create')(
@@ -333,6 +470,25 @@ describe('realtime database', () => {
 		expect(url().searchParams.get('orderBy')).toBe('"$key"');
 		expect(url().searchParams.get('startAt')).toBe('"a"');
 		expect(url().searchParams.get('limitToFirst')).toBe('2');
+	});
+
+	it('JSON-encodes a filter string that starts with a quote, and refuses NaN', async () => {
+		reply(200, {});
+		await endpointFor('database.get')(ctx(), {
+			databaseUrl: 'https://demo-project-default-rtdb.firebaseio.com',
+			orderBy: 'status',
+			equalTo: '"draft',
+		});
+		expect(url().searchParams.get('orderBy')).toBe('"status"');
+		expect(url().searchParams.get('equalTo')).toBe('"\\"draft"');
+		await expect(
+			endpointFor('database.set')(ctx(), {
+				databaseUrl: 'https://demo-project-default-rtdb.firebaseio.com',
+				path: 'stats',
+				data: { ratio: Number.NaN },
+			}),
+		).rejects.toThrow(/not finite/);
+		expect(calls).toHaveLength(1);
 	});
 
 	it('writes null (a delete by value) and reads null back', async () => {
@@ -398,6 +554,31 @@ describe('errors', () => {
 		expect(error.url).toBe('https://firestore.googleapis.com/v1/{name}');
 		expect(JSON.stringify(error)).not.toContain('secret-person');
 		expect(JSON.stringify(error)).not.toContain('ya29.test-token');
+	});
+
+	it('scrubs the minted bearer token and keys that are not field names', async () => {
+		replies(
+			{
+				status: 200,
+				body: { access_token: 'ya29.minted-secret', expires_in: 3600 },
+			},
+			{
+				status: 400,
+				body: {
+					error: {
+						message: 'Bad token ya29.minted-secret',
+						errors: { 'ada@example.com': 'is not allowed' },
+					},
+				},
+			},
+		);
+		const error = (await endpointFor('management.projects.get')(
+			ctx(SERVICE_ACCOUNT),
+			{ name: 'projects/demo-project' },
+		).catch((e: unknown) => e)) as Error;
+		expect(error.message).not.toContain('ya29.minted-secret');
+		expect(error.message).not.toContain('ada@example.com');
+		expect(error.message).toContain('is not allowed');
 	});
 
 	it('writes messages from Google, Realtime Database and plain bodies', () => {

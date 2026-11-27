@@ -92,12 +92,15 @@ export function decodeMaybeEmpty(id: string, value: unknown): unknown {
 	if (!isBinaryResponse(value)) return value;
 	const text = new TextDecoder().decode(value.bytes);
 	if (text.trim().length === 0) return EMPTY;
+	// `unknown` because the body is untrusted until checked.
+	let parsed: unknown;
 	try {
-		return JSON.parse(text);
+		parsed = JSON.parse(text);
 	} catch {
 		// The body itself stays out of the message: it can hold private data.
 		throw new Error(`Firebase ${id} answered with a body that is not JSON`);
 	}
+	return parsed;
 }
 
 // `unknown` because the value came from core's binary transport.
@@ -113,24 +116,45 @@ function isBinaryResponse(value: unknown): value is BinaryResponse {
 /** The JSON value a Realtime Database query parameter needs (`"name"`, `5`). */
 // `unknown` because a filter value is any JSON scalar.
 function databaseQueryValue(name: string, value: unknown): unknown {
+	// The REST API reads these four as JSON: a string always gets its quotes
+	// here, so `draft` and `"draft` both mean exactly that text.
 	if (
 		name === 'orderBy' ||
 		name === 'startAt' ||
 		name === 'endAt' ||
 		name === 'equalTo'
 	) {
-		// orderBy is already a quoted key or "$key"; the others are JSON-encoded
-		// unless the caller passed a number or boolean.
-		if (typeof value === 'string' && name !== 'orderBy') {
-			return value.startsWith('"') ? value : JSON.stringify(value);
-		}
-		if (name === 'orderBy' && typeof value === 'string') {
-			return value.startsWith('"') ? value : JSON.stringify(value);
-		}
 		return JSON.stringify(value);
 	}
 	return value;
 }
+
+/**
+ * A Realtime Database write body must be JSON: NaN or Infinity would go out
+ * as null, which the database takes as a delete.
+ */
+// `unknown` because the value is any caller JSON, checked here.
+function assertDatabaseJson(value: unknown, depth = 0): void {
+	if (depth > 32) throw new Error('Firebase database data is nested too deep');
+	if (typeof value === 'number' && !Number.isFinite(value)) {
+		throw new Error(
+			'Firebase database data holds a number that is not finite (NaN or Infinity); JSON has no such value',
+		);
+	}
+	if (Array.isArray(value)) {
+		for (const item of value) assertDatabaseJson(item, depth + 1);
+	} else if (typeof value === 'object' && value !== null) {
+		for (const inner of Object.values(value)) {
+			assertDatabaseJson(inner, depth + 1);
+		}
+	}
+}
+
+/** Operations whose result also carries the ETag from the response header. */
+const ETAG_READS: ReadonlySet<string> = new Set([
+	'remoteConfig.projects.getRemoteConfig',
+	'remoteConfig.namespaces.getRemoteConfig',
+]);
 
 /** File extensions for the content types downloads come back as. */
 const EXTENSIONS: Record<string, string> = {
@@ -257,7 +281,19 @@ export function createFirebaseOperation<Id extends FirebaseOperationId>(
 			// Upload paths start at the host root (/upload/storage/v1/...).
 			base = emulated ? new URL(emulated).origin : (api?.rootUrl ?? '');
 			path = operation.uploadPath.replace(/\{\+/g, '{');
-			query.uploadType = 'media';
+			if (operation.api.startsWith('firebaseappdistribution')) {
+				// App Distribution's raw upload protocol (its upload route's docs).
+				headers['X-Goog-Upload-Protocol'] = 'raw';
+			} else {
+				query.uploadType = 'media';
+			}
+			if (Object.keys(body).length > 0) {
+				// A media upload carries only the bytes: metadata sent along would
+				// be dropped without a word, so it is refused instead.
+				throw new Error(
+					`Firebase ${id} with \`file\` takes only the bytes and the query fields; set ${Object.keys(body).join(', ')} afterwards with the matching patch operation (storage.objects.patch for an object)`,
+				);
+			}
 		}
 
 		const request: FirebaseRequest = {
@@ -283,8 +319,14 @@ export function createFirebaseOperation<Id extends FirebaseOperationId>(
 			request.body = new Blob([resolved.file], {
 				type: resolved.file.type || 'application/octet-stream',
 			});
+			if (headers['X-Goog-Upload-Protocol'] === 'raw') {
+				headers['X-Goog-Upload-File-Name'] = encodeURIComponent(
+					resolved.file.name || 'release',
+				);
+			}
 			request.timeoutMs = FIREBASE_UPLOAD_TIMEOUT_MS;
 		} else if (operation.request === 'json') {
+			if (operation.api === 'rtdb' && hasBodyRoot) assertDatabaseJson(bodyRoot);
 			request.body = hasBodyRoot ? bodyRoot : body;
 		}
 
@@ -301,10 +343,40 @@ export function createFirebaseOperation<Id extends FirebaseOperationId>(
 		} else if (operation.response === 'empty') {
 			// Google answers `{}` (google.protobuf.Empty) or nothing; bytes that
 			// aren't JSON point at something else (a proxy page) and throw.
-			decodeMaybeEmpty(id, await makeFirebaseRequest(ctx, request));
+			const decoded = decodeMaybeEmpty(
+				id,
+				await makeFirebaseRequest(ctx, request),
+			);
+			// google.protobuf.Empty is `{}`; anything else is not this route's answer.
+			if (
+				decoded !== EMPTY &&
+				!(
+					typeof decoded === 'object' &&
+					decoded !== null &&
+					!Array.isArray(decoded) &&
+					Object.keys(decoded).length === 0
+				)
+			) {
+				throw new Error(
+					`Firebase ${id} answered with a body where none is documented`,
+				);
+			}
 			response = { success: true };
 		} else {
+			// The ETag first, then the template: a publish in between makes the
+			// ETag older than the template, so publishing with it is refused,
+			// never a silent overwrite.
+			const etag = ETAG_READS.has(id)
+				? await makeFirebaseRequest(ctx, { ...request, responseHeader: 'etag' })
+				: undefined;
 			response = await makeFirebaseRequest(ctx, request);
+			if (
+				typeof etag === 'string' &&
+				typeof response === 'object' &&
+				response !== null
+			) {
+				response = { ...response, etag };
+			}
 			// Core resolves a 2xx whose JSON it can't decode as `undefined`:
 			// that is a failure, never a result.
 			if (response === undefined) {

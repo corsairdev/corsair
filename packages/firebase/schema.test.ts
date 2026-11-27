@@ -33,9 +33,9 @@ describe('firebase-manifest.json', () => {
 		).toEqual([]);
 	});
 
-	it('has 407 operations over 13 APIs plus the Realtime Database', () => {
-		expect(ids).toHaveLength(407);
-		expect(new Set(ids).size).toBe(407);
+	it('has 405 operations over 13 APIs plus the Realtime Database', () => {
+		expect(ids).toHaveLength(405);
+		expect(new Set(ids).size).toBe(405);
 		expect([...FIREBASE_OPERATION_IDS].sort()).toEqual([...ids].sort());
 		expect(Object.keys(firebaseApis).sort()).toEqual([
 			'fcm_v1',

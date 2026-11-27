@@ -1,4 +1,4 @@
-import { createSign } from 'node:crypto';
+import { createHash, createSign } from 'node:crypto';
 import { AuthMissingError } from 'corsair/core';
 import type {
 	ApiRequestOptions,
@@ -16,6 +16,8 @@ import { ApiError, request } from 'corsair/http';
  * minute before it expires).
  */
 export const FIREBASE_DEFAULT_TIMEOUT_MS = 30_000;
+/** The key the plugin uses when only emulators are configured and no key is stored. */
+export const FIREBASE_EMULATOR_KEY = 'emulator';
 export const FIREBASE_UPLOAD_TIMEOUT_MS = 120_000;
 export const FIREBASE_UPLOAD_MAX_BYTES = 500 * 1024 * 1024;
 
@@ -130,11 +132,26 @@ export function serviceAccountAssertion(
 }
 
 type CachedToken = { token: string; expiresAt: number };
+/** Tokens by service account email and a hash of its private key. */
 const tokenCache = new Map<string, CachedToken>();
+/** Bumped by every clear, so an exchange already in flight doesn't refill the cache. */
+let cacheGeneration = 0;
+/** How long the token exchange may take, body included. */
+const TOKEN_EXCHANGE_TIMEOUT_MS = 15_000;
+/** OAuth error codes that are safe to show (RFC 6749 5.2); anything else is left out. */
+const OAUTH_ERRORS = new Set([
+	'invalid_request',
+	'invalid_client',
+	'invalid_grant',
+	'unauthorized_client',
+	'unsupported_grant_type',
+	'invalid_scope',
+]);
 
 /** Clears cached access tokens (tests, or after rotating a key). */
 export function clearFirebaseTokenCache(): void {
 	tokenCache.clear();
+	cacheGeneration++;
 }
 
 /**
@@ -145,40 +162,68 @@ export function clearFirebaseTokenCache(): void {
 export async function firebaseAccessToken(key: string): Promise<string> {
 	const parsed = parseFirebaseKey(key);
 	if (parsed.kind === 'token') return parsed.token;
-	const cacheKey = parsed.account.client_email;
+	// A changed private key for the same account gets its own token.
+	const cacheKey = `${parsed.account.client_email}:${createHash('sha256')
+		.update(parsed.account.private_key, 'utf8')
+		.digest('hex')
+		.slice(0, 16)}`;
 	const cached = tokenCache.get(cacheKey);
 	if (cached && cached.expiresAt > Date.now() + 60_000) return cached.token;
-	const response = await fetch(GOOGLE_TOKEN_URL, {
-		method: 'POST',
-		headers: { 'content-type': 'application/x-www-form-urlencoded' },
-		body: new URLSearchParams({
-			grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-			assertion: serviceAccountAssertion(parsed.account),
-		}).toString(),
-	});
+	const generation = cacheGeneration;
+	let status = 0;
 	// `unknown` because the token response is untrusted JSON until checked.
-	const body = (await response.json().catch(() => ({}))) as Record<
-		string,
-		unknown
-	>;
-	if (!response.ok || typeof body.access_token !== 'string') {
-		const reason =
-			typeof body.error_description === 'string'
-				? body.error_description
-				: typeof body.error === 'string'
-					? body.error
-					: `HTTP ${response.status}`;
+	let parsedBody: unknown;
+	try {
+		const signal = AbortSignal.timeout(TOKEN_EXCHANGE_TIMEOUT_MS);
+		const response = await fetch(GOOGLE_TOKEN_URL, {
+			method: 'POST',
+			headers: { 'content-type': 'application/x-www-form-urlencoded' },
+			body: new URLSearchParams({
+				grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+				assertion: serviceAccountAssertion(parsed.account),
+			}).toString(),
+			signal,
+		});
+		status = response.status;
+		// The same signal bounds the body read.
+		parsedBody = response.ok
+			? await response.json()
+			: await response.json().catch(() => null);
+	} catch (error) {
+		if (status === 0) {
+			throw new Error(
+				`[firebase] the token exchange with Google failed or timed out (${error instanceof Error ? error.name : 'error'})`,
+			);
+		}
+		parsedBody = null;
+	}
+	// `unknown` because the token response is untrusted JSON until checked.
+	const body: Record<string, unknown> =
+		typeof parsedBody === 'object' &&
+		parsedBody !== null &&
+		!Array.isArray(parsedBody)
+			? (parsedBody as Record<string, unknown>)
+			: {};
+	if (status < 200 || status >= 300 || typeof body.access_token !== 'string') {
+		// error_description can name the account (its email): only a known
+		// OAuth error code goes in the message.
+		const code =
+			typeof body.error === 'string' && OAUTH_ERRORS.has(body.error)
+				? body.error
+				: `HTTP ${status}`;
 		throw new AuthMissingError(
 			'firebase',
 			'api_key',
-			`[firebase] Google refused the service account (${reason.slice(0, 200)})`,
+			`[firebase] Google refused the service account (${code})`,
 		);
 	}
 	const lifetime = typeof body.expires_in === 'number' ? body.expires_in : 3600;
-	tokenCache.set(cacheKey, {
-		token: body.access_token,
-		expiresAt: Date.now() + lifetime * 1000,
-	});
+	if (generation === cacheGeneration) {
+		tokenCache.set(cacheKey, {
+			token: body.access_token,
+			expiresAt: Date.now() + lifetime * 1000,
+		});
+	}
 	return body.access_token;
 }
 
@@ -264,6 +309,8 @@ export type FirebaseRequest = {
 	body?: unknown;
 	/** `binary`: the success comes back as `{ bytes, contentType }`. */
 	responseType?: 'binary';
+	/** Return this response header's value instead of the body. */
+	responseHeader?: string;
 	timeoutMs?: number;
 	/** Use the emulators' `Bearer owner` instead of a Google token. */
 	emulator?: boolean;
@@ -297,7 +344,9 @@ export async function makeFirebaseRequest(
 	ctx: FirebaseCallContext,
 	options: FirebaseRequest,
 ): Promise<unknown> {
-	if (!ctx.key && !options.emulator) {
+	// The emulator placeholder key never goes to a Google host: a group without
+	// an emulator URL still needs a real credential.
+	if ((!ctx.key || ctx.key === FIREBASE_EMULATOR_KEY) && !options.emulator) {
 		throw new AuthMissingError('firebase', 'api_key');
 	}
 	const token = options.emulator ? 'owner' : await firebaseAccessToken(ctx.key);
@@ -323,6 +372,9 @@ export async function makeFirebaseRequest(
 		body: options.body,
 		mediaType: mediaTypeFor(options.body),
 		...(options.responseType ? { responseType: options.responseType } : {}),
+		...(options.responseHeader
+			? { responseHeader: options.responseHeader }
+			: {}),
 	};
 	try {
 		return await request<unknown>(config, requestOptions, {
@@ -331,6 +383,7 @@ export async function makeFirebaseRequest(
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw withoutRequestData(error, ctx.key, {
+				token: options.emulator ? undefined : token,
 				route: `${config.BASE}/${options.path.replace(/^\/+/, '')}`,
 				query: options.query,
 				path: options.pathParameters,
@@ -363,6 +416,8 @@ export function withoutRequestData(
 	original?: {
 		/** The route template the call took (`https://.../v1/{name}`). */
 		route?: string;
+		/** The bearer token the call sent (minted from the key, so not the key itself). */
+		token?: string;
 		query?: unknown;
 		path?: unknown;
 		body?: unknown;
@@ -372,6 +427,7 @@ export function withoutRequestData(
 	// so a body that echoes it loses it too.
 	const sent = [
 		...(key ? [{ text: key, wholeWord: false }] : []),
+		...(original?.token ? [{ text: original.token, wholeWord: false }] : []),
 		...sentStrings(error.request),
 		...(original
 			? sentStrings({
@@ -415,6 +471,9 @@ export function withoutRequestData(
 	);
 }
 
+/** A field path such as `user.email` or `fields[0].name`. */
+const FIELD_NAME = /^[A-Za-z_][A-Za-z0-9_.[\]-]{0,80}$/;
+
 /**
  * Google's error body: `{ "error": { "code": 404, "message": "...", "status":
  * "NOT_FOUND" } }` (the Identity Toolkit puts a code like EMAIL_EXISTS in
@@ -447,7 +506,12 @@ export function firebaseErrorMessage(
 		: typeof fields.errors === 'object' && fields.errors !== null
 			? Object.entries(fields.errors).flatMap(([field, messages]) =>
 					(Array.isArray(messages) ? messages : [messages]).map((message) =>
-						typeof message === 'string' ? `${field} ${message}` : undefined,
+						typeof message === 'string'
+							? // A key that isn't a field name (an email, a value) stays out.
+								FIELD_NAME.test(field)
+								? `${field} ${message}`
+								: message
+							: undefined,
 					),
 				)
 			: [];

@@ -11,7 +11,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { tryGetStoredKey } from './client';
+import { FIREBASE_EMULATOR_KEY, tryGetStoredKey } from './client';
 import {
 	firebaseEndpointSchemas,
 	firebaseEndpointsNested,
@@ -142,7 +142,7 @@ export function firebase<const T extends FirebasePluginOptions>(
 				Object.keys(options.emulatorUrls).length > 0
 			) {
 				const stored = await tryGetStoredKey(() => ctx.keys?.get_api_key());
-				return stored ?? 'emulator';
+				return stored ?? FIREBASE_EMULATOR_KEY;
 			}
 			const key = await tryGetStoredKey(() => ctx.keys?.get_api_key());
 			// No key configured: AuthMissingError makes core ask the tenant to connect.

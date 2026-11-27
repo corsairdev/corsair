@@ -3,7 +3,7 @@
 # docs-examples.test.ts parses every example with its input schema.
 displayName: Firebase
 domain: firebase.google.com
-description: "Cloud Firestore documents, queries, transactions, indexes, backups and import/export; Authentication users, sign-in, tenants, providers and project config; Realtime Database data, rules and instances; Cloud Storage objects and buckets; Hosting sites, versions, releases, channels and domains; Remote Config; Cloud Messaging; App Distribution; Security Rules; App Check; and the Firebase Management API for projects and apps (407 operations)."
+description: "Cloud Firestore documents, queries, transactions, indexes, backups and import/export; Authentication users, sign-in, tenants, providers and project config; Realtime Database data, rules and instances; Cloud Storage objects and buckets; Hosting sites, versions, releases, channels and domains; Remote Config; Cloud Messaging; App Distribution; Security Rules; App Check; and the Firebase Management API for projects and apps (405 operations)."
 recommendedAuth: api_key
 overviewNote: |
   Connect with a service account's JSON key (Firebase console > Project
@@ -29,12 +29,20 @@ overviewNote: |
   `messaging.*` (FCM v1), `appDistribution.*`, `rules.*`, `appCheck.*` and
   `management.*` (projects and apps).
   - **Lists** page with `pageSize` and `pageToken`; pass the response's
-  `nextPageToken` for the next page.
+  `nextPageToken` for the next page. Cloud Storage lists (`storage.*`) take
+  `maxResults` instead of `pageSize`.
+  - **Client sign-in calls** (`auth.accounts.*`, `auth.getPublicKeys` and
+  the other top-level `auth.get*` reads) take the project's Web API key as
+  `apiKey` (Project settings > General).
+  - **Remote Config.** The get operations return the template's `etag`;
+  pass it as `ifMatch` when you publish, so a change someone published in
+  between is refused instead of overwritten.
   - **Emulators.** `emulatorUrls` in the plugin options points groups at the
   Firebase Local Emulator Suite (calls then send `Bearer owner`).
   - **Risk.** Reads (GETs and the POSTs that only read, such as
   `runQuery` and `accounts.lookup`) are `read`. Deletes, sends (FCM
-  messages, email and SMS codes, tester invitations), imports, restores
+  messages, email and SMS codes including MFA starts, tester invitations),
+  bulk document deletes, bucket retention locks, imports, restores
   and rollbacks, publishing Remote Config, rules and Hosting releases,
   writing a whole Realtime Database path (`database.set`) or its rules,
   adding Firebase or Analytics to a project and minting credentials are
@@ -53,11 +61,11 @@ examples:
     args: {"databaseUrl": "https://demo-project-default-rtdb.firebaseio.com", "path": "users/ada", "data": {"name": "Ada", "born": 1815}}
 apiExamples:
   appCheck.apps.appAttestConfig.batchGet:
-    args: {"parent": "projects/demo-project"}
+    args: {"parent": "projects/demo-project", "names": ["projects/demo-project/apps/1:1234567890:web:abc123/appAttestConfig"]}
   appCheck.apps.appAttestConfig.get:
     args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/appAttestConfig"}
   appCheck.apps.appAttestConfig.patch:
-    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/appAttestConfig"}
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/appAttestConfig", "updateMask": "displayName"}
   appCheck.apps.debugTokens.create:
     args: {"parent": "projects/demo-project/apps/1:1234567890:web:abc123"}
   appCheck.apps.debugTokens.delete:
@@ -67,13 +75,13 @@ apiExamples:
   appCheck.apps.debugTokens.list:
     args: {"parent": "projects/demo-project/apps/1:1234567890:web:abc123"}
   appCheck.apps.debugTokens.patch:
-    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/debugTokens/dt-1"}
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/debugTokens/dt-1", "updateMask": "displayName"}
   appCheck.apps.deviceCheckConfig.batchGet:
-    args: {"parent": "projects/demo-project"}
+    args: {"parent": "projects/demo-project", "names": ["projects/demo-project/apps/1:1234567890:web:abc123/deviceCheckConfig"]}
   appCheck.apps.deviceCheckConfig.get:
     args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/deviceCheckConfig"}
   appCheck.apps.deviceCheckConfig.patch:
-    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/deviceCheckConfig"}
+    args: {"updateMask": "displayName", "name": "projects/demo-project/apps/1:1234567890:web:abc123/deviceCheckConfig"}
   appCheck.apps.exchangeAppAttestAssertion:
     args: {"app": "projects/demo-project/apps/1:1234567890:web:abc123"}
   appCheck.apps.exchangeAppAttestAttestation:
@@ -97,23 +105,23 @@ apiExamples:
   appCheck.apps.mintAppCheckToken:
     args: {"app": "projects/demo-project/apps/1:1234567890:web:abc123"}
   appCheck.apps.playIntegrityConfig.batchGet:
-    args: {"parent": "projects/demo-project"}
+    args: {"parent": "projects/demo-project", "names": ["projects/demo-project/apps/1:1234567890:web:abc123/playIntegrityConfig"]}
   appCheck.apps.playIntegrityConfig.get:
     args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/playIntegrityConfig"}
   appCheck.apps.playIntegrityConfig.patch:
-    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/playIntegrityConfig"}
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/playIntegrityConfig", "updateMask": "displayName"}
   appCheck.apps.recaptchaEnterpriseConfig.batchGet:
-    args: {"parent": "projects/demo-project"}
+    args: {"parent": "projects/demo-project", "names": ["projects/demo-project/apps/1:1234567890:web:abc123/recaptchaEnterpriseConfig"]}
   appCheck.apps.recaptchaEnterpriseConfig.get:
     args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/recaptchaEnterpriseConfig"}
   appCheck.apps.recaptchaEnterpriseConfig.patch:
-    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/recaptchaEnterpriseConfig"}
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/recaptchaEnterpriseConfig", "updateMask": "displayName"}
   appCheck.apps.recaptchaV3Config.batchGet:
-    args: {"parent": "projects/demo-project"}
+    args: {"parent": "projects/demo-project", "names": ["projects/demo-project/apps/1:1234567890:web:abc123/recaptchaV3Config"]}
   appCheck.apps.recaptchaV3Config.get:
     args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/recaptchaV3Config"}
   appCheck.apps.recaptchaV3Config.patch:
-    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/recaptchaV3Config"}
+    args: {"updateMask": "displayName", "name": "projects/demo-project/apps/1:1234567890:web:abc123/recaptchaV3Config"}
   appCheck.jwks.get:
     args: {"name": "jwks"}
   appCheck.oauthClients.exchangeAppAttestAssertion:
@@ -131,7 +139,7 @@ apiExamples:
   appCheck.services.list:
     args: {"parent": "projects/demo-project"}
   appCheck.services.patch:
-    args: {"name": "projects/demo-project/services/firestore.googleapis.com"}
+    args: {"name": "projects/demo-project/services/firestore.googleapis.com", "updateMask": "displayName"}
   appCheck.services.resourcePolicies.batchUpdate:
     args: {"parent": "projects/demo-project/services/firestore.googleapis.com"}
   appCheck.services.resourcePolicies.create:
@@ -143,7 +151,7 @@ apiExamples:
   appCheck.services.resourcePolicies.list:
     args: {"parent": "projects/demo-project/services/firestore.googleapis.com"}
   appCheck.services.resourcePolicies.patch:
-    args: {"name": "projects/demo-project/services/firestore.googleapis.com/resourcePolicies/rp-1"}
+    args: {"name": "projects/demo-project/services/firestore.googleapis.com/resourcePolicies/rp-1", "updateMask": "displayName"}
   appDistribution.apps.getAabInfo:
     args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/aabInfo"}
   appDistribution.apps.releases.batchDelete:
@@ -219,7 +227,7 @@ apiExamples:
   auth.accounts.signInWithIdp:
     args: {}
   auth.accounts.signInWithPassword:
-    args: {}
+    args: {"apiKey": "AIzaSyExampleWebApiKey", "email": "ada@example.com", "password": "correct-horse-battery-staple", "returnSecureToken": true}
   auth.accounts.signInWithPhoneNumber:
     args: {}
   auth.accounts.signUp:
@@ -379,11 +387,11 @@ apiExamples:
   authAdmin.tenants.testIamPermissions:
     args: {"resource": "projects/demo-project/tenants/tenant-1"}
   database.delete:
-    args: {"databaseUrl": "https://demo-project-default-rtdb.firebaseio.com"}
+    args: {"databaseUrl": "https://demo-project-default-rtdb.firebaseio.com", "path": "users/ada"}
   database.get:
     args: {"databaseUrl": "https://demo-project-default-rtdb.firebaseio.com", "path": "users", "orderBy": "$key", "limitToFirst": 10}
   database.push:
-    args: {"databaseUrl": "https://demo-project-default-rtdb.firebaseio.com", "data": "example"}
+    args: {"databaseUrl": "https://demo-project-default-rtdb.firebaseio.com", "path": "messages", "data": {"text": "Hello", "from": "ada"}}
   database.rules.get:
     args: {"databaseUrl": "https://demo-project-default-rtdb.firebaseio.com"}
   database.rules.set:
@@ -391,7 +399,7 @@ apiExamples:
   database.set:
     args: {"databaseUrl": "https://demo-project-default-rtdb.firebaseio.com", "path": "users/ada", "data": {"name": "Ada", "born": 1815}}
   database.update:
-    args: {"databaseUrl": "https://demo-project-default-rtdb.firebaseio.com", "data": "example"}
+    args: {"databaseUrl": "https://demo-project-default-rtdb.firebaseio.com", "path": "users/ada", "data": {"born": 1815, "title": "Countess of Lovelace"}}
   databaseInstances.locations.instances.create:
     args: {"parent": "projects/demo-project/locations/us-central1"}
   databaseInstances.locations.instances.delete:
@@ -417,7 +425,7 @@ apiExamples:
   firestore.databases.backupSchedules.patch:
     args: {"name": "projects/demo-project/databases/(default)/backupSchedules/schedule-1"}
   firestore.databases.bulkDeleteDocuments:
-    args: {"name": "projects/demo-project/databases/(default)"}
+    args: {"name": "projects/demo-project/databases/(default)", "collectionIds": ["scratch"], "namespaceIds": [""]}
   firestore.databases.changeStreams.create:
     args: {"parent": "projects/demo-project/databases/(default)"}
   firestore.databases.changeStreams.delete:
@@ -469,7 +477,7 @@ apiExamples:
   firestore.databases.documents.listDocuments:
     args: {"collectionId": "users", "parent": "projects/demo-project/databases/(default)/documents"}
   firestore.databases.documents.partitionQuery:
-    args: {"parent": "projects/demo-project/databases/(default)/documents/users/ada"}
+    args: {"parent": "projects/demo-project/databases/(default)/documents", "structuredQuery": {"from": [{"collectionId": "users", "allDescendants": true}], "orderBy": [{"field": {"fieldPath": "__name__"}, "direction": "ASCENDING"}]}, "partitionCount": "4"}
   firestore.databases.documents.patch:
     args: {"name": "projects/demo-project/databases/(default)/documents/users/ada"}
   firestore.databases.documents.rollback:
@@ -622,12 +630,8 @@ apiExamples:
     args: {"parent": "projects/demo-project/androidApps/1:1234567890:android:abc123"}
   management.androidApps.undelete:
     args: {"name": "projects/demo-project/androidApps/1:1234567890:android:abc123"}
-  management.availableLocations.list:
-    args: {"parent": "projects/demo-project"}
   management.availableProjects.list:
     args: {}
-  management.defaultLocation.finalize:
-    args: {"parent": "projects/demo-project"}
   management.iosApps.create:
     args: {"parent": "projects/demo-project"}
   management.iosApps.get:
@@ -751,7 +755,7 @@ apiExamples:
   remoteConfig.namespaces.updateConditionOrder:
     args: {"name": "projects/demo-project/namespaces/firebase/conditionOrder"}
   remoteConfig.namespaces.updateRemoteConfig:
-    args: {"name": "projects/demo-project/namespaces/firebase/remoteConfig"}
+    args: {"name": "projects/demo-project/namespaces/firebase/remoteConfig", "ifMatch": "example"}
   remoteConfig.projects.getRemoteConfig:
     args: {"project": "projects/demo-project"}
   remoteConfig.projects.updateRemoteConfig:

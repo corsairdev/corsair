@@ -410,7 +410,7 @@ export const FirebaseEmptyResponseSchema = z
 	})
 	.strict();
 
-// Built on first use, one operation at a time: converting all 407 operations at
+// Built on first use, one operation at a time: converting all 405 operations at
 // import would build every response model for an instance that may call two.
 const definitionCache = new Map<string, z.ZodType>();
 // `unknown` is necessary because each cached request schema has its own fields.
