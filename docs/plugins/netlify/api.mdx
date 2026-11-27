@@ -786,6 +786,7 @@ Record<string, {
 | `prerender` | `string \| null` | No | — |
 | `functions_region` | `string \| null` | No | — |
 | `prevent_non_git_prod_deploys` | `boolean \| null` | No | — |
+| `identity_instance_id` | `string \| null` | No | The site's Netlify Identity instance, when Identity is on (pass it to sites.identity.users.*). |
 
 <AccordionGroup>
 <Accordion title="published_deploy full type">
@@ -1029,7 +1030,8 @@ await corsair.netlify.api.accounts.sites.list({ account_slug: 'acme' });
   build_image?: string | null,
   prerender?: string | null,
   functions_region?: string | null,
-  prevent_non_git_prod_deploys?: boolean | null
+  prevent_non_git_prod_deploys?: boolean | null,
+  identity_instance_id?: string | null
 }[]
 ```
 </Accordion>
@@ -3248,7 +3250,7 @@ string | {
 
 `deploys.uploadFile`
 
-Upload one file a deploy listed as required: `path` is the file path in the site (`index.html`, `assets/app.js`), the bytes are the body
+Upload one file a deploy listed as required: `path` is the file path in the site (`index.html`, `assets/app.js`), the bytes are the body. Netlify processes the deploy once every required file and function is in
 
 **Risk:** `write`
 
@@ -3313,8 +3315,9 @@ Upload one function bundle (a zip) a deploy listed as required, by function name
 ```ts
 await corsair.netlify.api.deploys.uploadFunction({
 	deploy_id: '6566a2a8c0b7f6005d3a1f22',
-	name: 'example-site',
-	file: { base64: 'PGgxPkhlbGxvPC9oMT4=', filename: 'index.html', contentType: 'text/html' },
+	name: 'hello',
+	runtime: 'js',
+	file: { base64: 'UEsDBBQAAAAAAAAAe10jwYkZMgAAADIAAAAJAAAAaGVsbG8ubWpzZXhwb3J0IGRlZmF1bHQgYXN5bmMgKCkgPT4gbmV3IFJlc3BvbnNlKCJoZWxsbyIpOwpQSwECFAMUAAAAAAAAAHtdI8GJGTIAAAAyAAAACQAAAAAAAAAAAAAAgAEAAAAAaGVsbG8ubWpzUEsFBgAAAAABAAEANwAAAFkAAAAAAA==', filename: 'hello.zip', contentType: 'application/zip' },
 });
 ```
 
@@ -4287,12 +4290,18 @@ await corsair.netlify.api.env.setValue({
 
 `env.update`
 
-Update an environment variable: updates an existing environment variable and all of its values
+Replace an environment variable: its scopes, secret flag and every value (values left out are removed). Pass `new_key` to rename it
 
 **Risk:** `write`
 
 ```ts
-await corsair.netlify.api.env.update({ account_id: '5f3e9c1b7a2d4e0012ab34cd', key: 'API_URL' });
+await corsair.netlify.api.env.update({
+	account_id: '5f3e9c1b7a2d4e0012ab34cd',
+	key: 'API_URL',
+	site_id: '5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17',
+	new_key: 'API_BASE_URL',
+	values: [{ value: 'https://api.example.com', context: 'all' }],
+});
 ```
 
 **Input**
@@ -4302,6 +4311,7 @@ await corsair.netlify.api.env.update({ account_id: '5f3e9c1b7a2d4e0012ab34cd', k
 | `account_id` | `string` | Yes | Scope response to account_id |
 | `key` | `string` | Yes | The existing environment variable key name (case-sensitive) |
 | `site_id` | `string` | No | If provided, update an environment variable set on this site |
+| `new_key` | `string` | No | A new name for the variable; leave it out to keep `key`. |
 | `scopes` | `(builds \| functions \| runtime \| post-processing)[]` | No | The scopes that this environment variable is set to (Pro plans and above) |
 | `values` | `object[]` | No | — |
 | `is_secret` | `boolean` | No | Secret values are only readable by code running on Netlify's systems. With secrets, only the local development context values are readable from the UI, API, and CLI. By default, environment variable values are not secret. |
@@ -6049,6 +6059,7 @@ Record<string, {
 | `prerender` | `string \| null` | No | — |
 | `functions_region` | `string \| null` | No | — |
 | `prevent_non_git_prod_deploys` | `boolean \| null` | No | — |
+| `identity_instance_id` | `string \| null` | No | The site's Netlify Identity instance, when Identity is on (pass it to sites.identity.users.*). |
 
 <AccordionGroup>
 <Accordion title="published_deploy full type">
@@ -6978,7 +6989,7 @@ await corsair.netlify.api.sites.deployedBranches.list({ site_id: '5b2f8a51-7c1e-
 
 `sites.deploys.create`
 
-Create a deploy from a file digest (`files`: path -&gt; SHA1) and function digests. Netlify answers with `required` (the SHA1s it still needs); upload each with deploys.uploadFile, and the deploy goes live when the last one lands
+Create a deploy from a file digest (`files`: path -&gt; SHA1) and function digests, or from one `zip` of the site. Netlify answers with `required` and `required_functions` (what it still needs); upload each with deploys.uploadFile and deploys.uploadFunction, then poll deploys.get until `state` is `ready`
 
 **Risk:** `write`
 
@@ -7002,7 +7013,7 @@ await corsair.netlify.api.sites.deploys.create({
 | `latest-published` | `boolean` | No | — |
 | `title` | `string` | No | — |
 | `files` | `object` | No | A hash mapping file paths to SHA1 digests of the file contents. |
-| `zip` | `string \| object \| custom` | No | A zip file containing the site files to deploy. Alternative to 'files'. To use this field, set Content-Type to 'application/json' and include the zip content here. Alternatively, you can set Content-Type to 'application/zip' and send the zip as the raw request body (not as JSON). |
+| `zip` | `string \| object \| custom` | No | A zip of the site files, sent as the whole request body (Content-Type application/zip) instead of a `files` digest; the other body fields are then left out. |
 | `draft` | `boolean` | No | — |
 | `async` | `boolean` | No | — |
 | `functions` | `object` | No | — |
@@ -7553,11 +7564,7 @@ Update a deploy
 **Risk:** `write`
 
 ```ts
-await corsair.netlify.api.sites.deploys.update({
-	site_id: '5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17',
-	deploy_id: '6566a2a8c0b7f6005d3a1f22',
-	zip: { base64: 'PGgxPkhlbGxvPC9oMT4=', filename: 'index.html', contentType: 'text/html' },
-});
+await corsair.netlify.api.sites.deploys.update({ site_id: '5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17', deploy_id: '6566a2a8c0b7f6005d3a1f22' });
 ```
 
 **Input**
@@ -7568,7 +7575,7 @@ await corsair.netlify.api.sites.deploys.update({
 | `deploy_id` | `string` | Yes | — |
 | `commit_ref` | `string` | No | — |
 | `files` | `object` | No | A hash mapping file paths to SHA1 digests of the file contents. |
-| `zip` | `string \| object \| custom` | No | A zip file containing the site files to deploy. Alternative to 'files'. To use this field, set Content-Type to 'application/json' and include the zip content here. Alternatively, you can set Content-Type to 'application/zip' and send the zip as the raw request body (not as JSON). |
+| `zip` | `string \| object \| custom` | No | A zip of the site files, sent as the whole request body (Content-Type application/zip) instead of a `files` digest; the other body fields are then left out. |
 | `draft` | `boolean` | No | — |
 | `async` | `boolean` | No | — |
 | `functions` | `object` | No | — |
@@ -8590,7 +8597,25 @@ await corsair.netlify.api.sites.functions.list({ site_id: '5b2f8a51-7c1e-4d8a-9f
 
 
 
-**Output:** `any`
+**Output:** `object[] \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  branch?: string | null,
+  created_at?: string | null,
+  functions?: {
+  }[] | null,
+  id?: string | null,
+  log_type?: string | null,
+  provider?: string | null
+}[] | {
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -8657,6 +8682,7 @@ await corsair.netlify.api.sites.get({ site_id: '5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a
 | `prerender` | `string \| null` | No | — |
 | `functions_region` | `string \| null` | No | — |
 | `prevent_non_git_prod_deploys` | `boolean \| null` | No | — |
+| `identity_instance_id` | `string \| null` | No | The site's Netlify Identity instance, when Identity is on (pass it to sites.identity.users.*). |
 
 <AccordionGroup>
 <Accordion title="published_deploy full type">
@@ -9030,7 +9056,8 @@ await corsair.netlify.api.sites.list({ filter: 'owner', per_page: 20 });
   build_image?: string | null,
   prerender?: string | null,
   functions_region?: string | null,
-  prevent_non_git_prod_deploys?: boolean | null
+  prevent_non_git_prod_deploys?: boolean | null,
+  identity_instance_id?: string | null
 }[]
 ```
 </Accordion>
@@ -9069,12 +9096,15 @@ await corsair.netlify.api.sites.metadata.get({ site_id: '5b2f8a51-7c1e-4d8a-9f43
 
 `sites.metadata.update`
 
-Update a site's metadata
+Replace the site's metadata with the `metadata` object (`{}` clears it)
 
 **Risk:** `write`
 
 ```ts
-await corsair.netlify.api.sites.metadata.update({ site_id: '5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17' });
+await corsair.netlify.api.sites.metadata.update({
+	site_id: '5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17',
+	metadata: { owner: 'docs-team' },
+});
 ```
 
 **Input**
@@ -9082,6 +9112,17 @@ await corsair.netlify.api.sites.metadata.update({ site_id: '5b2f8a51-7c1e-4d8a-9
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `site_id` | `string` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -9104,7 +9145,11 @@ Create an add-on instance
 **Risk:** `destructive`
 
 ```ts
-await corsair.netlify.api.sites.serviceInstances.create({ site_id: '5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17', addon: 'example-addon' });
+await corsair.netlify.api.sites.serviceInstances.create({
+	site_id: '5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17',
+	addon: 'example-addon',
+	config: {},
+});
 ```
 
 **Input**
@@ -9113,6 +9158,17 @@ await corsair.netlify.api.sites.serviceInstances.create({ site_id: '5b2f8a51-7c1
 |------|------|----------|-------------|
 | `site_id` | `string` | Yes | — |
 | `addon` | `string` | Yes | — |
+| `config` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -9340,7 +9396,12 @@ Update an add-on instance
 **Risk:** `write`
 
 ```ts
-await corsair.netlify.api.sites.serviceInstances.update({ site_id: '5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17', addon: 'example-addon', instance_id: '6566a375c0b7f6005d3a1f3b' });
+await corsair.netlify.api.sites.serviceInstances.update({
+	site_id: '5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17',
+	addon: 'example-addon',
+	instance_id: '6566a375c0b7f6005d3a1f3b',
+	config: {},
+});
 ```
 
 **Input**
@@ -9350,6 +9411,17 @@ await corsair.netlify.api.sites.serviceInstances.update({ site_id: '5b2f8a51-7c1
 | `site_id` | `string` | Yes | — |
 | `addon` | `string` | Yes | — |
 | `instance_id` | `string` | Yes | — |
+| `config` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -10061,6 +10133,7 @@ await corsair.netlify.api.sites.unlinkRepo({ site_id: '5b2f8a51-7c1e-4d8a-9f43-2
 | `prerender` | `string \| null` | No | — |
 | `functions_region` | `string \| null` | No | — |
 | `prevent_non_git_prod_deploys` | `boolean \| null` | No | — |
+| `identity_instance_id` | `string \| null` | No | The site's Netlify Identity instance, when Identity is on (pass it to sites.identity.users.*). |
 
 <AccordionGroup>
 <Accordion title="published_deploy full type">
@@ -10392,6 +10465,7 @@ Record<string, {
 | `prerender` | `string \| null` | No | — |
 | `functions_region` | `string \| null` | No | — |
 | `prevent_non_git_prod_deploys` | `boolean \| null` | No | — |
+| `identity_instance_id` | `string \| null` | No | The site's Netlify Identity instance, when Identity is on (pass it to sites.identity.users.*). |
 
 <AccordionGroup>
 <Accordion title="published_deploy full type">

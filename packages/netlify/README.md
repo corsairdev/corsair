@@ -64,7 +64,7 @@ pnpm add @corsair-dev/netlify
 | `deploys.unlock` | `netlify.api.deploys.unlock` | `write` | Unlock a deploy |
 | `deploys.updateValidationsReport` | `netlify.api.deploys.updateValidationsReport` | `write` | Update a deploy's validations report: updates the deploy validations report for a deploy |
 | `deploys.uploadEdgeFunction` | `netlify.api.deploys.uploadEdgeFunction` | `write` | Upload a deploy's edge functions bundle |
-| `deploys.uploadFile` | `netlify.api.deploys.uploadFile` | `write` | Upload one file a deploy listed as required: `path` is the file path in the site (`index.html`, `assets/app.js`), the bytes are the body |
+| `deploys.uploadFile` | `netlify.api.deploys.uploadFile` | `write` | Upload one file a deploy listed as required: `path` is the file path in the site (`index.html`, `assets/app.js`), the bytes are the body. Netlify processes the deploy once every required file and function is in |
 | `deploys.uploadFunction` | `netlify.api.deploys.uploadFunction` | `write` | Upload one function bundle (a zip) a deploy listed as required, by function name |
 | `deploys.uploadServer` | `netlify.api.deploys.uploadServer` | `write` | Upload a deploy's Netlify Server bundle: uploads the deploy's Netlify Server bundle, addressed by the digest the deploy declared in its `server` property |
 | `dns.records.create` | `netlify.api.dns.records.create` | `write` | Create a DNS record |
@@ -83,7 +83,7 @@ pnpm add @corsair-dev/netlify
 | `env.list` | `netlify.api.env.list` | `read` | List environment variables for a team or site: returns all environment variables for an account or site |
 | `env.listForSite` | `netlify.api.env.listForSite` | `read` | List environment variables for a site: returns all environment variables for a site |
 | `env.setValue` | `netlify.api.env.setValue` | `write` | Set a value on an environment variable: updates or creates a new value for an existing environment variable |
-| `env.update` | `netlify.api.env.update` | `write` | Update an environment variable: updates an existing environment variable and all of its values |
+| `env.update` | `netlify.api.env.update` | `write` | Replace an environment variable: its scopes, secret flag and every value (values left out are removed). Pass `new_key` to rename it |
 | `forms.submissions.list` | `netlify.api.forms.submissions.list` | `read` | List a form's submissions, one page at a time |
 | `hooks.create` | `netlify.api.hooks.create` | `write` | Create an outgoing notification for a site: type `url` with `data.url` (and `data.signature_secret` to sign deliveries with a JWS the plugin's webhooks check), `slack` or `email`, for one event (deploy_created, deploy_failed, submission_created...) |
 | `hooks.delete` | `netlify.api.hooks.delete` | `destructive` | Delete an outgoing hook |
@@ -139,7 +139,7 @@ pnpm add @corsair-dev/netlify
 | `sites.database.snapshots.restore` | `netlify.api.sites.database.snapshots.restore` | `destructive` | Restore a database snapshot: restores a snapshot to a database branch |
 | `sites.delete` | `netlify.api.sites.delete` | `destructive` | Permanently delete a site with all its deploys, forms, functions and settings; its netlify.app subdomain is released |
 | `sites.deployedBranches.list` | `netlify.api.sites.deployedBranches.list` | `read` | List a site's deployed branches |
-| `sites.deploys.create` | `netlify.api.sites.deploys.create` | `write` | Create a deploy from a file digest (`files`: path -> SHA1) and function digests. Netlify answers with `required` (the SHA1s it still needs); upload each with deploys.uploadFile, and the deploy goes live when the last one lands |
+| `sites.deploys.create` | `netlify.api.sites.deploys.create` | `write` | Create a deploy from a file digest (`files`: path -> SHA1) and function digests, or from one `zip` of the site. Netlify answers with `required` and `required_functions` (what it still needs); upload each with deploys.uploadFile and deploys.uploadFunction, then poll deploys.get until `state` is `ready` |
 | `sites.deploys.delete` | `netlify.api.sites.deploys.delete` | `destructive` | Delete a site's deploy: marks a deploy for deletion |
 | `sites.deploys.get` | `netlify.api.sites.deploys.get` | `read` | Get a site's deploy |
 | `sites.deploys.list` | `netlify.api.sites.deploys.list` | `read` | List a site's deploys, one page at a time |
@@ -171,7 +171,7 @@ pnpm add @corsair-dev/netlify
 | `sites.identity.users.lookup` | `netlify.api.sites.identity.users.lookup` | `read` | Look up an Identity user by email: returns the one Identity user with this exact email |
 | `sites.list` | `netlify.api.sites.list` | `read` | List the sites the token can see, filterable by name and by owner (`filter`: all, owner or guest), one page at a time |
 | `sites.metadata.get` | `netlify.api.sites.metadata.get` | `read` | Get a site's metadata |
-| `sites.metadata.update` | `netlify.api.sites.metadata.update` | `write` | Update a site's metadata |
+| `sites.metadata.update` | `netlify.api.sites.metadata.update` | `write` | Replace the site's metadata with the `metadata` object (`{}` clears it) |
 | `sites.serviceInstances.create` | `netlify.api.sites.serviceInstances.create` | `destructive` | Create an add-on instance |
 | `sites.serviceInstances.delete` | `netlify.api.sites.serviceInstances.delete` | `destructive` | Delete an add-on instance |
 | `sites.serviceInstances.get` | `netlify.api.sites.serviceInstances.get` | `read` | Get an add-on instance |

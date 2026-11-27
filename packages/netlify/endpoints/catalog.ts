@@ -821,7 +821,7 @@ export const netlifyEndpointMeta = {
 	'deploys.uploadFile': {
 		riskLevel: 'write',
 		description:
-			'Upload one file a deploy listed as required: `path` is the file path in the site (`index.html`, `assets/app.js`), the bytes are the body',
+			'Upload one file a deploy listed as required: `path` is the file path in the site (`index.html`, `assets/app.js`), the bytes are the body. Netlify processes the deploy once every required file and function is in',
 	},
 	'deploys.uploadFunction': {
 		riskLevel: 'write',
@@ -912,7 +912,7 @@ export const netlifyEndpointMeta = {
 	'env.update': {
 		riskLevel: 'write',
 		description:
-			'Update an environment variable: updates an existing environment variable and all of its values',
+			'Replace an environment variable: its scopes, secret flag and every value (values left out are removed). Pass `new_key` to rename it',
 	},
 	'forms.submissions.list': {
 		riskLevel: 'read',
@@ -1174,7 +1174,7 @@ export const netlifyEndpointMeta = {
 	'sites.deploys.create': {
 		riskLevel: 'write',
 		description:
-			'Create a deploy from a file digest (`files`: path -> SHA1) and function digests. Netlify answers with `required` (the SHA1s it still needs); upload each with deploys.uploadFile, and the deploy goes live when the last one lands',
+			'Create a deploy from a file digest (`files`: path -> SHA1) and function digests, or from one `zip` of the site. Netlify answers with `required` and `required_functions` (what it still needs); upload each with deploys.uploadFile and deploys.uploadFunction, then poll deploys.get until `state` is `ready`',
 	},
 	'sites.deploys.delete': {
 		riskLevel: 'destructive',
@@ -1313,7 +1313,8 @@ export const netlifyEndpointMeta = {
 	},
 	'sites.metadata.update': {
 		riskLevel: 'write',
-		description: "Update a site's metadata",
+		description:
+			"Replace the site's metadata with the `metadata` object (`{}` clears it)",
 	},
 	'sites.serviceInstances.create': {
 		riskLevel: 'destructive',

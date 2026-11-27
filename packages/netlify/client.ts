@@ -130,7 +130,7 @@ function mediaTypeFor(request: NetlifyRequest): string | undefined {
 		return undefined;
 	}
 	if (typeof Blob !== 'undefined' && body instanceof Blob) {
-		return 'application/octet-stream';
+		return body.type || 'application/octet-stream';
 	}
 	return 'application/json';
 }
@@ -163,7 +163,17 @@ export async function makeNetlifyRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw withoutRequestData(error, ctx.key);
+			// Core may already have masked sensitive query values on
+			// error.request (the TLS `key` on sites.ssl.provision), so the
+			// values this call really sent are scrubbed from the body too.
+			throw withoutRequestData(error, ctx.key, {
+				query: options.query,
+				path: options.pathParameters,
+				body:
+					options.body instanceof Blob || options.body instanceof FormData
+						? undefined
+						: options.body,
+			});
 		}
 		throw error;
 	}
@@ -184,12 +194,25 @@ const MAX_ERROR_DEPTH = 6;
  * Core also writes a bare status text ("Not Found") for the common statuses,
  * which hides Netlify's reason. The message is rebuilt from Netlify's error body.
  */
-export function withoutRequestData(error: ApiError, key?: string): ApiError {
+export function withoutRequestData(
+	error: ApiError,
+	key?: string,
+	// `unknown` because the original values are whatever the call validated.
+	original?: { query?: unknown; path?: unknown; body?: unknown },
+): ApiError {
 	// The key travels in the transport config, not on error.request: add it,
 	// so a body that echoes it loses it too.
 	const sent = [
 		...(key ? [{ text: key, wholeWord: false }] : []),
 		...sentStrings(error.request),
+		...(original
+			? sentStrings({
+					...error.request,
+					query: original.query as Record<string, unknown> | undefined,
+					path: original.path as Record<string, unknown> | undefined,
+					body: original.body,
+				})
+			: []),
 	].sort((a, b) => b.text.length - a.text.length);
 	const body = scrubSent(withoutEchoedValues(error.body), sent);
 	const message = netlifyErrorMessage(error.status, error.statusText, body);

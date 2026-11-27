@@ -223,8 +223,10 @@ export function createNetlifyOperation<Id extends NetlifyOperationId>(
 		const headers: Record<string, string> = {};
 		// `unknown` because body values are validated per operation.
 		const body: Record<string, unknown> = {};
-		// `unknown` because a whole-body value is a list or an upload.
+		// `unknown` because a whole-body value is a list, an object or an upload.
 		let bodyRoot: unknown;
+		// `unknown` because a zip is a validated file input.
+		let zipBody: unknown;
 		const named = new Set<string>();
 		for (const field of netlifyInputFields(id)) {
 			named.add(field.name);
@@ -246,6 +248,9 @@ export function createNetlifyOperation<Id extends NetlifyOperationId>(
 					break;
 				case 'bodyRoot':
 					bodyRoot = value;
+					break;
+				case 'zipBody':
+					zipBody = value;
 					break;
 				default:
 					body[field.wire] = value;
@@ -280,8 +285,20 @@ export function createNetlifyOperation<Id extends NetlifyOperationId>(
 		};
 		// Fields Netlify sets itself never go back, even when the caller passes an object it read.
 		for (const name of operation.serverSetFields ?? []) delete body[name];
-		if (operation.request === 'json') {
-			request.body = bodyRoot !== undefined ? (bodyRoot as unknown[]) : body;
+		if (zipBody !== undefined) {
+			// A zip deploy: the archive is the whole body (application/zip),
+			// the documented alternative to a JSON file digest.
+			const resolved = await resolveFileInput(zipBody as FileInput, {
+				maxBytes: NETLIFY_UPLOAD_MAX_BYTES,
+				fallbackName: 'site.zip',
+			});
+			request.body = new Blob([resolved.file], { type: 'application/zip' });
+			request.timeoutMs = operation.timeoutMs ?? NETLIFY_UPLOAD_TIMEOUT_MS;
+		} else if (operation.request === 'json') {
+			request.body =
+				bodyRoot !== undefined
+					? (bodyRoot as Record<string, unknown> | unknown[])
+					: body;
 		} else if (operation.request === 'multipart') {
 			request.body = await buildForm(operation, body);
 		} else if (operation.request === 'binary') {
@@ -314,6 +331,11 @@ export function createNetlifyOperation<Id extends NetlifyOperationId>(
 		} else {
 			let raw = await makeNetlifyRequest(ctx, request);
 			if (operation.emptyOk) raw = decodeMaybeEmpty(id, raw);
+			// Core resolves a 2xx whose JSON it can't decode (or an empty body)
+			// as `undefined`: that is a failure, never a result.
+			else if (raw === undefined) {
+				throw new Error(`Netlify ${id} returned no decodable JSON body`);
+			}
 			if (raw === EMPTY) {
 				response = { success: true };
 			} else if (operation.paginated && Array.isArray(raw)) {

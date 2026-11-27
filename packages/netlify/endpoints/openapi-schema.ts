@@ -573,7 +573,9 @@ export const netlifyOutputSchemas = lazyRecord(getNetlifyOutputSchema);
 /**
  * - `path`, `query`, `header`: the named parameter.
  * - `bodyRoot`: the whole request body (a list of environment variables, the
- *   bytes of an upload).
+ *   bytes of an upload, a metadata object).
+ * - `zipBody`: a zip that, when given, is the whole body as application/zip
+ *   (a zip deploy) in place of the JSON fields.
  * - `body`: one field of the JSON body or multipart form (the default).
  */
 export type NetlifyFieldLocation =
@@ -581,6 +583,7 @@ export type NetlifyFieldLocation =
 	| 'query'
 	| 'header'
 	| 'bodyRoot'
+	| 'zipBody'
 	| 'body';
 
 export type NetlifyInputField = {
@@ -598,7 +601,7 @@ export type NetlifyInputField = {
 	alsoBody?: boolean;
 };
 
-const LOCATIONS = new Set(['path', 'query', 'header', 'bodyRoot']);
+const LOCATIONS = new Set(['path', 'query', 'header', 'bodyRoot', 'zipBody']);
 
 const fieldCache = new Map<string, readonly NetlifyInputField[]>();
 

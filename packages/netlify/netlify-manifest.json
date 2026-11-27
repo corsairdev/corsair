@@ -34,7 +34,9 @@
           },
           "per_page": {
             "type": "integer",
-            "x-corsair-in": "query"
+            "x-corsair-in": "query",
+            "minimum": 1,
+            "maximum": 100
           }
         },
         "required": ["account_id"]
@@ -530,7 +532,9 @@
           },
           "per_page": {
             "type": "integer",
-            "x-corsair-in": "query"
+            "x-corsair-in": "query",
+            "minimum": 1,
+            "maximum": 100
           }
         },
         "required": ["account_slug"]
@@ -819,7 +823,9 @@
           },
           "per_page": {
             "type": "integer",
-            "x-corsair-in": "query"
+            "x-corsair-in": "query",
+            "minimum": 1,
+            "maximum": 100
           },
           "strip_binary": {
             "type": "boolean",
@@ -856,7 +862,9 @@
           },
           "per_page": {
             "type": "integer",
-            "x-corsair-in": "query"
+            "x-corsair-in": "query",
+            "minimum": 1,
+            "maximum": 100
           },
           "state": {
             "type": "string",
@@ -1075,7 +1083,9 @@
           },
           "per_page": {
             "type": "integer",
-            "x-corsair-in": "query"
+            "x-corsair-in": "query",
+            "minimum": 1,
+            "maximum": 100
           },
           "state": {
             "type": "string",
@@ -2419,6 +2429,11 @@
             "type": "string",
             "x-corsair-in": "query"
           },
+          "new_key": {
+            "type": "string",
+            "description": "A new name for the variable; leave it out to keep `key`.",
+            "x-corsair-wire": "key"
+          },
           "scopes": {
             "description": "The scopes that this environment variable is set to (Pro plans and above)",
             "type": "array",
@@ -2467,7 +2482,9 @@
           },
           "per_page": {
             "type": "integer",
-            "x-corsair-in": "query"
+            "x-corsair-in": "query",
+            "minimum": 1,
+            "maximum": 100
           }
         },
         "required": ["form_id"]
@@ -3449,7 +3466,9 @@
           },
           "per_page": {
             "type": "integer",
-            "x-corsair-in": "query"
+            "x-corsair-in": "query",
+            "minimum": 1,
+            "maximum": 100
           }
         },
         "required": ["site_id"]
@@ -4302,7 +4321,8 @@
           "zip": {
             "type": "string",
             "format": "binary",
-            "description": "A zip file containing the site files to deploy. Alternative to 'files'. To use this field, set Content-Type to 'application/json' and include the zip content here. Alternatively, you can set Content-Type to 'application/zip' and send the zip as the raw request body (not as JSON)."
+            "description": "A zip of the site files, sent as the whole request body (Content-Type application/zip) instead of a `files` digest; the other body fields are then left out.",
+            "x-corsair-in": "zipBody"
           },
           "draft": {
             "type": "boolean"
@@ -4517,7 +4537,9 @@
           },
           "per_page": {
             "type": "integer",
-            "x-corsair-in": "query"
+            "x-corsair-in": "query",
+            "minimum": 1,
+            "maximum": 100
           }
         },
         "required": ["site_id"]
@@ -4609,7 +4631,8 @@
           "zip": {
             "type": "string",
             "format": "binary",
-            "description": "A zip file containing the site files to deploy. Alternative to 'files'. To use this field, set Content-Type to 'application/json' and include the zip content here. Alternatively, you can set Content-Type to 'application/zip' and send the zip as the raw request body (not as JSON)."
+            "description": "A zip of the site files, sent as the whole request body (Content-Type application/zip) instead of a `files` digest; the other body fields are then left out.",
+            "x-corsair-in": "zipBody"
           },
           "draft": {
             "type": "boolean"
@@ -4966,7 +4989,9 @@
           },
           "per_page": {
             "type": "integer",
-            "x-corsair-in": "query"
+            "x-corsair-in": "query",
+            "minimum": 1,
+            "maximum": 100
           }
         },
         "required": ["site_id"]
@@ -5270,7 +5295,19 @@
         },
         "required": ["site_id"]
       },
-      "output": {}
+      "output": {
+        "anyOf": [
+          {
+            "type": "array",
+            "items": {
+              "$ref": "siteFunction"
+            }
+          },
+          {
+            "type": "object"
+          }
+        ]
+      }
     },
     {
       "id": "sites.get",
@@ -5393,7 +5430,9 @@
           },
           "per_page": {
             "type": "integer",
-            "x-corsair-in": "query"
+            "x-corsair-in": "query",
+            "minimum": 1,
+            "maximum": 100
           }
         }
       },
@@ -5442,9 +5481,13 @@
             "type": "string",
             "x-corsair-in": "path",
             "minLength": 1
+          },
+          "metadata": {
+            "$ref": "metadata",
+            "x-corsair-in": "bodyRoot"
           }
         },
-        "required": ["site_id"]
+        "required": ["site_id", "metadata"]
       }
     },
     {
@@ -5467,9 +5510,13 @@
             "type": "string",
             "x-corsair-in": "path",
             "minLength": 1
+          },
+          "config": {
+            "type": "object",
+            "x-corsair-in": "bodyRoot"
           }
         },
-        "required": ["site_id", "addon"]
+        "required": ["site_id", "addon", "config"]
       },
       "output": {
         "$ref": "serviceInstance"
@@ -5589,9 +5636,13 @@
             "type": "string",
             "x-corsair-in": "path",
             "minLength": 1
+          },
+          "config": {
+            "type": "object",
+            "x-corsair-in": "bodyRoot"
           }
         },
-        "required": ["site_id", "addon", "instance_id"]
+        "required": ["site_id", "addon", "instance_id", "config"]
       }
     },
     {
@@ -6045,7 +6096,9 @@
           },
           "per_page": {
             "type": "integer",
-            "x-corsair-in": "query"
+            "x-corsair-in": "query",
+            "minimum": 1,
+            "maximum": 100
           }
         },
         "required": ["site_id"]
@@ -6285,7 +6338,9 @@
           },
           "per_page": {
             "type": "integer",
-            "x-corsair-in": "query"
+            "x-corsair-in": "query",
+            "minimum": 1,
+            "maximum": 100
           }
         },
         "required": ["submission_id"]
@@ -8457,6 +8512,10 @@
         },
         "prevent_non_git_prod_deploys": {
           "type": "boolean"
+        },
+        "identity_instance_id": {
+          "type": "string",
+          "description": "The site's Netlify Identity instance, when Identity is on (pass it to sites.identity.users.*)."
         }
       }
     },

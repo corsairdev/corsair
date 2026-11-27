@@ -15,15 +15,21 @@ they belong to. Netlify calls a team an account: `account_id` and
 - **Deploys.** `sites.deploys.create` takes a digest of the files
 (`files`: path -&gt; SHA1) and answers with the SHA1s it still needs in
 `required`; send each with `deploys.uploadFile` (the file's path and its
-bytes as `file`: a URL, `{ base64 }` or a Blob) and the deploy goes live
-when the last one lands. Functions upload the same way with
-`deploys.uploadFunction`. `sites.builds.create` starts a build from the
+bytes as `file`: a URL, `{ base64 }` or a Blob), and
+upload the functions it lists in `required_functions` the same way with
+`deploys.uploadFunction` (a zip per function). After the last upload
+Netlify processes the deploy: poll `deploys.get` until `state` is `ready`.
+A `draft` deploy is never published, and a locked site keeps its current
+deploy. A whole site can also go up as one zip (`zip` on
+`sites.deploys.create`). `sites.builds.create` starts a build from the
 linked repository instead.
 - **Lists** page with `page` (1-based) and `per_page`; the plugin sends 100
 when `per_page` is left out. Paged lists return `{ items, next_page }`,
 with `next_page` set while a page comes back full: step `page` until it
 is null.
-- **Risk.** Every delete is `destructive`, as are team plan changes
+- **Risk.** Every delete is `destructive` except the three that only stop
+work (`agentRunners.delete`, `agentRunners.sessions.delete`,
+`sites.devServers.deleteAll`, which are `write`), as are team plan changes
 (`accounts.create`, `accounts.update`), add-ons, database compute settings,
 data resets and restores, migrations, member invitations (they send
 email), agent runs (they spend AI credits), commits and pull requests

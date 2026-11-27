@@ -318,6 +318,8 @@ export type NetlifyFunctionScheduleInput = {
 	cron?: string;
 };
 
+export type NetlifyMetadataInput = Record<string, NetlifyJsonValue>;
+
 export type NetlifyRepoInfoInput = {
 	id?: number;
 	provider?: string;
@@ -1129,6 +1131,17 @@ export type NetlifySite = {
 	prerender?: string | null;
 	functions_region?: string | null;
 	prevent_non_git_prod_deploys?: boolean | null;
+	/** The site's Netlify Identity instance, when Identity is on (pass it to sites.identity.users.*). */
+	identity_instance_id?: string | null;
+};
+
+export type NetlifySiteFunction = {
+	branch?: string | null;
+	created_at?: string | null;
+	functions?: Array<Record<string, NetlifyJsonValue>> | null;
+	id?: string | null;
+	log_type?: string | null;
+	provider?: string | null;
 };
 
 export type NetlifySniCertificate = {
@@ -1683,6 +1696,8 @@ export type NetlifyOperationInputs = {
 		key: string;
 		/** If provided, update an environment variable set on this site */
 		site_id?: string;
+		/** A new name for the variable; leave it out to keep `key`. */
+		new_key?: string;
 		/** The scopes that this environment variable is set to (Pro plans and above) */
 		scopes?: Array<'builds' | 'functions' | 'runtime' | 'post-processing'>;
 		values?: Array<NetlifyEnvVarValueInput>;
@@ -2066,7 +2081,7 @@ export type NetlifyOperationInputs = {
 		title?: string;
 		/** A hash mapping file paths to SHA1 digests of the file contents. */
 		files?: Record<string, NetlifyJsonValue>;
-		/** A zip file containing the site files to deploy. Alternative to 'files'. To use this field, set Content-Type to 'application/json' and include the zip content here. Alternatively, you can set Content-Type to 'application/zip' and send the zip as the raw request body (not as JSON). */
+		/** A zip of the site files, sent as the whole request body (Content-Type application/zip) instead of a `files` digest; the other body fields are then left out. */
 		zip?: FileInput;
 		draft?: boolean;
 		async?: boolean;
@@ -2148,7 +2163,7 @@ export type NetlifyOperationInputs = {
 		commit_ref?: string;
 		/** A hash mapping file paths to SHA1 digests of the file contents. */
 		files?: Record<string, NetlifyJsonValue>;
-		/** A zip file containing the site files to deploy. Alternative to 'files'. To use this field, set Content-Type to 'application/json' and include the zip content here. Alternatively, you can set Content-Type to 'application/zip' and send the zip as the raw request body (not as JSON). */
+		/** A zip of the site files, sent as the whole request body (Content-Type application/zip) instead of a `files` digest; the other body fields are then left out. */
 		zip?: FileInput;
 		draft?: boolean;
 		async?: boolean;
@@ -2297,10 +2312,12 @@ export type NetlifyOperationInputs = {
 	};
 	'sites.metadata.update': {
 		site_id: string;
+		metadata: NetlifyMetadataInput;
 	};
 	'sites.serviceInstances.create': {
 		site_id: string;
 		addon: string;
+		config: Record<string, NetlifyJsonValue>;
 	};
 	'sites.serviceInstances.delete': {
 		site_id: string;
@@ -2319,6 +2336,7 @@ export type NetlifyOperationInputs = {
 		site_id: string;
 		addon: string;
 		instance_id: string;
+		config: Record<string, NetlifyJsonValue>;
 	};
 	'sites.snippets.create': {
 		site_id: string;
@@ -2778,7 +2796,9 @@ export type NetlifyOperationOutputs = {
 		success: true;
 	};
 	'sites.forms.list': Array<NetlifyForm>;
-	'sites.functions.list': NetlifyJsonValue;
+	'sites.functions.list':
+		| Array<NetlifySiteFunction>
+		| Record<string, NetlifyJsonValue>;
 	'sites.get': NetlifySite;
 	'sites.identity.users.get': NetlifyIdentityUser;
 	'sites.identity.users.lookup': NetlifyIdentityUser;

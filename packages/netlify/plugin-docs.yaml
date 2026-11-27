@@ -15,15 +15,21 @@ overviewNote: |
   - **Deploys.** `sites.deploys.create` takes a digest of the files
   (`files`: path -> SHA1) and answers with the SHA1s it still needs in
   `required`; send each with `deploys.uploadFile` (the file's path and its
-  bytes as `file`: a URL, `{ base64 }` or a Blob) and the deploy goes live
-  when the last one lands. Functions upload the same way with
-  `deploys.uploadFunction`. `sites.builds.create` starts a build from the
+  bytes as `file`: a URL, `{ base64 }` or a Blob), and
+  upload the functions it lists in `required_functions` the same way with
+  `deploys.uploadFunction` (a zip per function). After the last upload
+  Netlify processes the deploy: poll `deploys.get` until `state` is `ready`.
+  A `draft` deploy is never published, and a locked site keeps its current
+  deploy. A whole site can also go up as one zip (`zip` on
+  `sites.deploys.create`). `sites.builds.create` starts a build from the
   linked repository instead.
   - **Lists** page with `page` (1-based) and `per_page`; the plugin sends 100
   when `per_page` is left out. Paged lists return `{ items, next_page }`,
   with `next_page` set while a page comes back full: step `page` until it
   is null.
-  - **Risk.** Every delete is `destructive`, as are team plan changes
+  - **Risk.** Every delete is `destructive` except the three that only stop
+  work (`agentRunners.delete`, `agentRunners.sessions.delete`,
+  `sites.devServers.deleteAll`, which are `write`), as are team plan changes
   (`accounts.create`, `accounts.update`), add-ons, database compute settings,
   data resets and restores, migrations, member invitations (they send
   email), agent runs (they spend AI credits), commits and pull requests
@@ -157,7 +163,7 @@ apiExamples:
   deploys.uploadFile:
     args: {"deploy_id": "6566a2a8c0b7f6005d3a1f22", "path": "index.html", "file": {"base64": "PGgxPkhlbGxvPC9oMT4=", "filename": "index.html", "contentType": "text/html"}}
   deploys.uploadFunction:
-    args: {"deploy_id": "6566a2a8c0b7f6005d3a1f22", "name": "example-site", "file": {"base64": "PGgxPkhlbGxvPC9oMT4=", "filename": "index.html", "contentType": "text/html"}}
+    args: {"deploy_id": "6566a2a8c0b7f6005d3a1f22", "name": "hello", "runtime": "js", "file": {"base64": "UEsDBBQAAAAAAAAAe10jwYkZMgAAADIAAAAJAAAAaGVsbG8ubWpzZXhwb3J0IGRlZmF1bHQgYXN5bmMgKCkgPT4gbmV3IFJlc3BvbnNlKCJoZWxsbyIpOwpQSwECFAMUAAAAAAAAAHtdI8GJGTIAAAAyAAAACQAAAAAAAAAAAAAAgAEAAAAAaGVsbG8ubWpzUEsFBgAAAAABAAEANwAAAFkAAAAAAA==", "filename": "hello.zip", "contentType": "application/zip"}}
   deploys.uploadServer:
     args: {"deploy_id": "6566a2a8c0b7f6005d3a1f22", "code_sha": "0000000000000000000000000000000000000000000000000000000000000000", "file": {"base64": "PGgxPkhlbGxvPC9oMT4=", "filename": "index.html", "contentType": "text/html"}}
   dns.records.create:
@@ -193,7 +199,7 @@ apiExamples:
   env.setValue:
     args: {"account_id": "5f3e9c1b7a2d4e0012ab34cd", "key": "API_URL", "site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "context": "production", "value": "https://api.example.com"}
   env.update:
-    args: {"account_id": "5f3e9c1b7a2d4e0012ab34cd", "key": "API_URL"}
+    args: {"account_id": "5f3e9c1b7a2d4e0012ab34cd", "key": "API_URL", "site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "new_key": "API_BASE_URL", "values": [{"value": "https://api.example.com", "context": "all"}]}
   forms.submissions.list:
     args: {"form_id": "5f3e9d0a7a2d4e0012ab34ce"}
   hooks.create:
@@ -317,7 +323,7 @@ apiExamples:
   sites.deploys.rollback:
     args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
   sites.deploys.update:
-    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "deploy_id": "6566a2a8c0b7f6005d3a1f22", "zip": {"base64": "PGgxPkhlbGxvPC9oMT4=", "filename": "index.html", "contentType": "text/html"}}
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "deploy_id": "6566a2a8c0b7f6005d3a1f22"}
   sites.devServerHooks.create:
     args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
   sites.devServerHooks.delete:
@@ -369,9 +375,9 @@ apiExamples:
   sites.metadata.get:
     args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
   sites.metadata.update:
-    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "metadata": {"owner": "docs-team"}}
   sites.serviceInstances.create:
-    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "addon": "example-addon"}
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "addon": "example-addon", "config": {}}
   sites.serviceInstances.delete:
     args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "addon": "example-addon", "instance_id": "6566a375c0b7f6005d3a1f3b"}
   sites.serviceInstances.get:
@@ -379,7 +385,7 @@ apiExamples:
   sites.serviceInstances.list:
     args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
   sites.serviceInstances.update:
-    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "addon": "example-addon", "instance_id": "6566a375c0b7f6005d3a1f3b"}
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "addon": "example-addon", "instance_id": "6566a375c0b7f6005d3a1f3b", "config": {}}
   sites.snippets.create:
     args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "title": "Analytics", "general": "<script src=\"/a.js\"></script>", "general_position": "footer"}
   sites.snippets.delete:

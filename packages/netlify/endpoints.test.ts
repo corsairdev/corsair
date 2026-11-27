@@ -205,6 +205,54 @@ describe('requests', () => {
 		expect((calls[0]?.body as FormData).get('zip')).toBeInstanceOf(Blob);
 	});
 
+	it('sends a zip deploy as the raw application/zip body', async () => {
+		reply(200, { id: 'd1', state: 'uploaded' });
+		await endpointFor('sites.deploys.create')(ctx(), {
+			site_id: 's1',
+			title: 'zip deploy',
+			zip: { base64: 'UEsDBA==', filename: 'site.zip' },
+		});
+		expect(path()).toBe('/api/v1/sites/s1/deploys');
+		expect(query().get('title')).toBe('zip deploy');
+		expect(calls[0]?.headers['content-type']).toBe('application/zip');
+		const sent = calls[0]?.body as Blob;
+		expect(Buffer.from(await sent.arrayBuffer()).toString('base64')).toBe(
+			'UEsDBA==',
+		);
+	});
+
+	it('sends a metadata object as the whole body, and {} to clear it', async () => {
+		reply(204, undefined);
+		await endpointFor('sites.metadata.update')(ctx(), {
+			site_id: 's1',
+			metadata: { site_id: 'kept-as-a-key', owner: 'docs' },
+		});
+		expect(JSON.parse(String(calls[0]?.body))).toEqual({
+			site_id: 'kept-as-a-key',
+			owner: 'docs',
+		});
+		await expect(
+			endpointFor('sites.metadata.update')(ctx(), { site_id: 's1' }),
+		).rejects.toThrow(/metadata/);
+	});
+
+	it('renames an environment variable with new_key, else keeps key', async () => {
+		reply(200, { key: 'NEW_NAME' });
+		const base = { account_id: 'a1', key: 'OLD_NAME', values: [] };
+		await endpointFor('env.update')(ctx(), { ...base, new_key: 'NEW_NAME' });
+		expect(path()).toBe('/api/v1/accounts/a1/env/OLD_NAME');
+		expect(JSON.parse(String(calls[0]?.body)).key).toBe('NEW_NAME');
+		await endpointFor('env.update')(ctx(), base);
+		expect(JSON.parse(String(calls[1]?.body)).key).toBe('OLD_NAME');
+	});
+
+	it('caps per_page at the 100 Netlify serves', () => {
+		reply(200, []);
+		return expect(
+			endpointFor('sites.list')(ctx(), { per_page: 200 }),
+		).rejects.toThrow(/per_page/);
+	});
+
 	it('refuses dot segments and empty ids before sending anything', async () => {
 		reply(200, {});
 		await expect(
@@ -279,6 +327,18 @@ describe('responses', () => {
 		).rejects.toThrow(/not JSON/);
 	});
 
+	it('refuses a 2xx without a JSON body, or with one of the wrong type', async () => {
+		reply(200, '', 'application/json');
+		await expect(
+			endpointFor('sites.functions.list')(ctx(), { site_id: 's1' }),
+		).rejects.toThrow(/sites.functions.list/);
+		jest.restoreAllMocks();
+		reply(200, '{not json', 'application/json');
+		await expect(
+			endpointFor('sites.functions.list')(ctx(), { site_id: 's1' }),
+		).rejects.toThrow(/did not match its documented schema/);
+	});
+
 	it('reads a text route as text', async () => {
 		reply(200, 'diff --git a/x b/x\n', 'text/plain');
 		await expect(
@@ -328,6 +388,21 @@ describe('errors', () => {
 		);
 		expect(error.request.body).toBe('[REDACTED]');
 		expect(JSON.stringify(error)).not.toContain('SECRET_VALUE');
+	});
+
+	it('scrubs a TLS private key sent in the query from the error body', async () => {
+		reply(422, {
+			code: 422,
+			message: 'Invalid key -----BEGIN PRIVATE KEY-----MIIEsecret',
+		});
+		const error = (await endpointFor('sites.ssl.provision')(ctx(), {
+			site_id: 's1',
+			certificate: 'CERT',
+			key: '-----BEGIN PRIVATE KEY-----MIIEsecret',
+		}).catch((e: unknown) => e)) as ApiError;
+		expect(error.status).toBe(422);
+		expect(JSON.stringify(error)).not.toContain('MIIEsecret');
+		expect(error.message).toContain('[REDACTED]');
 	});
 
 	it('keeps the 429 rate-limit fields core reads', async () => {
