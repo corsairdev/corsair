@@ -7,37 +7,51 @@ description: "PayPal REST APIs: Checkout orders (create, authorize, capture, tra
 Use **PayPal** through Corsair: one client, typed API calls, and incoming webhooks.
 
 Each account stores a PayPal app's client id as `client_id` and its secret
-as the key (developer.paypal.com → Apps & Credentials). The plugin trades
-them for an access token (OAuth client credentials) and reuses it until it
-nears expiry. Sandbox and live apps are separate: set `environment` to
-`sandbox` or `live`, or leave it empty and the plugin tries live first and
-falls back to sandbox when live doesn't know the client id.
+as the key (developer.paypal.com → Apps & Credentials). On a new tenant, set
+both: the secret with the usual API-key setup, and the client id in the
+account's `client_id` field. In code, pass both to the plugin instead:
+`paypal({ key: secret, clientId, environment: 'sandbox' })`. The plugin
+trades them for an access token (OAuth client credentials) and reuses it
+until it nears expiry. Sandbox and live apps are separate: set
+`environment` to `sandbox` or `live`, or leave it empty and the plugin tries
+live first and falls back to sandbox when live doesn't know the client id.
 
-- **Money moves only in `destructive` operations**: capturing, authorizing,
-reauthorizing and voiding payments, refunds, payouts, subscription
-captures, cancellations, suspensions and revisions, sending and reminding
-invoices, recording payments and refunds, and every dispute action
-(accepting a claim refunds the buyer). Deletes are `destructive` too.
-Creating an order or an invoice draft moves nothing.
-- **Idempotency.** Writes take `paypal_request_id` (the PayPal-Request-Id
-header); repeat a call with the same id and PayPal returns the first
-result instead of acting twice. `prefer: "return=representation"` returns
-the full resource.
+- **Money and email go through `destructive` operations**: capturing,
+authorizing, reauthorizing and voiding payments, refunds, payouts,
+subscription captures, cancellations, suspensions and revisions, sending,
+reminding and updating invoices (an update emails the recipient unless
+`send_to_recipient` is false), recording payments and refunds, tracking
+numbers that can email the buyer, and every dispute action (accepting a
+claim refunds the buyer). `orders.create` is `destructive` too: with a card
+`payment_source` and intent `CAPTURE`, PayPal captures in the same call.
+Without a payment source it only makes a draft order for the buyer to
+approve. Deletes are `destructive`.
+- **Idempotency.** Many writes take `paypal_request_id` (the
+PayPal-Request-Id header; check the operation's inputs). Use a new id for
+each new action. A retry with the same id returns the first result instead
+of acting twice, but only while PayPal keeps the id (hours to days,
+depending on the API); after that, look the result up before retrying.
+`prefer: "return=representation"` returns the full resource.
 - **Partial updates** (`orders.update`, `plans.update`,
 `subscriptions.update`, `products.update`, `disputes.update`,
 `webProfiles.update`) take `patch`, a JSON Patch list such as
-`[{ "op": "replace", "path": "/description", "value": "..." }]`, and answer
-204 as `{ success: true }`.
+`[{ "op": "add", "path": "/description", "value": "..." }]` (`replace` only
+works on a field that is already set), and answer 204 as `{ success: true }`.
+`invoices.update` and `invoices.templates.update` replace the whole
+resource: send every field you want to keep.
 - **Dispute evidence** goes as a multipart form: the `input` field is the
 JSON part (evidences, notes) and the document fields take a file.
 - **Webhooks.** Create one with `webhooks.create` (your Corsair webhook URL
 and the event types) and give the plugin its id as `webhookId` (or store it
-as the account's webhook signature). Each delivery is checked offline
-against PayPal's certificate (PAYPAL-CERT-URL, which must be on paypal.com)
-and that webhook id, then routed by `event_type` to `checkoutOrder`,
-`paymentCapture`, `paymentAuthorization`, `sale`, `subscription`, `plan`,
-`invoice`, `dispute`, `payout`, `vault`, `catalogProduct` or `other`.
-`webhooks.verifySignature` does the same check through PayPal's API.
+as the account's webhook signature). Corsair checks each delivery's
+signature itself, without PayPal's verification API, against PayPal's
+certificate (PAYPAL-CERT-URL, which must be on paypal.com) and that webhook
+id. It downloads that certificate over HTTPS the first time it sees it, so
+the server needs outbound access to PayPal. Deliveries are then routed by
+`event_type` to `checkoutOrder`, `paymentCapture`, `paymentAuthorization`,
+`sale`, `subscription`, `plan`, `invoice`, `dispute`, `payout`, `vault`,
+`catalogProduct` or `other`. `webhooks.verifySignature` does the same check
+through PayPal's API.
 
 **What you get:**
 
@@ -136,18 +150,11 @@ await tenant.paypal.api.orders.get({ id: '5O190127TN364715T' });
 ```
 
 
-**Create an order**
+**Create a catalog product**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.paypal.api.orders.create({
-	intent: 'CAPTURE',
-	purchase_units: [{
-		reference_id: 'order-1001',
-		amount: { currency_code: 'USD', value: '49.00' },
-	}],
-	paypal_request_id: '7b92603e-77ed-4896-8e78-5dea2050476a',
-});
+await tenant.paypal.api.products.create({ name: 'Corsair Pro', type: 'SERVICE', category: 'SOFTWARE' });
 ```
 
 

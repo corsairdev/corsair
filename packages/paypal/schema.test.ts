@@ -153,10 +153,18 @@ describe('risk levels', () => {
 			'invoices.send',
 			'subscriptions.cancel',
 			'disputes.acceptClaim',
+			// Input-dependent: a card capture on create, customer emails on
+			// update and on tracking numbers.
+			'orders.create',
+			'invoices.update',
+			'orders.trackers.create',
+			'trackers.create',
+			'trackers.createBatch',
+			'trackers.update',
 		]) {
 			expect(risk(id)).toBe('destructive');
 		}
-		expect(risk('orders.create')).toBe('write');
+		expect(risk('invoices.create')).toBe('write');
 		expect(risk('invoices.search')).toBe('read');
 		expect(risk('transactions.list')).toBe('read');
 	});

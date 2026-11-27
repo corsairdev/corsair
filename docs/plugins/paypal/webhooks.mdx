@@ -63,11 +63,57 @@ export async function POST(request: Request) {
 
 A catalog product was created or updated (event_type CATALOG.PRODUCT.*)
 
-**Payload:** `unknown`
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The event id (WH-...); PayPal resends an event with the same id. |
+| `create_time` | `string \| null` | No | — |
+| `resource_type` | `string \| null` | No | The kind of resource: capture, checkout-order, subscription, invoices, dispute ... |
+| `event_type` | `string \| null` | No | What happened, for example PAYMENT.CAPTURE.COMPLETED. |
+| `event_version` | `string \| null` | No | — |
+| `resource_version` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | A one-line summary. |
+| `resource` | `Record<string, any> \| null` | No | The resource as the matching REST API returns it (an order, a capture, a subscription ...). |
+| `links` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href?: string | null,
+  rel?: string | null,
+  method?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
-**Response `data`:** `unknown`
 
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  create_time?: string | null,
+  resource_type?: string | null,
+  event_type?: string | null,
+  event_version?: string | null,
+  resource_version?: string | null,
+  summary?: string | null,
+  resource?: Record<string, any> | null,
+  links?: {
+    href?: string | null,
+    rel?: string | null,
+    method?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 **`webhookHooks` example**
 
@@ -95,11 +141,57 @@ paypal({
 
 A Checkout order was approved, completed, saved or voided (event_type CHECKOUT.ORDER.*)
 
-**Payload:** `unknown`
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The event id (WH-...); PayPal resends an event with the same id. |
+| `create_time` | `string \| null` | No | — |
+| `resource_type` | `string \| null` | No | The kind of resource: capture, checkout-order, subscription, invoices, dispute ... |
+| `event_type` | `string \| null` | No | What happened, for example PAYMENT.CAPTURE.COMPLETED. |
+| `event_version` | `string \| null` | No | — |
+| `resource_version` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | A one-line summary. |
+| `resource` | `Record<string, any> \| null` | No | The resource as the matching REST API returns it (an order, a capture, a subscription ...). |
+| `links` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href?: string | null,
+  rel?: string | null,
+  method?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
-**Response `data`:** `unknown`
 
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  create_time?: string | null,
+  resource_type?: string | null,
+  event_type?: string | null,
+  event_version?: string | null,
+  resource_version?: string | null,
+  summary?: string | null,
+  resource?: Record<string, any> | null,
+  links?: {
+    href?: string | null,
+    rel?: string | null,
+    method?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 **`webhookHooks` example**
 
@@ -127,11 +219,57 @@ paypal({
 
 A dispute was created, updated or resolved (event_type CUSTOMER.DISPUTE.*)
 
-**Payload:** `unknown`
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The event id (WH-...); PayPal resends an event with the same id. |
+| `create_time` | `string \| null` | No | — |
+| `resource_type` | `string \| null` | No | The kind of resource: capture, checkout-order, subscription, invoices, dispute ... |
+| `event_type` | `string \| null` | No | What happened, for example PAYMENT.CAPTURE.COMPLETED. |
+| `event_version` | `string \| null` | No | — |
+| `resource_version` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | A one-line summary. |
+| `resource` | `Record<string, any> \| null` | No | The resource as the matching REST API returns it (an order, a capture, a subscription ...). |
+| `links` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href?: string | null,
+  rel?: string | null,
+  method?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
-**Response `data`:** `unknown`
 
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  create_time?: string | null,
+  resource_type?: string | null,
+  event_type?: string | null,
+  event_version?: string | null,
+  resource_version?: string | null,
+  summary?: string | null,
+  resource?: Record<string, any> | null,
+  links?: {
+    href?: string | null,
+    rel?: string | null,
+    method?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 **`webhookHooks` example**
 
@@ -159,11 +297,57 @@ paypal({
 
 An invoice was created, updated, paid, refunded, scheduled or cancelled (event_type INVOICING.INVOICE.*)
 
-**Payload:** `unknown`
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The event id (WH-...); PayPal resends an event with the same id. |
+| `create_time` | `string \| null` | No | — |
+| `resource_type` | `string \| null` | No | The kind of resource: capture, checkout-order, subscription, invoices, dispute ... |
+| `event_type` | `string \| null` | No | What happened, for example PAYMENT.CAPTURE.COMPLETED. |
+| `event_version` | `string \| null` | No | — |
+| `resource_version` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | A one-line summary. |
+| `resource` | `Record<string, any> \| null` | No | The resource as the matching REST API returns it (an order, a capture, a subscription ...). |
+| `links` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href?: string | null,
+  rel?: string | null,
+  method?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
-**Response `data`:** `unknown`
 
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  create_time?: string | null,
+  resource_type?: string | null,
+  event_type?: string | null,
+  event_version?: string | null,
+  resource_version?: string | null,
+  summary?: string | null,
+  resource?: Record<string, any> | null,
+  links?: {
+    href?: string | null,
+    rel?: string | null,
+    method?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 **`webhookHooks` example**
 
@@ -191,11 +375,57 @@ paypal({
 
 Any other PayPal event (merchant onboarding, risk, customer, Venmo ...) (event_type *)
 
-**Payload:** `unknown`
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The event id (WH-...); PayPal resends an event with the same id. |
+| `create_time` | `string \| null` | No | — |
+| `resource_type` | `string \| null` | No | The kind of resource: capture, checkout-order, subscription, invoices, dispute ... |
+| `event_type` | `string \| null` | No | What happened, for example PAYMENT.CAPTURE.COMPLETED. |
+| `event_version` | `string \| null` | No | — |
+| `resource_version` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | A one-line summary. |
+| `resource` | `Record<string, any> \| null` | No | The resource as the matching REST API returns it (an order, a capture, a subscription ...). |
+| `links` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href?: string | null,
+  rel?: string | null,
+  method?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
-**Response `data`:** `unknown`
 
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  create_time?: string | null,
+  resource_type?: string | null,
+  event_type?: string | null,
+  event_version?: string | null,
+  resource_version?: string | null,
+  summary?: string | null,
+  resource?: Record<string, any> | null,
+  links?: {
+    href?: string | null,
+    rel?: string | null,
+    method?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 **`webhookHooks` example**
 
@@ -223,11 +453,57 @@ paypal({
 
 A payment authorization was created or voided (event_type PAYMENT.AUTHORIZATION.*)
 
-**Payload:** `unknown`
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The event id (WH-...); PayPal resends an event with the same id. |
+| `create_time` | `string \| null` | No | — |
+| `resource_type` | `string \| null` | No | The kind of resource: capture, checkout-order, subscription, invoices, dispute ... |
+| `event_type` | `string \| null` | No | What happened, for example PAYMENT.CAPTURE.COMPLETED. |
+| `event_version` | `string \| null` | No | — |
+| `resource_version` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | A one-line summary. |
+| `resource` | `Record<string, any> \| null` | No | The resource as the matching REST API returns it (an order, a capture, a subscription ...). |
+| `links` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href?: string | null,
+  rel?: string | null,
+  method?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
-**Response `data`:** `unknown`
 
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  create_time?: string | null,
+  resource_type?: string | null,
+  event_type?: string | null,
+  event_version?: string | null,
+  resource_version?: string | null,
+  summary?: string | null,
+  resource?: Record<string, any> | null,
+  links?: {
+    href?: string | null,
+    rel?: string | null,
+    method?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 **`webhookHooks` example**
 
@@ -255,11 +531,57 @@ paypal({
 
 A payment capture completed, was denied, pending, refunded, reversed or declined (event_type PAYMENT.CAPTURE.*)
 
-**Payload:** `unknown`
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The event id (WH-...); PayPal resends an event with the same id. |
+| `create_time` | `string \| null` | No | — |
+| `resource_type` | `string \| null` | No | The kind of resource: capture, checkout-order, subscription, invoices, dispute ... |
+| `event_type` | `string \| null` | No | What happened, for example PAYMENT.CAPTURE.COMPLETED. |
+| `event_version` | `string \| null` | No | — |
+| `resource_version` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | A one-line summary. |
+| `resource` | `Record<string, any> \| null` | No | The resource as the matching REST API returns it (an order, a capture, a subscription ...). |
+| `links` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href?: string | null,
+  rel?: string | null,
+  method?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
-**Response `data`:** `unknown`
 
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  create_time?: string | null,
+  resource_type?: string | null,
+  event_type?: string | null,
+  event_version?: string | null,
+  resource_version?: string | null,
+  summary?: string | null,
+  resource?: Record<string, any> | null,
+  links?: {
+    href?: string | null,
+    rel?: string | null,
+    method?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 **`webhookHooks` example**
 
@@ -287,11 +609,57 @@ paypal({
 
 A payout batch or item was processed, succeeded, denied, blocked, held, refunded, returned, unclaimed or cancelled (event_type PAYMENT.PAYOUTS*)
 
-**Payload:** `unknown`
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The event id (WH-...); PayPal resends an event with the same id. |
+| `create_time` | `string \| null` | No | — |
+| `resource_type` | `string \| null` | No | The kind of resource: capture, checkout-order, subscription, invoices, dispute ... |
+| `event_type` | `string \| null` | No | What happened, for example PAYMENT.CAPTURE.COMPLETED. |
+| `event_version` | `string \| null` | No | — |
+| `resource_version` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | A one-line summary. |
+| `resource` | `Record<string, any> \| null` | No | The resource as the matching REST API returns it (an order, a capture, a subscription ...). |
+| `links` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href?: string | null,
+  rel?: string | null,
+  method?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
-**Response `data`:** `unknown`
 
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  create_time?: string | null,
+  resource_type?: string | null,
+  event_type?: string | null,
+  event_version?: string | null,
+  resource_version?: string | null,
+  summary?: string | null,
+  resource?: Record<string, any> | null,
+  links?: {
+    href?: string | null,
+    rel?: string | null,
+    method?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 **`webhookHooks` example**
 
@@ -319,11 +687,57 @@ paypal({
 
 A billing plan was created, updated, activated, deactivated or its pricing changed (event_type BILLING.PLAN.*)
 
-**Payload:** `unknown`
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The event id (WH-...); PayPal resends an event with the same id. |
+| `create_time` | `string \| null` | No | — |
+| `resource_type` | `string \| null` | No | The kind of resource: capture, checkout-order, subscription, invoices, dispute ... |
+| `event_type` | `string \| null` | No | What happened, for example PAYMENT.CAPTURE.COMPLETED. |
+| `event_version` | `string \| null` | No | — |
+| `resource_version` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | A one-line summary. |
+| `resource` | `Record<string, any> \| null` | No | The resource as the matching REST API returns it (an order, a capture, a subscription ...). |
+| `links` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href?: string | null,
+  rel?: string | null,
+  method?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
-**Response `data`:** `unknown`
 
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  create_time?: string | null,
+  resource_type?: string | null,
+  event_type?: string | null,
+  event_version?: string | null,
+  resource_version?: string | null,
+  summary?: string | null,
+  resource?: Record<string, any> | null,
+  links?: {
+    href?: string | null,
+    rel?: string | null,
+    method?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 **`webhookHooks` example**
 
@@ -351,11 +765,57 @@ paypal({
 
 A subscription payment (sale) completed, was denied, pending, refunded or reversed (event_type PAYMENT.SALE.*)
 
-**Payload:** `unknown`
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The event id (WH-...); PayPal resends an event with the same id. |
+| `create_time` | `string \| null` | No | — |
+| `resource_type` | `string \| null` | No | The kind of resource: capture, checkout-order, subscription, invoices, dispute ... |
+| `event_type` | `string \| null` | No | What happened, for example PAYMENT.CAPTURE.COMPLETED. |
+| `event_version` | `string \| null` | No | — |
+| `resource_version` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | A one-line summary. |
+| `resource` | `Record<string, any> \| null` | No | The resource as the matching REST API returns it (an order, a capture, a subscription ...). |
+| `links` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href?: string | null,
+  rel?: string | null,
+  method?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
-**Response `data`:** `unknown`
 
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  create_time?: string | null,
+  resource_type?: string | null,
+  event_type?: string | null,
+  event_version?: string | null,
+  resource_version?: string | null,
+  summary?: string | null,
+  resource?: Record<string, any> | null,
+  links?: {
+    href?: string | null,
+    rel?: string | null,
+    method?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 **`webhookHooks` example**
 
@@ -383,11 +843,57 @@ paypal({
 
 A subscription was created, activated, updated, renewed, suspended, cancelled, expired or a payment failed (event_type BILLING.SUBSCRIPTION.*)
 
-**Payload:** `unknown`
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The event id (WH-...); PayPal resends an event with the same id. |
+| `create_time` | `string \| null` | No | — |
+| `resource_type` | `string \| null` | No | The kind of resource: capture, checkout-order, subscription, invoices, dispute ... |
+| `event_type` | `string \| null` | No | What happened, for example PAYMENT.CAPTURE.COMPLETED. |
+| `event_version` | `string \| null` | No | — |
+| `resource_version` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | A one-line summary. |
+| `resource` | `Record<string, any> \| null` | No | The resource as the matching REST API returns it (an order, a capture, a subscription ...). |
+| `links` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href?: string | null,
+  rel?: string | null,
+  method?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
-**Response `data`:** `unknown`
 
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  create_time?: string | null,
+  resource_type?: string | null,
+  event_type?: string | null,
+  event_version?: string | null,
+  resource_version?: string | null,
+  summary?: string | null,
+  resource?: Record<string, any> | null,
+  links?: {
+    href?: string | null,
+    rel?: string | null,
+    method?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 **`webhookHooks` example**
 
@@ -415,11 +921,57 @@ paypal({
 
 A vaulted payment token was created or deleted (event_type VAULT.PAYMENT-TOKEN.*)
 
-**Payload:** `unknown`
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | The event id (WH-...); PayPal resends an event with the same id. |
+| `create_time` | `string \| null` | No | — |
+| `resource_type` | `string \| null` | No | The kind of resource: capture, checkout-order, subscription, invoices, dispute ... |
+| `event_type` | `string \| null` | No | What happened, for example PAYMENT.CAPTURE.COMPLETED. |
+| `event_version` | `string \| null` | No | — |
+| `resource_version` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | A one-line summary. |
+| `resource` | `Record<string, any> \| null` | No | The resource as the matching REST API returns it (an order, a capture, a subscription ...). |
+| `links` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  href?: string | null,
+  rel?: string | null,
+  method?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
-**Response `data`:** `unknown`
 
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  create_time?: string | null,
+  resource_type?: string | null,
+  event_type?: string | null,
+  event_version?: string | null,
+  resource_version?: string | null,
+  summary?: string | null,
+  resource?: Record<string, any> | null,
+  links?: {
+    href?: string | null,
+    rel?: string | null,
+    method?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 **`webhookHooks` example**
 

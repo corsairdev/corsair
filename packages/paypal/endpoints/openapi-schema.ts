@@ -294,10 +294,7 @@ function schemaFromOpenApi(
 		}
 		const pattern = strict ? patternOf(value.pattern) : undefined;
 		if (pattern) stringSchema = stringSchema.regex(pattern);
-		// PayPal declares many numbers as strings and the other way round
-		// (report totals, gateway order, state codes, shipping class ids: live
-		// 11-27), so a response scalar may be either.
-		schema = strict ? stringSchema : z.union([stringSchema, z.number()]);
+		schema = stringSchema;
 	} else if (type === 'integer' || type === 'number') {
 		let numberSchema = z.number();
 		// A cursor or count that comes back fractional would be refused when sent back.
@@ -399,15 +396,6 @@ function schemaFromOpenApi(
 				});
 			}
 			schema = objectSchema;
-		}
-		if (!strict) {
-			// PHP's json_encode writes an empty associative array (no meta, no
-			// block hooks, no menu locations) as `[]`: that is the empty object.
-			schema = z.preprocess(
-				// `unknown` because the raw value is untrusted until parsed.
-				(raw: unknown) => (Array.isArray(raw) && raw.length === 0 ? {} : raw),
-				schema,
-			);
 		}
 	} else {
 		// `unknown` is necessary because the spec leaves this JSON value untyped.

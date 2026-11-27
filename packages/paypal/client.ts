@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { AuthMissingError } from 'corsair/core';
 import type {
 	ApiRequestOptions,
@@ -97,8 +98,25 @@ type CachedToken = {
 	expiresAt: number;
 };
 
-/** Access tokens by client id and environment (PayPal's last about 9 hours). */
+/**
+ * Access tokens by environment, client id and a hash of the secret (PayPal's
+ * last about 9 hours), so a changed or mistyped secret never rides on a token
+ * the old one earned.
+ */
 const tokenCache = new Map<string, CachedToken>();
+
+/** The cache key for one app's credentials; the secret only as a hash. */
+export function paypalTokenKey(
+	environment: PaypalEnvironment,
+	clientId: string,
+	secret: string,
+): string {
+	const fingerprint = createHash('sha256')
+		.update(secret, 'utf8')
+		.digest('hex')
+		.slice(0, 16);
+	return `${environment}:${clientId}:${fingerprint}`;
+}
 /** Which environment a client id belongs to, once a token request proved it. */
 const environmentOf = new Map<string, PaypalEnvironment>();
 
@@ -162,7 +180,7 @@ export async function paypalAccessToken(
 	const candidates: PaypalEnvironment[] = known ? [known] : ['live', 'sandbox'];
 	let lastError: unknown;
 	for (const env of candidates) {
-		const cacheKey = `${env}:${clientId}`;
+		const cacheKey = paypalTokenKey(env, clientId, secret);
 		const cached = tokenCache.get(cacheKey);
 		if (cached && cached.expiresAt > Date.now()) return cached;
 		try {
@@ -270,7 +288,7 @@ export async function makePaypalRequest(
 			return await send(token);
 		} catch (error) {
 			if (error instanceof ApiError && error.status === 401) {
-				tokenCache.delete(`${token.environment}:${clientId}`);
+				tokenCache.delete(paypalTokenKey(token.environment, clientId, ctx.key));
 				token = await paypalAccessToken(clientId, ctx.key, token.environment);
 				return await send(token);
 			}

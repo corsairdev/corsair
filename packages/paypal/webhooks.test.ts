@@ -3,7 +3,9 @@ import type { PaypalContext } from './index';
 import type { PaypalCert } from './webhooks';
 import {
 	crc32,
+	fetchPaypalCert,
 	isPaypalCertUrl,
+	paypalCertCacheSize,
 	paypalWebhooksNested,
 	verifyPaypalWebhook,
 	webhookIdFor,
@@ -156,5 +158,23 @@ describe('paypal webhooks', () => {
 			),
 		).resolves.toMatchObject({ success: false, statusCode: 401 });
 		jest.restoreAllMocks();
+	});
+});
+
+describe('certificate cache', () => {
+	afterEach(() => jest.restoreAllMocks());
+
+	it('shares one entry across fragments and keeps at most 32', () => {
+		// The fetch never settles: only what the cache keeps matters here.
+		const fetchSpy = jest
+			.spyOn(globalThis, 'fetch')
+			.mockImplementation(() => new Promise<Response>(() => {}));
+		const base = 'https://api.paypal.com/v1/notifications/certs/CERT-cache';
+		const first = fetchPaypalCert(`${base}#1`);
+		expect(fetchPaypalCert(`${base}#2`)).toBe(first);
+		expect(fetchSpy).toHaveBeenCalledTimes(1);
+		expect(String(fetchSpy.mock.calls[0]?.[0])).toBe(base);
+		for (let i = 0; i < 40; i++) void fetchPaypalCert(`${base}-${i}`);
+		expect(paypalCertCacheSize()).toBe(32);
 	});
 });

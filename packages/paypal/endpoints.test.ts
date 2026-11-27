@@ -163,6 +163,23 @@ describe('auth', () => {
 		expect(calls[1]?.headers.authorization).toBe('Bearer token-2');
 	});
 
+	it('does not reuse a token for a different secret on the same app', async () => {
+		reply(() => ({ status: 200, body: { id: 'X' } }));
+		await call('orders.get', { id: 'X' }, ctx('live-app', 'live'));
+		const replaced = {
+			...ctx('live-app', 'live'),
+			key: 'replaced-secret-value',
+		} as PaypalContext;
+		await call('orders.get', { id: 'X' }, replaced);
+		await call('orders.get', { id: 'X' }, ctx('live-app', 'live'));
+		expect(tokenCalls).toBe(2);
+		expect(calls.map((c) => c.headers.authorization)).toEqual([
+			'Bearer token-1',
+			'Bearer token-2',
+			'Bearer token-1',
+		]);
+	});
+
 	it('gets a new token once when PayPal answers 401', async () => {
 		let first = true;
 		reply(() => {

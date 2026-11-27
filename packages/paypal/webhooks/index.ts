@@ -70,25 +70,49 @@ export type PaypalCert = {
 };
 
 const certCache = new Map<string, Promise<PaypalCert>>();
+/**
+ * PayPal signs with a handful of certificates; the cap keeps forged
+ * deliveries with made-up (still paypal.com) URLs from growing the cache.
+ */
+const CERT_CACHE_MAX = 32;
+
+/** Certificates held in the cache (tests). */
+export function paypalCertCacheSize(): number {
+	return certCache.size;
+}
 
 /** PayPal's certificate by URL, fetched once per process. */
-export function fetchPaypalCert(url: string): Promise<PaypalCert> {
+export function fetchPaypalCert(raw: string): Promise<PaypalCert> {
+	// The fragment never reaches the server: `cert#1` and `cert#2` are one
+	// certificate and one cache entry.
+	const parsed = new URL(raw);
+	parsed.hash = '';
+	const url = parsed.toString();
 	let cert = certCache.get(url);
-	if (!cert) {
-		cert = fetch(url, { redirect: 'error' }).then(async (response) => {
-			if (!response.ok) {
-				throw new Error(`PayPal certificate fetch answered ${response.status}`);
-			}
-			const x509 = new X509Certificate(await response.text());
-			return {
-				publicKey: x509.publicKey,
-				subject: x509.subject,
-				validFrom: new Date(x509.validFrom),
-				validTo: new Date(x509.validTo),
-			};
-		});
-		cert.catch(() => certCache.delete(url));
+	if (cert) {
+		// Most recently used last, so eviction drops the oldest.
+		certCache.delete(url);
 		certCache.set(url, cert);
+		return cert;
+	}
+	cert = fetch(url, { redirect: 'error' }).then(async (response) => {
+		if (!response.ok) {
+			throw new Error(`PayPal certificate fetch answered ${response.status}`);
+		}
+		const x509 = new X509Certificate(await response.text());
+		return {
+			publicKey: x509.publicKey,
+			subject: x509.subject,
+			validFrom: new Date(x509.validFrom),
+			validTo: new Date(x509.validTo),
+		};
+	});
+	cert.catch(() => certCache.delete(url));
+	certCache.set(url, cert);
+	while (certCache.size > CERT_CACHE_MAX) {
+		const oldest = certCache.keys().next().value;
+		if (oldest === undefined) break;
+		certCache.delete(oldest);
 	}
 	return cert;
 }

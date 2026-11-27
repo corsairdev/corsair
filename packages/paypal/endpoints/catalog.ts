@@ -465,7 +465,7 @@ export const paypalEndpointMeta = {
 		description: 'Fully update template',
 	},
 	'invoices.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Fully update invoice',
 	},
 	'orders.authorize': {
@@ -483,7 +483,7 @@ export const paypalEndpointMeta = {
 		description: 'Confirm the Order',
 	},
 	'orders.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create a Checkout order (intent CAPTURE or AUTHORIZE) with purchase units, amounts and an optional payment source; the buyer approves it through the payer-action link',
 	},
@@ -492,7 +492,7 @@ export const paypalEndpointMeta = {
 		description: 'Show order details',
 	},
 	'orders.trackers.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Add tracking information for an Order',
 	},
 	'orders.trackers.update': {
@@ -642,11 +642,11 @@ export const paypalEndpointMeta = {
 		description: 'Update subscription',
 	},
 	'trackers.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Add tracking information for PayPal transaction',
 	},
 	'trackers.createBatch': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Add tracking information for multiple PayPal transactions',
 	},
 	'trackers.get': {
@@ -658,7 +658,7 @@ export const paypalEndpointMeta = {
 		description: 'List tracking information',
 	},
 	'trackers.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Update or cancel tracking information for PayPal transaction',
 	},
 	'transactions.list': {
