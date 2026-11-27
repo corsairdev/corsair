@@ -2483,6 +2483,7 @@ Record<string, {
 | `appId` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `tunnels` | `object[]` | No | — |
+| `tunnelsError` | `string` | No | Set when the sandbox started but its tunnels failed or were not ready within tunnelTimeoutMs. The sandbox keeps running. |
 
 <AccordionGroup>
 <Accordion title="tunnels full type">
