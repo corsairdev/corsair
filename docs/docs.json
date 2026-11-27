@@ -1962,6 +1962,14 @@
                 ]
               },
               {
+                "group": "DocuSeal",
+                "pages": [
+                  "plugins/docuseal/overview",
+                  "plugins/docuseal/api",
+                  "plugins/docuseal/database"
+                ]
+              },
+              {
                 "group": "DocuSign",
                 "pages": [
                   "plugins/docusign/overview",
