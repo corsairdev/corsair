@@ -13450,5 +13450,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-27",
+    "package": "@corsair-dev/defillama",
+    "dir": "packages/defillama",
+    "name": "DefiLlama",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
