@@ -5711,6 +5711,14 @@
                 ]
               },
               {
+                "group": "Supermemory",
+                "pages": [
+                  "plugins/supermemory/overview",
+                  "plugins/supermemory/api",
+                  "plugins/supermemory/database"
+                ]
+              },
+              {
                 "group": "SuperSaaS",
                 "pages": [
                   "plugins/supersaas/overview",

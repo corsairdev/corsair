@@ -1,0 +1,177 @@
+# Display copy for the generated docs and the catalog, plus one call
+# example per operation. Generated with the plugin from Supermemory's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Supermemory
+domain: supermemory.ai
+description: "Memory for AI agents with Supermemory: add documents, files and URLs to a namespace, search memories and document chunks, read user profiles, forget memories, and manage namespaces, connectors (Notion, Google Drive, OneDrive, Gmail, GitHub and more) and organization settings. Covers the v5 API and the legacy v3/v4 routes (74 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in the Supermemory console (console.supermemory.ai, API Keys). An organization key reaches every namespace; a scoped key only its own namespace and answers 403 elsewhere. Things to know before you write:
+
+  - **Namespaces scope everything.** A namespace (formerly a container tag) is one user, project or tenant. Every v5 route except `namespaces.list`, `connectors.listAll`, `organization.*` and `feedback.send` takes `namespace`, and a document belongs to exactly one.
+  - **Ingestion is asynchronous.** `documents.add`, `documents.batchAdd` and `documents.uploadFile` answer once the work is queued; extraction and memory formation continue in the background. Read `documents.get` (or `resources.list` with `type: documents`) for the status before you search for the new content. Reusing a document `id` appends to that document and keeps its history.
+  - **Search modes.** `search.query` searches memories and document chunks together by default (`searchMode` changes that); `profiles.get` returns the static and dynamic facts Supermemory keeps about the namespace.
+  - **Forgetting is permanent.** `memories.forget` removes memories by id, `memories.forgetMatching` removes every memory a natural-language query matches (pass `dryRun: true` first to preview the set), and `documents.delete`, `namespaces.delete` and `connectors.delete` (with `deleteDocuments`) remove content. `namespaces.delete` with `moveTo` moves the content into another namespace instead. All are `destructive`.
+  - **Connectors** link Notion, Google Drive, OneDrive, Gmail, GitHub and other apps: `connectors.create` returns an authorization link the account owner opens, and syncs then write documents into the namespace. Connectors need the Pro plan; the free plan answers 403.
+  - **Moves and merges wait for processing.** `namespaces.delete` with `moveTo` and `legacy.containerTags.merge` answer 409 while any document in either namespace is still being ingested or forming memories, which can take several minutes. Documents added with `taskType: "superrag"` skip memory formation.
+  - **Legacy routes.** Everything under `legacy.` is the v3/v4 API, still served and still in the API reference. Use it for what v5 doesn't have yet: direct memory writes (`legacy.memories.create`), conversations (`legacy.conversations.ingest`), document chunks and presigned file URLs, and container-tag merges. `legacy.settings.reset` deletes every document, memory and connection in the organization.
+  - **Feedback.** `feedback.send` sends a bug report or feature request to Supermemory's team, so it is `destructive`.
+  - **Limits.** A 429 is retried by core with backoff; a plan limit answers 402.
+examples:
+  read:
+    path: search.query
+    title: Search a user's memories
+    args: {"namespace": "user_ada", "query": "When does Ada like to meet?", "limit": 5}
+  write:
+    path: documents.add
+    title: Remember a note about a user
+    args: {"namespace": "user_ada", "content": "Ada prefers morning meetings and works in Lisbon.", "id": "doc_ada_notes", "metadata": {"source": "onboarding"}}
+apiExamples:
+  connectors.create:
+    args: {"namespace": "user_ada", "provider": "notion"}
+  connectors.delete:
+    args: {"namespace": "user_ada", "id": "doc_ada_notes"}
+  connectors.get:
+    args: {"namespace": "user_ada", "id": "doc_ada_notes"}
+  connectors.list:
+    args: {"namespace": "user_ada"}
+  connectors.listAll:
+    args: {}
+  connectors.sync:
+    args: {"namespace": "user_ada", "id": "doc_ada_notes"}
+  connectors.update:
+    args: {"namespace": "user_ada", "id": "doc_ada_notes"}
+  documents.add:
+    args: {"namespace": "user_ada", "content": "Ada prefers morning meetings and works in Lisbon.", "id": "doc_ada_notes", "metadata": {"source": "onboarding"}}
+  documents.batchAdd:
+    args: {"namespace": "user_ada", "documents": [{"content": "Ada prefers morning meetings and works in Lisbon."}]}
+  documents.delete:
+    args: {"namespace": "user_ada", "ids": ["doc_ada_notes"]}
+  documents.get:
+    args: {"namespace": "user_ada", "id": "doc_ada_notes", "include": ["chunks", "memories"]}
+  documents.memoryCounts:
+    args: {"namespace": "user_ada", "ids": ["doc_ada_notes"]}
+  documents.replaceWithFile:
+    args: {"namespace": "user_ada", "id": "doc_ada_notes", "file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  documents.update:
+    args: {"namespace": "user_ada", "id": "doc_ada_notes"}
+  documents.updateFile:
+    args: {"namespace": "user_ada", "id": "doc_ada_notes"}
+  documents.uploadFile:
+    args: {"namespace": "user_ada", "file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  feedback.send:
+    args: {"type": "bug", "title": "Search missed a recent document", "description": "A document added a minute ago did not show up in search results."}
+  graph.get:
+    args: {"namespace": "user_ada"}
+  legacy.connections.configure:
+    args: {"connectionId": "PTzGiUYei7pgzg5buzZHgA", "resources": [{}]}
+  legacy.connections.create:
+    args: {"provider": "notion"}
+  legacy.connections.delete:
+    args: {"connectionId": "PTzGiUYei7pgzg5buzZHgA"}
+  legacy.connections.deleteByProvider:
+    args: {"provider": "notion", "containerTags": ["user_ada"]}
+  legacy.connections.documents:
+    args: {"provider": "notion"}
+  legacy.connections.get:
+    args: {"connectionId": "PTzGiUYei7pgzg5buzZHgA"}
+  legacy.connections.getByProvider:
+    args: {"provider": "notion", "containerTags": ["user_ada"]}
+  legacy.connections.list:
+    args: {}
+  legacy.connections.resources:
+    args: {"connectionId": "PTzGiUYei7pgzg5buzZHgA"}
+  legacy.connections.sync:
+    args: {"provider": "notion"}
+  legacy.containerTags.delete:
+    args: {"containerTag": "user_ada"}
+  legacy.containerTags.get:
+    args: {"containerTag": "user_ada"}
+  legacy.containerTags.list:
+    args: {}
+  legacy.containerTags.merge:
+    args: {"containerTags": ["user_ada"], "targetContainerTag": "example"}
+  legacy.containerTags.mergeStatus:
+    args: {"mergeId": "merge_01"}
+  legacy.containerTags.update:
+    args: {"containerTag": "user_ada"}
+  legacy.conversations.ingest:
+    args: {"conversationId": "example", "messages": [{"role": "user", "content": "Ada prefers morning meetings and works in Lisbon."}]}
+  legacy.documents.add:
+    args: {"content": "Ada prefers morning meetings.", "containerTag": "user_ada"}
+  legacy.documents.batchAdd:
+    args: {"documents": [{"content": "Ada prefers morning meetings and works in Lisbon."}]}
+  legacy.documents.bulkDelete:
+    args: {}
+  legacy.documents.chunks:
+    args: {"id": "doc_ada_notes"}
+  legacy.documents.delete:
+    args: {"id": "doc_ada_notes"}
+  legacy.documents.fileUrl:
+    args: {"id": "doc_ada_notes"}
+  legacy.documents.get:
+    args: {"id": "doc_ada_notes"}
+  legacy.documents.list:
+    args: {}
+  legacy.documents.listProcessing:
+    args: {}
+  legacy.documents.search:
+    args: {"q": "meeting preferences", "containerTags": ["user_ada"]}
+  legacy.documents.update:
+    args: {"id": "doc_ada_notes"}
+  legacy.documents.uploadFile:
+    args: {"file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  legacy.memories.create:
+    args: {"memories": [{"content": "Ada prefers morning meetings and works in Lisbon."}], "containerTag": "user_ada"}
+  legacy.memories.forget:
+    args: {"containerTag": "user_ada"}
+  legacy.memories.forgetMatching:
+    args: {"containerTag": "user_ada"}
+  legacy.memories.list:
+    args: {"containerTags": ["user_ada"]}
+  legacy.memories.search:
+    args: {"q": "meeting preferences", "containerTag": "user_ada"}
+  legacy.memories.update:
+    args: {"containerTag": "user_ada", "newContent": "example"}
+  legacy.profile.buckets:
+    args: {"containerTag": "user_ada"}
+  legacy.profile.get:
+    args: {"containerTag": "user_ada"}
+  legacy.settings.get:
+    args: {}
+  legacy.settings.reset:
+    args: {"confirmation": "example"}
+  legacy.settings.suggestBuckets:
+    args: {}
+  legacy.settings.update:
+    args: {}
+  memories.forget:
+    args: {"namespace": "user_ada", "ids": ["doc_ada_notes"]}
+  memories.forgetMatching:
+    args: {"namespace": "user_ada", "query": "meeting preferences", "dryRun": true}
+  memories.get:
+    args: {"namespace": "user_ada", "id": "doc_ada_notes"}
+  namespaces.delete:
+    args: {"namespace": "user_ada"}
+  namespaces.get:
+    args: {"namespace": "user_ada"}
+  namespaces.list:
+    args: {}
+  namespaces.update:
+    args: {"namespace": "user_ada"}
+  organization.get:
+    args: {}
+  organization.update:
+    args: {"organizationalContext": "example"}
+  profiles.buckets.delete:
+    args: {"namespace": "user_ada", "buckets": ["work_style"]}
+  profiles.buckets.get:
+    args: {"namespace": "user_ada"}
+  profiles.buckets.set:
+    args: {"namespace": "user_ada", "buckets": {"work_style": "How the user likes to work and meet"}}
+  profiles.get:
+    args: {"namespace": "user_ada"}
+  resources.list:
+    args: {"namespace": "user_ada", "type": "memories", "limit": 20}
+  search.query:
+    args: {"namespace": "user_ada", "query": "When does Ada like to meet?", "limit": 5}
