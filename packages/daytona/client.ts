@@ -209,14 +209,33 @@ export async function makeDaytonaRequest(
 	}
 }
 
-/** String query and path values of a request, for scrubbing an error that echoes one. */
+/**
+ * Strings this call sends (query and path values, and every string in a JSON
+ * body), for scrubbing an error that echoes one. Core's ApiError keeps only a
+ * redacted copy of the request, so they are gathered from the request itself.
+ */
 function sentValues(options: DaytonaRequest): string[] {
 	const values: string[] = [];
-	for (const record of [options.query, options.pathParameters]) {
-		for (const value of Object.values(record ?? {})) {
-			if (typeof value === 'string' && value.length >= 6) values.push(value);
+	// `unknown` because query, path and body values are any validated JSON.
+	const visit = (value: unknown, depth: number) => {
+		if (depth > 8 || value === null || value === undefined) return;
+		if (typeof value === 'string') {
+			if (value.length >= 4) values.push(value);
+			return;
 		}
-	}
+		if (typeof Blob !== 'undefined' && value instanceof Blob) return;
+		if (typeof FormData !== 'undefined' && value instanceof FormData) return;
+		if (Array.isArray(value)) {
+			for (const item of value) visit(item, depth + 1);
+			return;
+		}
+		if (typeof value === 'object') {
+			for (const inner of Object.values(value)) visit(inner, depth + 1);
+		}
+	};
+	visit(options.query, 0);
+	visit(options.pathParameters, 0);
+	visit(options.body, 0);
 	return values;
 }
 
