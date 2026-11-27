@@ -6476,6 +6476,14 @@
                 ]
               },
               {
+                "group": "WordPress",
+                "pages": [
+                  "plugins/wordpress/overview",
+                  "plugins/wordpress/api",
+                  "plugins/wordpress/database"
+                ]
+              },
+              {
                 "group": "Workable",
                 "pages": [
                   "plugins/workable/overview",

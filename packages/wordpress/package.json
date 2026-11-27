@@ -1,0 +1,56 @@
+{
+  "name": "@corsair-dev/wordpress",
+  "version": "0.1.0",
+  "description": "WordPress integration for Corsair: self-hosted WordPress sites (and WordPress.com sites with application passwords): posts, pages, media uploads, revisions and autosaves, categories, tags and custom taxonomies, comments, users and application passwords, site settings, plugins (install, activate, delete), themes, block templates and template parts, global styles, navigation and classic menus, widgets and sidebars, block types, patterns and fonts, search, Site Health checks, the Abilities API, batch requests and any custom post type or plugin route (209 operations).",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "dev-source": "./index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc --build --force && tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=api\\.test\\.ts"
+  },
+  "peerDependencies": {
+    "corsair": ">=0.1.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "corsair": "workspace:*",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.9",
+    "tsup": "^8.0.1",
+    "typescript": "catalog:",
+    "zod": "^4.1.13"
+  },
+  "keywords": [
+    "corsair",
+    "wordpress",
+    "cms",
+    "blog",
+    "posts",
+    "pages",
+    "media",
+    "plugin"
+  ],
+  "author": "Corsair (https://corsair.dev)",
+  "license": "Apache-2.0",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/wordpress"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/wordpress"
+}
