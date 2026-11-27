@@ -13351,5 +13351,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-27",
+    "package": "@corsair-dev/paypal",
+    "dir": "packages/paypal",
+    "name": "PayPal",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-27",
+    "package": "@corsair-dev/railway",
+    "dir": "packages/railway",
+    "name": "Railway",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-27",
+    "package": "@corsair-dev/zep",
+    "dir": "packages/zep",
+    "name": "Zep",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
