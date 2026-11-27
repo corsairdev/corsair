@@ -427,6 +427,7 @@ export const BaseProviders = [
 	'leiga',
 	'lemlist',
 	'lemonsqueezy',
+	'letta',
 	'lever',
 	'lexoffice',
 	'linear',
@@ -1240,6 +1241,7 @@ export const ProviderDisplayNames = {
 	leiga: 'Leiga',
 	lemlist: 'Lemlist',
 	lemonsqueezy: 'Lemon Squeezy',
+	letta: 'Letta',
 	lever: 'Lever',
 	lexoffice: 'Lexoffice',
 	linear: 'Linear',
@@ -2060,6 +2062,7 @@ export type AllProviders =
 	| 'leiga'
 	| 'lemlist'
 	| 'lemonsqueezy'
+	| 'letta'
 	| 'lever'
 	| 'lexoffice'
 	| 'linear'

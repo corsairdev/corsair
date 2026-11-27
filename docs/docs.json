@@ -3558,6 +3558,14 @@
                 ]
               },
               {
+                "group": "Letta",
+                "pages": [
+                  "plugins/letta/overview",
+                  "plugins/letta/api",
+                  "plugins/letta/database"
+                ]
+              },
+              {
                 "group": "Lever",
                 "pages": [
                   "plugins/lever/overview",

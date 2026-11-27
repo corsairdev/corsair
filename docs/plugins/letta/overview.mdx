@@ -1,0 +1,136 @@
+---
+title: "Letta plugin"
+sidebarTitle: "Overview"
+description: "Stateful agents with Letta: create agents with memory, send them messages (sync, streaming, async or on a schedule), edit core memory blocks and archival passages, attach tools, MCP servers, folders and files, and inspect conversations, runs, steps and models (129 operations)."
+---
+
+Use **Letta** through Corsair: one client, typed API calls.
+
+Create an API key in Letta Cloud (app.letta.com). The `baseUrl` option points the plugin at another REST base, such as a proxy (https; plain http only for localhost). Things to know before you write:
+
+- **Agents keep state.** An agent has core memory blocks (always in its context), archival passages (searched when needed), attached tools, folders and files. `agents.blocks.*`, `agents.passages.*`, `blocks.*` and `archives.*` read and edit that memory directly.
+- **Messages run the model.** `agents.messages.create` and `conversations.messages.create` call the agent's model and may run its tools, so they spend tokens and are `destructive`. `agents.messages.createAsync` runs in the background (poll `runs.get`); the streaming routes return the server-sent events as text.
+- **Tools.** `tools.*` manage custom tools, `mcpServers.*` connect MCP servers, and `agents.tools.attach` gives a tool to an agent. `agents.tools.run` and `mcpServers.tools.run` execute a tool directly.
+- **Templates and identities** (`templates.*`, `agents.identities.*`) are Letta Cloud features.
+- **Routes Letta Cloud didn't serve (11-27).** On a free account, Letta Cloud had no route for `archives.*`, `folders.*`, `templates.*`, `passages.search` and `agents.importFile` (404, "Cannot GET"), though the reference lists them. They are kept as documented; expect a 404 until Letta serves them for your plan. Letta now steers new work to its Agent SDK and App Server; the REST API still answers.
+- **Undocumented returns.** Letta's reference gives no return type for some routes (deletes, attach and detach, file open and close, tags, traces); those return the JSON Letta sends, unchecked, or `{ success: true }` for an empty body.
+
+**What you get:**
+
+- 129 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/letta better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/letta better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/letta better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/letta better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { letta } from '@corsair-dev/letta';
+
+export const corsair = createCorsair({
+	plugins: [
+		letta(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Letta API key before the first call: `pnpm corsair setup --plugin=letta --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+letta()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'letta',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List agents**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.letta.api.agents.list({});
+```
+
+
+**Send a message to an agent**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.letta.api.agents.messages.create({ agent_id: 'agent-3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c', input: 'What do you remember about me?' });
+```
+
+
+See the full list on the [API](/plugins/letta/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/letta/api">
+    Every `letta.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

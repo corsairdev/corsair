@@ -1,0 +1,284 @@
+# Display copy for the generated docs and the catalog, plus one call
+# example per operation. Generated with the plugin from Letta's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Letta
+domain: letta.com
+description: "Stateful agents with Letta: create agents with memory, send them messages (sync, streaming, async or on a schedule), edit core memory blocks and archival passages, attach tools, MCP servers, folders and files, and inspect conversations, runs, steps and models (129 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key in Letta Cloud (app.letta.com). The `baseUrl` option points the plugin at another REST base, such as a proxy (https; plain http only for localhost). Things to know before you write:
+
+  - **Agents keep state.** An agent has core memory blocks (always in its context), archival passages (searched when needed), attached tools, folders and files. `agents.blocks.*`, `agents.passages.*`, `blocks.*` and `archives.*` read and edit that memory directly.
+  - **Messages run the model.** `agents.messages.create` and `conversations.messages.create` call the agent's model and may run its tools, so they spend tokens and are `destructive`. `agents.messages.createAsync` runs in the background (poll `runs.get`); the streaming routes return the server-sent events as text.
+  - **Tools.** `tools.*` manage custom tools, `mcpServers.*` connect MCP servers, and `agents.tools.attach` gives a tool to an agent. `agents.tools.run` and `mcpServers.tools.run` execute a tool directly.
+  - **Templates and identities** (`templates.*`, `agents.identities.*`) are Letta Cloud features.
+  - **Routes Letta Cloud didn't serve (11-27).** On a free account, Letta Cloud had no route for `archives.*`, `folders.*`, `templates.*`, `passages.search` and `agents.importFile` (404, "Cannot GET"), though the reference lists them. They are kept as documented; expect a 404 until Letta serves them for your plan. Letta now steers new work to its Agent SDK and App Server; the REST API still answers.
+  - **Undocumented returns.** Letta's reference gives no return type for some routes (deletes, attach and detach, file open and close, tags, traces); those return the JSON Letta sends, unchecked, or `{ success: true }` for an empty body.
+examples:
+  read:
+    path: agents.list
+    title: List agents
+    args: {}
+  write:
+    path: agents.messages.create
+    title: Send a message to an agent
+    args: {"agent_id": "agent-3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "input": "What do you remember about me?"}
+apiExamples:
+  accessTokens.create:
+    args: {"hostname": "example", "policy": [{"id": "doc_8f2k1x9q", "access": ["read_messages"], "type": "agent"}]}
+  accessTokens.delete:
+    args: {"token": "example"}
+  accessTokens.list:
+    args: {}
+  agents.archives.attach:
+    args: {"agent_id": "example", "archive_id": "example"}
+  agents.archives.detach:
+    args: {"agent_id": "example", "archive_id": "example"}
+  agents.blocks.attach:
+    args: {"agent_id": "example", "block_id": "example"}
+  agents.blocks.detach:
+    args: {"agent_id": "example", "block_id": "example"}
+  agents.blocks.get:
+    args: {"agent_id": "example", "block_label": "example"}
+  agents.blocks.list:
+    args: {"agent_id": "example"}
+  agents.blocks.update:
+    args: {"agent_id": "example", "block_label": "example"}
+  agents.create:
+    args: {}
+  agents.delete:
+    args: {"agent_id": "example"}
+  agents.exportFile:
+    args: {"agent_id": "example"}
+  agents.files.close:
+    args: {"agent_id": "example", "file_id": "example"}
+  agents.files.closeAll:
+    args: {"agent_id": "example"}
+  agents.files.list:
+    args: {"agent_id": "example"}
+  agents.files.open:
+    args: {"agent_id": "example", "file_id": "example"}
+  agents.folders.attach:
+    args: {"agent_id": "example", "folder_id": "example"}
+  agents.folders.detach:
+    args: {"agent_id": "example", "folder_id": "example"}
+  agents.folders.list:
+    args: {"agent_id": "example"}
+  agents.get:
+    args: {"agent_id": "example"}
+  agents.identities.attach:
+    args: {"agent_id": "example", "identity_id": "example"}
+  agents.identities.detach:
+    args: {"agent_id": "example", "identity_id": "example"}
+  agents.importFile:
+    args: {"file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  agents.list:
+    args: {}
+  agents.messages.cancel:
+    args: {"agent_id": "example"}
+  agents.messages.compact:
+    args: {"agent_id": "example"}
+  agents.messages.create:
+    args: {"agent_id": "agent-3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "input": "What do you remember about me?"}
+  agents.messages.createAsync:
+    args: {"agent_id": "example"}
+  agents.messages.list:
+    args: {"agent_id": "example"}
+  agents.messages.reset:
+    args: {"agent_id": "example"}
+  agents.messages.stream:
+    args: {"agent_id": "example"}
+  agents.passages.create:
+    args: {"agent_id": "example", "text": "example"}
+  agents.passages.delete:
+    args: {"agent_id": "example", "memory_id": "example"}
+  agents.passages.list:
+    args: {"agent_id": "example"}
+  agents.passages.search:
+    args: {"agent_id": "example", "query": "example"}
+  agents.recompile:
+    args: {"agent_id": "example"}
+  agents.schedule.create:
+    args: {"agent_id": "example", "messages": [{"content": "example", "role": "user"}], "schedule": {"scheduled_at": 1}}
+  agents.schedule.delete:
+    args: {"agent_id": "example", "scheduled_message_id": "example"}
+  agents.schedule.get:
+    args: {"agent_id": "example", "scheduled_message_id": "example"}
+  agents.schedule.list:
+    args: {"agent_id": "example"}
+  agents.tools.attach:
+    args: {"agent_id": "example", "tool_id": "example"}
+  agents.tools.detach:
+    args: {"agent_id": "example", "tool_id": "example"}
+  agents.tools.list:
+    args: {"agent_id": "example"}
+  agents.tools.run:
+    args: {"agent_id": "example", "tool_name": "example"}
+  agents.tools.updateApproval:
+    args: {"agent_id": "example", "tool_name": "example", "requires_approval": true}
+  agents.update:
+    args: {"agent_id": "example"}
+  archives.create:
+    args: {"name": "example"}
+  archives.delete:
+    args: {"archive_id": "example"}
+  archives.get:
+    args: {"archive_id": "example"}
+  archives.list:
+    args: {}
+  archives.passages.create:
+    args: {"archive_id": "example", "text": "example"}
+  archives.passages.createMany:
+    args: {"archive_id": "example", "passages": [{"text": "example"}]}
+  archives.passages.delete:
+    args: {"archive_id": "example", "passage_id": "example"}
+  archives.update:
+    args: {"archive_id": "example"}
+  blocks.agents.list:
+    args: {"block_id": "example"}
+  blocks.create:
+    args: {"label": "example", "value": "example"}
+  blocks.delete:
+    args: {"block_id": "example"}
+  blocks.get:
+    args: {"block_id": "example"}
+  blocks.list:
+    args: {}
+  blocks.update:
+    args: {"block_id": "example"}
+  client.health:
+    args: {}
+  conversations.cancel:
+    args: {"conversation_id": "example"}
+  conversations.create:
+    args: {"agent_id": "example"}
+  conversations.delete:
+    args: {"conversation_id": "example"}
+  conversations.fork:
+    args: {"conversation_id": "example"}
+  conversations.get:
+    args: {"conversation_id": "example"}
+  conversations.list:
+    args: {}
+  conversations.messages.compact:
+    args: {"conversation_id": "example"}
+  conversations.messages.create:
+    args: {"conversation_id": "example"}
+  conversations.messages.list:
+    args: {"conversation_id": "example"}
+  conversations.messages.stream:
+    args: {"conversation_id": "example"}
+  conversations.recompile:
+    args: {"conversation_id": "example"}
+  conversations.update:
+    args: {"conversation_id": "example"}
+  environments.get:
+    args: {"deviceId": "example"}
+  environments.list:
+    args: {}
+  environments.sendMessage:
+    args: {"connectionId": "example", "messages": [{"client_message_id": "example", "content": "example", "role": "user"}]}
+  folders.agents.list:
+    args: {"folder_id": "example"}
+  folders.create:
+    args: {"name": "example"}
+  folders.delete:
+    args: {"folder_id": "example"}
+  folders.files.delete:
+    args: {"folder_id": "example", "file_id": "example"}
+  folders.files.get:
+    args: {"folder_id": "example", "file_id": "example"}
+  folders.files.list:
+    args: {"folder_id": "example"}
+  folders.files.upload:
+    args: {"folder_id": "example", "file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  folders.get:
+    args: {"folder_id": "example"}
+  folders.list:
+    args: {}
+  folders.update:
+    args: {"folder_id": "example"}
+  mcpServers.create:
+    args: {"config": {"args": ["example"], "command": "example"}, "server_name": "example"}
+  mcpServers.delete:
+    args: {"mcp_server_id": "example"}
+  mcpServers.get:
+    args: {"mcp_server_id": "example"}
+  mcpServers.list:
+    args: {}
+  mcpServers.refresh:
+    args: {"mcp_server_id": "example"}
+  mcpServers.tools.get:
+    args: {"mcp_server_id": "example", "tool_id": "example"}
+  mcpServers.tools.list:
+    args: {"mcp_server_id": "example"}
+  mcpServers.tools.run:
+    args: {"mcp_server_id": "example", "tool_id": "example"}
+  mcpServers.update:
+    args: {"mcp_server_id": "example", "config": {"args": ["example"], "command": "example"}}
+  messages.get:
+    args: {"message_id": "example"}
+  messages.list:
+    args: {}
+  messages.search:
+    args: {"query": "example"}
+  models.embeddings.list:
+    args: {}
+  models.list:
+    args: {}
+  passages.search:
+    args: {}
+  runs.get:
+    args: {"run_id": "example"}
+  runs.list:
+    args: {}
+  runs.messages.list:
+    args: {"run_id": "example"}
+  runs.messages.stream:
+    args: {"run_id": "example"}
+  runs.steps.list:
+    args: {"run_id": "example"}
+  runs.trace.get:
+    args: {"run_id": "example"}
+  runs.usage.get:
+    args: {"run_id": "example"}
+  steps.feedback.create:
+    args: {"step_id": "example"}
+  steps.get:
+    args: {"step_id": "example"}
+  steps.list:
+    args: {}
+  steps.messages.list:
+    args: {"step_id": "example"}
+  steps.metrics.get:
+    args: {"step_id": "example"}
+  steps.trace.get:
+    args: {"step_id": "example"}
+  tags.list:
+    args: {}
+  templates.agents.create:
+    args: {"template_version": "example"}
+  templates.create:
+    args: {"body": {"agent_id": "example", "type": "agent"}}
+  templates.delete:
+    args: {"template_name": "example"}
+  templates.rollback:
+    args: {"template_name": "example", "version": "example"}
+  templates.save:
+    args: {"template_name": "example"}
+  templates.update:
+    args: {"template_name": "example", "agent_file_json": {}}
+  tools.create:
+    args: {"source_code": "example"}
+  tools.delete:
+    args: {"tool_id": "example"}
+  tools.get:
+    args: {"tool_id": "example"}
+  tools.list:
+    args: {}
+  tools.search:
+    args: {}
+  tools.update:
+    args: {"tool_id": "example"}
+  tools.upsert:
+    args: {"source_code": "example"}
