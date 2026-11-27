@@ -2347,6 +2347,14 @@
                 ]
               },
               {
+                "group": "Firebase",
+                "pages": [
+                  "plugins/firebase/overview",
+                  "plugins/firebase/api",
+                  "plugins/firebase/database"
+                ]
+              },
+              {
                 "group": "Fireberry",
                 "pages": [
                   "plugins/fireberry/overview",

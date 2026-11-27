@@ -280,6 +280,7 @@ export const BaseProviders = [
 	'findymail',
 	'finerworks',
 	'finmei',
+	'firebase',
 	'fireberry',
 	'firecrawl',
 	'fireflies',
@@ -1078,6 +1079,7 @@ export const ProviderDisplayNames = {
 	findymail: 'Findymail',
 	finerworks: 'FinerWorks',
 	finmei: 'Finmei',
+	firebase: 'Firebase',
 	fireberry: 'Fireberry',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
@@ -1883,6 +1885,7 @@ export type AllProviders =
 	| 'findymail'
 	| 'finerworks'
 	| 'finmei'
+	| 'firebase'
 	| 'fireberry'
 	| 'firecrawl'
 	| 'fireflies'
