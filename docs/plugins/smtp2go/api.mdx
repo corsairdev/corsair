@@ -1,0 +1,1759 @@
+---
+title: "SMTP2GO API reference"
+sidebarTitle: "API"
+description: "API reference for the SMTP2GO plugin in Corsair: every `smtp2go.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Activity
+
+### search
+
+`activity.search`
+
+Search delivery activity events (processed, delivered, bounced, opened, clicked and more) by date, address and event type; limited to 100 returned items per call
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.activity.search({ event_types: ['delivered', 'opened'], search_subject: 'receipt', limit: 100, region: 'eu' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `search` | `string` | No | — |
+| `search_email_id` | `string` | No | — |
+| `search_subject` | `string` | No | — |
+| `search_sender` | `string` | No | — |
+| `search_recipient` | `string` | No | — |
+| `event_types` | `string[]` | No | Event types to keep: 'processed', 'soft-bounced', 'hard-bounced', 'rejected', 'spam', 'delivered', 'unsubscribed', 'resubscribed', 'opened', 'clicked'. |
+| `limit` | `number` | No | Defaults to 100; the API returns at most 1000 items. |
+| `continue_token` | `string` | No | — |
+| `only_latest` | `boolean` | No | — |
+| `include_headers` | `boolean` | No | — |
+| `region` | `us \| eu \| au` | No | Read activity from one region instead of the account default. |
+| `subaccounts` | `string[]` | No | Subaccount ids to include. |
+
+Returns at most 1000 events per call; `total_events` is the full match
+count. The endpoint is documented at 60 requests per minute.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  events: {
+    email_id?: string | null,
+    event?: string | null,
+    date?: string | null,
+    from?: string | null,
+    sender?: string | null,
+    recipient?: string | null,
+    to?: string | null,
+    bcc?: string | null,
+    subject?: string | null,
+    username?: string | null,
+    subaccount_name?: string | null,
+    smtp_response?: string | null,
+    host?: string | null,
+    headers?: string | null,
+    custom_headers?: Record<string, unknown> | null
+  }[],
+  total_events?: number | null,
+  continue_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Domains
+
+### add
+
+`domains.add`
+
+Add a sender domain and get the DNS records to publish; verification starts right away unless auto_verify is false
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.domains.add({ domain: 'example.com', auto_verify: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The sender domain to add, such as example.com. |
+| `auto_verify` | `boolean` | No | Defaults to true: verification is attempted right away. |
+| `requisition_ssl` | `boolean` | No | Defaults to true: an SSL requisition is created for the tracking subdomain. |
+| `subaccount_id` | `string` | No | — |
+
+The answer contains the DNS records to publish (DKIM, return-path and
+CNAME). Verification starts right away unless `auto_verify` is false.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domains: {
+    domain?: {
+      fulldomain?: string | null,
+      subdomain?: string | null,
+      domain?: string | null,
+      suffix?: string | null,
+      dkim_selector?: string | null,
+      dkim_verified?: boolean | null,
+      dkim_status?: string | null,
+      dkim_value?: string | null,
+      rpath_selector?: string | null,
+      rpath_verified?: boolean | null,
+      rpath_status?: string | null,
+      rpath_value?: string | null,
+      setup_link?: string | null
+    } | null,
+    trackers?: {
+      fulldomain?: string | null,
+      subdomain?: string | null,
+      domain?: string | null,
+      suffix?: string | null,
+      cname_verified?: boolean | null,
+      cname_status?: string | null,
+      cname_value?: string | null,
+      enabled?: boolean | null
+    }[] | null,
+    subaccount_access?: {
+      subaccounts?: string[] | null,
+      future_subaccounts?: boolean | null
+    } | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`domains.list`
+
+List sender domains with DKIM and return-path verification state and tracking subdomains
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.domains.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `subaccount_id` | `string` | No | — |
+
+Each row carries the DKIM and return-path state under `domain` and the
+tracking subdomains under `trackers`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domains: {
+    domain?: {
+      fulldomain?: string | null,
+      subdomain?: string | null,
+      domain?: string | null,
+      suffix?: string | null,
+      dkim_selector?: string | null,
+      dkim_verified?: boolean | null,
+      dkim_status?: string | null,
+      dkim_value?: string | null,
+      rpath_selector?: string | null,
+      rpath_verified?: boolean | null,
+      rpath_status?: string | null,
+      rpath_value?: string | null,
+      setup_link?: string | null
+    } | null,
+    trackers?: {
+      fulldomain?: string | null,
+      subdomain?: string | null,
+      domain?: string | null,
+      suffix?: string | null,
+      cname_verified?: boolean | null,
+      cname_status?: string | null,
+      cname_value?: string | null,
+      enabled?: boolean | null
+    }[] | null,
+    subaccount_access?: {
+      subaccounts?: string[] | null,
+      future_subaccounts?: boolean | null
+    } | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`domains.remove`
+
+Remove a sender domain; mail from it stops being accepted and it must be added and verified again
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.smtp2go.api.domains.remove({ domain: 'example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The sender domain to remove. |
+| `subaccount_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domains: {
+    domain?: {
+      fulldomain?: string | null,
+      subdomain?: string | null,
+      domain?: string | null,
+      suffix?: string | null,
+      dkim_selector?: string | null,
+      dkim_verified?: boolean | null,
+      dkim_status?: string | null,
+      dkim_value?: string | null,
+      rpath_selector?: string | null,
+      rpath_verified?: boolean | null,
+      rpath_status?: string | null,
+      rpath_value?: string | null,
+      setup_link?: string | null
+    } | null,
+    trackers?: {
+      fulldomain?: string | null,
+      subdomain?: string | null,
+      domain?: string | null,
+      suffix?: string | null,
+      cname_verified?: boolean | null,
+      cname_status?: string | null,
+      cname_value?: string | null,
+      enabled?: boolean | null
+    }[] | null,
+    subaccount_access?: {
+      subaccounts?: string[] | null,
+      future_subaccounts?: boolean | null
+    } | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### verify
+
+`domains.verify`
+
+Run verification for one sender domain now instead of waiting for the periodic re-check
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.domains.verify({ domain: 'example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The sender domain to verify. |
+| `requisition_ssl` | `boolean` | No | — |
+| `subaccount_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domains: {
+    domain?: {
+      fulldomain?: string | null,
+      subdomain?: string | null,
+      domain?: string | null,
+      suffix?: string | null,
+      dkim_selector?: string | null,
+      dkim_verified?: boolean | null,
+      dkim_status?: string | null,
+      dkim_value?: string | null,
+      rpath_selector?: string | null,
+      rpath_verified?: boolean | null,
+      rpath_status?: string | null,
+      rpath_value?: string | null,
+      setup_link?: string | null
+    } | null,
+    trackers?: {
+      fulldomain?: string | null,
+      subdomain?: string | null,
+      domain?: string | null,
+      suffix?: string | null,
+      cname_verified?: boolean | null,
+      cname_status?: string | null,
+      cname_value?: string | null,
+      enabled?: boolean | null
+    }[] | null,
+    subaccount_access?: {
+      subaccounts?: string[] | null,
+      future_subaccounts?: boolean | null
+    } | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Email
+
+### cancelScheduled
+
+`email.cancelScheduled`
+
+Cancel one queued scheduled email by schedule_id; the message will not be sent and must be scheduled again to go out
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.smtp2go.api.email.cancelScheduled({ schedule_id: '4d3b03a7-8663-4592-899a-b479ba6fcba9' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schedule_id` | `string` | Yes | The schedule_id from email.searchScheduled. |
+
+`schedule_id` must be a UUID. The success body is undocumented; confirm
+the cancellation with `email.searchScheduled`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `Record<string, unknown> \| string \| null` | No | — |
+
+
+
+---
+
+### searchScheduled
+
+`email.searchScheduled`
+
+List emails queued by a schedule, filtered by schedule_id, subject, sender or recipient
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.email.searchScheduled({ limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `schedule_id` | `string` | No | — |
+| `search_subject` | `string` | No | — |
+| `search_recipient` | `string` | No | — |
+| `search_sender` | `string` | No | — |
+| `limit` | `number` | No | Defaults to 1000. |
+| `page` | `number` | No | — |
+
+The answer's `data` is a bare array of queued messages, not an object.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  schedule_id?: string | null,
+  schedule?: string | null,
+  sender?: string | null,
+  subject?: string | null,
+  recipients?: string | null,
+  client_ip?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchSent
+
+`email.searchSent`
+
+Search sent emails by date, recipient, sender, subject or email_id, with opens, clicks, delivery status and a continue_token for the next page
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.email.searchSent({ start_date: '2024-01-01', end_date: '2024-02-01', email_id: ['1u0SwL-B9zBpi9ffUq-JAB2'], limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | No | Search window start, such as 2024-01-01 or a full timestamp. |
+| `end_date` | `string` | No | — |
+| `email_id` | `string[]` | No | Only these emails; this is how a single send is looked up. |
+| `limit` | `number` | No | Defaults to 5000. |
+| `status_counts` | `boolean` | No | — |
+| `opened_only` | `boolean` | No | — |
+| `clicked_only` | `boolean` | No | — |
+| `ignore_case` | `boolean` | No | — |
+| `filter_query` | `string` | No | — |
+| `username` | `string` | No | — |
+| `headers` | `string[]` | No | Return these email header values on each result. |
+| `continue_token` | `string` | No | The continue_token from the previous page. |
+
+`limit` defaults to and caps at 5000. To look up one send, filter by
+`email_id`; there is no per-email status endpoint (`/email/status/{id}`
+answers 404). `continue_token` is null on the last page.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  count?: number | null,
+  emails: {
+    email_id?: string | null,
+    sender?: string | null,
+    recipient?: string | null,
+    subject?: string | null,
+    status?: string | null,
+    process_status?: string | null,
+    smtpcode?: number | null,
+    response?: string | null,
+    host?: string | null,
+    delivered_at?: string | null,
+    sent_at?: string | null,
+    total_opens?: number | null,
+    total_clicks?: number | null,
+    opens?: {
+      user_agent?: string | null,
+      opened_at?: string | null,
+      read_secs?: string | null,
+      recipient?: string | null,
+      ip_address?: string | null
+    }[] | null
+  }[],
+  continue_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`email.send`
+
+Send one email to up to 100 recipients, with HTML or plain text, a template, attachments, custom headers, or a schedule up to 3 days out; the result counts succeeded and failed recipients at HTTP 200, so check failed, not the status
+
+**Risk:** `write` · **Irreversible**
+
+```ts
+await corsair.smtp2go.api.email.send({ sender: 'John Smith <john@example.com>', to: ['Jane Jones <jane@example.com>'], subject: 'Your receipt', text_body: 'Thanks for your order.', custom_headers: [{ header: 'Reply-To', value: 'support@example.com' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sender` | `string` | Yes | The sender, in `Name <name@example.com>` format. |
+| `to` | `string[]` | Yes | Up to 100 recipients. Each recipient counts against the plan quota. |
+| `cc` | `string[]` | No | — |
+| `bcc` | `string[]` | No | — |
+| `subject` | `string` | No | Optional despite the docs saying required: the server does not enforce it. |
+| `html_body` | `string` | No | — |
+| `text_body` | `string` | No | — |
+| `custom_headers` | `object[]` | No | Content-Type, Content-Transfer-Encoding and MIME-Version cannot be overridden. |
+| `attachments` | `object[]` | No | — |
+| `inlines` | `object[]` | No | Inline images referenced by the HTML body via cid: URLs. |
+| `template_id` | `string` | No | — |
+| `template_data` | `string` | No | Template variables as a JSON-encoded string. |
+| `schedule` | `string` | No | Schedule the send, in `YYYY-MM-DD HH:mm:ss +ZZZZ` format, less than 3 days out. |
+| `fastaccept` | `boolean` | No | Accept the message without delivery results; defaults to false, which waits for per-recipient outcomes. |
+
+Sends real email. The plugin requires one of `text_body`, `html_body` or
+`template_id` before spending the call; SMTP2GO enforces the same rule
+server-side. `subject` is optional despite the docs saying required
+(verified live). Every To/CC/BCC recipient counts as one email against the
+plan quota. The answer carries `succeeded` and `failed` counts at HTTP
+200, plus a `failures` entry per rejected recipient, so check `failed`
+rather than the status code.
+
+<AccordionGroup>
+<Accordion title="custom_headers full type">
+
+```ts
+{
+  header: string,
+  value: string
+}[]
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  filename: string,
+  fileblob?: string,
+  url?: string,
+  mimetype?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="inlines full type">
+
+```ts
+{
+  filename: string,
+  fileblob?: string,
+  url?: string,
+  mimetype?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  succeeded?: number | null,
+  failed?: number | null,
+  failures?: Record<string, unknown>[] | null,
+  email_id?: string | null,
+  schedule_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendBatch
+
+`email.sendBatch`
+
+Send up to 1000 independent messages in one call; the answer carries one email_id or schedule_id entry per message
+
+**Risk:** `write` · **Irreversible**
+
+```ts
+await corsair.smtp2go.api.email.sendBatch({ emails: [{ sender: 'john@example.com', to: ['jane@example.com'], subject: 'Receipt 1', text_body: 'Thanks.' }, { sender: 'john@example.com', to: ['sam@example.com'], subject: 'Receipt 2', text_body: 'Thanks.' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `object[]` | Yes | Up to 1000 messages; each recipient counts against the quota. |
+
+Sends up to 1000 independent messages in one call; the answer's `data` is
+a bare array with one entry per message, carrying an `email_id`, or a
+`schedule_id` for scheduled messages.
+
+<AccordionGroup>
+<Accordion title="emails full type">
+
+```ts
+{
+  sender: string,
+  to: string[],
+  cc?: string[],
+  bcc?: string[],
+  subject?: string,
+  html_body?: string,
+  text_body?: string,
+  custom_headers?: {
+    header: string,
+    value: string
+  }[],
+  attachments?: {
+    filename: string,
+    fileblob?: string,
+    url?: string,
+    mimetype?: string
+  }[],
+  inlines?: {
+    filename: string,
+    fileblob?: string,
+    url?: string,
+    mimetype?: string
+  }[],
+  template_id?: string,
+  template_data?: string,
+  schedule?: string,
+  fastaccept?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email_id?: string | null,
+  schedule_id?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendMime
+
+`email.sendMime`
+
+Send one pre-encoded MIME message, with the same per-recipient succeeded/failed accounting as email.send
+
+**Risk:** `write` · **Irreversible**
+
+```ts
+await corsair.smtp2go.api.email.sendMime({ mime_email: 'MIME-Version: 1.0\r\nSubject: hi\r\n...', fastaccept: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mime_email` | `string` | Yes | A complete pre-encoded MIME message. |
+| `schedule` | `string` | No | Schedule the send, in `YYYY-MM-DD HH:mm:ss +ZZZZ` format, less than 3 days out. |
+| `fastaccept` | `boolean` | No | Accept the message without delivery results; defaults to false, which waits for per-recipient outcomes. |
+
+Sends one pre-encoded MIME message with the same `succeeded`/`failed`
+accounting as `email.send`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  succeeded?: number | null,
+  failed?: number | null,
+  failures?: Record<string, unknown>[] | null,
+  email_id?: string | null,
+  schedule_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stats
+
+### bounces
+
+`stats.bounces`
+
+Read bounce counts (hard, soft, rejects) over the last 30 days or a given window, per SMTP user or account-wide
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.stats.bounces({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | No | Restrict to one SMTP user; defaults to the whole account. |
+
+Percent fields are strings, such as `0.00`. Defaults to the last 30 days.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  emails?: number | null,
+  hardbounces?: number | null,
+  softbounces?: number | null,
+  rejects?: number | null,
+  bounce_percent?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### cycle
+
+`stats.cycle`
+
+Read the current billing cycle: emails sent, remaining and the plan cap
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.stats.cycle({});
+```
+
+**Input:** _empty object_
+
+Answers the current billing cycle: `cycle_used`, `cycle_remaining` and
+the plan cap `cycle_max`.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  cycle_start?: string | null,
+  cycle_end?: string | null,
+  cycle_used?: number | null,
+  cycle_remaining?: number | null,
+  cycle_max?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### history
+
+`stats.history`
+
+Read per-recipient sending history rows with volumes, bounces, opens, clicks and spam reports for a date range
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.stats.history({ group_by: 'email_address', start_date: '2024-01-01', end_date: '2024-01-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_by` | `string` | No | Group the rows, such as by day or by email_address. |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `subaccounts` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  count?: number | null,
+  history: {
+    email_address?: string | null,
+    used?: number | null,
+    bytecount?: number | null,
+    avgsize?: number | null,
+    lastip?: string | null,
+    bounces?: number | null,
+    clicks?: number | null,
+    opens?: number | null,
+    rejects?: number | null,
+    spam?: number | null,
+    unsubscribes?: number | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### spam
+
+`stats.spam`
+
+Read spam-complaint counts over the last 30 days or a given window
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.stats.spam({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  emails?: number | null,
+  spams?: number | null,
+  rejects?: number | null,
+  spam_percent?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### summary
+
+`stats.summary`
+
+Read one combined report: billing cycle usage, bounces, spam, unsubscribes, opens and clicks
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.stats.summary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | No | — |
+
+Combines cycle usage, bounces, spam, unsubscribes, opens and clicks; it
+can be slower than the individual endpoints.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  cycle_start?: string | null,
+  cycle_end?: string | null,
+  cycle_used?: number | null,
+  cycle_remaining?: number | null,
+  cycle_max?: number | null,
+  email_count?: number | null,
+  hardbounces?: number | null,
+  softbounces?: number | null,
+  bounce_rejects?: number | null,
+  bounce_percent?: string | null,
+  spam_emails?: number | null,
+  spam_rejects?: number | null,
+  spam_percent?: string | null,
+  unsubscribes?: number | null,
+  unsubscribe_percent?: string | null,
+  opens?: number | null,
+  clicks?: number | null,
+  rejects?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unsubscribes
+
+`stats.unsubscribes`
+
+Read unsubscribe counts over the last 30 days or a given window
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.stats.unsubscribes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  emails?: number | null,
+  unsubscribes?: number | null,
+  rejects?: number | null,
+  unsubscribe_percent?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Suppressions
+
+### add
+
+`suppressions.add`
+
+Block future sends to one email address, optionally scoped to a subaccount
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.suppressions.add({ email_address: 'temp@example.com', block_description: 'repeated complaints' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address` | `string` | Yes | The address to stop sending to. |
+| `block_description` | `string` | No | — |
+| `subaccount_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  added?: boolean | null,
+  email_address?: string | null,
+  block_description?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`suppressions.list`
+
+List suppressed addresses with their block reasons, filtered by address, block type or date, with a continue_token for the next page
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.suppressions.list({ suppression_types: ['spam'], limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address` | `string` | No | — |
+| `suppression_types` | `string[]` | No | Restrict the results to these types: 'manual', 'spam', 'unsubscribe', 'bounce', 'compliance'. |
+| `limit` | `number` | No | — |
+| `continue_token` | `string` | No | — |
+
+`suppression_types` accepts `manual`, `spam`, `unsubscribe`, `bounce` and
+`compliance`. Rows carry `reason` (the block type) and `timestamp`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  results: {
+    email_address?: string | null,
+    reason?: string | null,
+    block_description?: string | null,
+    complaint?: string | null,
+    subject?: string | null,
+    timestamp?: string | null
+  }[],
+  total_results?: number | null,
+  continue_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`suppressions.remove`
+
+Lift the given block types for one email address, reporting per reason whether it was removed
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.smtp2go.api.suppressions.remove({ email_address: 'temp@example.com', reasons: ['manual', 'spam'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address` | `string` | Yes | The address to unblock. |
+| `reasons` | `string[]` | No | Block types to remove; the API defaults to ['manual', 'spam']. |
+| `subaccount_id` | `string` | No | — |
+
+One answer row per requested reason; `removed: false` means that block
+type was not in place or could not be lifted. The API defaults
+`reasons` to `['manual', 'spam']`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  suppressions: {
+    email_address?: string | null,
+    reason?: string | null,
+    removed?: boolean | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### add
+
+`templates.add`
+
+Create a template; the caller picks the template id, subject and both HTML and text bodies are required
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.templates.add({ id: 'order-receipt', template_name: 'Order receipt', subject: 'Receipt for {{ product_name }}', html_body: '<p>{{ product_name }}</p>', text_body: '{{ product_name }}', tags: ['receipts'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | A caller-chosen id for the new template. |
+| `template_name` | `string` | Yes | — |
+| `subject` | `string` | Yes | — |
+| `html_body` | `string` | Yes | — |
+| `text_body` | `string` | Yes | — |
+| `template_variables` | `Record<string, unknown>` | No | — |
+| `tags` | `string[]` | No | — |
+
+Unusually, the API requires the caller to choose the template `id`.
+`subject`, `html_body` and `text_body` are all required.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  template_name?: string | null,
+  name?: string | null,
+  subject?: string | null,
+  html_body?: string | null,
+  text_body?: string | null,
+  template_variables?: Record<string, unknown> | null,
+  tags?: string[] | null,
+  last_updated?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Delete a template by id; the answer's data carries a confirmation string
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.smtp2go.api.templates.delete({ id: 'order-receipt' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The template to delete. |
+
+The answer's `data` is a confirmation string, such as
+"Successfully deleted template 'example'".
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `string` | Yes | — |
+
+
+
+---
+
+### edit
+
+`templates.edit`
+
+Change a template by id, optionally moving it to a new id
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.templates.edit({ id: 'order-receipt', subject: 'New subject' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The template to change. |
+| `new_id` | `string` | No | Move the template to a new id. |
+| `template_name` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `html_body` | `string` | No | — |
+| `text_body` | `string` | No | — |
+| `template_variables` | `Record<string, unknown>` | No | — |
+| `tags` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  template_name?: string | null,
+  name?: string | null,
+  subject?: string | null,
+  html_body?: string | null,
+  text_body?: string | null,
+  template_variables?: Record<string, unknown> | null,
+  tags?: string[] | null,
+  last_updated?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List email templates by name or tag, one page of 100 at a time with a continue_token
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.templates.list({ page_size: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fuzzy_search` | `boolean` | No | — |
+| `search_terms` | `string[]` | No | Terms matched against template names. |
+| `tags` | `string[]` | No | — |
+| `sort_direction` | `string` | No | — |
+| `page_size` | `number` | No | Defaults to 100. |
+| `continue_token` | `string` | No | The continue_token from the previous page. |
+
+`page_size` defaults to 100; `continue_token` is null on the last page.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  templates: {
+    id?: string | null,
+    name?: string | null,
+    template_name?: string | null,
+    subject?: string | null,
+    tags?: string[] | null,
+    last_updated?: string | null
+  }[],
+  total_count?: number | null,
+  continue_token?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### view
+
+`templates.view`
+
+Read one template with its subject, HTML and text bodies, tags and variables
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.templates.view({ id: '5355878' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The template id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  subject?: string | null,
+  html_body?: string | null,
+  text_body?: string | null,
+  tags?: string[] | null,
+  template_variables?: Record<string, unknown> | null,
+  last_updated?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### add
+
+`webhooks.add`
+
+Register a webhook URL for chosen email (or SMS) events, in form or JSON output, with optional auth headers
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.webhooks.add({ url: 'https://example.com/smtp2go-events', events: ['delivered', 'open', 'click', 'spam', 'bounce'], output_format: 'json' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The https URL events are posted to. |
+| `events` | `string[]` | No | Email events to receive: 'delivered', 'unsubscribe', 'spam', 'bounce', 'processed', 'reject', 'click', 'open'. Defaults to all. |
+| `sms_events` | `string[]` | No | — |
+| `headers` | `string[]` | No | Email headers echoed to the webhook. |
+| `usernames` | `string[]` | No | Restrict the webhook to these SMTP users. |
+| `output_format` | `form \| json` | No | Defaults to 'form'. |
+| `auth_header_type` | `string` | No | — |
+| `auth_header_value` | `string` | No | — |
+| `custom_headers` | `string[]` | No | Extra headers sent with every delivery. |
+| `subaccount_id` | `string` | No | — |
+
+`output_format` accepts `form` or `json` and defaults to `form`. With no
+`events` list the webhook receives all email events. The plugin does not
+receive these deliveries; it manages the registration only.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  url?: string | null,
+  events?: string[] | null,
+  sms_events?: string[] | null,
+  headers?: string | string[] | null,
+  usernames?: string | string[] | null,
+  output_format?: string | null,
+  auth_header_type?: string | null,
+  auth_header_value?: string | null,
+  disabled?: boolean | null,
+  custom_headers?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### edit
+
+`webhooks.edit`
+
+Change a webhook registration by id, including its event list, URL or disabled state
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.webhooks.edit({ id: 4320, disabled: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The webhook registration to change. |
+| `url` | `string` | No | — |
+| `events` | `string[]` | No | — |
+| `sms_events` | `string[]` | No | — |
+| `headers` | `string[]` | No | — |
+| `usernames` | `string[]` | No | — |
+| `output_format` | `form \| json` | No | — |
+| `disabled` | `boolean` | No | — |
+| `auth_header_type` | `string` | No | — |
+| `auth_header_value` | `string` | No | — |
+| `custom_headers` | `string[]` | No | — |
+| `subaccount_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  url?: string | null,
+  events?: string[] | null,
+  sms_events?: string[] | null,
+  headers?: string | string[] | null,
+  usernames?: string | string[] | null,
+  output_format?: string | null,
+  auth_header_type?: string | null,
+  auth_header_value?: string | null,
+  disabled?: boolean | null,
+  custom_headers?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+Read the account webhook registration with its events, output format and auth header settings
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subaccount_id` | `string` | No | — |
+
+The documented answer is a single registration object with its `events`,
+`output_format` and auth header settings, not an array.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  url?: string | null,
+  events?: string[] | null,
+  sms_events?: string[] | null,
+  headers?: string | string[] | null,
+  usernames?: string | string[] | null,
+  output_format?: string | null,
+  auth_header_type?: string | null,
+  auth_header_value?: string | null,
+  disabled?: boolean | null,
+  custom_headers?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`webhooks.remove`
+
+Remove a webhook registration by id; deliveries to that URL stop
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.smtp2go.api.webhooks.remove({ id: 4320 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The webhook registration to remove. |
+| `subaccount_id` | `string` | No | — |
+
+Removals are permanent; deliveries to that URL stop.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  url?: string | null,
+  events?: string[] | null,
+  sms_events?: string[] | null,
+  headers?: string | string[] | null,
+  usernames?: string | string[] | null,
+  output_format?: string | null,
+  auth_header_type?: string | null,
+  auth_header_value?: string | null,
+  disabled?: boolean | null,
+  custom_headers?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

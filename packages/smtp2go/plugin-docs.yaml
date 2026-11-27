@@ -1,0 +1,155 @@
+displayName: SMTP2GO
+description: Transactional email delivery with SMTP2GO - send single, batch and MIME messages, search sent email and activity, manage suppressions, sender domains, templates and webhook registrations, and read sending stats and plan usage.
+domain: smtp2go.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key at app.smtp2go.com under **Sending > API keys**. Keys look like `api-` followed by 32 letters and digits, and you can give each key its own endpoint permissions and sending limit, or mark it as a sandbox key so sends do not go out. Things to know before you call:
+
+  - **Auth travels in a header.** The plugin sends `X-Smtp2go-Api-Key` on every call. It never puts the key in the request body, even though SMTP2GO's docs show body auth: error payloads can echo request fields, and a body-carried key could leak into an error report.
+  - **A 200 is not always full success.** `email.send`, `email.sendMime` and `email.sendBatch` answer HTTP 200 with `succeeded` and `failed` counts. Check `failed` (and the per-recipient `failures` array), not just the call result.
+  - **A message needs a body.** SMTP2GO requires at least one of `text_body`, `html_body` or `template_id`; the plugin checks this before spending a call. `subject` is optional despite the docs saying required (verified live).
+  - **Quota accounting.** Every To/CC/BCC recipient counts as one email against the plan. `stats.cycle` answers how many are left in the current cycle.
+  - **Throttling is by IP.** Too many requests OR too many error responses trip a throttle that lasts at least a minute, answered by a 429 with an empty body and no `Retry-After` header. The plugin waits that minute before one retry; nothing retries a 4xx, because errors feed the same throttle.
+  - **Sends are never replayed.** A 5xx on a read is retried; a 5xx on a send or a removal is not, because the first attempt may have gone through.
+  - **Paging.** List operations take `continue_token` (and `page_size` or `limit`) and return the next `continue_token` in `data`; it is null on the last page.
+  - **There is no per-email status endpoint.** `/email/status/{email_id}` does not exist. Look up a sent email with `email.searchSent` filtered by `email_id`, or use `activity.search` for delivery events.
+  - **Webhooks.** `webhooks.*` manages webhook registrations over the API. The plugin does not receive SMTP2GO webhook deliveries; their payload shapes and signature scheme are not covered here.
+examples:
+  read:
+    path: stats.cycle
+    title: How many emails are left in this billing cycle
+    args: {}
+  write:
+    path: email.send
+    title: Send a plain-text email
+    args:
+      sender: John Smith <john@example.com>
+      to:
+        - Jane Jones <jane@example.com>
+      subject: Your receipt
+      text_body: Thanks for your order.
+apiExamples:
+  email.send:
+    call: "{ sender: 'John Smith <john@example.com>', to: ['Jane Jones <jane@example.com>'], subject: 'Your receipt', text_body: 'Thanks for your order.', custom_headers: [{ header: 'Reply-To', value: 'support@example.com' }] }"
+  email.sendMime:
+    call: "{ mime_email: 'MIME-Version: 1.0\\r\\nSubject: hi\\r\\n...', fastaccept: true }"
+  email.sendBatch:
+    call: "{ emails: [{ sender: 'john@example.com', to: ['jane@example.com'], subject: 'Receipt 1', text_body: 'Thanks.' }, { sender: 'john@example.com', to: ['sam@example.com'], subject: 'Receipt 2', text_body: 'Thanks.' }] }"
+  email.searchSent:
+    call: "{ start_date: '2024-01-01', end_date: '2024-02-01', email_id: ['1u0SwL-B9zBpi9ffUq-JAB2'], limit: 100 }"
+  email.searchScheduled:
+    call: "{ limit: 50 }"
+  email.cancelScheduled:
+    call: "{ schedule_id: '4d3b03a7-8663-4592-899a-b479ba6fcba9' }"
+  activity.search:
+    call: "{ event_types: ['delivered', 'opened'], search_subject: 'receipt', limit: 100, region: 'eu' }"
+  suppressions.list:
+    call: "{ suppression_types: ['spam'], limit: 50 }"
+  suppressions.add:
+    call: "{ email_address: 'temp@example.com', block_description: 'repeated complaints' }"
+  suppressions.remove:
+    call: "{ email_address: 'temp@example.com', reasons: ['manual', 'spam'] }"
+  domains.list:
+    call: "{}"
+  domains.add:
+    call: "{ domain: 'example.com', auto_verify: true }"
+  domains.verify:
+    call: "{ domain: 'example.com' }"
+  domains.remove:
+    call: "{ domain: 'example.com' }"
+  stats.bounces:
+    call: "{}"
+  stats.cycle:
+    call: "{}"
+  stats.spam:
+    call: "{}"
+  stats.unsubscribes:
+    call: "{}"
+  stats.history:
+    call: "{ group_by: 'email_address', start_date: '2024-01-01', end_date: '2024-01-31' }"
+  stats.summary:
+    call: "{}"
+  templates.list:
+    call: "{ page_size: 100 }"
+  templates.view:
+    call: "{ id: '5355878' }"
+  templates.add:
+    call: "{ id: 'order-receipt', template_name: 'Order receipt', subject: 'Receipt for {{ product_name }}', html_body: '<p>{{ product_name }}</p>', text_body: '{{ product_name }}', tags: ['receipts'] }"
+  templates.edit:
+    call: "{ id: 'order-receipt', subject: 'New subject' }"
+  templates.delete:
+    call: "{ id: 'order-receipt' }"
+  webhooks.list:
+    call: "{}"
+  webhooks.add:
+    call: "{ url: 'https://example.com/smtp2go-events', events: ['delivered', 'open', 'click', 'spam', 'bounce'], output_format: 'json' }"
+  webhooks.edit:
+    call: "{ id: 4320, disabled: true }"
+  webhooks.remove:
+    call: "{ id: 4320 }"
+apiNotes:
+  email.send: |
+    Sends real email. The plugin requires one of `text_body`, `html_body` or
+    `template_id` before spending the call; SMTP2GO enforces the same rule
+    server-side. `subject` is optional despite the docs saying required
+    (verified live). Every To/CC/BCC recipient counts as one email against the
+    plan quota. The answer carries `succeeded` and `failed` counts at HTTP
+    200, plus a `failures` entry per rejected recipient, so check `failed`
+    rather than the status code.
+  email.sendMime: |
+    Sends one pre-encoded MIME message with the same `succeeded`/`failed`
+    accounting as `email.send`.
+  email.sendBatch: |
+    Sends up to 1000 independent messages in one call; the answer's `data` is
+    a bare array with one entry per message, carrying an `email_id`, or a
+    `schedule_id` for scheduled messages.
+  email.searchSent: |
+    `limit` defaults to and caps at 5000. To look up one send, filter by
+    `email_id`; there is no per-email status endpoint (`/email/status/{id}`
+    answers 404). `continue_token` is null on the last page.
+  email.searchScheduled: |
+    The answer's `data` is a bare array of queued messages, not an object.
+  email.cancelScheduled: |
+    `schedule_id` must be a UUID. The success body is undocumented; confirm
+    the cancellation with `email.searchScheduled`.
+  activity.search: |
+    Returns at most 1000 events per call; `total_events` is the full match
+    count. The endpoint is documented at 60 requests per minute.
+  suppressions.list: |
+    `suppression_types` accepts `manual`, `spam`, `unsubscribe`, `bounce` and
+    `compliance`. Rows carry `reason` (the block type) and `timestamp`.
+  suppressions.remove: |
+    One answer row per requested reason; `removed: false` means that block
+    type was not in place or could not be lifted. The API defaults
+    `reasons` to `['manual', 'spam']`.
+  domains.list: |
+    Each row carries the DKIM and return-path state under `domain` and the
+    tracking subdomains under `trackers`.
+  domains.add: |
+    The answer contains the DNS records to publish (DKIM, return-path and
+    CNAME). Verification starts right away unless `auto_verify` is false.
+  stats.cycle: |
+    Answers the current billing cycle: `cycle_used`, `cycle_remaining` and
+    the plan cap `cycle_max`.
+  stats.bounces: |
+    Percent fields are strings, such as `0.00`. Defaults to the last 30 days.
+  stats.summary: |
+    Combines cycle usage, bounces, spam, unsubscribes, opens and clicks; it
+    can be slower than the individual endpoints.
+  templates.list: |
+    `page_size` defaults to 100; `continue_token` is null on the last page.
+  templates.add: |
+    Unusually, the API requires the caller to choose the template `id`.
+    `subject`, `html_body` and `text_body` are all required.
+  templates.delete: |
+    The answer's `data` is a confirmation string, such as
+    "Successfully deleted template 'example'".
+  webhooks.list: |
+    The documented answer is a single registration object with its `events`,
+    `output_format` and auth header settings, not an array.
+  webhooks.add: |
+    `output_format` accepts `form` or `json` and defaults to `form`. With no
+    `events` list the webhook receives all email events. The plugin does not
+    receive these deliveries; it manages the registration only.
+  webhooks.remove: |
+    Removals are permanent; deliveries to that URL stop.

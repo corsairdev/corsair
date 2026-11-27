@@ -1,0 +1,144 @@
+---
+title: "SMTP2GO plugin"
+sidebarTitle: "Overview"
+description: "Transactional email delivery with SMTP2GO - send single, batch and MIME messages, search sent email and activity, manage suppressions, sender domains, templates and webhook registrations, and read sending stats and plan usage."
+---
+
+Use **SMTP2GO** through Corsair: one client, typed API calls.
+
+Create an API key at app.smtp2go.com under **Sending &gt; API keys**. Keys look like `api-` followed by 32 letters and digits, and you can give each key its own endpoint permissions and sending limit, or mark it as a sandbox key so sends do not go out. Things to know before you call:
+
+- **Auth travels in a header.** The plugin sends `X-Smtp2go-Api-Key` on every call. It never puts the key in the request body, even though SMTP2GO's docs show body auth: error payloads can echo request fields, and a body-carried key could leak into an error report.
+- **A 200 is not always full success.** `email.send`, `email.sendMime` and `email.sendBatch` answer HTTP 200 with `succeeded` and `failed` counts. Check `failed` (and the per-recipient `failures` array), not just the call result.
+- **A message needs a body.** SMTP2GO requires at least one of `text_body`, `html_body` or `template_id`; the plugin checks this before spending a call. `subject` is optional despite the docs saying required (verified live).
+- **Quota accounting.** Every To/CC/BCC recipient counts as one email against the plan. `stats.cycle` answers how many are left in the current cycle.
+- **Throttling is by IP.** Too many requests OR too many error responses trip a throttle that lasts at least a minute, answered by a 429 with an empty body and no `Retry-After` header. The plugin waits that minute before one retry; nothing retries a 4xx, because errors feed the same throttle.
+- **Sends are never replayed.** A 5xx on a read is retried; a 5xx on a send or a removal is not, because the first attempt may have gone through.
+- **Paging.** List operations take `continue_token` (and `page_size` or `limit`) and return the next `continue_token` in `data`; it is null on the last page.
+- **There is no per-email status endpoint.** `/email/status/{email_id}` does not exist. Look up a sent email with `email.searchSent` filtered by `email_id`, or use `activity.search` for delivery events.
+- **Webhooks.** `webhooks.*` manages webhook registrations over the API. The plugin does not receive SMTP2GO webhook deliveries; their payload shapes and signature scheme are not covered here.
+
+**What you get:**
+
+- 29 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/smtp2go better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/smtp2go better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/smtp2go better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/smtp2go better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { smtp2go } from '@corsair-dev/smtp2go';
+
+export const corsair = createCorsair({
+	plugins: [
+		smtp2go(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the SMTP2GO API key before the first call: `pnpm corsair setup --plugin=smtp2go --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+smtp2go()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'smtp2go',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**How many emails are left in this billing cycle**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.smtp2go.api.stats.cycle({});
+```
+
+
+**Send a plain-text email**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.smtp2go.api.email.send({
+	sender: 'John Smith <john@example.com>',
+	to: ['Jane Jones <jane@example.com>'],
+	subject: 'Your receipt',
+	text_body: 'Thanks for your order.',
+});
+```
+
+
+See the full list on the [API](/plugins/smtp2go/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/smtp2go/api">
+    Every `smtp2go.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
