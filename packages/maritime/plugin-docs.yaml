@@ -1,0 +1,717 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from Maritime's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Maritime
+domain: maritime.sh
+description: "Maritime, the cloud for AI agents: agent boxes (chat, exec, files, triggers, channels, skills, env), virtual machines (create, run commands, files, snapshots, templates, keys), swarms and swarm servers, computers on demand (desktops and phones), end users, projects, private networks, domains, usage and billing, and signed webhooks (331 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  The account stores one Maritime API key (`mk_...`, from `maritime keys
+  create` or the dashboard's Settings → API keys), sent as
+  `Authorization: Bearer`. The key's scopes (provision, deploy, secrets,
+  manage, sandboxes) decide which operations work.
+
+  - **Two kinds of machine.** Agent boxes (`agents.*`) keep their disk, sleep
+  when idle and wake on a chat message, webhook, trigger or exec. Virtual
+  machines (`sandboxes.*`, ids `sbx-...`) run one task and end with their
+  disk; `sandboxes.ephemeral.create` makes one that ends after a few idle
+  minutes. Computers (`computers.*`) are desktops and phones your agent sees
+  and clicks.
+  - **Commands and files in a virtual machine** (`sandboxes.commands.*`,
+  `sandboxes.files.*`, `sandboxes.code.run`) go to the machine's own data
+  plane. The plugin reads the machine's `dataPlaneUrl` and `secret` first
+  and sends the secret in `X-Maritime-Token`; the account key never goes
+  there.
+  - **Money.** Every machine is billed per second while awake (an agent box
+  per GB of memory per month). Creating, waking or resizing one, running
+  commands in it, starting a swarm or renting a swarm server ($1 a minute),
+  and plan, trial, top-up and credit purchases are `destructive`, as are
+  sends (chat, invoke, project messages, invites), key and secret changes,
+  and every delete.
+  - **Lists** page with `limit` and `cursor` (pass the previous page's
+  `nextCursor`).
+  - **Webhooks.** Subscribe with `webhooks.create` (agent, message, exec and
+  end-user events, signed `X-Maritime-Signature: sha256=<hex>`) or
+  `sandboxWebhooks.create` (virtual machine events, signed
+  `Maritime-Signature: t=...,v1=...`). Store the secret returned at create
+  time as the webhook secret: the plugin checks every delivery with it.
+  - **Rate limits.** A 429 carries `Retry-After`; core retries it three
+  times, and a 5xx is retried for reads only.
+  - Not wrapped: sign-in and OAuth flows the CLI and dashboard run, the
+  dashboard's own proxies and share pages, Maritime's internal routes, the
+  E2B-compatible `/e2b` copy of the sandbox API (the e2b plugin reaches it
+  with `E2B_DOMAIN=sb.mtm.sh`), and the `/v1/fleets` partner API, which takes
+  a platform credential rather than an `mk_` key. The data plane's terminal
+  (WebSocket) and file watch (event stream) are left out too.
+examples:
+  read:
+    path: sandboxes.list
+    title: List virtual machines
+    args: {"state": ["running"], "limit": 20}
+  write:
+    path: sandboxes.commands.run
+    title: Run a command in a virtual machine
+    args: {"sandbox_id": "sbx-k3m7q2ab", "cmd": "uname -a", "timeoutSeconds": 30}
+apiExamples:
+  account.delete:
+    args: {}
+  account.limits:
+    args: {}
+  activity.list:
+    args: {}
+  agentTemplates.list:
+    args: {}
+  agents.activity:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.browserLiveView:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.capabilities.change:
+    args: {"agent_id": "ag_3k9x2m7q", "capability": "identity", "action": "add"}
+  agents.capabilities.get:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.channels.get:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.channels.update:
+    args: {"agent_id": "ag_3k9x2m7q", "channels": {}}
+  agents.channels.validateTelegram:
+    args: {"agent_id": "ag_3k9x2m7q", "bot_token": "example"}
+  agents.chat.getTurn:
+    args: {"agent_id": "ag_3k9x2m7q", "delivery_id": "dlv_6m3q8z"}
+  agents.chat.send:
+    args: {"agent_id": "ag_3k9x2m7q", "message": "Summarize today", "conversation_id": "customer-481:c_9"}
+  agents.create:
+    args: {"name": "support-agent", "templateId": "openclaw"}
+  agents.createOwnerLink:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.delete:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.desktop.getMode:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.desktop.takeover:
+    args: {"agent_id": "ag_3k9x2m7q", "mode": "example"}
+  agents.desktop.updateConfig:
+    args: {"agent_id": "ag_3k9x2m7q", "enabled": true}
+  agents.diagnostic:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.duplicate:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.env.create:
+    args: {"agent_id": "ag_3k9x2m7q", "key": "OPENAI_API_KEY", "value": "example"}
+  agents.env.delete:
+    args: {"agent_id": "ag_3k9x2m7q", "key": "OPENAI_API_KEY"}
+  agents.env.list:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.env.update:
+    args: {"agent_id": "ag_3k9x2m7q", "key": "OPENAI_API_KEY", "value": "example"}
+  agents.exec.cancel:
+    args: {"agent_id": "ag_3k9x2m7q", "execution_id": "exe_4n8r2v"}
+  agents.exec.get:
+    args: {"agent_id": "ag_3k9x2m7q", "execution_id": "exe_4n8r2v"}
+  agents.exec.run:
+    args: {"agent_id": "ag_3k9x2m7q", "command": ["printf", "hello\\n"], "timeout": 30}
+  agents.files.delete:
+    args: {"agent_id": "ag_3k9x2m7q", "path": "/data/notes.md"}
+  agents.files.download:
+    args: {"agent_id": "ag_3k9x2m7q", "path": "/data/notes.md"}
+  agents.files.list:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.files.mkdir:
+    args: {"agent_id": "ag_3k9x2m7q", "path": "/data/notes.md"}
+  agents.files.move:
+    args: {"agent_id": "ag_3k9x2m7q", "from": "/data/notes.md", "to": "/data/notes.md"}
+  agents.files.upload:
+    args: {"agent_id": "ag_3k9x2m7q", "file": {"base64": "aGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.md", "contentType": "text/markdown"}}
+  agents.files.write:
+    args: {"agent_id": "ag_3k9x2m7q", "path": "/data/notes.md", "content": "hello from Corsair"}
+  agents.get:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.getStopOperation:
+    args: {"agent_id": "ag_3k9x2m7q", "operation_id": "op_3x7k2d"}
+  agents.gmail.connect:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.gmail.disconnect:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.gmail.enable:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.gmail.status:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.hermes.pairings.allow:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.hermes.pairings.approve:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.hermes.pairings.list:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.hermes.pairings.revoke:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.inkboxIdentity:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.invoke:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.list:
+    args: {}
+  agents.listServers:
+    args: {}
+  agents.llm.calls:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.llm.deleteSpendLimit:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.llm.getSpendLimit:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.llm.reset:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.llm.setSpendLimit:
+    args: {"agent_id": "ag_3k9x2m7q", "monthlyLimitCents": 1}
+  agents.llm.status:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.logs:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.maritimeTelegram.connect:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.maritimeTelegram.disconnect:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.maritimeTelegram.status:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.reloadEnv:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.resetToUpstream:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.resize:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.restart:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.setVisibility:
+    args: {"agent_id": "ag_3k9x2m7q", "visibility": "private"}
+  agents.shareLinks.create:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.shareLinks.list:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.shareLinks.revoke:
+    args: {"agent_id": "ag_3k9x2m7q", "link_id": "lnk_7t3n6w"}
+  agents.shareLinks.revokeForEndUser:
+    args: {"agent_id": "ag_3k9x2m7q", "endUserExternalId": "example"}
+  agents.signedWebhook.delete:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.signedWebhook.get:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.signedWebhook.set:
+    args: {"agent_id": "ag_3k9x2m7q", "path": "/data/notes.md", "scheme": "spectrum_v0", "secret": "examplexxxxxxxxx"}
+  agents.skills.delete:
+    args: {"agent_id": "ag_3k9x2m7q", "skill_name": "web-search"}
+  agents.skills.export:
+    args: {"agent_id": "ag_3k9x2m7q", "skill_name": "web-search"}
+  agents.skills.install:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.skills.list:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.skills.search:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.skills.setAllowlist:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.skills.setEnv:
+    args: {"agent_id": "ag_3k9x2m7q", "env": {}}
+  agents.skills.upload:
+    args: {"agent_id": "ag_3k9x2m7q", "archiveBase64": "example"}
+  agents.sleep:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.start:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.stats:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.stop:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.triggers.create:
+    args: {"agent_id": "ag_3k9x2m7q", "type": "example"}
+  agents.triggers.delete:
+    args: {"agent_id": "ag_3k9x2m7q", "trigger_id": "trg_6b1m9q"}
+  agents.triggers.list:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.triggers.update:
+    args: {"agent_id": "ag_3k9x2m7q", "trigger_id": "trg_6b1m9q"}
+  agents.update:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.webhookToken.get:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.webhookToken.rotate:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.whatsapp.cancel:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.whatsapp.log:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.whatsapp.pairings.approve:
+    args: {"agent_id": "ag_3k9x2m7q", "code": "ABC123"}
+  agents.whatsapp.pairings.deny:
+    args: {"agent_id": "ag_3k9x2m7q", "code": "ABC123"}
+  agents.whatsapp.pairings.list:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.whatsapp.start:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  agents.whatsapp.status:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  apiKeys.create:
+    args: {"name": "build-42"}
+  apiKeys.list:
+    args: {}
+  apiKeys.revoke:
+    args: {"key_id": "key_1m9x4c"}
+  appium.sessions.get:
+    args: {"session_id": "ses_4b7w1x"}
+  appium.sessions.list:
+    args: {}
+  apps.delete:
+    args: {"app_id": "app_6q2k8n"}
+  apps.get:
+    args: {"app_id": "app_6q2k8n"}
+  apps.list:
+    args: {}
+  apps.upload:
+    args: {"file": {"base64": "UEsDBBQAAAAIAA==", "filename": "app-release.apk", "contentType": "application/vnd.android.package-archive"}}
+  billing.agentPay.createLink:
+    args: {}
+  billing.agents:
+    args: {}
+  billing.cancelSwitchToUsage:
+    args: {}
+  billing.config:
+    args: {}
+  billing.machineTypes:
+    args: {}
+  billing.meteredUsage:
+    args: {}
+  billing.plan.change:
+    args: {"plan": "example"}
+  billing.plan.changeWithTrial:
+    args: {"plan": "example"}
+  billing.plan.preview:
+    args: {"plan": "example"}
+  billing.plan.resume:
+    args: {}
+  billing.retryPayment:
+    args: {}
+  billing.summary:
+    args: {}
+  billing.switchToUsage:
+    args: {"plan": "example"}
+  billing.trial.cancel:
+    args: {}
+  billing.trial.get:
+    args: {}
+  billing.trial.start:
+    args: {}
+  billing.usage:
+    args: {}
+  computers.actions:
+    args: {"computer_id": "cmp_7h2k9d"}
+  computers.completeTakeover:
+    args: {"computer_id": "cmp_7h2k9d"}
+  computers.create:
+    args: {"externalUserId": "customer-481", "os": "linux"}
+  computers.createViewer:
+    args: {"computer_id": "cmp_7h2k9d"}
+  computers.delete:
+    args: {"computer_id": "cmp_7h2k9d"}
+  computers.exec:
+    args: {"computer_id": "cmp_7h2k9d", "command": "example"}
+  computers.files.list:
+    args: {"computer_id": "cmp_7h2k9d", "path": "/data/notes.md"}
+  computers.files.read:
+    args: {"computer_id": "cmp_7h2k9d", "path": "/data/notes.md"}
+  computers.files.write:
+    args: {"computer_id": "cmp_7h2k9d", "path": "/data/notes.md", "content": "hello from Corsair"}
+  computers.get:
+    args: {"computer_id": "cmp_7h2k9d"}
+  computers.installApp:
+    args: {"computer_id": "cmp_7h2k9d", "appId": "example"}
+  computers.list:
+    args: {}
+  computers.screenshot:
+    args: {"computer_id": "cmp_7h2k9d"}
+  computers.sessions.close:
+    args: {"computer_id": "cmp_7h2k9d"}
+  computers.sessions.list:
+    args: {"computer_id": "cmp_7h2k9d"}
+  computers.sleep:
+    args: {"computer_id": "cmp_7h2k9d"}
+  computers.tools.call:
+    args: {"computer_id": "cmp_7h2k9d", "tool": "read_invoice_total"}
+  computers.tools.list:
+    args: {"computer_id": "cmp_7h2k9d"}
+  computers.usage:
+    args: {}
+  computers.wake:
+    args: {"computer_id": "cmp_7h2k9d"}
+  deletedAgents.get:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  deletedAgents.list:
+    args: {"externalId": "example"}
+  deployments.cancel:
+    args: {"deployment_id": "dep_9f2a6b"}
+  deployments.create:
+    args: {"agentId": "example"}
+  deployments.get:
+    args: {"deployment_id": "dep_9f2a6b"}
+  deployments.list:
+    args: {}
+  deployments.listForAgent:
+    args: {"agent_id": "ag_3k9x2m7q"}
+  deployments.uploadZip:
+    args: {"file": {"base64": "aGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.md", "contentType": "text/markdown"}}
+  domains.check:
+    args: {"domain_id": "dom_3j6w9t"}
+  domains.create:
+    args: {"hostname": "example"}
+  domains.delete:
+    args: {"domain_id": "dom_3j6w9t"}
+  domains.get:
+    args: {"domain_id": "dom_3j6w9t"}
+  domains.labels.delete:
+    args: {"domain_id": "dom_3j6w9t", "label": "support"}
+  domains.labels.list:
+    args: {"domain_id": "dom_3j6w9t"}
+  domains.labels.set:
+    args: {"domain_id": "dom_3j6w9t", "label": "support"}
+  domains.list:
+    args: {}
+  endUsers.activity:
+    args: {"external_id": "customer-481"}
+  endUsers.agents.create:
+    args: {"external_id": "customer-481"}
+  endUsers.agents.list:
+    args: {"external_id": "customer-481"}
+  endUsers.delete:
+    args: {"external_id": "customer-481"}
+  endUsers.get:
+    args: {"external_id": "customer-481"}
+  endUsers.list:
+    args: {}
+  endUsers.policy.delete:
+    args: {"external_id": "customer-481"}
+  endUsers.policy.get:
+    args: {"external_id": "customer-481"}
+  endUsers.policy.set:
+    args: {"external_id": "customer-481", "policy": {}}
+  endUsers.resume:
+    args: {"external_id": "customer-481"}
+  endUsers.summary:
+    args: {}
+  endUsers.suspend:
+    args: {"external_id": "customer-481"}
+  endUsers.tokens.create:
+    args: {"external_id": "customer-481"}
+  endUsers.tokens.revoke:
+    args: {"external_id": "customer-481"}
+  endUsers.upsert:
+    args: {"external_id": "customer-481"}
+  feedback.create:
+    args: {"kind": "docs", "subject": "GET /v1/templates", "message": "The page lists this route but it answers 404."}
+  feedback.list:
+    args: {}
+  fleet.activity:
+    args: {}
+  fleet.batchCreate:
+    args: {"namePrefix": "example", "count": 1}
+  fleet.overview:
+    args: {}
+  fleet.propagate:
+    args: {"path": "/data/notes.md", "content": "hello from Corsair", "agentIds": ["example"]}
+  fleet.summary:
+    args: {}
+  health.check:
+    args: {}
+  llmSpendLimit.deleteDefault:
+    args: {}
+  llmSpendLimit.getDefault:
+    args: {}
+  llmSpendLimit.setDefault:
+    args: {"monthlyLimitCents": 1}
+  logs.list:
+    args: {}
+  network.activity:
+    args: {}
+  network.install.get:
+    args: {"token": "tok_example"}
+  network.install.unixScript:
+    args: {"token": "tok_example"}
+  network.install.windowsScript:
+    args: {"token": "tok_example"}
+  network.presets.create:
+    args: {"name": "build-42"}
+  network.presets.delete:
+    args: {"preset_id": "pre_7k1v4c"}
+  network.presets.list:
+    args: {}
+  network.presets.update:
+    args: {"preset_id": "pre_7k1v4c"}
+  network.privateNetworks.addResource:
+    args: {"network_id": "net_2r8m5x", "name": "build-42", "target": "example"}
+  network.privateNetworks.create:
+    args: {"name": "build-42"}
+  network.privateNetworks.createInstall:
+    args: {"network_id": "net_2r8m5x"}
+  network.privateNetworks.delete:
+    args: {"network_id": "net_2r8m5x"}
+  network.privateNetworks.deleteResource:
+    args: {"resource_id": "res_5n9q2b"}
+  network.privateNetworks.list:
+    args: {}
+  network.privateNetworks.update:
+    args: {"network_id": "net_2r8m5x"}
+  network.settings.get:
+    args: {}
+  network.settings.update:
+    args: {}
+  network.workloads.get:
+    args: {"kind": "agent", "workload_id": "ag_3k9x2m7q"}
+  network.workloads.newIp:
+    args: {"kind": "agent", "workload_id": "ag_3k9x2m7q"}
+  network.workloads.test:
+    args: {"kind": "agent", "workload_id": "ag_3k9x2m7q", "destination": "example"}
+  network.workloads.update:
+    args: {"kind": "agent", "workload_id": "ag_3k9x2m7q"}
+  notifications.list:
+    args: {}
+  notifications.markRead:
+    args: {"notification_id": "ntf_8q4m1c"}
+  notifications.readAll:
+    args: {}
+  notifications.unreadCount:
+    args: {}
+  organizations.create:
+    args: {"name": "build-42"}
+  organizations.delete:
+    args: {"organization_id": "org_4t7m1z"}
+  organizations.invites.accept:
+    args: {"token": "tok_example"}
+  organizations.invites.create:
+    args: {"organization_id": "org_4t7m1z", "email": "ops@example.com"}
+  organizations.invites.list:
+    args: {"organization_id": "org_4t7m1z"}
+  organizations.invites.preview:
+    args: {"token": "tok_example"}
+  organizations.invites.resend:
+    args: {"organization_id": "org_4t7m1z", "invite_id": "inv_2w8n5r"}
+  organizations.invites.revoke:
+    args: {"organization_id": "org_4t7m1z", "invite_id": "inv_2w8n5r"}
+  organizations.leave:
+    args: {"organization_id": "org_4t7m1z"}
+  organizations.me:
+    args: {}
+  organizations.members.changeRole:
+    args: {"organization_id": "org_4t7m1z", "user_id": "usr_9c3x6k", "role": "example"}
+  organizations.members.list:
+    args: {"organization_id": "org_4t7m1z"}
+  organizations.members.remove:
+    args: {"organization_id": "org_4t7m1z", "user_id": "usr_9c3x6k"}
+  organizations.rename:
+    args: {"organization_id": "org_4t7m1z", "name": "build-42"}
+  plans.cancel:
+    args: {}
+  plans.launchPromo:
+    args: {}
+  plans.list:
+    args: {}
+  plans.portal:
+    args: {}
+  plans.subscribe:
+    args: {"plan": "example"}
+  preferences.get:
+    args: {}
+  preferences.update:
+    args: {}
+  projects.bindings.list:
+    args: {"project_id": "prj_5t8w1c"}
+  projects.bindings.reassign:
+    args: {"project_id": "prj_5t8w1c", "binding_id": "bnd_5k2v8x", "agentId": "example"}
+  projects.bindings.unbind:
+    args: {"project_id": "prj_5t8w1c", "binding_id": "bnd_5k2v8x"}
+  projects.claimCodes.create:
+    args: {"project_id": "prj_5t8w1c"}
+  projects.claimCodes.list:
+    args: {"project_id": "prj_5t8w1c"}
+  projects.get:
+    args: {"project_id": "prj_5t8w1c"}
+  projects.list:
+    args: {}
+  projects.messages.get:
+    args: {"project_id": "prj_5t8w1c", "message_id": "msg_9n3c5k"}
+  projects.messages.send:
+    args: {"project_id": "prj_5t8w1c", "externalUserId": "example", "message": "Summarize today"}
+  projects.syncInstances:
+    args: {"project_id": "prj_5t8w1c"}
+  projects.telegram.connect:
+    args: {"project_id": "prj_5t8w1c", "botToken": "example"}
+  projects.telegram.disconnect:
+    args: {"project_id": "prj_5t8w1c"}
+  projects.update:
+    args: {"project_id": "prj_5t8w1c"}
+  projects.usage:
+    args: {"project_id": "prj_5t8w1c"}
+  projects.users.get:
+    args: {"project_id": "prj_5t8w1c", "external_user_id": "customer-481"}
+  projects.users.list:
+    args: {"project_id": "prj_5t8w1c"}
+  projects.users.unbind:
+    args: {"project_id": "prj_5t8w1c", "external_user_id": "customer-481"}
+  sandboxKeys.create:
+    args: {"sandbox": "example"}
+  sandboxKeys.list:
+    args: {"sandbox": "example"}
+  sandboxKeys.revoke:
+    args: {"key_id": "key_1m9x4c"}
+  sandboxWebhooks.create:
+    args: {"url": "https://example.com/maritime/sandbox-events", "events": ["sandbox.ended", "sandbox.error"]}
+  sandboxWebhooks.delete:
+    args: {"webhook_id": "whk_1c5v7n"}
+  sandboxWebhooks.deliveries:
+    args: {"webhook_id": "whk_1c5v7n"}
+  sandboxWebhooks.list:
+    args: {}
+  sandboxes.code.run:
+    args: {"sandbox_id": "sbx-k3m7q2ab", "code": "print(1 + 1)"}
+  sandboxes.commands.get:
+    args: {"sandbox_id": "sbx-k3m7q2ab", "command_id": "cmd_2b7x9k"}
+  sandboxes.commands.history:
+    args: {"sandbox_id": "sbx-k3m7q2ab"}
+  sandboxes.commands.kill:
+    args: {"sandbox_id": "sbx-k3m7q2ab", "command_id": "cmd_2b7x9k"}
+  sandboxes.commands.run:
+    args: {"sandbox_id": "sbx-k3m7q2ab", "cmd": "uname -a", "timeoutSeconds": 30}
+  sandboxes.create:
+    args: {"name": "build-42", "size": "small", "idleTimeoutSeconds": 300, "onIdle": "kill"}
+  sandboxes.createScreenViewer:
+    args: {"sandbox_id": "sbx-k3m7q2ab"}
+  sandboxes.createUrl:
+    args: {"sandbox_id": "sbx-k3m7q2ab", "port": 3000}
+  sandboxes.ephemeral.create:
+    args: {"name": "job-42", "idleMinutes": 5, "timeLimitMinutes": 30}
+  sandboxes.ephemeral.extend:
+    args: {"sandbox_id": "sbx-k3m7q2ab"}
+  sandboxes.ephemeral.kill:
+    args: {"sandbox_id": "sbx-k3m7q2ab"}
+  sandboxes.ephemeral.list:
+    args: {}
+  sandboxes.files.delete:
+    args: {"sandbox_id": "sbx-k3m7q2ab", "path": "/home/user/notes.md"}
+  sandboxes.files.list:
+    args: {"sandbox_id": "sbx-k3m7q2ab", "path": "/home/user"}
+  sandboxes.files.read:
+    args: {"sandbox_id": "sbx-k3m7q2ab", "path": "/home/user/notes.md"}
+  sandboxes.files.write:
+    args: {"sandbox_id": "sbx-k3m7q2ab", "path": "/home/user/notes.md", "content": "hello from Corsair"}
+  sandboxes.get:
+    args: {"id_or_name": "sbx-k3m7q2ab"}
+  sandboxes.info:
+    args: {"sandbox_id": "sbx-k3m7q2ab"}
+  sandboxes.kill:
+    args: {"sandbox_id": "sbx-k3m7q2ab"}
+  sandboxes.list:
+    args: {"state": ["running"], "limit": 20}
+  sandboxes.pause:
+    args: {"sandbox_id": "sbx-k3m7q2ab"}
+  sandboxes.promote:
+    args: {"sandbox_id": "sbx-k3m7q2ab"}
+  sandboxes.rotateSecret:
+    args: {"sandbox_id": "sbx-k3m7q2ab"}
+  sandboxes.save:
+    args: {"sandbox_id": "sbx-k3m7q2ab", "name": "build-42"}
+  sandboxes.update:
+    args: {"sandbox_id": "sbx-k3m7q2ab", "network": {"egress": "all"}}
+  sandboxes.usage:
+    args: {"sandbox_id": "sbx-k3m7q2ab"}
+  secrets.delete:
+    args: {"name": "build-42"}
+  secrets.list:
+    args: {}
+  secrets.set:
+    args: {"name": "build-42", "value": "example"}
+  servers.list:
+    args: {}
+  servers.release:
+    args: {}
+  servers.rent:
+    args: {}
+  snapshots.delete:
+    args: {"name": "build-42"}
+  snapshots.get:
+    args: {"name": "build-42"}
+  snapshots.list:
+    args: {}
+  stripe.createPortalSession:
+    args: {}
+  stripe.invoices:
+    args: {}
+  stripe.paymentMethods:
+    args: {}
+  stripe.subscriptions.cancel:
+    args: {"subscription_id": "sub_2x6m8q"}
+  stripe.subscriptions.list:
+    args: {}
+  swarms.cancel:
+    args: {"swarm_id": "swm_8d2k4p"}
+  swarms.create:
+    args: {"command": "example", "size": {"vcpus": 1}}
+  swarms.get:
+    args: {"swarm_id": "swm_8d2k4p"}
+  swarms.getAccess:
+    args: {}
+  swarms.list:
+    args: {}
+  swarms.requestAccess:
+    args: {}
+  swarms.results:
+    args: {"swarm_id": "swm_8d2k4p"}
+  templates.create:
+    args: {"name": "build-42"}
+  templates.delete:
+    args: {"name": "build-42"}
+  templates.get:
+    args: {"name": "build-42"}
+  templates.list:
+    args: {}
+  usage.daily:
+    args: {}
+  usage.report:
+    args: {}
+  usage.sandboxes:
+    args: {"from": "2026-11-01T00:00:00Z", "to": "2026-11-27T00:00:00Z"}
+  wallet.apiUsage:
+    args: {}
+  wallet.autoRecharge.get:
+    args: {}
+  wallet.autoRecharge.set:
+    args: {"enabled": true}
+  wallet.balance:
+    args: {}
+  wallet.browserUsage:
+    args: {}
+  wallet.checkDeployBalance:
+    args: {}
+  wallet.claimSignupBonus:
+    args: {}
+  wallet.paymentMethod:
+    args: {}
+  wallet.planUsage:
+    args: {}
+  wallet.purchaseApiCredits:
+    args: {"amount_cents": 500}
+  wallet.redeemPromo:
+    args: {"code": "ABC123"}
+  wallet.topup:
+    args: {"amount_cents": 500}
+  wallet.transactions:
+    args: {}
+  wallet.validatePromoCode:
+    args: {"code": "ABC123"}
+  webhooks.create:
+    args: {"url": "https://example.com/maritime/webhook", "events": ["agent.error", "agent.deployed"]}
+  webhooks.delete:
+    args: {"sub_id": "whk_1c5v7n"}
+  webhooks.deliveries.list:
+    args: {"sub_id": "whk_1c5v7n"}
+  webhooks.deliveries.replay:
+    args: {"delivery_id": "dlv_6m3q8z"}
+  webhooks.list:
+    args: {}
+  webhooks.test:
+    args: {"sub_id": "whk_1c5v7n"}
+  webhooks.update:
+    args: {"sub_id": "whk_1c5v7n"}
