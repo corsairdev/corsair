@@ -187,6 +187,22 @@ describe('credentials', () => {
 			parseDigestChallenge('Digest realm="r", nonce="n", qop="auth,auth-int"'),
 		).toMatchObject({ realm: 'r', nonce: 'n', qop: 'auth' });
 		expect(parseDigestChallenge('Bearer realm="x"')).toBeUndefined();
+		// Atlas's real challenge (11-27), unquoted values, and a long hostile one.
+		expect(
+			parseDigestChallenge(
+				'Digest realm="MMS Public API", domain="", nonce="abc+/=", algorithm=MD5, qop="auth", stale=false',
+			),
+		).toMatchObject({
+			realm: 'MMS Public API',
+			nonce: 'abc+/=',
+			algorithm: 'MD5',
+			qop: 'auth',
+		});
+		const started = Date.now();
+		expect(
+			parseDigestChallenge(`Digest ${'0'.repeat(200_000)}`),
+		).toBeUndefined();
+		expect(Date.now() - started).toBeLessThan(500);
 		const challenge = { realm: 'r', nonce: 'n', count: 0 };
 		expect(
 			digestAuthorization(challenge, 'u', 'p', 'GET', '/x', 'c'),

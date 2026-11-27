@@ -145,15 +145,45 @@ type DigestChallenge = {
 };
 const digestCache = new Map<string, DigestChallenge>();
 
+/** Longest challenge read; Atlas's is about 150 characters. */
+const MAX_CHALLENGE_LENGTH = 4096;
+
+/**
+ * `realm="MMS Public API", nonce="...", qop="auth"` as name -> value, in one
+ * pass (a regex over the header backtracks on long runs of word characters).
+ */
+function digestFields(text: string): Record<string, string> {
+	const fields: Record<string, string> = {};
+	const input = text.slice(0, MAX_CHALLENGE_LENGTH);
+	let i = 0;
+	while (i < input.length) {
+		while (i < input.length && (input[i] === ',' || input[i] === ' ')) i++;
+		const eq = input.indexOf('=', i);
+		if (eq === -1) break;
+		const name = input.slice(i, eq).trim().toLowerCase();
+		let value: string;
+		if (input[eq + 1] === '"') {
+			const close = input.indexOf('"', eq + 2);
+			const end = close === -1 ? input.length : close;
+			value = input.slice(eq + 2, end);
+			i = end + 1;
+		} else {
+			const comma = input.indexOf(',', eq + 1);
+			const end = comma === -1 ? input.length : comma;
+			value = input.slice(eq + 1, end).trim();
+			i = end;
+		}
+		if (/^\w+$/.test(name)) fields[name] = value;
+	}
+	return fields;
+}
+
 /** The fields of a `WWW-Authenticate: Digest ...` header. */
 export function parseDigestChallenge(
 	header: string,
 ): DigestChallenge | undefined {
 	if (!/^\s*digest\s/i.test(header)) return undefined;
-	const fields: Record<string, string> = {};
-	for (const match of header.matchAll(/(\w+)=(?:"([^"]*)"|([^,\s]*))/g)) {
-		fields[(match[1] ?? '').toLowerCase()] = match[2] ?? match[3] ?? '';
-	}
+	const fields = digestFields(header.replace(/^\s*digest\s+/i, ''));
 	if (!fields.realm || !fields.nonce) return undefined;
 	return {
 		realm: fields.realm,
