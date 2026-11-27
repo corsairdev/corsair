@@ -34,7 +34,8 @@ export const completedStatusWithMessage = {
 	number_of_pages: 2,
 };
 
-// The docs' synchronous hosted example.
+// The docs' synchronous hosted example; the unbranded.example.com domain
+// stands in for the host DocRaptor serves hosted downloads from.
 export const hostedDoc = {
 	download_id: '123-456-abc',
 	download_url: 'https://unbranded.example.com/download/123-456-abc',
