@@ -365,7 +365,14 @@ export function decodePickle(input: Uint8Array): unknown {
 		if (!target || typeof target !== 'object' || Array.isArray(target)) {
 			throw new UnsupportedPickleError('SETITEM on a non-dict');
 		}
-		(target as Record<string, unknown>)[dictKeyString(key)] = value;
+		// defineProperty, not assignment: a "__proto__" key stays an entry
+		// instead of replacing the object's prototype.
+		Object.defineProperty(target, dictKeyString(key), {
+			value,
+			writable: true,
+			enumerable: true,
+			configurable: true,
+		});
 	};
 	const readLine = () => {
 		const end = buf.indexOf(0x0a, pos);
@@ -594,24 +601,33 @@ export function pickleToJson(bytes: Uint8Array): unknown {
 
 /**
  * Make an SDK value JSON-safe: bytes as { $bytes: base64 }, Maps as objects,
- * Dates as ISO strings, bigints as strings.
+ * Dates as ISO strings, bigints as strings. A value that contains itself
+ * (pickle allows it) throws UnsupportedPickleError, so pickleToJson falls back
+ * to { $pickle }; values shared without a cycle convert normally.
  */
 export function toJsonValue(value: unknown): unknown {
+	return toJson(value, new Set());
+}
+
+function toJson(value: unknown, path: Set<object>): unknown {
 	if (value instanceof Date) return value.toISOString();
 	if (value instanceof Uint8Array) {
 		return { $bytes: Buffer.from(value).toString('base64') };
 	}
-	if (value instanceof Map) {
-		return Object.fromEntries(
-			[...value.entries()].map(([k, v]) => [String(k), toJsonValue(v)]),
-		);
-	}
-	if (Array.isArray(value)) return value.map(toJsonValue);
 	if (typeof value === 'bigint') return value.toString();
-	if (value && typeof value === 'object') {
-		return Object.fromEntries(
-			Object.entries(value).map(([k, v]) => [k, toJsonValue(v)]),
-		);
+	if (!value || typeof value !== 'object') return value;
+	if (path.has(value)) {
+		throw new UnsupportedPickleError('value contains itself');
 	}
-	return value;
+	path.add(value);
+	try {
+		if (Array.isArray(value)) return value.map((item) => toJson(item, path));
+		const entries =
+			value instanceof Map
+				? [...value.entries()].map(([k, v]) => [String(k), v] as const)
+				: Object.entries(value);
+		return Object.fromEntries(entries.map(([k, v]) => [k, toJson(v, path)]));
+	} finally {
+		path.delete(value);
+	}
 }

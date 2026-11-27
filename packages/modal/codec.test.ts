@@ -119,6 +119,39 @@ describe('decodePickle', () => {
 		});
 	});
 
+	it('keeps a "__proto__" key as an entry', () => {
+		// pickle.dumps({'__proto__': {'x': 1}, 'y': 2}, protocol=4)
+		const hex =
+			'80049520000000000000007d94288c095f5f70726f746f5f5f947d948c0178944b01738c0179944b02752e';
+		const decoded = decodePickle(Buffer.from(hex, 'hex')) as object;
+		expect(Object.getPrototypeOf(decoded)).toBe(Object.prototype);
+		expect(Object.keys(decoded)).toEqual(['__proto__', 'y']);
+		const json = pickleToJson(Buffer.from(hex, 'hex')) as object;
+		expect(Object.keys(json)).toEqual(['__proto__', 'y']);
+		expect(Object.getOwnPropertyDescriptor(json, '__proto__')?.value).toEqual({
+			x: 1,
+		});
+	});
+
+	it('falls back to $pickle for a value that contains itself', () => {
+		// l = []; l.append(l) and d = {}; d['self'] = d, protocol=4
+		for (const hex of [
+			'80049506000000000000005d946800612e',
+			'8004950d000000000000007d948c0473656c66946800732e',
+		]) {
+			const bytes = Buffer.from(hex, 'hex');
+			expect(pickleToJson(bytes)).toEqual({
+				$pickle: bytes.toString('base64'),
+			});
+		}
+	});
+
+	it('converts a value shared twice without a cycle', () => {
+		// a = [1]; pickle.dumps([a, a], protocol=4)
+		const hex = '8004950c000000000000005d94285d944b01616801652e';
+		expect(pickleToJson(Buffer.from(hex, 'hex'))).toEqual([[1], [1]]);
+	});
+
 	it('refuses truncated or malformed input without hanging', () => {
 		expect(() => decodePickle(Buffer.from('80044b', 'hex'))).toThrow(
 			UnsupportedPickleError,
