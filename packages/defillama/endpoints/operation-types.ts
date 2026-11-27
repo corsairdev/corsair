@@ -811,7 +811,7 @@ export type DefillamaOperationInputs = {
 	};
 	'rwa.chartByChain': {
 		/** Metric to break down by chain, defaults to `onChainMcap`. `onChainMcap` is Onchain AUM, `activeAum` is Active AUM and `defiActiveTvl` is DeFi Active TVL. The retired spelling `activeMcap` is still accepted here. */
-		key?: 'onChainMcap' | 'activeAum' | 'defiActiveTvl';
+		key?: 'onChainMcap' | 'activeAum' | 'defiActiveTvl' | 'activeMcap';
 	};
 	'rwa.current': Record<string, never>;
 	'rwa.list': Record<string, never>;
@@ -989,9 +989,9 @@ export type DefillamaOperationInputs = {
 	'yields.earn.list': Record<string, never>;
 	'yields.earn.query': {
 		/** Chain slug (lowercase). Repeat the parameter to match any of several chains, e.g. chain=ethereum&chain=arbitrum (at most 20 values) */
-		chain?: string;
+		chain?: string | Array<string>;
 		/** Protocol slug (lowercase, e.g. aave-v3). Repeat the parameter to match any of several protocols (at most 20 values) */
-		protocol?: string;
+		protocol?: string | Array<string>;
 		/** true keeps only pools whose assets are all stablecoins, false only the rest */
 		stablecoin?: boolean;
 		/** true keeps only pools exposed to a single asset, false only the rest */
@@ -1368,8 +1368,9 @@ export type DefillamaOperationOutputs = {
 		[key: string]: unknown;
 	}>;
 	'coins.batchHistorical': {
-		coins?: {
-			'avax:0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e'?: {
+		coins?: Record<
+			string,
+			{
 				symbol?: string | null;
 				prices?: Array<{
 					timestamp?: number | null;
@@ -1378,9 +1379,8 @@ export type DefillamaOperationOutputs = {
 					[key: string]: unknown;
 				}> | null;
 				[key: string]: unknown;
-			} | null;
-			[key: string]: unknown;
-		} | null;
+			}
+		> | null;
 		[key: string]: unknown;
 	};
 	'coins.block': {
@@ -1389,8 +1389,9 @@ export type DefillamaOperationOutputs = {
 		[key: string]: unknown;
 	};
 	'coins.chart': {
-		coins?: {
-			'ethereum:0xdF574c24545E5FfEcb9a659c229253D4111d87e1'?: {
+		coins?: Record<
+			string,
+			{
 				/** Token decimals. Omitted for coingecko-native assets (e.g. coingecko:ethereum). */
 				decimals?: number | null;
 				/** Confidence score between 0 and 1 indicating the reliability of the price. */
@@ -1402,14 +1403,14 @@ export type DefillamaOperationOutputs = {
 				}> | null;
 				symbol?: string | null;
 				[key: string]: unknown;
-			} | null;
-			[key: string]: unknown;
-		} | null;
+			}
+		> | null;
 		[key: string]: unknown;
 	};
 	'coins.current': {
-		coins?: {
-			'ethereum:0xdF574c24545E5FfEcb9a659c229253D4111d87e1'?: {
+		coins?: Record<
+			string,
+			{
 				/** Token decimals. Omitted for coingecko-native assets (e.g. coingecko:ethereum). */
 				decimals?: number | null;
 				price?: number | null;
@@ -1418,26 +1419,26 @@ export type DefillamaOperationOutputs = {
 				/** Confidence score between 0 and 1 indicating the reliability of the price. */
 				confidence?: number | null;
 				[key: string]: unknown;
-			} | null;
-			[key: string]: unknown;
-		} | null;
+			}
+		> | null;
 		[key: string]: unknown;
 	};
 	'coins.first': {
-		coins?: {
-			'ethereum:0xdF574c24545E5FfEcb9a659c229253D4111d87e1'?: {
+		coins?: Record<
+			string,
+			{
 				price?: number | null;
 				symbol?: string | null;
 				timestamp?: number | null;
 				[key: string]: unknown;
-			} | null;
-			[key: string]: unknown;
-		} | null;
+			}
+		> | null;
 		[key: string]: unknown;
 	};
 	'coins.historical': {
-		coins?: {
-			'ethereum:0xdF574c24545E5FfEcb9a659c229253D4111d87e1'?: {
+		coins?: Record<
+			string,
+			{
 				/** Token decimals. Omitted for coingecko-native assets (e.g. coingecko:ethereum). */
 				decimals?: number | null;
 				price?: number | null;
@@ -1446,16 +1447,12 @@ export type DefillamaOperationOutputs = {
 				/** Confidence score between 0 and 1 indicating the reliability of the price. */
 				confidence?: number | null;
 				[key: string]: unknown;
-			} | null;
-			[key: string]: unknown;
-		} | null;
+			}
+		> | null;
 		[key: string]: unknown;
 	};
 	'coins.percentageChange': {
-		coins?: {
-			'ethereum:0xdF574c24545E5FfEcb9a659c229253D4111d87e1'?: number | null;
-			[key: string]: unknown;
-		} | null;
+		coins?: Record<string, number> | null;
 		[key: string]: unknown;
 	};
 	'dat.institution': {
@@ -1524,11 +1521,37 @@ export type DefillamaOperationOutputs = {
 			}
 		> | null;
 		/** Historical OHLCV data */
-		ohlcv?: Array<Array<DefillamaJsonValue>> | null;
+		ohlcv?: Array<
+			[
+				number | null,
+				number | null,
+				number | null,
+				number | null,
+				number | null,
+				number | null,
+				...DefillamaJsonValue[],
+			]
+		> | null;
 		/** Historical asset value data */
-		assetValue?: Array<Array<DefillamaJsonValue>> | null;
+		assetValue?: Array<
+			[number | null, number | null, ...DefillamaJsonValue[]]
+		> | null;
 		/** Compact historical stats: [timestamp, fd_realized, fd_realistic, fd_maximum, mcap_realized, mcap_realistic, mcap_max, mnav_realized, mnav_realistic, mnav_max] */
-		stats?: Array<Array<DefillamaJsonValue>> | null;
+		stats?: Array<
+			[
+				number | null,
+				number | null,
+				number | null,
+				number | null,
+				number | null,
+				number | null,
+				number | null,
+				number | null,
+				number | null,
+				number | null,
+				...DefillamaJsonValue[],
+			]
+		> | null;
 		/** Transaction history */
 		transactions?: Array<{
 			/** Transaction ID */
@@ -1675,10 +1698,34 @@ export type DefillamaOperationOutputs = {
 		> | null;
 		/** Total number of companies tracked */
 		totalCompanies?: number | null;
-		flows?: Record<string, Array<Array<DefillamaJsonValue>>> | null;
+		flows?: Record<
+			string,
+			Array<
+				[
+					number | null,
+					number | null,
+					number | null,
+					number | null,
+					number | null,
+					number | null,
+					...DefillamaJsonValue[],
+				]
+			>
+		> | null;
 		mNAV?: Record<
 			string,
-			Record<string, Array<Array<DefillamaJsonValue>>>
+			Record<
+				string,
+				Array<
+					[
+						number | null,
+						number | null,
+						number | null,
+						number | null,
+						...DefillamaJsonValue[],
+					]
+				>
+			>
 		> | null;
 		/** Last update timestamp */
 		lastUpdated?: string | null;
@@ -3018,9 +3065,17 @@ export type DefillamaOperationOutputs = {
 	}>;
 	'perps.derivatives': {
 		/** Total data chart with timestamps and volumes */
-		totalDataChart?: Array<Array<DefillamaJsonValue>> | null;
+		totalDataChart?: Array<
+			[number | null, number | null, ...DefillamaJsonValue[]]
+		> | null;
 		/** Total data chart breakdown by protocol */
-		totalDataChartBreakdown?: Array<Array<DefillamaJsonValue>> | null;
+		totalDataChartBreakdown?: Array<
+			[
+				number | null,
+				Record<string, DefillamaJsonValue> | null,
+				...DefillamaJsonValue[],
+			]
+		> | null;
 		/** 24 hour breakdown */
 		breakdown24h?: Record<string, DefillamaJsonValue> | null;
 		/** 30 day breakdown */
@@ -3207,9 +3262,17 @@ export type DefillamaOperationOutputs = {
 		/** All time volume */
 		totalAllTime?: number | null;
 		/** Total data chart with timestamps and volumes */
-		totalDataChart?: Array<Array<DefillamaJsonValue>> | null;
+		totalDataChart?: Array<
+			[number | null, number | null, ...DefillamaJsonValue[]]
+		> | null;
 		/** Total data chart breakdown by chain and protocol */
-		totalDataChartBreakdown?: Array<Array<DefillamaJsonValue>> | null;
+		totalDataChartBreakdown?: Array<
+			[
+				number | null,
+				Record<string, DefillamaJsonValue> | null,
+				...DefillamaJsonValue[],
+			]
+		> | null;
 		/** 1 day change percentage */
 		change_1d?: number | null;
 		[key: string]: unknown;
@@ -3612,7 +3675,7 @@ export type DefillamaOperationOutputs = {
 	};
 	'stablecoins.prices': Array<{
 		date?: number | null;
-		prices?: Record<string, number> | null;
+		prices?: Record<string, number | null> | null;
 		[key: string]: unknown;
 	}>;
 	'tokenLiquidity.history': DefillamaJsonValue;

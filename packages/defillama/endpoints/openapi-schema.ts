@@ -338,6 +338,17 @@ function schemaFromOpenApi(
 		schema = z.boolean();
 	} else if (type === 'null') {
 		schema = z.null();
+	} else if (type === 'array' && Array.isArray(value.items)) {
+		// Positional rows ([timestamp, open, high, low, close, volume]): a tuple.
+		// A response row takes null in any column and extra trailing columns, so
+		// a column DefiLlama adds or leaves empty doesn't fail a read.
+		const columns: z.ZodType[] = value.items.map((item) => {
+			const column = schemaFromOpenApi(item, mode, cache);
+			return strict ? column : column.nullable();
+		});
+		const [first, ...others] = columns;
+		const tuple = first ? z.tuple([first, ...others]) : z.tuple([]);
+		schema = strict ? tuple : tuple.rest(z.unknown());
 	} else if (type === 'array') {
 		let arraySchema = z.array(schemaFromOpenApi(value.items, mode, cache));
 		if (strict && typeof value.minItems === 'number') {
@@ -459,7 +470,18 @@ export function getDefillamaInputSchema(
 
 function buildOutputSchema(operation: DefillamaOperationDefinition): z.ZodType {
 	// The top-level response stays non-null: a null or empty body is malformed.
-	return schemaFromOpenApi(operation.output, 'response', definitionCache);
+	const schema = schemaFromOpenApi(
+		operation.output,
+		'response',
+		definitionCache,
+	);
+	// A route the spec leaves untyped still answers some JSON value: a missing
+	// body (a 204) or null is an error, while 0, false or [] pass.
+	return schema instanceof z.ZodUnknown
+		? schema.refine((value) => value !== undefined && value !== null, {
+				message: 'DefiLlama answered without a body',
+			})
+		: schema;
 }
 
 /** Whether the documented response is a list (a JSON array). */

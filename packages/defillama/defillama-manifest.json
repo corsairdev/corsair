@@ -795,27 +795,25 @@
         "properties": {
           "coins": {
             "type": "object",
-            "properties": {
-              "avax:0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e": {
-                "type": "object",
-                "properties": {
-                  "symbol": {
-                    "type": "string"
-                  },
-                  "prices": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "timestamp": {
-                          "type": "number"
-                        },
-                        "price": {
-                          "type": "number"
-                        },
-                        "confidence": {
-                          "type": "number"
-                        }
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "symbol": {
+                  "type": "string"
+                },
+                "prices": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "timestamp": {
+                        "type": "number"
+                      },
+                      "price": {
+                        "type": "number"
+                      },
+                      "confidence": {
+                        "type": "number"
                       }
                     }
                   }
@@ -912,36 +910,34 @@
         "properties": {
           "coins": {
             "type": "object",
-            "properties": {
-              "ethereum:0xdF574c24545E5FfEcb9a659c229253D4111d87e1": {
-                "type": "object",
-                "required": ["confidence", "prices", "symbol"],
-                "properties": {
-                  "decimals": {
-                    "type": "number",
-                    "description": "Token decimals. Omitted for coingecko-native assets (e.g. coingecko:ethereum)."
-                  },
-                  "confidence": {
-                    "type": "number",
-                    "description": "Confidence score between 0 and 1 indicating the reliability of the price."
-                  },
-                  "prices": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "timestamp": {
-                          "type": "number"
-                        },
-                        "price": {
-                          "type": "number"
-                        }
+            "additionalProperties": {
+              "type": "object",
+              "required": ["confidence", "prices", "symbol"],
+              "properties": {
+                "decimals": {
+                  "type": "number",
+                  "description": "Token decimals. Omitted for coingecko-native assets (e.g. coingecko:ethereum)."
+                },
+                "confidence": {
+                  "type": "number",
+                  "description": "Confidence score between 0 and 1 indicating the reliability of the price."
+                },
+                "prices": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "timestamp": {
+                        "type": "number"
+                      },
+                      "price": {
+                        "type": "number"
                       }
                     }
-                  },
-                  "symbol": {
-                    "type": "string"
                   }
+                },
+                "symbol": {
+                  "type": "string"
                 }
               }
             }
@@ -975,28 +971,26 @@
         "properties": {
           "coins": {
             "type": "object",
-            "properties": {
-              "ethereum:0xdF574c24545E5FfEcb9a659c229253D4111d87e1": {
-                "type": "object",
-                "required": ["price", "symbol", "timestamp"],
-                "properties": {
-                  "decimals": {
-                    "type": "number",
-                    "description": "Token decimals. Omitted for coingecko-native assets (e.g. coingecko:ethereum)."
-                  },
-                  "price": {
-                    "type": "number"
-                  },
-                  "symbol": {
-                    "type": "string"
-                  },
-                  "timestamp": {
-                    "type": "number"
-                  },
-                  "confidence": {
-                    "type": "number",
-                    "description": "Confidence score between 0 and 1 indicating the reliability of the price."
-                  }
+            "additionalProperties": {
+              "type": "object",
+              "required": ["price", "symbol", "timestamp"],
+              "properties": {
+                "decimals": {
+                  "type": "number",
+                  "description": "Token decimals. Omitted for coingecko-native assets (e.g. coingecko:ethereum)."
+                },
+                "price": {
+                  "type": "number"
+                },
+                "symbol": {
+                  "type": "string"
+                },
+                "timestamp": {
+                  "type": "number"
+                },
+                "confidence": {
+                  "type": "number",
+                  "description": "Confidence score between 0 and 1 indicating the reliability of the price."
                 }
               }
             }
@@ -1030,19 +1024,17 @@
         "properties": {
           "coins": {
             "type": "object",
-            "properties": {
-              "ethereum:0xdF574c24545E5FfEcb9a659c229253D4111d87e1": {
-                "type": "object",
-                "properties": {
-                  "price": {
-                    "type": "number"
-                  },
-                  "symbol": {
-                    "type": "string"
-                  },
-                  "timestamp": {
-                    "type": "number"
-                  }
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "price": {
+                  "type": "number"
+                },
+                "symbol": {
+                  "type": "string"
+                },
+                "timestamp": {
+                  "type": "number"
                 }
               }
             }
@@ -1081,28 +1073,26 @@
         "properties": {
           "coins": {
             "type": "object",
-            "properties": {
-              "ethereum:0xdF574c24545E5FfEcb9a659c229253D4111d87e1": {
-                "type": "object",
-                "required": ["price", "symbol", "timestamp"],
-                "properties": {
-                  "decimals": {
-                    "type": "number",
-                    "description": "Token decimals. Omitted for coingecko-native assets (e.g. coingecko:ethereum)."
-                  },
-                  "price": {
-                    "type": "number"
-                  },
-                  "symbol": {
-                    "type": "string"
-                  },
-                  "timestamp": {
-                    "type": "number"
-                  },
-                  "confidence": {
-                    "type": "number",
-                    "description": "Confidence score between 0 and 1 indicating the reliability of the price."
-                  }
+            "additionalProperties": {
+              "type": "object",
+              "required": ["price", "symbol", "timestamp"],
+              "properties": {
+                "decimals": {
+                  "type": "number",
+                  "description": "Token decimals. Omitted for coingecko-native assets (e.g. coingecko:ethereum)."
+                },
+                "price": {
+                  "type": "number"
+                },
+                "symbol": {
+                  "type": "string"
+                },
+                "timestamp": {
+                  "type": "number"
+                },
+                "confidence": {
+                  "type": "number",
+                  "description": "Confidence score between 0 and 1 indicating the reliability of the price."
                 }
               }
             }
@@ -1151,10 +1141,8 @@
         "properties": {
           "coins": {
             "type": "object",
-            "properties": {
-              "ethereum:0xdF574c24545E5FfEcb9a659c229253D4111d87e1": {
-                "type": "number"
-              }
+            "additionalProperties": {
+              "type": "number"
             }
           }
         }
@@ -8279,7 +8267,7 @@
         "properties": {
           "key": {
             "type": "string",
-            "enum": ["onChainMcap", "activeAum", "defiActiveTvl"],
+            "enum": ["onChainMcap", "activeAum", "defiActiveTvl", "activeMcap"],
             "description": "Metric to break down by chain, defaults to `onChainMcap`. `onChainMcap` is Onchain AUM, `activeAum` is Active AUM and `defiActiveTvl` is DeFi Active TVL. The retired spelling `activeMcap` is still accepted here.",
             "x-corsair-in": "query"
           }
@@ -9011,7 +8999,7 @@
             "prices": {
               "type": "object",
               "additionalProperties": {
-                "type": "number"
+                "type": ["number", "null"]
               }
             }
           }
@@ -12983,12 +12971,36 @@
         "type": "object",
         "properties": {
           "chain": {
-            "type": "string",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "maxItems": 20
+              }
+            ],
             "description": "Chain slug (lowercase). Repeat the parameter to match any of several chains, e.g. chain=ethereum&chain=arbitrum (at most 20 values)",
             "x-corsair-in": "query"
           },
           "protocol": {
-            "type": "string",
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "maxItems": 20
+              }
+            ],
             "description": "Protocol slug (lowercase, e.g. aave-v3). Repeat the parameter to match any of several protocols (at most 20 values)",
             "x-corsair-in": "query"
           },

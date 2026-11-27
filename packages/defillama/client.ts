@@ -162,7 +162,9 @@ export function withoutRequestData(
 		...sentStrings(error.request),
 	].sort((a, b) => b.text.length - a.text.length);
 	const body = scrubSent(withoutEchoedValues(error.body), sent);
-	const message = defillamaErrorMessage(error.status, error.statusText, body);
+	// The reason phrase can quote a sent value (the key sits in the path).
+	const statusText = scrubSent(error.statusText, sent) as string;
+	const message = defillamaErrorMessage(error.status, statusText, body);
 	return new ApiError(
 		{
 			...error.request,
@@ -177,7 +179,7 @@ export function withoutRequestData(
 			url: routeUrl(error.url, error.request.url),
 			ok: false,
 			status: error.status,
-			statusText: error.statusText,
+			statusText,
 			body,
 		},
 		message,
@@ -356,7 +358,12 @@ function scrubSent(value: unknown, sent: SentString[], depth = 0): unknown {
 		// `unknown` because error detail items have no fixed shape.
 		const result: Record<string, unknown> = {};
 		for (const [key, inner] of Object.entries(value)) {
-			result[key] = scrubSent(inner, sent, depth + 1);
+			// A key can quote a sent value too (`{ "<key>": "invalid" }`).
+			result[scrubSent(key, sent, depth + 1) as string] = scrubSent(
+				inner,
+				sent,
+				depth + 1,
+			);
 		}
 		return result;
 	}

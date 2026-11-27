@@ -6,7 +6,8 @@ domain: defillama.com
 description: "DefiLlama DeFi data: TVL by protocol and chain, token prices and charts, stablecoins, yields and pools, DEX and options volumes, fees and revenue, oracles, forks, treasuries and hacks; with a Pro key also yields earn and borrow, unlocks, bridges, equities, ETFs, RWA, pre-IPO and digital-asset treasuries (136 operations, 73 free without a key)."
 recommendedAuth: api_key
 overviewNote: |
-  73 routes are free and need no key: TVL (`tvl.*`), coin prices
+  73 routes are free and need no key: TVL (`tvl.*`, except
+  `tvl.chainAssets`, `tvl.inflows` and `tvl.tokenProtocols`), coin prices
   (`coins.*`), stablecoins, yield pools (`yields.pools`,
   `yields.poolChart`), DEX, options and fees overviews, oracles, forks,
   hacks and more. They go to DefiLlama's free hosts (api.llama.fi,
@@ -150,7 +151,7 @@ apiExamples:
   forks.protocolChart:
     args: {"protocol": "uniswap-v2"}
   narratives.performance:
-    args: {"period": "30d"}
+    args: {"period": "30"}
   oracles.chainChart:
     args: {"chain": "Ethereum"}
   oracles.chainChartByProtocol:
@@ -276,7 +277,7 @@ apiExamples:
   volumes.optionsSummary:
     args: {"protocol": "hegic"}
   yields.borrow.marketHistory:
-    args: {"id": "1"}
+    args: {"id": "aa70268e-4b52-42bf-a116-608b370f9501"}
   yields.borrow.markets:
     args: {}
   yields.borrow.routes:
@@ -284,7 +285,7 @@ apiExamples:
   yields.borrowPools:
     args: {}
   yields.earn.history:
-    args: {"id": "1"}
+    args: {"id": "747c1d2a-c668-4682-b9f9-296708a3dd90"}
   yields.earn.list:
     args: {}
   yields.earn.query:
@@ -292,9 +293,9 @@ apiExamples:
   yields.earn.verified:
     args: {}
   yields.earn.verifiedGet:
-    args: {"id": "1"}
+    args: {"id": "747c1d2a-c668-4682-b9f9-296708a3dd90"}
   yields.earn.verifiedHistory:
-    args: {"id": "1"}
+    args: {"id": "747c1d2a-c668-4682-b9f9-296708a3dd90"}
   yields.lendBorrowChart:
     args: {"pool": "747c1d2a-c668-4682-b9f9-296708a3dd90"}
   yields.loops:

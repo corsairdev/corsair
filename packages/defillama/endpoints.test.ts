@@ -221,3 +221,111 @@ describe('errors', () => {
 		);
 	});
 });
+
+describe('review round 1', () => {
+	it('keeps the key out of the reason phrase and out of error-body keys', async () => {
+		jest.spyOn(globalThis, 'fetch').mockImplementation(
+			async () =>
+				new Response(JSON.stringify({ [KEY]: 'invalid key' }), {
+					status: 401,
+					statusText: `Bad key ${KEY}`,
+					headers: { 'content-type': 'application/json' },
+				}),
+		);
+		const error = await call('tvl.protocols', {}).catch(
+			(caught: unknown) => caught,
+		);
+		expect(error).toBeInstanceOf(ApiError);
+		const apiError = error as ApiError;
+		expect(apiError.status).toBe(401);
+		expect(apiError.statusText).not.toContain(KEY);
+		expect(apiError.message).not.toContain(KEY);
+		expect(JSON.stringify(apiError.body)).not.toContain(KEY);
+		expect(apiError.body).toEqual({ '[REDACTED]': 'invalid key' });
+	});
+
+	it('checks every returned coin, not only the example address', async () => {
+		reply(() => ({
+			status: 200,
+			body: {
+				coins: {
+					'coingecko:ethereum': {
+						price: 3000,
+						symbol: 'ETH',
+						timestamp: 1764547200,
+					},
+				},
+			},
+		}));
+		await expect(
+			call('coins.current', { coins: 'coingecko:ethereum' }),
+		).resolves.toEqual({
+			coins: {
+				'coingecko:ethereum': {
+					price: 3000,
+					symbol: 'ETH',
+					timestamp: 1764547200,
+				},
+			},
+		});
+		reply(() => ({
+			status: 200,
+			body: { coins: { 'coingecko:ethereum': { price: 'n/a' } } },
+		}));
+		await expect(
+			call('coins.current', { coins: 'coingecko:ethereum' }),
+		).rejects.toThrow(/did not match/);
+		// An empty result is still a result.
+		reply(() => ({ status: 200, body: { coins: {} } }));
+		await expect(
+			call('coins.percentageChange', { coins: 'coingecko:ethereum' }),
+		).resolves.toEqual({ coins: {} });
+	});
+
+	it('accepts a null historical stablecoin quote', async () => {
+		reply(() => ({
+			status: 200,
+			body: [{ date: 1764547200, prices: { tether: 1, frax: null } }],
+		}));
+		await expect(call('stablecoins.prices', {})).resolves.toEqual([
+			{ date: 1764547200, prices: { tether: 1, frax: null } },
+		]);
+	});
+
+	it('sends activeMcap and repeated chain and protocol filters', async () => {
+		reply(() => ({ status: 200, body: [] }));
+		await call('rwa.chartByChain', { key: 'activeMcap' });
+		expect(calls[0]?.url).toContain('key=activeMcap');
+		reply(() => ({ status: 200, body: { data: [] } }));
+		await call('yields.earn.query', {
+			chain: ['ethereum', 'arbitrum'],
+			protocol: 'aave-v3',
+		});
+		expect(calls[1]?.url).toContain('chain=ethereum&chain=arbitrum');
+		expect(calls[1]?.url).toContain('protocol=aave-v3');
+		await expect(
+			call('yields.earn.query', {
+				chain: Array.from({ length: 21 }, (_, i) => `c${i}`),
+			}),
+		).rejects.toThrow(/Invalid input/);
+	});
+
+	it('checks positional rows as tuples', async () => {
+		const row = [1764547200, 1, 2, 0.5, 1.5, 100];
+		reply(() => ({ status: 200, body: { ohlcv: [row] } }));
+		await expect(
+			call('dat.institution', { symbol: 'MSTR' }),
+		).resolves.toMatchObject({ ohlcv: [row] });
+		reply(() => ({ status: 200, body: { ohlcv: [['not a candle']] } }));
+		await expect(call('dat.institution', { symbol: 'MSTR' })).rejects.toThrow(
+			/did not match/,
+		);
+	});
+
+	it('refuses a missing body on an untyped route', async () => {
+		reply(() => ({ status: 204 }));
+		await expect(call('account.usage', {})).rejects.toThrow(/without a body/);
+		reply(() => ({ status: 200, body: 0 }));
+		await expect(call('account.usage', {})).resolves.toBe(0);
+	});
+});

@@ -478,16 +478,14 @@ await corsair.defillama.api.coins.batchHistorical({ coins: '{"coingecko:ethereum
 <Accordion title="coins full type">
 
 ```ts
-{
-  avax:0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e?: {
-    symbol?: string | null,
-    prices?: {
-      timestamp?: number | null,
-      price?: number | null,
-      confidence?: number | null
-    }[] | null
-  } | null
-} | null
+Record<string, {
+  symbol?: string | null,
+  prices?: {
+    timestamp?: number | null,
+    price?: number | null,
+    confidence?: number | null
+  }[] | null
+}> | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -562,17 +560,15 @@ await corsair.defillama.api.coins.chart({ coins: 'coingecko:ethereum,ethereum:0x
 <Accordion title="coins full type">
 
 ```ts
-{
-  ethereum:0xdF574c24545E5FfEcb9a659c229253D4111d87e1?: {
-    decimals?: number | null,
-    confidence?: number | null,
-    prices?: {
-      timestamp?: number | null,
-      price?: number | null
-    }[] | null,
-    symbol?: string | null
-  } | null
-} | null
+Record<string, {
+  decimals?: number | null,
+  confidence?: number | null,
+  prices?: {
+    timestamp?: number | null,
+    price?: number | null
+  }[] | null,
+  symbol?: string | null
+}> | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -611,15 +607,13 @@ await corsair.defillama.api.coins.current({ coins: 'coingecko:ethereum,coingecko
 <Accordion title="coins full type">
 
 ```ts
-{
-  ethereum:0xdF574c24545E5FfEcb9a659c229253D4111d87e1?: {
-    decimals?: number | null,
-    price?: number | null,
-    symbol?: string | null,
-    timestamp?: number | null,
-    confidence?: number | null
-  } | null
-} | null
+Record<string, {
+  decimals?: number | null,
+  price?: number | null,
+  symbol?: string | null,
+  timestamp?: number | null,
+  confidence?: number | null
+}> | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -658,13 +652,11 @@ await corsair.defillama.api.coins.first({ coins: 'coingecko:ethereum,ethereum:0x
 <Accordion title="coins full type">
 
 ```ts
-{
-  ethereum:0xdF574c24545E5FfEcb9a659c229253D4111d87e1?: {
-    price?: number | null,
-    symbol?: string | null,
-    timestamp?: number | null
-  } | null
-} | null
+Record<string, {
+  price?: number | null,
+  symbol?: string | null,
+  timestamp?: number | null
+}> | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -704,15 +696,13 @@ await corsair.defillama.api.coins.historical({ coins: 'coingecko:ethereum,ethere
 <Accordion title="coins full type">
 
 ```ts
-{
-  ethereum:0xdF574c24545E5FfEcb9a659c229253D4111d87e1?: {
-    decimals?: number | null,
-    price?: number | null,
-    symbol?: string | null,
-    timestamp?: number | null,
-    confidence?: number | null
-  } | null
-} | null
+Record<string, {
+  decimals?: number | null,
+  price?: number | null,
+  symbol?: string | null,
+  timestamp?: number | null,
+  confidence?: number | null
+}> | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -748,18 +738,7 @@ await corsair.defillama.api.coins.percentageChange({ coins: 'coingecko:ethereum,
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `coins` | `object \| null` | No | — |
-
-<AccordionGroup>
-<Accordion title="coins full type">
-
-```ts
-{
-  ethereum:0xdF574c24545E5FfEcb9a659c229253D4111d87e1?: number | null
-} | null
-```
-</Accordion>
-</AccordionGroup>
+| `coins` | `Record<string, number> \| null` | No | — |
 
 
 
@@ -812,9 +791,9 @@ await corsair.defillama.api.dat.institution({ symbol: 'USDT' });
 | `totalUsdValue` | `number \| null` | No | Total USD value of crypto holdings |
 | `assets` | `object \| null` | No | Asset holdings by asset type |
 | `assetsMeta` | `object \| null` | No | Metadata for assets held |
-| `ohlcv` | `any[][] \| null` | No | Historical OHLCV data |
-| `assetValue` | `any[][] \| null` | No | Historical asset value data |
-| `stats` | `any[][] \| null` | No | Compact historical stats: [timestamp, fd_realized, fd_realistic, fd_maximum, mcap_realized, mcap_realistic, mcap_max, mnav_realized, mnav_realistic, mnav_max] |
+| `ohlcv` | `[number \| null, number \| null, number \| null, number \| null, number \| null, number \| null, ...any[]][] \| null` | No | Historical OHLCV data |
+| `assetValue` | `[number \| null, number \| null, ...any[]][] \| null` | No | Historical asset value data |
+| `stats` | `[number \| null, number \| null, number \| null, number \| null, number \| null, number \| null, number \| null, number \| null, number \| null, number \| null, ...any[]][] \| null` | No | Compact historical stats: [timestamp, fd_realized, fd_realistic, fd_maximum, mcap_realized, mcap_realistic, mcap_max, mnav_realized, mnav_realistic, mnav_max] |
 | `transactions` | `object[] \| null` | No | Transaction history |
 | `lastUpdated` | `string \| null` | No | Last update timestamp |
 
@@ -896,8 +875,8 @@ await corsair.defillama.api.dat.institutions({});
 | `institutions` | `object[] \| null` | No | — |
 | `assets` | `object \| null` | No | — |
 | `totalCompanies` | `number \| null` | No | Total number of companies tracked |
-| `flows` | `Record<string, any[][]> \| null` | No | — |
-| `mNAV` | `Record<string, Record<string, any[][]>> \| null` | No | — |
+| `flows` | `Record<string, [number \| null, number \| null, number \| null, number \| null, number \| null, number \| null, ...any[]][]> \| null` | No | — |
+| `mNAV` | `Record<string, Record<string, [number \| null, number \| null, number \| null, number \| null, ...any[]][]>> \| null` | No | — |
 | `lastUpdated` | `string \| null` | No | Last update timestamp |
 
 <AccordionGroup>
@@ -2972,7 +2951,7 @@ Get chart of narratives based on category performance (with individual coins wei
 **Risk:** `read`
 
 ```ts
-await corsair.defillama.api.narratives.performance({ period: '30d' });
+await corsair.defillama.api.narratives.performance({ period: '30' });
 ```
 
 **Input**
@@ -3621,8 +3600,8 @@ await corsair.defillama.api.perps.derivatives({ excludeTotalDataChart: true, exc
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `totalDataChart` | `any[][] \| null` | No | Total data chart with timestamps and volumes |
-| `totalDataChartBreakdown` | `any[][] \| null` | No | Total data chart breakdown by protocol |
+| `totalDataChart` | `[number \| null, number \| null, ...any[]][] \| null` | No | Total data chart with timestamps and volumes |
+| `totalDataChartBreakdown` | `object[] \| null` | No | Total data chart breakdown by protocol |
 | `breakdown24h` | `object \| null` | No | 24 hour breakdown |
 | `breakdown30d` | `object \| null` | No | 30 day breakdown |
 | `chain` | `string \| null \| null` | No | Chain filter |
@@ -3645,6 +3624,18 @@ await corsair.defillama.api.perps.derivatives({ excludeTotalDataChart: true, exc
 | `protocols` | `object[] \| null` | No | List of protocols |
 
 <AccordionGroup>
+<Accordion title="totalDataChartBreakdown full type">
+
+```ts
+[
+  number | null,
+  {
+  } | null,
+  ...any[]
+][] | null
+```
+</Accordion>
+
 <Accordion title="breakdown24h full type">
 
 ```ts
@@ -3773,8 +3764,8 @@ await corsair.defillama.api.perps.derivativesSummary({ protocol: 'aave', exclude
 | `total48hto24h` | `number \| null` | No | 48h to 24h volume |
 | `total7d` | `number \| null` | No | 7 day volume |
 | `totalAllTime` | `number \| null` | No | All time volume |
-| `totalDataChart` | `any[][] \| null` | No | Total data chart with timestamps and volumes |
-| `totalDataChartBreakdown` | `any[][] \| null` | No | Total data chart breakdown by chain and protocol |
+| `totalDataChart` | `[number \| null, number \| null, ...any[]][] \| null` | No | Total data chart with timestamps and volumes |
+| `totalDataChartBreakdown` | `object[] \| null` | No | Total data chart breakdown by chain and protocol |
 | `change_1d` | `number \| null` | No | 1 day change percentage |
 
 <AccordionGroup>
@@ -3791,6 +3782,18 @@ await corsair.defillama.api.perps.derivativesSummary({ protocol: 'aave', exclude
 ```ts
 {
 } | null | null
+```
+</Accordion>
+
+<Accordion title="totalDataChartBreakdown full type">
+
+```ts
+[
+  number | null,
+  {
+  } | null,
+  ...any[]
+][] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -4234,7 +4237,7 @@ await corsair.defillama.api.rwa.chartByChain({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `key` | `onChainMcap \| activeAum \| defiActiveTvl` | No | Metric to break down by chain, defaults to `onChainMcap`. `onChainMcap` is Onchain AUM, `activeAum` is Active AUM and `defiActiveTvl` is DeFi Active TVL. The retired spelling `activeMcap` is still accepted here. |
+| `key` | `onChainMcap \| activeAum \| defiActiveTvl \| activeMcap` | No | Metric to break down by chain, defaults to `onChainMcap`. `onChainMcap` is Onchain AUM, `activeAum` is Active AUM and `defiActiveTvl` is DeFi Active TVL. The retired spelling `activeMcap` is still accepted here. |
 
 
 
@@ -4727,7 +4730,7 @@ await corsair.defillama.api.stablecoins.prices({});
 ```ts
 {
   date?: number | null,
-  prices?: Record<string, number> | null
+  prices?: Record<string, number | null> | null
 }[]
 ```
 </Accordion>
@@ -6057,7 +6060,7 @@ Retrieve daily borrow-side history for a borrow market (needs a DefiLlama Pro ke
 **Risk:** `read`
 
 ```ts
-await corsair.defillama.api.yields.borrow.marketHistory({ id: '1' });
+await corsair.defillama.api.yields.borrow.marketHistory({ id: 'aa70268e-4b52-42bf-a116-608b370f9501' });
 ```
 
 **Input**
@@ -6512,7 +6515,7 @@ Retrieve daily history for an earn pool (needs a DefiLlama Pro key)
 **Risk:** `read`
 
 ```ts
-await corsair.defillama.api.yields.earn.history({ id: '1' });
+await corsair.defillama.api.yields.earn.history({ id: '747c1d2a-c668-4682-b9f9-296708a3dd90' });
 ```
 
 **Input**
@@ -6708,8 +6711,8 @@ await corsair.defillama.api.yields.earn.query({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `chain` | `string` | No | Chain slug (lowercase). Repeat the parameter to match any of several chains, e.g. chain=ethereum&chain=arbitrum (at most 20 values) |
-| `protocol` | `string` | No | Protocol slug (lowercase, e.g. aave-v3). Repeat the parameter to match any of several protocols (at most 20 values) |
+| `chain` | `string \| string[]` | No | Chain slug (lowercase). Repeat the parameter to match any of several chains, e.g. chain=ethereum&chain=arbitrum (at most 20 values) |
+| `protocol` | `string \| string[]` | No | Protocol slug (lowercase, e.g. aave-v3). Repeat the parameter to match any of several protocols (at most 20 values) |
 | `stablecoin` | `boolean` | No | true keeps only pools whose assets are all stablecoins, false only the rest |
 | `single_asset_exposure` | `boolean` | No | true keeps only pools exposed to a single asset, false only the rest |
 | `impermanent_loss_risk` | `boolean` | No | true keeps only pools with impermanent loss risk, false only the rest |
@@ -6925,7 +6928,7 @@ Retrieve the latest verified data for one earn pool (needs a DefiLlama Pro key)
 **Risk:** `read`
 
 ```ts
-await corsair.defillama.api.yields.earn.verifiedGet({ id: '1' });
+await corsair.defillama.api.yields.earn.verifiedGet({ id: '747c1d2a-c668-4682-b9f9-296708a3dd90' });
 ```
 
 **Input**
@@ -7016,7 +7019,7 @@ Retrieve daily verified history for an earn pool (needs a DefiLlama Pro key)
 **Risk:** `read`
 
 ```ts
-await corsair.defillama.api.yields.earn.verifiedHistory({ id: '1' });
+await corsair.defillama.api.yields.earn.verifiedHistory({ id: '747c1d2a-c668-4682-b9f9-296708a3dd90' });
 ```
 
 **Input**
