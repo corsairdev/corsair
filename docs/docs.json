@@ -4900,6 +4900,14 @@
                 ]
               },
               {
+                "group": "Ragie",
+                "pages": [
+                  "plugins/ragie/overview",
+                  "plugins/ragie/api",
+                  "plugins/ragie/database"
+                ]
+              },
+              {
                 "group": "Railway",
                 "pages": [
                   "plugins/railway/overview",
