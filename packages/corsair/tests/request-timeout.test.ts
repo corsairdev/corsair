@@ -22,6 +22,52 @@ afterEach(() => {
 });
 
 describe('Request timeout Tests', () => {
+	it('replaces path parameters without regex backtracking', async () => {
+		let requestedUrl = '';
+		const fetchMock: typeof fetch = async (input) => {
+			requestedUrl = String(input);
+			return new Response('{}', {
+				status: 200,
+				headers: { 'content-type': 'application/json' },
+			});
+		};
+		global.fetch = jest.fn(fetchMock);
+
+		await request(config, {
+			method: 'GET',
+			url: '/items/{itemId}/{{a{{a{{a',
+			path: { itemId: 'a/b' },
+		});
+
+		expect(requestedUrl).toBe('https://api.example.com/items/a/b/{{a{{a{{a');
+	});
+
+	it('stops scanning after the first unmatched opening brace', async () => {
+		let requestedUrl = '';
+		const unmatched = '{'.repeat(100_000);
+		const fetchMock: typeof fetch = async (input) => {
+			requestedUrl = String(input);
+			return new Response('{}', {
+				status: 200,
+				headers: { 'content-type': 'application/json' },
+			});
+		};
+		global.fetch = jest.fn(fetchMock);
+
+		// The old /{(.*?)}/g substitution took ~3s on this input (quadratic);
+		// the scanner is linear and finishes in a few milliseconds.
+		const startedAt = performance.now();
+		await request(config, {
+			method: 'GET',
+			url: `/items/{itemId}/${unmatched}`,
+			path: { itemId: 'a/b' },
+		});
+		const elapsedMs = performance.now() - startedAt;
+
+		expect(requestedUrl).toBe(`https://api.example.com/items/a/b/${unmatched}`);
+		expect(elapsedMs).toBeLessThan(1000);
+	});
+
 	it('passes a timeout-aware abort signal to fetch', async () => {
 		let signal: AbortSignal | undefined;
 
