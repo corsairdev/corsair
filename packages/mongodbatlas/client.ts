@@ -134,12 +134,21 @@ export async function serviceAccountToken(
 	if (cached && cached.expiresAt > Date.now() + 60_000) return cached.token;
 	let pending = inflightTokens.get(cacheKey);
 	if (!pending) {
-		pending = exchangeServiceAccountToken(clientId, clientSecret, cacheKey);
-		inflightTokens.set(cacheKey, pending);
-		pending.then(
-			() => inflightTokens.delete(cacheKey),
-			() => inflightTokens.delete(cacheKey),
+		const exchange = exchangeServiceAccountToken(
+			clientId,
+			clientSecret,
+			cacheKey,
 		);
+		pending = exchange;
+		inflightTokens.set(cacheKey, exchange);
+		// Only this exchange's own entry goes: after a clear, a newer one may
+		// sit under the same key.
+		const release = () => {
+			if (inflightTokens.get(cacheKey) === exchange) {
+				inflightTokens.delete(cacheKey);
+			}
+		};
+		exchange.then(release, release);
 	}
 	return pending;
 }
