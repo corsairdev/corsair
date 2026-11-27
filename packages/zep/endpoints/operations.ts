@@ -472,6 +472,11 @@ export function createZepOperation<Id extends ZepOperationId>(
 			response = { success: true };
 		} else {
 			let result = await makeZepRequest(ctx, request);
+			// Core hands back a non-JSON body as a string; an HTML page there is a
+			// proxy or login page, never a Zep answer.
+			if (typeof result === 'string' && /^\s*<(!doctype|html)/i.test(result)) {
+				throw new Error(`Zep ${id} answered with an HTML page, not JSON`);
+			}
 			if (operation.emptyOk) {
 				result = decodeMaybeEmpty(id, result);
 			}

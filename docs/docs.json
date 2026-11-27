@@ -6620,7 +6620,8 @@
                 "pages": [
                   "plugins/zep/overview",
                   "plugins/zep/api",
-                  "plugins/zep/database"
+                  "plugins/zep/database",
+                  "plugins/zep/webhooks"
                 ]
               },
               {
