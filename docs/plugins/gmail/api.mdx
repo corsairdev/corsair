@@ -1724,3 +1724,38 @@ await corsair.gmail.api.threads.untrash({});
 
 ---
 
+## Users
+
+### getProfile
+
+`users.getProfile`
+
+Get the mailbox profile for the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.gmail.api.users.getProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailAddress` | `string` | No | — |
+| `messagesTotal` | `number` | No | — |
+| `threadsTotal` | `number` | No | — |
+| `historyId` | `string` | No | — |
+
+
+
+---
+

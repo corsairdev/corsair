@@ -2,6 +2,7 @@ import type {
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
+	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
@@ -20,11 +21,13 @@ import {
 	LabelsEndpoints,
 	MessagesEndpoints,
 	ThreadsEndpoints,
+	UsersEndpoints,
 } from './endpoints';
 import {
 	GmailEndpointInputSchemas,
 	GmailEndpointOutputSchemas,
 } from './endpoints/types';
+import { createErrorHandlers, mergeErrorHandlers } from './error-handlers';
 import type { GmailCredentials } from './schema';
 import { GmailSchema } from './schema';
 import { gmailSubscribe } from './subscribe';
@@ -158,6 +161,9 @@ export const gmailEndpointsNested = {
 		trash: ThreadsEndpoints.trash,
 		untrash: ThreadsEndpoints.untrash,
 	},
+	users: {
+		getProfile: UsersEndpoints.getProfile,
+	},
 } as const;
 
 export const gmailEndpointSchemas = {
@@ -257,6 +263,10 @@ export const gmailEndpointSchemas = {
 		input: GmailEndpointInputSchemas.threadsUntrash,
 		output: GmailEndpointOutputSchemas.threadsUntrash,
 	},
+	'users.getProfile': {
+		input: GmailEndpointInputSchemas.usersGetProfile,
+		output: GmailEndpointOutputSchemas.usersGetProfile,
+	},
 } as const;
 
 export const gmailWebhooksNested = {
@@ -269,6 +279,7 @@ export type GmailPluginOptions = {
 	credentials?: GmailCredentials;
 	hooks?: InternalGmailPlugin['hooks'];
 	webhookHooks?: InternalGmailPlugin['webhookHooks'];
+	errorHandlers?: CorsairErrorHandler;
 	/**
 	 * Which Gmail webhook event types to process and store.
 	 * When omitted, all event types are processed (default).
@@ -398,7 +409,23 @@ const gmailEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Restore a thread from the trash',
 	},
+	'users.getProfile': {
+		riskLevel: 'read',
+		description: 'Get the mailbox profile for the authenticated user',
+	},
 } satisfies RequiredPluginEndpointMeta<typeof gmailEndpointsNested>;
+
+// Operations the error handlers may retry. Writes are never retried, because
+// Corsair retries the whole endpoint call and a write could run twice.
+const readOperations: ReadonlySet<string> = new Set(
+	Object.entries(gmailEndpointMeta)
+		.filter(([, meta]) => meta.riskLevel === 'read')
+		.map(([operation]) => operation),
+);
+
+export function isReadOperation(operation: string): boolean {
+	return readOperations.has(operation);
+}
 
 export type BaseGmailPlugin<T extends GmailPluginOptions> = CorsairPlugin<
 	'gmail',
@@ -450,6 +477,10 @@ export function gmail<const T extends GmailPluginOptions>(
 		endpointMeta: gmailEndpointMeta,
 		endpointSchemas: gmailEndpointSchemas,
 		webhookSchemas: gmailWebhookSchemas,
+		errorHandlers: mergeErrorHandlers(
+			createErrorHandlers(isReadOperation),
+			options.errorHandlers,
+		),
 		keyBuilder: async (ctx: GmailKeyBuilderContext) => {
 			const authType = ctx.authType;
 
