@@ -4011,6 +4011,15 @@
                 ]
               },
               {
+                "group": "Netlify",
+                "pages": [
+                  "plugins/netlify/overview",
+                  "plugins/netlify/api",
+                  "plugins/netlify/database",
+                  "plugins/netlify/webhooks"
+                ]
+              },
+              {
                 "group": "Neutrino API",
                 "pages": [
                   "plugins/neutrino/overview",

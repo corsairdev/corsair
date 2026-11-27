@@ -1,0 +1,422 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from Netlify's swagger;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Netlify
+domain: netlify.com
+description: "Sites, deploys (with file and function uploads), builds and build hooks, environment variables, forms and submissions, functions, DNS zones and records, TLS certificates, split tests, snippets, Netlify DB databases, agent runs, teams, members and audit logs, deploy keys, add-ons and AI Gateway tokens, plus JWS-signed webhooks for deploy and form events (185 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Connect with a Netlify personal access token (User settings >
+  Applications > Personal access tokens) or an OAuth access token; it is sent
+  as `Authorization: Bearer <token>` and acts as that user across every team
+  they belong to. Netlify calls a team an account: `account_id` and
+  `account_slug` come from `accounts.list`, site ids from `sites.list`.
+
+  - **Deploys.** `sites.deploys.create` takes a digest of the files
+  (`files`: path -> SHA1) and answers with the SHA1s it still needs in
+  `required`; send each with `deploys.uploadFile` (the file's path and its
+  bytes as `file`: a URL, `{ base64 }` or a Blob) and the deploy goes live
+  when the last one lands. Functions upload the same way with
+  `deploys.uploadFunction`. `sites.builds.create` starts a build from the
+  linked repository instead.
+  - **Lists** page with `page` (1-based) and `per_page`; the plugin sends 100
+  when `per_page` is left out. Paged lists return `{ items, next_page }`,
+  with `next_page` set while a page comes back full: step `page` until it
+  is null.
+  - **Risk.** Every delete is `destructive`, as are team plan changes
+  (`accounts.create`, `accounts.update`), add-ons, database compute settings,
+  data resets and restores, migrations, member invitations (they send
+  email), agent runs (they spend AI credits), commits and pull requests
+  from agent runs, DNS zone transfers, unlinking a repository and disabling
+  a site.
+  - **Webhooks.** Create an outgoing hook with `hooks.create` (type `url`,
+  `data.url` your Corsair webhook URL, `data.signature_secret` a long random
+  secret) for each event you want, and give the plugin the same secret as
+  `webhookSecret` (or store it as the account's webhook signature).
+  Deliveries are checked against `X-Webhook-Signature` (a JWS, HS256, whose
+  `sha256` claim must match the body) and routed by `X-Netlify-Event`:
+  deploy events to `deploy`, `submission_created` to `submission`.
+  - Rate limits: 500 requests a minute, 3 deploys a minute and 100 a day;
+  core waits for `X-RateLimit-Reset` and retries a 429 three times.
+  - Not wrapped: three routes the swagger tags `x-internal` (the build
+  plugins runtime's own calls).
+examples:
+  read:
+    path: sites.list
+    title: List sites
+    args: {"filter": "owner", "per_page": 20}
+  write:
+    path: sites.builds.create
+    title: Start a build
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "clear_cache": true}
+apiExamples:
+  accounts.audit.list:
+    args: {"account_id": "5f3e9c1b7a2d4e0012ab34cd"}
+  accounts.builds.status:
+    args: {"account_id": "5f3e9c1b7a2d4e0012ab34cd"}
+  accounts.cancel:
+    args: {"account_id": "5f3e9c1b7a2d4e0012ab34cd"}
+  accounts.create:
+    args: {"name": "example-site", "type_id": "example"}
+  accounts.get:
+    args: {"account_id": "5f3e9c1b7a2d4e0012ab34cd"}
+  accounts.list:
+    args: {}
+  accounts.listTypes:
+    args: {}
+  accounts.members.add:
+    args: {"account_slug": "acme", "email": "grace@example.com", "role": "Developer"}
+  accounts.members.get:
+    args: {"account_slug": "acme", "member_id": "5f3e9e117a2d4e0012ab34cf"}
+  accounts.members.list:
+    args: {"account_slug": "acme"}
+  accounts.members.remove:
+    args: {"account_slug": "acme", "member_id": "5f3e9e117a2d4e0012ab34cf"}
+  accounts.members.update:
+    args: {"account_slug": "acme", "member_id": "5f3e9e117a2d4e0012ab34cf"}
+  accounts.sites.create:
+    args: {"account_slug": "acme", "name": "acme-docs"}
+  accounts.sites.list:
+    args: {"account_slug": "acme"}
+  accounts.update:
+    args: {"account_id": "5f3e9c1b7a2d4e0012ab34cd"}
+  agentRunners.archive:
+    args: {"agent_runner_id": "6566a360c0b7f6005d3a1f38"}
+  agentRunners.commitToBranch:
+    args: {"agent_runner_id": "6566a360c0b7f6005d3a1f38", "target_branch": "main"}
+  agentRunners.create:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  agentRunners.createPullRequest:
+    args: {"agent_runner_id": "6566a360c0b7f6005d3a1f38"}
+  agentRunners.createUploadUrl:
+    args: {"account_id": "5f3e9c1b7a2d4e0012ab34cd", "filename": "brief.md", "content_type": "text/markdown"}
+  agentRunners.delete:
+    args: {"agent_runner_id": "6566a360c0b7f6005d3a1f38"}
+  agentRunners.get:
+    args: {"agent_runner_id": "6566a360c0b7f6005d3a1f38"}
+  agentRunners.getDiff:
+    args: {"agent_runner_id": "6566a360c0b7f6005d3a1f38"}
+  agentRunners.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "account_id": "5f3e9c1b7a2d4e0012ab34cd"}
+  agentRunners.sessions.answer:
+    args: {"agent_runner_id": "6566a360c0b7f6005d3a1f38", "agent_runner_session_id": "6566a365c0b7f6005d3a1f39", "refId": "example"}
+  agentRunners.sessions.create:
+    args: {"agent_runner_id": "6566a360c0b7f6005d3a1f38"}
+  agentRunners.sessions.delete:
+    args: {"agent_runner_id": "6566a360c0b7f6005d3a1f38", "agent_runner_session_id": "6566a365c0b7f6005d3a1f39"}
+  agentRunners.sessions.get:
+    args: {"agent_runner_id": "6566a360c0b7f6005d3a1f38", "agent_runner_session_id": "6566a365c0b7f6005d3a1f39"}
+  agentRunners.sessions.list:
+    args: {"agent_runner_id": "6566a360c0b7f6005d3a1f38"}
+  agentRunners.sessions.stop:
+    args: {"agent_runner_id": "6566a360c0b7f6005d3a1f38", "agent_runner_session_id": "6566a365c0b7f6005d3a1f39"}
+  agentRunners.sessions.update:
+    args: {"agent_runner_id": "6566a360c0b7f6005d3a1f38", "agent_runner_session_id": "6566a365c0b7f6005d3a1f39"}
+  agentRunners.stop:
+    args: {"agent_runner_id": "6566a360c0b7f6005d3a1f38"}
+  agentRunners.update:
+    args: {"agent_runner_id": "6566a360c0b7f6005d3a1f38"}
+  aiGateway.getAccountToken:
+    args: {"account_id": "5f3e9c1b7a2d4e0012ab34cd"}
+  aiGateway.getSiteToken:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  aiGateway.listProviders:
+    args: {}
+  billing.paymentMethods.list:
+    args: {}
+  builds.appendLog:
+    args: {"build_id": "6566a2a9c0b7f6005d3a1f23"}
+  builds.get:
+    args: {"build_id": "6566a2a9c0b7f6005d3a1f23"}
+  builds.notifyStart:
+    args: {"build_id": "6566a2a9c0b7f6005d3a1f23"}
+  cache.purge:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "cache_tags": ["product-42"]}
+  deployKeys.create:
+    args: {}
+  deployKeys.delete:
+    args: {"key_id": "6566a320c0b7f6005d3a1f32"}
+  deployKeys.get:
+    args: {"key_id": "6566a320c0b7f6005d3a1f32"}
+  deployKeys.list:
+    args: {}
+  deploys.cancel:
+    args: {"deploy_id": "6566a2a8c0b7f6005d3a1f22"}
+  deploys.delete:
+    args: {"deploy_id": "6566a2a8c0b7f6005d3a1f22"}
+  deploys.get:
+    args: {"deploy_id": "6566a2a8c0b7f6005d3a1f22"}
+  deploys.lock:
+    args: {"deploy_id": "6566a2a8c0b7f6005d3a1f22"}
+  deploys.unlock:
+    args: {"deploy_id": "6566a2a8c0b7f6005d3a1f22"}
+  deploys.updateValidationsReport:
+    args: {"deploy_id": "6566a2a8c0b7f6005d3a1f22"}
+  deploys.uploadEdgeFunction:
+    args: {"deploy_id": "6566a2a8c0b7f6005d3a1f22", "code_sha": "0000000000000000000000000000000000000000000000000000000000000000", "file": {"base64": "PGgxPkhlbGxvPC9oMT4=", "filename": "index.html", "contentType": "text/html"}}
+  deploys.uploadFile:
+    args: {"deploy_id": "6566a2a8c0b7f6005d3a1f22", "path": "index.html", "file": {"base64": "PGgxPkhlbGxvPC9oMT4=", "filename": "index.html", "contentType": "text/html"}}
+  deploys.uploadFunction:
+    args: {"deploy_id": "6566a2a8c0b7f6005d3a1f22", "name": "example-site", "file": {"base64": "PGgxPkhlbGxvPC9oMT4=", "filename": "index.html", "contentType": "text/html"}}
+  deploys.uploadServer:
+    args: {"deploy_id": "6566a2a8c0b7f6005d3a1f22", "code_sha": "0000000000000000000000000000000000000000000000000000000000000000", "file": {"base64": "PGgxPkhlbGxvPC9oMT4=", "filename": "index.html", "contentType": "text/html"}}
+  dns.records.create:
+    args: {"zone_id": "6566a330c0b7f6005d3a1f33", "type": "CNAME", "hostname": "www.example.com", "value": "acme-docs.netlify.app", "ttl": 3600}
+  dns.records.delete:
+    args: {"zone_id": "6566a330c0b7f6005d3a1f33", "dns_record_id": "6566a335c0b7f6005d3a1f34"}
+  dns.records.get:
+    args: {"zone_id": "6566a330c0b7f6005d3a1f33", "dns_record_id": "6566a335c0b7f6005d3a1f34"}
+  dns.records.list:
+    args: {"zone_id": "6566a330c0b7f6005d3a1f33"}
+  dns.zones.create:
+    args: {}
+  dns.zones.delete:
+    args: {"zone_id": "6566a330c0b7f6005d3a1f33"}
+  dns.zones.get:
+    args: {"zone_id": "6566a330c0b7f6005d3a1f33"}
+  dns.zones.list:
+    args: {}
+  dns.zones.transfer:
+    args: {"zone_id": "6566a330c0b7f6005d3a1f33", "account_id": "5f3e9c1b7a2d4e0012ab34cd", "transfer_account_id": "5f3e9c1b7a2d4e0012ab35aa", "transfer_user_id": "5f3e9c1b7a2d4e0012ab35bb"}
+  env.create:
+    args: {"account_id": "5f3e9c1b7a2d4e0012ab34cd", "site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "env_vars": [{"key": "API_URL", "scopes": ["builds", "functions"], "values": [{"value": "https://api.example.com", "context": "all"}]}]}
+  env.delete:
+    args: {"account_id": "5f3e9c1b7a2d4e0012ab34cd", "key": "API_URL"}
+  env.deleteValue:
+    args: {"account_id": "5f3e9c1b7a2d4e0012ab34cd", "id": "6566a390c0b7f6005d3a1f3e", "key": "API_URL"}
+  env.get:
+    args: {"account_id": "5f3e9c1b7a2d4e0012ab34cd", "key": "API_URL"}
+  env.list:
+    args: {"account_id": "5f3e9c1b7a2d4e0012ab34cd"}
+  env.listForSite:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  env.setValue:
+    args: {"account_id": "5f3e9c1b7a2d4e0012ab34cd", "key": "API_URL", "site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "context": "production", "value": "https://api.example.com"}
+  env.update:
+    args: {"account_id": "5f3e9c1b7a2d4e0012ab34cd", "key": "API_URL"}
+  forms.submissions.list:
+    args: {"form_id": "5f3e9d0a7a2d4e0012ab34ce"}
+  hooks.create:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "type": "url", "event": "deploy_failed", "data": {"url": "https://example.com/netlify/webhooks", "signature_secret": "a-long-random-secret"}}
+  hooks.delete:
+    args: {"hook_id": "6566a31ac0b7f6005d3a1f31"}
+  hooks.enable:
+    args: {"hook_id": "6566a31ac0b7f6005d3a1f31"}
+  hooks.get:
+    args: {"hook_id": "6566a31ac0b7f6005d3a1f31"}
+  hooks.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  hooks.listTypes:
+    args: {}
+  hooks.update:
+    args: {"hook_id": "6566a31ac0b7f6005d3a1f31"}
+  oauth.tickets.create:
+    args: {"client_id": "example-oauth-client-id"}
+  oauth.tickets.exchange:
+    args: {"ticket_id": "6566a350c0b7f6005d3a1f37"}
+  oauth.tickets.get:
+    args: {"ticket_id": "6566a350c0b7f6005d3a1f37"}
+  services.get:
+    args: {"addonName": "example-addon"}
+  services.getManifest:
+    args: {"addonName": "example-addon"}
+  services.list:
+    args: {}
+  sites.agentRunnerHooks.create:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.agentRunnerHooks.delete:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "id": "6566a390c0b7f6005d3a1f3e"}
+  sites.agentRunnerHooks.get:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "id": "6566a390c0b7f6005d3a1f3e"}
+  sites.agentRunnerHooks.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.agentRunnerHooks.update:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "id": "6566a390c0b7f6005d3a1f3e"}
+  sites.agentRunners.create:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "prompt": "Add a dark mode toggle to the header"}
+  sites.assets.create:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "name": "example-site", "size": 1024, "content_type": "text/markdown"}
+  sites.assets.delete:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "asset_id": "6566a340c0b7f6005d3a1f35"}
+  sites.assets.get:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "asset_id": "6566a340c0b7f6005d3a1f35"}
+  sites.assets.getPublicSignature:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "asset_id": "6566a340c0b7f6005d3a1f35"}
+  sites.assets.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.assets.update:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "asset_id": "6566a340c0b7f6005d3a1f35", "state": "uploaded"}
+  sites.buildHooks.create:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "title": "CMS publish", "branch": "main"}
+  sites.buildHooks.delete:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "id": "6566a390c0b7f6005d3a1f3e"}
+  sites.buildHooks.get:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "id": "6566a390c0b7f6005d3a1f3e"}
+  sites.buildHooks.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.buildHooks.update:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "id": "6566a390c0b7f6005d3a1f3e"}
+  sites.builds.create:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "clear_cache": true}
+  sites.builds.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.create:
+    args: {"name": "acme-docs"}
+  sites.database.branches.create:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "branch_id": "br-preview-a1b2c3"}
+  sites.database.branches.delete:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "branch_id": "br-preview-a1b2c3"}
+  sites.database.branches.get:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "branch_id": "br-preview-a1b2c3"}
+  sites.database.branches.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.database.branches.reset:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "branch_id": "br-preview-a1b2c3"}
+  sites.database.branches.setComputeSettings:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "branch_id": "br-preview-a1b2c3"}
+  sites.database.compute.clear:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.database.compute.get:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.database.compute.set:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.database.create:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.database.delete:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.database.get:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.database.migrations.get:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "name": "example-site"}
+  sites.database.migrations.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.database.migrations.run:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "deploy_id": "6566a2a8c0b7f6005d3a1f22"}
+  sites.database.snapshots.create:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.database.snapshots.delete:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "snapshot_id": "snap-a1b2c3"}
+  sites.database.snapshots.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.database.snapshots.restore:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "snapshot_id": "snap-a1b2c3"}
+  sites.delete:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.deployedBranches.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.deploys.create:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "title": "Deploy from Corsair", "files": {"/index.html": "907d14fb3af2b0d4f18c2d46abe8aedce17367bd"}}
+  sites.deploys.delete:
+    args: {"deploy_id": "6566a2a8c0b7f6005d3a1f22", "site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.deploys.get:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "deploy_id": "6566a2a8c0b7f6005d3a1f22"}
+  sites.deploys.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "per_page": 10}
+  sites.deploys.restore:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "deploy_id": "6566a2a8c0b7f6005d3a1f22"}
+  sites.deploys.rollback:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.deploys.update:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "deploy_id": "6566a2a8c0b7f6005d3a1f22", "zip": {"base64": "PGgxPkhlbGxvPC9oMT4=", "filename": "index.html", "contentType": "text/html"}}
+  sites.devServerHooks.create:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.devServerHooks.delete:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "id": "6566a390c0b7f6005d3a1f3e"}
+  sites.devServerHooks.get:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "id": "6566a390c0b7f6005d3a1f3e"}
+  sites.devServerHooks.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.devServerHooks.update:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "id": "6566a390c0b7f6005d3a1f3e"}
+  sites.devServers.create:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.devServers.deleteAll:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.devServers.get:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "dev_server_id": "6566a370c0b7f6005d3a1f3a"}
+  sites.devServers.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.devServers.markActivity:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "dev_server_id": "6566a370c0b7f6005d3a1f3a"}
+  sites.devServers.updateState:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "dev_server_id": "6566a370c0b7f6005d3a1f3a", "state": "starting"}
+  sites.disable:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "reason": "Paused for maintenance"}
+  sites.dns.configure:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.dns.get:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.enable:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.files.get:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "file_path": "index.html"}
+  sites.files.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.forms.delete:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "form_id": "5f3e9d0a7a2d4e0012ab34ce"}
+  sites.forms.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.functions.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.get:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.identity.users.get:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "identity_id": "6566a380c0b7f6005d3a1f3c", "user_id": "6566a385c0b7f6005d3a1f3d"}
+  sites.identity.users.lookup:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "identity_id": "6566a380c0b7f6005d3a1f3c", "email": "ada@example.com"}
+  sites.list:
+    args: {"filter": "owner", "per_page": 20}
+  sites.metadata.get:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.metadata.update:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.serviceInstances.create:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "addon": "example-addon"}
+  sites.serviceInstances.delete:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "addon": "example-addon", "instance_id": "6566a375c0b7f6005d3a1f3b"}
+  sites.serviceInstances.get:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "addon": "example-addon", "instance_id": "6566a375c0b7f6005d3a1f3b"}
+  sites.serviceInstances.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.serviceInstances.update:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "addon": "example-addon", "instance_id": "6566a375c0b7f6005d3a1f3b"}
+  sites.snippets.create:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "title": "Analytics", "general": "<script src=\"/a.js\"></script>", "general_position": "footer"}
+  sites.snippets.delete:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "snippet_id": "0"}
+  sites.snippets.get:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "snippet_id": "0"}
+  sites.snippets.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.snippets.update:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "snippet_id": "0"}
+  sites.splitTests.create:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.splitTests.get:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "split_test_id": "6566a345c0b7f6005d3a1f36"}
+  sites.splitTests.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.splitTests.publish:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "split_test_id": "6566a345c0b7f6005d3a1f36"}
+  sites.splitTests.unpublish:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "split_test_id": "6566a345c0b7f6005d3a1f36"}
+  sites.splitTests.update:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "split_test_id": "6566a345c0b7f6005d3a1f36"}
+  sites.ssl.get:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.ssl.listCertificates:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "domain": "example.com"}
+  sites.ssl.provision:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.submissions.list:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "per_page": 20}
+  sites.unlinkRepo:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17"}
+  sites.update:
+    args: {"site_id": "5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17", "name": "acme-docs-v2"}
+  submissions.delete:
+    args: {"submission_id": "6566a30fc0b7f6005d3a1f30"}
+  submissions.get:
+    args: {"submission_id": "6566a30fc0b7f6005d3a1f30"}
+  user.me:
+    args: {}
