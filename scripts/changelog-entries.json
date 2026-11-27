@@ -13378,5 +13378,68 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-27",
+    "package": "@corsair-dev/browserbase",
+    "dir": "packages/browserbase",
+    "name": "Browserbase",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-27",
+    "package": "@corsair-dev/crawl4ai",
+    "dir": "packages/crawl4ai",
+    "name": "Crawl4AI",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-27",
+    "package": "@corsair-dev/daytona",
+    "dir": "packages/daytona",
+    "name": "Daytona",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-27",
+    "package": "@corsair-dev/firebase",
+    "dir": "packages/firebase",
+    "name": "Firebase",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-27",
+    "package": "@corsair-dev/letta",
+    "dir": "packages/letta",
+    "name": "Letta",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-27",
+    "package": "@corsair-dev/mongodbatlas",
+    "dir": "packages/mongodbatlas",
+    "name": "MongoDB Atlas",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-27",
+    "package": "@corsair-dev/polymarket",
+    "dir": "packages/polymarket",
+    "name": "Polymarket",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
