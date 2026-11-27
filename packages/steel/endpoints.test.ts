@@ -183,6 +183,13 @@ describe('every operation', () => {
 			// Every query field of the example reaches the URL.
 			for (const [name, value] of Object.entries(args)) {
 				if (properties[name]?.['x-corsair-in'] !== 'query') continue;
+				// Maps go out as name[key]=value; vendor tests check those.
+				if (
+					typeof value === 'object' &&
+					value !== null &&
+					!Array.isArray(value)
+				)
+					continue;
 				const wire =
 					(properties[name]?.['x-corsair-name'] as string | undefined) ?? name;
 				const join = properties[name]?.['x-corsair-join'] as string | undefined;

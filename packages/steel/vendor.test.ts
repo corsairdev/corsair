@@ -174,6 +174,62 @@ describe('steel routes', () => {
 	});
 });
 
+describe('review fixes', () => {
+	it('keeps a file path out of the error URL and request', async () => {
+		reply({ message: 'not found' }, 404);
+		const error = (await api.files
+			.download(ctx, { path: 'clients/ada@example.test/notes.txt' })
+			.catch((e: unknown) => e)) as { url: string; request: { url: string } };
+		expect(calls[0]?.url.pathname).toBe(
+			'/v1/files/clients/ada%40example.test/notes.txt',
+		);
+		expect(error.url).toBe('https://api.steel.dev/v1/files/{path}');
+		expect(JSON.stringify(error)).not.toContain('ada');
+	});
+
+	it('scrubs caller data used as keys in an error body', async () => {
+		reply(
+			{ message: 'bad', fields: { 'ada@example.test': 'invalid credentials' } },
+			400,
+		);
+		const error = (await api.credentials
+			.create(ctx, {
+				origin: 'https://example.com',
+				value: { 'ada@example.test': 'secret-pass' },
+			})
+			.catch((e: unknown) => e)) as { body: unknown };
+		const body = JSON.stringify(error.body);
+		expect(body).not.toContain('ada@example.test');
+		expect(body).toContain('invalid credentials');
+	});
+
+	it('returns a zero-byte file the route documents', async () => {
+		reply(new Uint8Array([]), 200, 'application/octet-stream');
+		await expect(
+			api.files.download(ctx, { path: 'empty.txt' }),
+		).resolves.toMatchObject({
+			filename: 'steel-files-download',
+		});
+	});
+
+	it('refuses an empty body without a documented file type', async () => {
+		reply(new Uint8Array([]), 200, 'text/html');
+		await expect(
+			api.files.download(ctx, { path: 'empty.txt' }),
+		).rejects.toThrow(/without a file/);
+	});
+
+	it('sends a metadata filter as bracketed query keys', async () => {
+		reply({ sessions: [], nextCursor: null });
+		await api.sessions.list(ctx, {
+			metadata: { environment: 'production' },
+		} as never);
+		expect(calls[0]?.url.searchParams.get('metadata[environment]')).toBe(
+			'production',
+		);
+	});
+});
+
 describe('risk levels', () => {
 	it.each([
 		'sessions.create',

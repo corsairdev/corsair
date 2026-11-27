@@ -72,6 +72,12 @@ export type SteelRequest = {
 	body?: unknown;
 	/** The content type of a raw body. */
 	mediaType?: string;
+	/**
+	 * Path values the operation already encoded itself (a file path whose
+	 * slashes stay): sent as they are, while the route keeps its placeholder,
+	 * so error URLs never show them.
+	 */
+	rawPathValues?: Set<string>;
 	/** `binary`: the success comes back as `{ bytes, contentType }`. */
 	responseType?: 'binary';
 	timeoutMs?: number;
@@ -99,13 +105,19 @@ export function baseUrlOf(ctx: SteelCallContext): string {
 	return configured.replace(/\/+$/, '');
 }
 
-function configFor(base: string, key: string, timeoutMs?: number) {
+function configFor(
+	base: string,
+	key: string,
+	timeoutMs?: number,
+	rawPathValues?: Set<string>,
+) {
 	return {
 		BASE: base,
 		VERSION: '1',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		ENCODE_PATH: encodeSteelPathValue,
+		ENCODE_PATH: (value: string) =>
+			rawPathValues?.has(value) ? value : encodeSteelPathValue(value),
 		TIMEOUT: Math.ceil(timeoutMs ?? STEEL_DEFAULT_TIMEOUT_MS),
 		HEADERS: {
 			Accept: 'application/json',
@@ -159,7 +171,12 @@ export async function makeSteelRequest(
 		throw new AuthMissingError('steel', 'api_key');
 	}
 	const base = baseUrlOf(ctx);
-	const config = configFor(base, ctx.key, options.timeoutMs);
+	const config = configFor(
+		base,
+		ctx.key,
+		options.timeoutMs,
+		options.rawPathValues,
+	);
 	const requestOptions: ApiRequestOptions = {
 		method: options.method,
 		url: options.path,
@@ -397,7 +414,10 @@ function scrubSent(value: unknown, sent: SentString[], depth = 0): unknown {
 		// `unknown` because each field is scrubbed by its own type.
 		const result: Record<string, unknown> = {};
 		for (const [key, inner] of Object.entries(value)) {
-			result[key] = scrubSent(inner, sent, depth + 1);
+			// A key can be caller data too (a field error keyed by an email).
+			const name = scrubSent(key, sent, depth + 1) as string;
+			result[name === key ? key : `${REDACTED}#${Object.keys(result).length}`] =
+				scrubSent(inner, sent, depth + 1);
 		}
 		return result;
 	}

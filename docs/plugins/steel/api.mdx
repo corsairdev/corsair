@@ -6469,7 +6469,7 @@ await corsair.steel.api.sessions.credentials.replace({ id: '3f0e6a2c-8b1d-4c7e-9
 
 `sessions.events`
 
-Get recorded events. This endpoint allows you to get the recorded session events in the RRWeb format.
+Get recorded events. This endpoint allows you to get the recorded session events in the RRWeb format. Steel puts the next page token in a Next-Cursor response header, which the plugin cannot read yet; page by time instead.
 
 **Risk:** `read`
 
@@ -7178,12 +7178,12 @@ await corsair.steel.api.sessions.release({ id: '3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a
 
 `sessions.releaseAll`
 
-Release all sessions. Releases all active sessions for the current organization. Ends every live session in the project.
+Release all sessions. Releases all active sessions for the current organization. Ends every live session in the project given by projectId; without it, every session the key reaches (all projects for an organization key).
 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.steel.api.sessions.releaseAll({});
+await corsair.steel.api.sessions.releaseAll({ projectId: '3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c' });
 ```
 
 **Input**

@@ -16,6 +16,7 @@ import { steel } from './index';
  * deleted at the end, even when a step fails.
  *
  * Never run here: apiKeys.create (mints a key the API can't delete),
+ * extensions.deleteAll (it has no scope, so it would remove every extension),
  * secretConnections.create (needs a 1Password or Vault token), and the paid
  * CAPTCHA solvers (they need a verified account).
  */
@@ -353,7 +354,8 @@ describeIfKey('steel live', () => {
 		made.session = '';
 		await step('sessions.cost', { id }, (o) => JSON.stringify(o).slice(0, 80));
 		await maybe('sessions.hlsPlaylist', { id }, /4\d\d/);
-		await step('sessions.releaseAll', {});
+		// Only this run's project: without projectId it ends every session the key reaches.
+		await step('sessions.releaseAll', { projectId: made.project });
 	});
 
 	it('profile from the session, then cleanup', async () => {
@@ -365,7 +367,6 @@ describeIfKey('steel live', () => {
 		await step('credentials.delete', { origin: 'https://example.com' });
 		await step('extensions.delete', { extensionId: made.extension });
 		made.extension = '';
-		await step('extensions.deleteAll', {});
 		await step('vaults.delete', { id: made.vault });
 		made.vault = '';
 	});

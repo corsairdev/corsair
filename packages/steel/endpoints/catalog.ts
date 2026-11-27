@@ -439,7 +439,7 @@ export const steelEndpointMeta = {
 	'sessions.events': {
 		riskLevel: 'read',
 		description:
-			'Get recorded events. This endpoint allows you to get the recorded session events in the RRWeb format.',
+			'Get recorded events. This endpoint allows you to get the recorded session events in the RRWeb format. Steel puts the next page token in a Next-Cursor response header, which the plugin cannot read yet; page by time instead.',
 	},
 	'sessions.files.delete': {
 		riskLevel: 'destructive',
@@ -516,7 +516,7 @@ export const steelEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Release all sessions. Releases all active sessions for the current organization. Ends every live session in the project.',
+			'Release all sessions. Releases all active sessions for the current organization. Ends every live session in the project given by projectId; without it, every session the key reaches (all projects for an organization key).',
 	},
 	'sessions.signalCatalog': {
 		riskLevel: 'read',

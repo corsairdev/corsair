@@ -147,7 +147,7 @@ apiExamples:
   sessions.release:
     args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
   sessions.releaseAll:
-    args: {}
+    args: {"projectId": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
   sessions.signalCatalog:
     args: {}
   tools.pdf:

@@ -211,10 +211,16 @@ export function isUsableFile(
 	bytes: Uint8Array,
 	contentType: string | null | undefined,
 ): boolean {
-	if (bytes.byteLength === 0) return false;
-	if ((operation.fileTypes ?? []).some((type) => type.includes('html')))
-		return true;
-	if ((contentType ?? '').toLowerCase().includes('html')) return false;
+	const type = (contentType ?? '').split(';')[0]?.trim().toLowerCase() ?? '';
+	if ((operation.fileTypes ?? []).some((t) => t.includes('html'))) return true;
+	if (type.includes('html')) return false;
+	// An empty file is a file when it comes back with a type the route
+	// documents; an empty body without one is a proxy or a dropped answer.
+	if (bytes.byteLength === 0) {
+		return (operation.fileTypes ?? []).some(
+			(t) => t.toLowerCase() === type && type !== '',
+		);
+	}
 	const head = new TextDecoder()
 		.decode(bytes.subarray(0, 1024))
 		.replace(/^[\s﻿]+/, '');
@@ -233,7 +239,7 @@ function isBinaryResponse(value: unknown): value is BinaryResponse {
 
 /**
  * Query values: lists repeat the key (or go out as one joined value where
- * the spec says `explode: false`), maps go out as JSON.
+ * the spec says `explode: false`), maps go out as `name[key]=value`.
  */
 // `unknown` because query values are validated scalars, lists or maps.
 export function queryValue(value: unknown, join?: string): unknown {
@@ -245,7 +251,7 @@ export function queryValue(value: unknown, join?: string): unknown {
 			typeof item === 'object' && item !== null ? JSON.stringify(item) : item,
 		);
 	}
-	if (typeof value === 'object' && value !== null) return JSON.stringify(value);
+	// A map goes through as is: core writes it as `name[key]=value` (deepObject).
 	return value;
 }
 
@@ -315,20 +321,20 @@ export function createSteelOperation<Id extends SteelOperationId>(
 			}
 		}
 
-		// Slash-keeping values go into the route here; core encodes the rest.
-		let path = operation.path;
+		// Slash-keeping values are encoded here, segment by segment, and sent
+		// as they are; the route keeps its placeholder for error URLs.
+		const rawPathValues = new Set<string>();
 		for (const field of fields) {
-			if (!field.slashes || pathParameters[field.wire] === undefined) continue;
-			path = path.replace(
-				`{${field.wire}}`,
-				encodeSlashPath(pathParameters[field.wire] as string),
-			);
-			delete pathParameters[field.wire];
+			const value = pathParameters[field.wire];
+			if (!field.slashes || value === undefined) continue;
+			pathParameters[field.wire] = encodeSlashPath(value);
+			rawPathValues.add(pathParameters[field.wire] as string);
 		}
 
 		const request: SteelRequest = {
 			method: operation.method,
-			path,
+			path: operation.path,
+			...(rawPathValues.size > 0 ? { rawPathValues } : {}),
 			pathParameters,
 			query,
 			headers,
