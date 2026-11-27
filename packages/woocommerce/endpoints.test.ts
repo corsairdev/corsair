@@ -126,6 +126,16 @@ describe('requests', () => {
 		await expect(call('products.get', { id: 5 }, appPassword)).rejects.toThrow(
 			/needs an https store URL/,
 		);
+		// `.local` and `.test` names can resolve to another machine.
+		for (const host of ['shop.local', 'shop.test', 'wp.localhost']) {
+			const site = `http://${host}`;
+			await expect(
+				call('products.get', { id: 5 }, {
+					...ctx(site),
+					options: { siteUrl: site, consumerKey: 'ada' },
+				} as WoocommerceContext),
+			).rejects.toThrow(/needs an https store URL/);
+		}
 		expect(calls).toHaveLength(0);
 		await call('products.get', { id: 5 }, ctx('http://shop.example.com'));
 		expect(url().searchParams.get('oauth_signature')).toBeTruthy();
@@ -146,6 +156,18 @@ describe('requests', () => {
 			items: [],
 			next_page: null,
 		});
+		// A filter value that is part of the code must not hide it.
+		for (const search of ['number', 'page']) {
+			reply(400, {
+				code: 'woocommerce_rest_invalid_page_number',
+				message:
+					'The page number requested is larger than the number of pages available.',
+				data: { status: 400 },
+			});
+			await expect(
+				call('coupons.list', { search, per_page: 1, page: 2 }),
+			).resolves.toEqual({ items: [], next_page: null });
+		}
 	});
 
 	it('keeps an explicit null in the body', async () => {

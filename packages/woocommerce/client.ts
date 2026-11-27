@@ -41,18 +41,15 @@ export async function tryGetStoredKey(
 }
 
 /**
- * Hosts that never leave the machine or the local network's development
- * names: loopback addresses and `.localhost`, `.local`, `.test` names.
+ * Loopback hosts only: `localhost`, `127.x.x.x` and `::1`. A `.local` or
+ * `.test` name can resolve to another machine (mDNS, local DNS, a hosts
+ * file), so it does not count, and plain HTTP to it would carry the
+ * password across the network.
  */
 export function isLocalHost(hostname: string): boolean {
 	const host = hostname.toLowerCase().replace(/^\[|\]$/g, '');
 	return (
-		host === 'localhost' ||
-		host === '::1' ||
-		/^127(\.\d{1,3}){3}$/.test(host) ||
-		host.endsWith('.localhost') ||
-		host.endsWith('.local') ||
-		host.endsWith('.test')
+		host === 'localhost' || host === '::1' || /^127(\.\d{1,3}){3}$/.test(host)
 	);
 }
 
@@ -287,7 +284,7 @@ export async function makeWoocommerceRequest(
 		throw new AuthMissingError(
 			'woocommerce',
 			'api_key',
-			'[woocommerce] an application password needs an https store URL (plain http only for localhost and .local/.test/.localhost hosts); use a REST API key pair (ck_/cs_) for an http store',
+			'[woocommerce] an application password needs an https store URL (plain http only for loopback hosts: localhost, 127.0.0.1, [::1]); use a REST API key pair (ck_/cs_) for an http store',
 		);
 	}
 	let query = options.query ?? {};
@@ -333,6 +330,30 @@ export async function makeWoocommerceRequest(
 
 const REDACTED = '[REDACTED]';
 
+/**
+ * WooCommerce's error `code` (`woocommerce_rest_invalid_page_number`) is an
+ * identifier, not request data, and the past-last-page check reads it: a
+ * filter value such as `number` must not rewrite it. Put the sent code back
+ * when it is identifier-shaped.
+ */
+// `unknown` because error bodies are untrusted.
+function keepErrorCode(original: unknown, scrubbed: unknown): unknown {
+	if (
+		typeof original !== 'object' ||
+		original === null ||
+		typeof scrubbed !== 'object' ||
+		scrubbed === null ||
+		Array.isArray(scrubbed)
+	) {
+		return scrubbed;
+	}
+	const code = (original as { code?: unknown }).code;
+	if (typeof code !== 'string' || !/^[a-z0-9_.-]{1,100}$/i.test(code)) {
+		return scrubbed;
+	}
+	return { ...(scrubbed as Record<string, unknown>), code };
+}
+
 /** How deep into an error body values are checked; anything deeper is replaced. */
 const MAX_ERROR_DEPTH = 6;
 
@@ -359,7 +380,10 @@ export function withoutRequestData(
 			.map((text) => ({ text, wholeWord: text.length < WHOLE_WORD_BELOW })),
 		...sentStrings(error.request),
 	].sort((a, b) => b.text.length - a.text.length);
-	const body = scrubSent(withoutEchoedValues(error.body), sent);
+	const body = keepErrorCode(
+		error.body,
+		scrubSent(withoutEchoedValues(error.body), sent),
+	);
 	const message = woocommerceErrorMessage(error.status, error.statusText, body);
 	return new ApiError(
 		{
