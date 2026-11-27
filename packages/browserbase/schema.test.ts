@@ -98,13 +98,39 @@ describe('schemas', () => {
 	});
 
 	it('requires path parameters and refuses unknown keys on body-less routes', () => {
-		const operation = browserbaseOperations.find(
-			(o) => o.request === 'none' && /\{\w+\}/.test(o.path),
-		);
+		// A route whose only required fields are plain-string path values.
+		const operation = browserbaseOperations.find((o) => {
+			if (o.request !== 'none' || !/\{\w+\}/.test(o.path)) return false;
+			const properties = (o.input.properties ?? {}) as Record<
+				string,
+				Record<string, unknown>
+			>;
+			return ((o.input.required ?? []) as string[]).every((name) => {
+				const field = properties[name];
+				return (
+					field?.['x-corsair-in'] === 'path' &&
+					field.type === 'string' &&
+					!field.format &&
+					!field.pattern &&
+					!field.enum
+				);
+			});
+		});
 		if (!operation) return;
 		const schema = getBrowserbaseInputSchema(operation.id);
+		const valid = Object.fromEntries(
+			((operation.input.required ?? []) as string[]).map((name) => [
+				name,
+				'value-1',
+			]),
+		);
 		expect(schema.safeParse({}).success).toBe(false);
-		expect(schema.safeParse({ __not_a_field__: 1 }).success).toBe(false);
+		expect(schema.safeParse(valid).success).toBe(true);
+		const withUnknown = schema.safeParse({ ...valid, __not_a_field__: 1 });
+		expect(withUnknown.success).toBe(false);
+		expect(JSON.stringify(withUnknown.error?.issues)).toContain(
+			'unrecognized_keys',
+		);
 	});
 
 	it('parses JSON responses leniently: unknown fields pass', () => {

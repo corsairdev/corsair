@@ -1110,7 +1110,7 @@ export type BrowserbaseOperationInputs = {
 		maxAgeHours?: number;
 		/** Return the passages of each page most relevant to the query. Defaults to false. */
 		excerpts?: boolean;
-		provider?: ('parallel' | 'exa') | 'parallel' | 'exa' | BrowserbaseJsonValue;
+		provider?: ('parallel' | 'exa') | 'parallel' | 'exa';
 		mode?:
 			| ('fast' | 'advanced' | 'deep-lite' | 'deep')
 			| ('fast' | 'advanced')

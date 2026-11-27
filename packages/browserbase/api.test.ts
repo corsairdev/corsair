@@ -215,21 +215,11 @@ describeIfKey('browserbase live', () => {
 			return undefined;
 		}
 	};
-	/** An operation Browserbase refuses for a reason outside the plugin (plan, nothing to act on). */
-	const refused = async (op: string, args: Json, status: RegExp) => {
-		try {
-			await call(op, args);
-			report.push({ op, ok: true, note: 'ok (expected a refusal)' });
-		} catch (error) {
-			const message = (error as Error).message;
-			report.push({
-				op,
-				ok: status.test(message),
-				note: `refused as expected: ${message}`,
-			});
-		}
+	/** Runs one operation and says whether it worked (deletes answer an empty body). */
+	const ran = async (op: string, args: Json = {}): Promise<boolean> => {
+		await step(op, args);
+		return report[report.length - 1]?.ok === true;
 	};
-
 	beforeAll(async () => {
 		client = await createClient();
 	});
@@ -342,8 +332,9 @@ describeIfKey('browserbase live', () => {
 				id: made.webhook,
 				revokeImmediately: true,
 			});
-			await step('webhooks.delete', { id: made.webhook });
-			made.webhook = undefined;
+			// The handle stays for afterAll unless this worked.
+			if (await ran('webhooks.delete', { id: made.webhook }))
+				made.webhook = undefined;
 		}
 	});
 
@@ -369,8 +360,9 @@ describeIfKey('browserbase live', () => {
 					),
 					keypairId: keypair.id,
 				});
-				await step('secrets.delete', { id: made.secret });
-				made.secret = undefined;
+				// The handle stays for afterAll unless this worked.
+				if (await ran('secrets.delete', { id: made.secret }))
+					made.secret = undefined;
 			}
 		}
 		const extension = await step('extensions.upload', {
@@ -394,8 +386,9 @@ describeIfKey('browserbase live', () => {
 		if (certificate) {
 			made.certificate = String(certificate.id);
 			await step('certificates.get', { id: made.certificate });
-			await step('certificates.delete', { id: made.certificate });
-			made.certificate = undefined;
+			// The handle stays for afterAll unless this worked.
+			if (await ran('certificates.delete', { id: made.certificate }))
+				made.certificate = undefined;
 		}
 		const agent = await step('agents.create', {
 			name: RUN,
@@ -408,8 +401,9 @@ describeIfKey('browserbase live', () => {
 				agentId: made.agent,
 				name: `${RUN}-renamed`,
 			});
-			await step('agents.delete', { agentId: made.agent });
-			made.agent = undefined;
+			// The handle stays for afterAll unless this worked.
+			if (await ran('agents.delete', { agentId: made.agent }))
+				made.agent = undefined;
 		}
 	});
 
@@ -451,8 +445,9 @@ describeIfKey('browserbase live', () => {
 			});
 		}
 		await step('downloads.list', { sessionId: made.session });
-		await step('sessions.update', { ...s, status: 'REQUEST_RELEASE' });
-		made.session = undefined;
+		// The handle stays for afterAll unless this worked.
+		if (await ran('sessions.update', { ...s, status: 'REQUEST_RELEASE' }))
+			made.session = undefined;
 		await sleep(15_000);
 		await step('sessions.logs', s);
 		await step('sessions.recordingDownloads.create', s);
@@ -471,20 +466,24 @@ describeIfKey('browserbase live', () => {
 
 	it('deletes what it made', async () => {
 		if (made.extension) {
-			await step('extensions.delete', { id: made.extension });
-			made.extension = undefined;
+			// The handle stays for afterAll unless this worked.
+			if (await ran('extensions.delete', { id: made.extension }))
+				made.extension = undefined;
 		}
 		if (made.policy) {
-			await step('navigationPolicies.delete', { id: made.policy });
-			made.policy = undefined;
+			// The handle stays for afterAll unless this worked.
+			if (await ran('navigationPolicies.delete', { id: made.policy }))
+				made.policy = undefined;
 		}
 		if (made.context) {
-			await step('contexts.delete', { id: made.context });
-			made.context = undefined;
+			// The handle stays for afterAll unless this worked.
+			if (await ran('contexts.delete', { id: made.context }))
+				made.context = undefined;
 		}
 		if (made.label) {
-			await step('labels.delete', { labelId: made.label });
-			made.label = undefined;
+			// The handle stays for afterAll unless this worked.
+			if (await ran('labels.delete', { labelId: made.label }))
+				made.label = undefined;
 		}
 		expect(report.filter((r) => !r.ok)).toEqual([]);
 	});

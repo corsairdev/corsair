@@ -689,6 +689,7 @@
       "summary": "Upload a Certificate",
       "request": "multipart",
       "response": "json",
+      "maxUploadBytes": 100000000,
       "input": {
         "type": "object",
         "properties": {
@@ -2513,8 +2514,7 @@
               {
                 "type": "string",
                 "enum": ["exa"]
-              },
-              {}
+              }
             ]
           },
           "mode": {
