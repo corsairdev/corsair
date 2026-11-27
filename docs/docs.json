@@ -6693,6 +6693,15 @@
                 ]
               },
               {
+                "group": "Zep",
+                "pages": [
+                  "plugins/zep/overview",
+                  "plugins/zep/api",
+                  "plugins/zep/database",
+                  "plugins/zep/webhooks"
+                ]
+              },
+              {
                 "group": "Zoho Bigin",
                 "pages": [
                   "plugins/zohobigin/overview",

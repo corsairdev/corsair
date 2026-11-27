@@ -1,0 +1,438 @@
+# Display copy for the generated docs and the catalog, plus one call
+# example per operation. Generated with the plugin from Zep's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Zep
+domain: getzep.com
+description: "Context engineering and agent memory with Zep: create users and threads, add chat messages and read the assembled context, build and search knowledge graphs (episodes, nodes, edges, hyperedges, observations, ontology), manage user groups, context templates, batch ingestion and project settings, and work with Agent Skills and traces (205 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Create a project API key in the Zep dashboard. Every call acts on that project. Things to know before you write:
+
+  - **Users, threads and graphs.** A user has its own graph; a thread belongs to a user and holds chat messages. `threads.messages.add` adds messages and Zep extracts facts into the user's graph in the background; `threads.getContext` returns the assembled context block for the next prompt. Standalone graphs (`graphs.create`) hold shared knowledge that isn't tied to one user.
+  - **IDs.** v4 addresses everything by `uuid` (`thread_uuid`, `user_uuid`, `graph_uuid`). The ids you chose (`user_id`, `thread_id`, `graph_id`) are looked up with `users.lookup`, `threads.lookup`, `graphs.lookup` or `lookup.developerIds`.
+  - **Ingestion is asynchronous.** `graphs.episodes.add`, `threads.messages.add` and the batch routes queue work; `tasks.get` and `graphs.episodes.get` show progress. Batches (`batches.create`, `batches.addItems`, `batches.process`) load history in bulk.
+  - **Search.** `graphs.searchEdges`, `graphs.searchNodes`, `graphs.searchEpisodes`, `graphs.searchObservations` and `graphs.searchThreadSummaries` search one graph; `graphs.getContext` assembles context from a template; `graphs.query` (experimental) streams a multi-hop answer as server-sent events and comes back as text.
+  - **Deletes are permanent.** Deleting a user deletes its graph and threads; deleting a graph, episode, node or edge removes it from search. Every delete is `destructive`.
+  - **Agent Skills** (`agents.*`) are in closed release: accounts without access get 403 `permission_denied`. **Trace connections** (`traceConnections.*`, Braintrust or LangSmith) check the provider credential when created and answer 422 when the provider refuses it.
+  - **Admin-only routes.** Policy sets on user groups (`userGroups.listPolicySets`, `attachPolicySet`, `detachPolicySet`) need a dashboard bearer token: a project API key gets 403. Domain knowledge (`*.getKnowledge`, `*.setKnowledge`) needs the `knowledge_api` account flag (404 without it).
+  - **Webhooks.** Zep posts `episode.processed`, `ingest.batch.completed` and `byom.request_failed` to an endpoint set up in the dashboard (paid plans), signed with Svix. The plugin verifies them with the endpoint's signing secret.
+examples:
+  read:
+    path: threads.getContext
+    title: Get a thread's context for the next prompt
+    args: {"thread_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  write:
+    path: threads.messages.add
+    title: Add chat messages to a thread
+    args: {"thread_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "messages": [{"role": "user", "name": "Ada", "content": "I moved to Lisbon last month."}, {"role": "assistant", "content": "Noted, Lisbon it is."}]}
+apiExamples:
+  agents.create:
+    args: {"agent_id": "example", "name": "example", "security_domain": "example"}
+  agents.declareBreakingChange:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "expected_revision": 1, "version": "example"}
+  agents.delete:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "expected_revision": 1}
+  agents.get:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.getContext:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.learning.get:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "task_family": "example"}
+  agents.learning.listRuns:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.list:
+    args: {}
+  agents.literalPolicy.get:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.literalPolicy.update:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "allowlisted_classes": {"environments": ["example"], "tools": ["example"]}, "allowlisted_values": {"environments": ["example"], "tools": ["example"]}, "default": "parameterize"}
+  agents.planSplit:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "destinations": [{"agent": {"agent_id": "example", "name": "example", "security_domain": "example"}, "skills": [{"skill_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "skill_version_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "version": 1}]}], "expected_revision": 1, "rationale": "example", "review_acknowledged": true}
+  agents.skillCandidates.evaluate:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "review_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "candidate_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "evaluated_by": "customer", "evaluator_version": "example", "expected_revision": 1, "verdict": "succeeded"}
+  agents.skillCandidates.get:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "review_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.skillCandidates.list:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.skillPublications.lookup:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "source_agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "source_skill_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "source_version": 1}
+  agents.skills.approve:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "skill_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "expected_version": 1}
+  agents.skills.create:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "definition": {}}
+  agents.skills.createVersion:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "skill_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "definition": {}, "expected_version": 1}
+  agents.skills.evaluations.create:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "skill_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "evaluated_by": "customer", "evaluator_version": "example", "skill_version": 1, "verdict": "succeeded"}
+  agents.skills.evidence.list:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "skill_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.skills.get:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "skill_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.skills.getPublication:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "skill_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.skills.importPackage:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  agents.skills.list:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.skills.relations.list:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "skill_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.skills.retire:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "skill_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "expected_version": 1}
+  agents.skills.search:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "query": "example"}
+  agents.skills.uses.addOutcome:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "skill_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "use_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "outcome": "succeeded"}
+  agents.skills.uses.create:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "skill_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "search_id": "example", "trace_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "usage": "selected"}
+  agents.skills.versions.compare:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "skill_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "from_version": 1, "to_version": 1}
+  agents.skills.versions.exports.create:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "skill_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "version": 1}
+  agents.skills.versions.exports.get:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "skill_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "version": 1, "task_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.skills.versions.get:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "skill_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "version": 1}
+  agents.skills.versions.list:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "skill_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.skills.versions.restore:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "skill_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "expected_version": 1, "version": 1}
+  agents.taskFamilies.list:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.taskFamilies.rename:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "from_slug": "example", "to_slug": "example"}
+  agents.traceImports.create:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.traceImports.delete:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "import_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.traceImports.get:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "import_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.traceImports.list:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.traceImports.pause:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "import_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.traceImports.resume:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "import_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.traceImports.runs.create:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "import_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.traceImports.runs.get:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "import_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "run_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.traceImports.runs.items.list:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "import_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "run_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.traceImports.runs.list:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "import_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.traceImports.update:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "import_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.traces.abandon:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "trace_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "highest_accepted_sequence": 1}
+  agents.traces.appendEvent:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "trace_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "event_type": "input_reference"}
+  agents.traces.close:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "trace_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.traces.correctTaskFamily:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "trace_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "expected_revision": 1, "reason": "example", "task_family": "example"}
+  agents.traces.create:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "objective": "example"}
+  agents.traces.delete:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "trace_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "expected_revision": 1}
+  agents.traces.deleteEvent:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "trace_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "event_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "expected_revision": 1}
+  agents.traces.get:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "trace_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.traces.getSummary:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "trace_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.traces.list:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.traces.listEvents:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "trace_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.traces.listSummaryVersions:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "trace_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.traces.reopen:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "trace_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "expected_revision": 1}
+  agents.traces.update:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "trace_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "expected_revision": 1, "task_family": "example"}
+  agents.update:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "expected_revision": 1}
+  agents.verifiers.get:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "verifier_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.verifiers.invalidateEvidence:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "verifier_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "reason": "example", "verifier_revisions": [1]}
+  agents.verifiers.list:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  agents.verifiers.revoke:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "verifier_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "expected_revision": 1}
+  agents.verifiers.update:
+    args: {"agent_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "verifier_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "expected_revision": 1}
+  batches.addItems:
+    args: {"batch_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "items": [{"type": "graph_episode"}]}
+  batches.create:
+    args: {}
+  batches.delete:
+    args: {"batch_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  batches.get:
+    args: {"batch_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  batches.list:
+    args: {}
+  batches.listItems:
+    args: {"batch_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  batches.process:
+    args: {"batch_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  contextTemplates.create:
+    args: {}
+  contextTemplates.delete:
+    args: {"template_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  contextTemplates.get:
+    args: {"template_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  contextTemplates.list:
+    args: {}
+  contextTemplates.update:
+    args: {"template_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  debugLogs.enable:
+    args: {}
+  graphs.clone:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.create:
+    args: {}
+  graphs.delete:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.documentSummaries.list:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.edges.add:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "edges": [{"fact": "example", "fact_name": "example", "source_node": {}, "target_node": {}}]}
+  graphs.edges.delete:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "edge_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.edges.get:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "edge_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.edges.list:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.edges.update:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "edge_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.episodes.add:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "data": "example"}
+  graphs.episodes.delete:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "episode_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.episodes.get:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "episode_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.episodes.getDebugLogs:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "episode_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.episodes.list:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.episodes.listIngestionTraces:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "episode_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.episodes.update:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "episode_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.get:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.getContentPolicy:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.getContext:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "query": "example"}
+  graphs.getInclusionRules:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.getInstructions:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.getKnowledge:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.getObservationSteering:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.getOntology:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.getSubgraph:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "seed_node_uuids": ["3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"]}
+  graphs.hyperedges.add:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "edges": [{"name": "example", "source_node": {}, "target_node": {}}], "fact": "example"}
+  graphs.hyperedges.createEdge:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "hyperedge_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "name": "example", "source_node": {}, "target_node": {}}
+  graphs.hyperedges.delete:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "hyperedge_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.hyperedges.deleteEdge:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "hyperedge_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "edge_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.hyperedges.get:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "hyperedge_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.hyperedges.list:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.hyperedges.update:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "hyperedge_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.list:
+    args: {}
+  graphs.listContentPolicyEvents:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.listMetadataKeys:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.lookup:
+    args: {}
+  graphs.nodes.add:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "nodes": [{"name": "example"}]}
+  graphs.nodes.delete:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "node_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.nodes.get:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "node_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.nodes.list:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.nodes.listNeighbors:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "node_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.nodes.update:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "node_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.observations.get:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "observation_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.observations.list:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.query:
+    args: {"graph_uuids": ["3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"], "query": "example", "stream": true}
+  graphs.searchEdges:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "query": "example"}
+  graphs.searchEpisodes:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "query": "example"}
+  graphs.searchNodes:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "query": "example"}
+  graphs.searchObservations:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "query": "example"}
+  graphs.searchThreadSummaries:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "query": "example"}
+  graphs.setInclusionRules:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.setInstructions:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.setKnowledge:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.setObservationSteering:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.setOntology:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.threadSummaries.list:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.update:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  graphs.warm:
+    args: {"graph_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  lookup.developerIds:
+    args: {}
+  project.get:
+    args: {}
+  project.getContentPolicy:
+    args: {}
+  project.getContentPolicyRevision:
+    args: {"revision_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  project.getInclusionRules:
+    args: {}
+  project.getInstructions:
+    args: {}
+  project.getKnowledge:
+    args: {}
+  project.getObservationSteering:
+    args: {}
+  project.getOntology:
+    args: {}
+  project.getUserSummaryInstructions:
+    args: {}
+  project.listContentPolicyRevisions:
+    args: {}
+  project.setContentPolicy:
+    args: {}
+  project.setInclusionRules:
+    args: {}
+  project.setInstructions:
+    args: {}
+  project.setKnowledge:
+    args: {}
+  project.setObservationSteering:
+    args: {}
+  project.setOntology:
+    args: {}
+  project.setUserSummaryInstructions:
+    args: {}
+  project.update:
+    args: {}
+  tasks.get:
+    args: {"task_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  tasks.list:
+    args: {}
+  threads.create:
+    args: {"user_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  threads.delete:
+    args: {"thread_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  threads.get:
+    args: {"thread_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  threads.getContext:
+    args: {"thread_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  threads.getSummary:
+    args: {"thread_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  threads.list:
+    args: {}
+  threads.listEpisodes:
+    args: {"thread_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  threads.lookup:
+    args: {}
+  threads.messages.add:
+    args: {"thread_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "messages": [{"role": "user", "name": "Ada", "content": "I moved to Lisbon last month."}, {"role": "assistant", "content": "Noted, Lisbon it is."}]}
+  threads.messages.get:
+    args: {"thread_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "message_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  threads.messages.list:
+    args: {"thread_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  threads.messages.update:
+    args: {"thread_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "message_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  traceConnections.create:
+    args: {}
+  traceConnections.delete:
+    args: {"connection_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  traceConnections.get:
+    args: {"connection_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  traceConnections.getTrace:
+    args: {"connection_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "provider_project_id": "example", "trace_id": "example"}
+  traceConnections.list:
+    args: {}
+  traceConnections.listProjects:
+    args: {"connection_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  traceConnections.listTraces:
+    args: {"connection_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "provider_project_id": "example"}
+  traceConnections.update:
+    args: {"connection_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  traceConnections.verify:
+    args: {"connection_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  userGroups.addMembers:
+    args: {"group_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "user_uuids": ["3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"]}
+  userGroups.attachPolicySet:
+    args: {"group_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "policy_set_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  userGroups.create:
+    args: {"name": "example"}
+  userGroups.delete:
+    args: {"group_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  userGroups.detachPolicySet:
+    args: {"group_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "policy_set_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  userGroups.get:
+    args: {"group_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  userGroups.list:
+    args: {}
+  userGroups.listMemberCandidates:
+    args: {"group_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  userGroups.listMembers:
+    args: {"group_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  userGroups.listPolicySets:
+    args: {"group_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  userGroups.removeMember:
+    args: {"group_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "user_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  userGroups.removeMembers:
+    args: {"group_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "user_uuids": ["3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"]}
+  userGroups.update:
+    args: {"group_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  users.create:
+    args: {}
+  users.delete:
+    args: {"user_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  users.get:
+    args: {"user_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  users.getByEmail:
+    args: {"email": "ada@example.com"}
+  users.getNode:
+    args: {"user_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  users.getSummaryInstructions:
+    args: {"user_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  users.list:
+    args: {}
+  users.listUserGroups:
+    args: {"user_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  users.lookup:
+    args: {}
+  users.setSummaryInstructions:
+    args: {"user_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  users.update:
+    args: {"user_uuid": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
