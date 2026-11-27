@@ -24,7 +24,8 @@ import type {
 /**
  * A server-sent event stream can answer 200 and still end in an `error`
  * event (Zep's graph query does: `{ type: 'error', status, error }`). Such a
- * stream is a failure, not a completed call. Returns the error's text, or
+ * stream is a failure, not a completed call. Returns what is safe to show
+ * (the event's status only: its message can quote the query back), or
  * undefined when no event says error.
  */
 export function streamError(text: string): string | undefined {
@@ -38,11 +39,10 @@ export function streamError(text: string): string | undefined {
 			if (line.trim() === '') event = '';
 			continue;
 		}
-		const data = line.slice(5).trim();
 		// `unknown` because each event's data is the vendor's own JSON.
 		let parsed: unknown;
 		try {
-			parsed = JSON.parse(data);
+			parsed = JSON.parse(line.slice(5).trim());
 		} catch {
 			parsed = undefined;
 		}
@@ -51,20 +51,10 @@ export function streamError(text: string): string | undefined {
 				? (parsed as Record<string, unknown>)
 				: undefined;
 		if (event === 'error' || record?.type === 'error') {
-			const inner = record?.error;
-			const message =
-				typeof inner === 'string'
-					? inner
-					: inner && typeof inner === 'object'
-						? String((inner as Record<string, unknown>).message ?? '')
-						: typeof record?.message === 'string'
-							? record.message
-							: '';
-			const status = record?.status ? ` ${String(record.status)}` : '';
-			return `${status ? `status${status}: ` : ''}${message || 'no message'}`.slice(
-				0,
-				300,
-			);
+			const status = record?.status;
+			return typeof status === 'number' || typeof status === 'string'
+				? `status ${String(status).slice(0, 12)}`
+				: 'no status';
 		}
 	}
 	return undefined;

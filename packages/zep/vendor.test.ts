@@ -125,8 +125,17 @@ describe('zep v4 routes', () => {
 				stream: true,
 			}),
 		).rejects.toThrow(
-			'Zep graphs.query stream ended with an error event (status 500: decision model timed out)',
+			'Zep graphs.query stream ended with an error event (status 500)',
 		);
+		// The event's message can quote the query back: it never reaches the error.
+		const error = await api.graphs
+			.query(ctx, {
+				graph_uuids: ['g1'],
+				query: 'Where does Ada live?',
+				stream: true,
+			})
+			.catch((e: unknown) => e);
+		expect(String((error as Error).message)).not.toContain('decision model');
 	});
 
 	it('takes an explicit null where Zep documents "set to null to clear"', async () => {
