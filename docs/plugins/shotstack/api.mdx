@@ -470,7 +470,7 @@ await corsair.shotstack.api.renders.create({ timeline: { tracks: [{ clips: [{ as
 ```ts
 {
   find: string,
-  replace: any
+  replace: string | number | boolean | Record<string, any>
 }[]
 ```
 </Accordion>
@@ -764,7 +764,7 @@ await corsair.shotstack.api.templates.create({ name: 'My lower third', template:
   },
   merge?: {
     find: string,
-    replace: any
+    replace: string | number | boolean | Record<string, any>
   }[],
   callback?: string,
   instance?: s1 | s2 | a1
@@ -939,7 +939,7 @@ await corsair.shotstack.api.templates.render({ id: 'f5493c17-d01f-445c-bb49-535f
 ```ts
 {
   find: string,
-  replace: any
+  replace: string | number | boolean | Record<string, any>
 }[]
 ```
 </Accordion>
@@ -1012,7 +1012,7 @@ await corsair.shotstack.api.templates.update({ id: 'f5493c17-d01f-445c-bb49-535f
   },
   merge?: {
     find: string,
-    replace: any
+    replace: string | number | boolean | Record<string, any>
   }[],
   callback?: string,
   instance?: s1 | s2 | a1

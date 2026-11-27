@@ -1,4 +1,5 @@
 import { AuthMissingError } from 'corsair/core';
+import type { ShotstackKeyBuilderContext } from './index';
 import { shotstack, shotstackEndpointSchemas } from './index';
 
 // The key builder only reads authType and keys.
@@ -16,7 +17,10 @@ function buildKey(
 	ctx: ReturnType<typeof keyContext>,
 ) {
 	// The fake context is not a full KeyBuilderContext.
-	return plugin.keyBuilder?.(ctx as never, 'endpoint');
+	return plugin.keyBuilder?.(
+		ctx as unknown as ShotstackKeyBuilderContext,
+		'endpoint',
+	);
 }
 
 const operations = [
@@ -78,9 +82,10 @@ describe('shotstack plugin definition', () => {
 		expect(plugin.id).toBe('shotstack');
 		expect(plugin.options?.authType).toBe('api_key');
 		expect(plugin.webhooks).toEqual({});
-		expect(
-			plugin.pluginWebhookMatcher?.({ headers: {}, body: {} } as never),
-		).toBe(false);
+		// The matcher only inspects headers and body presence, so an empty
+		// delivery is a faithful stand-in.
+		const delivery = { headers: {}, body: {} } as never;
+		expect(plugin.pluginWebhookMatcher?.(delivery)).toBe(false);
 	});
 
 	it('exposes exactly the 23 catalog operations across 7 groups', () => {
@@ -175,7 +180,10 @@ describe('shotstack key builder', () => {
 
 	it('refuses webhook keys, because Shotstack sends the plugin no inbound webhooks', async () => {
 		await expect(
-			shotstack().keyBuilder?.(keyContext('stored-key') as never, 'webhook'),
+			shotstack().keyBuilder?.(
+				keyContext('stored-key') as unknown as ShotstackKeyBuilderContext,
+				'webhook',
+			),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 });

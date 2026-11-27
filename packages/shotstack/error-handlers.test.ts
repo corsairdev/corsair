@@ -201,6 +201,24 @@ describe('Shotstack error handlers', () => {
 		).resolves.toEqual({ maxRetries: 9 });
 	});
 
+	it('runs a caller handler for a status a builtin also matches, before that builtin', async () => {
+		const merged = mergeErrorHandlers(errorHandlers, {
+			UPSTREAM_ERROR: {
+				match: (error: Error) =>
+					error instanceof ShotstackAPIError &&
+					error.method === 'GET' &&
+					error.status === 503,
+				handler: async () => ({ maxRetries: 5 }),
+			},
+		});
+		// Core takes the first match in key order, so the caller's 503 handler
+		// must classify ahead of the builtin SERVER_ERROR, not behind it.
+		const firstMatch = (Object.keys(merged) as (keyof typeof merged)[]).find(
+			(key) => merged[key]?.match(apiError(503, { method: 'GET' }), CONTEXT),
+		);
+		expect(firstMatch).toBe('UPSTREAM_ERROR');
+	});
+
 	it('keeps the builtin DEFAULT when the caller adds none', () => {
 		const merged = mergeErrorHandlers(errorHandlers, {
 			CUSTOM_ERROR: {

@@ -61,7 +61,14 @@ const MergeFieldInputSchema = z
 			.describe(
 				'The placeholder to find, without the double brace delimiters.',
 			),
-		replace: z.unknown().describe('The replacement value; any JSON type.'),
+		replace: z
+			.union([
+				z.string(),
+				z.number(),
+				z.boolean(),
+				z.record(z.string(), z.unknown()),
+			])
+			.describe('The replacement value; any JSON type.'),
 	})
 	.superRefine((field, ctx) => {
 		if (!('replace' in field)) {

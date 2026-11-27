@@ -205,6 +205,9 @@ export async function makeShotstackRequest(
 // A present envelope with a missing resource must fail loudly, not read as
 // an empty page. On the Edit API the output schemas pin `success: literal(true)`,
 // so a 2xx body that still says `success: false` fails the parse.
+// unknown: the unwraps run before the output schema parse, so the raw 2xx
+// body has no static type yet; each function narrows it and throws on the
+// shapes the json:api envelope cannot produce.
 
 /** The `attributes` of a json:api single-resource response. */
 export function attributesOf(raw: unknown): Record<string, unknown> {
