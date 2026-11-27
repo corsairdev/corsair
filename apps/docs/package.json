@@ -1,0 +1,44 @@
+{
+  "name": "@corsair/docs",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "sync-assets": "node scripts/sync-assets.mjs",
+    "dev": "node scripts/sync-assets.mjs && next dev",
+    "build": "node scripts/sync-assets.mjs && next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "fumadocs-core": "16.19.7",
+    "fumadocs-mdx": "15.6.4",
+    "fumadocs-ui": "16.19.7",
+    "mermaid": "^12.3.0",
+    "next": "16.4.6",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "zod": "^4.4.3",
+    "lucide-react": "^1.71.0",
+    "unified": "^11.0.5",
+    "remark-parse": "^11.0.0",
+    "remark-mdx": "^3.1.1",
+    "remark-gfm": "^4.0.1",
+    "remark-stringify": "^11.0.0",
+    "@modelcontextprotocol/server": "^2.4.0",
+    "@fumadocs/mdx-remote": "^1.5.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.16",
+    "@types/mdx": "^2.0.13",
+    "@types/node": "^24.9.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "tailwindcss": "^4.1.16",
+    "typescript": "^5.9.3",
+    "@types/mdast": "^4.0.4",
+    "mdast-util-mdx-jsx": "^3.2.0",
+    "mdast-util-mdxjs-esm": "^2.0.1"
+  },
+  "packageManager": "pnpm@10.20.0"
+}
