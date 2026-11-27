@@ -1,0 +1,164 @@
+---
+title: "Railway plugin"
+sidebarTitle: "Overview"
+description: "Projects, environments, services and service instances, deployments with logs, deploy, redeploy, restart and rollback, variables, domains and TCP proxies, volumes and backups, buckets, databases, templates, GitHub repo deploys, workspaces, members, invitations and tokens, notification rules, observability dashboards, metrics, HTTP logs and traces, usage limits, sandboxes and cloud agents (394 operations over Railway's public GraphQL API)."
+---
+
+Use **Railway** through Corsair: one client, typed API calls.
+
+Connect with a Railway token from railway.com/account/tokens: an account
+token reaches every workspace you are in, a workspace token one workspace.
+Both go out as `Authorization: Bearer <token>`. A project token (from a
+project's settings) works with `tokenKind: 'project'` in the plugin
+options and reaches only that project's environment.
+
+- **One operation per GraphQL field.** Every query and mutation of
+Railway's public API (`backboard.railway.com/graphql/v2`) is an operation;
+its input is the field's arguments, mostly an `input` object for mutations.
+The plugin sends a fixed document per operation that selects every scalar
+field of the result and the scalars of each nested object; lists inside a
+result (a project's services) come from their own list operations.
+- **Lists** that Railway pages (projects, deployments, environments, ...)
+take `first`/`after` (or `last`/`before`) and return `{ items, pageInfo }`;
+pass `pageInfo.endCursor` as `after` for the next page.
+- **Errors.** Railway answers most failures with HTTP 200 and a GraphQL
+`errors` list; the plugin raises them as `RailwayGraphQLError` with a
+status (403 for "Not Authorized", 404 for a missing record, 400 otherwise).
+- **Risk.** Queries are `read`. Deletes, deploys, redeploys, restarts,
+rollbacks, template and repo deploys, new services, environments,
+volumes, buckets, sandboxes and cloud agents (all use credits), tokens and
+credential resets, invitations (they send email), billing and usage limits,
+restores and transfers are `destructive`; other mutations are `write`.
+- Not wrapped: Railway's CLI telemetry and login-session fields, its staff
+and careers fields, the dashboard's landing and X-agent claim state, email
+change and second-factor/passkey setup (they need a person at the
+dashboard), and fields Railway marks deprecated. Railway's project
+webhooks are not signed, so the plugin has no webhook handlers.
+
+**What you get:**
+
+- 394 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/railway better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/railway better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/railway better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/railway better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { railway } from '@corsair-dev/railway';
+
+export const corsair = createCorsair({
+	plugins: [
+		railway(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Railway API key before the first call: `pnpm corsair setup --plugin=railway --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+railway()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'railway',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List projects**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.railway.api.projects.list({ first: 20 });
+```
+
+
+**Set a service variable**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.railway.api.variables.upsert({
+	input: {
+		projectId: '00000002-5c1e-4d8a-9f43-2b6e1c0a9d17',
+		environmentId: '00000003-5c1e-4d8a-9f43-2b6e1c0a9d17',
+		serviceId: '00000004-5c1e-4d8a-9f43-2b6e1c0a9d17',
+		name: 'API_URL',
+		value: 'https://api.example.com',
+	},
+});
+```
+
+
+See the full list on the [API](/plugins/railway/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/railway/api">
+    Every `railway.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
