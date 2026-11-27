@@ -4593,6 +4593,14 @@
                 ]
               },
               {
+                "group": "Polymarket",
+                "pages": [
+                  "plugins/polymarket/overview",
+                  "plugins/polymarket/api",
+                  "plugins/polymarket/database"
+                ]
+              },
+              {
                 "group": "Postmark",
                 "pages": [
                   "plugins/postmark/overview",
