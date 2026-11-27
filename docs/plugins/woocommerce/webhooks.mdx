@@ -1,0 +1,210 @@
+---
+title: "WooCommerce webhooks"
+sidebarTitle: "Webhooks"
+description: "WooCommerce incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The WooCommerce plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/woocommerce/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `action` (`action`)
+- `coupon` (`coupon`)
+- `customer` (`customer`)
+- `order` (`order`)
+- `product` (`product`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Action
+
+### Action
+
+`action`
+
+A WordPress or WooCommerce action hook fired (topic action.<hook>, for example action.woocommerce_add_to_cart) (X-WC-Webhook-Topic action.<hook>)
+
+**Payload:** `unknown`
+
+
+**Response `data`:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+woocommerce({
+    webhookHooks: {
+        action: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Coupon
+
+### Coupon
+
+`coupon`
+
+A coupon was created, updated, deleted or restored (X-WC-Webhook-Topic coupon.created, coupon.updated, coupon.deleted, coupon.restored)
+
+**Payload:** `unknown`
+
+
+**Response `data`:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+woocommerce({
+    webhookHooks: {
+        coupon: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Customer
+
+### Customer
+
+`customer`
+
+A customer was created, updated or deleted (X-WC-Webhook-Topic customer.created, customer.updated, customer.deleted)
+
+**Payload:** `unknown`
+
+
+**Response `data`:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+woocommerce({
+    webhookHooks: {
+        customer: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Order
+
+### Order
+
+`order`
+
+An order was created, updated, deleted or restored (X-WC-Webhook-Topic order.created, order.updated, order.deleted, order.restored)
+
+**Payload:** `unknown`
+
+
+**Response `data`:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+woocommerce({
+    webhookHooks: {
+        order: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Product
+
+### Product
+
+`product`
+
+A product was created, updated, deleted or restored (X-WC-Webhook-Topic product.created, product.updated, product.deleted, product.restored)
+
+**Payload:** `unknown`
+
+
+**Response `data`:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+woocommerce({
+    webhookHooks: {
+        product: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+

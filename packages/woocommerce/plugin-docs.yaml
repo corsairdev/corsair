@@ -1,0 +1,360 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from the WooCommerce REST index;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: WooCommerce
+domain: woocommerce.com
+description: "WooCommerce stores (REST API v3): products with variations, attributes, categories, tags, brands, reviews and shipping classes, orders with notes, refunds, receipts and customer emails, customers and their downloads, coupons, tax rates and classes, shipping zones, locations and methods, payment gateways, store settings, sales and top-seller reports, system status and tools, countries and currencies, batch updates, and signed webhooks for orders, products, customers and coupons (155 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Each account stores the store's `site_url` (the WordPress address of the
+  shop, with or without `/wp-json`) and a REST API key pair: the consumer key
+  as `consumer_key` and the consumer secret as the key. Create one in
+  WooCommerce → Settings → Advanced → REST API with Read/Write permission
+  (Read for reports only). Over HTTPS the pair goes as HTTP Basic auth; over
+  plain HTTP (a local store) the plugin signs each call with OAuth 1.0a, as
+  WooCommerce requires. A WordPress application password also works: put the
+  WordPress username in `consumer_key` and the application password as the
+  key. SDK users can pass `siteUrl` and `consumerKey` as options.
+
+  - **Lists** page with `page` and `per_page` (up to 100) and return
+  `{ items, next_page }`: `next_page` is set while a page comes back full.
+  - **Money** amounts are strings (`"19.99"`), as WooCommerce sends them.
+  - **Batch** routes take `{ create, update, delete }` with up to 100 records
+  in all.
+  - **Risk.** Every delete is `destructive`, as are refunds (the gateway
+  returns the money unless `api_refund: false`), sending order emails, batch
+  calls, running system status tools, replacing a zone's locations and
+  changing a payment gateway. Creating an order takes no payment.
+  - **Webhooks.** Create one with `webhooks.create` (topic `order.created`,
+  `product.updated`, `customer.deleted`, `coupon.restored`, or
+  `action.<hook>`), the Corsair webhook URL as `delivery_url` and a `secret`,
+  and give the plugin the same secret as `webhookSecret` (or store it as the
+  account's webhook signature). Deliveries are checked against
+  `X-WC-Webhook-Signature` (base64 HMAC-SHA256 of the body) and routed by
+  `X-WC-Webhook-Resource` to `order`, `product`, `customer`, `coupon` and
+  `action`. The `webhook_id=<id>` ping WooCommerce sends when a webhook is
+  created is not a store event and isn't routed.
+  - Not wrapped: the WooCommerce.com marketplace and PayPal Payments callback
+  routes under wc/v3, the legacy wc/v1 and wc/v2 APIs, the Store API
+  (wc/store, for storefront carts) and wc-analytics (the admin dashboards).
+  WordPress content (posts, pages, users) is in the `wordpress` plugin.
+examples:
+  read:
+    path: orders.list
+    title: List processing orders
+    args: {"status": ["processing"], "per_page": 20}
+  write:
+    path: products.create
+    title: Create a product
+    args: {"name": "Corsair Hoodie", "type": "simple", "regular_price": "49.00", "sku": "CORSAIR-HOODIE", "status": "draft"}
+apiExamples:
+  coupons.batch:
+    args: {}
+  coupons.create:
+    args: {"code": "SPRING10", "discount_type": "percent", "amount": "10"}
+  coupons.delete:
+    args: {"id": 42}
+  coupons.get:
+    args: {"id": 42}
+  coupons.list:
+    args: {}
+  coupons.update:
+    args: {"id": 42}
+  customers.batch:
+    args: {}
+  customers.create:
+    args: {"email": "ada@example.com", "first_name": "Ada", "last_name": "Lovelace"}
+  customers.delete:
+    args: {"id": 42}
+  customers.downloads:
+    args: {"customer_id": 7}
+  customers.get:
+    args: {"id": 42}
+  customers.list:
+    args: {}
+  customers.update:
+    args: {"id": 42}
+  data.continents.get:
+    args: {"location": "US"}
+  data.continents.list:
+    args: {}
+  data.countries.get:
+    args: {"location": "US"}
+  data.countries.list:
+    args: {}
+  data.currencies.current:
+    args: {}
+  data.currencies.get:
+    args: {"currency": "USD"}
+  data.currencies.list:
+    args: {}
+  data.index:
+    args: {}
+  orders.batch:
+    args: {}
+  orders.create:
+    args: {"payment_method": "bacs", "set_paid": false, "billing": {"first_name": "Ada", "last_name": "Lovelace", "email": "ada@example.com"}, "line_items": [{"product_id": 42, "quantity": 2}]}
+  orders.delete:
+    args: {"id": 42}
+  orders.emailTemplates:
+    args: {"id": 42}
+  orders.get:
+    args: {"id": 42}
+  orders.list:
+    args: {"status": ["processing"], "per_page": 20}
+  orders.notes.create:
+    args: {"order_id": 1001, "note": "Packed and ready to ship.", "customer_note": false}
+  orders.notes.delete:
+    args: {"order_id": 1001, "id": 42}
+  orders.notes.get:
+    args: {"order_id": 1001, "id": 42}
+  orders.notes.list:
+    args: {"order_id": 1001}
+  orders.receipt.create:
+    args: {"id": 42}
+  orders.receipt.get:
+    args: {"id": 42}
+  orders.refunds.create:
+    args: {"order_id": 1001, "amount": "10.00", "reason": "Damaged in transit", "api_refund": false}
+  orders.refunds.delete:
+    args: {"order_id": 1001, "id": 42}
+  orders.refunds.get:
+    args: {"order_id": 1001, "id": 42}
+  orders.refunds.list:
+    args: {"order_id": 1001}
+  orders.refunds.preview:
+    args: {"order_id": 1001, "line_items": [{"line_item_id": 1}]}
+  orders.sendEmail:
+    args: {"id": 42}
+  orders.sendOrderDetails:
+    args: {"id": 42}
+  orders.statuses:
+    args: {}
+  orders.update:
+    args: {"id": 1001, "status": "completed"}
+  paymentGateways.get:
+    args: {"id": "42"}
+  paymentGateways.list:
+    args: {}
+  paymentGateways.update:
+    args: {"id": "42"}
+  products.attributes.batch:
+    args: {}
+  products.attributes.create:
+    args: {"name": "Example"}
+  products.attributes.delete:
+    args: {"id": 42}
+  products.attributes.get:
+    args: {"id": 42}
+  products.attributes.list:
+    args: {}
+  products.attributes.terms.batch:
+    args: {"attribute_id": 1}
+  products.attributes.terms.create:
+    args: {"attribute_id": 1, "name": "Example"}
+  products.attributes.terms.delete:
+    args: {"attribute_id": 1, "id": 42}
+  products.attributes.terms.get:
+    args: {"attribute_id": 1, "id": 42}
+  products.attributes.terms.list:
+    args: {"attribute_id": 1}
+  products.attributes.terms.update:
+    args: {"attribute_id": 1, "id": 42}
+  products.attributes.update:
+    args: {"id": 42}
+  products.batch:
+    args: {"create": [{"name": "Mug", "regular_price": "12.00"}], "delete": [43]}
+  products.brands.batch:
+    args: {}
+  products.brands.create:
+    args: {"name": "Example"}
+  products.brands.delete:
+    args: {"id": 42}
+  products.brands.get:
+    args: {"id": 42}
+  products.brands.list:
+    args: {}
+  products.brands.update:
+    args: {"id": 42}
+  products.categories.batch:
+    args: {}
+  products.categories.create:
+    args: {"name": "Example"}
+  products.categories.delete:
+    args: {"id": 42}
+  products.categories.get:
+    args: {"id": 42}
+  products.categories.list:
+    args: {}
+  products.categories.update:
+    args: {"id": 42}
+  products.create:
+    args: {"name": "Corsair Hoodie", "type": "simple", "regular_price": "49.00", "sku": "CORSAIR-HOODIE", "status": "draft"}
+  products.customFieldNames:
+    args: {}
+  products.delete:
+    args: {"id": 42}
+  products.duplicate:
+    args: {"id": 42}
+  products.get:
+    args: {"id": 42}
+  products.list:
+    args: {}
+  products.related:
+    args: {"id": 42}
+  products.reviews.batch:
+    args: {}
+  products.reviews.create:
+    args: {"product_id": 42, "reviewer": "example", "reviewer_email": "ada@example.com", "review": "example"}
+  products.reviews.delete:
+    args: {"id": 42}
+  products.reviews.get:
+    args: {"id": 42}
+  products.reviews.list:
+    args: {}
+  products.reviews.update:
+    args: {"id": 42}
+  products.shippingClasses.batch:
+    args: {}
+  products.shippingClasses.create:
+    args: {"name": "Example"}
+  products.shippingClasses.delete:
+    args: {"id": 42}
+  products.shippingClasses.get:
+    args: {"id": 42}
+  products.shippingClasses.list:
+    args: {}
+  products.shippingClasses.suggestSlug:
+    args: {}
+  products.shippingClasses.update:
+    args: {"id": 42}
+  products.suggested:
+    args: {}
+  products.tags.batch:
+    args: {}
+  products.tags.create:
+    args: {"name": "Example"}
+  products.tags.delete:
+    args: {"id": 42}
+  products.tags.get:
+    args: {"id": 42}
+  products.tags.list:
+    args: {}
+  products.tags.update:
+    args: {"id": 42}
+  products.update:
+    args: {"id": 42}
+  products.variations.batch:
+    args: {"product_id": 42}
+  products.variations.create:
+    args: {"product_id": 42, "regular_price": "49.00", "attributes": [{"id": 1, "option": "Large"}]}
+  products.variations.delete:
+    args: {"product_id": 42, "id": 42}
+  products.variations.generate:
+    args: {"product_id": 42}
+  products.variations.get:
+    args: {"product_id": 42, "id": 42}
+  products.variations.list:
+    args: {"product_id": 42}
+  products.variations.update:
+    args: {"product_id": 42, "id": 42}
+  refunds.list:
+    args: {}
+  reports.couponTotals:
+    args: {}
+  reports.customerTotals:
+    args: {}
+  reports.list:
+    args: {}
+  reports.orderTotals:
+    args: {}
+  reports.productTotals:
+    args: {}
+  reports.reviewTotals:
+    args: {}
+  reports.sales:
+    args: {"period": "month"}
+  reports.topSellers:
+    args: {}
+  settings.batch:
+    args: {"group_id": "general"}
+  settings.batchAll:
+    args: {}
+  settings.get:
+    args: {"group_id": "general", "id": "42"}
+  settings.groups:
+    args: {}
+  settings.list:
+    args: {"group_id": "general"}
+  settings.update:
+    args: {"group_id": "general", "id": "woocommerce_currency", "value": "EUR"}
+  shipping.zones.create:
+    args: {"name": "Example"}
+  shipping.zones.delete:
+    args: {"id": 42}
+  shipping.zones.get:
+    args: {"id": 42}
+  shipping.zones.list:
+    args: {}
+  shipping.zones.locations.list:
+    args: {"id": 42}
+  shipping.zones.locations.replace:
+    args: {"id": 42}
+  shipping.zones.methods.create:
+    args: {"zone_id": 1, "method_id": "flat_rate"}
+  shipping.zones.methods.delete:
+    args: {"zone_id": 1, "instance_id": 3}
+  shipping.zones.methods.get:
+    args: {"zone_id": 1, "instance_id": 3}
+  shipping.zones.methods.list:
+    args: {"zone_id": 1}
+  shipping.zones.methods.update:
+    args: {"zone_id": 1, "instance_id": 3}
+  shipping.zones.update:
+    args: {"id": 42}
+  shippingMethods.get:
+    args: {"id": "42"}
+  shippingMethods.list:
+    args: {}
+  systemStatus.get:
+    args: {}
+  systemStatus.tools.get:
+    args: {"id": "42"}
+  systemStatus.tools.list:
+    args: {}
+  systemStatus.tools.run:
+    args: {"id": "42"}
+  taxes.batch:
+    args: {}
+  taxes.classes.create:
+    args: {"name": "Example"}
+  taxes.classes.delete:
+    args: {"slug": "reduced-rate"}
+  taxes.classes.get:
+    args: {"slug": "reduced-rate"}
+  taxes.classes.list:
+    args: {}
+  taxes.create:
+    args: {}
+  taxes.delete:
+    args: {"id": 42}
+  taxes.get:
+    args: {"id": 42}
+  taxes.list:
+    args: {}
+  taxes.update:
+    args: {"id": 42}
+  variations.list:
+    args: {}
+  webhooks.batch:
+    args: {}
+  webhooks.create:
+    args: {"name": "Order created", "topic": "order.created", "delivery_url": "https://example.com/hooks/corsair", "secret": "a-long-random-secret"}
+  webhooks.delete:
+    args: {"id": 42}
+  webhooks.get:
+    args: {"id": 42}
+  webhooks.list:
+    args: {}
+  webhooks.update:
+    args: {"id": 42}

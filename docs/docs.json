@@ -6468,6 +6468,15 @@
                 ]
               },
               {
+                "group": "WooCommerce",
+                "pages": [
+                  "plugins/woocommerce/overview",
+                  "plugins/woocommerce/api",
+                  "plugins/woocommerce/database",
+                  "plugins/woocommerce/webhooks"
+                ]
+              },
+              {
                 "group": "Woodpecker Co",
                 "pages": [
                   "plugins/woodpeckerco/overview",

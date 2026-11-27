@@ -783,6 +783,7 @@ export const BaseProviders = [
 	'witai',
 	'wix',
 	'wiza',
+	'woocommerce',
 	'woodpeckerco',
 	'workable',
 	'workday',
@@ -1581,6 +1582,7 @@ export const ProviderDisplayNames = {
 	witai: 'WitAi',
 	wix: 'Wix',
 	wiza: 'Wiza',
+	woocommerce: 'WooCommerce',
 	woodpeckerco: 'Woodpecker Co',
 	workable: 'Workable',
 	workday: 'Workday',
@@ -2386,6 +2388,7 @@ export type AllProviders =
 	| 'witai'
 	| 'wix'
 	| 'wiza'
+	| 'woocommerce'
 	| 'woodpeckerco'
 	| 'workable'
 	| 'workday'

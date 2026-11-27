@@ -1,0 +1,5986 @@
+---
+title: "WooCommerce API reference"
+sidebarTitle: "API"
+description: "API reference for the WooCommerce plugin in Corsair: every `woocommerce.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Coupons
+
+### batch
+
+`coupons.batch`
+
+Create, update and delete up to 100 coupons in one call
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.coupons.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `create` | `Record<string, any>[]` | No | Records to create, each with the same fields as the create operation. |
+| `update` | `Record<string, any>[]` | No | Records to update, each with its `id` (settings: `id` and `value`) and the fields to change. |
+| `delete` | `number[]` | No | Ids of records to delete (permanently). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### create
+
+`coupons.create`
+
+Create a coupon
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.coupons.create({ code: 'SPRING10', discount_type: 'percent', amount: '10' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | Coupon code. |
+| `amount` | `number \| string` | No | The amount of discount. Should always be numeric, even if setting a percentage. |
+| `status` | `string` | No | The status of the coupon. Should always be draft, published, or pending review |
+| `discount_type` | `percent \| fixed_cart \| fixed_product` | No | Determines the type of discount that will be applied. |
+| `description` | `string` | No | Coupon description. |
+| `date_expires` | `string \| null` | No | The date the coupon expires, in the site's timezone. |
+| `date_expires_gmt` | `string \| null` | No | The date the coupon expires, as GMT. |
+| `individual_use` | `boolean` | No | If true, the coupon can only be used individually. Other applied coupons will be removed from the cart. |
+| `product_ids` | `number[]` | No | List of product IDs the coupon can be used on. |
+| `excluded_product_ids` | `number[]` | No | List of product IDs the coupon cannot be used on. |
+| `usage_limit` | `number` | No | How many times the coupon can be used in total. |
+| `usage_limit_per_user` | `number` | No | How many times the coupon can be used per customer. |
+| `limit_usage_to_x_items` | `number` | No | Max number of items in the cart the coupon can be applied to. |
+| `free_shipping` | `boolean` | No | If true and if the free shipping method requires a coupon, this coupon will enable free shipping. |
+| `product_categories` | `number[]` | No | List of category IDs the coupon applies to. |
+| `excluded_product_categories` | `number[]` | No | List of category IDs the coupon does not apply to. |
+| `exclude_sale_items` | `boolean` | No | If true, this coupon will not be applied to items that have sale prices. |
+| `minimum_amount` | `number \| string` | No | Minimum order amount that needs to be in the cart before coupon applies. |
+| `maximum_amount` | `number \| string` | No | Maximum order amount allowed when using the coupon. |
+| `email_restrictions` | `string[]` | No | List of email addresses that can use this coupon. |
+| `meta_data` | `object[]` | No | Meta data. |
+
+<AccordionGroup>
+<Accordion title="meta_data full type">
+
+```ts
+{
+  key?: string,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`coupons.delete`
+
+Delete a coupon; without force true it goes to the trash
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.coupons.delete({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `force` | `boolean` | No | Whether to bypass trash and force deletion. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### get
+
+`coupons.get`
+
+Get one coupon
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.coupons.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`coupons.list`
+
+List coupons, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.coupons.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `after` | `string` | No | Limit response to resources published after a given ISO8601 compliant date. |
+| `before` | `string` | No | Limit response to resources published before a given ISO8601 compliant date. |
+| `modified_after` | `string` | No | Limit response to resources modified after a given ISO8601 compliant date. |
+| `modified_before` | `string` | No | Limit response to resources modified before a given ISO8601 compliant date. |
+| `dates_are_gmt` | `boolean` | No | Whether to consider GMT post dates when limiting response by published or modified date. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific ids. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `date \| id \| include \| title \| slug \| modified` | No | Sort collection by object attribute. |
+| `code` | `string` | No | Limit result set to resources with a specific code. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### update
+
+`coupons.update`
+
+Update a coupon: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.coupons.update({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `code` | `string` | No | Coupon code. |
+| `amount` | `number \| string` | No | The amount of discount. Should always be numeric, even if setting a percentage. |
+| `status` | `string` | No | The status of the coupon. Should always be draft, published, or pending review |
+| `discount_type` | `percent \| fixed_cart \| fixed_product` | No | Determines the type of discount that will be applied. |
+| `description` | `string` | No | Coupon description. |
+| `date_expires` | `string \| null` | No | The date the coupon expires, in the site's timezone. |
+| `date_expires_gmt` | `string \| null` | No | The date the coupon expires, as GMT. |
+| `individual_use` | `boolean` | No | If true, the coupon can only be used individually. Other applied coupons will be removed from the cart. |
+| `product_ids` | `number[]` | No | List of product IDs the coupon can be used on. |
+| `excluded_product_ids` | `number[]` | No | List of product IDs the coupon cannot be used on. |
+| `usage_limit` | `number` | No | How many times the coupon can be used in total. |
+| `usage_limit_per_user` | `number` | No | How many times the coupon can be used per customer. |
+| `limit_usage_to_x_items` | `number` | No | Max number of items in the cart the coupon can be applied to. |
+| `free_shipping` | `boolean` | No | If true and if the free shipping method requires a coupon, this coupon will enable free shipping. |
+| `product_categories` | `number[]` | No | List of category IDs the coupon applies to. |
+| `excluded_product_categories` | `number[]` | No | List of category IDs the coupon does not apply to. |
+| `exclude_sale_items` | `boolean` | No | If true, this coupon will not be applied to items that have sale prices. |
+| `minimum_amount` | `number \| string` | No | Minimum order amount that needs to be in the cart before coupon applies. |
+| `maximum_amount` | `number \| string` | No | Maximum order amount allowed when using the coupon. |
+| `email_restrictions` | `string[]` | No | List of email addresses that can use this coupon. |
+| `meta_data` | `object[]` | No | Meta data. |
+
+<AccordionGroup>
+<Accordion title="meta_data full type">
+
+```ts
+{
+  key?: string,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Customers
+
+### batch
+
+`customers.batch`
+
+Create, update and delete up to 100 customers in one call
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.customers.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `create` | `Record<string, any>[]` | No | Records to create, each with the same fields as the create operation. |
+| `update` | `Record<string, any>[]` | No | Records to update, each with its `id` (settings: `id` and `value`) and the fields to change. |
+| `delete` | `number[]` | No | Ids of records to delete (permanently). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### create
+
+`customers.create`
+
+Create a customer
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.customers.create({ email: 'ada@example.com', first_name: 'Ada', last_name: 'Lovelace' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | New user email address. |
+| `first_name` | `string` | No | Customer first name. |
+| `last_name` | `string` | No | Customer last name. |
+| `username` | `string` | No | New user username. |
+| `password` | `string` | No | New user password. |
+| `billing` | `object` | No | List of billing address data. |
+| `shipping` | `object` | No | List of shipping address data. |
+| `meta_data` | `object[]` | No | Meta data. |
+
+<AccordionGroup>
+<Accordion title="billing full type">
+
+```ts
+{
+  first_name?: string,
+  last_name?: string,
+  company?: string,
+  address_1?: string,
+  address_2?: string,
+  city?: string,
+  state?: string,
+  postcode?: string,
+  country?: string,
+  email?: string,
+  phone?: string
+}
+```
+</Accordion>
+
+<Accordion title="shipping full type">
+
+```ts
+{
+  first_name?: string,
+  last_name?: string,
+  company?: string,
+  address_1?: string,
+  address_2?: string,
+  city?: string,
+  state?: string,
+  postcode?: string,
+  country?: string,
+  phone?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta_data full type">
+
+```ts
+{
+  key?: string,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`customers.delete`
+
+Delete a customer (WooCommerce needs force true)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.customers.delete({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `force` | `boolean` | No | Required to be true, as resource does not support trashing. |
+| `reassign` | `number` | No | ID to reassign posts to. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### downloads
+
+`customers.downloads`
+
+List the downloadable files a customer has access to
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.customers.downloads({ customer_id: 7 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customer_id` | `number` | Yes | Unique identifier for the resource. |
+| `context` | `view` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### get
+
+`customers.get`
+
+Get one customer
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.customers.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`customers.list`
+
+List customers, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.customers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `id \| include \| name \| registered_date` | No | Sort collection by object attribute. |
+| `email` | `string` | No | Limit result set to resources with a specific email. |
+| `role` | `all \| administrator \| editor \| author \| contributor \| subscriber \| customer \| shop_manager` | No | Limit result set to resources with a specific role. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### update
+
+`customers.update`
+
+Update a customer: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.customers.update({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `email` | `string` | No | The email address for the customer. |
+| `first_name` | `string` | No | Customer first name. |
+| `last_name` | `string` | No | Customer last name. |
+| `username` | `string` | No | Customer login name. |
+| `password` | `string` | No | Customer password. |
+| `billing` | `object` | No | List of billing address data. |
+| `shipping` | `object` | No | List of shipping address data. |
+| `meta_data` | `object[]` | No | Meta data. |
+
+<AccordionGroup>
+<Accordion title="billing full type">
+
+```ts
+{
+  first_name?: string,
+  last_name?: string,
+  company?: string,
+  address_1?: string,
+  address_2?: string,
+  city?: string,
+  state?: string,
+  postcode?: string,
+  country?: string,
+  email?: string,
+  phone?: string
+}
+```
+</Accordion>
+
+<Accordion title="shipping full type">
+
+```ts
+{
+  first_name?: string,
+  last_name?: string,
+  company?: string,
+  address_1?: string,
+  address_2?: string,
+  city?: string,
+  state?: string,
+  postcode?: string,
+  country?: string,
+  phone?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta_data full type">
+
+```ts
+{
+  key?: string,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Data
+
+### continents.get
+
+`data.continents.get`
+
+Get one continent
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.data.continents.get({ location: 'US' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `string` | Yes | A continent code (`EU`) or country code (`US`). |
+| `continent` | `string` | No | 2 character continent code. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### continents.list
+
+`data.continents.list`
+
+List continents
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.data.continents.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### countries.get
+
+`data.countries.get`
+
+Get one country
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.data.countries.get({ location: 'US' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `string` | Yes | ISO3166 alpha-2 country code. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### countries.list
+
+`data.countries.list`
+
+List countries
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.data.countries.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### currencies.current
+
+`data.currencies.current`
+
+Get the store's currency
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.data.currencies.current({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### currencies.get
+
+`data.currencies.get`
+
+Get one currency
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.data.currencies.get({ currency: 'USD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `currency` | `string` | Yes | ISO currency code (`USD`). |
+| `location` | `string` | No | ISO4217 currency code. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### currencies.list
+
+`data.currencies.list`
+
+List currencies
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.data.currencies.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### index
+
+`data.index`
+
+List the reference data routes (continents, countries, currencies)
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.data.index({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown[]`
+
+
+---
+
+## Orders
+
+### batch
+
+`orders.batch`
+
+Create, update and delete up to 100 orders in one call
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.orders.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `create` | `Record<string, any>[]` | No | Records to create, each with the same fields as the create operation. |
+| `update` | `Record<string, any>[]` | No | Records to update, each with its `id` (settings: `id` and `value`) and the fields to change. |
+| `delete` | `number[]` | No | Ids of records to delete (permanently). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### create
+
+`orders.create`
+
+Create an order with line items, billing and shipping addresses, shipping lines, fees, coupons and a status (no payment is taken; set_paid marks it paid)
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.orders.create({
+	payment_method: 'bacs',
+	set_paid: false,
+	billing: { first_name: 'Ada', last_name: 'Lovelace', email: 'ada@example.com' },
+	line_items: [{ product_id: 42, quantity: 2 }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent_id` | `number` | No | Parent order ID. |
+| `created_via` | `string` | No | Shows where the order was created. |
+| `status` | `auto-draft \| pending \| processing \| on-hold \| completed \| cancelled \| refunded \| failed \| checkout-draft` | No | Order status. |
+| `currency` | `AED \| AFN \| ALL \| AMD \| ANG \| AOA \| ARS \| AUD \| AWG \| AZN \| BAM \| BBD \| BDT \| BGN \| BHD \| BIF \| BMD \| BND \| BOB \| BRL \| BSD \| BTC \| BTN \| BWP \| BYR \| BYN \| BZD \| CAD \| CDF \| CHF \| CHW \| CLP \| CNY \| COP \| CRC \| CUC \| CUP \| CVE \| CZK \| DJF \| DKK \| DOP \| DZD \| EGP \| ERN \| ETB \| EUR \| FJD \| FKP \| GBP \| GEL \| GGP \| GHS \| GIP \| GMD \| GNF \| GTQ \| GYD \| HKD \| HNL \| HRK \| HTG \| HUF \| IDR \| ILS \| IMP \| INR \| IQD \| IRR \| IRT \| ISK \| JEP \| JMD \| JOD \| JPY \| KES \| KGS \| KHR \| KMF \| KPW \| KRW \| KWD \| KYD \| KZT \| LAK \| LBP \| LKR \| LRD \| LSL \| LYD \| MAD \| MDL \| MGA \| MKD \| MMK \| MNT \| MOP \| MRU \| MUR \| MVR \| MWK \| MXN \| MYR \| MZN \| NAD \| NGN \| NIO \| NOK \| NPR \| NZD \| OMR \| PAB \| PEN \| PGK \| PHP \| PKR \| PLN \| PRB \| PYG \| QAR \| RON \| RSD \| RUB \| RWF \| SAR \| SBD \| SCR \| SDG \| SEK \| SGD \| SHP \| SLL \| SOS \| SRD \| SSP \| STN \| SYP \| SZL \| THB \| TJS \| TMT \| TND \| TOP \| TRY \| TTD \| TWD \| TZS \| UAH \| UGX \| USD \| UYU \| UZS \| VEF \| VES \| VND \| VUV \| WST \| XAF \| XCD \| XOF \| XPF \| YER \| ZAR \| ZMW` | No | Currency the order was created with, in ISO format. |
+| `customer_id` | `number` | No | User ID who owns the order. 0 for guests. |
+| `customer_note` | `string` | No | Note left by customer during checkout. |
+| `billing` | `object` | No | Billing address. |
+| `shipping` | `object` | No | Shipping address. |
+| `payment_method` | `string` | No | Payment method ID. |
+| `payment_method_title` | `string` | No | Payment method title. |
+| `transaction_id` | `string` | No | Unique transaction ID. |
+| `meta_data` | `object[]` | No | Meta data. |
+| `line_items` | `object[]` | No | Line items data. |
+| `shipping_lines` | `object[]` | No | Shipping lines data. |
+| `fee_lines` | `object[]` | No | Fee lines data. |
+| `coupon_lines` | `object[]` | No | Coupons line data. |
+| `set_paid` | `boolean` | No | Define if the order is paid. It will set the status to processing and reduce stock items. |
+| `manual_update` | `boolean` | No | Set the action as manual so that the order note registers as "added by user". |
+
+<AccordionGroup>
+<Accordion title="billing full type">
+
+```ts
+{
+  first_name?: string,
+  last_name?: string,
+  company?: string,
+  address_1?: string,
+  address_2?: string,
+  city?: string,
+  state?: string,
+  postcode?: string,
+  country?: string,
+  email?: string | null,
+  phone?: string
+}
+```
+</Accordion>
+
+<Accordion title="shipping full type">
+
+```ts
+{
+  first_name?: string,
+  last_name?: string,
+  company?: string,
+  address_1?: string,
+  address_2?: string,
+  city?: string,
+  state?: string,
+  postcode?: string,
+  country?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta_data full type">
+
+```ts
+{
+  key?: string,
+  value?: any
+}[]
+```
+</Accordion>
+
+<Accordion title="line_items full type">
+
+```ts
+{
+  name?: any,
+  parent_name?: string | null,
+  product_id?: any,
+  variation_id?: number,
+  quantity?: number,
+  tax_class?: string,
+  subtotal?: string,
+  total?: string,
+  meta_data?: {
+    key?: string,
+    value?: any
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="shipping_lines full type">
+
+```ts
+{
+  method_title?: any,
+  method_id?: any,
+  instance_id?: string,
+  total?: string,
+  meta_data?: {
+    key?: string,
+    value?: any
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="fee_lines full type">
+
+```ts
+{
+  name?: any,
+  tax_class?: string,
+  tax_status?: taxable | none,
+  total?: string,
+  meta_data?: {
+    key?: string,
+    value?: any
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="coupon_lines full type">
+
+```ts
+{
+  code?: any,
+  meta_data?: {
+    key?: string,
+    value?: any
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`orders.delete`
+
+Delete an order; without force true it goes to the trash
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.orders.delete({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `force` | `boolean` | No | Whether to bypass trash and force deletion. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### emailTemplates
+
+`orders.emailTemplates`
+
+List the emails that can be sent for an order
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.orders.emailTemplates({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier of the order. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### get
+
+`orders.get`
+
+Get one order
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.orders.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`orders.list`
+
+List orders, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.orders.list({
+	status: ['processing'],
+	per_page: 20,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `after` | `string` | No | Limit response to resources published after a given ISO8601 compliant date. |
+| `before` | `string` | No | Limit response to resources published before a given ISO8601 compliant date. |
+| `modified_after` | `string` | No | Limit response to resources modified after a given ISO8601 compliant date. |
+| `modified_before` | `string` | No | Limit response to resources modified before a given ISO8601 compliant date. |
+| `dates_are_gmt` | `boolean` | No | Whether to consider GMT post dates when limiting response by published or modified date. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific ids. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `date \| id \| include \| title \| slug \| modified` | No | Sort collection by object attribute. |
+| `parent` | `number[]` | No | Limit result set to those of particular parent IDs. |
+| `parent_exclude` | `number[]` | No | Limit result set to all items except those of a particular parent ID. |
+| `status` | `(any \| trash \| auto-draft \| pending \| processing \| on-hold \| completed \| cancelled \| refunded \| failed \| checkout-draft)[]` | No | Limit result set to orders which have specific statuses. |
+| `customer` | `number` | No | Limit result set to orders assigned a specific customer. |
+| `product` | `number` | No | Limit result set to orders assigned a specific product. |
+| `dp` | `number` | No | Number of decimal points to use in each resource. |
+| `order_item_display_meta` | `boolean` | No | Only show meta which is meant to be displayed for an order. |
+| `include_meta` | `string[]` | No | Limit meta_data to specific keys. |
+| `exclude_meta` | `string[]` | No | Ensure meta_data excludes specific keys. |
+| `created_via` | `string[]` | No | Limit result set to orders created via specific sources (e.g. checkout, admin). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### notes.create
+
+`orders.notes.create`
+
+Create a order note for a order
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.orders.notes.create({ order_id: 1001, note: 'Packed and ready to ship.', customer_note: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | The order ID. |
+| `note` | `string` | Yes | Order note content. |
+| `customer_note` | `boolean` | No | If true, the note will be shown to customers and they will be notified. If false, the note will be for admin reference only. |
+| `added_by_user` | `boolean` | No | If true, this note will be attributed to the current user. If false, the note will be attributed to the system. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### notes.delete
+
+`orders.notes.delete`
+
+Delete a order note (WooCommerce needs force true)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.orders.notes.delete({ order_id: 1001, id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | The order ID. |
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `force` | `boolean` | No | Required to be true, as resource does not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### notes.get
+
+`orders.notes.get`
+
+Get one order note
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.orders.notes.get({ order_id: 1001, id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | The order ID. |
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### notes.list
+
+`orders.notes.list`
+
+List the order notes of a order
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.orders.notes.list({ order_id: 1001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | The order ID. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `type` | `any \| customer \| internal` | No | Limit result to customers or internal notes. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### receipt.create
+
+`orders.receipt.create`
+
+Generate the receipt of an order
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.orders.receipt.create({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier of the order. |
+| `expiration_date` | `string` | No | Expiration date formatted as yyyy-mm-dd. |
+| `expiration_days` | `number` | No | Number of days to be added to the current date to get the expiration date. |
+| `force_new` | `boolean` | No | True to force the creation of a new receipt even if one already exists and has not expired yet. |
+
+
+
+**Output:** `any`
+
+
+---
+
+### receipt.get
+
+`orders.receipt.get`
+
+Get the receipt of an order (a link to the rendered receipt)
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.orders.receipt.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier of the order. |
+
+
+
+**Output:** `any`
+
+
+---
+
+### refunds.create
+
+`orders.refunds.create`
+
+Refund an order, in full or by line item; with api_refund true (the default) the payment gateway sends the money back
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.orders.refunds.create({
+	order_id: 1001,
+	amount: '10.00',
+	reason: 'Damaged in transit',
+	api_refund: false,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | The order ID. |
+| `amount` | `string` | No | Refund amount. |
+| `reason` | `string` | No | Reason for refund. |
+| `refunded_by` | `number` | No | User ID of user who created the refund. |
+| `meta_data` | `object[]` | No | Meta data. |
+| `shipping_lines` | `object[]` | No | Shipping lines data. |
+| `fee_lines` | `object[]` | No | Fee lines data. |
+| `api_refund` | `boolean` | No | When true, the payment gateway API is used to generate the refund. |
+| `api_restock` | `boolean` | No | When true, refunded items are restocked. |
+| `compute_totals` | `boolean` | No | When true, the server computes per-line refund amounts from quantities using the order's stored prices and taxes, validating the request against the order's refund history. Defaults to false, which preserves the pre-existing behavior of this endpoint. |
+
+<AccordionGroup>
+<Accordion title="meta_data full type">
+
+```ts
+{
+  key?: string,
+  value?: any
+}[]
+```
+</Accordion>
+
+<Accordion title="shipping_lines full type">
+
+```ts
+{
+  method_title?: any,
+  method_id?: any,
+  instance_id?: string,
+  total?: string,
+  meta_data?: {
+    key?: string,
+    value?: any
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="fee_lines full type">
+
+```ts
+{
+  name?: any,
+  tax_class?: string,
+  tax_status?: taxable | none,
+  total?: string,
+  meta_data?: {
+    key?: string,
+    value?: any
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### refunds.delete
+
+`orders.refunds.delete`
+
+Delete a refund (WooCommerce needs force true)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.orders.refunds.delete({ order_id: 1001, id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | The order ID. |
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `force` | `boolean` | No | Required to be true, as resource does not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### refunds.get
+
+`orders.refunds.get`
+
+Get one refund
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.orders.refunds.get({ order_id: 1001, id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | The order ID. |
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### refunds.list
+
+`orders.refunds.list`
+
+List the refunds of a order, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.orders.refunds.list({ order_id: 1001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | The order ID. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `after` | `string` | No | Limit response to resources published after a given ISO8601 compliant date. |
+| `before` | `string` | No | Limit response to resources published before a given ISO8601 compliant date. |
+| `modified_after` | `string` | No | Limit response to resources modified after a given ISO8601 compliant date. |
+| `modified_before` | `string` | No | Limit response to resources modified before a given ISO8601 compliant date. |
+| `dates_are_gmt` | `boolean` | No | Whether to consider GMT post dates when limiting response by published or modified date. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific ids. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `date \| id \| include \| title \| slug \| modified` | No | Sort collection by object attribute. |
+| `parent` | `number[]` | No | Limit result set to those of particular parent IDs. |
+| `parent_exclude` | `number[]` | No | Limit result set to all items except those of a particular parent ID. |
+| `dp` | `number` | No | Number of decimal points to use in each resource. |
+| `order_item_display_meta` | `boolean` | No | Only show meta which is meant to be displayed for an order. |
+| `include_meta` | `string[]` | No | Limit meta_data to specific keys. |
+| `exclude_meta` | `string[]` | No | Ensure meta_data excludes specific keys. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### refunds.preview
+
+`orders.refunds.preview`
+
+Work out a refund (amounts, taxes, line items) without creating it
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.orders.refunds.preview({
+	order_id: 1001,
+	line_items: [{ line_item_id: 1 }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `order_id` | `number` | Yes | The order ID. |
+| `line_items` | `object[]` | Yes | Line items to include in the refund preview. |
+
+<AccordionGroup>
+<Accordion title="line_items full type">
+
+```ts
+{
+  line_item_id: number,
+  quantity?: number,
+  refund_total?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### sendEmail
+
+`orders.sendEmail`
+
+Send one of the order emails (an invoice, a status email) to the customer or another address
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.orders.sendEmail({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier of the order. |
+| `email` | `string` | No | Email address to send the order details to. |
+| `force_email_update` | `boolean` | No | Whether to update the billing email of the order, even if it already has one. |
+| `template_id` | `new_order \| cancelled_order \| customer_cancelled_order \| failed_order \| customer_failed_order \| customer_on_hold_order \| customer_processing_order \| customer_completed_order \| customer_refunded_order \| customer_invoice \| customer_note \| customer_reset_password \| customer_new_account \| admin_payment_gateway_enabled \| customer_pos_completed_order \| customer_pos_refunded_order \| customer_verify_email` | No | The email template to use. If omitted, the best template is auto-selected based on order status. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### sendOrderDetails
+
+`orders.sendOrderDetails`
+
+Email the order details (invoice) to the customer
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.orders.sendOrderDetails({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier of the order. |
+| `email` | `string` | No | Email address to send the order details to. |
+| `force_email_update` | `boolean` | No | Whether to update the billing email of the order, even if it already has one. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### statuses
+
+`orders.statuses`
+
+List the order statuses the store uses, core and custom
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.orders.statuses({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### update
+
+`orders.update`
+
+Update an order: status (processing, completed, cancelled ...), addresses, line items, notes and meta; only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.orders.update({ id: 1001, status: 'completed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `parent_id` | `number` | No | Parent order ID. |
+| `created_via` | `string` | No | Shows where the order was created. |
+| `status` | `auto-draft \| pending \| processing \| on-hold \| completed \| cancelled \| refunded \| failed \| checkout-draft` | No | Order status. |
+| `currency` | `AED \| AFN \| ALL \| AMD \| ANG \| AOA \| ARS \| AUD \| AWG \| AZN \| BAM \| BBD \| BDT \| BGN \| BHD \| BIF \| BMD \| BND \| BOB \| BRL \| BSD \| BTC \| BTN \| BWP \| BYR \| BYN \| BZD \| CAD \| CDF \| CHF \| CHW \| CLP \| CNY \| COP \| CRC \| CUC \| CUP \| CVE \| CZK \| DJF \| DKK \| DOP \| DZD \| EGP \| ERN \| ETB \| EUR \| FJD \| FKP \| GBP \| GEL \| GGP \| GHS \| GIP \| GMD \| GNF \| GTQ \| GYD \| HKD \| HNL \| HRK \| HTG \| HUF \| IDR \| ILS \| IMP \| INR \| IQD \| IRR \| IRT \| ISK \| JEP \| JMD \| JOD \| JPY \| KES \| KGS \| KHR \| KMF \| KPW \| KRW \| KWD \| KYD \| KZT \| LAK \| LBP \| LKR \| LRD \| LSL \| LYD \| MAD \| MDL \| MGA \| MKD \| MMK \| MNT \| MOP \| MRU \| MUR \| MVR \| MWK \| MXN \| MYR \| MZN \| NAD \| NGN \| NIO \| NOK \| NPR \| NZD \| OMR \| PAB \| PEN \| PGK \| PHP \| PKR \| PLN \| PRB \| PYG \| QAR \| RON \| RSD \| RUB \| RWF \| SAR \| SBD \| SCR \| SDG \| SEK \| SGD \| SHP \| SLL \| SOS \| SRD \| SSP \| STN \| SYP \| SZL \| THB \| TJS \| TMT \| TND \| TOP \| TRY \| TTD \| TWD \| TZS \| UAH \| UGX \| USD \| UYU \| UZS \| VEF \| VES \| VND \| VUV \| WST \| XAF \| XCD \| XOF \| XPF \| YER \| ZAR \| ZMW` | No | Currency the order was created with, in ISO format. |
+| `customer_id` | `number` | No | User ID who owns the order. 0 for guests. |
+| `customer_note` | `string` | No | Note left by customer during checkout. |
+| `billing` | `object` | No | Billing address. |
+| `shipping` | `object` | No | Shipping address. |
+| `payment_method` | `string` | No | Payment method ID. |
+| `payment_method_title` | `string` | No | Payment method title. |
+| `transaction_id` | `string` | No | Unique transaction ID. |
+| `meta_data` | `object[]` | No | Meta data. |
+| `line_items` | `object[]` | No | Line items data. |
+| `shipping_lines` | `object[]` | No | Shipping lines data. |
+| `fee_lines` | `object[]` | No | Fee lines data. |
+| `coupon_lines` | `object[]` | No | Coupons line data. |
+| `set_paid` | `boolean` | No | Define if the order is paid. It will set the status to processing and reduce stock items. |
+| `manual_update` | `boolean` | No | Set the action as manual so that the order note registers as "added by user". |
+
+<AccordionGroup>
+<Accordion title="billing full type">
+
+```ts
+{
+  first_name?: string,
+  last_name?: string,
+  company?: string,
+  address_1?: string,
+  address_2?: string,
+  city?: string,
+  state?: string,
+  postcode?: string,
+  country?: string,
+  email?: string | null,
+  phone?: string
+}
+```
+</Accordion>
+
+<Accordion title="shipping full type">
+
+```ts
+{
+  first_name?: string,
+  last_name?: string,
+  company?: string,
+  address_1?: string,
+  address_2?: string,
+  city?: string,
+  state?: string,
+  postcode?: string,
+  country?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta_data full type">
+
+```ts
+{
+  key?: string,
+  value?: any
+}[]
+```
+</Accordion>
+
+<Accordion title="line_items full type">
+
+```ts
+{
+  name?: any,
+  parent_name?: string | null,
+  product_id?: any,
+  variation_id?: number,
+  quantity?: number,
+  tax_class?: string,
+  subtotal?: string,
+  total?: string,
+  meta_data?: {
+    key?: string,
+    value?: any
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="shipping_lines full type">
+
+```ts
+{
+  method_title?: any,
+  method_id?: any,
+  instance_id?: string,
+  total?: string,
+  meta_data?: {
+    key?: string,
+    value?: any
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="fee_lines full type">
+
+```ts
+{
+  name?: any,
+  tax_class?: string,
+  tax_status?: taxable | none,
+  total?: string,
+  meta_data?: {
+    key?: string,
+    value?: any
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="coupon_lines full type">
+
+```ts
+{
+  code?: any,
+  meta_data?: {
+    key?: string,
+    value?: any
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Payment Gateways
+
+### get
+
+`paymentGateways.get`
+
+Get one payment gateway
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.paymentGateways.get({ id: '42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier for the resource. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`paymentGateways.list`
+
+List payment gateways
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.paymentGateways.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### update
+
+`paymentGateways.update`
+
+Enable, disable or reconfigure a payment gateway (title, description, settings)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.paymentGateways.update({ id: '42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier for the resource. |
+| `title` | `string` | No | Payment gateway title on checkout. |
+| `description` | `string` | No | Payment gateway description on checkout. |
+| `order` | `number` | No | Payment gateway sort order. |
+| `enabled` | `boolean` | No | Payment gateway enabled status. |
+| `settings` | `object` | No | Payment gateway settings. |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  value?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Products
+
+### attributes.batch
+
+`products.attributes.batch`
+
+Create, update and delete up to 100 product attributes in one call
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.products.attributes.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `create` | `Record<string, any>[]` | No | Records to create, each with the same fields as the create operation. |
+| `update` | `Record<string, any>[]` | No | Records to update, each with its `id` (settings: `id` and `value`) and the fields to change. |
+| `delete` | `number[]` | No | Ids of records to delete (permanently). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### attributes.create
+
+`products.attributes.create`
+
+Create a product attribute for a product
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.attributes.create({ name: 'Example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name for the resource. |
+| `slug` | `string` | No | An alphanumeric identifier for the resource unique to its type. |
+| `type` | `select` | No | Type of attribute. |
+| `order_by` | `menu_order \| name \| name_num \| id` | No | Default sort order. |
+| `has_archives` | `boolean` | No | Enable/Disable attribute archives. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### attributes.delete
+
+`products.attributes.delete`
+
+Delete a product attribute (WooCommerce needs force true)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.products.attributes.delete({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `force` | `boolean` | No | Required to be true, as resource does not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### attributes.get
+
+`products.attributes.get`
+
+Get one product attribute
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.attributes.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### attributes.list
+
+`products.attributes.list`
+
+List the product attributes of a product
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.attributes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### attributes.terms.batch
+
+`products.attributes.terms.batch`
+
+Create, update and delete up to 100 attribute terms in one call
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.products.attributes.terms.batch({ attribute_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attribute_id` | `number` | Yes | Unique identifier for the attribute of the terms. |
+| `create` | `Record<string, any>[]` | No | Records to create, each with the same fields as the create operation. |
+| `update` | `Record<string, any>[]` | No | Records to update, each with its `id` (settings: `id` and `value`) and the fields to change. |
+| `delete` | `number[]` | No | Ids of records to delete (permanently). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### attributes.terms.create
+
+`products.attributes.terms.create`
+
+Create a attribute term for a product attribute
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.attributes.terms.create({ attribute_id: 1, name: 'Example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attribute_id` | `number` | Yes | Unique identifier for the attribute of the terms. |
+| `name` | `string` | Yes | Name for the resource. |
+| `slug` | `string` | No | An alphanumeric identifier for the resource unique to its type. |
+| `description` | `string` | No | HTML description of the resource. |
+| `menu_order` | `number` | No | Menu order, used to custom sort the resource. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### attributes.terms.delete
+
+`products.attributes.terms.delete`
+
+Delete a attribute term (WooCommerce needs force true)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.products.attributes.terms.delete({ attribute_id: 1, id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attribute_id` | `number` | Yes | Unique identifier for the attribute of the terms. |
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `force` | `boolean` | No | Required to be true, as resource does not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### attributes.terms.get
+
+`products.attributes.terms.get`
+
+Get one attribute term
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.attributes.terms.get({ attribute_id: 1, id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attribute_id` | `number` | Yes | Unique identifier for the attribute of the terms. |
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### attributes.terms.list
+
+`products.attributes.terms.list`
+
+List the attribute terms of a product attribute, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.attributes.terms.list({ attribute_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attribute_id` | `number` | Yes | Unique identifier for the attribute of the terms. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific ids. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. Applies to hierarchical taxonomies only. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `id \| include \| name \| slug \| term_group \| description \| count` | No | Sort collection by resource attribute. |
+| `hide_empty` | `boolean` | No | Whether to hide resources not assigned to any products. |
+| `parent` | `number` | No | Limit result set to resources assigned to a specific parent. Applies to hierarchical taxonomies only. |
+| `product` | `number` | No | Limit result set to resources assigned to a specific product. |
+| `slug` | `string \| string[]` | No | Limit result set to resources with a specific slug. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### attributes.terms.update
+
+`products.attributes.terms.update`
+
+Update a attribute term: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.attributes.terms.update({ attribute_id: 1, id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `attribute_id` | `number` | Yes | Unique identifier for the attribute of the terms. |
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `name` | `string` | No | Term name. |
+| `slug` | `string` | No | An alphanumeric identifier for the resource unique to its type. |
+| `description` | `string` | No | HTML description of the resource. |
+| `menu_order` | `number` | No | Menu order, used to custom sort the resource. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### attributes.update
+
+`products.attributes.update`
+
+Update a product attribute: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.attributes.update({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `name` | `string` | No | Attribute name. |
+| `slug` | `string` | No | An alphanumeric identifier for the resource unique to its type. |
+| `type` | `select` | No | Type of attribute. |
+| `order_by` | `menu_order \| name \| name_num \| id` | No | Default sort order. |
+| `has_archives` | `boolean` | No | Enable/Disable attribute archives. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### batch
+
+`products.batch`
+
+Create, update and delete up to 100 products in one call
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.products.batch({
+	create: [{ name: 'Mug', regular_price: '12.00' }],
+	delete: [43],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `create` | `Record<string, any>[]` | No | Records to create, each with the same fields as the create operation. |
+| `update` | `Record<string, any>[]` | No | Records to update, each with its `id` (settings: `id` and `value`) and the fields to change. |
+| `delete` | `number[]` | No | Ids of records to delete (permanently). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### brands.batch
+
+`products.brands.batch`
+
+Create, update and delete up to 100 brands in one call
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.products.brands.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `create` | `Record<string, any>[]` | No | Records to create, each with the same fields as the create operation. |
+| `update` | `Record<string, any>[]` | No | Records to update, each with its `id` (settings: `id` and `value`) and the fields to change. |
+| `delete` | `number[]` | No | Ids of records to delete (permanently). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### brands.create
+
+`products.brands.create`
+
+Create a brand for a product
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.brands.create({ name: 'Example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name for the resource. |
+| `slug` | `string` | No | An alphanumeric identifier for the resource unique to its type. |
+| `parent` | `number` | No | The ID for the parent of the resource. |
+| `description` | `string` | No | HTML description of the resource. |
+| `display` | `default \| products \| subcategories \| both` | No | Category archive display type. |
+| `image` | `object` | No | Image data. |
+| `menu_order` | `number` | No | Menu order, used to custom sort the resource. |
+
+<AccordionGroup>
+<Accordion title="image full type">
+
+```ts
+{
+  id?: number,
+  src?: string,
+  name?: string,
+  alt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### brands.delete
+
+`products.brands.delete`
+
+Delete a brand (WooCommerce needs force true)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.products.brands.delete({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `force` | `boolean` | No | Required to be true, as resource does not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### brands.get
+
+`products.brands.get`
+
+Get one brand
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.brands.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### brands.list
+
+`products.brands.list`
+
+List the brands of a product, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.brands.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific ids. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. Applies to hierarchical taxonomies only. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `id \| include \| name \| slug \| term_group \| description \| count` | No | Sort collection by resource attribute. |
+| `hide_empty` | `boolean` | No | Whether to hide resources not assigned to any products. |
+| `parent` | `number` | No | Limit result set to resources assigned to a specific parent. Applies to hierarchical taxonomies only. |
+| `product` | `number` | No | Limit result set to resources assigned to a specific product. |
+| `slug` | `string \| string[]` | No | Limit result set to resources with a specific slug. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### brands.update
+
+`products.brands.update`
+
+Update a brand: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.brands.update({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `name` | `string` | No | Category name. |
+| `slug` | `string` | No | An alphanumeric identifier for the resource unique to its type. |
+| `parent` | `number` | No | The ID for the parent of the resource. |
+| `description` | `string` | No | HTML description of the resource. |
+| `display` | `default \| products \| subcategories \| both` | No | Category archive display type. |
+| `image` | `object` | No | Image data. |
+| `menu_order` | `number` | No | Menu order, used to custom sort the resource. |
+
+<AccordionGroup>
+<Accordion title="image full type">
+
+```ts
+{
+  id?: number,
+  src?: string,
+  name?: string,
+  alt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### categories.batch
+
+`products.categories.batch`
+
+Create, update and delete up to 100 product categories in one call
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.products.categories.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `create` | `Record<string, any>[]` | No | Records to create, each with the same fields as the create operation. |
+| `update` | `Record<string, any>[]` | No | Records to update, each with its `id` (settings: `id` and `value`) and the fields to change. |
+| `delete` | `number[]` | No | Ids of records to delete (permanently). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### categories.create
+
+`products.categories.create`
+
+Create a product category for a product
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.categories.create({ name: 'Example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name for the resource. |
+| `slug` | `string` | No | An alphanumeric identifier for the resource unique to its type. |
+| `parent` | `number` | No | The ID for the parent of the resource. |
+| `description` | `string` | No | HTML description of the resource. |
+| `display` | `default \| products \| subcategories \| both` | No | Category archive display type. |
+| `image` | `object` | No | Image data. |
+
+<AccordionGroup>
+<Accordion title="image full type">
+
+```ts
+{
+  id?: number,
+  src?: string,
+  name?: string,
+  alt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### categories.delete
+
+`products.categories.delete`
+
+Delete a product category (WooCommerce needs force true)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.products.categories.delete({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `force` | `boolean` | No | Required to be true, as resource does not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### categories.get
+
+`products.categories.get`
+
+Get one product category
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.categories.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### categories.list
+
+`products.categories.list`
+
+List the product categories of a product, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.categories.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific ids. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. Applies to hierarchical taxonomies only. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `id \| include \| name \| slug \| term_group \| description \| count` | No | Sort collection by resource attribute. |
+| `hide_empty` | `boolean` | No | Whether to hide resources not assigned to any products. |
+| `parent` | `number` | No | Limit result set to resources assigned to a specific parent. Applies to hierarchical taxonomies only. |
+| `product` | `number` | No | Limit result set to resources assigned to a specific product. |
+| `slug` | `string \| string[]` | No | Limit result set to resources with a specific slug. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### categories.update
+
+`products.categories.update`
+
+Update a product category: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.categories.update({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `name` | `string` | No | Category name. |
+| `slug` | `string` | No | An alphanumeric identifier for the resource unique to its type. |
+| `parent` | `number` | No | The ID for the parent of the resource. |
+| `description` | `string` | No | HTML description of the resource. |
+| `display` | `default \| products \| subcategories \| both` | No | Category archive display type. |
+| `image` | `object` | No | Image data. |
+
+<AccordionGroup>
+<Accordion title="image full type">
+
+```ts
+{
+  id?: number,
+  src?: string,
+  name?: string,
+  alt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### create
+
+`products.create`
+
+Create a product
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.create({
+	name: 'Corsair Hoodie',
+	type: 'simple',
+	regular_price: '49.00',
+	sku: 'CORSAIR-HOODIE',
+	status: 'draft',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | Product name. |
+| `slug` | `string` | No | Product slug. |
+| `date_created` | `string \| null` | No | The date the product was created, in the site's timezone. |
+| `date_created_gmt` | `string \| null` | No | The date the product was created, as GMT. |
+| `type` | `simple \| grouped \| external \| variable` | No | Product type. |
+| `status` | `draft \| pending \| private \| publish \| future \| auto-draft \| trash` | No | Product status (post status). |
+| `featured` | `boolean` | No | Featured product. |
+| `catalog_visibility` | `visible \| catalog \| search \| hidden` | No | Catalog visibility. |
+| `description` | `string` | No | Product description. |
+| `short_description` | `string` | No | Product short description. |
+| `sku` | `string` | No | Stock Keeping Unit. |
+| `global_unique_id` | `string` | No | GTIN, UPC, EAN or ISBN. |
+| `regular_price` | `string` | No | Product regular price. |
+| `sale_price` | `string` | No | Product sale price. |
+| `date_on_sale_from` | `string \| null` | No | Start date of sale price, in the site's timezone. |
+| `date_on_sale_from_gmt` | `string \| null` | No | Start date of sale price, as GMT. |
+| `date_on_sale_to` | `string \| null` | No | End date of sale price, in the site's timezone. |
+| `date_on_sale_to_gmt` | `string \| null` | No | End date of sale price, in the site's timezone. |
+| `virtual` | `boolean` | No | If the product is virtual. |
+| `downloadable` | `boolean` | No | If the product is downloadable. |
+| `downloads` | `object[]` | No | List of downloadable files. |
+| `download_limit` | `number` | No | Number of times downloadable files can be downloaded after purchase. |
+| `download_expiry` | `number` | No | Number of days until access to downloadable files expires. |
+| `external_url` | `string` | No | Product external URL. Only for external products. |
+| `button_text` | `string` | No | Product external button text. Only for external products. |
+| `tax_status` | `taxable \| shipping \| none` | No | Tax status. |
+| `tax_class` | `string` | No | Tax class. |
+| `manage_stock` | `boolean` | No | Stock management at product level. |
+| `stock_quantity` | `number` | No | Stock quantity. |
+| `stock_status` | `instock \| outofstock \| onbackorder` | No | Controls the stock status of the product. |
+| `backorders` | `no \| notify \| yes` | No | If managing stock, this controls if backorders are allowed. |
+| `low_stock_amount` | `number \| null` | No | Low Stock amount for the product. |
+| `sold_individually` | `boolean` | No | Allow one item to be bought in a single order. |
+| `weight` | `string` | No | Product weight (lbs). |
+| `dimensions` | `object` | No | Product dimensions. |
+| `shipping_class` | `string` | No | Shipping class slug. |
+| `reviews_allowed` | `boolean` | No | Allow reviews. |
+| `post_password` | `string` | No | Post password. |
+| `upsell_ids` | `number[]` | No | List of up-sell products IDs. |
+| `cross_sell_ids` | `number[]` | No | List of cross-sell products IDs. |
+| `parent_id` | `number` | No | Product parent ID. |
+| `purchase_note` | `string` | No | Optional note to send the customer after purchase. |
+| `categories` | `object[]` | No | List of categories. |
+| `brands` | `object[]` | No | List of brands. |
+| `tags` | `object[]` | No | List of tags. |
+| `images` | `object[]` | No | List of images. |
+| `attributes` | `object[]` | No | List of attributes. |
+| `default_attributes` | `object[]` | No | Defaults variation attributes. |
+| `menu_order` | `number` | No | Menu order, used to custom sort products. |
+| `meta_data` | `object[]` | No | Meta data. |
+| `customs_commodity_code` | `string \| null` | No | Customs commodity code containing 6 to 14 digits. Punctuation and spaces are removed. |
+| `customs_country_of_origin` | `string \| null` | No | Two-letter country of origin code. |
+| `customs_description` | `string \| null` | No | Plain-text customs description, up to 35 characters, without emoji or special symbols such as ™. |
+
+<AccordionGroup>
+<Accordion title="downloads full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  file?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="dimensions full type">
+
+```ts
+{
+  length?: string,
+  width?: string,
+  height?: string
+}
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+  id?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="brands full type">
+
+```ts
+{
+  id?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+  id?: number,
+  src?: string,
+  name?: string,
+  alt?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="attributes full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  position?: number,
+  visible?: boolean,
+  variation?: boolean,
+  options?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="default_attributes full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  option?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta_data full type">
+
+```ts
+{
+  key?: string,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### customFieldNames
+
+`products.customFieldNames`
+
+List the custom field (meta) names used on products, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.customFieldNames({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `string` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `order` | `asc \| desc` | No | Order sort items ascending or descending. |
+
+
+
+**Output:** `(string \| number)[]`
+
+
+---
+
+### delete
+
+`products.delete`
+
+Delete a product; without force true it goes to the trash
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.products.delete({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `force` | `boolean` | No | Whether to bypass trash and force deletion. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### duplicate
+
+`products.duplicate`
+
+Duplicate a product (as a draft copy)
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.duplicate({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `name` | `string` | No | Product name. |
+| `slug` | `string` | No | Product slug. |
+| `date_created` | `string \| null` | No | The date the product was created, in the site's timezone. |
+| `date_created_gmt` | `string \| null` | No | The date the product was created, as GMT. |
+| `type` | `simple \| grouped \| external \| variable` | No | Product type. |
+| `status` | `draft \| pending \| private \| publish \| future \| auto-draft \| trash` | No | Product status (post status). |
+| `featured` | `boolean` | No | Featured product. |
+| `catalog_visibility` | `visible \| catalog \| search \| hidden` | No | Catalog visibility. |
+| `description` | `string` | No | Product description. |
+| `short_description` | `string` | No | Product short description. |
+| `sku` | `string` | No | Stock Keeping Unit. |
+| `global_unique_id` | `string` | No | GTIN, UPC, EAN or ISBN. |
+| `regular_price` | `string` | No | Product regular price. |
+| `sale_price` | `string` | No | Product sale price. |
+| `date_on_sale_from` | `string \| null` | No | Start date of sale price, in the site's timezone. |
+| `date_on_sale_from_gmt` | `string \| null` | No | Start date of sale price, as GMT. |
+| `date_on_sale_to` | `string \| null` | No | End date of sale price, in the site's timezone. |
+| `date_on_sale_to_gmt` | `string \| null` | No | End date of sale price, in the site's timezone. |
+| `virtual` | `boolean` | No | If the product is virtual. |
+| `downloadable` | `boolean` | No | If the product is downloadable. |
+| `downloads` | `object[]` | No | List of downloadable files. |
+| `download_limit` | `number` | No | Number of times downloadable files can be downloaded after purchase. |
+| `download_expiry` | `number` | No | Number of days until access to downloadable files expires. |
+| `external_url` | `string` | No | Product external URL. Only for external products. |
+| `button_text` | `string` | No | Product external button text. Only for external products. |
+| `tax_status` | `taxable \| shipping \| none` | No | Tax status. |
+| `tax_class` | `string` | No | Tax class. |
+| `manage_stock` | `boolean` | No | Stock management at product level. |
+| `stock_quantity` | `number` | No | Stock quantity. |
+| `stock_status` | `instock \| outofstock \| onbackorder` | No | Controls the stock status of the product. |
+| `backorders` | `no \| notify \| yes` | No | If managing stock, this controls if backorders are allowed. |
+| `low_stock_amount` | `number \| null` | No | Low Stock amount for the product. |
+| `sold_individually` | `boolean` | No | Allow one item to be bought in a single order. |
+| `weight` | `string` | No | Product weight (lbs). |
+| `dimensions` | `object` | No | Product dimensions. |
+| `shipping_class` | `string` | No | Shipping class slug. |
+| `reviews_allowed` | `boolean` | No | Allow reviews. |
+| `post_password` | `string` | No | Post password. |
+| `upsell_ids` | `number[]` | No | List of up-sell products IDs. |
+| `cross_sell_ids` | `number[]` | No | List of cross-sell products IDs. |
+| `parent_id` | `number` | No | Product parent ID. |
+| `purchase_note` | `string` | No | Optional note to send the customer after purchase. |
+| `categories` | `object[]` | No | List of categories. |
+| `brands` | `object[]` | No | List of brands. |
+| `tags` | `object[]` | No | List of tags. |
+| `images` | `object[]` | No | List of images. |
+| `attributes` | `object[]` | No | List of attributes. |
+| `default_attributes` | `object[]` | No | Defaults variation attributes. |
+| `menu_order` | `number` | No | Menu order, used to custom sort products. |
+| `meta_data` | `object[]` | No | Meta data. |
+| `customs_commodity_code` | `string \| null` | No | Customs commodity code containing 6 to 14 digits. Punctuation and spaces are removed. |
+| `customs_country_of_origin` | `string \| null` | No | Two-letter country of origin code. |
+| `customs_description` | `string \| null` | No | Plain-text customs description, up to 35 characters, without emoji or special symbols such as ™. |
+
+<AccordionGroup>
+<Accordion title="downloads full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  file?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="dimensions full type">
+
+```ts
+{
+  length?: string,
+  width?: string,
+  height?: string
+}
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+  id?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="brands full type">
+
+```ts
+{
+  id?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+  id?: number,
+  src?: string,
+  name?: string,
+  alt?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="attributes full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  position?: number,
+  visible?: boolean,
+  variation?: boolean,
+  options?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="default_attributes full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  option?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta_data full type">
+
+```ts
+{
+  key?: string,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### get
+
+`products.get`
+
+Get one product
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `image_size` | `string` | No | Image size to return. Accepts any registered WordPress image size. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`products.list`
+
+List products, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `after` | `string` | No | Limit response to resources published after a given ISO8601 compliant date. |
+| `before` | `string` | No | Limit response to resources published before a given ISO8601 compliant date. |
+| `modified_after` | `string` | No | Limit response to resources modified after a given ISO8601 compliant date. |
+| `modified_before` | `string` | No | Limit response to resources modified before a given ISO8601 compliant date. |
+| `dates_are_gmt` | `boolean` | No | Whether to consider GMT post dates when limiting response by published or modified date. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific ids. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `date \| id \| include \| title \| slug \| modified \| popularity \| rating \| post__in \| price \| sales \| menu_order \| random` | No | Sort collection by object attribute. |
+| `parent` | `number[]` | No | Limit result set to those of particular parent IDs. |
+| `parent_exclude` | `number[]` | No | Limit result set to all items except those of a particular parent ID. |
+| `brand` | `string` | No | Limit result set to products assigned a specific brand ID. |
+| `slug` | `string` | No | Limit result set to products with a specific slug. |
+| `status` | `any \| future \| trash \| draft \| pending \| private \| publish` | No | Limit result set to products assigned a specific status. |
+| `type` | `simple \| grouped \| external \| variable` | No | Limit result set to products assigned a specific type. |
+| `sku` | `string` | No | Limit result set to products with specific SKU(s). Use commas to separate. |
+| `featured` | `boolean` | No | Limit result set to featured products. |
+| `category` | `string` | No | Limit result set to products assigned a specific category ID. |
+| `tag` | `string` | No | Limit result set to products assigned a specific tag ID. |
+| `shipping_class` | `string` | No | Limit result set to products assigned a specific shipping class ID. |
+| `attribute` | `string` | No | Limit result set to products with a specific attribute. Use the taxonomy name/attribute slug. |
+| `attribute_term` | `string` | No | Limit result set to products with a specific attribute term ID (required an assigned attribute). |
+| `on_sale` | `boolean` | No | Limit result set to products on sale. |
+| `min_price` | `string` | No | Limit result set to products based on a minimum price. |
+| `max_price` | `string` | No | Limit result set to products based on a maximum price. |
+| `include_meta` | `string[]` | No | Limit meta_data to specific keys. |
+| `exclude_meta` | `string[]` | No | Ensure meta_data excludes specific keys. |
+| `image_size` | `string` | No | Image size to return. Accepts any registered WordPress image size. |
+| `stock_status` | `instock \| outofstock \| onbackorder` | No | Limit result set to products with specified stock status. |
+| `search_sku` | `string` | No | Limit results to those with a SKU that partial matches a string. This argument takes precedence over 'sku'. |
+| `search_name_or_sku` | `string` | No | Limit results to those with a name or SKU that partial matches a string. This argument takes precedence over 'search', 'sku' and 'search_sku'. |
+| `search_fields` | `(name \| global_unique_id \| description \| short_description \| sku)[]` | No | Limit search to specific fields when used with search parameter. Available fields: name, sku, global_unique_id, description, short_description. This argument takes precedence over all other search parameters. |
+| `include_status` | `(any \| future \| trash \| draft \| pending \| private \| publish)[]` | No | Limit result set to products with any of the statuses. |
+| `exclude_status` | `(future \| trash \| draft \| pending \| private \| publish)[]` | No | Exclude products with any of the statuses from result set. |
+| `include_types` | `(simple \| grouped \| external \| variable)[]` | No | Limit result set to products with any of the types. |
+| `exclude_types` | `(simple \| grouped \| external \| variable)[]` | No | Exclude products with any of the types from result set. |
+| `downloadable` | `boolean` | No | Limit result set to downloadable products. |
+| `virtual` | `boolean` | No | Limit result set to virtual products. |
+| `pos_products_only` | `boolean` | No | Limit result set to products visible in Point of Sale. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### related
+
+`products.related`
+
+List the ids of products related to a product
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.related({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### reviews.batch
+
+`products.reviews.batch`
+
+Create, update and delete up to 100 product reviews in one call
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.products.reviews.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `create` | `Record<string, any>[]` | No | Records to create, each with the same fields as the create operation. |
+| `update` | `Record<string, any>[]` | No | Records to update, each with its `id` (settings: `id` and `value`) and the fields to change. |
+| `delete` | `number[]` | No | Ids of records to delete (permanently). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### reviews.create
+
+`products.reviews.create`
+
+Create a product review for a product
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.reviews.create({
+	product_id: 42,
+	reviewer: 'example',
+	reviewer_email: 'ada@example.com',
+	review: 'example',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `number` | Yes | Unique identifier for the product. |
+| `product_name` | `string` | No | Product name. |
+| `status` | `approved \| hold \| spam \| unspam \| trash \| untrash` | No | Status of the review. |
+| `reviewer` | `string` | Yes | Name of the reviewer. |
+| `reviewer_email` | `string` | Yes | Email of the reviewer. |
+| `review` | `string` | Yes | Review content. |
+| `rating` | `number` | No | Review rating (0 to 5). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### reviews.delete
+
+`products.reviews.delete`
+
+Delete a product review; without force true it goes to the trash
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.products.reviews.delete({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `force` | `boolean` | No | Whether to bypass trash and force deletion. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### reviews.get
+
+`products.reviews.get`
+
+Get one product review
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.reviews.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### reviews.list
+
+`products.reviews.list`
+
+List the product reviews of a product, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.reviews.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `after` | `string` | No | Limit response to resources published after a given ISO8601 compliant date. |
+| `before` | `string` | No | Limit response to reviews published before a given ISO8601 compliant date. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `date \| date_gmt \| id \| include \| product` | No | Sort collection by object attribute. |
+| `reviewer` | `number[]` | No | Limit result set to reviews assigned to specific user IDs. |
+| `reviewer_exclude` | `number[]` | No | Ensure result set excludes reviews assigned to specific user IDs. |
+| `reviewer_email` | `string` | No | Limit result set to that from a specific author email. |
+| `product` | `number[]` | No | Limit result set to reviews assigned to specific product IDs. |
+| `status` | `all \| hold \| approved \| spam \| trash` | No | Limit result set to reviews assigned a specific status. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### reviews.update
+
+`products.reviews.update`
+
+Update a product review: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.reviews.update({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `product_id` | `number` | No | Unique identifier for the product that the review belongs to. |
+| `product_name` | `string` | No | Product name. |
+| `status` | `approved \| hold \| spam \| unspam \| trash \| untrash` | No | Status of the review. |
+| `reviewer` | `string` | No | Reviewer name. |
+| `reviewer_email` | `string` | No | Reviewer email. |
+| `review` | `string` | No | The content of the review. |
+| `rating` | `number` | No | Review rating (0 to 5). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### shippingClasses.batch
+
+`products.shippingClasses.batch`
+
+Create, update and delete up to 100 shipping classes in one call
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.products.shippingClasses.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `create` | `Record<string, any>[]` | No | Records to create, each with the same fields as the create operation. |
+| `update` | `Record<string, any>[]` | No | Records to update, each with its `id` (settings: `id` and `value`) and the fields to change. |
+| `delete` | `number[]` | No | Ids of records to delete (permanently). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### shippingClasses.create
+
+`products.shippingClasses.create`
+
+Create a shipping class for a product
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.shippingClasses.create({ name: 'Example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name for the resource. |
+| `slug` | `string` | No | An alphanumeric identifier for the resource unique to its type. |
+| `description` | `string` | No | HTML description of the resource. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### shippingClasses.delete
+
+`products.shippingClasses.delete`
+
+Delete a shipping class (WooCommerce needs force true)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.products.shippingClasses.delete({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `force` | `boolean` | No | Required to be true, as resource does not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### shippingClasses.get
+
+`products.shippingClasses.get`
+
+Get one shipping class
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.shippingClasses.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### shippingClasses.list
+
+`products.shippingClasses.list`
+
+List the shipping classes of a product, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.shippingClasses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific ids. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. Applies to hierarchical taxonomies only. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `id \| include \| name \| slug \| term_group \| description \| count` | No | Sort collection by resource attribute. |
+| `hide_empty` | `boolean` | No | Whether to hide resources not assigned to any products. |
+| `parent` | `number` | No | Limit result set to resources assigned to a specific parent. Applies to hierarchical taxonomies only. |
+| `product` | `number` | No | Limit result set to resources assigned to a specific product. |
+| `slug` | `string \| string[]` | No | Limit result set to resources with a specific slug. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### shippingClasses.suggestSlug
+
+`products.shippingClasses.suggestSlug`
+
+Suggest a unique slug for a new shipping class name
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.shippingClasses.suggestSlug({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | Shipping class name. |
+| `slug` | `string` | No | An alphanumeric identifier for the resource unique to its type. |
+| `description` | `string` | No | HTML description of the resource. |
+
+
+
+**Output:** `string \| number`
+
+
+---
+
+### shippingClasses.update
+
+`products.shippingClasses.update`
+
+Update a shipping class: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.shippingClasses.update({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `name` | `string` | No | Shipping class name. |
+| `slug` | `string` | No | An alphanumeric identifier for the resource unique to its type. |
+| `description` | `string` | No | HTML description of the resource. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### suggested
+
+`products.suggested`
+
+List products suggested for a product by shared categories and tags
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.suggested({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `after` | `string` | No | Limit response to resources published after a given ISO8601 compliant date. |
+| `before` | `string` | No | Limit response to resources published before a given ISO8601 compliant date. |
+| `modified_after` | `string` | No | Limit response to resources modified after a given ISO8601 compliant date. |
+| `modified_before` | `string` | No | Limit response to resources modified before a given ISO8601 compliant date. |
+| `dates_are_gmt` | `boolean` | No | Whether to consider GMT post dates when limiting response by published or modified date. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific ids. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `date \| id \| include \| title \| slug \| modified \| popularity \| rating \| post__in \| price \| sales \| menu_order \| random` | No | Sort collection by object attribute. |
+| `parent` | `number[]` | No | Limit result set to those of particular parent IDs. |
+| `parent_exclude` | `number[]` | No | Limit result set to all items except those of a particular parent ID. |
+| `brand` | `string` | No | Limit result set to products assigned a specific brand ID. |
+| `slug` | `string` | No | Limit result set to products with a specific slug. |
+| `status` | `any \| future \| trash \| draft \| pending \| private \| publish` | No | Limit result set to products assigned a specific status. |
+| `type` | `simple \| grouped \| external \| variable` | No | Limit result set to products assigned a specific type. |
+| `sku` | `string` | No | Limit result set to products with specific SKU(s). Use commas to separate. |
+| `featured` | `boolean` | No | Limit result set to featured products. |
+| `category` | `string` | No | Limit result set to products assigned a specific category ID. |
+| `tag` | `string` | No | Limit result set to products assigned a specific tag ID. |
+| `shipping_class` | `string` | No | Limit result set to products assigned a specific shipping class ID. |
+| `attribute` | `string` | No | Limit result set to products with a specific attribute. Use the taxonomy name/attribute slug. |
+| `attribute_term` | `string` | No | Limit result set to products with a specific attribute term ID (required an assigned attribute). |
+| `in_stock` | `boolean` | No | Limit result set to products in stock or out of stock. |
+| `on_sale` | `boolean` | No | Limit result set to products on sale. |
+| `min_price` | `string` | No | Limit result set to products based on a minimum price. |
+| `max_price` | `string` | No | Limit result set to products based on a maximum price. |
+| `include_meta` | `string[]` | No | Limit meta_data to specific keys. |
+| `exclude_meta` | `string[]` | No | Ensure meta_data excludes specific keys. |
+| `image_size` | `string` | No | Image size to return. Accepts any registered WordPress image size. |
+| `categories` | `number[]` | No | Limit result set to specific product category ids. |
+| `tags` | `number[]` | No | Limit result set to specific product tag ids. |
+| `limit` | `number` | No | Limit result set to specific amount of suggested products. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### tags.batch
+
+`products.tags.batch`
+
+Create, update and delete up to 100 product tags in one call
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.products.tags.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `create` | `Record<string, any>[]` | No | Records to create, each with the same fields as the create operation. |
+| `update` | `Record<string, any>[]` | No | Records to update, each with its `id` (settings: `id` and `value`) and the fields to change. |
+| `delete` | `number[]` | No | Ids of records to delete (permanently). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### tags.create
+
+`products.tags.create`
+
+Create a product tag for a product
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.tags.create({ name: 'Example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name for the resource. |
+| `slug` | `string` | No | An alphanumeric identifier for the resource unique to its type. |
+| `description` | `string` | No | HTML description of the resource. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### tags.delete
+
+`products.tags.delete`
+
+Delete a product tag (WooCommerce needs force true)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.products.tags.delete({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `force` | `boolean` | No | Required to be true, as resource does not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### tags.get
+
+`products.tags.get`
+
+Get one product tag
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.tags.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### tags.list
+
+`products.tags.list`
+
+List the product tags of a product, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific ids. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. Applies to hierarchical taxonomies only. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `id \| include \| name \| slug \| term_group \| description \| count` | No | Sort collection by resource attribute. |
+| `hide_empty` | `boolean` | No | Whether to hide resources not assigned to any products. |
+| `parent` | `number` | No | Limit result set to resources assigned to a specific parent. Applies to hierarchical taxonomies only. |
+| `product` | `number` | No | Limit result set to resources assigned to a specific product. |
+| `slug` | `string \| string[]` | No | Limit result set to resources with a specific slug. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### tags.update
+
+`products.tags.update`
+
+Update a product tag: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.tags.update({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `name` | `string` | No | Tag name. |
+| `slug` | `string` | No | An alphanumeric identifier for the resource unique to its type. |
+| `description` | `string` | No | HTML description of the resource. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### update
+
+`products.update`
+
+Update a product: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.update({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `name` | `string` | No | Product name. |
+| `slug` | `string` | No | Product slug. |
+| `date_created` | `string \| null` | No | The date the product was created, in the site's timezone. |
+| `date_created_gmt` | `string \| null` | No | The date the product was created, as GMT. |
+| `type` | `simple \| grouped \| external \| variable` | No | Product type. |
+| `status` | `draft \| pending \| private \| publish \| future \| auto-draft \| trash` | No | Product status (post status). |
+| `featured` | `boolean` | No | Featured product. |
+| `catalog_visibility` | `visible \| catalog \| search \| hidden` | No | Catalog visibility. |
+| `description` | `string` | No | Product description. |
+| `short_description` | `string` | No | Product short description. |
+| `sku` | `string` | No | Stock Keeping Unit. |
+| `global_unique_id` | `string` | No | GTIN, UPC, EAN or ISBN. |
+| `regular_price` | `string` | No | Product regular price. |
+| `sale_price` | `string` | No | Product sale price. |
+| `date_on_sale_from` | `string \| null` | No | Start date of sale price, in the site's timezone. |
+| `date_on_sale_from_gmt` | `string \| null` | No | Start date of sale price, as GMT. |
+| `date_on_sale_to` | `string \| null` | No | End date of sale price, in the site's timezone. |
+| `date_on_sale_to_gmt` | `string \| null` | No | End date of sale price, in the site's timezone. |
+| `virtual` | `boolean` | No | If the product is virtual. |
+| `downloadable` | `boolean` | No | If the product is downloadable. |
+| `downloads` | `object[]` | No | List of downloadable files. |
+| `download_limit` | `number` | No | Number of times downloadable files can be downloaded after purchase. |
+| `download_expiry` | `number` | No | Number of days until access to downloadable files expires. |
+| `external_url` | `string` | No | Product external URL. Only for external products. |
+| `button_text` | `string` | No | Product external button text. Only for external products. |
+| `tax_status` | `taxable \| shipping \| none` | No | Tax status. |
+| `tax_class` | `string` | No | Tax class. |
+| `manage_stock` | `boolean` | No | Stock management at product level. |
+| `stock_quantity` | `number` | No | Stock quantity. |
+| `stock_status` | `instock \| outofstock \| onbackorder` | No | Controls the stock status of the product. |
+| `backorders` | `no \| notify \| yes` | No | If managing stock, this controls if backorders are allowed. |
+| `low_stock_amount` | `number \| null` | No | Low Stock amount for the product. |
+| `sold_individually` | `boolean` | No | Allow one item to be bought in a single order. |
+| `weight` | `string` | No | Product weight (lbs). |
+| `dimensions` | `object` | No | Product dimensions. |
+| `shipping_class` | `string` | No | Shipping class slug. |
+| `reviews_allowed` | `boolean` | No | Allow reviews. |
+| `post_password` | `string` | No | Post password. |
+| `upsell_ids` | `number[]` | No | List of up-sell products IDs. |
+| `cross_sell_ids` | `number[]` | No | List of cross-sell products IDs. |
+| `parent_id` | `number` | No | Product parent ID. |
+| `purchase_note` | `string` | No | Optional note to send the customer after purchase. |
+| `categories` | `object[]` | No | List of categories. |
+| `brands` | `object[]` | No | List of brands. |
+| `tags` | `object[]` | No | List of tags. |
+| `images` | `object[]` | No | List of images. |
+| `attributes` | `object[]` | No | List of attributes. |
+| `default_attributes` | `object[]` | No | Defaults variation attributes. |
+| `menu_order` | `number` | No | Menu order, used to custom sort products. |
+| `meta_data` | `object[]` | No | Meta data. |
+| `customs_commodity_code` | `string \| null` | No | Customs commodity code containing 6 to 14 digits. Punctuation and spaces are removed. |
+| `customs_country_of_origin` | `string \| null` | No | Two-letter country of origin code. |
+| `customs_description` | `string \| null` | No | Plain-text customs description, up to 35 characters, without emoji or special symbols such as ™. |
+
+<AccordionGroup>
+<Accordion title="downloads full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  file?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="dimensions full type">
+
+```ts
+{
+  length?: string,
+  width?: string,
+  height?: string
+}
+```
+</Accordion>
+
+<Accordion title="categories full type">
+
+```ts
+{
+  id?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="brands full type">
+
+```ts
+{
+  id?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+  id?: number,
+  src?: string,
+  name?: string,
+  alt?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="attributes full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  position?: number,
+  visible?: boolean,
+  variation?: boolean,
+  options?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="default_attributes full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  option?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta_data full type">
+
+```ts
+{
+  key?: string,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### variations.batch
+
+`products.variations.batch`
+
+Create, update and delete up to 100 variations in one call
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.products.variations.batch({ product_id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `number` | Yes | Unique identifier for the variable product. |
+| `create` | `Record<string, any>[]` | No | Records to create, each with the same fields as the create operation. |
+| `update` | `Record<string, any>[]` | No | Records to update, each with its `id` (settings: `id` and `value`) and the fields to change. |
+| `delete` | `number[]` | No | Ids of records to delete (permanently). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### variations.create
+
+`products.variations.create`
+
+Create a variation for a product
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.variations.create({
+	product_id: 42,
+	regular_price: '49.00',
+	attributes: [{ id: 1, option: 'Large' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `number` | Yes | Unique identifier for the variable product. |
+| `description` | `string` | No | Variation description. |
+| `sku` | `string` | No | Stock Keeping Unit. |
+| `global_unique_id` | `string` | No | GTIN, UPC, EAN or ISBN. |
+| `regular_price` | `string` | No | Variation regular price. |
+| `sale_price` | `string` | No | Variation sale price. |
+| `date_on_sale_from` | `string \| null` | No | Start date of sale price, in the site's timezone. |
+| `date_on_sale_from_gmt` | `string \| null` | No | Start date of sale price, as GMT. |
+| `date_on_sale_to` | `string \| null` | No | End date of sale price, in the site's timezone. |
+| `date_on_sale_to_gmt` | `string \| null` | No | End date of sale price, in the site's timezone. |
+| `status` | `draft \| pending \| private \| publish` | No | Variation status. |
+| `virtual` | `boolean` | No | If the variation is virtual. |
+| `downloadable` | `boolean` | No | If the variation is downloadable. |
+| `downloads` | `object[]` | No | List of downloadable files. |
+| `download_limit` | `number` | No | Number of times downloadable files can be downloaded after purchase. |
+| `download_expiry` | `number` | No | Number of days until access to downloadable files expires. |
+| `tax_status` | `taxable \| shipping \| none` | No | Tax status. |
+| `tax_class` | `string` | No | Tax class. |
+| `manage_stock` | `boolean \| string` | No | Stock management at variation level. |
+| `stock_quantity` | `number` | No | Stock quantity. |
+| `stock_status` | `instock \| outofstock \| onbackorder` | No | Controls the stock status of the product. |
+| `backorders` | `no \| notify \| yes` | No | If managing stock, this controls if backorders are allowed. |
+| `low_stock_amount` | `number \| null` | No | Low Stock amount for the variation. |
+| `weight` | `string` | No | Variation weight (lbs). |
+| `dimensions` | `object` | No | Variation dimensions. |
+| `shipping_class` | `string` | No | Shipping class slug. |
+| `image` | `object` | No | Variation image data. |
+| `gallery_image_ids` | `number[]` | No | Variation gallery image IDs, excluding the featured image (which is set via "image"). Mirrors how galleries work on parent products. |
+| `attributes` | `object[]` | No | List of attributes. |
+| `menu_order` | `number` | No | Menu order, used to custom sort products. |
+| `meta_data` | `object[]` | No | Meta data. |
+| `customs_commodity_code` | `string \| null` | No | Customs commodity code containing 6 to 14 digits. Punctuation and spaces are removed. In view context, an empty value inherits the parent value; in edit context, only the stored value is returned (null when inherited). |
+| `customs_country_of_origin` | `string \| null` | No | Two-letter country of origin code. In view context, an empty value inherits the parent value; in edit context, only the stored value is returned (null when inherited). |
+| `customs_description` | `string \| null` | No | Plain-text customs description, up to 35 characters, without emoji or special symbols such as ™. In view context, an empty value inherits the parent value; in edit context, only the stored value is returned (null when inherited). |
+
+<AccordionGroup>
+<Accordion title="downloads full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  file?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="dimensions full type">
+
+```ts
+{
+  length?: string,
+  width?: string,
+  height?: string
+}
+```
+</Accordion>
+
+<Accordion title="image full type">
+
+```ts
+{
+  id?: number,
+  src?: string,
+  name?: string,
+  alt?: string
+}
+```
+</Accordion>
+
+<Accordion title="attributes full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  option?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta_data full type">
+
+```ts
+{
+  key?: string,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### variations.delete
+
+`products.variations.delete`
+
+Delete a variation; without force true it goes to the trash
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.products.variations.delete({ product_id: 42, id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `number` | Yes | Unique identifier for the variable product. |
+| `id` | `number` | Yes | Unique identifier for the variation. |
+| `force` | `boolean` | No | Whether to bypass trash and force deletion. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### variations.generate
+
+`products.variations.generate`
+
+Create every missing variation from a variable product's attributes
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.variations.generate({ product_id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `number` | Yes | Unique identifier for the variable product. |
+| `delete` | `boolean` | No | Deletes unused variations. |
+| `default_values` | `object` | No | Default values for generated variations. |
+| `description` | `string` | No | Variation description. |
+| `sku` | `string` | No | Stock Keeping Unit. |
+| `global_unique_id` | `string` | No | GTIN, UPC, EAN or ISBN. |
+| `regular_price` | `string` | No | Variation regular price. |
+| `sale_price` | `string` | No | Variation sale price. |
+| `date_on_sale_from` | `string \| null` | No | Start date of sale price, in the site's timezone. |
+| `date_on_sale_from_gmt` | `string \| null` | No | Start date of sale price, as GMT. |
+| `date_on_sale_to` | `string \| null` | No | End date of sale price, in the site's timezone. |
+| `date_on_sale_to_gmt` | `string \| null` | No | End date of sale price, in the site's timezone. |
+| `status` | `draft \| pending \| private \| publish` | No | Variation status. |
+| `virtual` | `boolean` | No | If the variation is virtual. |
+| `downloadable` | `boolean` | No | If the variation is downloadable. |
+| `downloads` | `object[]` | No | List of downloadable files. |
+| `download_limit` | `number` | No | Number of times downloadable files can be downloaded after purchase. |
+| `download_expiry` | `number` | No | Number of days until access to downloadable files expires. |
+| `tax_status` | `taxable \| shipping \| none` | No | Tax status. |
+| `tax_class` | `string` | No | Tax class. |
+| `manage_stock` | `boolean \| string` | No | Stock management at variation level. |
+| `stock_quantity` | `number` | No | Stock quantity. |
+| `stock_status` | `instock \| outofstock \| onbackorder` | No | Controls the stock status of the product. |
+| `backorders` | `no \| notify \| yes` | No | If managing stock, this controls if backorders are allowed. |
+| `low_stock_amount` | `number \| null` | No | Low Stock amount for the variation. |
+| `weight` | `string` | No | Variation weight (lbs). |
+| `dimensions` | `object` | No | Variation dimensions. |
+| `shipping_class` | `string` | No | Shipping class slug. |
+| `image` | `object` | No | Variation image data. |
+| `gallery_image_ids` | `number[]` | No | Variation gallery image IDs, excluding the featured image (which is set via "image"). Mirrors how galleries work on parent products. |
+| `attributes` | `object[]` | No | List of attributes. |
+| `menu_order` | `number` | No | Menu order, used to custom sort products. |
+| `meta_data` | `object[]` | No | Meta data. |
+| `customs_commodity_code` | `string \| null` | No | Customs commodity code containing 6 to 14 digits. Punctuation and spaces are removed. In view context, an empty value inherits the parent value; in edit context, only the stored value is returned (null when inherited). |
+| `customs_country_of_origin` | `string \| null` | No | Two-letter country of origin code. In view context, an empty value inherits the parent value; in edit context, only the stored value is returned (null when inherited). |
+| `customs_description` | `string \| null` | No | Plain-text customs description, up to 35 characters, without emoji or special symbols such as ™. In view context, an empty value inherits the parent value; in edit context, only the stored value is returned (null when inherited). |
+
+<AccordionGroup>
+<Accordion title="default_values full type">
+
+```ts
+{
+  description?: string,
+  sku?: string,
+  global_unique_id?: string,
+  regular_price?: string,
+  sale_price?: string,
+  date_on_sale_from?: string | null,
+  date_on_sale_from_gmt?: string | null,
+  date_on_sale_to?: string | null,
+  date_on_sale_to_gmt?: string | null,
+  status?: draft | pending | private | publish,
+  virtual?: boolean,
+  downloadable?: boolean,
+  downloads?: {
+    id?: string,
+    name?: string,
+    file?: string
+  }[],
+  download_limit?: number,
+  download_expiry?: number,
+  tax_status?: taxable | shipping | none,
+  tax_class?: string,
+  manage_stock?: boolean | string,
+  stock_quantity?: number,
+  stock_status?: instock | outofstock | onbackorder,
+  backorders?: no | notify | yes,
+  low_stock_amount?: number | null,
+  weight?: string,
+  dimensions?: {
+    length?: string,
+    width?: string,
+    height?: string
+  },
+  shipping_class?: string,
+  image?: {
+    id?: number,
+    src?: string,
+    name?: string,
+    alt?: string
+  },
+  gallery_image_ids?: number[],
+  attributes?: {
+    id?: number,
+    name?: string,
+    option?: string
+  }[],
+  menu_order?: number,
+  meta_data?: {
+    key?: string,
+    value?: any
+  }[],
+  customs_commodity_code?: string | null,
+  customs_country_of_origin?: string | null,
+  customs_description?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="downloads full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  file?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="dimensions full type">
+
+```ts
+{
+  length?: string,
+  width?: string,
+  height?: string
+}
+```
+</Accordion>
+
+<Accordion title="image full type">
+
+```ts
+{
+  id?: number,
+  src?: string,
+  name?: string,
+  alt?: string
+}
+```
+</Accordion>
+
+<Accordion title="attributes full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  option?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta_data full type">
+
+```ts
+{
+  key?: string,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### variations.get
+
+`products.variations.get`
+
+Get one variation
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.variations.get({ product_id: 42, id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `number` | Yes | Unique identifier for the variable product. |
+| `id` | `number` | Yes | Unique identifier for the variation. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `image_size` | `string` | No | Image size to return. Accepts any registered WordPress image size. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### variations.list
+
+`products.variations.list`
+
+List the variations of a product, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.products.variations.list({ product_id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `number` | Yes | Unique identifier for the variable product. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `after` | `string` | No | Limit response to resources published after a given ISO8601 compliant date. |
+| `before` | `string` | No | Limit response to resources published before a given ISO8601 compliant date. |
+| `modified_after` | `string` | No | Limit response to resources modified after a given ISO8601 compliant date. |
+| `modified_before` | `string` | No | Limit response to resources modified before a given ISO8601 compliant date. |
+| `dates_are_gmt` | `boolean` | No | Whether to consider GMT post dates when limiting response by published or modified date. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific ids. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `date \| id \| include \| title \| slug \| modified \| menu_order` | No | Sort collection by object attribute. |
+| `parent` | `number[]` | No | Limit result set to those of particular parent IDs. |
+| `parent_exclude` | `number[]` | No | Limit result set to all items except those of a particular parent ID. |
+| `slug` | `string` | No | Limit result set to products with a specific slug. |
+| `status` | `any \| future \| trash \| draft \| pending \| private \| publish` | No | Limit result set to products assigned a specific status. |
+| `sku` | `string` | No | Limit result set to products with specific SKU(s). Use commas to separate. |
+| `on_sale` | `boolean` | No | Limit result set to products on sale. |
+| `min_price` | `string` | No | Limit result set to products based on a minimum price. |
+| `max_price` | `string` | No | Limit result set to products based on a maximum price. |
+| `include_meta` | `string[]` | No | Limit meta_data to specific keys. |
+| `exclude_meta` | `string[]` | No | Ensure meta_data excludes specific keys. |
+| `image_size` | `string` | No | Use a specific registered image size for the returned variation image src. Falls back to the full size if the requested size is not registered. |
+| `stock_status` | `instock \| outofstock \| onbackorder` | No | Limit result set to products with specified stock status. |
+| `has_price` | `boolean` | No | Limit result set to products with or without price. |
+| `attributes` | `object[]` | No | Limit result set to products with specified attributes. |
+| `virtual` | `boolean` | No | Limit result set to virtual product variations. |
+| `downloadable` | `boolean` | No | Limit result set to downloadable product variations. |
+| `include_status` | `(any \| future \| trash \| draft \| pending \| private \| publish)[]` | No | Limit result set to product variations with any of the statuses. |
+| `exclude_status` | `(future \| trash \| draft \| pending \| private \| publish)[]` | No | Exclude product variations with any of the statuses from result set. |
+| `pos_products_only` | `boolean` | No | Limit result set to variations visible in Point of Sale. |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  attribute?: string,
+  term?: string,
+  terms?: any[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### variations.update
+
+`products.variations.update`
+
+Update a variation: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.products.variations.update({ product_id: 42, id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `number` | Yes | Unique identifier for the variable product. |
+| `id` | `number` | Yes | Unique identifier for the variation. |
+| `description` | `string` | No | Variation description. |
+| `sku` | `string` | No | Stock Keeping Unit. |
+| `global_unique_id` | `string` | No | GTIN, UPC, EAN or ISBN. |
+| `regular_price` | `string` | No | Variation regular price. |
+| `sale_price` | `string` | No | Variation sale price. |
+| `date_on_sale_from` | `string \| null` | No | Start date of sale price, in the site's timezone. |
+| `date_on_sale_from_gmt` | `string \| null` | No | Start date of sale price, as GMT. |
+| `date_on_sale_to` | `string \| null` | No | End date of sale price, in the site's timezone. |
+| `date_on_sale_to_gmt` | `string \| null` | No | End date of sale price, in the site's timezone. |
+| `status` | `draft \| pending \| private \| publish` | No | Variation status. |
+| `virtual` | `boolean` | No | If the variation is virtual. |
+| `downloadable` | `boolean` | No | If the variation is downloadable. |
+| `downloads` | `object[]` | No | List of downloadable files. |
+| `download_limit` | `number` | No | Number of times downloadable files can be downloaded after purchase. |
+| `download_expiry` | `number` | No | Number of days until access to downloadable files expires. |
+| `tax_status` | `taxable \| shipping \| none` | No | Tax status. |
+| `tax_class` | `string` | No | Tax class. |
+| `manage_stock` | `boolean \| string` | No | Stock management at variation level. |
+| `stock_quantity` | `number` | No | Stock quantity. |
+| `stock_status` | `instock \| outofstock \| onbackorder` | No | Controls the stock status of the product. |
+| `backorders` | `no \| notify \| yes` | No | If managing stock, this controls if backorders are allowed. |
+| `low_stock_amount` | `number \| null` | No | Low Stock amount for the variation. |
+| `weight` | `string` | No | Variation weight (lbs). |
+| `dimensions` | `object` | No | Variation dimensions. |
+| `shipping_class` | `string` | No | Shipping class slug. |
+| `image` | `object` | No | Variation image data. |
+| `gallery_image_ids` | `number[]` | No | Variation gallery image IDs, excluding the featured image (which is set via "image"). Mirrors how galleries work on parent products. |
+| `attributes` | `object[]` | No | List of attributes. |
+| `menu_order` | `number` | No | Menu order, used to custom sort products. |
+| `meta_data` | `object[]` | No | Meta data. |
+| `customs_commodity_code` | `string \| null` | No | Customs commodity code containing 6 to 14 digits. Punctuation and spaces are removed. In view context, an empty value inherits the parent value; in edit context, only the stored value is returned (null when inherited). |
+| `customs_country_of_origin` | `string \| null` | No | Two-letter country of origin code. In view context, an empty value inherits the parent value; in edit context, only the stored value is returned (null when inherited). |
+| `customs_description` | `string \| null` | No | Plain-text customs description, up to 35 characters, without emoji or special symbols such as ™. In view context, an empty value inherits the parent value; in edit context, only the stored value is returned (null when inherited). |
+
+<AccordionGroup>
+<Accordion title="downloads full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  file?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="dimensions full type">
+
+```ts
+{
+  length?: string,
+  width?: string,
+  height?: string
+}
+```
+</Accordion>
+
+<Accordion title="image full type">
+
+```ts
+{
+  id?: number,
+  src?: string,
+  name?: string,
+  alt?: string
+}
+```
+</Accordion>
+
+<Accordion title="attributes full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  option?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta_data full type">
+
+```ts
+{
+  key?: string,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Refunds
+
+### list
+
+`refunds.list`
+
+List refunds across all orders, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.refunds.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `after` | `string` | No | Limit response to resources published after a given ISO8601 compliant date. |
+| `before` | `string` | No | Limit response to resources published before a given ISO8601 compliant date. |
+| `modified_after` | `string` | No | Limit response to resources modified after a given ISO8601 compliant date. |
+| `modified_before` | `string` | No | Limit response to resources modified before a given ISO8601 compliant date. |
+| `dates_are_gmt` | `boolean` | No | Whether to consider GMT post dates when limiting response by published or modified date. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific ids. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `date \| id \| include \| title \| slug \| modified` | No | Sort collection by object attribute. |
+| `parent` | `number[]` | No | Limit result set to those of particular parent IDs. |
+| `parent_exclude` | `number[]` | No | Limit result set to all items except those of a particular parent ID. |
+| `dp` | `number` | No | Number of decimal points to use in each resource. |
+| `order_item_display_meta` | `boolean` | No | Only show meta which is meant to be displayed for an order. |
+| `include_meta` | `string[]` | No | Limit meta_data to specific keys. |
+| `exclude_meta` | `string[]` | No | Ensure meta_data excludes specific keys. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+## Reports
+
+### couponTotals
+
+`reports.couponTotals`
+
+Get coupon totals by type
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.reports.couponTotals({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### customerTotals
+
+`reports.customerTotals`
+
+Get customer totals (paying and non-paying)
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.reports.customerTotals({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### list
+
+`reports.list`
+
+List the available reports
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.reports.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### orderTotals
+
+`reports.orderTotals`
+
+Get order totals by status
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.reports.orderTotals({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### productTotals
+
+`reports.productTotals`
+
+Get product totals by type
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.reports.productTotals({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### reviewTotals
+
+`reports.reviewTotals`
+
+Get review totals by rating
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.reports.reviewTotals({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### sales
+
+`reports.sales`
+
+Get the sales report (gross and net sales, orders, items, tax, shipping, discounts) for a period or date range
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.reports.sales({ period: 'month' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view` | No | Scope under which the request is made; determines fields present in response. |
+| `period` | `week \| month \| last_month \| year` | No | Report period. |
+| `date_min` | `string` | No | Return sales for a specific start date, the date need to be in the YYYY-MM-DD format. |
+| `date_max` | `string` | No | Return sales for a specific end date, the date need to be in the YYYY-MM-DD format. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### topSellers
+
+`reports.topSellers`
+
+Get the top-selling products for a period or date range
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.reports.topSellers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view` | No | Scope under which the request is made; determines fields present in response. |
+| `period` | `week \| month \| last_month \| year` | No | Report period. |
+| `date_min` | `string` | No | Return sales for a specific start date, the date need to be in the YYYY-MM-DD format. |
+| `date_max` | `string` | No | Return sales for a specific end date, the date need to be in the YYYY-MM-DD format. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+## Settings
+
+### batch
+
+`settings.batch`
+
+Update several settings of a group in one call
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.settings.batch({ group_id: 'general' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | Settings group id (`general`, `products`, `tax`, `shipping`, `checkout`, `account`, `email`, `advanced` ...). |
+| `create` | `Record<string, any>[]` | No | Records to create, each with the same fields as the create operation. |
+| `update` | `Record<string, any>[]` | No | Records to update, each with its `id` (settings: `id` and `value`) and the fields to change. |
+| `delete` | `number[]` | No | Ids of records to delete (permanently). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### batchAll
+
+`settings.batchAll`
+
+Update settings across groups in one call
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.settings.batchAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `create` | `Record<string, any>[]` | No | Records to create, each with the same fields as the create operation. |
+| `update` | `Record<string, any>[]` | No | Records to update, each with its `id` (settings: `id` and `value`) and the fields to change. |
+| `delete` | `number[]` | No | Ids of records to delete (permanently). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### get
+
+`settings.get`
+
+Get one setting
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.settings.get({ group_id: 'general', id: '42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | Settings group id (`general`, `products`, `tax`, `shipping`, `checkout`, `account`, `email`, `advanced` ...). |
+| `id` | `string` | Yes | Unique identifier for the resource. |
+| `group` | `string` | No | Settings group ID. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### groups
+
+`settings.groups`
+
+List the settings groups (general, products, tax, shipping, checkout, account, email, advanced ...)
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.settings.groups({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### list
+
+`settings.list`
+
+List every setting in a group with its value, type and options
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.settings.list({ group_id: 'general' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | Settings group id (`general`, `products`, `tax`, `shipping`, `checkout`, `account`, `email`, `advanced` ...). |
+| `group` | `string` | No | Settings group ID. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### update
+
+`settings.update`
+
+Update one setting value
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.settings.update({ group_id: 'general', id: 'woocommerce_currency', value: 'EUR' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | Settings group id (`general`, `products`, `tax`, `shipping`, `checkout`, `account`, `email`, `advanced` ...). |
+| `id` | `string` | Yes | Unique identifier for the resource. |
+| `group` | `string` | No | Settings group ID. |
+| `value` | `any` | No | Setting value. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Shipping
+
+### zones.create
+
+`shipping.zones.create`
+
+Create a shipping zone
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.shipping.zones.create({ name: 'Example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Shipping zone name. |
+| `order` | `number` | No | Shipping zone order. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### zones.delete
+
+`shipping.zones.delete`
+
+Delete a shipping zone (WooCommerce needs force true)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.shipping.zones.delete({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique ID for the resource. |
+| `force` | `boolean` | No | Whether to bypass trash and force deletion. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### zones.get
+
+`shipping.zones.get`
+
+Get one shipping zone
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.shipping.zones.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique ID for the resource. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### zones.list
+
+`shipping.zones.list`
+
+List shipping zones
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.shipping.zones.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### zones.locations.list
+
+`shipping.zones.locations.list`
+
+List zone locations
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.shipping.zones.locations.list({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique ID for the resource. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### zones.locations.replace
+
+`shipping.zones.locations.replace`
+
+Replace every location (country, state, postcode) of a shipping zone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.shipping.zones.locations.replace({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique ID for the resource. |
+| `code` | `string` | No | Shipping zone location code. |
+| `type` | `postcode \| state \| country \| continent` | No | Shipping zone location type. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### zones.methods.create
+
+`shipping.zones.methods.create`
+
+Create a shipping method
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.shipping.zones.methods.create({ zone_id: 1, method_id: 'flat_rate' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `number` | Yes | Unique ID for the zone. |
+| `order` | `number` | No | Shipping method sort order. |
+| `enabled` | `boolean` | No | Shipping method enabled status. |
+| `settings` | `object` | No | Shipping method settings. |
+| `method_id` | `any` | Yes | Shipping method ID. |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  value?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### zones.methods.delete
+
+`shipping.zones.methods.delete`
+
+Delete a shipping method (WooCommerce needs force true)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.shipping.zones.methods.delete({ zone_id: 1, instance_id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `number` | Yes | Unique ID for the zone. |
+| `instance_id` | `number` | Yes | Unique ID for the instance. |
+| `force` | `boolean` | No | Whether to bypass trash and force deletion. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### zones.methods.get
+
+`shipping.zones.methods.get`
+
+Get one shipping method
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.shipping.zones.methods.get({ zone_id: 1, instance_id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `number` | Yes | Unique ID for the zone. |
+| `instance_id` | `number` | Yes | Unique ID for the instance. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### zones.methods.list
+
+`shipping.zones.methods.list`
+
+List shipping methods
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.shipping.zones.methods.list({ zone_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `number` | Yes | Unique ID for the zone. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### zones.methods.update
+
+`shipping.zones.methods.update`
+
+Update a shipping method: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.shipping.zones.methods.update({ zone_id: 1, instance_id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zone_id` | `number` | Yes | Unique ID for the zone. |
+| `instance_id` | `number` | Yes | Unique ID for the instance. |
+| `order` | `number` | No | Shipping method sort order. |
+| `enabled` | `boolean` | No | Shipping method enabled status. |
+| `settings` | `object` | No | Shipping method settings. |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  value?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### zones.update
+
+`shipping.zones.update`
+
+Update a shipping zone: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.shipping.zones.update({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique ID for the resource. |
+| `name` | `string` | No | Shipping zone name. |
+| `order` | `number` | No | Shipping zone order. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Shipping Methods
+
+### get
+
+`shippingMethods.get`
+
+Get one shipping method type
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.shippingMethods.get({ id: '42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier for the resource. |
+| `context` | `view` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`shippingMethods.list`
+
+List shipping method types
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.shippingMethods.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+## System Status
+
+### get
+
+`systemStatus.get`
+
+Get the system status report: environment, database, active plugins, theme, settings, pages and security
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.systemStatus.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### tools.get
+
+`systemStatus.tools.get`
+
+Get one system status tool
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.systemStatus.tools.get({ id: '42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier for the resource. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### tools.list
+
+`systemStatus.tools.list`
+
+List system status tools
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.systemStatus.tools.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### tools.run
+
+`systemStatus.tools.run`
+
+Run a system status tool (clear transients, regenerate product lookup tables, delete orphaned variations ...)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.systemStatus.tools.run({ id: '42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | A unique identifier for the tool. |
+| `name` | `string` | No | Tool name. |
+| `action` | `string` | No | What running the tool will do. |
+| `description` | `string` | No | Tool description. |
+| `success` | `boolean` | No | Did the tool run successfully? |
+| `message` | `string` | No | Tool return message. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Taxes
+
+### batch
+
+`taxes.batch`
+
+Create, update and delete up to 100 tax rates in one call
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.taxes.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `create` | `Record<string, any>[]` | No | Records to create, each with the same fields as the create operation. |
+| `update` | `Record<string, any>[]` | No | Records to update, each with its `id` (settings: `id` and `value`) and the fields to change. |
+| `delete` | `number[]` | No | Ids of records to delete (permanently). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### classes.create
+
+`taxes.classes.create`
+
+Create a tax class for a tax rate
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.taxes.classes.create({ name: 'Example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Tax class name. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### classes.delete
+
+`taxes.classes.delete`
+
+Delete a tax class (WooCommerce needs force true)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.taxes.classes.delete({ slug: 'reduced-rate' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | Unique slug for the resource. |
+| `force` | `boolean` | No | Required to be true, as resource does not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### classes.get
+
+`taxes.classes.get`
+
+Get one tax class
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.taxes.classes.get({ slug: 'reduced-rate' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | Unique slug for the resource. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### classes.list
+
+`taxes.classes.list`
+
+List the tax classes of a tax rate
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.taxes.classes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### create
+
+`taxes.create`
+
+Create a tax rate
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.taxes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | No | Country ISO 3166 code. |
+| `state` | `string` | No | State code. |
+| `postcode` | `string` | No | Postcode/ZIP, it doesn't support multiple values. Deprecated as of WooCommerce 5.3, 'postcodes' should be used instead. |
+| `city` | `string` | No | City name, it doesn't support multiple values. Deprecated as of WooCommerce 5.3, 'cities' should be used instead. |
+| `rate` | `string` | No | Tax rate. |
+| `name` | `string` | No | Tax rate name. |
+| `priority` | `number` | No | Tax priority. |
+| `compound` | `boolean` | No | Whether or not this is a compound rate. |
+| `shipping` | `boolean` | No | Whether or not this tax rate also gets applied to shipping. |
+| `order` | `number` | No | Indicates the order that will appear in queries. |
+| `class` | `standard \| reduced-rate \| zero-rate` | No | Tax class. |
+| `postcodes` | `string[]` | No | List of postcodes / ZIPs. Introduced in WooCommerce 5.3. |
+| `cities` | `string[]` | No | List of city names. Introduced in WooCommerce 5.3. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`taxes.delete`
+
+Delete a tax rate (WooCommerce needs force true)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.taxes.delete({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `force` | `boolean` | No | Required to be true, as resource does not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### get
+
+`taxes.get`
+
+Get one tax rate
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.taxes.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`taxes.list`
+
+List tax rates, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.taxes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `id \| order \| priority` | No | Sort collection by object attribute. |
+| `class` | `standard \| reduced-rate \| zero-rate` | No | Sort by tax class. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### update
+
+`taxes.update`
+
+Update a tax rate: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.taxes.update({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `country` | `string` | No | Country ISO 3166 code. |
+| `state` | `string` | No | State code. |
+| `postcode` | `string` | No | Postcode/ZIP, it doesn't support multiple values. Deprecated as of WooCommerce 5.3, 'postcodes' should be used instead. |
+| `city` | `string` | No | City name, it doesn't support multiple values. Deprecated as of WooCommerce 5.3, 'cities' should be used instead. |
+| `rate` | `string` | No | Tax rate. |
+| `name` | `string` | No | Tax rate name. |
+| `priority` | `number` | No | Tax priority. |
+| `compound` | `boolean` | No | Whether or not this is a compound rate. |
+| `shipping` | `boolean` | No | Whether or not this tax rate also gets applied to shipping. |
+| `order` | `number` | No | Indicates the order that will appear in queries. |
+| `class` | `standard \| reduced-rate \| zero-rate` | No | Tax class. |
+| `postcodes` | `string[]` | No | List of postcodes / ZIPs. Introduced in WooCommerce 5.3. |
+| `cities` | `string[]` | No | List of city names. Introduced in WooCommerce 5.3. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Variations
+
+### list
+
+`variations.list`
+
+List variations across all products, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.variations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `after` | `string` | No | Limit response to resources published after a given ISO8601 compliant date. |
+| `before` | `string` | No | Limit response to resources published before a given ISO8601 compliant date. |
+| `modified_after` | `string` | No | Limit response to resources modified after a given ISO8601 compliant date. |
+| `modified_before` | `string` | No | Limit response to resources modified before a given ISO8601 compliant date. |
+| `dates_are_gmt` | `boolean` | No | Whether to consider GMT post dates when limiting response by published or modified date. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific ids. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `date \| id \| include \| title \| slug \| modified \| menu_order` | No | Sort collection by object attribute. |
+| `parent` | `number[]` | No | Limit result set to those of particular parent IDs. |
+| `parent_exclude` | `number[]` | No | Limit result set to all items except those of a particular parent ID. |
+| `slug` | `string` | No | Limit result set to products with a specific slug. |
+| `status` | `any \| future \| trash \| draft \| pending \| private \| publish` | No | Limit result set to products assigned a specific status. |
+| `sku` | `string` | No | Limit result set to products with specific SKU(s). Use commas to separate. |
+| `on_sale` | `boolean` | No | Limit result set to products on sale. |
+| `min_price` | `string` | No | Limit result set to products based on a minimum price. |
+| `max_price` | `string` | No | Limit result set to products based on a maximum price. |
+| `include_meta` | `string[]` | No | Limit meta_data to specific keys. |
+| `exclude_meta` | `string[]` | No | Ensure meta_data excludes specific keys. |
+| `image_size` | `string` | No | Use a specific registered image size for the returned variation image src. Falls back to the full size if the requested size is not registered. |
+| `stock_status` | `instock \| outofstock \| onbackorder` | No | Limit result set to products with specified stock status. |
+| `has_price` | `boolean` | No | Limit result set to products with or without price. |
+| `attributes` | `object[]` | No | Limit result set to products with specified attributes. |
+| `virtual` | `boolean` | No | Limit result set to virtual product variations. |
+| `downloadable` | `boolean` | No | Limit result set to downloadable product variations. |
+| `include_status` | `(any \| future \| trash \| draft \| pending \| private \| publish)[]` | No | Limit result set to product variations with any of the statuses. |
+| `exclude_status` | `(future \| trash \| draft \| pending \| private \| publish)[]` | No | Exclude product variations with any of the statuses from result set. |
+| `pos_products_only` | `boolean` | No | Limit result set to variations visible in Point of Sale. |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  attribute?: string,
+  term?: string,
+  terms?: any[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+## Webhooks
+
+### batch
+
+`webhooks.batch`
+
+Create, update and delete up to 100 webhooks in one call
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.webhooks.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `create` | `Record<string, any>[]` | No | Records to create, each with the same fields as the create operation. |
+| `update` | `Record<string, any>[]` | No | Records to update, each with its `id` (settings: `id` and `value`) and the fields to change. |
+| `delete` | `number[]` | No | Ids of records to delete (permanently). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### create
+
+`webhooks.create`
+
+Create a webhook: a topic (order.created, product.updated, customer.deleted, coupon.restored or action.&lt;hook&gt;), a delivery URL and a secret. With a secret, the plugin's webhooks verify the deliveries
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.webhooks.create({
+	name: 'Order created',
+	topic: 'order.created',
+	delivery_url: 'https://example.com/hooks/corsair',
+	secret: 'a-long-random-secret',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | A friendly name for the webhook. |
+| `status` | `active \| paused \| disabled` | No | Webhook status. |
+| `topic` | `string` | Yes | Webhook topic. |
+| `secret` | `string` | No | Secret key used to generate a hash of the delivered webhook and provided in the request headers. This will default to a MD5 hash from the current user's ID\|username if not provided. |
+| `delivery_url` | `string` | Yes | Webhook delivery URL. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook (WooCommerce needs force true)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.woocommerce.api.webhooks.delete({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `force` | `boolean` | No | Required to be true, as resource does not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Get one webhook
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.webhooks.get({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhooks, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.woocommerce.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `after` | `string` | No | Limit response to resources published after a given ISO8601 compliant date. |
+| `before` | `string` | No | Limit response to resources published before a given ISO8601 compliant date. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific ids. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. Takes precedence over the page parameter. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `date \| id \| title` | No | Sort collection by object attribute. |
+| `status` | `all \| active \| paused \| disabled` | No | Limit result set to webhooks assigned a specific status. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a webhook: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.woocommerce.api.webhooks.update({ id: 42 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the resource. |
+| `name` | `string` | No | A friendly name for the webhook. |
+| `status` | `active \| paused \| disabled` | No | Webhook status. |
+| `topic` | `string` | No | Webhook topic. |
+| `secret` | `string` | No | Secret key used to generate a hash of the delivered webhook and provided in the request headers. This will default to a MD5 hash from the current user's ID\|username if not provided. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
