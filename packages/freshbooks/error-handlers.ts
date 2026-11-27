@@ -85,7 +85,12 @@ export function mergeErrorHandlers(
 	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
 	const { DEFAULT: userDefault, ...userRest } = user;
 	const fallback = userDefault ?? builtinDefault;
-	return fallback
-		? { ...builtinRest, ...userRest, DEFAULT: fallback }
-		: { ...builtinRest, ...userRest };
+	// Caller keys keep their positions first: core takes the first matching
+	// key in order, so a caller handler for a status no builtin covers would
+	// never run if builtin keys came first.
+	const merged: CorsairErrorHandler = { ...userRest };
+	for (const [name, entry] of Object.entries(builtinRest)) {
+		if (!(name in merged)) merged[name] = entry;
+	}
+	return fallback ? { ...merged, DEFAULT: fallback } : merged;
 }

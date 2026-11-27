@@ -6,8 +6,10 @@ import {
 	FreshBooksEndpointOutputSchemas as Outputs,
 } from './types';
 
-// Billable tasks live under the projects path inside the accounting API, and
-// unlike the other accounting resources they have no delete call at all.
+// Billable tasks live under the projects path inside the accounting API.
+// Their delete is the accounting-family soft delete (docs-only in the
+// research table; the docs example omits the vis_state body), sent as a PUT
+// with {"task": {"vis_state": 1}} like clients and estimates.
 const base = (accountId: string) =>
 	`/accounting/account/${segment(accountId)}/projects/tasks`;
 
@@ -78,6 +80,24 @@ export const update: FreshBooksEndpoints['tasksUpdate'] = (ctx, input) =>
 			method: 'PUT',
 			path: `${base(accountId)}/${segment(taskId)}`,
 			body: { task },
+		}),
+		{ log: ({ accountId, taskId }) => ({ accountId, taskId }) },
+	);
+
+export const remove: FreshBooksEndpoints['tasksDelete'] = (ctx, input) =>
+	call(
+		ctx,
+		{
+			event: 'tasks.delete',
+			input: Inputs.tasksDelete,
+			output: Outputs.tasksDelete,
+			envelope: 'accounting',
+		},
+		input,
+		({ accountId, taskId }) => ({
+			method: 'PUT',
+			path: `${base(accountId)}/${segment(taskId)}`,
+			body: { task: { vis_state: 1 } },
 		}),
 		{ log: ({ accountId, taskId }) => ({ accountId, taskId }) },
 	);

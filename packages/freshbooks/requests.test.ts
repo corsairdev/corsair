@@ -145,6 +145,22 @@ describe('clients', () => {
 		expect(sent.body).toEqual({ client: { vis_state: 1 } });
 		expectBearerAuth(fetchMock);
 	});
+
+	it('tasks.delete soft-deletes with vis_state 1', async () => {
+		respondJson(fetchMock, {
+			response: { result: { task: { ...taskRecord, vis_state: 1 } } },
+		});
+
+		await invoke(Tasks.remove, { accountId: ACCOUNT_ID, taskId: 159361 });
+
+		const sent = lastRequest(fetchMock);
+		expect(sent.method).toBe('PUT');
+		expect(sent.path).toBe(
+			`/accounting/account/${ACCOUNT_ID}/projects/tasks/159361`,
+		);
+		expect(sent.body).toEqual({ task: { vis_state: 1 } });
+		expectBearerAuth(fetchMock);
+	});
 });
 
 describe('invoices', () => {

@@ -54,7 +54,7 @@ await corsair.freshbooks.api.clients.create({ accountId: 'LJArJ4', client: { fna
   p_province?: string,
   p_street?: string,
   p_street2?: string,
-  contacts?: Record<string, unknown>[]
+  contacts?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -103,7 +103,7 @@ await corsair.freshbooks.api.clients.create({ accountId: 'LJArJ4', client: { fna
   allow_email_include_pdf?: boolean | null,
   allow_late_fees?: boolean | null,
   allow_late_notifications?: boolean | null,
-  contacts?: Record<string, unknown>[] | null
+  contacts?: Record<string, any>[] | null
 }
 ```
 </Accordion>
@@ -177,7 +177,7 @@ Soft delete: `PUT` with `vis_state: 1` marks the client deleted while the record
   allow_email_include_pdf?: boolean | null,
   allow_late_fees?: boolean | null,
   allow_late_notifications?: boolean | null,
-  contacts?: Record<string, unknown>[] | null
+  contacts?: Record<string, any>[] | null
 }
 ```
 </Accordion>
@@ -249,7 +249,7 @@ await corsair.freshbooks.api.clients.get({ accountId: 'LJArJ4', customerId: 2389
   allow_email_include_pdf?: boolean | null,
   allow_late_fees?: boolean | null,
   allow_late_notifications?: boolean | null,
-  contacts?: Record<string, unknown>[] | null
+  contacts?: Record<string, any>[] | null
 }
 ```
 </Accordion>
@@ -277,7 +277,7 @@ await corsair.freshbooks.api.clients.list({ accountId: 'LJArJ4', page: 1, per_pa
 |------|------|----------|-------------|
 | `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
 | `page` | `number` | No | 1-based page. Requesting page 0 returns page 1. |
-| `per_page` | `number` | No | Defaults to 15. Values above 100 are capped silently by the API. |
+| `per_page` | `number` | No | Defaults to 15. The plugin refuses values above 100 because the API would cap them silently. |
 
 `page` counts from 1 and `per_page` defaults to 15. FreshBooks silently caps every page at 100 rows. Needs `user:clients:read`.
 
@@ -328,7 +328,7 @@ await corsair.freshbooks.api.clients.list({ accountId: 'LJArJ4', page: 1, per_pa
   allow_email_include_pdf?: boolean | null,
   allow_late_fees?: boolean | null,
   allow_late_notifications?: boolean | null,
-  contacts?: Record<string, unknown>[] | null
+  contacts?: Record<string, any>[] | null
 }[]
 ```
 </Accordion>
@@ -383,7 +383,7 @@ await corsair.freshbooks.api.clients.update({ accountId: 'LJArJ4', customerId: 2
   p_province?: string,
   p_street?: string,
   p_street2?: string,
-  contacts?: Record<string, unknown>[]
+  contacts?: Record<string, any>[]
 }
 ```
 </Accordion>
@@ -432,7 +432,7 @@ await corsair.freshbooks.api.clients.update({ accountId: 'LJArJ4', customerId: 2
   allow_email_include_pdf?: boolean | null,
   allow_late_fees?: boolean | null,
   allow_late_notifications?: boolean | null,
-  contacts?: Record<string, unknown>[] | null
+  contacts?: Record<string, any>[] | null
 }
 ```
 </Accordion>
@@ -713,7 +713,7 @@ await corsair.freshbooks.api.estimates.list({ accountId: 'LJArJ4', page: 1 });
 |------|------|----------|-------------|
 | `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
 | `page` | `number` | No | 1-based page. Requesting page 0 returns page 1. |
-| `per_page` | `number` | No | Defaults to 15. Values above 100 are capped silently by the API. |
+| `per_page` | `number` | No | Defaults to 15. The plugin refuses values above 100 because the API would cap them silently. |
 
 
 
@@ -1120,7 +1120,7 @@ await corsair.freshbooks.api.expenses.list({ accountId: 'LJArJ4', page: 1 });
 |------|------|----------|-------------|
 | `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
 | `page` | `number` | No | 1-based page. Requesting page 0 returns page 1. |
-| `per_page` | `number` | No | Defaults to 15. Values above 100 are capped silently by the API. |
+| `per_page` | `number` | No | Defaults to 15. The plugin refuses values above 100 because the API would cap them silently. |
 
 
 
@@ -1629,7 +1629,7 @@ await corsair.freshbooks.api.invoices.list({ accountId: 'LJArJ4', page: 1 });
 |------|------|----------|-------------|
 | `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
 | `page` | `number` | No | 1-based page. Requesting page 0 returns page 1. |
-| `per_page` | `number` | No | Defaults to 15. Values above 100 are capped silently by the API. |
+| `per_page` | `number` | No | Defaults to 15. The plugin refuses values above 100 because the API would cap them silently. |
 
 
 
@@ -2160,10 +2160,10 @@ await corsair.freshbooks.api.projects.create({ businessId: 77128, project: { tit
   owner?: number | null,
   identity_id?: number | null,
   sample?: boolean | null,
-  group?: Record<string, unknown> | null,
-  links?: Record<string, unknown> | null,
-  members?: Record<string, unknown>[] | null,
-  services?: Record<string, unknown>[] | null
+  group?: Record<string, any> | null,
+  links?: Record<string, any> | null,
+  members?: Record<string, any>[] | null,
+  services?: Record<string, any>[] | null
 }
 ```
 </Accordion>
@@ -2257,10 +2257,10 @@ await corsair.freshbooks.api.projects.get({ businessId: 77128, projectId: 779803
   owner?: number | null,
   identity_id?: number | null,
   sample?: boolean | null,
-  group?: Record<string, unknown> | null,
-  links?: Record<string, unknown> | null,
-  members?: Record<string, unknown>[] | null,
-  services?: Record<string, unknown>[] | null
+  group?: Record<string, any> | null,
+  links?: Record<string, any> | null,
+  members?: Record<string, any>[] | null,
+  services?: Record<string, any>[] | null
 }
 ```
 </Accordion>
@@ -2288,7 +2288,7 @@ await corsair.freshbooks.api.projects.list({ businessId: 77128, page: 0 });
 |------|------|----------|-------------|
 | `businessId` | `number` | Yes | The numeric business id, from the `businessId` field of users.me. |
 | `page` | `number` | No | 0-based page: the docs list example shows meta.page 0. |
-| `per_page` | `number` | No | Defaults to 15. Values above 100 are capped silently by the API. |
+| `per_page` | `number` | No | Defaults to 15. The plugin refuses values above 100 because the API would cap them silently. |
 
 This family pages from 0: the docs list example shows `meta.page: 0`. `sort` and detail filters are not exposed by this plugin yet. Needs `user:projects:read`.
 
@@ -2324,10 +2324,10 @@ This family pages from 0: the docs list example shows `meta.page: 0`. `sort` and
   owner?: number | null,
   identity_id?: number | null,
   sample?: boolean | null,
-  group?: Record<string, unknown> | null,
-  links?: Record<string, unknown> | null,
-  members?: Record<string, unknown>[] | null,
-  services?: Record<string, unknown>[] | null
+  group?: Record<string, any> | null,
+  links?: Record<string, any> | null,
+  members?: Record<string, any>[] | null,
+  services?: Record<string, any>[] | null
 }[]
 ```
 </Accordion>
@@ -2426,10 +2426,10 @@ await corsair.freshbooks.api.projects.update({ businessId: 77128, projectId: 779
   owner?: number | null,
   identity_id?: number | null,
   sample?: boolean | null,
-  group?: Record<string, unknown> | null,
-  links?: Record<string, unknown> | null,
-  members?: Record<string, unknown>[] | null,
-  services?: Record<string, unknown>[] | null
+  group?: Record<string, any> | null,
+  links?: Record<string, any> | null,
+  members?: Record<string, any>[] | null,
+  services?: Record<string, any>[] | null
 }
 ```
 </Accordion>
@@ -2478,6 +2478,64 @@ await corsair.freshbooks.api.tasks.create({ accountId: 'LJArJ4', task: { name: '
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  id: number,
+  taskid?: number | null,
+  name?: string | null,
+  tname?: string | null,
+  description?: string | null,
+  tdesc?: string | null,
+  billable?: boolean | null,
+  rate?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  tax1?: number | null,
+  tax2?: number | null,
+  updated?: string | null,
+  vis_state?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Soft-delete a billable task by setting vis_state to 1. The record stays in FreshBooks; no documented call restores it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.freshbooks.api.tasks.delete({ accountId: 'LJArJ4', taskId: 159361 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `taskId` | `number` | Yes | The task to delete. |
+
+Soft delete: `PUT` with `{"task": {"vis_state": 1}}` marks the task deleted while the record stays. Restoring by setting `vis_state: 0` is undocumented, so the plugin marks this irreversible. The docs example omits the body; the shape follows the accounting-family pattern and stays on the live-smoke checklist.
 
 
 
@@ -2590,7 +2648,7 @@ await corsair.freshbooks.api.tasks.list({ accountId: 'LJArJ4', page: 1 });
 |------|------|----------|-------------|
 | `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
 | `page` | `number` | No | 1-based page. Requesting page 0 returns page 1. |
-| `per_page` | `number` | No | Defaults to 15. Values above 100 are capped silently by the API. |
+| `per_page` | `number` | No | Defaults to 15. The plugin refuses values above 100 because the API would cap them silently. |
 
 
 
@@ -2895,7 +2953,7 @@ await corsair.freshbooks.api.timeEntries.list({ businessId: 77128, started_from:
 | `billed` | `boolean` | No | Only billed (true) or unbilled (false) entries. |
 | `include_deleted` | `boolean` | No | Sent as 1; adds deleted entries. |
 | `page` | `number` | No | Page number as reported by meta.page of the previous call. |
-| `per_page` | `number` | No | Defaults to 15. Values above 100 are capped silently by the API. |
+| `per_page` | `number` | No | Defaults to 15. The plugin refuses values above 100 because the API would cap them silently. |
 
 Bare response with a `meta` object that also carries `total_logged` and `total_unbilled`. `started_from` and `started_to` are ISO times. Needs `user:time_entries:read`.
 

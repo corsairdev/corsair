@@ -442,6 +442,19 @@ describe('output parsing per operation', () => {
 		expect(result.task.name).toBe('Piloting');
 	});
 
+	it('tasks.delete returns the task marked deleted', async () => {
+		respondJson(fetchMock, {
+			response: { result: { task: { ...taskRecord, vis_state: 1 } } },
+		});
+
+		const result = await invoke(Tasks.remove, {
+			accountId: ACCOUNT_ID,
+			taskId: 159361,
+		});
+
+		expect(result.task.vis_state).toBe(1);
+	});
+
 	it('projects.list parses the bare page with meta', async () => {
 		respondJson(fetchMock, projectsListResponse);
 

@@ -5,8 +5,10 @@ import { usersMeResponse } from './test-fixtures';
 
 /**
  * Bound-client tests: the plugin inside a real corsair instance, where the
- * key builder resolves the stored account key the way runtime calls do. CI
- * skips this file by name, so nothing here may call the live API unmocked.
+ * key builder resolves the stored account key the way runtime calls do. The
+ * file was previously named integration.test.ts, which CI ignores by name;
+ * under this plain name CI runs it, so nothing here may call the live API
+ * unmocked.
  */
 async function createClient(options: Parameters<typeof freshbooks>[0]) {
 	const testDb = createTestDatabase();

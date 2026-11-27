@@ -1,4 +1,5 @@
 import { AuthMissingError } from 'corsair/core';
+import type { FreshBooksKeyBuilderContext } from './index';
 import { freshBooksEndpointSchemas, freshbooks } from './index';
 
 // The key builder only reads authType and keys.
@@ -16,7 +17,10 @@ function buildKey(
 	ctx: ReturnType<typeof keyContext>,
 ) {
 	// The fake context is not a full KeyBuilderContext.
-	return plugin.keyBuilder?.(ctx as never, 'endpoint');
+	return plugin.keyBuilder?.(
+		ctx as unknown as FreshBooksKeyBuilderContext,
+		'endpoint',
+	);
 }
 
 const operations = [
@@ -48,6 +52,7 @@ const operations = [
 	'projects.list',
 	'projects.update',
 	'tasks.create',
+	'tasks.delete',
 	'tasks.get',
 	'tasks.list',
 	'tasks.update',
@@ -71,7 +76,7 @@ describe('freshbooks plugin definition', () => {
 		).toBe(false);
 	});
 
-	it('exposes exactly the 37 catalog operations across 8 groups', () => {
+	it('exposes exactly the 38 catalog operations across 8 groups', () => {
 		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
 			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
 		);
@@ -115,6 +120,7 @@ describe('freshbooks plugin definition', () => {
 				'invoices.delete',
 				'invoices.sendEmail',
 				'projects.delete',
+				'tasks.delete',
 				'timeEntries.delete',
 			].sort(),
 		);
@@ -169,7 +175,10 @@ describe('freshbooks key builder', () => {
 
 	it('refuses webhook keys: deliveries are not handled', async () => {
 		await expect(
-			freshbooks().keyBuilder?.(keyContext('stored-token') as never, 'webhook'),
+			freshbooks().keyBuilder?.(
+				keyContext('stored-token') as unknown as FreshBooksKeyBuilderContext,
+				'webhook',
+			),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 });

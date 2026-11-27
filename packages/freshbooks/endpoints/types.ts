@@ -53,7 +53,9 @@ const PerPageSchema = z
 	.positive()
 	.max(100)
 	.optional()
-	.describe('Defaults to 15. Values above 100 are capped silently by the API.');
+	.describe(
+		'Defaults to 15. The plugin refuses values above 100 because the API would cap them silently.',
+	);
 
 const MoneySchema = z
 	.object({
@@ -849,6 +851,13 @@ const TasksUpdateInputSchema = z.object({
 
 export type TasksUpdateInput = z.infer<typeof TasksUpdateInputSchema>;
 
+const TasksDeleteInputSchema = z.object({
+	accountId: AccountIdSchema,
+	taskId: z.number().int().positive().describe('The task to delete.'),
+});
+
+export type TasksDeleteInput = z.infer<typeof TasksDeleteInputSchema>;
+
 // ── projects ──────────────────────────────────────────────────────────────
 
 const ServiceSchema = z.object({
@@ -1089,6 +1098,7 @@ export type FreshBooksEndpointInputs = {
 	tasksGet: TasksGetInput;
 	tasksCreate: TasksCreateInput;
 	tasksUpdate: TasksUpdateInput;
+	tasksDelete: TasksDeleteInput;
 	projectsList: ProjectsListInput;
 	projectsGet: ProjectsGetInput;
 	projectsCreate: ProjectsCreateInput;
@@ -1129,6 +1139,7 @@ export type FreshBooksEndpointOutputs = {
 	tasksGet: z.infer<typeof TaskResponseSchema>;
 	tasksCreate: z.infer<typeof TaskResponseSchema>;
 	tasksUpdate: z.infer<typeof TaskResponseSchema>;
+	tasksDelete: z.infer<typeof TaskResponseSchema>;
 	projectsList: z.infer<typeof ProjectsListResponseSchema>;
 	projectsGet: z.infer<typeof ProjectResponseSchema>;
 	projectsCreate: z.infer<typeof ProjectResponseSchema>;
@@ -1169,6 +1180,7 @@ export const FreshBooksEndpointInputSchemas = {
 	tasksGet: TasksGetInputSchema,
 	tasksCreate: TasksCreateInputSchema,
 	tasksUpdate: TasksUpdateInputSchema,
+	tasksDelete: TasksDeleteInputSchema,
 	projectsList: ProjectsListInputSchema,
 	projectsGet: ProjectsGetInputSchema,
 	projectsCreate: ProjectsCreateInputSchema,
@@ -1209,6 +1221,7 @@ export const FreshBooksEndpointOutputSchemas = {
 	tasksGet: TaskResponseSchema,
 	tasksCreate: TaskResponseSchema,
 	tasksUpdate: TaskResponseSchema,
+	tasksDelete: TaskResponseSchema,
 	projectsList: ProjectsListResponseSchema,
 	projectsGet: ProjectResponseSchema,
 	projectsCreate: ProjectResponseSchema,

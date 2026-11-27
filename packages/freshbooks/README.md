@@ -40,6 +40,7 @@ pnpm add @corsair-dev/freshbooks
 | `projects.list` | `freshbooks.api.projects.list` | `read` | List projects with paging |
 | `projects.update` | `freshbooks.api.projects.update` | `write` | Change project fields |
 | `tasks.create` | `freshbooks.api.tasks.create` | `write` | Create a billable task |
+| `tasks.delete` | `freshbooks.api.tasks.delete` | `destructive` | Soft-delete a billable task by setting vis_state to 1. The record stays in FreshBooks; no documented call restores it |
 | `tasks.get` | `freshbooks.api.tasks.get` | `read` | Read one billable task, including its rate |
 | `tasks.list` | `freshbooks.api.tasks.list` | `read` | List billable tasks with paging |
 | `tasks.update` | `freshbooks.api.tasks.update` | `write` | Change task fields |

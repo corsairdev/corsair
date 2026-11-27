@@ -86,6 +86,7 @@ export type FreshBooksEndpoints = {
 	tasksGet: FreshBooksEndpoint<'tasksGet'>;
 	tasksCreate: FreshBooksEndpoint<'tasksCreate'>;
 	tasksUpdate: FreshBooksEndpoint<'tasksUpdate'>;
+	tasksDelete: FreshBooksEndpoint<'tasksDelete'>;
 	projectsList: FreshBooksEndpoint<'projectsList'>;
 	projectsGet: FreshBooksEndpoint<'projectsGet'>;
 	projectsCreate: FreshBooksEndpoint<'projectsCreate'>;
@@ -137,6 +138,7 @@ const freshBooksEndpointsNested = {
 		get: Tasks.get,
 		create: Tasks.create,
 		update: Tasks.update,
+		delete: Tasks.remove,
 	},
 	projects: {
 		list: Projects.list,
@@ -262,6 +264,10 @@ export const freshBooksEndpointSchemas = {
 	'tasks.update': {
 		input: FreshBooksEndpointInputSchemas.tasksUpdate,
 		output: FreshBooksEndpointOutputSchemas.tasksUpdate,
+	},
+	'tasks.delete': {
+		input: FreshBooksEndpointInputSchemas.tasksDelete,
+		output: FreshBooksEndpointOutputSchemas.tasksDelete,
 	},
 	'projects.list': {
 		input: FreshBooksEndpointInputSchemas.projectsList,
@@ -432,6 +438,12 @@ const freshBooksEndpointMeta = {
 	'tasks.update': {
 		riskLevel: 'write',
 		description: 'Change task fields',
+	},
+	'tasks.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Soft-delete a billable task by setting vis_state to 1. The record stays in FreshBooks; no documented call restores it',
 	},
 	'projects.list': {
 		riskLevel: 'read',

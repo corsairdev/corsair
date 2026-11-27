@@ -13,6 +13,8 @@ overviewNote: |
 
   Two ids run the API, both from `users.me`: the `accountId` (such as LJArJ4) for the accounting family (clients, invoices, estimates, expenses, tasks) and the numeric `businessId` for projects and timeEntries. `users.me` surfaces both.
 
+  Deliberate non-goals for v1: payments, webhook registrations, and `systems.get` (research scoped them in, this plugin ships the core resources only).
+
   - **Two response families.** The accounting family wraps every answer in `{response: {result}}` and reports errors as `{response: {errors}}`; the projects and timetracking families answer bare with a `meta` paging object. The plugin unwraps both and reports envelope errors as failed calls.
   - **Paging.** Accounting lists page from 1; projects pages from 0. `per_page` defaults to 15, and the API silently caps every page at 100 rows.
   - **Deletes.** Accounting deletes are soft: the plugin sends `vis_state: 1`, the record stays, and no documented call restores it. `projects.delete` and `timeEntries.delete` remove the data outright. All deletes are marked destructive and irreversible.
@@ -64,6 +66,8 @@ apiNotes:
     `duration` is seconds, `started_at` an ISO timestamp; `is_logged: false` starts a timer instead of logging. Needs `user:time_entries:write`.
   timeEntries.delete: |
     Hard `DELETE` answered with 204 and no content. Irreversible.
+  tasks.delete: |
+    Soft delete: `PUT` with `{"task": {"vis_state": 1}}` marks the task deleted while the record stays. Restoring by setting `vis_state: 0` is undocumented, so the plugin marks this irreversible. The docs example omits the body; the shape follows the accounting-family pattern and stays on the live-smoke checklist.
 apiExamples:
   users.me: {}
   clients.list:
@@ -118,6 +122,8 @@ apiExamples:
     call: "{ accountId: 'LJArJ4', task: { name: 'Consulting', rate: { amount: '100.00', code: 'CAD' } } }"
   tasks.update:
     call: "{ accountId: 'LJArJ4', taskId: 159361, task: { billable: false } }"
+  tasks.delete:
+    call: "{ accountId: 'LJArJ4', taskId: 159361 }"
   projects.list:
     call: "{ businessId: 77128, page: 0 }"
   projects.get:

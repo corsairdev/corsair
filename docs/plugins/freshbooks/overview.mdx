@@ -16,6 +16,8 @@ Access tokens last 12 hours. Refresh tokens are single-use and rotate on every r
 
 Two ids run the API, both from `users.me`: the `accountId` (such as LJArJ4) for the accounting family (clients, invoices, estimates, expenses, tasks) and the numeric `businessId` for projects and timeEntries. `users.me` surfaces both.
 
+Deliberate non-goals for v1: payments, webhook registrations, and `systems.get` (research scoped them in, this plugin ships the core resources only).
+
 - **Two response families.** The accounting family wraps every answer in `{response: {result}}` and reports errors as `{response: {errors}}`; the projects and timetracking families answer bare with a `meta` paging object. The plugin unwraps both and reports envelope errors as failed calls.
 - **Paging.** Accounting lists page from 1; projects pages from 0. `per_page` defaults to 15, and the API silently caps every page at 100 rows.
 - **Deletes.** Accounting deletes are soft: the plugin sends `vis_state: 1`, the record stays, and no documented call restores it. `projects.delete` and `timeEntries.delete` remove the data outright. All deletes are marked destructive and irreversible.
@@ -26,7 +28,7 @@ Two ids run the API, both from `users.me`: the `accountId` (such as LJArJ4) for 
 
 **What you get:**
 
-- 37 typed API operations
+- 38 typed API operations
 
 ## Setup
 
@@ -82,7 +84,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-The key is a FreshBooks OAuth 2 access token, not a static API key; see the note above for how to mint one. Store it before the first call: `pnpm corsair setup --plugin=freshbooks --tenant=acme api_key=<your-access-token>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own token on the connect page. See [API key auth](/concepts/api-key).
+Store the FreshBooks API key before the first call: `pnpm corsair setup --plugin=freshbooks --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
 freshbooks()

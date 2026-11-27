@@ -130,7 +130,7 @@ describe('mergeErrorHandlers', () => {
 		expect(mergeErrorHandlers(errorHandlers, undefined)).toBe(errorHandlers);
 	});
 
-	it('puts the caller DEFAULT last and keeps builtin handlers ahead', async () => {
+	it('puts the caller DEFAULT last and keeps builtin handlers available', async () => {
 		const merged = mergeErrorHandlers(errorHandlers, {
 			DEFAULT: {
 				match: () => true,
@@ -145,6 +145,18 @@ describe('mergeErrorHandlers', () => {
 			handlerContext(),
 		);
 		expect(fallback).toEqual({ maxRetries: 5 });
+	});
+
+	it('runs a caller handler for an overlapping condition before the builtin', async () => {
+		const merged = mergeErrorHandlers(errorHandlers, {
+			THROTTLE_ERROR: {
+				match: (error: Error) => error.message.includes('throttle'),
+				handler: async () => ({ maxRetries: 4 }),
+			},
+		});
+		// Core takes the first match in key order, so the caller's new key must
+		// sort ahead of every builtin, not after them.
+		expect(Object.keys(merged).indexOf('THROTTLE_ERROR')).toBe(0);
 	});
 
 	it('lets a caller handler for a new status run before DEFAULT', async () => {
