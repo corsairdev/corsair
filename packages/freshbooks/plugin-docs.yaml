@@ -1,4 +1,140 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "FreshBooks"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: FreshBooks
+description: Cloud accounting for freelancers and small businesses. This plugin manages clients, invoices, estimates, expenses, projects and billable tasks, records and reads time entries, and reads the authenticated identity that supplies the account and business ids.
+domain: freshbooks.com
+recommendedAuth: api_key
+overviewNote: |
+  FreshBooks has no static API key. The key this plugin uses is an OAuth 2 access token from your own FreshBooks app:
+
+  1. Sign in at my.freshbooks.com, open the developer portal (my.freshbooks.com/#/developer), create an app and register an HTTPS redirect URI. Scopes are per resource, `user:<resource>:read|write`.
+  2. Authorize the app through the OAuth flow (freshbooks.com/api/authentication shows the steps) and exchange the code for a token.
+  3. Paste the access token into Corsair as the FreshBooks key.
+
+  Access tokens last 12 hours. Refresh tokens are single-use and rotate on every refresh, so a stored refresh token goes stale as soon as a newer one is issued. When the access token expires, run the OAuth flow again and paste the new token.
+
+  Two ids run the API, both from `users.me`: the `accountId` (such as LJArJ4) for the accounting family (clients, invoices, estimates, expenses, tasks) and the numeric `businessId` for projects and timeEntries. `users.me` surfaces both.
+
+  - **Two response families.** The accounting family wraps every answer in `{response: {result}}` and reports errors as `{response: {errors}}`; the projects and timetracking families answer bare with a `meta` paging object. The plugin unwraps both and reports envelope errors as failed calls.
+  - **Paging.** Accounting lists page from 1; projects pages from 0. `per_page` defaults to 15, and the API silently caps every page at 100 rows.
+  - **Deletes.** Accounting deletes are soft: the plugin sends `vis_state: 1`, the record stays, and no documented call restores it. `projects.delete` and `timeEntries.delete` remove the data outright. All deletes are marked destructive and irreversible.
+  - **invoices.sendEmail cannot be unsent.** It emails the client immediately. `invoices.markSent` only flips the status without emailing anyone.
+  - **Invoice number collisions.** Creating invoices concurrently without `invoice_number` can answer 409; the docs say retrying succeeds, and the plugin retries that case automatically.
+  - **Webhooks.** FreshBooks can POST event callbacks to your own endpoint (freshbooks.com/api/webhooks), but this plugin does not handle inbound deliveries, so none are registered through it.
+  - **Unverified accounting surface.** The accounting routes could not be verified against a live account before this build: the API resolves the account id before auth, so every probe with a bogus id hits the same "Account not found" wall. The projects and timetracking routes were proven to exist by probe, and request and response shapes come from the docs examples throughout. File an issue if a live call disagrees with a schema.
+examples:
+  read:
+    path: users.me
+    title: Read the authenticated identity with its ids
+    args: {}
+  write:
+    path: clients.create
+    title: Create a client
+    args:
+      accountId: LJArJ4
+      client:
+        fname: Melville
+        lname: DMello
+        email: melville@example.com
+        organization: Example Ltd
+apiNotes:
+  users.me: |
+    `GET /auth/api/v1/users/me`. Returns the identity with `business_memberships`; the plugin surfaces `accountId` and `businessId` from the first membership. Needs the `user:profile:read` scope.
+  clients.list: |
+    `page` counts from 1 and `per_page` defaults to 15. FreshBooks silently caps every page at 100 rows. Needs `user:clients:read`.
+  clients.delete: |
+    Soft delete: `PUT` with `vis_state: 1` marks the client deleted while the record stays. Restoring by setting `vis_state: 0` is undocumented, so the plugin marks this irreversible.
+  invoices.create: |
+    Creates a draft. Creating several invoices concurrently without `invoice_number` can collide with a 409; the plugin retries that one case. Needs `user:invoices:write`.
+  invoices.markSent: |
+    `PUT` with `action_mark_as_sent: true` flips a draft to sent without emailing anyone.
+  invoices.sendEmail: |
+    `PUT` with `action_email: true`. Emails the client immediately and cannot be unsent. Omit `email_recipients` to use the client email; `invoice_customized_email` overrides subject and body for this send.
+  invoices.delete: |
+    Soft delete with `vis_state: 1`, like the other accounting resources.
+  estimates.delete: |
+    Soft delete with `vis_state: 1`. The docs example for this call omits the body entirely, so the exact contract is unverified until a live key exists.
+  expenses.create: |
+    `amount.amount` is a string (such as "39.99"), `categoryid` is the expense category id, `staffid` and `date` come from the docs example. Needs `user:expenses:write`.
+  projects.list: |
+    This family pages from 0: the docs list example shows `meta.page: 0`. `sort` and detail filters are not exposed by this plugin yet. Needs `user:projects:read`.
+  projects.delete: |
+    Hard `DELETE`: the project is gone, not marked. Irreversible.
+  timeEntries.list: |
+    Bare response with a `meta` object that also carries `total_logged` and `total_unbilled`. `started_from` and `started_to` are ISO times. Needs `user:time_entries:read`.
+  timeEntries.create: |
+    `duration` is seconds, `started_at` an ISO timestamp; `is_logged: false` starts a timer instead of logging. Needs `user:time_entries:write`.
+  timeEntries.delete: |
+    Hard `DELETE` answered with 204 and no content. Irreversible.
+apiExamples:
+  users.me: {}
+  clients.list:
+    call: "{ accountId: 'LJArJ4', page: 1, per_page: 25 }"
+  clients.get:
+    call: "{ accountId: 'LJArJ4', customerId: 238951 }"
+  clients.create:
+    call: "{ accountId: 'LJArJ4', client: { fname: 'Melville', lname: 'DMello', email: 'melville@example.com', organization: 'Example Ltd' } }"
+  clients.update:
+    call: "{ accountId: 'LJArJ4', customerId: 238951, client: { organization: 'Example Ltd' } }"
+  clients.delete:
+    call: "{ accountId: 'LJArJ4', customerId: 238951 }"
+  invoices.list:
+    call: "{ accountId: 'LJArJ4', page: 1 }"
+  invoices.get:
+    call: "{ accountId: 'LJArJ4', invoiceId: 152429 }"
+  invoices.create:
+    call: "{ accountId: 'LJArJ4', invoice: { customerid: 960771, create_date: '2026-01-31', currency_code: 'CAD', lines: [{ name: 'Consulting', qty: 2, unit_cost: 50 }] } }"
+  invoices.update:
+    call: "{ accountId: 'LJArJ4', invoiceId: 152429, invoice: { notes: 'Net 30' } }"
+  invoices.markSent:
+    call: "{ accountId: 'LJArJ4', invoiceId: 152429 }"
+  invoices.sendEmail:
+    call: "{ accountId: 'LJArJ4', invoiceId: 152429, email_recipients: ['billing@example.com'], email_include_pdf: true }"
+  invoices.delete:
+    call: "{ accountId: 'LJArJ4', invoiceId: 152429 }"
+  estimates.list:
+    call: "{ accountId: 'LJArJ4', page: 1 }"
+  estimates.get:
+    call: "{ accountId: 'LJArJ4', estimateId: 152430 }"
+  estimates.create:
+    call: "{ accountId: 'LJArJ4', estimate: { customerid: 960771, create_date: '2026-01-31' } }"
+  estimates.update:
+    call: "{ accountId: 'LJArJ4', estimateId: 152430, estimate: { terms: 'Net 15' } }"
+  estimates.delete:
+    call: "{ accountId: 'LJArJ4', estimateId: 152430 }"
+  expenses.list:
+    call: "{ accountId: 'LJArJ4', page: 1 }"
+  expenses.get:
+    call: "{ accountId: 'LJArJ4', expenseId: 123456 }"
+  expenses.create:
+    call: "{ accountId: 'LJArJ4', expense: { amount: { amount: '39.99', code: 'USD' }, categoryid: 50104404, staffid: 1, date: '2026-01-31', vendor: 'Internet Co.' } }"
+  expenses.update:
+    call: "{ accountId: 'LJArJ4', expenseId: 123456, expense: { vendor: 'Other Co.' } }"
+  expenses.delete:
+    call: "{ accountId: 'LJArJ4', expenseId: 123456 }"
+  tasks.list:
+    call: "{ accountId: 'LJArJ4', page: 1 }"
+  tasks.get:
+    call: "{ accountId: 'LJArJ4', taskId: 159361 }"
+  tasks.create:
+    call: "{ accountId: 'LJArJ4', task: { name: 'Consulting', rate: { amount: '100.00', code: 'CAD' } } }"
+  tasks.update:
+    call: "{ accountId: 'LJArJ4', taskId: 159361, task: { billable: false } }"
+  projects.list:
+    call: "{ businessId: 77128, page: 0 }"
+  projects.get:
+    call: "{ businessId: 77128, projectId: 779803 }"
+  projects.create:
+    call: "{ businessId: 77128, project: { title: 'My Cool Project', project_type: 'fixed_price', client_id: '97499', fixed_price: '500' } }"
+  projects.update:
+    call: "{ businessId: 77128, projectId: 779803, project: { title: 'Renamed' } }"
+  projects.delete:
+    call: "{ businessId: 77128, projectId: 779803 }"
+  timeEntries.list:
+    call: "{ businessId: 77128, started_from: '2026-01-01T00:00:00Z', started_to: '2026-02-01T00:00:00Z' }"
+  timeEntries.get:
+    call: "{ businessId: 77128, timeEntryId: 5095 }"
+  timeEntries.create:
+    call: "{ businessId: 77128, time_entry: { is_logged: true, duration: 7200, started_at: '2026-01-31T09:00:00Z', note: 'Consulting', project_id: 153125 } }"
+  timeEntries.update:
+    call: "{ businessId: 77128, timeEntryId: 5095, time_entry: { note: 'Updated' } }"
+  timeEntries.delete:
+    call: "{ businessId: 77128, timeEntryId: 5095 }"

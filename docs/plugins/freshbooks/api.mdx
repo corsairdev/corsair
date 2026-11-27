@@ -1,0 +1,3073 @@
+---
+title: "FreshBooks API reference"
+sidebarTitle: "API"
+description: "API reference for the FreshBooks plugin in Corsair: every `freshbooks.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Clients
+
+### create
+
+`clients.create`
+
+Create a client
+
+**Risk:** `write`
+
+```ts
+await corsair.freshbooks.api.clients.create({ accountId: 'LJArJ4', client: { fname: 'Melville', lname: 'DMello', email: 'melville@example.com', organization: 'Example Ltd' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `client` | `object` | Yes | The client fields to set. |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  fname?: string,
+  lname?: string,
+  email?: string,
+  organization?: string,
+  currency_code?: string,
+  bus_phone?: string,
+  home_phone?: string,
+  mob_phone?: string,
+  fax?: string,
+  note?: string,
+  language?: string,
+  vat_name?: string,
+  vat_number?: string,
+  company_industry?: string,
+  p_city?: string,
+  p_code?: string,
+  p_country?: string,
+  p_province?: string,
+  p_street?: string,
+  p_street2?: string,
+  contacts?: Record<string, unknown>[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id: number,
+  accounting_systemid?: string | null,
+  email?: string | null,
+  fname?: string | null,
+  lname?: string | null,
+  organization?: string | null,
+  currency_code?: string | null,
+  bus_phone?: string | null,
+  home_phone?: string | null,
+  mob_phone?: string | null,
+  fax?: string | null,
+  note?: string | null,
+  language?: string | null,
+  vat_name?: string | null,
+  vat_number?: string | null,
+  company_industry?: string | null,
+  p_city?: string | null,
+  p_code?: string | null,
+  p_country?: string | null,
+  p_province?: string | null,
+  p_street?: string | null,
+  p_street2?: string | null,
+  last_activity?: string | null,
+  last_login?: string | null,
+  level?: number | null,
+  num_logins?: number | null,
+  notified?: boolean | null,
+  allow_email_include_pdf?: boolean | null,
+  allow_late_fees?: boolean | null,
+  allow_late_notifications?: boolean | null,
+  contacts?: Record<string, unknown>[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`clients.delete`
+
+Soft-delete a client by setting vis_state to 1. The record stays in FreshBooks; no documented call restores it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.freshbooks.api.clients.delete({ accountId: 'LJArJ4', customerId: 238951 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `customerId` | `number` | Yes | The client to delete. |
+
+Soft delete: `PUT` with `vis_state: 1` marks the client deleted while the record stays. Restoring by setting `vis_state: 0` is undocumented, so the plugin marks this irreversible.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id: number,
+  accounting_systemid?: string | null,
+  email?: string | null,
+  fname?: string | null,
+  lname?: string | null,
+  organization?: string | null,
+  currency_code?: string | null,
+  bus_phone?: string | null,
+  home_phone?: string | null,
+  mob_phone?: string | null,
+  fax?: string | null,
+  note?: string | null,
+  language?: string | null,
+  vat_name?: string | null,
+  vat_number?: string | null,
+  company_industry?: string | null,
+  p_city?: string | null,
+  p_code?: string | null,
+  p_country?: string | null,
+  p_province?: string | null,
+  p_street?: string | null,
+  p_street2?: string | null,
+  last_activity?: string | null,
+  last_login?: string | null,
+  level?: number | null,
+  num_logins?: number | null,
+  notified?: boolean | null,
+  allow_email_include_pdf?: boolean | null,
+  allow_late_fees?: boolean | null,
+  allow_late_notifications?: boolean | null,
+  contacts?: Record<string, unknown>[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`clients.get`
+
+Read one client
+
+**Risk:** `read`
+
+```ts
+await corsair.freshbooks.api.clients.get({ accountId: 'LJArJ4', customerId: 238951 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `customerId` | `number` | Yes | The client id, from a client's `id`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id: number,
+  accounting_systemid?: string | null,
+  email?: string | null,
+  fname?: string | null,
+  lname?: string | null,
+  organization?: string | null,
+  currency_code?: string | null,
+  bus_phone?: string | null,
+  home_phone?: string | null,
+  mob_phone?: string | null,
+  fax?: string | null,
+  note?: string | null,
+  language?: string | null,
+  vat_name?: string | null,
+  vat_number?: string | null,
+  company_industry?: string | null,
+  p_city?: string | null,
+  p_code?: string | null,
+  p_country?: string | null,
+  p_province?: string | null,
+  p_street?: string | null,
+  p_street2?: string | null,
+  last_activity?: string | null,
+  last_login?: string | null,
+  level?: number | null,
+  num_logins?: number | null,
+  notified?: boolean | null,
+  allow_email_include_pdf?: boolean | null,
+  allow_late_fees?: boolean | null,
+  allow_late_notifications?: boolean | null,
+  contacts?: Record<string, unknown>[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`clients.list`
+
+List clients with paging
+
+**Risk:** `read`
+
+```ts
+await corsair.freshbooks.api.clients.list({ accountId: 'LJArJ4', page: 1, per_page: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `page` | `number` | No | 1-based page. Requesting page 0 returns page 1. |
+| `per_page` | `number` | No | Defaults to 15. Values above 100 are capped silently by the API. |
+
+`page` counts from 1 and `per_page` defaults to 15. FreshBooks silently caps every page at 100 rows. Needs `user:clients:read`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clients` | `object[]` | Yes | — |
+| `page` | `number` | Yes | — |
+| `pages` | `number` | Yes | — |
+| `per_page` | `number` | Yes | — |
+| `total` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="clients full type">
+
+```ts
+{
+  id: number,
+  accounting_systemid?: string | null,
+  email?: string | null,
+  fname?: string | null,
+  lname?: string | null,
+  organization?: string | null,
+  currency_code?: string | null,
+  bus_phone?: string | null,
+  home_phone?: string | null,
+  mob_phone?: string | null,
+  fax?: string | null,
+  note?: string | null,
+  language?: string | null,
+  vat_name?: string | null,
+  vat_number?: string | null,
+  company_industry?: string | null,
+  p_city?: string | null,
+  p_code?: string | null,
+  p_country?: string | null,
+  p_province?: string | null,
+  p_street?: string | null,
+  p_street2?: string | null,
+  last_activity?: string | null,
+  last_login?: string | null,
+  level?: number | null,
+  num_logins?: number | null,
+  notified?: boolean | null,
+  allow_email_include_pdf?: boolean | null,
+  allow_late_fees?: boolean | null,
+  allow_late_notifications?: boolean | null,
+  contacts?: Record<string, unknown>[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`clients.update`
+
+Change client fields
+
+**Risk:** `write`
+
+```ts
+await corsair.freshbooks.api.clients.update({ accountId: 'LJArJ4', customerId: 238951, client: { organization: 'Example Ltd' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `customerId` | `number` | Yes | The client to change. |
+| `client` | `object` | Yes | The client fields to change. |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  fname?: string,
+  lname?: string,
+  email?: string,
+  organization?: string,
+  currency_code?: string,
+  bus_phone?: string,
+  home_phone?: string,
+  mob_phone?: string,
+  fax?: string,
+  note?: string,
+  language?: string,
+  vat_name?: string,
+  vat_number?: string,
+  company_industry?: string,
+  p_city?: string,
+  p_code?: string,
+  p_country?: string,
+  p_province?: string,
+  p_street?: string,
+  p_street2?: string,
+  contacts?: Record<string, unknown>[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `client` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="client full type">
+
+```ts
+{
+  id: number,
+  accounting_systemid?: string | null,
+  email?: string | null,
+  fname?: string | null,
+  lname?: string | null,
+  organization?: string | null,
+  currency_code?: string | null,
+  bus_phone?: string | null,
+  home_phone?: string | null,
+  mob_phone?: string | null,
+  fax?: string | null,
+  note?: string | null,
+  language?: string | null,
+  vat_name?: string | null,
+  vat_number?: string | null,
+  company_industry?: string | null,
+  p_city?: string | null,
+  p_code?: string | null,
+  p_country?: string | null,
+  p_province?: string | null,
+  p_street?: string | null,
+  p_street2?: string | null,
+  last_activity?: string | null,
+  last_login?: string | null,
+  level?: number | null,
+  num_logins?: number | null,
+  notified?: boolean | null,
+  allow_email_include_pdf?: boolean | null,
+  allow_late_fees?: boolean | null,
+  allow_late_notifications?: boolean | null,
+  contacts?: Record<string, unknown>[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Estimates
+
+### create
+
+`estimates.create`
+
+Create an estimate for a client
+
+**Risk:** `write`
+
+```ts
+await corsair.freshbooks.api.estimates.create({ accountId: 'LJArJ4', estimate: { customerid: 960771, create_date: '2026-01-31' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `estimate` | `object` | Yes | The estimate fields to set. FreshBooks creates it as a draft. |
+
+<AccordionGroup>
+<Accordion title="estimate full type">
+
+```ts
+{
+  customerid: number,
+  create_date?: string,
+  email?: string,
+  notes?: string,
+  terms?: string,
+  lines?: {
+    name?: string,
+    description?: string,
+    qty?: number,
+    unit_cost?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `estimate` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="estimate full type">
+
+```ts
+{
+  id: number,
+  accounting_systemid?: string | null,
+  customerid?: number | null,
+  estimate_number?: string | null,
+  create_date?: string | null,
+  created_at?: string | null,
+  status?: number | null,
+  vis_state?: number | null,
+  reply_status?: string | null,
+  ui_status?: string | null,
+  invoiced?: boolean | null,
+  sent?: string | boolean | null,
+  amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  discount_total?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  description?: string | null,
+  terms?: string | null,
+  notes?: string | null,
+  current_organization?: string | null,
+  address?: string | null,
+  province?: string | null,
+  country?: string | null,
+  code?: string | null,
+  street2?: string | null,
+  lname?: string | null,
+  vat_name?: string | null,
+  vat_number?: string | null,
+  ownerid?: number | null,
+  template?: string | number | null,
+  updated?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`estimates.delete`
+
+Soft-delete an estimate by setting vis_state to 1. The record stays in FreshBooks; no documented call restores it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.freshbooks.api.estimates.delete({ accountId: 'LJArJ4', estimateId: 152430 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `estimateId` | `number` | Yes | The estimate to delete. |
+
+Soft delete with `vis_state: 1`. The docs example for this call omits the body entirely, so the exact contract is unverified until a live key exists.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `estimate` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="estimate full type">
+
+```ts
+{
+  id: number,
+  accounting_systemid?: string | null,
+  customerid?: number | null,
+  estimate_number?: string | null,
+  create_date?: string | null,
+  created_at?: string | null,
+  status?: number | null,
+  vis_state?: number | null,
+  reply_status?: string | null,
+  ui_status?: string | null,
+  invoiced?: boolean | null,
+  sent?: string | boolean | null,
+  amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  discount_total?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  description?: string | null,
+  terms?: string | null,
+  notes?: string | null,
+  current_organization?: string | null,
+  address?: string | null,
+  province?: string | null,
+  country?: string | null,
+  code?: string | null,
+  street2?: string | null,
+  lname?: string | null,
+  vat_name?: string | null,
+  vat_number?: string | null,
+  ownerid?: number | null,
+  template?: string | number | null,
+  updated?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`estimates.get`
+
+Read one estimate, including its status
+
+**Risk:** `read`
+
+```ts
+await corsair.freshbooks.api.estimates.get({ accountId: 'LJArJ4', estimateId: 152430 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `estimateId` | `number` | Yes | The estimate id, from an estimate's `id`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `estimate` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="estimate full type">
+
+```ts
+{
+  id: number,
+  accounting_systemid?: string | null,
+  customerid?: number | null,
+  estimate_number?: string | null,
+  create_date?: string | null,
+  created_at?: string | null,
+  status?: number | null,
+  vis_state?: number | null,
+  reply_status?: string | null,
+  ui_status?: string | null,
+  invoiced?: boolean | null,
+  sent?: string | boolean | null,
+  amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  discount_total?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  description?: string | null,
+  terms?: string | null,
+  notes?: string | null,
+  current_organization?: string | null,
+  address?: string | null,
+  province?: string | null,
+  country?: string | null,
+  code?: string | null,
+  street2?: string | null,
+  lname?: string | null,
+  vat_name?: string | null,
+  vat_number?: string | null,
+  ownerid?: number | null,
+  template?: string | number | null,
+  updated?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`estimates.list`
+
+List estimates with paging
+
+**Risk:** `read`
+
+```ts
+await corsair.freshbooks.api.estimates.list({ accountId: 'LJArJ4', page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `page` | `number` | No | 1-based page. Requesting page 0 returns page 1. |
+| `per_page` | `number` | No | Defaults to 15. Values above 100 are capped silently by the API. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `estimates` | `object[]` | Yes | — |
+| `page` | `number` | Yes | — |
+| `pages` | `number` | Yes | — |
+| `per_page` | `number` | Yes | — |
+| `total` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="estimates full type">
+
+```ts
+{
+  id: number,
+  accounting_systemid?: string | null,
+  customerid?: number | null,
+  estimate_number?: string | null,
+  create_date?: string | null,
+  created_at?: string | null,
+  status?: number | null,
+  vis_state?: number | null,
+  reply_status?: string | null,
+  ui_status?: string | null,
+  invoiced?: boolean | null,
+  sent?: string | boolean | null,
+  amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  discount_total?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  description?: string | null,
+  terms?: string | null,
+  notes?: string | null,
+  current_organization?: string | null,
+  address?: string | null,
+  province?: string | null,
+  country?: string | null,
+  code?: string | null,
+  street2?: string | null,
+  lname?: string | null,
+  vat_name?: string | null,
+  vat_number?: string | null,
+  ownerid?: number | null,
+  template?: string | number | null,
+  updated?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`estimates.update`
+
+Change estimate fields
+
+**Risk:** `write`
+
+```ts
+await corsair.freshbooks.api.estimates.update({ accountId: 'LJArJ4', estimateId: 152430, estimate: { terms: 'Net 15' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `estimateId` | `number` | Yes | The estimate to change. |
+| `estimate` | `object` | Yes | The estimate fields to change. |
+
+<AccordionGroup>
+<Accordion title="estimate full type">
+
+```ts
+{
+  customerid?: number,
+  create_date?: string,
+  email?: string,
+  notes?: string,
+  terms?: string,
+  lines?: {
+    name?: string,
+    description?: string,
+    qty?: number,
+    unit_cost?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `estimate` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="estimate full type">
+
+```ts
+{
+  id: number,
+  accounting_systemid?: string | null,
+  customerid?: number | null,
+  estimate_number?: string | null,
+  create_date?: string | null,
+  created_at?: string | null,
+  status?: number | null,
+  vis_state?: number | null,
+  reply_status?: string | null,
+  ui_status?: string | null,
+  invoiced?: boolean | null,
+  sent?: string | boolean | null,
+  amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  discount_total?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  description?: string | null,
+  terms?: string | null,
+  notes?: string | null,
+  current_organization?: string | null,
+  address?: string | null,
+  province?: string | null,
+  country?: string | null,
+  code?: string | null,
+  street2?: string | null,
+  lname?: string | null,
+  vat_name?: string | null,
+  vat_number?: string | null,
+  ownerid?: number | null,
+  template?: string | number | null,
+  updated?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Expenses
+
+### create
+
+`expenses.create`
+
+Record an expense
+
+**Risk:** `write`
+
+```ts
+await corsair.freshbooks.api.expenses.create({ accountId: 'LJArJ4', expense: { amount: { amount: '39.99', code: 'USD' }, categoryid: 50104404, staffid: 1, date: '2026-01-31', vendor: 'Internet Co.' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `expense` | `object` | Yes | The expense to record. |
+
+`amount.amount` is a string (such as "39.99"), `categoryid` is the expense category id, `staffid` and `date` come from the docs example. Needs `user:expenses:write`.
+
+<AccordionGroup>
+<Accordion title="expense full type">
+
+```ts
+{
+  amount: {
+    amount: string,
+    code?: string
+  },
+  categoryid: number,
+  staffid?: number,
+  clientid?: number,
+  projectid?: number,
+  date?: string,
+  vendor?: string,
+  note?: string,
+  isduplicate?: boolean,
+  has_receipt?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expense` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="expense full type">
+
+```ts
+{
+  id: number,
+  accounting_systemid?: string | null,
+  account_name?: string | null,
+  accountid?: string | null,
+  amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  categoryid?: number | null,
+  staffid?: number | null,
+  clientid?: number | null,
+  code?: string | null,
+  date?: string | null,
+  vendor?: string | null,
+  bank_name?: string | null,
+  ext_systemid?: string | null,
+  has_receipt?: boolean | null,
+  isduplicate?: boolean | null,
+  invoiceid?: number | null,
+  markup_percent?: number | null,
+  profileid?: number | null,
+  projectid?: number | null,
+  status?: string | number | null,
+  transactionid?: string | null,
+  updated?: string | null,
+  vis_state?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`expenses.delete`
+
+Soft-delete an expense by setting vis_state to 1. The record stays in FreshBooks; no documented call restores it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.freshbooks.api.expenses.delete({ accountId: 'LJArJ4', expenseId: 123456 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `expenseId` | `number` | Yes | The expense to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expense` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="expense full type">
+
+```ts
+{
+  id: number,
+  accounting_systemid?: string | null,
+  account_name?: string | null,
+  accountid?: string | null,
+  amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  categoryid?: number | null,
+  staffid?: number | null,
+  clientid?: number | null,
+  code?: string | null,
+  date?: string | null,
+  vendor?: string | null,
+  bank_name?: string | null,
+  ext_systemid?: string | null,
+  has_receipt?: boolean | null,
+  isduplicate?: boolean | null,
+  invoiceid?: number | null,
+  markup_percent?: number | null,
+  profileid?: number | null,
+  projectid?: number | null,
+  status?: string | number | null,
+  transactionid?: string | null,
+  updated?: string | null,
+  vis_state?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`expenses.get`
+
+Read one expense
+
+**Risk:** `read`
+
+```ts
+await corsair.freshbooks.api.expenses.get({ accountId: 'LJArJ4', expenseId: 123456 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `expenseId` | `number` | Yes | The expense id, from an expense's `id`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expense` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="expense full type">
+
+```ts
+{
+  id: number,
+  accounting_systemid?: string | null,
+  account_name?: string | null,
+  accountid?: string | null,
+  amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  categoryid?: number | null,
+  staffid?: number | null,
+  clientid?: number | null,
+  code?: string | null,
+  date?: string | null,
+  vendor?: string | null,
+  bank_name?: string | null,
+  ext_systemid?: string | null,
+  has_receipt?: boolean | null,
+  isduplicate?: boolean | null,
+  invoiceid?: number | null,
+  markup_percent?: number | null,
+  profileid?: number | null,
+  projectid?: number | null,
+  status?: string | number | null,
+  transactionid?: string | null,
+  updated?: string | null,
+  vis_state?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`expenses.list`
+
+List expenses with paging
+
+**Risk:** `read`
+
+```ts
+await corsair.freshbooks.api.expenses.list({ accountId: 'LJArJ4', page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `page` | `number` | No | 1-based page. Requesting page 0 returns page 1. |
+| `per_page` | `number` | No | Defaults to 15. Values above 100 are capped silently by the API. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expenses` | `object[]` | Yes | — |
+| `page` | `number` | Yes | — |
+| `pages` | `number` | Yes | — |
+| `per_page` | `number` | Yes | — |
+| `total` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="expenses full type">
+
+```ts
+{
+  id: number,
+  accounting_systemid?: string | null,
+  account_name?: string | null,
+  accountid?: string | null,
+  amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  categoryid?: number | null,
+  staffid?: number | null,
+  clientid?: number | null,
+  code?: string | null,
+  date?: string | null,
+  vendor?: string | null,
+  bank_name?: string | null,
+  ext_systemid?: string | null,
+  has_receipt?: boolean | null,
+  isduplicate?: boolean | null,
+  invoiceid?: number | null,
+  markup_percent?: number | null,
+  profileid?: number | null,
+  projectid?: number | null,
+  status?: string | number | null,
+  transactionid?: string | null,
+  updated?: string | null,
+  vis_state?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`expenses.update`
+
+Change expense fields
+
+**Risk:** `write`
+
+```ts
+await corsair.freshbooks.api.expenses.update({ accountId: 'LJArJ4', expenseId: 123456, expense: { vendor: 'Other Co.' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `expenseId` | `number` | Yes | The expense to change. |
+| `expense` | `object` | Yes | The expense fields to change. |
+
+<AccordionGroup>
+<Accordion title="expense full type">
+
+```ts
+{
+  amount?: {
+    amount: string,
+    code?: string
+  },
+  categoryid?: number,
+  staffid?: number,
+  clientid?: number,
+  projectid?: number,
+  date?: string,
+  vendor?: string,
+  note?: string,
+  isduplicate?: boolean,
+  has_receipt?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expense` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="expense full type">
+
+```ts
+{
+  id: number,
+  accounting_systemid?: string | null,
+  account_name?: string | null,
+  accountid?: string | null,
+  amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  categoryid?: number | null,
+  staffid?: number | null,
+  clientid?: number | null,
+  code?: string | null,
+  date?: string | null,
+  vendor?: string | null,
+  bank_name?: string | null,
+  ext_systemid?: string | null,
+  has_receipt?: boolean | null,
+  isduplicate?: boolean | null,
+  invoiceid?: number | null,
+  markup_percent?: number | null,
+  profileid?: number | null,
+  projectid?: number | null,
+  status?: string | number | null,
+  transactionid?: string | null,
+  updated?: string | null,
+  vis_state?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Invoices
+
+### create
+
+`invoices.create`
+
+Create a draft invoice. Concurrent creates without invoice_number can collide (409); retrying succeeds
+
+**Risk:** `write`
+
+```ts
+await corsair.freshbooks.api.invoices.create({ accountId: 'LJArJ4', invoice: { customerid: 960771, create_date: '2026-01-31', currency_code: 'CAD', lines: [{ name: 'Consulting', qty: 2, unit_cost: 50 }] } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `invoice` | `object` | Yes | The invoice fields to set. FreshBooks creates it as a draft. |
+
+Creates a draft. Creating several invoices concurrently without `invoice_number` can collide with a 409; the plugin retries that one case. Needs `user:invoices:write`.
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  customerid: number,
+  create_date?: string,
+  currency_code?: string,
+  invoice_number?: string,
+  notes?: string,
+  terms?: string,
+  lines?: {
+    name?: string,
+    description?: string,
+    qty?: number,
+    unit_cost?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  id: number,
+  accountid?: string | null,
+  accounting_systemid?: string | null,
+  customerid?: number | null,
+  invoice_number?: string | null,
+  create_date?: string | null,
+  due_date?: string | null,
+  date_paid?: string | null,
+  created_at?: string | null,
+  currency_code?: string | null,
+  current_organization?: string | null,
+  address?: string | null,
+  city?: string | null,
+  province?: string | null,
+  country?: string | null,
+  code?: string | null,
+  fname?: string | null,
+  lname?: string | null,
+  vat_name?: string | null,
+  vat_number?: string | null,
+  notes?: string | null,
+  terms?: string | null,
+  description?: string | null,
+  po_number?: string | null,
+  amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  outstanding?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  unpaid?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  total?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  deposit_amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  deposit_percentage?: string | null,
+  deposit_status?: string | null,
+  discount_total?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  discount_value?: string | null,
+  discount_description?: string | null,
+  dispute_status?: string | null,
+  generation_date?: string | null,
+  payment_status?: string | null,
+  v3_status?: string | null,
+  status?: number | null,
+  vis_state?: number | null,
+  auto_bill?: boolean | null,
+  autobill_status?: string | null,
+  basecampid?: number | null,
+  ownerid?: number | null,
+  estimateid?: number | null,
+  parent?: number | null,
+  template?: string | number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`invoices.delete`
+
+Soft-delete an invoice by setting vis_state to 1. The record stays in FreshBooks; no documented call restores it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.freshbooks.api.invoices.delete({ accountId: 'LJArJ4', invoiceId: 152429 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `invoiceId` | `number` | Yes | The invoice to delete. |
+
+Soft delete with `vis_state: 1`, like the other accounting resources.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  id: number,
+  accountid?: string | null,
+  accounting_systemid?: string | null,
+  customerid?: number | null,
+  invoice_number?: string | null,
+  create_date?: string | null,
+  due_date?: string | null,
+  date_paid?: string | null,
+  created_at?: string | null,
+  currency_code?: string | null,
+  current_organization?: string | null,
+  address?: string | null,
+  city?: string | null,
+  province?: string | null,
+  country?: string | null,
+  code?: string | null,
+  fname?: string | null,
+  lname?: string | null,
+  vat_name?: string | null,
+  vat_number?: string | null,
+  notes?: string | null,
+  terms?: string | null,
+  description?: string | null,
+  po_number?: string | null,
+  amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  outstanding?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  unpaid?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  total?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  deposit_amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  deposit_percentage?: string | null,
+  deposit_status?: string | null,
+  discount_total?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  discount_value?: string | null,
+  discount_description?: string | null,
+  dispute_status?: string | null,
+  generation_date?: string | null,
+  payment_status?: string | null,
+  v3_status?: string | null,
+  status?: number | null,
+  vis_state?: number | null,
+  auto_bill?: boolean | null,
+  autobill_status?: string | null,
+  basecampid?: number | null,
+  ownerid?: number | null,
+  estimateid?: number | null,
+  parent?: number | null,
+  template?: string | number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`invoices.get`
+
+Read one invoice, including its amount and status
+
+**Risk:** `read`
+
+```ts
+await corsair.freshbooks.api.invoices.get({ accountId: 'LJArJ4', invoiceId: 152429 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `invoiceId` | `number` | Yes | The invoice id, from an invoice's `id`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  id: number,
+  accountid?: string | null,
+  accounting_systemid?: string | null,
+  customerid?: number | null,
+  invoice_number?: string | null,
+  create_date?: string | null,
+  due_date?: string | null,
+  date_paid?: string | null,
+  created_at?: string | null,
+  currency_code?: string | null,
+  current_organization?: string | null,
+  address?: string | null,
+  city?: string | null,
+  province?: string | null,
+  country?: string | null,
+  code?: string | null,
+  fname?: string | null,
+  lname?: string | null,
+  vat_name?: string | null,
+  vat_number?: string | null,
+  notes?: string | null,
+  terms?: string | null,
+  description?: string | null,
+  po_number?: string | null,
+  amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  outstanding?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  unpaid?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  total?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  deposit_amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  deposit_percentage?: string | null,
+  deposit_status?: string | null,
+  discount_total?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  discount_value?: string | null,
+  discount_description?: string | null,
+  dispute_status?: string | null,
+  generation_date?: string | null,
+  payment_status?: string | null,
+  v3_status?: string | null,
+  status?: number | null,
+  vis_state?: number | null,
+  auto_bill?: boolean | null,
+  autobill_status?: string | null,
+  basecampid?: number | null,
+  ownerid?: number | null,
+  estimateid?: number | null,
+  parent?: number | null,
+  template?: string | number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`invoices.list`
+
+List invoices with paging
+
+**Risk:** `read`
+
+```ts
+await corsair.freshbooks.api.invoices.list({ accountId: 'LJArJ4', page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `page` | `number` | No | 1-based page. Requesting page 0 returns page 1. |
+| `per_page` | `number` | No | Defaults to 15. Values above 100 are capped silently by the API. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoices` | `object[]` | Yes | — |
+| `page` | `number` | Yes | — |
+| `pages` | `number` | Yes | — |
+| `per_page` | `number` | Yes | — |
+| `total` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoices full type">
+
+```ts
+{
+  id: number,
+  accountid?: string | null,
+  accounting_systemid?: string | null,
+  customerid?: number | null,
+  invoice_number?: string | null,
+  create_date?: string | null,
+  due_date?: string | null,
+  date_paid?: string | null,
+  created_at?: string | null,
+  currency_code?: string | null,
+  current_organization?: string | null,
+  address?: string | null,
+  city?: string | null,
+  province?: string | null,
+  country?: string | null,
+  code?: string | null,
+  fname?: string | null,
+  lname?: string | null,
+  vat_name?: string | null,
+  vat_number?: string | null,
+  notes?: string | null,
+  terms?: string | null,
+  description?: string | null,
+  po_number?: string | null,
+  amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  outstanding?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  unpaid?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  total?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  deposit_amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  deposit_percentage?: string | null,
+  deposit_status?: string | null,
+  discount_total?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  discount_value?: string | null,
+  discount_description?: string | null,
+  dispute_status?: string | null,
+  generation_date?: string | null,
+  payment_status?: string | null,
+  v3_status?: string | null,
+  status?: number | null,
+  vis_state?: number | null,
+  auto_bill?: boolean | null,
+  autobill_status?: string | null,
+  basecampid?: number | null,
+  ownerid?: number | null,
+  estimateid?: number | null,
+  parent?: number | null,
+  template?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markSent
+
+`invoices.markSent`
+
+Mark a draft invoice as sent without emailing anyone; the client-facing status changes
+
+**Risk:** `write`
+
+```ts
+await corsair.freshbooks.api.invoices.markSent({ accountId: 'LJArJ4', invoiceId: 152429 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `invoiceId` | `number` | Yes | The draft invoice to mark sent. |
+
+`PUT` with `action_mark_as_sent: true` flips a draft to sent without emailing anyone.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  id: number,
+  accountid?: string | null,
+  accounting_systemid?: string | null,
+  customerid?: number | null,
+  invoice_number?: string | null,
+  create_date?: string | null,
+  due_date?: string | null,
+  date_paid?: string | null,
+  created_at?: string | null,
+  currency_code?: string | null,
+  current_organization?: string | null,
+  address?: string | null,
+  city?: string | null,
+  province?: string | null,
+  country?: string | null,
+  code?: string | null,
+  fname?: string | null,
+  lname?: string | null,
+  vat_name?: string | null,
+  vat_number?: string | null,
+  notes?: string | null,
+  terms?: string | null,
+  description?: string | null,
+  po_number?: string | null,
+  amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  outstanding?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  unpaid?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  total?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  deposit_amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  deposit_percentage?: string | null,
+  deposit_status?: string | null,
+  discount_total?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  discount_value?: string | null,
+  discount_description?: string | null,
+  dispute_status?: string | null,
+  generation_date?: string | null,
+  payment_status?: string | null,
+  v3_status?: string | null,
+  status?: number | null,
+  vis_state?: number | null,
+  auto_bill?: boolean | null,
+  autobill_status?: string | null,
+  basecampid?: number | null,
+  ownerid?: number | null,
+  estimateid?: number | null,
+  parent?: number | null,
+  template?: string | number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendEmail
+
+`invoices.sendEmail`
+
+Email the invoice to the client now. The email goes out immediately and cannot be unsent
+
+**Risk:** `write` · **Irreversible**
+
+```ts
+await corsair.freshbooks.api.invoices.sendEmail({ accountId: 'LJArJ4', invoiceId: 152429, email_recipients: ['billing@example.com'], email_include_pdf: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `invoiceId` | `number` | Yes | The invoice to email to the client. |
+| `email_recipients` | `string[]` | No | Addresses to send to. Omit to let FreshBooks use the client email. |
+| `email_include_pdf` | `boolean` | No | — |
+| `invoice_customized_email` | `object` | No | Overrides the email subject and body for this send. |
+
+`PUT` with `action_email: true`. Emails the client immediately and cannot be unsent. Omit `email_recipients` to use the client email; `invoice_customized_email` overrides subject and body for this send.
+
+<AccordionGroup>
+<Accordion title="invoice_customized_email full type">
+
+```ts
+{
+  subject: string,
+  body: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  id: number,
+  accountid?: string | null,
+  accounting_systemid?: string | null,
+  customerid?: number | null,
+  invoice_number?: string | null,
+  create_date?: string | null,
+  due_date?: string | null,
+  date_paid?: string | null,
+  created_at?: string | null,
+  currency_code?: string | null,
+  current_organization?: string | null,
+  address?: string | null,
+  city?: string | null,
+  province?: string | null,
+  country?: string | null,
+  code?: string | null,
+  fname?: string | null,
+  lname?: string | null,
+  vat_name?: string | null,
+  vat_number?: string | null,
+  notes?: string | null,
+  terms?: string | null,
+  description?: string | null,
+  po_number?: string | null,
+  amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  outstanding?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  unpaid?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  total?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  deposit_amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  deposit_percentage?: string | null,
+  deposit_status?: string | null,
+  discount_total?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  discount_value?: string | null,
+  discount_description?: string | null,
+  dispute_status?: string | null,
+  generation_date?: string | null,
+  payment_status?: string | null,
+  v3_status?: string | null,
+  status?: number | null,
+  vis_state?: number | null,
+  auto_bill?: boolean | null,
+  autobill_status?: string | null,
+  basecampid?: number | null,
+  ownerid?: number | null,
+  estimateid?: number | null,
+  parent?: number | null,
+  template?: string | number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`invoices.update`
+
+Change invoice fields on a draft or sent invoice
+
+**Risk:** `write`
+
+```ts
+await corsair.freshbooks.api.invoices.update({ accountId: 'LJArJ4', invoiceId: 152429, invoice: { notes: 'Net 30' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `invoiceId` | `number` | Yes | The invoice to change. |
+| `invoice` | `object` | Yes | The invoice fields to change. |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  customerid?: number,
+  create_date?: string,
+  currency_code?: string,
+  invoice_number?: string,
+  notes?: string,
+  terms?: string,
+  lines?: {
+    name?: string,
+    description?: string,
+    qty?: number,
+    unit_cost?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `invoice` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="invoice full type">
+
+```ts
+{
+  id: number,
+  accountid?: string | null,
+  accounting_systemid?: string | null,
+  customerid?: number | null,
+  invoice_number?: string | null,
+  create_date?: string | null,
+  due_date?: string | null,
+  date_paid?: string | null,
+  created_at?: string | null,
+  currency_code?: string | null,
+  current_organization?: string | null,
+  address?: string | null,
+  city?: string | null,
+  province?: string | null,
+  country?: string | null,
+  code?: string | null,
+  fname?: string | null,
+  lname?: string | null,
+  vat_name?: string | null,
+  vat_number?: string | null,
+  notes?: string | null,
+  terms?: string | null,
+  description?: string | null,
+  po_number?: string | null,
+  amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  outstanding?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  unpaid?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  total?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  deposit_amount?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  deposit_percentage?: string | null,
+  deposit_status?: string | null,
+  discount_total?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  discount_value?: string | null,
+  discount_description?: string | null,
+  dispute_status?: string | null,
+  generation_date?: string | null,
+  payment_status?: string | null,
+  v3_status?: string | null,
+  status?: number | null,
+  vis_state?: number | null,
+  auto_bill?: boolean | null,
+  autobill_status?: string | null,
+  basecampid?: number | null,
+  ownerid?: number | null,
+  estimateid?: number | null,
+  parent?: number | null,
+  template?: string | number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a fixed-price or hourly project
+
+**Risk:** `write`
+
+```ts
+await corsair.freshbooks.api.projects.create({ businessId: 77128, project: { title: 'My Cool Project', project_type: 'fixed_price', client_id: '97499', fixed_price: '500' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessId` | `number` | Yes | The numeric business id, from the `businessId` field of users.me. |
+| `project` | `object` | Yes | The project to create. |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  title: string,
+  description?: string,
+  project_type: fixed_price | hourly_rate,
+  client_id?: string | number,
+  fixed_price?: string,
+  rate?: string,
+  budget?: string,
+  due_date?: string,
+  start_date?: string,
+  complete?: boolean,
+  services?: {
+    id?: number,
+    name?: string,
+    billable?: boolean,
+    rate?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  id: number,
+  title?: string | null,
+  description?: string | null,
+  project_type?: string | null,
+  fixed_price?: string | null,
+  rate?: string | null,
+  budget?: string | null,
+  internal_budget?: string | null,
+  complete?: boolean | null,
+  active?: boolean | null,
+  due_date?: string | null,
+  updated_at?: string | null,
+  start_date?: string | null,
+  client_id?: string | number | null,
+  business_id?: number | null,
+  owner?: number | null,
+  identity_id?: number | null,
+  sample?: boolean | null,
+  group?: Record<string, unknown> | null,
+  links?: Record<string, unknown> | null,
+  members?: Record<string, unknown>[] | null,
+  services?: Record<string, unknown>[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a project outright. FreshBooks does not mark it; the data is gone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.freshbooks.api.projects.delete({ businessId: 77128, projectId: 779803 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessId` | `number` | Yes | The numeric business id, from the `businessId` field of users.me. |
+| `projectId` | `number` | Yes | The project to delete. |
+
+Hard `DELETE`: the project is gone, not marked. Irreversible.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `projectId` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Read one project, including its services and group
+
+**Risk:** `read`
+
+```ts
+await corsair.freshbooks.api.projects.get({ businessId: 77128, projectId: 779803 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessId` | `number` | Yes | The numeric business id, from the `businessId` field of users.me. |
+| `projectId` | `number` | Yes | The project id, from a project's `id`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  id: number,
+  title?: string | null,
+  description?: string | null,
+  project_type?: string | null,
+  fixed_price?: string | null,
+  rate?: string | null,
+  budget?: string | null,
+  internal_budget?: string | null,
+  complete?: boolean | null,
+  active?: boolean | null,
+  due_date?: string | null,
+  updated_at?: string | null,
+  start_date?: string | null,
+  client_id?: string | number | null,
+  business_id?: number | null,
+  owner?: number | null,
+  identity_id?: number | null,
+  sample?: boolean | null,
+  group?: Record<string, unknown> | null,
+  links?: Record<string, unknown> | null,
+  members?: Record<string, unknown>[] | null,
+  services?: Record<string, unknown>[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects with paging
+
+**Risk:** `read`
+
+```ts
+await corsair.freshbooks.api.projects.list({ businessId: 77128, page: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessId` | `number` | Yes | The numeric business id, from the `businessId` field of users.me. |
+| `page` | `number` | No | 0-based page: the docs list example shows meta.page 0. |
+| `per_page` | `number` | No | Defaults to 15. Values above 100 are capped silently by the API. |
+
+This family pages from 0: the docs list example shows `meta.page: 0`. `sort` and detail filters are not exposed by this plugin yet. Needs `user:projects:read`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id: number,
+  title?: string | null,
+  description?: string | null,
+  project_type?: string | null,
+  fixed_price?: string | null,
+  rate?: string | null,
+  budget?: string | null,
+  internal_budget?: string | null,
+  complete?: boolean | null,
+  active?: boolean | null,
+  due_date?: string | null,
+  updated_at?: string | null,
+  start_date?: string | null,
+  client_id?: string | number | null,
+  business_id?: number | null,
+  owner?: number | null,
+  identity_id?: number | null,
+  sample?: boolean | null,
+  group?: Record<string, unknown> | null,
+  links?: Record<string, unknown> | null,
+  members?: Record<string, unknown>[] | null,
+  services?: Record<string, unknown>[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  pages?: number | null,
+  per_page?: number | null,
+  total?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Change project fields
+
+**Risk:** `write`
+
+```ts
+await corsair.freshbooks.api.projects.update({ businessId: 77128, projectId: 779803, project: { title: 'Renamed' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessId` | `number` | Yes | The numeric business id, from the `businessId` field of users.me. |
+| `projectId` | `number` | Yes | The project to change. |
+| `project` | `object` | Yes | The project fields to change. |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  project_type?: fixed_price | hourly_rate,
+  client_id?: string | number,
+  fixed_price?: string,
+  rate?: string,
+  budget?: string,
+  due_date?: string,
+  start_date?: string,
+  complete?: boolean,
+  services?: {
+    id?: number,
+    name?: string,
+    billable?: boolean,
+    rate?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  id: number,
+  title?: string | null,
+  description?: string | null,
+  project_type?: string | null,
+  fixed_price?: string | null,
+  rate?: string | null,
+  budget?: string | null,
+  internal_budget?: string | null,
+  complete?: boolean | null,
+  active?: boolean | null,
+  due_date?: string | null,
+  updated_at?: string | null,
+  start_date?: string | null,
+  client_id?: string | number | null,
+  business_id?: number | null,
+  owner?: number | null,
+  identity_id?: number | null,
+  sample?: boolean | null,
+  group?: Record<string, unknown> | null,
+  links?: Record<string, unknown> | null,
+  members?: Record<string, unknown>[] | null,
+  services?: Record<string, unknown>[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tasks
+
+### create
+
+`tasks.create`
+
+Create a billable task
+
+**Risk:** `write`
+
+```ts
+await corsair.freshbooks.api.tasks.create({ accountId: 'LJArJ4', task: { name: 'Consulting', rate: { amount: '100.00', code: 'CAD' } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `task` | `object` | Yes | The task to create. |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  name: string,
+  description?: string,
+  billable?: boolean,
+  rate?: {
+    amount: string,
+    code?: string
+  },
+  tax1?: number,
+  tax2?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  id: number,
+  taskid?: number | null,
+  name?: string | null,
+  tname?: string | null,
+  description?: string | null,
+  tdesc?: string | null,
+  billable?: boolean | null,
+  rate?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  tax1?: number | null,
+  tax2?: number | null,
+  updated?: string | null,
+  vis_state?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`tasks.get`
+
+Read one billable task, including its rate
+
+**Risk:** `read`
+
+```ts
+await corsair.freshbooks.api.tasks.get({ accountId: 'LJArJ4', taskId: 159361 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `taskId` | `number` | Yes | The task id, from a task's `id`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  id: number,
+  taskid?: number | null,
+  name?: string | null,
+  tname?: string | null,
+  description?: string | null,
+  tdesc?: string | null,
+  billable?: boolean | null,
+  rate?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  tax1?: number | null,
+  tax2?: number | null,
+  updated?: string | null,
+  vis_state?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tasks.list`
+
+List billable tasks with paging
+
+**Risk:** `read`
+
+```ts
+await corsair.freshbooks.api.tasks.list({ accountId: 'LJArJ4', page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `page` | `number` | No | 1-based page. Requesting page 0 returns page 1. |
+| `per_page` | `number` | No | Defaults to 15. Values above 100 are capped silently by the API. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tasks` | `object[]` | Yes | — |
+| `page` | `number` | Yes | — |
+| `pages` | `number` | Yes | — |
+| `per_page` | `number` | Yes | — |
+| `total` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tasks full type">
+
+```ts
+{
+  id: number,
+  taskid?: number | null,
+  name?: string | null,
+  tname?: string | null,
+  description?: string | null,
+  tdesc?: string | null,
+  billable?: boolean | null,
+  rate?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  tax1?: number | null,
+  tax2?: number | null,
+  updated?: string | null,
+  vis_state?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tasks.update`
+
+Change task fields
+
+**Risk:** `write`
+
+```ts
+await corsair.freshbooks.api.tasks.update({ accountId: 'LJArJ4', taskId: 159361, task: { billable: false } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | The accounting system id, such as LJArJ4, from the `accountId` field of users.me. |
+| `taskId` | `number` | Yes | The task to change. |
+| `task` | `object` | Yes | The task fields to change. |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  name?: string,
+  description?: string,
+  billable?: boolean,
+  rate?: {
+    amount: string,
+    code?: string
+  },
+  tax1?: number,
+  tax2?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="task full type">
+
+```ts
+{
+  id: number,
+  taskid?: number | null,
+  name?: string | null,
+  tname?: string | null,
+  description?: string | null,
+  tdesc?: string | null,
+  billable?: boolean | null,
+  rate?: {
+    amount?: string | null,
+    code?: string | null
+  } | null,
+  tax1?: number | null,
+  tax2?: number | null,
+  updated?: string | null,
+  vis_state?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Time Entries
+
+### create
+
+`timeEntries.create`
+
+Log a time entry (duration and start time), or start a timer when is_logged is false
+
+**Risk:** `write`
+
+```ts
+await corsair.freshbooks.api.timeEntries.create({ businessId: 77128, time_entry: { is_logged: true, duration: 7200, started_at: '2026-01-31T09:00:00Z', note: 'Consulting', project_id: 153125 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessId` | `number` | Yes | The numeric business id, from the `businessId` field of users.me. |
+| `time_entry` | `object` | Yes | The time entry to create. |
+
+`duration` is seconds, `started_at` an ISO timestamp; `is_logged: false` starts a timer instead of logging. Needs `user:time_entries:write`.
+
+<AccordionGroup>
+<Accordion title="time_entry full type">
+
+```ts
+{
+  is_logged: boolean,
+  duration: number,
+  started_at: string,
+  note?: string,
+  project_id?: number | string,
+  client_id?: number | string,
+  identity_id?: number | string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time_entry` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="time_entry full type">
+
+```ts
+{
+  id: number,
+  duration?: number | null,
+  is_logged?: boolean | null,
+  active?: boolean | null,
+  started_at?: string | null,
+  note?: string | null,
+  project_id?: number | string | null,
+  client_id?: number | string | null,
+  identity_id?: number | string | null,
+  timer?: {
+    id?: number | null,
+    is_running?: boolean | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`timeEntries.delete`
+
+Delete a time entry outright. FreshBooks does not mark it; the data is gone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.freshbooks.api.timeEntries.delete({ businessId: 77128, timeEntryId: 5095 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessId` | `number` | Yes | The numeric business id, from the `businessId` field of users.me. |
+| `timeEntryId` | `number` | Yes | The time entry to delete. |
+
+Hard `DELETE` answered with 204 and no content. Irreversible.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `timeEntryId` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`timeEntries.get`
+
+Read one time entry, including its duration and timer
+
+**Risk:** `read`
+
+```ts
+await corsair.freshbooks.api.timeEntries.get({ businessId: 77128, timeEntryId: 5095 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessId` | `number` | Yes | The numeric business id, from the `businessId` field of users.me. |
+| `timeEntryId` | `number` | Yes | The time entry id, from a time entry's `id`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time_entry` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="time_entry full type">
+
+```ts
+{
+  id: number,
+  duration?: number | null,
+  is_logged?: boolean | null,
+  active?: boolean | null,
+  started_at?: string | null,
+  note?: string | null,
+  project_id?: number | string | null,
+  client_id?: number | string | null,
+  identity_id?: number | string | null,
+  timer?: {
+    id?: number | null,
+    is_running?: boolean | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`timeEntries.list`
+
+List time entries with paging, optionally filtered by start time, update time or billed state
+
+**Risk:** `read`
+
+```ts
+await corsair.freshbooks.api.timeEntries.list({ businessId: 77128, started_from: '2026-01-01T00:00:00Z', started_to: '2026-02-01T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessId` | `number` | Yes | The numeric business id, from the `businessId` field of users.me. |
+| `started_from` | `string` | No | Only entries starting at or after this ISO time. |
+| `started_to` | `string` | No | Only entries starting at or before this ISO time. |
+| `updated_since` | `string` | No | Only entries updated at or after this ISO time. |
+| `billed` | `boolean` | No | Only billed (true) or unbilled (false) entries. |
+| `include_deleted` | `boolean` | No | Sent as 1; adds deleted entries. |
+| `page` | `number` | No | Page number as reported by meta.page of the previous call. |
+| `per_page` | `number` | No | Defaults to 15. Values above 100 are capped silently by the API. |
+
+Bare response with a `meta` object that also carries `total_logged` and `total_unbilled`. `started_from` and `started_to` are ISO times. Needs `user:time_entries:read`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time_entries` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="time_entries full type">
+
+```ts
+{
+  id: number,
+  duration?: number | null,
+  is_logged?: boolean | null,
+  active?: boolean | null,
+  started_at?: string | null,
+  note?: string | null,
+  project_id?: number | string | null,
+  client_id?: number | string | null,
+  identity_id?: number | string | null,
+  timer?: {
+    id?: number | null,
+    is_running?: boolean | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  pages?: number | null,
+  per_page?: number | null,
+  total?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`timeEntries.update`
+
+Change time entry fields
+
+**Risk:** `write`
+
+```ts
+await corsair.freshbooks.api.timeEntries.update({ businessId: 77128, timeEntryId: 5095, time_entry: { note: 'Updated' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessId` | `number` | Yes | The numeric business id, from the `businessId` field of users.me. |
+| `timeEntryId` | `number` | Yes | The time entry to change. |
+| `time_entry` | `object` | Yes | The time entry fields to change. |
+
+<AccordionGroup>
+<Accordion title="time_entry full type">
+
+```ts
+{
+  is_logged?: boolean,
+  duration?: number,
+  started_at?: string,
+  note?: string,
+  project_id?: number | string,
+  client_id?: number | string,
+  identity_id?: number | string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `time_entry` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="time_entry full type">
+
+```ts
+{
+  id: number,
+  duration?: number | null,
+  is_logged?: boolean | null,
+  active?: boolean | null,
+  started_at?: string | null,
+  note?: string | null,
+  project_id?: number | string | null,
+  client_id?: number | string | null,
+  identity_id?: number | string | null,
+  timer?: {
+    id?: number | null,
+    is_running?: boolean | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### me
+
+`users.me`
+
+Read the authenticated FreshBooks identity, including the accountId and businessId the other endpoints need
+
+**Risk:** `read`
+
+```ts
+await corsair.freshbooks.api.users.me({});
+```
+
+**Input:** _empty object_
+
+`GET /auth/api/v1/users/me`. Returns the identity with `business_memberships`; the plugin surfaces `accountId` and `businessId` from the first membership. Needs the `user:profile:read` scope.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `business_memberships` | `object[]` | Yes | — |
+| `accountId` | `string` | No | The account_id of the first membership business that has one. Pass it as accountId to the accounting endpoints. |
+| `businessId` | `number` | No | The id of the first membership business. Pass it as businessId to the projects and timeEntries endpoints. |
+
+<AccordionGroup>
+<Accordion title="business_memberships full type">
+
+```ts
+{
+  id?: number | null,
+  role?: string | null,
+  business: {
+    id?: number | null,
+    name?: string | null,
+    account_id?: string | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

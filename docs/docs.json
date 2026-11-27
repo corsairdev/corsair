@@ -2530,6 +2530,14 @@
                 ]
               },
               {
+                "group": "FreshBooks",
+                "pages": [
+                  "plugins/freshbooks/overview",
+                  "plugins/freshbooks/api",
+                  "plugins/freshbooks/database"
+                ]
+              },
+              {
                 "group": "Freshdesk",
                 "pages": [
                   "plugins/freshdesk/overview",
