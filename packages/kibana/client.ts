@@ -58,7 +58,10 @@ export async function makeKibanaRequest<T>(
 		method,
 		url: endpoint,
 		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
+			method === 'POST' ||
+			method === 'PUT' ||
+			method === 'PATCH' ||
+			method === 'DELETE'
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
