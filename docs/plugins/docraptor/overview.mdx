@@ -1,0 +1,138 @@
+---
+title: "DocRaptor plugin"
+sidebarTitle: "Overview"
+description: "Convert HTML into PDF and XML into Excel with DocRaptor - queue asynchronous conversions, poll them to completion, host finished documents at paid public URLs and expire them again."
+---
+
+Use **DocRaptor** through Corsair: one client, typed API calls.
+
+Sign up at https://docraptor.com/signup and read the API key from your account dashboard. The key is the HTTP Basic username with an empty password, and the plugin builds that header for you. Things to know before you send:
+
+- **Test mode is free.** Pass `test: true` (the default) and documents are not charged against the plan, but PDFs carry a watermark and Excel output is cut to 20 rows. Omit `test` or set it to false only when you mean to spend quota.
+- **Asynchronous is the plugin path.** `documents.createAsync` queues a conversion and returns a `status_id`; `documents.status` reads it back with `queued`, `working`, `completed` or `failed`. The synchronous creation endpoint answers with the raw PDF or Excel bytes, which this plugin does not expose because the bytes would arrive garbled; fetch the `download_url` from `documents.status` yourself when the document is completed.
+- **Download URLs are single-use-ish.** A `download_url` can be fetched only a few times (as few as once, depending on the account's data retention setting) and disappears when retention expires. Never cache it; download and store the file yourself.
+- **Hosted documents are a paid add-on.** `documents.createHosted` and `documents.createHostedAsync` put the finished document on a public unbranded URL that is billed per download. `hosted_download_limit` caps the fetches and `hosted_expires_at` sets the removal time.
+- **Expiring is permanent.** `documents.expire` removes a hosted document immediately and cannot be undone. Expiring a test-mode document is not needed; test documents are not hosted.
+- **The throttle is a 403, not a 429.** More than 30 simultaneous generation requests are refused with a 403 whose message names simultaneous requests; the plugin retries that once on reads. Other 403s mean a missing permission or a denied listing and are never retried.
+- **Listing needs a real key.** `documents.list` is implemented from the documentation, but a test-mode key is denied the listing with an empty 403, so its row fields are unverified.
+- **Webhooks.** The plugin does not receive webhooks; DocRaptor's `callback_url` parameter can post completion notices to your own endpoint instead.
+
+**What you get:**
+
+- 7 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/docraptor better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/docraptor better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/docraptor better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/docraptor better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { docraptor } from '@corsair-dev/docraptor';
+
+export const corsair = createCorsair({
+	plugins: [
+		docraptor(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the DocRaptor API key before the first call: `pnpm corsair setup --plugin=docraptor --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+docraptor()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'docraptor',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read where a document stands**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.docraptor.api.documents.status({ statusId: '123454321' });
+```
+
+
+**Expire a hosted document**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.docraptor.api.documents.expire({ downloadId: '123-456-abc' });
+```
+
+
+See the full list on the [API](/plugins/docraptor/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/docraptor/api">
+    Every `docraptor.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -1,0 +1,47 @@
+displayName: DocRaptor
+description: Convert HTML into PDF and XML into Excel with DocRaptor - queue asynchronous conversions, poll them to completion, host finished documents at paid public URLs and expire them again.
+domain: docraptor.com
+recommendedAuth: api_key
+overviewNote: |
+  Sign up at https://docraptor.com/signup and read the API key from your account dashboard. The key is the HTTP Basic username with an empty password, and the plugin builds that header for you. Things to know before you send:
+
+  - **Test mode is free.** Pass `test: true` (the default) and documents are not charged against the plan, but PDFs carry a watermark and Excel output is cut to 20 rows. Omit `test` or set it to false only when you mean to spend quota.
+  - **Asynchronous is the plugin path.** `documents.createAsync` queues a conversion and returns a `status_id`; `documents.status` reads it back with `queued`, `working`, `completed` or `failed`. The synchronous creation endpoint answers with the raw PDF or Excel bytes, which this plugin does not expose because the bytes would arrive garbled; fetch the `download_url` from `documents.status` yourself when the document is completed.
+  - **Download URLs are single-use-ish.** A `download_url` can be fetched only a few times (as few as once, depending on the account's data retention setting) and disappears when retention expires. Never cache it; download and store the file yourself.
+  - **Hosted documents are a paid add-on.** `documents.createHosted` and `documents.createHostedAsync` put the finished document on a public unbranded URL that is billed per download. `hosted_download_limit` caps the fetches and `hosted_expires_at` sets the removal time.
+  - **Expiring is permanent.** `documents.expire` removes a hosted document immediately and cannot be undone. Expiring a test-mode document is not needed; test documents are not hosted.
+  - **The throttle is a 403, not a 429.** More than 30 simultaneous generation requests are refused with a 403 whose message names simultaneous requests; the plugin retries that once on reads. Other 403s mean a missing permission or a denied listing and are never retried.
+  - **Listing needs a real key.** `documents.list` is implemented from the documentation, but a test-mode key is denied the listing with an empty 403, so its row fields are unverified.
+  - **Webhooks.** The plugin does not receive webhooks; DocRaptor's `callback_url` parameter can post completion notices to your own endpoint instead.
+apiNotes:
+  documents.createAsync: 'Asynchronous creation is the plugin path. The synchronous POST /docs and the GET /download endpoint answer with raw PDF or Excel bytes, which would arrive garbled through this client, so they are not exposed; fetch the download_url from documents.status yourself once the document is completed.'
+  documents.createHostedAsync: 'Same asynchronous flow as documents.createAsync, for a paid hosted document; poll documents.status for the public download_url.'
+  documents.status: 'The download_url allows only a few fetches and expires with the account''s data retention setting, so never cache it; each fetch can count against the limit and hosted downloads are billed per fetch.'
+  documents.createHosted: 'Hosted documents are a paid add-on. Their success shape follows the documentation example and was not verifiable with a test-mode key.'
+  documents.list: 'Unverified: DocRaptor denies this listing to test-mode keys with an empty 403 body, so the row fields pass through exactly as a paid account receives them.'
+  ips.list: 'Public endpoint served from docraptor.com; the standard auth header is sent and ignored.'
+examples:
+  read:
+    path: documents.status
+    title: Read where a document stands
+    args:
+      statusId: '123454321'
+  write:
+    path: documents.expire
+    title: Expire a hosted document
+    args:
+      downloadId: '123-456-abc'
+apiExamples:
+  documents.createAsync:
+    call: "{ type: 'pdf', test: true, document_content: '<html><body><h1>Invoice</h1></body></html>' }"
+  documents.createHosted:
+    call: "{ type: 'pdf', hosted_download_limit: 5, document_content: '<html><body><h1>Report</h1></body></html>' }"
+  documents.createHostedAsync:
+    call: "{ type: 'pdf', document_url: 'https://example.com/report.html' }"
+  documents.status:
+    call: "{ statusId: '123454321' }"
+  documents.list:
+    call: '{ page: 1, per_page: 100 }'
+  documents.expire:
+    call: "{ downloadId: '123-456-abc' }"
+  ips.list: {}
