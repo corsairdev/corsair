@@ -68,14 +68,13 @@ const OPTIONS = {
 };
 
 function ctx(
-	key = serializePolymarketCredentials({ clob: CLOB }),
-	options: Record<string, unknown> = OPTIONS,
+	key = serializePolymarketCredentials({ clob: CLOB, ...OPTIONS }),
 ): PolymarketContext {
 	return {
 		endpoints: {},
 		$getAccountId: () => Promise.resolve('test-account'),
 		key,
-		options,
+		options: {},
 		keys: {},
 		db: {},
 		// `unknown` because a test context fills only the fields the endpoints read.
@@ -232,7 +231,7 @@ describe('credentials', () => {
 
 	it('runs public reads with no key and refuses account calls without one', async () => {
 		reply(() => ({ status: 200, body: [] }));
-		await call('gamma.markets.list', { limit: 1 }, ctx('', {}));
+		await call('gamma.markets.list', { limit: 1 }, ctx(''));
 		expect(Object.keys(calls[0]?.headers ?? {})).not.toContain('poly_api_key');
 		for (const id of [
 			'clob.orders.list',
@@ -241,7 +240,7 @@ describe('credentials', () => {
 			'relayer.apiKeys.list',
 		]) {
 			await expect(
-				call(id, docs.apiExamples[id]?.args ?? {}, ctx('', {})),
+				call(id, docs.apiExamples[id]?.args ?? {}, ctx('')),
 			).rejects.toBeInstanceOf(AuthMissingError);
 		}
 		expect(calls).toHaveLength(1);
@@ -273,7 +272,7 @@ describe('credentials', () => {
 		await call(
 			'relayer.transactions.list',
 			{},
-			ctx('', { relayer: { builder } }),
+			ctx(serializePolymarketCredentials({ relayer: { builder } })),
 		);
 		expect(calls[0]?.headers).toMatchObject({
 			poly_builder_api_key: 'b-key',
@@ -335,6 +334,24 @@ describe('errors', () => {
 		expect(JSON.stringify(apiError.body)).not.toContain(CLOB.apiKey);
 		expect(apiError.request.body).toBe('[REDACTED]');
 		expect(apiError.request.headers).toBeUndefined();
+	});
+
+	it('scrubs the L1 wallet signature and address from an error', async () => {
+		reply(() => ({
+			status: 400,
+			body: { error: `invalid signature 0xsig-value for ${CLOB.address}` },
+		}));
+		const error = await call('clob.apiKeys.derive', {
+			poly_address: CLOB.address,
+			poly_signature: '0xsig-value',
+			poly_timestamp: '1700000000',
+			poly_nonce: '0',
+		}).catch((e: unknown) => e);
+		expect(error).toBeInstanceOf(ApiError);
+		const text = `${(error as ApiError).message} ${JSON.stringify((error as ApiError).body)}`;
+		expect(text).toMatch(/^Polymarket 400: invalid signature/);
+		expect(text).not.toContain('0xsig-value');
+		expect(text).not.toContain(CLOB.address);
 	});
 
 	it('reads each API error shape', () => {

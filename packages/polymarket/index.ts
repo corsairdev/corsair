@@ -174,27 +174,36 @@ export function polymarket<const T extends PolymarketPluginOptions>(
 		})(),
 		keyBuilder: async (ctx: PolymarketKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
-			if (options.clob) {
-				return serializePolymarketCredentials({ clob: options.clob });
-			}
-			const apiKey = await tryGetStoredKey(() => ctx.keys?.get_api_key());
-			// No key: public operations still run; account operations raise
-			// AuthMissingError when they're called (see client.ts).
-			if (!apiKey) return '';
-			const [secret, passphrase, address] = await Promise.all([
-				tryGetStoredKey(() => ctx.keys.get_secret()),
-				tryGetStoredKey(() => ctx.keys.get_passphrase()),
-				tryGetStoredKey(() => ctx.keys.get_address()),
-			]);
+			// Every credential set a call may need travels in the call's key;
+			// the client reads them from there only.
 			const credentials: PolymarketCredentials = {
-				clob: {
-					apiKey,
-					secret: secret ?? '',
-					passphrase: passphrase ?? '',
-					address: address ?? '',
-				},
+				...(options.perps ? { perps: options.perps } : {}),
+				...(options.rfq ? { rfq: options.rfq } : {}),
+				...(options.relayer ? { relayer: options.relayer } : {}),
 			};
-			return serializePolymarketCredentials(credentials);
+			if (options.clob) {
+				credentials.clob = options.clob;
+			} else {
+				const apiKey = await tryGetStoredKey(() => ctx.keys?.get_api_key());
+				if (apiKey) {
+					const [secret, passphrase, address] = await Promise.all([
+						tryGetStoredKey(() => ctx.keys.get_secret()),
+						tryGetStoredKey(() => ctx.keys.get_passphrase()),
+						tryGetStoredKey(() => ctx.keys.get_address()),
+					]);
+					credentials.clob = {
+						apiKey,
+						secret: secret ?? '',
+						passphrase: passphrase ?? '',
+						address: address ?? '',
+					};
+				}
+			}
+			// None set: public operations still run; account operations raise
+			// AuthMissingError when they're called (see client.ts).
+			return Object.keys(credentials).length > 0
+				? serializePolymarketCredentials(credentials)
+				: '';
 		},
 	} satisfies InternalPolymarketPlugin;
 }

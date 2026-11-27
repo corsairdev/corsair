@@ -260,7 +260,7 @@ pnpm add @corsair-dev/polymarket
 | `perps.orders.create` | `polymarket.api.perps.orders.create` | `destructive` | Create Orders |
 | `perps.orders.modify` | `polymarket.api.perps.orders.modify` | `destructive` | Modify Orders |
 | `perps.orders.modifyByClientId` | `polymarket.api.perps.orders.modifyByClientId` | `destructive` | Modify Orders COID |
-| `perps.orders.setAutoCancel` | `polymarket.api.perps.orders.setAutoCancel` | `write` | Set Auto-Cancel |
+| `perps.orders.setAutoCancel` | `polymarket.api.perps.orders.setAutoCancel` | `destructive` | Set Auto-Cancel |
 | `perps.ping` | `polymarket.api.perps.ping` | `read` | Test Connection |
 | `perps.proxy.create` | `polymarket.api.perps.proxy.create` | `destructive` | Create Proxy |
 | `perps.proxy.delete` | `polymarket.api.perps.proxy.delete` | `destructive` | Delete Proxy |

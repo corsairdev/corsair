@@ -27,7 +27,9 @@ describe('polymarket plugin', () => {
 	it('reads public market data and signs CLOB calls through createCorsair', async () => {
 		const fetchSpy = jest
 			.spyOn(globalThis, 'fetch')
-			.mockImplementation(async () => Response.json([]));
+			.mockImplementation(async (input) =>
+				Response.json(String(input).includes('gamma-api') ? [] : { data: [] }),
+			);
 		const testDb = createTestDatabase();
 		await createIntegrationAndAccount(testDb.db, 'polymarket', 'default');
 		const corsair = createCorsair({
@@ -80,5 +82,13 @@ describe('polymarket plugin', () => {
 		await expect(
 			plugin.keyBuilder?.({ keys: stored } as never, 'webhook'),
 		).resolves.toBe('');
+		// Perps, RFQ and relayer credentials travel in the key as well.
+		const perps = { proxy: '0xproxy', secret: 'perps-secret' };
+		await expect(
+			polymarket({ perps }).keyBuilder?.(
+				{ keys: { ...stored, get_api_key: async () => null } } as never,
+				'endpoint',
+			),
+		).resolves.toBe(JSON.stringify({ perps }));
 	});
 });

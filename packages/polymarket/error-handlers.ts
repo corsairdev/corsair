@@ -1,12 +1,11 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 
-// Polymarket answers errors with a meaningful HTTP status and a WP_Error code
-// (400 rest_invalid_param, 401 rest_not_logged_in or a wrong application
-// password, 403 rest_forbidden / rest_cannot_* for a missing capability, 404
-// rest_no_route or a missing record, 409 a conflict, 410 rest_already_trashed,
-// 429 from a host or security plugin). The status is the signal; the message
-// text is a fallback for an error that lost it.
+// Polymarket answers errors with a meaningful HTTP status: 400 a bad
+// request or order, 401 a missing or wrong signature, 403 a geoblock or a
+// closed route, 404 an unknown market, order or trade, 425/429 rate limits,
+// 503 trading paused. The status is the signal; the message text is a
+// fallback for an error that lost it.
 function text(error: Error): string {
 	return error.message.toLowerCase();
 }
@@ -74,8 +73,8 @@ export const errorHandlers = {
 			const code = status(error);
 			return code !== undefined && code >= 500;
 		},
-		// Only reads are retried: a write (a post created, a plugin installed)
-		// may already have happened, and Polymarket has no idempotency keys.
+		// Only reads are retried: a write (an order placed, a withdrawal) may
+		// already have happened.
 		handler: async (error: Error) =>
 			isRead(error)
 				? { maxRetries: 2, retryStrategy: 'exponential_backoff' as const }

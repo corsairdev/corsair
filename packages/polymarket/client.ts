@@ -76,6 +76,13 @@ export type PolymarketCredentials = {
 		passphrase: string;
 		address: string;
 	};
+	perps?: { proxy: string; secret: string };
+	rfq?: { keyId: string; secret: string };
+	relayer?: {
+		apiKey?: string;
+		address?: string;
+		builder?: { apiKey: string; secret: string; passphrase: string };
+	};
 };
 
 export function serializePolymarketCredentials(
@@ -98,17 +105,8 @@ function parseCredentials(key: string | undefined): PolymarketCredentials {
 
 /** What a call needs from the endpoint context. */
 export type PolymarketCallContext = {
-	/** Serialized PolymarketCredentials, or '' when none are stored. */
+	/** Serialized PolymarketCredentials (the key builder's), or '' when none are set. */
 	key?: string;
-	options?: {
-		perps?: { proxy: string; secret: string };
-		rfq?: { keyId: string; secret: string };
-		relayer?: {
-			apiKey?: string;
-			address?: string;
-			builder?: { apiKey: string; secret: string; passphrase: string };
-		};
-	};
 };
 
 /** One path value, encoded. */
@@ -191,12 +189,13 @@ export function polymarketAuthHeaders(
 	const path = fillPath(options.path, options.pathParameters);
 	const body = options.body === undefined ? '' : JSON.stringify(options.body);
 	const seconds = String(Math.floor(now() / 1000));
+	const credentials = parseCredentials(ctx.key);
 	switch (options.auth) {
 		case 'none':
 		case 'clobL1':
 			return { headers: {}, secrets: [] };
 		case 'clob': {
-			const clob = parseCredentials(ctx.key).clob;
+			const clob = credentials.clob;
 			if (!clob?.apiKey || !clob.secret || !clob.passphrase || !clob.address) {
 				throw new AuthMissingError(
 					'polymarket',
@@ -218,11 +217,11 @@ export function polymarketAuthHeaders(
 						body,
 					),
 				},
-				secrets: [clob.apiKey, clob.secret, clob.passphrase],
+				secrets: [clob.apiKey, clob.secret, clob.passphrase, clob.address],
 			};
 		}
 		case 'perps': {
-			const perps = ctx.options?.perps;
+			const perps = credentials.perps;
 			if (!perps?.proxy || !perps.secret) {
 				throw new AuthMissingError(
 					'polymarket',
@@ -235,11 +234,11 @@ export function polymarketAuthHeaders(
 					'POLYMARKET-PROXY': perps.proxy,
 					'POLYMARKET-SECRET': perps.secret,
 				},
-				secrets: [perps.secret],
+				secrets: [perps.proxy, perps.secret],
 			};
 		}
 		case 'rfq': {
-			const rfq = ctx.options?.rfq;
+			const rfq = credentials.rfq;
 			if (!rfq?.keyId || !rfq.secret) {
 				throw new AuthMissingError(
 					'polymarket',
@@ -260,18 +259,18 @@ export function polymarketAuthHeaders(
 						false,
 					),
 				},
-				secrets: [rfq.secret],
+				secrets: [rfq.keyId, rfq.secret],
 			};
 		}
 		case 'relayer': {
-			const relayer = ctx.options?.relayer;
+			const relayer = credentials.relayer;
 			if (relayer?.apiKey && relayer.address) {
 				return {
 					headers: {
 						RELAYER_API_KEY: relayer.apiKey,
 						RELAYER_API_KEY_ADDRESS: relayer.address,
 					},
-					secrets: [relayer.apiKey],
+					secrets: [relayer.apiKey, relayer.address],
 				};
 			}
 			const builder = relayer?.builder;
@@ -335,7 +334,13 @@ export async function makePolymarketRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw withoutRequestData(error, auth.secrets);
+			// Header values (the CLOB L1 wallet signature and address, every
+			// auth header) are scrubbed too: an error body can echo them.
+			throw withoutRequestData(error, [
+				...auth.secrets,
+				...Object.values(auth.headers),
+				...Object.values(options.headers ?? {}),
+			]);
 		}
 		throw error;
 	}

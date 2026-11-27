@@ -136,6 +136,7 @@ describe('risk levels', () => {
 		]) {
 			expect(risk(id)).toBe('destructive');
 		}
+		expect(risk('perps.orders.setAutoCancel')).toBe('destructive');
 		expect(risk('bridge.deposit')).toBe('write');
 		expect(risk('clob.heartbeats.send')).toBe('write');
 	});

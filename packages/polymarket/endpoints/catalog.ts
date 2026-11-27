@@ -1849,7 +1849,7 @@ export const polymarketEndpointMeta = {
 		description: 'Modify Orders COID',
 	},
 	'perps.orders.setAutoCancel': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Set Auto-Cancel',
 	},
 	'perps.ping': {
