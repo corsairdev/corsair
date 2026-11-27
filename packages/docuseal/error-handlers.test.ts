@@ -91,6 +91,18 @@ describe('DocuSeal error handlers', () => {
 		},
 	);
 
+	it('retries a read whose connection dropped before reaching DocuSeal', async () => {
+		const dropped = new DocuSealAPIError('fetch failed', {
+			cause: new Error('socket hang up'),
+			method: 'GET',
+		});
+		expect(classify(dropped)).toBe('TRANSPORT_ERROR');
+		expect(await strategy(dropped)).toEqual({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff',
+		});
+	});
+
 	it('does not replay a write that timed out', async () => {
 		const timeout = new Error('The operation timed out');
 		const error = new DocuSealAPIError(timeout.message, {
@@ -136,11 +148,10 @@ describe('mergeErrorHandlers', () => {
 
 		expect(merged.CUSTOM_ERROR).toBe(custom);
 		const names = Object.keys(merged);
-		// Core takes the first match in key order, so a caller handler that
-		// sits after DEFAULT would never run.
-		expect(names.indexOf('CUSTOM_ERROR')).toBeLessThan(
-			names.indexOf('DEFAULT'),
-		);
+		// Caller keys come FIRST, not merely before DEFAULT: core takes the
+		// first match in key order, so a builtin key sitting ahead of a caller
+		// key would claim overlapping errors before the caller's handler runs.
+		expect(names.indexOf('CUSTOM_ERROR')).toBe(0);
 	});
 
 	it('lets a caller DEFAULT override the builtin fallback', () => {
