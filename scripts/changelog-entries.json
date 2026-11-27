@@ -13297,5 +13297,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-27",
+    "package": "@corsair-dev/maritime",
+    "dir": "packages/maritime",
+    "name": "Maritime",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-27",
+    "package": "@corsair-dev/netlify",
+    "dir": "packages/netlify",
+    "name": "Netlify",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-27",
+    "package": "@corsair-dev/wordpress",
+    "dir": "packages/wordpress",
+    "name": "WordPress",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
