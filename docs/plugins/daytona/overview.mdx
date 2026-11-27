@@ -1,0 +1,179 @@
+---
+title: "Daytona plugin"
+sidebarTitle: "Overview"
+description: "Daytona runs AI-generated code in sandboxes: sandboxes (create, start, stop, archive, fork, resize, SSH access, preview URLs, logs), the toolbox inside each one (files, processes and sessions, git, LSP, code interpreter, computer use), snapshots, volumes, Docker registries, secrets, organization usage, members and regions, audit logs, telemetry and usage analytics, and signed webhooks (212 operations)."
+---
+
+Use **Daytona** through Corsair: one client, typed API calls, and incoming webhooks.
+
+The account stores one Daytona API key (app.daytona.io/dashboard/keys),
+sent as `Authorization: Bearer`. Its permissions decide which operations
+work. Set `apiUrl` for a self-hosted Daytona, and `organizationId` when a
+key reaches more than one organization.
+
+- **Three APIs, one key.** The main API manages sandboxes, snapshots,
+volumes, registries, secrets and organizations. `toolbox.*` operations run
+inside one sandbox (files, processes and sessions, git, LSP, the code
+interpreter, computer use): the plugin asks the API for the sandbox's
+toolbox proxy URL and calls `<proxy>/<sandbox id>`. `analytics.*` reads
+telemetry and usage from the Analytics API that `GET /config` names.
+- **Money.** Sandboxes are billed per second for the vCPU, memory and disk
+they reserve (a stopped one for its disk). Creating, starting, forking,
+resizing or recovering one, running commands or code in it, snapshots,
+volumes and warm pools are `destructive`, as are git pushes, key and
+credential rotation and every delete.
+- **Organization routes** take the key's own organization id
+(`apiKeys.getCurrent` returns it as `organizationId`); another id answers
+`403 Invalid authentication context`.
+- **Daytona Cloud gaps** (checked live on v0.235.0): `runners.list`,
+`runners.create`, `organizations.createRegion` and the `warmPools.*` routes
+answer 404 there and work only on a self-hosted Daytona that has them;
+`apiKeys.list` and `apiKeys.delete` answer 403 until the organization
+allows managing keys with an API key; the main API's sandbox telemetry
+(`sandboxes.getLogs`, `getMetrics`, `getTraces`, `getTraceSpans`) answers
+403 because Cloud serves it from `analytics.telemetry.*`.
+- **Webhooks** go out through Svix. Open the endpoint portal with
+`webhooks.getAppPortalAccess`, add an endpoint, and store its `whsec_`
+signing secret as the webhook secret; the plugin checks the Svix signature
+of every delivery.
+- **Rate limits** depend on the organization's tier. A 429 carries
+`Retry-After` and core retries it three times; a 5xx is retried for reads only.
+- Not wrapped: routes that answer 401 to every API key and take only the
+dashboard's user sign-in (listing, creating and deleting organizations,
+invitations, roles, identity providers and SSO, member access changes,
+the `users/me` routes), routes Daytona's own runners, proxy, SSH gateway,
+OTEL collector and dashboard call, the PTY WebSocket, the code
+interpreter's WebSocket execute (`toolbox.process.codeRun` runs code over
+HTTP), bulk file upload and download (multipart batches; upload and
+download one file at a time), the toolbox daemon's own setup routes, and
+deprecated routes.
+
+**What you get:**
+
+- 212 typed API operations
+- 7 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/daytona better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/daytona better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/daytona better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/daytona better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { daytona } from '@corsair-dev/daytona';
+
+export const corsair = createCorsair({
+	plugins: [
+		daytona(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Daytona API key before the first call: `pnpm corsair setup --plugin=daytona --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+daytona()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'daytona',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List sandboxes**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.daytona.api.sandboxes.list({ labels: '{"team":"ml"}' });
+```
+
+
+**Run a command in a sandbox**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.daytona.api.toolbox.process.executeCommand({ sandbox_id: 'my-sandbox', command: 'uname -a', timeout: 30 });
+```
+
+
+See the full list on the [API](/plugins/daytona/api) page.
+
+## Webhooks
+
+This plugin registers **7** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/daytona/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/daytona/api">
+    Every `daytona.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/daytona/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
