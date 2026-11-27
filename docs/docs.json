@@ -2591,6 +2591,15 @@
                 ]
               },
               {
+                "group": "Gitea",
+                "pages": [
+                  "plugins/gitea/overview",
+                  "plugins/gitea/api",
+                  "plugins/gitea/database",
+                  "plugins/gitea/webhooks"
+                ]
+              },
+              {
                 "group": "Globalping",
                 "pages": [
                   "plugins/globalping/overview",

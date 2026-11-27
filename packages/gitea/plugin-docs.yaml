@@ -1,0 +1,1122 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from Gitea's swagger;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Gitea
+domain: gitea.com
+description: "Git hosting on Gitea, Forgejo and Codeberg (gitea.com or any self-hosted instance): repositories, branches and protections, commits and statuses, files, tags and releases, issues, comments, labels, milestones and time tracking, pull requests and reviews, wikis, projects, Actions (runs, jobs, artifacts, secrets, variables, runners, workflows), packages, organizations and teams, users, keys, notifications and site admin, plus signed webhooks for pushes, issues, pull requests, reviews and releases (530 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Gitea is self-hosted, so each account stores two things: an access token
+  and the `instance_url` of the site it belongs to (`https://gitea.com`,
+  `https://codeberg.org` or your own `https://git.example.com`, with or
+  without `/api/v1`). Forgejo and Codeberg serve the same API v1, so the
+  plugin works there too. A route an older or forked server lacks answers
+  404 `page not found`, and a body field it doesn't know is ignored rather
+  than refused: the stale-edit check `content_version` on `issues.update`
+  and `pulls.update` only works on servers that include go-gitea/gitea#37035. Create the token at
+  `<instance>/user/settings/applications` with the scopes you need
+  (read:/write: repository, issue, organization, user, notification,
+  package, misc, and admin for the site-admin routes); it is sent as
+  `Authorization: token <token>`. SDK users can pass `instanceUrl` in the
+  plugin options instead of storing it; with a stored token it must match the
+  stored instance (the token is never sent to another host), else pass `key`
+  too.
+
+  - **Repository routes** take `owner` and `repo`. Branches, refs, tags and
+  file paths keep their slashes (`feature/login`, `docs/README.md`).
+  - **Lists** page with `page` (1-based) and `limit`; the plugin sends 50
+  when `limit` is left out. Gitea clamps `limit` to the instance's
+  MAX_RESPONSE_ITEMS (50 unless an admin lowered it), so a short page doesn't
+  mean the list ended. Paged lists return `{ items, next_page }`, with
+  `next_page` set while a page has entries: step `page` until it is null.
+  - **Files.** `contents.get` returns a file's metadata and base64 content;
+  `contents.raw`, `contents.media`, `repos.downloadArchive` and the Actions
+  log and artifact downloads return the bytes as a file. Diffs, patches,
+  signing keys and rendered markdown come back as `{ text }`.
+  - **Risk.** Every delete is `destructive`, as are site-admin changes to
+  users and organizations, merging a pull request, moving a branch to another
+  commit (`branches.setCommit`), applying a patch, transfers, renaming an
+  organization and overwriting Actions secrets. `admin.*` needs a site-admin
+  token.
+  - **Webhooks.** Register one with `webhooks.create` (or `orgs.hooks.create`,
+  `user.hooks.create`, `admin.hooks.create`) using `type: gitea` and a
+  `config.secret`, point it at your Corsair webhook URL, and give the plugin
+  the same secret as `webhookSecret` (or store it as the account's webhook
+  signature). Deliveries are checked against `X-Gitea-Signature` (HMAC-SHA256
+  of the body) and routed by `X-Gitea-Event-Type` to `push`, `refCreated`,
+  `refDeleted`, `fork`, `issues`, `issueComment`, `pullRequest`,
+  `pullRequestReview`, `release`, `wiki`, `repository`, `status`,
+  `workflowRun`, `workflowJob` and `package`.
+  - Not wrapped: four routes the swagger marks deprecated (each has a
+  replacement), and `users.tokens` list, create and delete, which Gitea only
+  accepts with the account password (BasicAuth), not a token.
+examples:
+  read:
+    path: repos.get
+    title: Get a repository
+    args: {"owner": "gitea", "repo": "tea"}
+  write:
+    path: issues.create
+    title: Create an issue
+    args: {"owner": "gitea", "repo": "tea", "title": "Release notes cover the breaking change", "body": "The 2.0 migration guide does not mention the renamed config keys."}
+apiExamples:
+  actions.artifacts.delete:
+    args: {"owner": "ada", "repo": "website", "artifact_id": "9"}
+  actions.artifacts.download:
+    args: {"owner": "ada", "repo": "website", "artifact_id": "9"}
+  actions.artifacts.get:
+    args: {"owner": "ada", "repo": "website", "artifact_id": "9"}
+  actions.artifacts.list:
+    args: {"owner": "ada", "repo": "website"}
+  actions.jobs.downloadLogs:
+    args: {"owner": "ada", "repo": "website", "job_id": 41}
+  actions.jobs.get:
+    args: {"owner": "ada", "repo": "website", "job_id": "41"}
+  actions.jobs.list:
+    args: {"owner": "ada", "repo": "website"}
+  actions.runners.createRegistrationToken:
+    args: {"owner": "ada", "repo": "website"}
+  actions.runners.delete:
+    args: {"owner": "ada", "repo": "website", "runner_id": "5"}
+  actions.runners.get:
+    args: {"owner": "ada", "repo": "website", "runner_id": "5"}
+  actions.runners.list:
+    args: {"owner": "ada", "repo": "website"}
+  actions.runners.update:
+    args: {"owner": "ada", "repo": "website", "runner_id": "5", "disabled": true}
+  actions.runs.approve:
+    args: {"owner": "ada", "repo": "website", "run": 17}
+  actions.runs.artifacts.list:
+    args: {"owner": "ada", "repo": "website", "run": 17}
+  actions.runs.attempts.get:
+    args: {"owner": "ada", "repo": "website", "run": 17, "attempt": 1}
+  actions.runs.attempts.jobs.list:
+    args: {"owner": "ada", "repo": "website", "run": 17, "attempt": 1}
+  actions.runs.cancel:
+    args: {"owner": "ada", "repo": "website", "run": 17}
+  actions.runs.delete:
+    args: {"owner": "ada", "repo": "website", "run": 17}
+  actions.runs.downloadLogs:
+    args: {"owner": "ada", "repo": "website", "run": 17}
+  actions.runs.forceCancel:
+    args: {"owner": "ada", "repo": "website", "run": 17}
+  actions.runs.get:
+    args: {"owner": "ada", "repo": "website", "run": 17}
+  actions.runs.jobs.list:
+    args: {"owner": "ada", "repo": "website", "run": 17}
+  actions.runs.jobs.rerun:
+    args: {"owner": "ada", "repo": "website", "run": 17, "job_id": 41}
+  actions.runs.list:
+    args: {"owner": "ada", "repo": "website"}
+  actions.runs.rerun:
+    args: {"owner": "ada", "repo": "website", "run": 17}
+  actions.runs.rerunFailed:
+    args: {"owner": "ada", "repo": "website", "run": 17}
+  actions.secrets.delete:
+    args: {"owner": "ada", "repo": "website", "secretname": "DEPLOY_TOKEN"}
+  actions.secrets.list:
+    args: {"owner": "ada", "repo": "website"}
+  actions.secrets.set:
+    args: {"owner": "ada", "repo": "website", "secretname": "DEPLOY_TOKEN", "data": "secret-value"}
+  actions.tasks.list:
+    args: {"owner": "ada", "repo": "website"}
+  actions.variables.create:
+    args: {"owner": "ada", "repo": "website", "variablename": "NODE_VERSION", "value": "20"}
+  actions.variables.delete:
+    args: {"owner": "ada", "repo": "website", "variablename": "NODE_VERSION"}
+  actions.variables.get:
+    args: {"owner": "ada", "repo": "website", "variablename": "NODE_VERSION"}
+  actions.variables.list:
+    args: {"owner": "ada", "repo": "website"}
+  actions.variables.update:
+    args: {"owner": "ada", "repo": "website", "variablename": "NODE_VERSION", "value": "20"}
+  actions.workflows.disable:
+    args: {"owner": "ada", "repo": "website", "workflow_id": "ci.yml"}
+  actions.workflows.dispatch:
+    args: {"owner": "ada", "repo": "website", "workflow_id": "ci.yml", "ref": "main"}
+  actions.workflows.enable:
+    args: {"owner": "ada", "repo": "website", "workflow_id": "ci.yml"}
+  actions.workflows.get:
+    args: {"owner": "ada", "repo": "website", "workflow_id": "ci.yml"}
+  actions.workflows.list:
+    args: {"owner": "ada", "repo": "website"}
+  actions.workflows.runs.list:
+    args: {"owner": "ada", "repo": "website", "workflow_id": "ci.yml"}
+  admin.actions.jobs.list:
+    args: {}
+  admin.actions.runners.createRegistrationToken:
+    args: {}
+  admin.actions.runners.delete:
+    args: {"runner_id": "5"}
+  admin.actions.runners.get:
+    args: {"runner_id": "5"}
+  admin.actions.runners.list:
+    args: {}
+  admin.actions.runners.update:
+    args: {"runner_id": "5", "disabled": true}
+  admin.actions.runs.list:
+    args: {}
+  admin.cron.list:
+    args: {}
+  admin.cron.run:
+    args: {"task": "update_mirrors"}
+  admin.emails.list:
+    args: {}
+  admin.emails.search:
+    args: {}
+  admin.hooks.create:
+    args: {"type": "dingtalk", "config": {}}
+  admin.hooks.delete:
+    args: {"id": 12}
+  admin.hooks.get:
+    args: {"id": 12}
+  admin.hooks.list:
+    args: {}
+  admin.hooks.update:
+    args: {"id": 12}
+  admin.orgs.list:
+    args: {}
+  admin.packages.list:
+    args: {}
+  admin.unadopted.adopt:
+    args: {"owner": "ada", "repo": "website"}
+  admin.unadopted.delete:
+    args: {"owner": "ada", "repo": "website"}
+  admin.unadopted.list:
+    args: {}
+  admin.users.badges.add:
+    args: {"username": "ada"}
+  admin.users.badges.delete:
+    args: {"username": "ada"}
+  admin.users.badges.list:
+    args: {"username": "ada"}
+  admin.users.create:
+    args: {"username": "grace", "email": "grace@example.com", "password": "correct-horse-battery-staple", "must_change_password": true}
+  admin.users.delete:
+    args: {"username": "ada"}
+  admin.users.keys.create:
+    args: {"username": "ada", "title": "Login fails on Safari", "key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGitea0example0key0value0for0docs ada@example.com"}
+  admin.users.keys.delete:
+    args: {"username": "ada", "id": 12}
+  admin.users.list:
+    args: {}
+  admin.users.orgs.create:
+    args: {"owner": "ada", "username": "acme", "full_name": "Acme Inc."}
+  admin.users.rename:
+    args: {"username": "ada", "new_username": "ada-lovelace"}
+  admin.users.repos.create:
+    args: {"username": "ada", "name": "website"}
+  admin.users.update:
+    args: {"username": "ada", "source_id": 1}
+  branchProtections.create:
+    args: {"owner": "ada", "repo": "website", "rule_name": "main", "enable_push": false, "required_approvals": 1}
+  branchProtections.delete:
+    args: {"owner": "ada", "repo": "website", "name": "website"}
+  branchProtections.get:
+    args: {"owner": "ada", "repo": "website", "name": "website"}
+  branchProtections.list:
+    args: {"owner": "ada", "repo": "website"}
+  branchProtections.setPriority:
+    args: {"owner": "ada", "repo": "website"}
+  branchProtections.update:
+    args: {"owner": "ada", "repo": "website", "name": "website"}
+  branches.create:
+    args: {"owner": "ada", "repo": "website", "new_branch_name": "feature/login", "old_ref_name": "main"}
+  branches.delete:
+    args: {"owner": "ada", "repo": "website", "branch": "main"}
+  branches.get:
+    args: {"owner": "ada", "repo": "website", "branch": "main"}
+  branches.list:
+    args: {"owner": "ada", "repo": "website"}
+  branches.rename:
+    args: {"owner": "ada", "repo": "website", "branch": "main", "name": "website"}
+  branches.setCommit:
+    args: {"owner": "ada", "repo": "website", "branch": "main", "new_commit_id": "6e4269bf64d3ce786c4ca996916a43555eeddba4"}
+  comments.attachments.create:
+    args: {"owner": "ada", "repo": "website", "id": 12, "attachment": {"base64": "iVBORw0KGgo=", "filename": "screenshot.png", "contentType": "image/png"}}
+  comments.attachments.delete:
+    args: {"owner": "ada", "repo": "website", "id": 12, "attachment_id": 3}
+  comments.attachments.get:
+    args: {"owner": "ada", "repo": "website", "id": 12, "attachment_id": 3}
+  comments.attachments.list:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  comments.attachments.update:
+    args: {"owner": "ada", "repo": "website", "id": 12, "attachment_id": 3}
+  comments.create:
+    args: {"owner": "ada", "repo": "website", "index": 4, "body": "Fixed in #5."}
+  comments.delete:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  comments.get:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  comments.list:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  comments.listForRepo:
+    args: {"owner": "ada", "repo": "website"}
+  comments.reactions.add:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  comments.reactions.list:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  comments.reactions.remove:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  comments.update:
+    args: {"owner": "ada", "repo": "website", "id": 12, "body": "Steps to reproduce: open /login in Safari 17."}
+  commits.compare:
+    args: {"owner": "ada", "repo": "website", "basehead": "main...feature/login"}
+  commits.downloadDiff:
+    args: {"owner": "ada", "repo": "website", "sha": "6e4269bf64d3ce786c4ca996916a43555eeddba4", "diffType": "diff"}
+  commits.get:
+    args: {"owner": "ada", "repo": "website", "sha": "6e4269bf64d3ce786c4ca996916a43555eeddba4"}
+  commits.list:
+    args: {"owner": "gitea", "repo": "tea", "sha": "main", "limit": 10}
+  commits.pullRequest:
+    args: {"owner": "ada", "repo": "website", "sha": "6e4269bf64d3ce786c4ca996916a43555eeddba4"}
+  commits.statuses.combined:
+    args: {"owner": "ada", "repo": "website", "ref": "main"}
+  commits.statuses.create:
+    args: {"owner": "ada", "repo": "website", "sha": "6e4269bf64d3ce786c4ca996916a43555eeddba4"}
+  commits.statuses.list:
+    args: {"owner": "ada", "repo": "website", "sha": "6e4269bf64d3ce786c4ca996916a43555eeddba4"}
+  commits.statuses.listByRef:
+    args: {"owner": "ada", "repo": "website", "ref": "main"}
+  contents.applyPatch:
+    args: {"owner": "ada", "repo": "website", "content": "Looks good to me."}
+  contents.changeFiles:
+    args: {"owner": "ada", "repo": "website", "files": [{"operation": "create", "path": "docs/notes.md"}]}
+  contents.create:
+    args: {"owner": "ada", "repo": "website", "filepath": "docs/notes.md", "content": "SGVsbG8gZnJvbSBDb3JzYWly", "message": "Add notes", "branch": "main"}
+  contents.delete:
+    args: {"owner": "ada", "repo": "website", "filepath": "docs/README.md", "sha": "6e4269bf64d3ce786c4ca996916a43555eeddba4"}
+  contents.editorConfig:
+    args: {"owner": "ada", "repo": "website", "filepath": "docs/README.md"}
+  contents.get:
+    args: {"owner": "ada", "repo": "website", "filepath": "docs/README.md"}
+  contents.getExt:
+    args: {"owner": "ada", "repo": "website", "filepath": "docs/README.md"}
+  contents.getMany:
+    args: {"owner": "ada", "repo": "website", "body": "Steps to reproduce: open /login in Safari 17."}
+  contents.getManyByPost:
+    args: {"owner": "ada", "repo": "website"}
+  contents.list:
+    args: {"owner": "ada", "repo": "website"}
+  contents.media:
+    args: {"owner": "ada", "repo": "website", "filepath": "docs/README.md"}
+  contents.raw:
+    args: {"owner": "ada", "repo": "website", "filepath": "docs/README.md"}
+  contents.update:
+    args: {"owner": "ada", "repo": "website", "filepath": "docs/README.md", "content": "Looks good to me."}
+  git.blobs.get:
+    args: {"owner": "ada", "repo": "website", "sha": "6e4269bf64d3ce786c4ca996916a43555eeddba4"}
+  git.notes.get:
+    args: {"owner": "ada", "repo": "website", "sha": "6e4269bf64d3ce786c4ca996916a43555eeddba4"}
+  git.refs.list:
+    args: {"owner": "ada", "repo": "website"}
+  git.refs.listMatching:
+    args: {"owner": "ada", "repo": "website", "ref": "main"}
+  git.tags.get:
+    args: {"owner": "ada", "repo": "website", "sha": "6e4269bf64d3ce786c4ca996916a43555eeddba4"}
+  git.trees.get:
+    args: {"owner": "ada", "repo": "website", "sha": "6e4269bf64d3ce786c4ca996916a43555eeddba4"}
+  issues.assignees.add:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.assignees.check:
+    args: {"owner": "ada", "repo": "website", "index": 4, "assignee": "grace"}
+  issues.assignees.remove:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.attachments.create:
+    args: {"owner": "ada", "repo": "website", "index": 4, "attachment": {"base64": "iVBORw0KGgo=", "filename": "screenshot.png", "contentType": "image/png"}}
+  issues.attachments.delete:
+    args: {"owner": "ada", "repo": "website", "index": 4, "attachment_id": 3}
+  issues.attachments.get:
+    args: {"owner": "ada", "repo": "website", "index": 4, "attachment_id": 3}
+  issues.attachments.list:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.attachments.update:
+    args: {"owner": "ada", "repo": "website", "index": 4, "attachment_id": 3}
+  issues.blocks.add:
+    args: {"owner": "ada", "repo": "website", "index": "4"}
+  issues.blocks.list:
+    args: {"owner": "ada", "repo": "website", "index": "4"}
+  issues.blocks.remove:
+    args: {"owner": "ada", "repo": "website", "index": "4"}
+  issues.config.get:
+    args: {"owner": "ada", "repo": "website"}
+  issues.config.validate:
+    args: {"owner": "ada", "repo": "website"}
+  issues.create:
+    args: {"owner": "gitea", "repo": "tea", "title": "Release notes cover the breaking change", "body": "The 2.0 migration guide does not mention the renamed config keys."}
+  issues.delete:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.dependencies.add:
+    args: {"owner": "ada", "repo": "website", "index": "4"}
+  issues.dependencies.list:
+    args: {"owner": "ada", "repo": "website", "index": "4"}
+  issues.dependencies.remove:
+    args: {"owner": "ada", "repo": "website", "index": "4"}
+  issues.get:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.labels.add:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.labels.clear:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.labels.list:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.labels.remove:
+    args: {"owner": "ada", "repo": "website", "index": 4, "id": 12}
+  issues.labels.replace:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.list:
+    args: {"owner": "gitea", "repo": "tea", "state": "open", "type": "issues", "limit": 20}
+  issues.listPinned:
+    args: {"owner": "ada", "repo": "website"}
+  issues.lock:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.movePin:
+    args: {"owner": "ada", "repo": "website", "index": 4, "position": 1}
+  issues.pin:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.reactions.add:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.reactions.list:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.reactions.remove:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.search:
+    args: {}
+  issues.setDeadline:
+    args: {"owner": "ada", "repo": "website", "index": 4, "due_date": "2026-04-09"}
+  issues.stopwatch.delete:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.stopwatch.start:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.stopwatch.stop:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.subscriptions.add:
+    args: {"owner": "ada", "repo": "website", "index": 4, "user": "grace"}
+  issues.subscriptions.check:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.subscriptions.list:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.subscriptions.remove:
+    args: {"owner": "ada", "repo": "website", "index": 4, "user": "grace"}
+  issues.templates.list:
+    args: {"owner": "ada", "repo": "website"}
+  issues.timeline:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.times.add:
+    args: {"owner": "ada", "repo": "website", "index": 4, "time": 3600}
+  issues.times.delete:
+    args: {"owner": "ada", "repo": "website", "index": 4, "id": 12}
+  issues.times.list:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.times.reset:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.unlock:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.unpin:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  issues.update:
+    args: {"owner": "ada", "repo": "website", "index": 4, "state": "closed"}
+  labels.create:
+    args: {"owner": "ada", "repo": "website", "name": "website", "color": "#e11d21"}
+  labels.delete:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  labels.get:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  labels.list:
+    args: {"owner": "ada", "repo": "website"}
+  labels.update:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  milestones.create:
+    args: {"owner": "ada", "repo": "website"}
+  milestones.delete:
+    args: {"owner": "ada", "repo": "website", "id": "12"}
+  milestones.get:
+    args: {"owner": "ada", "repo": "website", "id": "12"}
+  milestones.list:
+    args: {"owner": "ada", "repo": "website"}
+  milestones.update:
+    args: {"owner": "ada", "repo": "website", "id": "12"}
+  misc.gitignoreTemplates.get:
+    args: {"name": "website"}
+  misc.gitignoreTemplates.list:
+    args: {}
+  misc.labelTemplates.get:
+    args: {"name": "website"}
+  misc.labelTemplates.list:
+    args: {}
+  misc.licenseTemplates.get:
+    args: {"name": "website"}
+  misc.licenseTemplates.list:
+    args: {}
+  misc.markdown.render:
+    args: {"Text": "**bold**", "Mode": "gfm"}
+  misc.markdown.renderRaw:
+    args: {"text": "# Release notes\n\n- Faster search"}
+  misc.markup.render:
+    args: {}
+  misc.signingKey.gpg:
+    args: {}
+  misc.signingKey.ssh:
+    args: {}
+  misc.topics.search:
+    args: {"q": "cli"}
+  misc.version:
+    args: {}
+  notifications.countNew:
+    args: {}
+  notifications.list:
+    args: {}
+  notifications.listForRepo:
+    args: {"owner": "ada", "repo": "website"}
+  notifications.markRead:
+    args: {}
+  notifications.markReadForRepo:
+    args: {"owner": "ada", "repo": "website"}
+  notifications.threads.get:
+    args: {"id": "12"}
+  notifications.threads.markRead:
+    args: {"id": "12"}
+  orgs.actions.jobs.list:
+    args: {"org": "acme"}
+  orgs.actions.runners.createRegistrationToken:
+    args: {"org": "acme"}
+  orgs.actions.runners.delete:
+    args: {"org": "acme", "runner_id": "5"}
+  orgs.actions.runners.get:
+    args: {"org": "acme", "runner_id": "5"}
+  orgs.actions.runners.list:
+    args: {"org": "acme"}
+  orgs.actions.runners.update:
+    args: {"org": "acme", "runner_id": "5", "disabled": true}
+  orgs.actions.runs.list:
+    args: {"org": "acme"}
+  orgs.actions.secrets.delete:
+    args: {"org": "acme", "secretname": "DEPLOY_TOKEN"}
+  orgs.actions.secrets.list:
+    args: {"org": "acme"}
+  orgs.actions.secrets.set:
+    args: {"org": "acme", "secretname": "DEPLOY_TOKEN", "data": "secret-value"}
+  orgs.actions.variables.create:
+    args: {"org": "acme", "variablename": "NODE_VERSION", "value": "20"}
+  orgs.actions.variables.delete:
+    args: {"org": "acme", "variablename": "NODE_VERSION"}
+  orgs.actions.variables.get:
+    args: {"org": "acme", "variablename": "NODE_VERSION"}
+  orgs.actions.variables.list:
+    args: {"org": "acme"}
+  orgs.actions.variables.update:
+    args: {"org": "acme", "variablename": "NODE_VERSION", "value": "20"}
+  orgs.activityFeeds.list:
+    args: {"org": "acme"}
+  orgs.avatar.delete:
+    args: {"org": "acme"}
+  orgs.avatar.update:
+    args: {"org": "acme"}
+  orgs.blocks.add:
+    args: {"org": "acme", "username": "ada"}
+  orgs.blocks.check:
+    args: {"org": "acme", "username": "ada"}
+  orgs.blocks.list:
+    args: {"org": "acme"}
+  orgs.blocks.remove:
+    args: {"org": "acme", "username": "ada"}
+  orgs.create:
+    args: {"username": "acme", "full_name": "Acme Inc.", "visibility": "private"}
+  orgs.delete:
+    args: {"org": "acme"}
+  orgs.get:
+    args: {"org": "acme"}
+  orgs.hooks.create:
+    args: {"org": "acme", "type": "dingtalk", "config": {}}
+  orgs.hooks.delete:
+    args: {"org": "acme", "id": 12}
+  orgs.hooks.get:
+    args: {"org": "acme", "id": 12}
+  orgs.hooks.list:
+    args: {"org": "acme"}
+  orgs.hooks.update:
+    args: {"org": "acme", "id": 12}
+  orgs.labels.create:
+    args: {"org": "acme", "name": "website", "color": "#e11d21"}
+  orgs.labels.delete:
+    args: {"org": "acme", "id": 12}
+  orgs.labels.get:
+    args: {"org": "acme", "id": 12}
+  orgs.labels.list:
+    args: {"org": "acme"}
+  orgs.labels.update:
+    args: {"org": "acme", "id": 12}
+  orgs.list:
+    args: {}
+  orgs.members.check:
+    args: {"org": "acme", "username": "ada"}
+  orgs.members.list:
+    args: {"org": "acme"}
+  orgs.members.remove:
+    args: {"org": "acme", "username": "ada"}
+  orgs.projects.columns.create:
+    args: {"org": "acme", "id": 12, "title": "Login fails on Safari"}
+  orgs.projects.columns.delete:
+    args: {"org": "acme", "id": 12, "column_id": 2}
+  orgs.projects.columns.get:
+    args: {"org": "acme", "id": 12, "column_id": 2}
+  orgs.projects.columns.issues.add:
+    args: {"org": "acme", "id": 12, "column_id": 2, "issue_id": 7}
+  orgs.projects.columns.issues.list:
+    args: {"org": "acme", "id": 12, "column_id": 2}
+  orgs.projects.columns.issues.remove:
+    args: {"org": "acme", "id": 12, "column_id": 2, "issue_id": 7}
+  orgs.projects.columns.list:
+    args: {"org": "acme", "id": 12}
+  orgs.projects.columns.move:
+    args: {"org": "acme", "id": 12, "column_ids": [2]}
+  orgs.projects.columns.setDefault:
+    args: {"org": "acme", "id": 12, "column_id": 2}
+  orgs.projects.columns.update:
+    args: {"org": "acme", "id": 12, "column_id": 2}
+  orgs.projects.create:
+    args: {"org": "acme", "title": "Login fails on Safari"}
+  orgs.projects.delete:
+    args: {"org": "acme", "id": 12}
+  orgs.projects.get:
+    args: {"org": "acme", "id": 12}
+  orgs.projects.issues.move:
+    args: {"org": "acme", "id": 12, "issue_id": 7, "column_id": 2}
+  orgs.projects.list:
+    args: {"org": "acme"}
+  orgs.projects.update:
+    args: {"org": "acme", "id": 12}
+  orgs.publicMembers.check:
+    args: {"org": "acme", "username": "ada"}
+  orgs.publicMembers.conceal:
+    args: {"org": "acme", "username": "ada"}
+  orgs.publicMembers.list:
+    args: {"org": "acme"}
+  orgs.publicMembers.publicize:
+    args: {"org": "acme", "username": "ada"}
+  orgs.rename:
+    args: {"org": "acme", "new_name": "renamed"}
+  orgs.repos.create:
+    args: {"org": "acme", "name": "website"}
+  orgs.repos.deleteAll:
+    args: {"org": "acme"}
+  orgs.repos.list:
+    args: {"org": "acme"}
+  orgs.teams.create:
+    args: {"org": "acme", "name": "website"}
+  orgs.teams.list:
+    args: {"org": "acme"}
+  orgs.teams.search:
+    args: {"org": "acme"}
+  orgs.update:
+    args: {"org": "acme"}
+  packages.delete:
+    args: {"owner": "ada", "type": "npm", "name": "website"}
+  packages.link:
+    args: {"owner": "ada", "type": "npm", "name": "website", "repo_name": "tea"}
+  packages.list:
+    args: {"owner": "ada"}
+  packages.unlink:
+    args: {"owner": "ada", "type": "npm", "name": "website"}
+  packages.versions.delete:
+    args: {"owner": "ada", "type": "npm", "name": "website", "version": "1.0.0"}
+  packages.versions.files.list:
+    args: {"owner": "ada", "type": "npm", "name": "website", "version": "1.0.0"}
+  packages.versions.get:
+    args: {"owner": "ada", "type": "npm", "name": "website", "version": "1.0.0"}
+  packages.versions.getLatest:
+    args: {"owner": "ada", "type": "npm", "name": "website"}
+  packages.versions.list:
+    args: {"owner": "ada", "type": "npm", "name": "website"}
+  projects.columns.create:
+    args: {"owner": "ada", "repo": "website", "id": 12, "title": "Login fails on Safari"}
+  projects.columns.delete:
+    args: {"owner": "ada", "repo": "website", "id": 12, "column_id": 2}
+  projects.columns.get:
+    args: {"owner": "ada", "repo": "website", "id": 12, "column_id": 2}
+  projects.columns.issues.add:
+    args: {"owner": "ada", "repo": "website", "id": 12, "column_id": 2, "issue_id": 7}
+  projects.columns.issues.list:
+    args: {"owner": "ada", "repo": "website", "id": 12, "column_id": 2}
+  projects.columns.issues.remove:
+    args: {"owner": "ada", "repo": "website", "id": 12, "column_id": 2, "issue_id": 7}
+  projects.columns.list:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  projects.columns.move:
+    args: {"owner": "ada", "repo": "website", "id": 12, "column_ids": [2]}
+  projects.columns.setDefault:
+    args: {"owner": "ada", "repo": "website", "id": 12, "column_id": 2}
+  projects.columns.update:
+    args: {"owner": "ada", "repo": "website", "id": 12, "column_id": 2}
+  projects.create:
+    args: {"owner": "ada", "repo": "website", "title": "Login fails on Safari"}
+  projects.delete:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  projects.get:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  projects.issues.move:
+    args: {"owner": "ada", "repo": "website", "id": 12, "issue_id": 7, "column_id": 2}
+  projects.list:
+    args: {"owner": "ada", "repo": "website"}
+  projects.update:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  pulls.cancelAutoMerge:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  pulls.commits:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  pulls.create:
+    args: {"owner": "ada", "repo": "website", "title": "Fix login on Safari", "head": "feature/login", "base": "main"}
+  pulls.downloadDiff:
+    args: {"owner": "ada", "repo": "website", "index": 4, "diffType": "diff"}
+  pulls.files:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  pulls.get:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  pulls.getByBaseHead:
+    args: {"owner": "ada", "repo": "website", "base": "main", "head": "feature/login"}
+  pulls.isMerged:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  pulls.list:
+    args: {"owner": "ada", "repo": "website"}
+  pulls.listPinned:
+    args: {"owner": "ada", "repo": "website"}
+  pulls.merge:
+    args: {"owner": "ada", "repo": "website", "index": 5, "do": "squash", "delete_branch_after_merge": true}
+  pulls.requestedReviewers.add:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  pulls.requestedReviewers.remove:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  pulls.reviewComments.reply:
+    args: {"owner": "ada", "repo": "website", "index": 4, "id": 12}
+  pulls.reviewComments.resolve:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  pulls.reviewComments.unresolve:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  pulls.reviews.comments:
+    args: {"owner": "ada", "repo": "website", "index": 4, "id": 12}
+  pulls.reviews.create:
+    args: {"owner": "ada", "repo": "website", "index": 5, "event": "APPROVED", "body": "Looks good."}
+  pulls.reviews.delete:
+    args: {"owner": "ada", "repo": "website", "index": 4, "id": 12}
+  pulls.reviews.dismiss:
+    args: {"owner": "ada", "repo": "website", "index": 4, "id": 12}
+  pulls.reviews.get:
+    args: {"owner": "ada", "repo": "website", "index": 4, "id": 12}
+  pulls.reviews.list:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  pulls.reviews.submit:
+    args: {"owner": "ada", "repo": "website", "index": 4, "id": 12}
+  pulls.reviews.undismiss:
+    args: {"owner": "ada", "repo": "website", "index": 4, "id": 12}
+  pulls.update:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  pulls.updateBranch:
+    args: {"owner": "ada", "repo": "website", "index": 4}
+  releases.assets.create:
+    args: {"owner": "ada", "repo": "website", "id": 12, "attachment": {"base64": "iVBORw0KGgo=", "filename": "screenshot.png", "contentType": "image/png"}}
+  releases.assets.delete:
+    args: {"owner": "ada", "repo": "website", "id": 12, "attachment_id": 3}
+  releases.assets.get:
+    args: {"owner": "ada", "repo": "website", "id": 12, "attachment_id": 3}
+  releases.assets.list:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  releases.assets.update:
+    args: {"owner": "ada", "repo": "website", "id": 12, "attachment_id": 3}
+  releases.create:
+    args: {"owner": "ada", "repo": "website", "tag_name": "v1.0.0", "name": "v1.0.0", "target_commitish": "main", "body": "First release"}
+  releases.delete:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  releases.deleteByTag:
+    args: {"owner": "ada", "repo": "website", "tag": "v1.0.0"}
+  releases.get:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  releases.getByTag:
+    args: {"owner": "ada", "repo": "website", "tag": "v1.0.0"}
+  releases.getLatest:
+    args: {"owner": "ada", "repo": "website"}
+  releases.list:
+    args: {"owner": "ada", "repo": "website"}
+  releases.update:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  repos.acceptTransfer:
+    args: {"owner": "ada", "repo": "website"}
+  repos.activityFeeds.list:
+    args: {"owner": "ada", "repo": "website"}
+  repos.assignees.check:
+    args: {"owner": "ada", "repo": "website", "assignee": "grace"}
+  repos.assignees.list:
+    args: {"owner": "ada", "repo": "website"}
+  repos.avatar.delete:
+    args: {"owner": "ada", "repo": "website"}
+  repos.avatar.update:
+    args: {"owner": "ada", "repo": "website"}
+  repos.collaborators.add:
+    args: {"owner": "ada", "repo": "website", "collaborator": "grace"}
+  repos.collaborators.check:
+    args: {"owner": "ada", "repo": "website", "collaborator": "grace"}
+  repos.collaborators.list:
+    args: {"owner": "ada", "repo": "website"}
+  repos.collaborators.permission:
+    args: {"owner": "ada", "repo": "website", "collaborator": "grace"}
+  repos.collaborators.remove:
+    args: {"owner": "ada", "repo": "website", "collaborator": "grace"}
+  repos.create:
+    args: {"name": "demo", "auto_init": true, "description": "Scratch repository", "private": true}
+  repos.delete:
+    args: {"owner": "ada", "repo": "demo"}
+  repos.deployKeys.create:
+    args: {"owner": "ada", "repo": "website", "title": "Login fails on Safari", "key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGitea0example0key0value0for0docs ada@example.com"}
+  repos.deployKeys.createToken:
+    args: {"owner": "ada", "repo": "website", "title": "Login fails on Safari"}
+  repos.deployKeys.delete:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  repos.deployKeys.get:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  repos.deployKeys.list:
+    args: {"owner": "ada", "repo": "website"}
+  repos.downloadArchive:
+    args: {"owner": "ada", "repo": "website", "archive": "main.zip"}
+  repos.forks.create:
+    args: {"owner": "ada", "repo": "website"}
+  repos.forks.list:
+    args: {"owner": "ada", "repo": "website"}
+  repos.generateFromTemplate:
+    args: {"template_owner": "acme", "template_repo": "service-template", "owner": "ada", "name": "website"}
+  repos.get:
+    args: {"owner": "gitea", "repo": "tea"}
+  repos.getById:
+    args: {"id": 12}
+  repos.gitHooks.delete:
+    args: {"owner": "ada", "repo": "website", "id": "12"}
+  repos.gitHooks.get:
+    args: {"owner": "ada", "repo": "website", "id": "12"}
+  repos.gitHooks.list:
+    args: {"owner": "ada", "repo": "website"}
+  repos.gitHooks.update:
+    args: {"owner": "ada", "repo": "website", "id": "12"}
+  repos.languages:
+    args: {"owner": "ada", "repo": "website"}
+  repos.licenses:
+    args: {"owner": "ada", "repo": "website"}
+  repos.list:
+    args: {"limit": 50}
+  repos.mergeUpstream:
+    args: {"owner": "ada", "repo": "website"}
+  repos.migrate:
+    args: {"clone_addr": "https://github.com/go-gitea/tea.git", "repo_name": "tea"}
+  repos.mirrorSync:
+    args: {"owner": "ada", "repo": "website"}
+  repos.newPinAllowed:
+    args: {"owner": "ada", "repo": "website"}
+  repos.pushMirrors.add:
+    args: {"owner": "ada", "repo": "website"}
+  repos.pushMirrors.delete:
+    args: {"owner": "ada", "repo": "website", "name": "website"}
+  repos.pushMirrors.get:
+    args: {"owner": "ada", "repo": "website", "name": "website"}
+  repos.pushMirrors.list:
+    args: {"owner": "ada", "repo": "website"}
+  repos.pushMirrors.sync:
+    args: {"owner": "ada", "repo": "website"}
+  repos.rejectTransfer:
+    args: {"owner": "ada", "repo": "website"}
+  repos.reviewers:
+    args: {"owner": "ada", "repo": "website"}
+  repos.search:
+    args: {"q": "cli", "limit": 10}
+  repos.signingKey.gpg:
+    args: {"owner": "ada", "repo": "website"}
+  repos.signingKey.ssh:
+    args: {"owner": "ada", "repo": "website"}
+  repos.stargazers:
+    args: {"owner": "ada", "repo": "website"}
+  repos.subscribers:
+    args: {"owner": "ada", "repo": "website"}
+  repos.subscription.get:
+    args: {"owner": "ada", "repo": "website"}
+  repos.subscription.unwatch:
+    args: {"owner": "ada", "repo": "website"}
+  repos.subscription.watch:
+    args: {"owner": "ada", "repo": "website"}
+  repos.teams.add:
+    args: {"owner": "ada", "repo": "website", "team": "developers"}
+  repos.teams.check:
+    args: {"owner": "ada", "repo": "website", "team": "developers"}
+  repos.teams.list:
+    args: {"owner": "ada", "repo": "website"}
+  repos.teams.remove:
+    args: {"owner": "ada", "repo": "website", "team": "developers"}
+  repos.topics.add:
+    args: {"owner": "ada", "repo": "website", "topic": "go"}
+  repos.topics.list:
+    args: {"owner": "ada", "repo": "website"}
+  repos.topics.remove:
+    args: {"owner": "ada", "repo": "website", "topic": "go"}
+  repos.topics.replace:
+    args: {"owner": "ada", "repo": "website"}
+  repos.trackedTimes:
+    args: {"owner": "ada", "repo": "website"}
+  repos.transfer:
+    args: {"owner": "ada", "repo": "website", "new_owner": "acme"}
+  repos.update:
+    args: {"owner": "ada", "repo": "website"}
+  settings.api:
+    args: {}
+  settings.attachment:
+    args: {}
+  settings.repository:
+    args: {}
+  settings.ui:
+    args: {}
+  tagProtections.create:
+    args: {"owner": "ada", "repo": "website"}
+  tagProtections.delete:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  tagProtections.get:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  tagProtections.list:
+    args: {"owner": "ada", "repo": "website"}
+  tagProtections.update:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  tags.create:
+    args: {"owner": "ada", "repo": "website", "tag_name": "v1.0.0"}
+  tags.delete:
+    args: {"owner": "ada", "repo": "website", "tag": "v1.0.0"}
+  tags.get:
+    args: {"owner": "ada", "repo": "website", "tag": "v1.0.0"}
+  tags.list:
+    args: {"owner": "ada", "repo": "website"}
+  teams.activityFeeds.list:
+    args: {"id": 12}
+  teams.delete:
+    args: {"id": 12}
+  teams.get:
+    args: {"id": 12}
+  teams.members.add:
+    args: {"id": 12, "username": "ada"}
+  teams.members.get:
+    args: {"id": 12, "username": "ada"}
+  teams.members.list:
+    args: {"id": 12}
+  teams.members.remove:
+    args: {"id": 12, "username": "ada"}
+  teams.repos.add:
+    args: {"id": 12, "org": "acme", "repo": "website"}
+  teams.repos.get:
+    args: {"id": 12, "org": "acme", "repo": "website"}
+  teams.repos.list:
+    args: {"id": 12}
+  teams.repos.remove:
+    args: {"id": 12, "org": "acme", "repo": "website"}
+  teams.update:
+    args: {"id": 12, "name": "website"}
+  user.actions.jobs.list:
+    args: {}
+  user.actions.runners.createRegistrationToken:
+    args: {}
+  user.actions.runners.delete:
+    args: {"runner_id": "5"}
+  user.actions.runners.get:
+    args: {"runner_id": "5"}
+  user.actions.runners.list:
+    args: {}
+  user.actions.runners.update:
+    args: {"runner_id": "5", "disabled": true}
+  user.actions.runs.list:
+    args: {}
+  user.actions.secrets.delete:
+    args: {"secretname": "DEPLOY_TOKEN"}
+  user.actions.secrets.set:
+    args: {"secretname": "DEPLOY_TOKEN", "data": "secret-value"}
+  user.actions.variables.create:
+    args: {"variablename": "NODE_VERSION", "value": "20"}
+  user.actions.variables.delete:
+    args: {"variablename": "NODE_VERSION"}
+  user.actions.variables.get:
+    args: {"variablename": "NODE_VERSION"}
+  user.actions.variables.list:
+    args: {}
+  user.actions.variables.update:
+    args: {"variablename": "NODE_VERSION", "value": "20"}
+  user.avatar.delete:
+    args: {}
+  user.avatar.update:
+    args: {}
+  user.blocks.add:
+    args: {"username": "ada"}
+  user.blocks.check:
+    args: {"username": "ada"}
+  user.blocks.list:
+    args: {}
+  user.blocks.remove:
+    args: {"username": "ada"}
+  user.emails.add:
+    args: {}
+  user.emails.list:
+    args: {}
+  user.emails.remove:
+    args: {}
+  user.followers.list:
+    args: {}
+  user.following.check:
+    args: {"username": "ada"}
+  user.following.follow:
+    args: {"username": "ada"}
+  user.following.list:
+    args: {}
+  user.following.unfollow:
+    args: {"username": "ada"}
+  user.gpgKeys.create:
+    args: {"armored_public_key": "-----BEGIN PGP PUBLIC KEY BLOCK-----\n...\n-----END PGP PUBLIC KEY BLOCK-----"}
+  user.gpgKeys.delete:
+    args: {"id": 12}
+  user.gpgKeys.get:
+    args: {"id": 12}
+  user.gpgKeys.list:
+    args: {}
+  user.gpgKeys.verificationToken:
+    args: {}
+  user.gpgKeys.verify:
+    args: {"key_id": "example", "armored_signature": "example"}
+  user.hooks.create:
+    args: {"type": "dingtalk", "config": {}}
+  user.hooks.delete:
+    args: {"id": 12}
+  user.hooks.get:
+    args: {"id": 12}
+  user.hooks.list:
+    args: {}
+  user.hooks.update:
+    args: {"id": 12}
+  user.keys.create:
+    args: {"title": "Login fails on Safari", "key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGitea0example0key0value0for0docs ada@example.com"}
+  user.keys.delete:
+    args: {"id": 12}
+  user.keys.get:
+    args: {"id": 12}
+  user.keys.list:
+    args: {}
+  user.me:
+    args: {}
+  user.oauth2Apps.create:
+    args: {}
+  user.oauth2Apps.delete:
+    args: {"id": 12}
+  user.oauth2Apps.get:
+    args: {"id": 12}
+  user.oauth2Apps.list:
+    args: {}
+  user.oauth2Apps.update:
+    args: {"id": 12}
+  user.orgs.list:
+    args: {}
+  user.projects.columns.create:
+    args: {"id": 12, "title": "Login fails on Safari"}
+  user.projects.columns.delete:
+    args: {"id": 12, "column_id": 2}
+  user.projects.columns.get:
+    args: {"id": 12, "column_id": 2}
+  user.projects.columns.issues.add:
+    args: {"id": 12, "column_id": 2, "issue_id": 7}
+  user.projects.columns.issues.list:
+    args: {"id": 12, "column_id": 2}
+  user.projects.columns.issues.remove:
+    args: {"id": 12, "column_id": 2, "issue_id": 7}
+  user.projects.columns.list:
+    args: {"id": 12}
+  user.projects.columns.move:
+    args: {"id": 12, "column_ids": [2]}
+  user.projects.columns.setDefault:
+    args: {"id": 12, "column_id": 2}
+  user.projects.columns.update:
+    args: {"id": 12, "column_id": 2}
+  user.projects.create:
+    args: {"title": "Login fails on Safari"}
+  user.projects.delete:
+    args: {"id": 12}
+  user.projects.get:
+    args: {"id": 12}
+  user.projects.issues.move:
+    args: {"id": 12, "issue_id": 7, "column_id": 2}
+  user.projects.list:
+    args: {}
+  user.projects.update:
+    args: {"id": 12}
+  user.settings.get:
+    args: {}
+  user.settings.update:
+    args: {}
+  user.starred.check:
+    args: {"owner": "ada", "repo": "website"}
+  user.starred.list:
+    args: {}
+  user.starred.star:
+    args: {"owner": "ada", "repo": "website"}
+  user.starred.unstar:
+    args: {"owner": "ada", "repo": "website"}
+  user.stopwatches.list:
+    args: {}
+  user.subscriptions.list:
+    args: {}
+  user.teams.list:
+    args: {}
+  user.token.delete:
+    args: {}
+  user.token.get:
+    args: {}
+  user.trackedTimes.list:
+    args: {}
+  users.activityFeeds.list:
+    args: {"username": "ada"}
+  users.followers.list:
+    args: {"username": "ada"}
+  users.following.check:
+    args: {"username": "ada", "target": "grace"}
+  users.following.list:
+    args: {"username": "ada"}
+  users.get:
+    args: {"username": "ada"}
+  users.gpgKeys.list:
+    args: {"username": "ada"}
+  users.heatmap:
+    args: {"username": "ada"}
+  users.keys.list:
+    args: {"username": "ada"}
+  users.orgs.list:
+    args: {"username": "ada"}
+  users.orgs.permissions:
+    args: {"username": "ada", "org": "acme"}
+  users.projects.list:
+    args: {"username": "ada"}
+  users.repos.list:
+    args: {"username": "ada"}
+  users.search:
+    args: {}
+  users.starred.list:
+    args: {"username": "ada"}
+  users.subscriptions.list:
+    args: {"username": "ada"}
+  webhooks.create:
+    args: {"owner": "ada", "repo": "website", "type": "gitea", "active": true, "events": ["push", "issues", "pull_request", "release"], "config": {"url": "https://example.com/gitea/webhooks", "content_type": "json", "secret": "a-long-random-secret"}}
+  webhooks.delete:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  webhooks.get:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  webhooks.list:
+    args: {"owner": "ada", "repo": "website"}
+  webhooks.test:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  webhooks.update:
+    args: {"owner": "ada", "repo": "website", "id": 12}
+  wiki.create:
+    args: {"owner": "ada", "repo": "website"}
+  wiki.delete:
+    args: {"owner": "ada", "repo": "website", "pageName": "Home"}
+  wiki.get:
+    args: {"owner": "ada", "repo": "website", "pageName": "Home"}
+  wiki.list:
+    args: {"owner": "ada", "repo": "website"}
+  wiki.revisions:
+    args: {"owner": "ada", "repo": "website", "pageName": "Home"}
+  wiki.update:
+    args: {"owner": "ada", "repo": "website", "pageName": "Home", "title": "Login fails on Safari"}
