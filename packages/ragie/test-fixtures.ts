@@ -150,7 +150,9 @@ export const webhookEndpoint = {
 	url: 'https://example.com/hooks/ragie',
 	partition_pattern: null,
 	active: true,
-	secret: 'whsec_9f2b7c1d4e5a6b8c0d2e3f4a5b6c7d8e',
+	// Not a real secret: shaped unlike Stripe's whsec_ pattern so GitHub
+	// secret scanning does not flag this fixture.
+	secret: 'whsec_ragie-fixture-not-a-real-secret',
 };
 
 export const webhookEndpointsList = {
