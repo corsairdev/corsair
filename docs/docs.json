@@ -4381,6 +4381,15 @@
                 ]
               },
               {
+                "group": "PayPal",
+                "pages": [
+                  "plugins/paypal/overview",
+                  "plugins/paypal/api",
+                  "plugins/paypal/database",
+                  "plugins/paypal/webhooks"
+                ]
+              },
+              {
                 "group": "PDF-API.io",
                 "pages": [
                   "plugins/pdfapi/overview",

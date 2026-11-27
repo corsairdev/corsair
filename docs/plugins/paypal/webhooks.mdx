@@ -1,0 +1,441 @@
+---
+title: "PayPal webhooks"
+sidebarTitle: "Webhooks"
+description: "PayPal incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The PayPal plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/paypal/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `catalogProduct` (`catalogProduct`)
+- `checkoutOrder` (`checkoutOrder`)
+- `dispute` (`dispute`)
+- `invoice` (`invoice`)
+- `other` (`other`)
+- `paymentAuthorization` (`paymentAuthorization`)
+- `paymentCapture` (`paymentCapture`)
+- `payout` (`payout`)
+- `plan` (`plan`)
+- `sale` (`sale`)
+- `subscription` (`subscription`)
+- `vault` (`vault`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Catalog Product
+
+### Catalog Product
+
+`catalogProduct`
+
+A catalog product was created or updated (event_type CATALOG.PRODUCT.*)
+
+**Payload:** `unknown`
+
+
+**Response `data`:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+paypal({
+    webhookHooks: {
+        catalogProduct: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Checkout Order
+
+### Checkout Order
+
+`checkoutOrder`
+
+A Checkout order was approved, completed, saved or voided (event_type CHECKOUT.ORDER.*)
+
+**Payload:** `unknown`
+
+
+**Response `data`:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+paypal({
+    webhookHooks: {
+        checkoutOrder: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Dispute
+
+### Dispute
+
+`dispute`
+
+A dispute was created, updated or resolved (event_type CUSTOMER.DISPUTE.*)
+
+**Payload:** `unknown`
+
+
+**Response `data`:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+paypal({
+    webhookHooks: {
+        dispute: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Invoice
+
+### Invoice
+
+`invoice`
+
+An invoice was created, updated, paid, refunded, scheduled or cancelled (event_type INVOICING.INVOICE.*)
+
+**Payload:** `unknown`
+
+
+**Response `data`:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+paypal({
+    webhookHooks: {
+        invoice: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Other
+
+### Other
+
+`other`
+
+Any other PayPal event (merchant onboarding, risk, customer, Venmo ...) (event_type *)
+
+**Payload:** `unknown`
+
+
+**Response `data`:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+paypal({
+    webhookHooks: {
+        other: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Payment Authorization
+
+### Payment Authorization
+
+`paymentAuthorization`
+
+A payment authorization was created or voided (event_type PAYMENT.AUTHORIZATION.*)
+
+**Payload:** `unknown`
+
+
+**Response `data`:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+paypal({
+    webhookHooks: {
+        paymentAuthorization: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Payment Capture
+
+### Payment Capture
+
+`paymentCapture`
+
+A payment capture completed, was denied, pending, refunded, reversed or declined (event_type PAYMENT.CAPTURE.*)
+
+**Payload:** `unknown`
+
+
+**Response `data`:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+paypal({
+    webhookHooks: {
+        paymentCapture: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Payout
+
+### Payout
+
+`payout`
+
+A payout batch or item was processed, succeeded, denied, blocked, held, refunded, returned, unclaimed or cancelled (event_type PAYMENT.PAYOUTS*)
+
+**Payload:** `unknown`
+
+
+**Response `data`:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+paypal({
+    webhookHooks: {
+        payout: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Plan
+
+### Plan
+
+`plan`
+
+A billing plan was created, updated, activated, deactivated or its pricing changed (event_type BILLING.PLAN.*)
+
+**Payload:** `unknown`
+
+
+**Response `data`:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+paypal({
+    webhookHooks: {
+        plan: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Sale
+
+### Sale
+
+`sale`
+
+A subscription payment (sale) completed, was denied, pending, refunded or reversed (event_type PAYMENT.SALE.*)
+
+**Payload:** `unknown`
+
+
+**Response `data`:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+paypal({
+    webhookHooks: {
+        sale: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Subscription
+
+### Subscription
+
+`subscription`
+
+A subscription was created, activated, updated, renewed, suspended, cancelled, expired or a payment failed (event_type BILLING.SUBSCRIPTION.*)
+
+**Payload:** `unknown`
+
+
+**Response `data`:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+paypal({
+    webhookHooks: {
+        subscription: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Vault
+
+### Vault
+
+`vault`
+
+A vaulted payment token was created or deleted (event_type VAULT.PAYMENT-TOKEN.*)
+
+**Payload:** `unknown`
+
+
+**Response `data`:** `unknown`
+
+
+**`webhookHooks` example**
+
+```ts
+paypal({
+    webhookHooks: {
+        vault: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
