@@ -470,6 +470,7 @@ export const BaseProviders = [
 	'monday',
 	'mondaymcp',
 	'moneybird',
+	'mongodbatlas',
 	'moonclerk',
 	'moosend',
 	'mopinion',
@@ -1268,6 +1269,7 @@ export const ProviderDisplayNames = {
 	monday: 'Monday',
 	mondaymcp: 'Monday MCP',
 	moneybird: 'Moneybird',
+	mongodbatlas: 'MongoDB Atlas',
 	moonclerk: 'MoonClerk',
 	moosend: 'Moosend',
 	mopinion: 'Mopinion',
@@ -2073,6 +2075,7 @@ export type AllProviders =
 	| 'monday'
 	| 'mondaymcp'
 	| 'moneybird'
+	| 'mongodbatlas'
 	| 'moonclerk'
 	| 'moosend'
 	| 'mopinion'
