@@ -75,6 +75,17 @@ export type SupermemoryRequest = {
 	/** `binary`: the success comes back as `{ bytes, contentType }`. */
 	responseType?: 'binary';
 	timeoutMs?: number;
+	/**
+	 * One attempt only, even on a 429: a route whose 429 means a daily quota
+	 * is spent (R8), where waiting out Retry-After would hold the call for hours.
+	 */
+	singleAttempt?: boolean;
+	/**
+	 * Caller strings that aren't values the transport can see: map keys
+	 * (metadata keys) and file names. Scrubbed from error bodies like the
+	 * values sent.
+	 */
+	sensitive?: string[];
 };
 
 /** The API base: the plugin's `baseUrl` option (a self-hosted server or a proxy), else Supermemory's own. */
@@ -161,11 +172,13 @@ export async function makeSupermemoryRequest(
 	};
 	try {
 		return await request<unknown>(config, requestOptions, {
-			rateLimitConfig: SUPERMEMORY_RATE_LIMIT_CONFIG,
+			rateLimitConfig: options.singleAttempt
+				? { ...SUPERMEMORY_RATE_LIMIT_CONFIG, maxRetries: 0 }
+				: SUPERMEMORY_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw withoutRequestData(error, ctx.key, base);
+			throw withoutRequestData(error, ctx.key, base, options.sensitive);
 		}
 		throw error;
 	}
@@ -190,9 +203,13 @@ export function withoutRequestData(
 	error: ApiError,
 	key?: string,
 	base: string = SUPERMEMORY_API_BASE,
+	sensitive: readonly string[] = [],
 ): ApiError {
 	const sent = [
 		...(key ? [{ text: key, wholeWord: false }] : []),
+		...sensitive
+			.filter((text) => text.length >= 2)
+			.map((text) => ({ text, wholeWord: text.length < WHOLE_WORD_BELOW })),
 		...sentStrings(error.request),
 	].sort((a, b) => b.text.length - a.text.length);
 	const body = scrubSent(withoutEchoedValues(error.body), sent);
@@ -324,7 +341,16 @@ function sentStrings(request: ApiError['request']): SentString[] {
 			for (const item of value) visit(item, depth + 1, secret);
 			return;
 		}
-		if (typeof FormData !== 'undefined' && value instanceof FormData) return;
+		if (typeof FormData !== 'undefined' && value instanceof FormData) {
+			// Text fields and file names; file contents are never read.
+			value.forEach((entry) => {
+				if (typeof entry === 'string') visit(entry, depth + 1, secret);
+				else if (typeof File !== 'undefined' && entry instanceof File) {
+					visit(entry.name, depth + 1, secret);
+				}
+			});
+			return;
+		}
 		if (value instanceof Uint8Array || value instanceof ArrayBuffer) return;
 		if (typeof value === 'object') {
 			for (const [key, inner] of Object.entries(value)) {

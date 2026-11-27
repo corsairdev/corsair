@@ -59,7 +59,6 @@ describeIfKey('supermemory live', () => {
 	let client: Awaited<ReturnType<typeof createClient>> | undefined;
 	const report: Array<{ op: string; ok: boolean; note: string }> = [];
 	const ids: Record<string, string> = {};
-	let originalContext: unknown = null;
 	let originalChunkSize: unknown;
 
 	// `unknown` because the walk goes through the generated API object by name.
@@ -124,12 +123,11 @@ describeIfKey('supermemory live', () => {
 
 	describe('reads', () => {
 		it('organization.get', async () => {
-			const out = await step(
+			await step(
 				'organization.get',
 				{},
 				(o) => `namespaceCount ${String(o.namespaceCount)}`,
 			);
-			originalContext = out.organizationalContext ?? null;
 		});
 		it.each([
 			'namespaces.list',
@@ -382,17 +380,23 @@ describeIfKey('supermemory live', () => {
 			);
 		});
 		it('organization.update (and back)', async () => {
+			// Read the context here, so the restore never depends on another test.
+			const before = await call('organization.get', {});
+			const previous = before.organizationalContext ?? null;
 			await step('organization.update', {
 				organizationalContext:
 					'Corsair test organization for plugin live runs.',
 			});
-			// Bucket suggestions need an organization context (400 without one).
-			await step('legacy.settings.suggestBuckets', {}, (o) =>
-				JSON.stringify(o).slice(0, 120),
-			);
-			await step('organization.update', {
-				organizationalContext: originalContext,
-			});
+			try {
+				// Bucket suggestions need an organization context (400 without one).
+				await step('legacy.settings.suggestBuckets', {}, (o) =>
+					JSON.stringify(o).slice(0, 120),
+				);
+			} finally {
+				await step('organization.update', {
+					organizationalContext: previous,
+				});
+			}
 		});
 	});
 

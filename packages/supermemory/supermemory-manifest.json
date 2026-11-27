@@ -3029,6 +3029,7 @@
       "summary": "Send feedback",
       "request": "json",
       "response": "json",
+      "singleAttempt": true,
       "input": {
         "type": "object",
         "properties": {

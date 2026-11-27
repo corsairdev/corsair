@@ -10,6 +10,7 @@ import {
 import type { SupermemoryContext } from '../index';
 import type { SupermemoryOperationDefinition } from './manifest';
 import {
+	customerMapKeys,
 	getSupermemoryInputSchema,
 	getSupermemoryOutputSchema,
 	MASKED_KEY,
@@ -254,6 +255,19 @@ export function queryValue(value: unknown, join?: string): unknown {
 }
 
 /**
+ * A path value that may hold slashes (`downloads/report.pdf`): each segment is
+ * encoded on its own, so the slashes stay and nothing else can change the
+ * route. Empty, `.` and `..` segments are refused.
+ */
+export function encodeSlashPath(value: string): string {
+	const segments = value.replace(/^\/+/, '').split('/');
+	if (segments.some((part) => part === '' || part === '.' || part === '..')) {
+		throw new Error('Invalid Supermemory file path');
+	}
+	return segments.map(encodeURIComponent).join('/');
+}
+
+/**
  * One endpoint per manifest operation. The caller passes one flat object;
  * each named field goes to the path, query string or a header as the spec
  * says, and everything else is the request body.
@@ -306,9 +320,20 @@ export function createSupermemoryOperation<Id extends SupermemoryOperationId>(
 			}
 		}
 
+		// Slash-keeping values go into the route here; core encodes the rest.
+		let path = operation.path;
+		for (const field of fields) {
+			if (!field.slashes || pathParameters[field.wire] === undefined) continue;
+			path = path.replace(
+				`{${field.wire}}`,
+				encodeSlashPath(pathParameters[field.wire] as string),
+			);
+			delete pathParameters[field.wire];
+		}
+
 		const request: SupermemoryRequest = {
 			method: operation.method,
-			path: operation.path,
+			path,
 			pathParameters,
 			query,
 			headers,
@@ -319,6 +344,8 @@ export function createSupermemoryOperation<Id extends SupermemoryOperationId>(
 				? { responseType: 'binary' as const }
 				: {}),
 			...(operation.timeoutMs ? { timeoutMs: operation.timeoutMs } : {}),
+			...(operation.singleAttempt ? { singleAttempt: true } : {}),
+			sensitive: customerMapKeys(operation.input, parsedInput.data),
 		};
 		// Fields the vendor sets itself never go back, even when the caller passes an object it read.
 		for (const name of operation.serverSetFields ?? []) delete valid[name];
@@ -370,6 +397,13 @@ export function createSupermemoryOperation<Id extends SupermemoryOperationId>(
 			const binary = await makeSupermemoryRequest(ctx, request);
 			if (!isBinaryResponse(binary))
 				throw new Error('Supermemory returned no body');
+			// A text route answers text; an HTML page is a proxy or login page.
+			const type = (binary.contentType ?? '').toLowerCase();
+			if (!type.startsWith('text/') || type.startsWith('text/html')) {
+				throw new Error(
+					`Supermemory ${id} answered with ${type || 'no content type'}, not text`,
+				);
+			}
 			response = {
 				text: new TextDecoder().decode(binary.bytes),
 				contentType: binary.contentType ?? null,
