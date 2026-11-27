@@ -384,6 +384,7 @@ export const BaseProviders = [
 	'inboxkit',
 	'inkbox',
 	'insightoai',
+	'instabox',
 	'instagram',
 	'instantly',
 	'intercom',
@@ -1189,6 +1190,7 @@ export const ProviderDisplayNames = {
 	inboxkit: 'InboxKit',
 	inkbox: 'Inkbox',
 	insightoai: 'Insighto.ai',
+	instabox: 'InstaBox',
 	instagram: 'Instagram',
 	instantly: 'Instantly',
 	intercom: 'Intercom',
@@ -2001,6 +2003,7 @@ export type AllProviders =
 	| 'inboxkit'
 	| 'inkbox'
 	| 'insightoai'
+	| 'instabox'
 	| 'instagram'
 	| 'instantly'
 	| 'intercom'

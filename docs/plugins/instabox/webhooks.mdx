@@ -1,0 +1,1050 @@
+---
+title: "InstaBox webhooks"
+sidebarTitle: "Webhooks"
+description: "InstaBox incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The InstaBox plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/instabox/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `sandbox`
+  - `created` (`sandbox.created`)
+  - `deleted` (`sandbox.deleted`)
+  - `error` (`sandbox.error`)
+  - `queued` (`sandbox.queued`)
+  - `queueEnded` (`sandbox.queueEnded`)
+  - `started` (`sandbox.started`)
+  - `stopped` (`sandbox.stopped`)
+  - `suspended` (`sandbox.suspended`)
+- `snapshot`
+  - `created` (`snapshot.created`)
+  - `deleted` (`snapshot.deleted`)
+  - `failed` (`snapshot.failed`)
+- `webhook`
+  - `test` (`webhook.test`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Sandbox
+
+### Created
+
+`sandbox.created`
+
+A machine was accepted (state creating) (type sandbox.created)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id, the same on every retry. |
+| `type` | `string` | Yes | The event type, such as sandbox.suspended. |
+| `createdAt` | `string \| null` | No | — |
+| `orgId` | `string \| null` | No | The workspace the event is from. |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sandbox?: {
+    id?: string | null,
+    name?: string | null,
+    metadata?: Record<string, any> | null
+  } | null,
+  previousState?: string | null,
+  state?: string | null,
+  reason?: string | null,
+  operationId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string | null,
+  orgId?: string | null,
+  data?: {
+    sandbox?: {
+      id?: string | null,
+      name?: string | null,
+      metadata?: Record<string, any> | null
+    } | null,
+    previousState?: string | null,
+    state?: string | null,
+    reason?: string | null,
+    operationId?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+instabox({
+    webhookHooks: {
+        sandbox: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`sandbox.deleted`
+
+A machine was deleted (type sandbox.deleted)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id, the same on every retry. |
+| `type` | `string` | Yes | The event type, such as sandbox.suspended. |
+| `createdAt` | `string \| null` | No | — |
+| `orgId` | `string \| null` | No | The workspace the event is from. |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sandbox?: {
+    id?: string | null,
+    name?: string | null,
+    metadata?: Record<string, any> | null
+  } | null,
+  previousState?: string | null,
+  state?: string | null,
+  reason?: string | null,
+  operationId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string | null,
+  orgId?: string | null,
+  data?: {
+    sandbox?: {
+      id?: string | null,
+      name?: string | null,
+      metadata?: Record<string, any> | null
+    } | null,
+    previousState?: string | null,
+    state?: string | null,
+    reason?: string | null,
+    operationId?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+instabox({
+    webhookHooks: {
+        sandbox: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Error
+
+`sandbox.error`
+
+A machine is in error (type sandbox.error)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id, the same on every retry. |
+| `type` | `string` | Yes | The event type, such as sandbox.suspended. |
+| `createdAt` | `string \| null` | No | — |
+| `orgId` | `string \| null` | No | The workspace the event is from. |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sandbox?: {
+    id?: string | null,
+    name?: string | null,
+    metadata?: Record<string, any> | null
+  } | null,
+  previousState?: string | null,
+  state?: string | null,
+  reason?: string | null,
+  operationId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string | null,
+  orgId?: string | null,
+  data?: {
+    sandbox?: {
+      id?: string | null,
+      name?: string | null,
+      metadata?: Record<string, any> | null
+    } | null,
+    previousState?: string | null,
+    state?: string | null,
+    reason?: string | null,
+    operationId?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+instabox({
+    webhookHooks: {
+        sandbox: {
+            error: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Queued
+
+`sandbox.queued`
+
+A GPU machine's create or start joined the GPU queue (type sandbox.queued)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id, the same on every retry. |
+| `type` | `string` | Yes | The event type, such as sandbox.suspended. |
+| `createdAt` | `string \| null` | No | — |
+| `orgId` | `string \| null` | No | The workspace the event is from. |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sandbox?: {
+    id?: string | null,
+    name?: string | null,
+    metadata?: Record<string, any> | null
+  } | null,
+  previousState?: string | null,
+  state?: string | null,
+  reason?: string | null,
+  operationId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string | null,
+  orgId?: string | null,
+  data?: {
+    sandbox?: {
+      id?: string | null,
+      name?: string | null,
+      metadata?: Record<string, any> | null
+    } | null,
+    previousState?: string | null,
+    state?: string | null,
+    reason?: string | null,
+    operationId?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+instabox({
+    webhookHooks: {
+        sandbox: {
+            queued: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Queue Ended
+
+`sandbox.queueEnded`
+
+A request in the GPU queue expired, was cancelled or failed (data.reason) (type sandbox.queue_ended)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id, the same on every retry. |
+| `type` | `string` | Yes | The event type, such as sandbox.suspended. |
+| `createdAt` | `string \| null` | No | — |
+| `orgId` | `string \| null` | No | The workspace the event is from. |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sandbox?: {
+    id?: string | null,
+    name?: string | null,
+    metadata?: Record<string, any> | null
+  } | null,
+  previousState?: string | null,
+  state?: string | null,
+  reason?: string | null,
+  operationId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string | null,
+  orgId?: string | null,
+  data?: {
+    sandbox?: {
+      id?: string | null,
+      name?: string | null,
+      metadata?: Record<string, any> | null
+    } | null,
+    previousState?: string | null,
+    state?: string | null,
+    reason?: string | null,
+    operationId?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+instabox({
+    webhookHooks: {
+        sandbox: {
+            queueEnded: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Started
+
+`sandbox.started`
+
+A machine is running and ready for exec and SSH (after create, start, resume or wake) (type sandbox.started)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id, the same on every retry. |
+| `type` | `string` | Yes | The event type, such as sandbox.suspended. |
+| `createdAt` | `string \| null` | No | — |
+| `orgId` | `string \| null` | No | The workspace the event is from. |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sandbox?: {
+    id?: string | null,
+    name?: string | null,
+    metadata?: Record<string, any> | null
+  } | null,
+  previousState?: string | null,
+  state?: string | null,
+  reason?: string | null,
+  operationId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string | null,
+  orgId?: string | null,
+  data?: {
+    sandbox?: {
+      id?: string | null,
+      name?: string | null,
+      metadata?: Record<string, any> | null
+    } | null,
+    previousState?: string | null,
+    state?: string | null,
+    reason?: string | null,
+    operationId?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+instabox({
+    webhookHooks: {
+        sandbox: {
+            started: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Stopped
+
+`sandbox.stopped`
+
+A machine stopped (type sandbox.stopped)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id, the same on every retry. |
+| `type` | `string` | Yes | The event type, such as sandbox.suspended. |
+| `createdAt` | `string \| null` | No | — |
+| `orgId` | `string \| null` | No | The workspace the event is from. |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sandbox?: {
+    id?: string | null,
+    name?: string | null,
+    metadata?: Record<string, any> | null
+  } | null,
+  previousState?: string | null,
+  state?: string | null,
+  reason?: string | null,
+  operationId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string | null,
+  orgId?: string | null,
+  data?: {
+    sandbox?: {
+      id?: string | null,
+      name?: string | null,
+      metadata?: Record<string, any> | null
+    } | null,
+    previousState?: string | null,
+    state?: string | null,
+    reason?: string | null,
+    operationId?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+instabox({
+    webhookHooks: {
+        sandbox: {
+            stopped: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Suspended
+
+`sandbox.suspended`
+
+A machine paused: by you, when idle, or by a plan limit (type sandbox.suspended)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id, the same on every retry. |
+| `type` | `string` | Yes | The event type, such as sandbox.suspended. |
+| `createdAt` | `string \| null` | No | — |
+| `orgId` | `string \| null` | No | The workspace the event is from. |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sandbox?: {
+    id?: string | null,
+    name?: string | null,
+    metadata?: Record<string, any> | null
+  } | null,
+  previousState?: string | null,
+  state?: string | null,
+  reason?: string | null,
+  operationId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string | null,
+  orgId?: string | null,
+  data?: {
+    sandbox?: {
+      id?: string | null,
+      name?: string | null,
+      metadata?: Record<string, any> | null
+    } | null,
+    previousState?: string | null,
+    state?: string | null,
+    reason?: string | null,
+    operationId?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+instabox({
+    webhookHooks: {
+        sandbox: {
+            suspended: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Snapshot
+
+### Created
+
+`snapshot.created`
+
+A snapshot is ready (type snapshot.created)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id, the same on every retry. |
+| `type` | `string` | Yes | The event type, such as sandbox.suspended. |
+| `createdAt` | `string \| null` | No | — |
+| `orgId` | `string \| null` | No | The workspace the event is from. |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sandbox?: {
+    id?: string | null,
+    name?: string | null,
+    metadata?: Record<string, any> | null
+  } | null,
+  previousState?: string | null,
+  state?: string | null,
+  reason?: string | null,
+  operationId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string | null,
+  orgId?: string | null,
+  data?: {
+    sandbox?: {
+      id?: string | null,
+      name?: string | null,
+      metadata?: Record<string, any> | null
+    } | null,
+    previousState?: string | null,
+    state?: string | null,
+    reason?: string | null,
+    operationId?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+instabox({
+    webhookHooks: {
+        snapshot: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`snapshot.deleted`
+
+A snapshot was deleted (type snapshot.deleted)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id, the same on every retry. |
+| `type` | `string` | Yes | The event type, such as sandbox.suspended. |
+| `createdAt` | `string \| null` | No | — |
+| `orgId` | `string \| null` | No | The workspace the event is from. |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sandbox?: {
+    id?: string | null,
+    name?: string | null,
+    metadata?: Record<string, any> | null
+  } | null,
+  previousState?: string | null,
+  state?: string | null,
+  reason?: string | null,
+  operationId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string | null,
+  orgId?: string | null,
+  data?: {
+    sandbox?: {
+      id?: string | null,
+      name?: string | null,
+      metadata?: Record<string, any> | null
+    } | null,
+    previousState?: string | null,
+    state?: string | null,
+    reason?: string | null,
+    operationId?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+instabox({
+    webhookHooks: {
+        snapshot: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Failed
+
+`snapshot.failed`
+
+A snapshot failed to upload (type snapshot.failed)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id, the same on every retry. |
+| `type` | `string` | Yes | The event type, such as sandbox.suspended. |
+| `createdAt` | `string \| null` | No | — |
+| `orgId` | `string \| null` | No | The workspace the event is from. |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sandbox?: {
+    id?: string | null,
+    name?: string | null,
+    metadata?: Record<string, any> | null
+  } | null,
+  previousState?: string | null,
+  state?: string | null,
+  reason?: string | null,
+  operationId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string | null,
+  orgId?: string | null,
+  data?: {
+    sandbox?: {
+      id?: string | null,
+      name?: string | null,
+      metadata?: Record<string, any> | null
+    } | null,
+    previousState?: string | null,
+    state?: string | null,
+    reason?: string | null,
+    operationId?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+instabox({
+    webhookHooks: {
+        snapshot: {
+            failed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Webhook
+
+### Test
+
+`webhook.test`
+
+A test delivery (orgs.webhooks.test) (type webhook.test)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id, the same on every retry. |
+| `type` | `string` | Yes | The event type, such as sandbox.suspended. |
+| `createdAt` | `string \| null` | No | — |
+| `orgId` | `string \| null` | No | The workspace the event is from. |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sandbox?: {
+    id?: string | null,
+    name?: string | null,
+    metadata?: Record<string, any> | null
+  } | null,
+  previousState?: string | null,
+  state?: string | null,
+  reason?: string | null,
+  operationId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string | null,
+  orgId?: string | null,
+  data?: {
+    sandbox?: {
+      id?: string | null,
+      name?: string | null,
+      metadata?: Record<string, any> | null
+    } | null,
+    previousState?: string | null,
+    state?: string | null,
+    reason?: string | null,
+    operationId?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+instabox({
+    webhookHooks: {
+        webhook: {
+            test: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
