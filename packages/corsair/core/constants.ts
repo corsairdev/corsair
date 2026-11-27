@@ -229,6 +229,7 @@ export const BaseProviders = [
 	'dockerhub',
 	'docmosis',
 	'docparser',
+	'docraptor',
 	'docsbotai',
 	'docsumo',
 	'documenso',
@@ -1049,6 +1050,7 @@ export const ProviderDisplayNames = {
 	dockerhub: 'Docker Hub',
 	docmosis: 'Docmosis',
 	docparser: 'Docparser',
+	docraptor: 'DocRaptor',
 	docsbotai: 'DocsBot AI',
 	docsumo: 'Docsumo',
 	documenso: 'Documenso',
@@ -1876,6 +1878,7 @@ export type AllProviders =
 	| 'dockerhub'
 	| 'docmosis'
 	| 'docparser'
+	| 'docraptor'
 	| 'docsbotai'
 	| 'docsumo'
 	| 'documenso'
