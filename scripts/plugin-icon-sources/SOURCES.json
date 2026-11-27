@@ -57,6 +57,10 @@
   "brevo": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/brevo.svg"
   },
+  "browserbase": {
+    "from": "https://media.brand.dev/2dd6ef37-f1f7-4909-986b-083b10229f75.svg",
+    "note": "found with the context.dev Brand API for browserbase.com"
+  },
   "bubble": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/bubble.svg"
   },
@@ -253,6 +257,10 @@
     "from": "https://media.brand.dev/26fd6213-641e-4830-a940-9ff3acf6980d.svg",
     "note": "found with the context.dev Brand API for giftup.app"
   },
+  "gitea": {
+    "from": "https://media.brand.dev/c9788197-06c1-456b-bd15-8b054c7d8701.svg",
+    "note": "found with the context.dev Brand API for gitea.com"
+  },
   "github": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/github.svg"
   },
@@ -352,6 +360,10 @@
     "from": "https://media.brand.dev/baeb30ed-6c4a-4d66-a5cf-db3df3444426.svg",
     "note": "found with the context.dev Brand API for stackgo.io"
   },
+  "instabox": {
+    "from": "https://media.brand.dev/da1a7192-c2a8-4c78-bc1f-1f59e85474ed.svg",
+    "note": "found with the context.dev Brand API for instabox.sh"
+  },
   "instagram": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/instagram.svg"
   },
@@ -430,6 +442,10 @@
   "mixpanel": {
     "from": "https://media.brand.dev/c300b6eb-7aad-4fa6-97ef-76be786e02c1.svg",
     "note": "found with the context.dev Brand API for mixpanel.com; the brand.dev file is the white mark for dark surfaces, recoloured to Mixpanel purple #7856FF (mixpanel.com light favicon)"
+  },
+  "modal": {
+    "from": "https://media.brand.dev/ceed4bb4-1d1e-42ee-9cc9-161a0520a6a1.svg",
+    "note": "found with the context.dev Brand API for modal.com"
   },
   "monday": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/monday.svg"
@@ -531,6 +547,10 @@
     "from": "https://media.brand.dev/e41a6d48-ea91-4124-9a31-b4840f398e69.svg",
     "note": "found with the context.dev Brand API for polygon.technology"
   },
+  "polymarket": {
+    "from": "https://media.brand.dev/0f4f586c-5273-41f5-92be-67f70e06b0b3.svg",
+    "note": "found with the context.dev Brand API for polymarket.com"
+  },
   "posthog": {
     "from": "https://svgl.app/library/posthog.svg"
   },
@@ -608,6 +628,10 @@
   "satismeter": {
     "from": "https://satismeter.com/favicon.svg",
     "note": "satismeter.com <link rel=icon> favicon.svg (current triangle mark)"
+  },
+  "scrapecreators": {
+    "from": "https://media.brand.dev/8373bdc0-7fa2-4132-bf64-7491d454f918.svg",
+    "note": "found with the context.dev Brand API for scrapecreators.com"
   },
   "scrapedo": {
     "from": "https://media.brand.dev/2308b1d5-5c3d-41d7-9766-96edf92f8cb2.svg",
@@ -771,6 +795,10 @@
   },
   "whatsapp": {
     "from": "https://svgl.app/library/whatsapp-icon.svg"
+  },
+  "wordpress": {
+    "from": "https://media.brand.dev/9bddb127-285f-4b45-b4b0-6366780ef470.svg",
+    "note": "found with the context.dev Brand API for wordpress.org"
   },
   "yandex": {
     "from": "https://media.brand.dev/6e87f40f-176f-41d7-8197-9b5aac3563cd.svg",

@@ -1,0 +1,1729 @@
+{
+  "id": "bravesearch",
+  "displayName": "Brave Search",
+  "description": "Search the web, news, videos, images and places from Brave's independent index, get LLM-ready page context, live rich results, autocomplete, spellcheck and cited AI answers, and read organization usage with the Brave Search API.",
+  "npmPackageName": "@corsair-dev/bravesearch",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 17,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "admin_key"]
+    }
+  ],
+  "api": [
+    {
+      "path": "bravesearch.api.admin.listAdminKeys",
+      "shortPath": "admin.listAdminKeys",
+      "description": "List the organization's admin keys (no secrets)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "include_deleted",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include deleted keys (default false)."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Keys per page, 1-1000 (default 100)."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "string",
+            "description": "next_page from the previous response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object?: string, id?: string, name?: string | null, hint?: string, status?: string, scopes?: string[], expires_at?: string | null, last_used_at?: string | null, created_by_name?: string | null, created_at?: string }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bravesearch.api.admin.listApiKeys",
+      "shortPath": "admin.listApiKeys",
+      "description": "List the organization's search API keys (no secrets)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "include_deleted",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include deleted keys (default false)."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Keys per page, 1-1000 (default 100)."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "string",
+            "description": "next_page from the previous response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object?: string, id?: string, name?: string | null, hint?: string, status?: string, plan?: { id?: string, name?: string, billing_model?: string, billed_on?: string[] }, created_by_name?: string | null, created_at?: string }[]"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bravesearch.api.admin.me",
+      "shortPath": "admin.me",
+      "description": "Check the admin key and its organization",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "scopes",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "expires_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "{ name?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bravesearch.api.admin.usage",
+      "shortPath": "admin.usage",
+      "description": "Get API usage in time buckets by key, endpoint or plan",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "starting_at",
+            "optional": false,
+            "type": "string",
+            "description": "ISO 8601 start with an offset, e.g. 2026-11-01T00:00:00Z. Up to 12 months back."
+          },
+          {
+            "key": "ending_at",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 end with an offset (default now)."
+          },
+          {
+            "key": "bucket_width",
+            "optional": true,
+            "type": "1h | 1d | 1mo",
+            "description": "Bucket size (default 1d). 1mo buckets are the billed totals."
+          },
+          {
+            "key": "group_by",
+            "optional": true,
+            "type": "(api_key_id | endpoint | plan_id)[]",
+            "description": "Split each bucket by these."
+          },
+          {
+            "key": "api_key_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only these search keys (key_...)."
+          },
+          {
+            "key": "endpoints",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only these endpoints: web, news, images, videos, llm_context, answers, ..."
+          },
+          {
+            "key": "plan_ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only these plans (plan_...)."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Buckets per page (1h: 168, 1d: 31, 1mo: 12 at most)."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "string",
+            "description": "next_page from the previous response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object?: string, starting_at?: string, ending_at?: string, results: { api_key_id?: string | null, endpoint?: string | null, plan_id?: string | null, requests?: number | null, queries?: number | null, input_tokens?: number | null, output_tokens?: number | null }[] }[]"
+          },
+          {
+            "key": "api_keys",
+            "optional": true,
+            "type": "Record<string, {}>"
+          },
+          {
+            "key": "plans",
+            "optional": true,
+            "type": "Record<string, { id?: string, name?: string, billing_model?: string, billed_on?: string[] }>"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data_refreshed_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bravesearch.api.answers.create",
+      "shortPath": "answers.create",
+      "description": "Answer a question from one web search, with optional inline citations (Answers plan)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role?: user, content: string }[]",
+            "description": "Exactly one user message: [{ \"role\": \"user\", \"content\": \"your question\" }]."
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "brave-pro | brave",
+            "description": "brave-pro (default) or brave."
+          },
+          {
+            "key": "max_completion_tokens",
+            "optional": true,
+            "type": "number",
+            "description": "Cap on answer tokens."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Country for the searches behind the answer (default us)."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Answer language (default: the question's language)."
+          },
+          {
+            "key": "safesearch",
+            "optional": true,
+            "type": "off | moderate | strict",
+            "description": "Adult content filter (default moderate)."
+          },
+          {
+            "key": "web_search_options",
+            "optional": true,
+            "type": "{ search_context_size?: low | medium | high, user_location?: { type?: approximate, approximate: { city?: string, country?: string, region?: string, timezone?: string } } }",
+            "description": "OpenAI-style search options: context size and approximate user location."
+          },
+          {
+            "key": "enable_citations",
+            "optional": true,
+            "type": "boolean",
+            "description": "Collect inline citations into `citations` (start/end offsets into the answer, url, snippet)."
+          },
+          {
+            "key": "enable_entities",
+            "optional": true,
+            "type": "boolean",
+            "description": "Collect inline entity tags into `tags`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ index?: number, message: { role?: string, content: string }, finish_reason?: string | null }[]"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "citations",
+            "optional": false,
+            "type": "any[]",
+            "description": "Citation objects: { start_index, end_index, number, url, favicon, snippet }."
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "any",
+            "description": "Brave's usage line: X-Request-Queries, X-Request-Tokens-In/Out and their costs in USD."
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "{ tag: string, value: any }[]",
+            "description": "Other tagged stream items (entities and anything new), in order."
+          }
+        ]
+      }
+    },
+    {
+      "path": "bravesearch.api.answers.research",
+      "shortPath": "answers.research",
+      "description": "Answer a question with multi-search deep research; can run minutes and bills per search and token (Answers plan)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ role?: user, content: string }[]",
+            "description": "Exactly one user message: [{ \"role\": \"user\", \"content\": \"your question\" }]."
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "brave-pro | brave",
+            "description": "brave-pro (default) or brave."
+          },
+          {
+            "key": "max_completion_tokens",
+            "optional": true,
+            "type": "number",
+            "description": "Cap on answer tokens."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Country for the searches behind the answer (default us)."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Answer language (default: the question's language)."
+          },
+          {
+            "key": "safesearch",
+            "optional": true,
+            "type": "off | moderate | strict",
+            "description": "Adult content filter (default moderate)."
+          },
+          {
+            "key": "web_search_options",
+            "optional": true,
+            "type": "{ search_context_size?: low | medium | high, user_location?: { type?: approximate, approximate: { city?: string, country?: string, region?: string, timezone?: string } } }",
+            "description": "OpenAI-style search options: context size and approximate user location."
+          },
+          {
+            "key": "research_maximum_number_of_queries",
+            "optional": true,
+            "type": "number",
+            "description": "Most searches in total (default 20)."
+          },
+          {
+            "key": "research_maximum_number_of_iterations",
+            "optional": true,
+            "type": "number",
+            "description": "Most research rounds (default 4)."
+          },
+          {
+            "key": "research_maximum_number_of_seconds",
+            "optional": true,
+            "type": "number",
+            "description": "Time budget in seconds (default 180)."
+          },
+          {
+            "key": "research_maximum_number_of_results_per_query",
+            "optional": true,
+            "type": "number",
+            "description": "Results read per search (default 30)."
+          },
+          {
+            "key": "research_maximum_number_of_tokens_per_query",
+            "optional": true,
+            "type": "number",
+            "description": "Tokens gathered per search (default 8192)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "object",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "choices",
+            "optional": false,
+            "type": "{ index?: number, message: { role?: string, content: string }, finish_reason?: string | null }[]"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "citations",
+            "optional": false,
+            "type": "any[]",
+            "description": "Citation objects: { start_index, end_index, number, url, favicon, snippet }."
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "any",
+            "description": "Brave's usage line: X-Request-Queries, X-Request-Tokens-In/Out and their costs in USD."
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "{ tag: string, value: any }[]",
+            "description": "Other tagged stream items (entities and anything new), in order."
+          }
+        ]
+      }
+    },
+    {
+      "path": "bravesearch.api.images.search",
+      "shortPath": "images.search",
+      "description": "Search images",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "The search query. Up to 400 characters; Brave search operators (site:, \"quotes\", -term) work unless operators is false."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter country code the results come from (US, GB, DE, ...), or ALL for worldwide. Default US."
+          },
+          {
+            "key": "search_lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language of the results: en, de, fr, pt-br, zh-hans, ... Default en."
+          },
+          {
+            "key": "spellcheck",
+            "optional": true,
+            "type": "boolean",
+            "description": "Spell-correct the query (default true)."
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string",
+            "description": "Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest."
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean",
+            "description": "Ask Brave not to serve cached results (Cache-Control: no-cache, best effort)."
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string",
+            "description": "The end user's browser User-Agent, for device-specific results."
+          },
+          {
+            "key": "safesearch",
+            "optional": true,
+            "type": "off | strict",
+            "description": "Adult content filter. Default strict."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Results, 1-200 (default 50). Image search has no pages: raise count for more."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ original?: string, altered?: string, cleaned?: string, spellcheck_off?: boolean, show_strict_warning?: boolean, more_results_available?: boolean, summary_key?: string }"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ type?: string, title?: string, url?: string, source?: string, page_fetched?: string, thumbnail?: { src?: string, original?: string, width?: number, height?: number, logo?: boolean }, properties?: { url?: string, placeholder?: string, width?: number, height?: number }, meta_url?: { scheme?: string, netloc?: string, hostname?: string, favicon?: string, path?: string }, confidence?: string }[]"
+          },
+          {
+            "key": "extra",
+            "optional": true,
+            "type": "{ might_be_offensive?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bravesearch.api.llm.context",
+      "shortPath": "llm.context",
+      "description": "Search the web and get extracted page text, token-budgeted, for grounding an LLM",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "The search query. Up to 600 characters; Brave search operators (site:, \"quotes\", -term) work unless operators is false."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter country code the results come from (US, GB, DE, ...), or ALL for worldwide. Default US."
+          },
+          {
+            "key": "search_lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language of the results: en, de, fr, pt-br, zh-hans, ... Default en."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Search results considered when picking context, 1-50 (default 20)."
+          },
+          {
+            "key": "safesearch",
+            "optional": true,
+            "type": "off | moderate | strict",
+            "description": "Adult content filter. Default: none."
+          },
+          {
+            "key": "spellcheck",
+            "optional": true,
+            "type": "boolean",
+            "description": "Spell-correct the query (default true)."
+          },
+          {
+            "key": "operators",
+            "optional": true,
+            "type": "boolean",
+            "description": "Apply search operators (default true)."
+          },
+          {
+            "key": "operators_fallback",
+            "optional": true,
+            "type": "boolean",
+            "description": "Relaxed operator matching first, then the original results (default true)."
+          },
+          {
+            "key": "maximum_number_of_urls",
+            "optional": true,
+            "type": "number",
+            "description": "Most distinct URLs in the context."
+          },
+          {
+            "key": "maximum_number_of_tokens",
+            "optional": true,
+            "type": "number",
+            "description": "Approximate token budget for the whole context, 1024-32768 (default 8192)."
+          },
+          {
+            "key": "maximum_number_of_tokens_per_url",
+            "optional": true,
+            "type": "number",
+            "description": "Token budget per URL, 512-8192 (default 4096)."
+          },
+          {
+            "key": "context_threshold_mode",
+            "optional": true,
+            "type": "disabled | strict | lenient | balanced",
+            "description": "How strictly content must match the query to be included."
+          },
+          {
+            "key": "goggles",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Goggles re-rank results: the URL of a hosted Goggle or a Goggle definition, or a list of up to 3."
+          },
+          {
+            "key": "freshness",
+            "optional": true,
+            "type": "string",
+            "description": "Page age filter: pd (24 hours), pw (7 days), pm (31 days), py (365 days), or a range YYYY-MM-DDtoYYYY-MM-DD."
+          },
+          {
+            "key": "enable_local",
+            "optional": true,
+            "type": "boolean",
+            "description": "Local (POI and map) context. Default: on when a location is given."
+          },
+          {
+            "key": "enable_source_metadata",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add site_name, favicon, thumbnail and description to each source."
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ lat?: number, long?: number, city?: string, state?: string, state_name?: string, country?: string, postal_code?: string }"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string",
+            "description": "Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest."
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean",
+            "description": "Ask Brave not to serve cached results (Cache-Control: no-cache, best effort)."
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string",
+            "description": "The end user's browser User-Agent, for device-specific results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "grounding",
+            "optional": true,
+            "type": "{ generic?: { url?: string, title?: string, name?: string, snippets?: string[] }[], poi?: { url?: string, title?: string, name?: string, snippets?: string[] } | null, map?: { url?: string, title?: string, name?: string, snippets?: string[] }[] }"
+          },
+          {
+            "key": "sources",
+            "optional": true,
+            "type": "Record<string, { title?: string, hostname?: string, age?: string[] | null }>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bravesearch.api.local.descriptions",
+      "shortPath": "local.descriptions",
+      "description": "Get AI-written descriptions for location ids from a search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "Location ids (loc...) from web.search locations or local.placeSearch results. Ids expire after 8 hours."
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string",
+            "description": "Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest."
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean",
+            "description": "Ask Brave not to serve cached results (Cache-Control: no-cache, best effort)."
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string",
+            "description": "The end user's browser User-Agent, for device-specific results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ type?: string, id?: string, description?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bravesearch.api.local.placeSearch",
+      "shortPath": "local.placeSearch",
+      "description": "Search businesses, landmarks and other places in an area by text or coordinates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "What to look for (coffee, museums ...). Without it, general points of interest in the area."
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Area as text instead of coordinates: \"san francisco ca united states\", \"tokyo japan\"."
+          },
+          {
+            "key": "latitude",
+            "optional": true,
+            "type": "number",
+            "description": "Latitude of the area centre."
+          },
+          {
+            "key": "longitude",
+            "optional": true,
+            "type": "number",
+            "description": "Longitude of the area centre."
+          },
+          {
+            "key": "radius",
+            "optional": true,
+            "type": "number",
+            "description": "Bias toward results within this many metres of the coordinates (not a hard limit)."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Results, 1-100 (default 20)."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter country code the results come from (US, GB, DE, ...), or ALL for worldwide. Default US."
+          },
+          {
+            "key": "search_lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language of the results: en, de, fr, pt-br, zh-hans, ... Default en."
+          },
+          {
+            "key": "ui_lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language of the response display strings, <lang>-<COUNTRY> such as en-US. Default en-US."
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "metric | imperial",
+            "description": "Measurement units in results."
+          },
+          {
+            "key": "safesearch",
+            "optional": true,
+            "type": "off | moderate | strict",
+            "description": "Adult content filter. Default strict."
+          },
+          {
+            "key": "spellcheck",
+            "optional": true,
+            "type": "boolean",
+            "description": "Spell-correct the query (default true)."
+          },
+          {
+            "key": "geoloc",
+            "optional": true,
+            "type": "string",
+            "description": "The user's position as <latitude>x<longitude>, used for distances."
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string",
+            "description": "Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest."
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean",
+            "description": "Ask Brave not to serve cached results (Cache-Control: no-cache, best effort)."
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string",
+            "description": "The end user's browser User-Agent, for device-specific results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ original?: string, altered?: string, cleaned?: string, spellcheck_off?: boolean, show_strict_warning?: boolean, more_results_available?: boolean, summary_key?: string }"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string, type?: string, title?: string, url?: string, provider_url?: string, description?: string, coordinates?: number[], zoom_level?: number, thumbnail?: { src?: string, original?: string, width?: number, height?: number, logo?: boolean }, postal_address?: {}, opening_hours?: {}, contact?: {}, price_range?: string, rating?: {}, distance?: {}, profiles?: { name?: string, long_name?: string, url?: string, img?: string }[], categories?: string[], serves_cuisine?: string[], timezone?: string }[]"
+          },
+          {
+            "key": "cities",
+            "optional": true,
+            "type": "{ name?: string, country?: string }[]"
+          },
+          {
+            "key": "countries",
+            "optional": true,
+            "type": "{ name?: string, country?: string }[]"
+          },
+          {
+            "key": "regions",
+            "optional": true,
+            "type": "{ name?: string, country?: string }[]"
+          },
+          {
+            "key": "neighborhoods",
+            "optional": true,
+            "type": "{ name?: string, country?: string }[]"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "streets",
+            "optional": true,
+            "type": "{}[]"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{}"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bravesearch.api.local.pois",
+      "shortPath": "local.pois",
+      "description": "Get details (address, hours, rating, contact) for location ids from a search",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "Location ids (loc...) from web.search locations or local.placeSearch results. Ids expire after 8 hours."
+          },
+          {
+            "key": "search_lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language of the results: en, de, fr, pt-br, zh-hans, ... Default en."
+          },
+          {
+            "key": "ui_lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language of the response display strings, <lang>-<COUNTRY> such as en-US. Default en-US."
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "metric | imperial",
+            "description": "Measurement units in results."
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ lat?: number, long?: number }"
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string",
+            "description": "Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest."
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean",
+            "description": "Ask Brave not to serve cached results (Cache-Control: no-cache, best effort)."
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string",
+            "description": "The end user's browser User-Agent, for device-specific results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string, type?: string, title?: string, url?: string, provider_url?: string, description?: string, coordinates?: number[], zoom_level?: number, thumbnail?: { src?: string, original?: string, width?: number, height?: number, logo?: boolean }, postal_address?: {}, opening_hours?: {}, contact?: {}, price_range?: string, rating?: {}, distance?: {}, profiles?: { name?: string, long_name?: string, url?: string, img?: string }[], categories?: string[], serves_cuisine?: string[], timezone?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bravesearch.api.news.search",
+      "shortPath": "news.search",
+      "description": "Search news articles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "The search query. Up to 400 characters; Brave search operators (site:, \"quotes\", -term) work unless operators is false."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter country code the results come from (US, GB, DE, ...), or ALL for worldwide. Default US."
+          },
+          {
+            "key": "search_lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language of the results: en, de, fr, pt-br, zh-hans, ... Default en."
+          },
+          {
+            "key": "spellcheck",
+            "optional": true,
+            "type": "boolean",
+            "description": "Spell-correct the query (default true)."
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string",
+            "description": "Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest."
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean",
+            "description": "Ask Brave not to serve cached results (Cache-Control: no-cache, best effort)."
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string",
+            "description": "The end user's browser User-Agent, for device-specific results."
+          },
+          {
+            "key": "ui_lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language of the response display strings, <lang>-<COUNTRY> such as en-US. Default en-US."
+          },
+          {
+            "key": "safesearch",
+            "optional": true,
+            "type": "off | moderate | strict",
+            "description": "Adult content filter. Default strict."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, 1-50 (default 20)."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based page index (pages of `count` results), at most 9."
+          },
+          {
+            "key": "freshness",
+            "optional": true,
+            "type": "string",
+            "description": "Page age filter: pd (24 hours), pw (7 days), pm (31 days), py (365 days), or a range YYYY-MM-DDtoYYYY-MM-DD."
+          },
+          {
+            "key": "extra_snippets",
+            "optional": true,
+            "type": "boolean",
+            "description": "Up to 5 extra excerpts per article."
+          },
+          {
+            "key": "goggles",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Goggles re-rank results: the URL of a hosted Goggle or a Goggle definition, or a list of up to 3."
+          },
+          {
+            "key": "include_fetch_metadata",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add when each page was fetched."
+          },
+          {
+            "key": "operators",
+            "optional": true,
+            "type": "boolean",
+            "description": "Apply search operators (default true)."
+          },
+          {
+            "key": "operators_fallback",
+            "optional": true,
+            "type": "boolean",
+            "description": "Relaxed operator matching first (default false)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ original?: string, altered?: string, cleaned?: string, spellcheck_off?: boolean, show_strict_warning?: boolean, more_results_available?: boolean, summary_key?: string }"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ type?: string, title?: string, url?: string, description?: string, age?: string, page_age?: string, page_fetched?: string, language?: string, family_friendly?: boolean, profile?: { name?: string, long_name?: string, url?: string, img?: string }, meta_url?: { scheme?: string, netloc?: string, hostname?: string, favicon?: string, path?: string }, thumbnail?: { src?: string, original?: string, width?: number, height?: number, logo?: boolean }, extra_snippets?: string[], breaking?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bravesearch.api.spellcheck.search",
+      "shortPath": "spellcheck.search",
+      "description": "Get the spell-corrected form of a query",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "The search query. Up to 400 characters; Brave search operators (site:, \"quotes\", -term) work unless operators is false."
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language of the results: en, de, fr, pt-br, zh-hans, ... Default en."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter country code the results come from (US, GB, DE, ...), or ALL for worldwide. Default US."
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string",
+            "description": "Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest."
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean",
+            "description": "Ask Brave not to serve cached results (Cache-Control: no-cache, best effort)."
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string",
+            "description": "The end user's browser User-Agent, for device-specific results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ original?: string, altered?: string, cleaned?: string, spellcheck_off?: boolean, show_strict_warning?: boolean, more_results_available?: boolean, summary_key?: string }"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ query?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bravesearch.api.suggest.search",
+      "shortPath": "suggest.search",
+      "description": "Get query autocomplete suggestions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "The search query. Up to 400 characters; Brave search operators (site:, \"quotes\", -term) work unless operators is false."
+          },
+          {
+            "key": "lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language of the results: en, de, fr, pt-br, zh-hans, ... Default en."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter country code the results come from (US, GB, DE, ...), or ALL for worldwide. Default US."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Suggestions, 1-20 (default 5)."
+          },
+          {
+            "key": "rich",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add entity data (title, description, image) to suggestions. Needs the paid Autosuggest plan."
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string",
+            "description": "Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest."
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean",
+            "description": "Ask Brave not to serve cached results (Cache-Control: no-cache, best effort)."
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string",
+            "description": "The end user's browser User-Agent, for device-specific results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ original?: string, altered?: string, cleaned?: string, spellcheck_off?: boolean, show_strict_warning?: boolean, more_results_available?: boolean, summary_key?: string }"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ query?: string, is_entity?: boolean, title?: string, description?: string, img?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bravesearch.api.videos.search",
+      "shortPath": "videos.search",
+      "description": "Search videos",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "The search query. Up to 400 characters; Brave search operators (site:, \"quotes\", -term) work unless operators is false."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter country code the results come from (US, GB, DE, ...), or ALL for worldwide. Default US."
+          },
+          {
+            "key": "search_lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language of the results: en, de, fr, pt-br, zh-hans, ... Default en."
+          },
+          {
+            "key": "spellcheck",
+            "optional": true,
+            "type": "boolean",
+            "description": "Spell-correct the query (default true)."
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string",
+            "description": "Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest."
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean",
+            "description": "Ask Brave not to serve cached results (Cache-Control: no-cache, best effort)."
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string",
+            "description": "The end user's browser User-Agent, for device-specific results."
+          },
+          {
+            "key": "ui_lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language of the response display strings, <lang>-<COUNTRY> such as en-US. Default en-US."
+          },
+          {
+            "key": "safesearch",
+            "optional": true,
+            "type": "off | moderate | strict",
+            "description": "Adult content filter. Default moderate."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, 1-50 (default 20)."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based page index (pages of `count` results), at most 9."
+          },
+          {
+            "key": "freshness",
+            "optional": true,
+            "type": "string",
+            "description": "Page age filter: pd (24 hours), pw (7 days), pm (31 days), py (365 days), or a range YYYY-MM-DDtoYYYY-MM-DD."
+          },
+          {
+            "key": "include_fetch_metadata",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add when each page was fetched."
+          },
+          {
+            "key": "operators",
+            "optional": true,
+            "type": "boolean",
+            "description": "Apply search operators (default true)."
+          },
+          {
+            "key": "operators_fallback",
+            "optional": true,
+            "type": "boolean",
+            "description": "Relaxed operator matching first (default false)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ original?: string, altered?: string, cleaned?: string, spellcheck_off?: boolean, show_strict_warning?: boolean, more_results_available?: boolean, summary_key?: string }"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ type?: string, url?: string, title?: string, description?: string, age?: string, page_age?: string, video?: { duration?: string, views?: number, creator?: string, publisher?: string }, meta_url?: { scheme?: string, netloc?: string, hostname?: string, favicon?: string, path?: string }, thumbnail?: { src?: string, original?: string, width?: number, height?: number, logo?: boolean } }[]"
+          },
+          {
+            "key": "extra",
+            "optional": true,
+            "type": "{ might_be_offensive?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bravesearch.api.web.rich",
+      "shortPath": "web.rich",
+      "description": "Get live rich data (weather, stocks, sports, currency ...) for a web.search callback key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "callback_key",
+            "optional": false,
+            "type": "string",
+            "description": "rich.hint.callback_key from a web.search with enable_rich_callback."
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string",
+            "description": "Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest."
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean",
+            "description": "Ask Brave not to serve cached results (Cache-Control: no-cache, best effort)."
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string",
+            "description": "The end user's browser User-Agent, for device-specific results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ type?: string, subtype?: string, provider?: {} }[]"
+          },
+          {
+            "key": "response_callback_info",
+            "optional": true,
+            "type": "{ vertical?: string, callback_key?: string, callback_status?: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "bravesearch.api.web.search",
+      "shortPath": "web.search",
+      "description": "Search the web: ranked pages with snippets, plus news, videos, discussions, FAQ, infobox and local sections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "The search query. Up to 600 characters; Brave search operators (site:, \"quotes\", -term) work unless operators is false."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter country code the results come from (US, GB, DE, ...), or ALL for worldwide. Default US."
+          },
+          {
+            "key": "search_lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language of the results: en, de, fr, pt-br, zh-hans, ... Default en."
+          },
+          {
+            "key": "ui_lang",
+            "optional": true,
+            "type": "string",
+            "description": "Language of the response display strings, <lang>-<COUNTRY> such as en-US. Default en-US."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Web results per page, 1-20 (default 20). Applies to web results only."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Zero-based page index (pages of `count` results), at most 9."
+          },
+          {
+            "key": "safesearch",
+            "optional": true,
+            "type": "off | moderate | strict",
+            "description": "Adult content filter. Default moderate."
+          },
+          {
+            "key": "spellcheck",
+            "optional": true,
+            "type": "boolean",
+            "description": "Spell-correct the query (default true); the corrected query is in query.altered."
+          },
+          {
+            "key": "freshness",
+            "optional": true,
+            "type": "string",
+            "description": "Page age filter: pd (24 hours), pw (7 days), pm (31 days), py (365 days), or a range YYYY-MM-DDtoYYYY-MM-DD."
+          },
+          {
+            "key": "text_decorations",
+            "optional": true,
+            "type": "boolean",
+            "description": "Keep highlight markers in snippets (default true)."
+          },
+          {
+            "key": "result_filter",
+            "optional": true,
+            "type": "(discussions | faq | infobox | news | query | summarizer | videos | web | locations)[]",
+            "description": "Only these result sections. Default: every section the plan includes."
+          },
+          {
+            "key": "units",
+            "optional": true,
+            "type": "metric | imperial",
+            "description": "Measurement units in results."
+          },
+          {
+            "key": "goggles",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Goggles re-rank results: the URL of a hosted Goggle or a Goggle definition, or a list of up to 3."
+          },
+          {
+            "key": "extra_snippets",
+            "optional": true,
+            "type": "boolean",
+            "description": "Up to 5 extra excerpts per result."
+          },
+          {
+            "key": "enable_rich_callback",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return a rich.hint.callback_key for live data (weather, stocks, sports ...); fetch it with web.rich."
+          },
+          {
+            "key": "include_fetch_metadata",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add when each page was fetched."
+          },
+          {
+            "key": "operators",
+            "optional": true,
+            "type": "boolean",
+            "description": "Apply search operators (default true)."
+          },
+          {
+            "key": "operators_fallback",
+            "optional": true,
+            "type": "boolean",
+            "description": "Try relaxed operator matching first, falling back to the original results (default false)."
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ lat?: number, long?: number, timezone?: string, city?: string, state?: string, state_name?: string, country?: string, postal_code?: string }",
+            "description": "Where the user is, for local results. Sent as X-Loc-* headers."
+          },
+          {
+            "key": "api_version",
+            "optional": true,
+            "type": "string",
+            "description": "Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest."
+          },
+          {
+            "key": "no_cache",
+            "optional": true,
+            "type": "boolean",
+            "description": "Ask Brave not to serve cached results (Cache-Control: no-cache, best effort)."
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string",
+            "description": "The end user's browser User-Agent, for device-specific results."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ original?: string, altered?: string, cleaned?: string, spellcheck_off?: boolean, show_strict_warning?: boolean, more_results_available?: boolean, summary_key?: string }"
+          },
+          {
+            "key": "mixed",
+            "optional": true,
+            "type": "{ type?: string, main?: {}[], top?: {}[], side?: {}[] }"
+          },
+          {
+            "key": "web",
+            "optional": true,
+            "type": "{ type?: string, results?: { type?: string, title?: string, url?: string, description?: string, age?: string, page_age?: string, page_fetched?: string, language?: string, family_friendly?: boolean, profile?: { name?: string, long_name?: string, url?: string, img?: string }, meta_url?: { scheme?: string, netloc?: string, hostname?: string, favicon?: string, path?: string }, thumbnail?: { src?: string, original?: string, width?: number, height?: number, logo?: boolean }, extra_snippets?: string[] }[], mutated_by_goggles?: boolean, family_friendly?: boolean }"
+          },
+          {
+            "key": "news",
+            "optional": true,
+            "type": "{ type?: string, results?: { type?: string, title?: string, url?: string, description?: string, age?: string, page_age?: string, page_fetched?: string, language?: string, family_friendly?: boolean, profile?: { name?: string, long_name?: string, url?: string, img?: string }, meta_url?: { scheme?: string, netloc?: string, hostname?: string, favicon?: string, path?: string }, thumbnail?: { src?: string, original?: string, width?: number, height?: number, logo?: boolean }, extra_snippets?: string[] }[], mutated_by_goggles?: boolean, family_friendly?: boolean }"
+          },
+          {
+            "key": "videos",
+            "optional": true,
+            "type": "{ type?: string, results?: {}[], mutated_by_goggles?: boolean, family_friendly?: boolean }"
+          },
+          {
+            "key": "discussions",
+            "optional": true,
+            "type": "{ type?: string, results?: {}[], mutated_by_goggles?: boolean, family_friendly?: boolean }"
+          },
+          {
+            "key": "faq",
+            "optional": true,
+            "type": "{ type?: string, results?: {}[], mutated_by_goggles?: boolean, family_friendly?: boolean }"
+          },
+          {
+            "key": "infobox",
+            "optional": true,
+            "type": "{ type?: string, results?: any[], mutated_by_goggles?: boolean, family_friendly?: boolean }"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "{ type?: string, results?: { id?: string, type?: string, title?: string, url?: string, provider_url?: string, description?: string, coordinates?: number[], zoom_level?: number, thumbnail?: { src?: string, original?: string, width?: number, height?: number, logo?: boolean }, postal_address?: {}, opening_hours?: {}, contact?: {}, price_range?: string, rating?: {}, distance?: {}, profiles?: { name?: string, long_name?: string, url?: string, img?: string }[], categories?: string[], serves_cuisine?: string[], timezone?: string }[], mutated_by_goggles?: boolean, family_friendly?: boolean }"
+          },
+          {
+            "key": "rich",
+            "optional": true,
+            "type": "{ type?: string, hint?: { vertical?: string, callback_key?: string } }"
+          },
+          {
+            "key": "summarizer",
+            "optional": true,
+            "type": "{ type?: string, key?: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,0 +1,4631 @@
+{
+  "id": "browserbase",
+  "displayName": "Browserbase",
+  "description": "Cloud browsers for AI agents with Browserbase: start, inspect, label and release browser sessions with live debug URLs, logs, replays and recordings, keep logins in contexts and secrets, run Functions and agents, fetch pages and search the web, and receive signed webhooks (76 operations).",
+  "npmPackageName": "@corsair-dev/browserbase",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 76,
+    "webhooks": 7,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "browserbase.api.agents.create",
+      "shortPath": "agents.create",
+      "description": "Create an Agent. Create a reusable agent. An agent defines a systemPrompt and resultSchema that guide its behavior for every run. Only name is required; an agent created with no systemPrompt behaves like an unconfigured run.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Human-readable name for the agent. Used to identify the agent in the dashboard and API responses."
+          },
+          {
+            "key": "systemPrompt",
+            "optional": true,
+            "type": "string",
+            "description": "System prompt that steers the agent's behavior on every run that uses this agent."
+          },
+          {
+            "key": "resultSchema",
+            "optional": true,
+            "type": "{}",
+            "description": "An optional [JSON Schema](https://json-schema.org/specification) object. If provided, runs that reference this agent will aim to return a `result` that conforms to this schema when they complete. Can be overridden per run by passing `resultSchema` on the run request."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique identifier for the agent. Use this value as `agentId` when creating an agent run."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Human-readable name for the agent. Used to identify the agent in the dashboard and API responses."
+          },
+          {
+            "key": "systemPrompt",
+            "optional": true,
+            "type": "string | null",
+            "description": "System prompt applied to every run that uses this agent."
+          },
+          {
+            "key": "resultSchema",
+            "optional": true,
+            "type": "{} | null",
+            "description": "[JSON Schema](https://json-schema.org/specification) that runs referencing this agent will aim to conform their `result` to. Can be overridden per run by passing `resultSchema` on the run request."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.agents.delete",
+      "shortPath": "agents.delete",
+      "description": "Delete an Agent. Delete an agent. Runs that already referenced this agent are unaffected. Cannot be undone.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string",
+            "description": "The agent ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Browserbase accepted the call; it answered with no body."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.agents.get",
+      "shortPath": "agents.get",
+      "description": "Get an Agent. Retrieve an agent by ID. (GET /v1/agents/{agentId})",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string",
+            "description": "The agent ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique identifier for the agent. Use this value as `agentId` when creating an agent run."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Human-readable name for the agent. Used to identify the agent in the dashboard and API responses."
+          },
+          {
+            "key": "systemPrompt",
+            "optional": true,
+            "type": "string | null",
+            "description": "System prompt applied to every run that uses this agent."
+          },
+          {
+            "key": "resultSchema",
+            "optional": true,
+            "type": "{} | null",
+            "description": "[JSON Schema](https://json-schema.org/specification) that runs referencing this agent will aim to conform their `result` to. Can be overridden per run by passing `resultSchema` on the run request."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.agents.list",
+      "shortPath": "agents.list",
+      "description": "List Agents. List agents across your account. Supports filtering by creation time.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startAt",
+            "optional": true,
+            "type": "string",
+            "description": "Only return agents created on or after this timestamp (inclusive). RFC 3339, e.g. 2026-01-19T00:00:00Z."
+          },
+          {
+            "key": "endAt",
+            "optional": true,
+            "type": "string",
+            "description": "Only return agents created on or before this timestamp (inclusive). RFC 3339, e.g. 2026-01-20T00:00:00Z."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor. Pass the nextCursor from the previous response to fetch the next page. Omit to start from the first page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ agentId?: string | null, name?: string | null, systemPrompt?: string | null, resultSchema?: {} | null, createdAt?: string | null, updatedAt?: string | null }[] | null",
+            "description": "The page of matching agents."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null",
+            "description": "The maximum number of results returned in this page."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null | null",
+            "description": "Cursor for the next page. Pass it back as `cursor` on the next request to continue paging. null when there are no more results."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.agents.runs.create",
+      "shortPath": "agents.runs.create",
+      "description": "Run an Agent. Run a browser agent to complete the task by using web search and browser tooling. Optionally pass agentId to run a custom agent you've created. Starts an agent run that uses browser time and model tokens.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentId",
+            "optional": true,
+            "type": "string",
+            "description": "Optionally run a specific [custom agent](/reference/api/create-an-agent) you've created by ID. The run will use the agent's `systemPrompt` and `resultSchema` unless overridden."
+          },
+          {
+            "key": "task",
+            "optional": false,
+            "type": "string",
+            "description": "A natural language description of the task the agent should accomplish."
+          },
+          {
+            "key": "resultSchema",
+            "optional": true,
+            "type": "{}",
+            "description": "An optional [JSON Schema](https://json-schema.org/specification) object. If provided, the agent will aim to return a `result` that conforms to this schema when the run completes. Overrides the referenced agent's default `resultSchema` for this run only."
+          },
+          {
+            "key": "browserSettings",
+            "optional": true,
+            "type": "{ context?: { id: string, persist?: boolean }, proxies?: ({ type: browserbase, proxyId?: string, geolocation?: { city?: string, state?: string, country: string }, domainPattern?: string } | { type: external, server: string, domainPattern?: string, username?: string, password?: string } | { type: none, domainPattern?: string })[] | boolean, proxySettings?: { caCertificates?: string[] }, allowedDomains?: string[], ignoreCertificateErrors?: boolean, verified?: boolean, recordSession?: boolean, logSession?: boolean }",
+            "description": "Browser configuration for the agent's session. When omitted, runner defaults apply."
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "Record<string, { value: string, description?: string }>",
+            "description": "Optional named variables the agent can reference as placeholders, i.e. `%variable%`. Each entry pairs a `value` the placeholder resolves to with an optional `description` that hints to the agent when it should be used. Values are not persisted."
+          },
+          {
+            "key": "pauseWhen",
+            "optional": true,
+            "type": "string",
+            "description": "Optional description of when the agent should pause and wait for input from your application (e.g. a verification code, an approval, or an answer from another system). When set, the agent is given a `pause` tool; calling it transitions the run to `PAUSED` (the agent's request is the trailing `pause` tool call in the run's messages) until it is resumed via the resume endpoint."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique identifier for the run."
+          },
+          {
+            "key": "agentId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The ID of the agent applied to this run, if any. Omitted for ad-hoc runs."
+          },
+          {
+            "key": "task",
+            "optional": true,
+            "type": "string | null",
+            "description": "The original task description."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Current status of the run. - `PENDING` - agent will run soon - `RUNNING` - agent is currently running - `COMPLETED` - agent has finished running - `FAILED` - agent has failed the run - `STOPPED` - run was stopped by the user - `TIMED_OUT` - run exceeded maximum time - `PAUSED` - run is paused awaiting input from the caller; the agent's request is the trailing `pause` tool call in the run's messages"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The Browserbase session ID powering this run."
+          },
+          {
+            "key": "sandboxId",
+            "optional": true,
+            "type": "string | null",
+            "description": "External sandbox identifier assigned by the runner. Optional."
+          },
+          {
+            "key": "resultSchema",
+            "optional": true,
+            "type": "{} | null",
+            "description": "Per-run [JSON Schema](https://json-schema.org/specification) override for the result shape. When unset, the agent's default `resultSchema` applies."
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{} | null",
+            "description": "The agent's structured result for the run. Only present when the run has finished and output is available. The result conforms to the provided [JSON Schema](https://json-schema.org/specification) when one is set."
+          },
+          {
+            "key": "cause",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null } | null"
+          },
+          {
+            "key": "startedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.agents.runs.get",
+      "shortPath": "agents.runs.get",
+      "description": "Get a Run. Retrieve the current status and details of a run, including its result and associated session information. To fetch the run's messages, use List Run Messages.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string",
+            "description": "The run ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique identifier for the run."
+          },
+          {
+            "key": "agentId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The ID of the agent applied to this run, if any. Omitted for ad-hoc runs."
+          },
+          {
+            "key": "task",
+            "optional": true,
+            "type": "string | null",
+            "description": "The original task description."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Current status of the run. - `PENDING` - agent will run soon - `RUNNING` - agent is currently running - `COMPLETED` - agent has finished running - `FAILED` - agent has failed the run - `STOPPED` - run was stopped by the user - `TIMED_OUT` - run exceeded maximum time - `PAUSED` - run is paused awaiting input from the caller; the agent's request is the trailing `pause` tool call in the run's messages"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The Browserbase session ID powering this run."
+          },
+          {
+            "key": "sandboxId",
+            "optional": true,
+            "type": "string | null",
+            "description": "External sandbox identifier assigned by the runner. Optional."
+          },
+          {
+            "key": "resultSchema",
+            "optional": true,
+            "type": "{} | null",
+            "description": "Per-run [JSON Schema](https://json-schema.org/specification) override for the result shape. When unset, the agent's default `resultSchema` applies."
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{} | null",
+            "description": "The agent's structured result for the run. Only present when the run has finished and output is available. The result conforms to the provided [JSON Schema](https://json-schema.org/specification) when one is set."
+          },
+          {
+            "key": "cause",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null } | null"
+          },
+          {
+            "key": "startedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.agents.runs.list",
+      "shortPath": "agents.runs.list",
+      "description": "List Runs. List runs across your account. Supports filtering by status, by the agent they reference, and by creation time.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "PENDING | RUNNING | COMPLETED | FAILED | STOPPED | TIMED_OUT | PAUSED",
+            "description": "Current status of the run. - `PENDING` - agent will run soon - `RUNNING` - agent is currently running - `COMPLETED` - agent has finished running - `FAILED` - agent has failed the run - `STOPPED` - run was stopped by the user - `TIMED_OUT` - run exceeded maximum time - `PAUSED` - run is paused awaiting input from the caller; the agent's request is the trailing `pause` tool call in the run's messages"
+          },
+          {
+            "key": "agentId",
+            "optional": true,
+            "type": "string",
+            "description": "Only return runs that reference this agent ID."
+          },
+          {
+            "key": "startAt",
+            "optional": true,
+            "type": "string",
+            "description": "Only return runs created on or after this timestamp (inclusive). RFC 3339, e.g. 2026-01-19T00:00:00Z."
+          },
+          {
+            "key": "endAt",
+            "optional": true,
+            "type": "string",
+            "description": "Only return runs created on or before this timestamp (inclusive). RFC 3339, e.g. 2026-01-20T00:00:00Z."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor. Pass the nextCursor from the previous response to fetch the next page. Omit to start from the first page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ runId?: string | null, agentId?: string | null, task?: string | null, status?: string | null, sessionId?: string | null, sandboxId?: string | null, resultSchema?: {} | null, result?: {} | null, cause?: { code?: string | null, message?: string | null } | null, startedAt?: string | null, endedAt?: string | null, createdAt?: string | null, updatedAt?: string | null }[] | null",
+            "description": "The page of matching agent runs."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null",
+            "description": "The maximum number of results returned in this page."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null | null",
+            "description": "Cursor for the next page. Pass it back as `cursor` on the next request to continue paging. null when there are no more results."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.agents.runs.messages",
+      "shortPath": "agents.runs.messages",
+      "description": "List Run Messages. Returns a paginated list of messages produced by a run, in chronological order, with the oldest messages first. Messages conform to the AI SDK UIMessage format.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string",
+            "description": "The `id` of the last message you've already received. The response will contain messages produced after that one, in chronological order. Omit on the first call. Pass the previous response's `nextSince` value to continue paging or to poll for new messages."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of messages to return."
+          },
+          {
+            "key": "all",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return every message after `since` in one response, ignoring `limit`."
+          },
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string",
+            "description": "The run ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, createdAt?: string | null, message?: { role?: string | null, content?: string | { type?: string | null, text?: string | null, toolCallId?: string | null, toolName?: string | null, input?: any | null, output?: any | null, mediaType?: string | null, data?: string | null }[] | null } | null }[] | null",
+            "description": "The page of messages, in chronological order, with the oldest messages first."
+          },
+          {
+            "key": "nextSince",
+            "optional": true,
+            "type": "string | null | null",
+            "description": "The `id` of the last message in `data`. Pass it back as `since` on the next request to continue paging, or to poll for new messages. `null` only when the run has no messages yet; in that case, omit `since` and retry."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.agents.runs.resume",
+      "shortPath": "agents.runs.resume",
+      "description": "Resume a Run. Resume a PAUSED run with additional input. The reply in task is delivered to the agent as the answer to its pause request (the trailing pause tool call in the run's messages), and variables merge over the run's original variables. Resuming a run that is not paused returns a conflict.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string",
+            "description": "The run ID."
+          },
+          {
+            "key": "task",
+            "optional": true,
+            "type": "string",
+            "description": "Additional input for the agent: the reply to its request for input, which is the trailing `pause` tool call in the run's messages (e.g. an answer or an approval). Delivered to the agent as the result of that pause call."
+          },
+          {
+            "key": "variables",
+            "optional": true,
+            "type": "Record<string, { value: string, description?: string }>",
+            "description": "Optional named variables the agent can reference as placeholders, i.e. `%variable%`. Each entry pairs a `value` the placeholder resolves to with an optional `description` that hints to the agent when it should be used. Values are not persisted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique identifier for the run."
+          },
+          {
+            "key": "agentId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The ID of the agent applied to this run, if any. Omitted for ad-hoc runs."
+          },
+          {
+            "key": "task",
+            "optional": true,
+            "type": "string | null",
+            "description": "The original task description."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Current status of the run. - `PENDING` - agent will run soon - `RUNNING` - agent is currently running - `COMPLETED` - agent has finished running - `FAILED` - agent has failed the run - `STOPPED` - run was stopped by the user - `TIMED_OUT` - run exceeded maximum time - `PAUSED` - run is paused awaiting input from the caller; the agent's request is the trailing `pause` tool call in the run's messages"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The Browserbase session ID powering this run."
+          },
+          {
+            "key": "sandboxId",
+            "optional": true,
+            "type": "string | null",
+            "description": "External sandbox identifier assigned by the runner. Optional."
+          },
+          {
+            "key": "resultSchema",
+            "optional": true,
+            "type": "{} | null",
+            "description": "Per-run [JSON Schema](https://json-schema.org/specification) override for the result shape. When unset, the agent's default `resultSchema` applies."
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{} | null",
+            "description": "The agent's structured result for the run. Only present when the run has finished and output is available. The result conforms to the provided [JSON Schema](https://json-schema.org/specification) when one is set."
+          },
+          {
+            "key": "cause",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null } | null"
+          },
+          {
+            "key": "startedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.agents.runs.stop",
+      "shortPath": "agents.runs.stop",
+      "description": "Stop a Run. Request that an in-progress run stop. The run winds down and transitions to STOPPED. Stopping a run that has already finished returns a conflict.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string",
+            "description": "The run ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique identifier for the run."
+          },
+          {
+            "key": "agentId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The ID of the agent applied to this run, if any. Omitted for ad-hoc runs."
+          },
+          {
+            "key": "task",
+            "optional": true,
+            "type": "string | null",
+            "description": "The original task description."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Current status of the run. - `PENDING` - agent will run soon - `RUNNING` - agent is currently running - `COMPLETED` - agent has finished running - `FAILED` - agent has failed the run - `STOPPED` - run was stopped by the user - `TIMED_OUT` - run exceeded maximum time - `PAUSED` - run is paused awaiting input from the caller; the agent's request is the trailing `pause` tool call in the run's messages"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The Browserbase session ID powering this run."
+          },
+          {
+            "key": "sandboxId",
+            "optional": true,
+            "type": "string | null",
+            "description": "External sandbox identifier assigned by the runner. Optional."
+          },
+          {
+            "key": "resultSchema",
+            "optional": true,
+            "type": "{} | null",
+            "description": "Per-run [JSON Schema](https://json-schema.org/specification) override for the result shape. When unset, the agent's default `resultSchema` applies."
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{} | null",
+            "description": "The agent's structured result for the run. Only present when the run has finished and output is available. The result conforms to the provided [JSON Schema](https://json-schema.org/specification) when one is set."
+          },
+          {
+            "key": "cause",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null } | null"
+          },
+          {
+            "key": "startedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.agents.update",
+      "shortPath": "agents.update",
+      "description": "Update an Agent. Update an existing agent. Only the fields provided in the body are modified; omitted fields are left unchanged.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentId",
+            "optional": false,
+            "type": "string",
+            "description": "The agent ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Human-readable name for the agent. Used to identify the agent in the dashboard and API responses."
+          },
+          {
+            "key": "systemPrompt",
+            "optional": true,
+            "type": "string",
+            "description": "New system prompt that steers the agent's behavior on every run that uses this agent."
+          },
+          {
+            "key": "resultSchema",
+            "optional": true,
+            "type": "{}",
+            "description": "An optional [JSON Schema](https://json-schema.org/specification) object. If provided, runs that reference this agent will aim to return a `result` that conforms to this schema when they complete. Can be overridden per run by passing `resultSchema` on the run request."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "agentId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique identifier for the agent. Use this value as `agentId` when creating an agent run."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Human-readable name for the agent. Used to identify the agent in the dashboard and API responses."
+          },
+          {
+            "key": "systemPrompt",
+            "optional": true,
+            "type": "string | null",
+            "description": "System prompt applied to every run that uses this agent."
+          },
+          {
+            "key": "resultSchema",
+            "optional": true,
+            "type": "{} | null",
+            "description": "[JSON Schema](https://json-schema.org/specification) that runs referencing this agent will aim to conform their `result` to. Can be overridden per run by passing `resultSchema` on the run request."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.certificates.delete",
+      "shortPath": "certificates.delete",
+      "description": "Delete a Certificate. Delete an uploaded certificate from your project by its ID. Session creation requests that still reference this ID in proxySettings.caCertificates fail with HTTP 400. Cannot be undone.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Browserbase accepted the call; it answered with no body."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.certificates.get",
+      "shortPath": "certificates.get",
+      "description": "Get a Certificate. Retrieve metadata for an uploaded certificate by its ID, including its project ID and timestamps. The PEM content is not returned.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The Project ID linked to the uploaded Certificate."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.certificates.list",
+      "shortPath": "certificates.list",
+      "description": "List Certificates. List the certificates uploaded to your project.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, createdAt?: string | null, updatedAt?: string | null, projectId?: string | null }[]"
+      }
+    },
+    {
+      "path": "browserbase.api.certificates.upload",
+      "shortPath": "certificates.upload",
+      "description": "Upload a Certificate. Upload a PEM file with one or more CA certificates (up to 100 MB). Pass the returned ID in proxySettings.caCertificates when creating a session so the browser trusts these certificates.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "A file: a public URL to it, or {url, filename?, contentType?}, or {base64, filename?, contentType?} for a small one."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The Project ID linked to the uploaded Certificate."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.contexts.create",
+      "shortPath": "contexts.create",
+      "description": "Create a Context. (POST /v1/contexts)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string",
+            "description": "The Project ID. Can be found in [Settings](https://www.browserbase.com/settings). Optional - if not provided, the project will be inferred from the API key."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Optional user-defined name for the Context. Leading and trailing whitespace is trimmed before storage. Names are unique within the project among active Contexts, compared case-insensitively."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "publicKey",
+            "optional": true,
+            "type": "string | null",
+            "description": "The public key to encrypt the user-data-directory."
+          },
+          {
+            "key": "cipherAlgorithm",
+            "optional": true,
+            "type": "string | null",
+            "description": "The cipher algorithm used to encrypt the user-data-directory. AES-256-CBC is currently the only supported algorithm."
+          },
+          {
+            "key": "initializationVectorSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "The initialization vector size used to encrypt the user-data-directory. [Read more about how to use it](/features/contexts)."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.contexts.delete",
+      "shortPath": "contexts.delete",
+      "description": "Delete a Context. Cannot be undone. (DELETE /v1/contexts/{id})",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Browserbase accepted the call; it answered with no body."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.contexts.get",
+      "shortPath": "contexts.get",
+      "description": "Get a Context. (GET /v1/contexts/{id})",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The Project ID linked to the uploaded Context."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Optional user-defined name for the Context. Leading and trailing whitespace is trimmed before storage. Names are unique within the project among active Contexts, compared case-insensitively."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.downloads.delete",
+      "shortPath": "downloads.delete",
+      "description": "Delete a Download. Delete a download file from storage and mark as deleted. Cannot be undone.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The download ID to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Browserbase accepted the call; it answered with no body."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.downloads.get",
+      "shortPath": "downloads.get",
+      "description": "Get a Download. Get download metadata (Accept: application/json) or file content (Accept: application/octet-stream).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The download ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique identifier for the download."
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The Session ID this download belongs to."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string | null",
+            "description": "The filename of the downloaded file."
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string | null",
+            "description": "The MIME type of the file."
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null",
+            "description": "File size in bytes."
+          },
+          {
+            "key": "checksum",
+            "optional": true,
+            "type": "string | null",
+            "description": "SHA256 checksum of the file."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Timestamp when the file was downloaded."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.downloads.list",
+      "shortPath": "downloads.list",
+      "description": "List Downloads. List all downloads for a session with optional filtering and pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sessionId",
+            "optional": false,
+            "type": "string",
+            "description": "Filter downloads by session ID (required)."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by exact filename match."
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by MIME type."
+          },
+          {
+            "key": "minSize",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum file size in bytes."
+          },
+          {
+            "key": "maxSize",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum file size in bytes."
+          },
+          {
+            "key": "createdAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Filter downloads created on or after this timestamp."
+          },
+          {
+            "key": "createdBefore",
+            "optional": true,
+            "type": "string",
+            "description": "Filter downloads created on or before this timestamp."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results to skip for pagination."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "downloads",
+            "optional": true,
+            "type": "{ id?: string | null, sessionId?: string | null, filename?: string | null, mimeType?: string | null, size?: number | null, checksum?: string | null, createdAt?: string | null }[] | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total count of matching downloads."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.extensions.delete",
+      "shortPath": "extensions.delete",
+      "description": "Delete an Extension. Cannot be undone. (DELETE /v1/extensions/{id})",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Browserbase accepted the call; it answered with no body."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.extensions.get",
+      "shortPath": "extensions.get",
+      "description": "Get an Extension. (GET /v1/extensions/{id})",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The Project ID linked to the uploaded Extension."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.extensions.upload",
+      "shortPath": "extensions.upload",
+      "description": "Upload an Extension. (POST /v1/extensions)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "A file: a public URL to it, or {url, filename?, contentType?}, or {base64, filename?, contentType?} for a small one."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The Project ID linked to the uploaded Extension."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.fetch.page",
+      "shortPath": "fetch.page",
+      "description": "Fetch a Page. Fetch a page and return its content, headers, and metadata. A metered read: each call counts against the plan.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL to fetch"
+          },
+          {
+            "key": "allowRedirects",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to follow HTTP redirects"
+          },
+          {
+            "key": "allowInsecureSsl",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to bypass TLS certificate verification"
+          },
+          {
+            "key": "proxies",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether to enable proxy support for the request"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "raw | json | markdown",
+            "description": "Output format for the response content. `raw` (default) returns the response body unchanged; `json` returns structured data (requires `schema`); `markdown` returns the page as markdown."
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "JSON Schema describing the desired structure of the response. Only used when `format` is `json`."
+          },
+          {
+            "key": "contextId",
+            "optional": true,
+            "type": "string",
+            "description": "ID of a context whose persisted cookies are sent with the request."
+          },
+          {
+            "key": "allowedDomains",
+            "optional": true,
+            "type": "string[]",
+            "description": "Domains the fetch may reach, up to 1000. A listed domain also permits its subdomains: `example.com` permits `www.example.com`. A URL on any other host is rejected with a 400 before it is fetched, and so is a redirect to one when `allowRedirects` is set, before it is followed. An empty list (the default) allows any host."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique identifier for the fetch request"
+          },
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number | null",
+            "description": "HTTP status code of the fetched response"
+          },
+          {
+            "key": "headers",
+            "optional": true,
+            "type": "Record<string, string> | null",
+            "description": "Response headers as key-value pairs"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | Record<string, any> | null",
+            "description": "The response body content. A string for `raw` and `markdown` formats; a structured object for `json` format (the schema-extracted result)."
+          },
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string | null",
+            "description": "The MIME type of the response"
+          },
+          {
+            "key": "encoding",
+            "optional": true,
+            "type": "string | null",
+            "description": "The character encoding of the response"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.functions.builds.get",
+      "shortPath": "functions.builds.get",
+      "description": "Get a Function Build. (GET /v1/functions/builds/{id})",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "request",
+            "optional": true,
+            "type": "{ entrypoint?: string | null, functionNames?: string[] | null } | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "startedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "builtFunctions",
+            "optional": true,
+            "type": "{ id?: string | null, projectId?: string | null, name?: string | null, createdAt?: string | null, updatedAt?: string | null, createdVersion?: { id?: string | null, projectId?: string | null, functionId?: string | null, functionBuildId?: string | null, sessionCreateParams?: {} | null, userParamsSchema?: {} | null, createdAt?: string | null, updatedAt?: string | null } | null }[] | null"
+          },
+          {
+            "key": "cause",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.functions.builds.list",
+      "shortPath": "functions.builds.list",
+      "description": "List Function Builds. (GET /v1/functions/builds)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, projectId?: string | null, request?: { entrypoint?: string | null, functionNames?: string[] | null } | null, status?: string | null, createdAt?: string | null, updatedAt?: string | null, startedAt?: string | null, endedAt?: string | null, expiresAt?: string | null, builtFunctions?: { id?: string | null, projectId?: string | null, name?: string | null, createdAt?: string | null, updatedAt?: string | null, createdVersion?: { id?: string | null, projectId?: string | null, functionId?: string | null, functionBuildId?: string | null, sessionCreateParams?: {} | null, userParamsSchema?: {} | null, createdAt?: string | null, updatedAt?: string | null } | null }[] | null, cause?: { code?: string | null, message?: string | null } | null }[] | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.functions.builds.logs",
+      "shortPath": "functions.builds.logs",
+      "description": "Get Function Build Logs. (GET /v1/functions/builds/{id}/logs)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "{ message?: string | null, timestamp?: number | null }[] | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.functions.get",
+      "shortPath": "functions.get",
+      "description": "Get a Function. (GET /v1/functions/{id})",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.functions.invocations.get",
+      "shortPath": "functions.invocations.get",
+      "description": "Get an Invocation. (GET /v1/functions/invocations/{id})",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "functionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "versionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{} | null",
+            "description": "JSON object that can be stored in a JSONB column"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "string | number | boolean | any[] | {} | null | null",
+            "description": "Any JSON-serializable value that can be stored in a JSONB column"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "startedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cause",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.functions.invocations.logs",
+      "shortPath": "functions.invocations.logs",
+      "description": "Get Invocation Logs. (GET /v1/functions/invocations/{id}/logs)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "logs",
+            "optional": true,
+            "type": "{ message?: string | null, timestamp?: number | null }[] | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.functions.invoke",
+      "shortPath": "functions.invoke",
+      "description": "Invoke a Function. Runs the Function on Browserbase compute.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{}",
+            "description": "JSON object that can be stored in a JSONB column"
+          },
+          {
+            "key": "sessionCreateParams",
+            "optional": true,
+            "type": "{ labels?: string[], extensionId?: string, browserSettings?: { context?: { id: string, persist?: boolean }, extensionId?: string, viewport?: { width?: number, height?: number }, blockAds?: boolean, solveCaptchas?: boolean, recordSession?: boolean, logSession?: boolean, advancedStealth?: boolean, verified?: boolean, captchaImageSelector?: string, captchaInputSelector?: string, os?: windows | mac | linux | mobile | tablet, size?: regular | large | xlarge, enableNativeSelectPolyfill?: boolean, enablePdfViewer?: boolean, extensions?: (onepassword | browser-events)[], allowedDomains?: string[], ignoreCertificateErrors?: boolean, riskPolicyId?: string }, proxies?: ({ type: browserbase, proxyId?: string, geolocation?: { city?: string, state?: string, country: string }, domainPattern?: string } | { type: external, server: string, domainPattern?: string, username?: string, password?: string } | { type: none, domainPattern?: string })[] | boolean, proxySettings?: { caCertificates?: string[] }, userMetadata?: {}, timeout?: number }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "functionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "versionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sessionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "{} | null",
+            "description": "JSON object that can be stored in a JSONB column"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "string | number | boolean | any[] | {} | null | null",
+            "description": "Any JSON-serializable value that can be stored in a JSONB column"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "startedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.functions.list",
+      "shortPath": "functions.list",
+      "description": "List Functions. (GET /v1/functions)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, projectId?: string | null, name?: string | null, createdAt?: string | null, updatedAt?: string | null }[] | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.functions.secrets.attach",
+      "shortPath": "functions.secrets.attach",
+      "description": "Attach a Secret to a Function. Attach a secret to a Function, taking effect on the Function's next invocation. Note: Attaching a secret that is already attached succeeds to support idempotency.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secretId",
+            "optional": false,
+            "type": "string",
+            "description": "The id of the project secret to attach (the `id` returned by POST /v1/secrets). Idempotent: re-attaching an already-attached secret succeeds."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Browserbase accepted the call; it answered with no body."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.functions.secrets.detach",
+      "shortPath": "functions.secrets.detach",
+      "description": "Detach a Secret from a Function. Detach a secret from a Function, taking effect on the Function's next invocation. Note: Detaching a secret that is not attached succeeds to support idempotency. Cannot be undone.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "secretId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Browserbase accepted the call; it answered with no body."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.functions.secrets.list",
+      "shortPath": "functions.secrets.list",
+      "description": "List Function Secrets. List secrets attached to a function. Supports filtering by secret creation time. Returns metadata only.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startAt",
+            "optional": true,
+            "type": "string",
+            "description": "Only return secrets created on or after this timestamp (inclusive). RFC 3339, e.g. 2026-01-19T00:00:00Z."
+          },
+          {
+            "key": "endAt",
+            "optional": true,
+            "type": "string",
+            "description": "Only return secrets created on or before this timestamp (inclusive). RFC 3339, e.g. 2026-01-20T00:00:00Z."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor. Pass the nextCursor from the previous response to fetch the next page. Keep the same filters across pages. Omit to start from the first page."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, secretKey?: string | null, createdAt?: string | null, updatedAt?: string | null }[] | null",
+            "description": "The page of matching secrets."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null",
+            "description": "The maximum number of results returned in this page."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null | null",
+            "description": "Cursor for the next page. Pass it back as `cursor` on the next request to continue paging. null when there are no more results."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.functions.versions.get",
+      "shortPath": "functions.versions.get",
+      "description": "Get a Function Version. (GET /v1/functions/versions/{id})",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "functionId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "functionBuildId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "sessionCreateParams",
+            "optional": true,
+            "type": "{} | null",
+            "description": "JSON object that can be stored in a JSONB column"
+          },
+          {
+            "key": "userParamsSchema",
+            "optional": true,
+            "type": "{} | null",
+            "description": "JSON object that can be stored in a JSONB column"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.functions.versions.invocations",
+      "shortPath": "functions.versions.invocations",
+      "description": "List Invocations for a Function Version.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | null, projectId?: string | null, functionId?: string | null, versionId?: string | null, sessionId?: string | null, region?: string | null, params?: {} | null, status?: string | null, results?: string | number | boolean | any[] | {} | null | null, createdAt?: string | null, updatedAt?: string | null, startedAt?: string | null, endedAt?: string | null, expiresAt?: string | null }[] | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.functions.versions.list",
+      "shortPath": "functions.versions.list",
+      "description": "List Function Versions. (GET /v1/functions/{id}/versions)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | null, projectId?: string | null, functionId?: string | null, functionBuildId?: string | null, sessionCreateParams?: {} | null, userParamsSchema?: {} | null, createdAt?: string | null, updatedAt?: string | null }[] | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.labels.create",
+      "shortPath": "labels.create",
+      "description": "Create a Label. Create a project-owned label.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Label name. Browserbase trims surrounding Unicode whitespace and preserves display capitalization. The trimmed name must contain 1–128 Unicode characters and no NUL characters. Names are unique ignoring case within the project."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Stable identifier of the label."
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The project that owns the label."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Display name, unique ignoring case within the project."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "UTC timestamp when the label was created."
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "UTC timestamp when the label was last renamed."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.labels.delete",
+      "shortPath": "labels.delete",
+      "description": "Delete a Label. Delete a label and its session assignments, preserving the sessions. Missing and other-project labels are successful no-ops. Cannot be undone.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "labelId",
+            "optional": false,
+            "type": "string",
+            "description": "The label's identifier."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Browserbase accepted the call; it answered with no body."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.labels.list",
+      "shortPath": "labels.list",
+      "description": "List Labels. List the project's labels, newest first. Page by passing the previous response's nextCursor as cursor; a null nextCursor means there are no further pages.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor. Pass the nextCursor from the previous response to fetch the next page. Omit to start from the first page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, projectId?: string | null, name?: string | null, createdAt?: string | null, updatedAt?: string | null }[] | null",
+            "description": "The page of matching labels."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null",
+            "description": "The maximum number of results returned in this page."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null | null",
+            "description": "Cursor for the next page. Pass it back as `cursor` on the next request to continue paging. null when there are no more results."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.labels.update",
+      "shortPath": "labels.update",
+      "description": "Update a Label. Rename a label, preserving its ID, creation time, and session assignments.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "labelId",
+            "optional": false,
+            "type": "string",
+            "description": "The label's identifier."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Label name. Browserbase trims surrounding Unicode whitespace and preserves display capitalization. The trimmed name must contain 1–128 Unicode characters and no NUL characters. Names are unique ignoring case within the project."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Stable identifier of the label."
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The project that owns the label."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Display name, unique ignoring case within the project."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "UTC timestamp when the label was created."
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "UTC timestamp when the label was last renamed."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.navigationPolicies.create",
+      "shortPath": "navigationPolicies.create",
+      "description": "Create a Navigation Policy. Create a navigation policy for this project. Omitted fields take the defaults: enabled, block by default, block unknown domains, no category rules, and no overrides. Bind the policy to a session with browserSettings.riskPolicyId.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Display name. A policy's id identifies it, not its name."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Free-form notes about the policy."
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the policy can be bound to new sessions. Running sessions keep the policy they started with. A disabled policy stays editable and can be re-enabled."
+          },
+          {
+            "key": "defaultDecision",
+            "optional": true,
+            "type": "allow | block",
+            "description": "Decision for each of a domain's categories that has no category rule. The strictest of a domain's category decisions applies, and overrides take precedence."
+          },
+          {
+            "key": "allowedCategories",
+            "optional": true,
+            "type": "(adult | ai-tools | alcohol-tobacco | business | child-abuse | communication | dating | drugs | education | entertainment | finance | gambling | games | government-military | hacking | hate | health | illegal-activity | infrastructure | kids | lifestyle | malware | newly-registered | news | parked-inactive | phishing-scams | piracy | proxy-anonymizer | search-portal | self-harm | shopping | social-media | society-culture | sports | technology | terrorism-extremism | travel | url-shortener | violence | weapons)[]",
+            "description": "Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one."
+          },
+          {
+            "key": "blockedCategories",
+            "optional": true,
+            "type": "(adult | ai-tools | alcohol-tobacco | business | child-abuse | communication | dating | drugs | education | entertainment | finance | gambling | games | government-military | hacking | hate | health | illegal-activity | infrastructure | kids | lifestyle | malware | newly-registered | news | parked-inactive | phishing-scams | piracy | proxy-anonymizer | search-portal | self-harm | shopping | social-media | society-culture | sports | technology | terrorism-extremism | travel | url-shortener | violence | weapons)[]",
+            "description": "Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one."
+          },
+          {
+            "key": "unknownDomainBehavior",
+            "optional": true,
+            "type": "allow | block",
+            "description": "Decision for a domain, or one of its categories, that Browserbase can't classify. It counts as one of the domain's category decisions, so the strictest still applies."
+          },
+          {
+            "key": "domainOverrides",
+            "optional": true,
+            "type": "{ domain: string, decision: allow | block }[]",
+            "description": "Per-host decisions that take precedence over category rules and the default. Each host may appear once."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique identifier for the navigation policy."
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The project the policy belongs to."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Display name. A policy's id identifies it, not its name."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Free-form notes about the policy."
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the policy can be bound to new sessions. Running sessions keep the policy they started with. A disabled policy stays editable and can be re-enabled."
+          },
+          {
+            "key": "defaultDecision",
+            "optional": true,
+            "type": "string | null",
+            "description": "Decision for each of a domain's categories that has no category rule. The strictest of a domain's category decisions applies, and overrides take precedence."
+          },
+          {
+            "key": "allowedCategories",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one."
+          },
+          {
+            "key": "blockedCategories",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one."
+          },
+          {
+            "key": "unknownDomainBehavior",
+            "optional": true,
+            "type": "string | null",
+            "description": "Decision for a domain, or one of its categories, that Browserbase can't classify. It counts as one of the domain's category decisions, so the strictest still applies."
+          },
+          {
+            "key": "domainOverrides",
+            "optional": true,
+            "type": "{ domain?: string | null, decision?: string | null }[] | null",
+            "description": "Per-host decisions that take precedence over category rules and the default. Each host may appear once."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.navigationPolicies.delete",
+      "shortPath": "navigationPolicies.delete",
+      "description": "Delete a Navigation Policy. Delete a navigation policy. New sessions can no longer bind to it; running sessions keep the policy they started with. Cannot be undone.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The navigation policy ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Browserbase accepted the call; it answered with no body."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.navigationPolicies.get",
+      "shortPath": "navigationPolicies.get",
+      "description": "Get a Navigation Policy. Retrieve a single navigation policy by ID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The navigation policy ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique identifier for the navigation policy."
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The project the policy belongs to."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Display name. A policy's id identifies it, not its name."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Free-form notes about the policy."
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the policy can be bound to new sessions. Running sessions keep the policy they started with. A disabled policy stays editable and can be re-enabled."
+          },
+          {
+            "key": "defaultDecision",
+            "optional": true,
+            "type": "string | null",
+            "description": "Decision for each of a domain's categories that has no category rule. The strictest of a domain's category decisions applies, and overrides take precedence."
+          },
+          {
+            "key": "allowedCategories",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one."
+          },
+          {
+            "key": "blockedCategories",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one."
+          },
+          {
+            "key": "unknownDomainBehavior",
+            "optional": true,
+            "type": "string | null",
+            "description": "Decision for a domain, or one of its categories, that Browserbase can't classify. It counts as one of the domain's category decisions, so the strictest still applies."
+          },
+          {
+            "key": "domainOverrides",
+            "optional": true,
+            "type": "{ domain?: string | null, decision?: string | null }[] | null",
+            "description": "Per-host decisions that take precedence over category rules and the default. Each host may appear once."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.navigationPolicies.list",
+      "shortPath": "navigationPolicies.list",
+      "description": "List Navigation Policies. List the project's navigation policies, ordered by name.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, projectId?: string | null, name?: string | null, description?: string | null, enabled?: boolean | null, defaultDecision?: string | null, allowedCategories?: string[] | null, blockedCategories?: string[] | null, unknownDomainBehavior?: string | null, domainOverrides?: { domain?: string | null, decision?: string | null }[] | null, createdAt?: string | null, updatedAt?: string | null }[] | null",
+            "description": "The project's navigation policies, ordered by name."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.navigationPolicies.update",
+      "shortPath": "navigationPolicies.update",
+      "description": "Update a Navigation Policy. Update a navigation policy. Omitted fields keep their values; a supplied list replaces the stored list rather than adding to it. The change applies to sessions that start afterwards; running sessions keep the policy they started with.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The navigation policy ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Display name. A policy's id identifies it, not its name."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Free-form notes about the policy."
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the policy can be bound to new sessions. Running sessions keep the policy they started with. A disabled policy stays editable and can be re-enabled."
+          },
+          {
+            "key": "defaultDecision",
+            "optional": true,
+            "type": "allow | block",
+            "description": "Decision for each of a domain's categories that has no category rule. The strictest of a domain's category decisions applies, and overrides take precedence."
+          },
+          {
+            "key": "allowedCategories",
+            "optional": true,
+            "type": "(adult | ai-tools | alcohol-tobacco | business | child-abuse | communication | dating | drugs | education | entertainment | finance | gambling | games | government-military | hacking | hate | health | illegal-activity | infrastructure | kids | lifestyle | malware | newly-registered | news | parked-inactive | phishing-scams | piracy | proxy-anonymizer | search-portal | self-harm | shopping | social-media | society-culture | sports | technology | terrorism-extremism | travel | url-shortener | violence | weapons)[]",
+            "description": "Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one."
+          },
+          {
+            "key": "blockedCategories",
+            "optional": true,
+            "type": "(adult | ai-tools | alcohol-tobacco | business | child-abuse | communication | dating | drugs | education | entertainment | finance | gambling | games | government-military | hacking | hate | health | illegal-activity | infrastructure | kids | lifestyle | malware | newly-registered | news | parked-inactive | phishing-scams | piracy | proxy-anonymizer | search-portal | self-harm | shopping | social-media | society-culture | sports | technology | terrorism-extremism | travel | url-shortener | violence | weapons)[]",
+            "description": "Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one."
+          },
+          {
+            "key": "unknownDomainBehavior",
+            "optional": true,
+            "type": "allow | block",
+            "description": "Decision for a domain, or one of its categories, that Browserbase can't classify. It counts as one of the domain's category decisions, so the strictest still applies."
+          },
+          {
+            "key": "domainOverrides",
+            "optional": true,
+            "type": "{ domain: string, decision: allow | block }[]",
+            "description": "Per-host decisions that take precedence over category rules and the default. Each host may appear once."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique identifier for the navigation policy."
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The project the policy belongs to."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Display name. A policy's id identifies it, not its name."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Free-form notes about the policy."
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the policy can be bound to new sessions. Running sessions keep the policy they started with. A disabled policy stays editable and can be re-enabled."
+          },
+          {
+            "key": "defaultDecision",
+            "optional": true,
+            "type": "string | null",
+            "description": "Decision for each of a domain's categories that has no category rule. The strictest of a domain's category decisions applies, and overrides take precedence."
+          },
+          {
+            "key": "allowedCategories",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one."
+          },
+          {
+            "key": "blockedCategories",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one."
+          },
+          {
+            "key": "unknownDomainBehavior",
+            "optional": true,
+            "type": "string | null",
+            "description": "Decision for a domain, or one of its categories, that Browserbase can't classify. It counts as one of the domain's category decisions, so the strictest still applies."
+          },
+          {
+            "key": "domainOverrides",
+            "optional": true,
+            "type": "{ domain?: string | null, decision?: string | null }[] | null",
+            "description": "Per-host decisions that take precedence over category rules and the default. Each host may appear once."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Get a Project. (GET /v1/projects/{id})",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ownerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "defaultTimeout",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "concurrency",
+            "optional": true,
+            "type": "number | null",
+            "description": "The maximum number of sessions that this project can run concurrently."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List Projects. (GET /v1/projects)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, createdAt?: string | null, updatedAt?: string | null, name?: string | null, ownerId?: string | null, defaultTimeout?: number | null, concurrency?: number | null }[]"
+      }
+    },
+    {
+      "path": "browserbase.api.projects.usage",
+      "shortPath": "projects.usage",
+      "description": "Get Project Usage. (GET /v1/projects/{id}/usage)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "browserMinutes",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "proxyBytes",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.search.web",
+      "shortPath": "search.web",
+      "description": "Web Search. Perform a web search and return structured results. A metered read: each call counts against the plan.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "The search query string"
+          },
+          {
+            "key": "numResults",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results to return"
+          },
+          {
+            "key": "includeDomains",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only return results from these domains. Entries can be a hostname (example.com), a hostname with a path prefix (example.com/docs), or a wildcard subdomain (*.example.com). The `parallel` provider allows one list, not both, with at most 200 domains and no scheme, port, query string, or fragment."
+          },
+          {
+            "key": "excludeDomains",
+            "optional": true,
+            "type": "string[]",
+            "description": "Never return results from these domains. Accepts the same entry formats as includeDomains. Not supported with the people category."
+          },
+          {
+            "key": "startPublishedDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only return results published after this date-time (RFC 3339, for example 2026-01-01T00:00:00Z). The `parallel` provider rounds it up to a whole UTC day. Not supported with the company or people categories."
+          },
+          {
+            "key": "endPublishedDate",
+            "optional": true,
+            "type": "string",
+            "description": "Only return results published before this date-time (RFC 3339, for example 2026-01-01T00:00:00Z). Only the `exa` provider supports this filter. Not supported with the company or people categories."
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "company | publication | news | personal site | financial report | people",
+            "description": "Focus the search on a category of content. Only the `exa` provider supports this filter."
+          },
+          {
+            "key": "userLocation",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter ISO 3166-1 country code of the end user. Localizes ranking without restricting results to sources from that country. The `parallel` provider supports only [some countries](https://docs.browserbase.com/platform/search/overview#appendix-supported-countries)."
+          },
+          {
+            "key": "moderation",
+            "optional": true,
+            "type": "boolean",
+            "description": "Filter unsafe content from the results. Defaults to `false`. Only the `exa` provider supports `true`."
+          },
+          {
+            "key": "objective",
+            "optional": true,
+            "type": "string",
+            "description": "The task intent and soft preferences for the search, in natural language. Adds context to query without replacing it."
+          },
+          {
+            "key": "maxAgeHours",
+            "optional": true,
+            "type": "number",
+            "description": "Refetch a page when the cached copy is older than this many hours. Omit to use the provider default. A provider can return an older cached copy when a live fetch fails."
+          },
+          {
+            "key": "excerpts",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the passages of each page most relevant to the query. Defaults to false."
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "parallel | exa | parallel | exa"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "fast | advanced | deep-lite | deep | fast | advanced | fast | deep-lite | deep"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique identifier for the request"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string | null",
+            "description": "The search query that was executed"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string | null",
+            "description": "The search provider that served the request. Can differ from the documented default when the project or the filters select another provider."
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "string | null",
+            "description": "The search mode that served the request."
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: string | null, url?: string | null, title?: string | null, author?: string | null, publishedDate?: string | null, image?: string | null, favicon?: string | null, excerpts?: string[] | null }[] | null",
+            "description": "List of search results"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.secrets.create",
+      "shortPath": "secrets.create",
+      "description": "Create a Secret. (POST /v1/secrets)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secretKey",
+            "optional": false,
+            "type": "string",
+            "description": "The name to store the secret value under."
+          },
+          {
+            "key": "sealedSecretValue",
+            "optional": false,
+            "type": "string",
+            "description": "The secret value encrypted with HPKE. To seal the secret value before sending, get the project's public key from GET /v1/secrets/keypair. Decode the publicKey using base64 into the raw 32-byte public key. Then, use HPKE Base mode (RFC 9180) with the following algorithm suite: DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, and AES-256-GCM. Set both info and additional authenticated data (AAD) to an empty byte string. Then, create a new sender context using the public key and these settings, and encrypt the secret value as one message. Put the 32-byte encapsulated key before the ciphertext and keep the authentication tag at the end of the ciphertext. Encode the combined bytes with standard base64. Send the result as sealedSecretValue: base64(enc || ciphertext)"
+          },
+          {
+            "key": "keypairId",
+            "optional": false,
+            "type": "string",
+            "description": "The `id` returned by GET /v1/secrets/keypair, identifying the keypair whose public key encrypted the value. Recorded with the secret so decryption stays correct across keypair rotation."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique identifier of the secret."
+          },
+          {
+            "key": "secretKey",
+            "optional": true,
+            "type": "string | null",
+            "description": "The name the secret value is stored under."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Time at which the secret was created, in UTC, using RFC 3339 format, e.g. 2026-01-19T00:00:00.000Z."
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Time at which the secret's value was last set, in UTC, using RFC 3339 format, e.g. 2026-01-20T00:00:00.000Z."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.secrets.delete",
+      "shortPath": "secrets.delete",
+      "description": "Delete a Secret. Cannot be undone. (DELETE /v1/secrets/{id})",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The id of the project secret to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Browserbase accepted the call; it answered with no body."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.secrets.get",
+      "shortPath": "secrets.get",
+      "description": "Get a Secret. (GET /v1/secrets/{id})",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The id of the project secret to retrieve."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique identifier of the secret."
+          },
+          {
+            "key": "secretKey",
+            "optional": true,
+            "type": "string | null",
+            "description": "The name the secret value is stored under."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Time at which the secret was created, in UTC, using RFC 3339 format, e.g. 2026-01-19T00:00:00.000Z."
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Time at which the secret's value was last set, in UTC, using RFC 3339 format, e.g. 2026-01-20T00:00:00.000Z."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.secrets.keypair",
+      "shortPath": "secrets.keypair",
+      "description": "Get a Keypair. (GET /v1/secrets/keypair)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Identifier of the keypair the public key was minted from. Pass this back when creating a secret so the ciphertext records which keypair sealed it, which keeps decryption correct across keypair rotation."
+          },
+          {
+            "key": "publicKey",
+            "optional": true,
+            "type": "string | null",
+            "description": "The project's HPKE public encryption key, base64-encoded. Encrypt secret values with this key before creating a secret."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.secrets.list",
+      "shortPath": "secrets.list",
+      "description": "List Secrets. List project secrets. Supports filtering by creation time.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startAt",
+            "optional": true,
+            "type": "string",
+            "description": "Only return secrets created on or after this timestamp (inclusive). RFC 3339, e.g. 2026-01-19T00:00:00Z."
+          },
+          {
+            "key": "endAt",
+            "optional": true,
+            "type": "string",
+            "description": "Only return secrets created on or before this timestamp (inclusive). RFC 3339, e.g. 2026-01-20T00:00:00Z."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pagination cursor. Pass the nextCursor from the previous response to fetch the next page. Omit to start from the first page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, secretKey?: string | null, createdAt?: string | null, updatedAt?: string | null }[] | null",
+            "description": "The page of matching secrets."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null",
+            "description": "The maximum number of results returned in this page."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null | null",
+            "description": "Cursor for the next page. Pass it back as `cursor` on the next request to continue paging. null when there are no more results."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.secrets.update",
+      "shortPath": "secrets.update",
+      "description": "Update a Secret. Replace a secret's value. The name cannot be changed; to rename, create a new secret and delete the old one.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The id of the project secret to update."
+          },
+          {
+            "key": "sealedSecretValue",
+            "optional": false,
+            "type": "string",
+            "description": "The new secret value encrypted with HPKE. To seal the secret value before sending, get the project's public key from GET /v1/secrets/keypair. Decode the publicKey using base64 into the raw 32-byte public key. Then, use HPKE Base mode (RFC 9180) with the following algorithm suite: DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, and AES-256-GCM. Set both info and additional authenticated data (AAD) to an empty byte string. Then, create a new sender context using the public key and these settings, and encrypt the secret value as one message. Put the 32-byte encapsulated key before the ciphertext and keep the authentication tag at the end of the ciphertext. Encode the combined bytes with standard base64. Send the result as sealedSecretValue: base64(enc || ciphertext)"
+          },
+          {
+            "key": "keypairId",
+            "optional": false,
+            "type": "string",
+            "description": "The `id` returned by GET /v1/secrets/keypair, identifying the keypair whose public key encrypted the value. Recorded with the secret so decryption stays correct across keypair rotation."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique identifier of the secret."
+          },
+          {
+            "key": "secretKey",
+            "optional": true,
+            "type": "string | null",
+            "description": "The name the secret value is stored under."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Time at which the secret was created, in UTC, using RFC 3339 format, e.g. 2026-01-19T00:00:00.000Z."
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Time at which the secret's value was last set, in UTC, using RFC 3339 format, e.g. 2026-01-20T00:00:00.000Z."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.sessions.create",
+      "shortPath": "sessions.create",
+      "description": "Create a Session. Starts a cloud browser that is billed by the minute until it is released or times out.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[]",
+            "description": "Label names to assign after creation. Creates missing labels automatically. Assignment is best-effort and does not delay or fail session creation."
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string",
+            "description": "The Project ID. Can be found in [Settings](https://www.browserbase.com/settings). Optional - if not provided, the project will be inferred from the API key."
+          },
+          {
+            "key": "extensionId",
+            "optional": true,
+            "type": "string",
+            "description": "The uploaded Extension ID. See [Upload Extension](/reference/api/upload-an-extension)."
+          },
+          {
+            "key": "browserSettings",
+            "optional": true,
+            "type": "{ context?: { id: string, persist?: boolean }, extensionId?: string, viewport?: { width?: number, height?: number }, blockAds?: boolean, solveCaptchas?: boolean, recordSession?: boolean, logSession?: boolean, advancedStealth?: boolean, verified?: boolean, captchaImageSelector?: string, captchaInputSelector?: string, os?: windows | mac | linux | mobile | tablet, size?: regular | large | xlarge, allowedDomains?: string[], ignoreCertificateErrors?: boolean, riskPolicyId?: string }"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Duration in seconds after which the session will automatically end. Defaults to the Project's `defaultTimeout`. Minimum 60 seconds, maximum 21600 seconds (6 hours)."
+          },
+          {
+            "key": "keepAlive",
+            "optional": true,
+            "type": "boolean",
+            "description": "Set to true to keep the session alive even after disconnections. Available on the Hobby Plan and above."
+          },
+          {
+            "key": "proxies",
+            "optional": true,
+            "type": "({ type: browserbase, proxyId?: string, geolocation?: { city?: string, state?: string, country: string }, domainPattern?: string } | { type: external, server: string, domainPattern?: string, username?: string, password?: string } | { type: none, domainPattern?: string })[] | boolean",
+            "description": "Proxy configuration. Can be true for default proxy, or an array of proxy configurations."
+          },
+          {
+            "key": "proxySettings",
+            "optional": true,
+            "type": "{ caCertificates?: string[] }",
+            "description": "Supplementary proxy settings. Optional."
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us-west-2 | us-east-1 | eu-central-1 | ap-southeast-1",
+            "description": "The region where the Session should run."
+          },
+          {
+            "key": "userMetadata",
+            "optional": true,
+            "type": "{}",
+            "description": "Arbitrary user metadata to attach to the session. To learn more about user metadata, see [User Metadata](/features/sessions#user-metadata)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The Project ID linked to the Session."
+          },
+          {
+            "key": "startedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string | null",
+            "description": "Size of the browser used for the session."
+          },
+          {
+            "key": "proxyBytes",
+            "optional": true,
+            "type": "number | null",
+            "description": "Bytes used via the [Proxy](/features/stealth-mode#proxies-and-residential-ips)"
+          },
+          {
+            "key": "keepAlive",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Indicates if the Session was created to be kept alive upon disconnections"
+          },
+          {
+            "key": "contextId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Optional. The Context linked to the Session."
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null",
+            "description": "The region where the Session is running."
+          },
+          {
+            "key": "userMetadata",
+            "optional": true,
+            "type": "{} | null",
+            "description": "Arbitrary user metadata to attach to the session. To learn more about user metadata, see [User Metadata](/features/sessions#user-metadata)."
+          },
+          {
+            "key": "connectUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "WebSocket URL to connect to the Session."
+          },
+          {
+            "key": "seleniumRemoteUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "HTTP URL to connect to the Session."
+          },
+          {
+            "key": "signingKey",
+            "optional": true,
+            "type": "string | null",
+            "description": "Signing key to use when connecting to the Session via HTTP."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.sessions.debug",
+      "shortPath": "sessions.debug",
+      "description": "Session Live URLs. (GET /v1/sessions/{id}/debug)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "expiresIn",
+            "optional": true,
+            "type": "number",
+            "description": "Time-to-live of the generated live view URLs, in seconds. If omitted, the URLs expire with the session, up to a maximum of 21600 seconds (6 hours)."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "debuggerFullscreenUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "debuggerUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ id?: string | null, url?: string | null, faviconUrl?: string | null, title?: string | null, debuggerUrl?: string | null, debuggerFullscreenUrl?: string | null }[] | null"
+          },
+          {
+            "key": "wsUrl",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.sessions.get",
+      "shortPath": "sessions.get",
+      "description": "Get a Session. (GET /v1/sessions/{id})",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "includeLabels",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the session's label IDs and current names."
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The Project ID linked to the Session."
+          },
+          {
+            "key": "startedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string | null",
+            "description": "Size of the browser used for the session."
+          },
+          {
+            "key": "proxyBytes",
+            "optional": true,
+            "type": "number | null",
+            "description": "Bytes used via the [Proxy](/features/stealth-mode#proxies-and-residential-ips)"
+          },
+          {
+            "key": "keepAlive",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Indicates if the Session was created to be kept alive upon disconnections"
+          },
+          {
+            "key": "contextId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Optional. The Context linked to the Session."
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null",
+            "description": "The region where the Session is running."
+          },
+          {
+            "key": "userMetadata",
+            "optional": true,
+            "type": "{} | null",
+            "description": "Arbitrary user metadata to attach to the session. To learn more about user metadata, see [User Metadata](/features/sessions#user-metadata)."
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null }[] | null",
+            "description": "Browserbase returns label IDs and current names only when includeLabels is true. An empty array means the session has no labels."
+          },
+          {
+            "key": "connectUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "WebSocket URL to connect to the Session."
+          },
+          {
+            "key": "seleniumRemoteUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "HTTP URL to connect to the Session."
+          },
+          {
+            "key": "signingKey",
+            "optional": true,
+            "type": "string | null",
+            "description": "Signing key to use when connecting to the Session via HTTP."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.sessions.list",
+      "shortPath": "sessions.list",
+      "description": "List Sessions. (GET /v1/sessions)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "PENDING | RUNNING | ERROR | TIMED_OUT | COMPLETED"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Query sessions by user metadata. See [Querying Sessions by User Metadata](/features/sessions#querying-sessions-by-user-metadata) for the schema of this query."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, createdAt?: string | null, updatedAt?: string | null, projectId?: string | null, startedAt?: string | null, endedAt?: string | null, expiresAt?: string | null, status?: string | null, size?: string | null, proxyBytes?: number | null, keepAlive?: boolean | null, contextId?: string | null, region?: string | null, userMetadata?: {} | null }[]"
+      }
+    },
+    {
+      "path": "browserbase.api.sessions.logs",
+      "shortPath": "sessions.logs",
+      "description": "Session Logs. (GET /v1/sessions/{id}/logs)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ method?: string | null, pageId?: number | null, sessionId?: string | null, request?: { timestamp?: number | null, params?: {} | null, rawBody?: string | null } | null, response?: { timestamp?: number | null, result?: {} | null, rawBody?: string | null } | null, timestamp?: number | null, frameId?: string | null, loaderId?: string | null }[]"
+      }
+    },
+    {
+      "path": "browserbase.api.sessions.recordingDownloads.create",
+      "shortPath": "sessions.recordingDownloads.create",
+      "description": "Create Session Recording Downloads. Requests one downloadable MP4 per recorded page of a session. Assembly runs asynchronously and every page returns as PENDING. Re-posting re-enqueues all pages and retries any that failed. Poll the GET endpoint for per-page status and, on standard (non-BYOS) projects, download URLs.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Session ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "downloads",
+            "optional": true,
+            "type": "{ pageId?: string | null, status?: string | null, downloadUrl?: string | null, completedAt?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.sessions.recordingDownloads.list",
+      "shortPath": "sessions.recordingDownloads.list",
+      "description": "List Session Recording Downloads. Returns the per-page download status for a session, with a short-lived signed URL for each completed page on standard (non-BYOS) projects.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Session ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "downloads",
+            "optional": true,
+            "type": "{ pageId?: string | null, status?: string | null, downloadUrl?: string | null, completedAt?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.sessions.replays.get",
+      "shortPath": "sessions.replays.get",
+      "description": "Get Session Replay. Returns page metadata for a session replay, including timing information and the URL of each page's HLS playlist.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Session ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "{ pageId?: string | null, url?: string | null, startTimeMs?: number | null, endTimeMs?: number | null }[] | null"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.sessions.replays.page",
+      "shortPath": "sessions.replays.page",
+      "description": "Get Replay Page. Returns an HLS VOD media playlist (.m3u8) for a specific page of a session replay.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Session ID"
+          },
+          {
+            "key": "pageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file, base64-encoded. Missing when the file came back as text or contentOmitted is set."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string",
+            "description": "Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.sessions.setLabels",
+      "shortPath": "sessions.setLabels",
+      "description": "Set Session Labels. Atomically replace a session's labels. Returns the response after the assignment commits.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "labels",
+            "optional": false,
+            "type": "string[]",
+            "description": "Complete replacement set of label names. Empty clears assignments; missing names create labels."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "{ id?: string | null, projectId?: string | null, name?: string | null, createdAt?: string | null, updatedAt?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.sessions.update",
+      "shortPath": "sessions.update",
+      "description": "Update a Session. Setting status to REQUEST_RELEASE ends the session.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "REQUEST_RELEASE",
+            "description": "Set to `REQUEST_RELEASE` to request that the session complete. Use before session's timeout to avoid additional charges."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The Project ID linked to the Session."
+          },
+          {
+            "key": "startedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "endedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string | null",
+            "description": "Size of the browser used for the session."
+          },
+          {
+            "key": "proxyBytes",
+            "optional": true,
+            "type": "number | null",
+            "description": "Bytes used via the [Proxy](/features/stealth-mode#proxies-and-residential-ips)"
+          },
+          {
+            "key": "keepAlive",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Indicates if the Session was created to be kept alive upon disconnections"
+          },
+          {
+            "key": "contextId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Optional. The Context linked to the Session."
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null",
+            "description": "The region where the Session is running."
+          },
+          {
+            "key": "userMetadata",
+            "optional": true,
+            "type": "{} | null",
+            "description": "Arbitrary user metadata to attach to the session. To learn more about user metadata, see [User Metadata](/features/sessions#user-metadata)."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.sessions.uploadFile",
+      "shortPath": "sessions.uploadFile",
+      "description": "Create Session Uploads. (POST /v1/sessions/{id}/uploads)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "A file: a public URL to it, or {url, filename?, contentType?}, or {base64, filename?, contentType?} for a small one."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a Webhook. Register an HTTPS endpoint to receive events for this project. The response includes the signing secret, which is shown only here and when the secret is rotated. Store it before discarding the response. An endpoint may only be registered once per project. The response holds the signing secret; it is shown only here and on rotate.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "endpoint",
+            "optional": false,
+            "type": "string",
+            "description": "HTTPS URL that event deliveries are POSTed to. Must be publicly reachable."
+          },
+          {
+            "key": "eventTypes",
+            "optional": false,
+            "type": "(functions.builds.running | functions.builds.completed | functions.builds.failed | functions.invocations.pending | functions.invocations.running | functions.invocations.completed | functions.invocations.failed)[]",
+            "description": "Event types this webhook subscribes to. Unknown types are rejected."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique identifier for the webhook."
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The project the webhook belongs to."
+          },
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string | null",
+            "description": "HTTPS URL that event deliveries are POSTed to. Must be publicly reachable."
+          },
+          {
+            "key": "eventTypes",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Event types this webhook subscribes to. Unknown types are rejected."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string | null",
+            "description": "HMAC-SHA256 signing secret, prefixed `whsec_`. Shown once here; store it now. Use it to verify the signature on every delivery."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a Webhook. Delete a webhook. Deliveries stop immediately and the signing secret is retired. Events that occurred before the delete are not replayed if the endpoint is registered again. Cannot be undone.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The webhook ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true",
+            "description": "Browserbase accepted the call; it answered with no body."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Get a Webhook. Retrieve a single webhook by ID. The signing secret is not included; it is only ever returned on create and rotate.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The webhook ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique identifier for the webhook."
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The project the webhook belongs to."
+          },
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string | null",
+            "description": "HTTPS URL that event deliveries are POSTed to. Must be publicly reachable."
+          },
+          {
+            "key": "eventTypes",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Event types this webhook subscribes to. Unknown types are rejected."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List Webhooks. List the project's webhooks, newest first. Signing secrets are not included. Page by passing the previous response's nextCursor as cursor; a null nextCursor means there are no further pages.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results to return."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor from a previous response's `nextCursor`. Omit for the first page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | null, projectId?: string | null, endpoint?: string | null, eventTypes?: string[] | null, createdAt?: string | null, updatedAt?: string | null }[] | null",
+            "description": "The page of webhooks, newest first."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null",
+            "description": "The maximum number of results returned in this page."
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null | null",
+            "description": "Cursor for the next page. Pass it back as `cursor` to continue paging. null when there are no more results."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.webhooks.rotateSecret",
+      "shortPath": "webhooks.rotateSecret",
+      "description": "Rotate a Webhook signing secret. Issue a new signing secret for a webhook. By default the previous secret keeps verifying for 24 hours so a receiver can be updated without dropping deliveries; pass revokeImmediately to end that window at once. The new secret is returned only here.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The webhook ID."
+          },
+          {
+            "key": "revokeImmediately",
+            "optional": true,
+            "type": "boolean",
+            "description": "Expire the old secret at once instead of honouring it for 24 hours. Use when responding to a leak; deliveries signed with the old secret stop verifying immediately."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string | null",
+            "description": "The new signing secret, prefixed `whsec_`."
+          }
+        ]
+      }
+    },
+    {
+      "path": "browserbase.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update a Webhook. Update a webhook's endpoint URL, its subscribed event types, or both. Omitted fields are left unchanged. eventTypes replaces the existing subscription rather than adding to it. The signing secret is unaffected.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The webhook ID."
+          },
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string",
+            "description": "HTTPS URL that event deliveries are POSTed to. Must be publicly reachable."
+          },
+          {
+            "key": "eventTypes",
+            "optional": true,
+            "type": "(functions.builds.running | functions.builds.completed | functions.builds.failed | functions.invocations.pending | functions.invocations.running | functions.invocations.completed | functions.invocations.failed)[]",
+            "description": "Event types this webhook subscribes to. Unknown types are rejected."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique identifier for the webhook."
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "The project the webhook belongs to."
+          },
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string | null",
+            "description": "HTTPS URL that event deliveries are POSTed to. Must be publicly reachable."
+          },
+          {
+            "key": "eventTypes",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Event types this webhook subscribes to. Unknown types are rejected."
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "browserbase.webhooks.builds.completed",
+      "shortPath": "builds.completed",
+      "description": "A Function build finished successfully.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The event id; the same on every retry, so a dedupe key."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "functions.builds.completed"
+          },
+          {
+            "key": "resourceId",
+            "optional": true,
+            "type": "string",
+            "description": "The build the event is about."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Event-specific fields."
+          }
+        ]
+      },
+      "responseType": "{ id: string, type: functions.builds.completed, resourceId?: string, data?: Record<string, any> }",
+      "usageExample": "browserbase({\n    webhookHooks: {\n        builds: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "browserbase.webhooks.builds.failed",
+      "shortPath": "builds.failed",
+      "description": "A Function build failed.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The event id; the same on every retry, so a dedupe key."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "functions.builds.failed"
+          },
+          {
+            "key": "resourceId",
+            "optional": true,
+            "type": "string",
+            "description": "The build the event is about."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Event-specific fields."
+          }
+        ]
+      },
+      "responseType": "{ id: string, type: functions.builds.failed, resourceId?: string, data?: Record<string, any> }",
+      "usageExample": "browserbase({\n    webhookHooks: {\n        builds: {\n            failed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "browserbase.webhooks.builds.running",
+      "shortPath": "builds.running",
+      "description": "A Function build started.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The event id; the same on every retry, so a dedupe key."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "functions.builds.running"
+          },
+          {
+            "key": "resourceId",
+            "optional": true,
+            "type": "string",
+            "description": "The build the event is about."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Event-specific fields."
+          }
+        ]
+      },
+      "responseType": "{ id: string, type: functions.builds.running, resourceId?: string, data?: Record<string, any> }",
+      "usageExample": "browserbase({\n    webhookHooks: {\n        builds: {\n            running: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "browserbase.webhooks.invocations.completed",
+      "shortPath": "invocations.completed",
+      "description": "A Function invocation finished successfully.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The event id; the same on every retry, so a dedupe key."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "functions.invocations.completed"
+          },
+          {
+            "key": "resourceId",
+            "optional": true,
+            "type": "string",
+            "description": "The invocation the event is about."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Event-specific fields."
+          }
+        ]
+      },
+      "responseType": "{ id: string, type: functions.invocations.completed, resourceId?: string, data?: Record<string, any> }",
+      "usageExample": "browserbase({\n    webhookHooks: {\n        invocations: {\n            completed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "browserbase.webhooks.invocations.failed",
+      "shortPath": "invocations.failed",
+      "description": "A Function invocation failed.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The event id; the same on every retry, so a dedupe key."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "functions.invocations.failed"
+          },
+          {
+            "key": "resourceId",
+            "optional": true,
+            "type": "string",
+            "description": "The invocation the event is about."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Event-specific fields."
+          }
+        ]
+      },
+      "responseType": "{ id: string, type: functions.invocations.failed, resourceId?: string, data?: Record<string, any> }",
+      "usageExample": "browserbase({\n    webhookHooks: {\n        invocations: {\n            failed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "browserbase.webhooks.invocations.pending",
+      "shortPath": "invocations.pending",
+      "description": "Browserbase accepted and queued a Function invocation.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The event id; the same on every retry, so a dedupe key."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "functions.invocations.pending"
+          },
+          {
+            "key": "resourceId",
+            "optional": true,
+            "type": "string",
+            "description": "The invocation the event is about."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Event-specific fields."
+          }
+        ]
+      },
+      "responseType": "{ id: string, type: functions.invocations.pending, resourceId?: string, data?: Record<string, any> }",
+      "usageExample": "browserbase({\n    webhookHooks: {\n        invocations: {\n            pending: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "browserbase.webhooks.invocations.running",
+      "shortPath": "invocations.running",
+      "description": "A Function invocation started.",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The event id; the same on every retry, so a dedupe key."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "functions.invocations.running"
+          },
+          {
+            "key": "resourceId",
+            "optional": true,
+            "type": "string",
+            "description": "The invocation the event is about."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Event-specific fields."
+          }
+        ]
+      },
+      "responseType": "{ id: string, type: functions.invocations.running, resourceId?: string, data?: Record<string, any> }",
+      "usageExample": "browserbase({\n    webhookHooks: {\n        invocations: {\n            running: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

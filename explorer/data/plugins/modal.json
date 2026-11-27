@@ -1,0 +1,4534 @@
+{
+  "id": "modal",
+  "displayName": "Modal",
+  "description": "Modal's serverless cloud through its JavaScript SDK: sandboxes (create from any image, exec, files, tunnels, snapshots, logs), image builds, calls to deployed functions and classes, function calls, volumes, secrets, queues, dicts, apps and environments (95 operations).",
+  "npmPackageName": "@corsair-dev/modal",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 95,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "token_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "modal.api.apps.create",
+      "shortPath": "apps.create",
+      "description": "Get a Modal App by name, creating an empty one if it does not exist. Sandboxes and image builds run inside an App.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "environmentName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.apps.get",
+      "shortPath": "apps.get",
+      "description": "Look up a Modal App by name and return its id. Fails with 404 if the App does not exist.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "environmentName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.apps.info",
+      "shortPath": "apps.info",
+      "description": "An App's description, lifecycle (state, deploys, who and when) and the ids of its functions and servers.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lifecycle",
+            "optional": false,
+            "type": "{ state: string, version?: number, createdAt?: string, createdBy?: string, deployedAt?: string, deployedBy?: string, stoppedAt?: string, stoppedBy?: string }"
+          },
+          {
+            "key": "functions",
+            "optional": false,
+            "type": "Record<string, string>",
+            "description": "Function names mapped to function ids."
+          },
+          {
+            "key": "servers",
+            "optional": false,
+            "type": "Record<string, string>",
+            "description": "Server names mapped to function ids."
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.apps.list",
+      "shortPath": "apps.list",
+      "description": "List the live Apps in an environment (stopped and disabled Apps are left out).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most items to return (1-1000, default 200)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apps",
+            "optional": false,
+            "type": "{ appId: string, name?: string, environmentName?: string }[]"
+          },
+          {
+            "key": "truncated",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.apps.sandboxStats",
+      "shortPath": "apps.sandboxStats",
+      "description": "Cost in USD of an App's sandboxes over a time range (at most 7 days, on UTC hour boundaries), optionally grouped by tag values.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "since",
+            "optional": false,
+            "type": "string",
+            "description": "Range start (ISO 8601, on a UTC hour boundary)."
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "string",
+            "description": "Range end (ISO 8601, on a UTC hour boundary). Defaults to now."
+          },
+          {
+            "key": "groupByTags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Tag names to group by."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Only sandboxes with all of these tags."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groups",
+            "optional": false,
+            "type": "{ tags: Record<string, string | null>, cost: string, costByResource: Record<string, string> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.apps.stats",
+      "shortPath": "apps.stats",
+      "description": "Call, request, container and sandbox counts for an App over a time window (default the last hour; at most 7 days, starting within the last 30 days).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string",
+            "description": "Window start (ISO 8601)."
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "string",
+            "description": "Window end (ISO 8601)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "since",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "until",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "functions",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "servers",
+            "optional": false,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "sandboxes",
+            "optional": false,
+            "type": "{ total: number, finished: number, live: number }"
+          },
+          {
+            "key": "lifecycle",
+            "optional": false,
+            "type": "{ state: string, version?: number, createdAt?: string, createdBy?: string, deployedAt?: string, deployedBy?: string, stoppedAt?: string, stoppedBy?: string }"
+          },
+          {
+            "key": "deploymentCount",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.apps.stop",
+      "shortPath": "apps.stop",
+      "description": "Stop an App: terminates all its running containers and sandboxes and stops it taking new inputs. A deployed App has to be deployed again to come back.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.classes.call",
+      "shortPath": "classes.call",
+      "description": "Run a method of a deployed class and wait for its result (billed for the compute it uses).",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "appName",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "className",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the deployed class (modal.Cls)."
+          },
+          {
+            "key": "method",
+            "optional": false,
+            "type": "string",
+            "description": "Method to run."
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Values for the class's modal.parameter() fields."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "args",
+            "optional": true,
+            "type": "any[]",
+            "description": "Positional arguments (JSON values, sent CBOR-encoded). Defaults to []."
+          },
+          {
+            "key": "kwargs",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Keyword arguments. Defaults to {}."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ cpu?: number, cpuLimit?: number, memoryMiB?: number, memoryLimitMiB?: number, gpu?: string, env?: Record<string, string>, secrets?: string[], retries?: number, maxContainers?: number, bufferContainers?: number, scaledownWindowMs?: number, timeoutMs?: number, routingRegion?: string }",
+            "description": "Override the deployed resources and settings for these calls (creates a variant of the function)."
+          },
+          {
+            "key": "waitMs",
+            "optional": true,
+            "type": "number",
+            "description": "How long to wait for the result. If the call is still running then, the result has status \"pending\" and functionCalls.get fetches it later. Defaults to 120000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "functionCallId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "completed | pending"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any",
+            "description": "Return value (bytes as { $bytes: base64 })."
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.classes.spawn",
+      "shortPath": "classes.spawn",
+      "description": "Start a method of a deployed class without waiting; returns a function call id.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "appName",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "className",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the deployed class (modal.Cls)."
+          },
+          {
+            "key": "method",
+            "optional": false,
+            "type": "string",
+            "description": "Method to run."
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Values for the class's modal.parameter() fields."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "args",
+            "optional": true,
+            "type": "any[]",
+            "description": "Positional arguments (JSON values, sent CBOR-encoded). Defaults to []."
+          },
+          {
+            "key": "kwargs",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Keyword arguments. Defaults to {}."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ cpu?: number, cpuLimit?: number, memoryMiB?: number, memoryLimitMiB?: number, gpu?: string, env?: Record<string, string>, secrets?: string[], retries?: number, maxContainers?: number, bufferContainers?: number, scaledownWindowMs?: number, timeoutMs?: number, routingRegion?: string }",
+            "description": "Override the deployed resources and settings for these calls (creates a variant of the function)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "functionCallId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.dicts.clear",
+      "shortPath": "dicts.clear",
+      "description": "Remove every entry from the Dict. Cannot be undone.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Dict name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.dicts.contains",
+      "shortPath": "dicts.contains",
+      "description": "Whether a key is in the Dict.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Dict name."
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string | number | boolean | null",
+            "description": "Key: a string, number, boolean or null (the same key in Python matches)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "found",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.dicts.create",
+      "shortPath": "dicts.create",
+      "description": "Get a named Dict (a key/value store shared by sandboxes and functions), creating it if it does not exist.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Dict name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dictId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.dicts.delete",
+      "shortPath": "dicts.delete",
+      "description": "Delete a Dict and all its entries. Cannot be undone.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Dict name."
+          },
+          {
+            "key": "allowMissing",
+            "optional": true,
+            "type": "boolean",
+            "description": "Succeed even if the Dict does not exist."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.dicts.get",
+      "shortPath": "dicts.get",
+      "description": "Read the value stored under a key. Python tuples and sets come back as arrays, bytes as { $bytes: base64 }, other objects (datetimes, class instances) as { $pickle: base64 }.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Dict name."
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string | number | boolean | null",
+            "description": "Key: a string, number, boolean or null (the same key in Python matches)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "found",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.dicts.items",
+      "shortPath": "dicts.items",
+      "description": "Keys and values in the Dict, decoded as in dicts.get (a tuple key comes back as an array).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Dict name."
+          },
+          {
+            "key": "keysOnly",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return keys without values."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most items to return (1-10000, default 1000)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ key: any, value?: any }[]"
+          },
+          {
+            "key": "truncated",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.dicts.len",
+      "shortPath": "dicts.len",
+      "description": "Number of entries in the Dict.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Dict name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "length",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.dicts.list",
+      "shortPath": "dicts.list",
+      "description": "List the named Dicts in an environment, newest first.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most items to return (1-1000, default 100)."
+          },
+          {
+            "key": "createdBefore",
+            "optional": true,
+            "type": "number",
+            "description": "Cursor: only objects created before this Unix time (pass nextCreatedBefore from the previous page)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dicts",
+            "optional": false,
+            "type": "{ dictId: string, name: string, createdAt?: string, createdBy?: string }[]"
+          },
+          {
+            "key": "nextCreatedBefore",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.dicts.pop",
+      "shortPath": "dicts.pop",
+      "description": "Remove a key and return its value.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Dict name."
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string | number | boolean | null",
+            "description": "Key: a string, number, boolean or null (the same key in Python matches)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "found",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.dicts.put",
+      "shortPath": "dicts.put",
+      "description": "Store a JSON value under a key. With skipIfExists an existing key is left alone.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Dict name."
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string | number | boolean | null",
+            "description": "Key: a string, number, boolean or null (the same key in Python matches)."
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "any"
+          },
+          {
+            "key": "skipIfExists",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "created",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.dicts.update",
+      "shortPath": "dicts.update",
+      "description": "Store several key/value pairs at once.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Dict name."
+          },
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ key: string | number | boolean | null, value: any }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.environments.create",
+      "shortPath": "environments.create",
+      "description": "Create an environment in the workspace.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Environment name, e.g. \"main\" or \"dev\"."
+          },
+          {
+            "key": "restricted",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only users with an explicit role in the environment can access it."
+          },
+          {
+            "key": "defaultRole",
+            "optional": true,
+            "type": "string",
+            "description": "Default environment role for workspace members."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.environments.delete",
+      "shortPath": "environments.delete",
+      "description": "Delete an environment and every App, Volume, Secret, Queue and Dict in it. Cannot be undone.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Environment name, e.g. \"main\" or \"dev\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.environments.get",
+      "shortPath": "environments.get",
+      "description": "Look up a Modal environment by name and return its id.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Environment name, e.g. \"main\" or \"dev\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environmentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.environments.getDefault",
+      "shortPath": "environments.getDefault",
+      "description": "The environment calls run in: the account's configured environment, else the workspace default.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environmentId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.environments.list",
+      "shortPath": "environments.list",
+      "description": "List the environments in the workspace.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most items to return (1-1000, default 200)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environments",
+            "optional": false,
+            "type": "{ environmentId: string, name: string }[]"
+          },
+          {
+            "key": "truncated",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.files.list",
+      "shortPath": "files.list",
+      "description": "List the entries of a directory in a running sandbox.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "Absolute path inside the sandbox."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ name: string, path: string, type: string, size: number, mode: number, permissions: string, owner: string, group: string, modifiedTime: number, symlinkTarget?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.files.makeDirectory",
+      "shortPath": "files.makeDirectory",
+      "description": "Create a directory in a running sandbox.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "Absolute path inside the sandbox."
+          },
+          {
+            "key": "createParents",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also create missing parent directories (like mkdir -p)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.files.read",
+      "shortPath": "files.read",
+      "description": "Read a file from a running sandbox, as UTF-8 text or base64 for binary files.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "Absolute path inside the sandbox."
+          },
+          {
+            "key": "encoding",
+            "optional": true,
+            "type": "utf8 | base64",
+            "description": "\"utf8\" for text, \"base64\" for binary content. Defaults to \"utf8\"."
+          },
+          {
+            "key": "maxBytes",
+            "optional": true,
+            "type": "number",
+            "description": "Fail instead of returning a file larger than this. Defaults to 5000000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "encoding",
+            "optional": false,
+            "type": "utf8 | base64"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.files.remove",
+      "shortPath": "files.remove",
+      "description": "Delete a file or directory in a running sandbox (recursive for non-empty directories).",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "Absolute path inside the sandbox."
+          },
+          {
+            "key": "recursive",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.files.stat",
+      "shortPath": "files.stat",
+      "description": "Type, size, owner, permissions and modified time of a path in a running sandbox.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "Absolute path inside the sandbox."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "\"file\", \"directory\" or \"symlink\"."
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "mode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "permissions",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "owner",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "group",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "modifiedTime",
+            "optional": false,
+            "type": "number",
+            "description": "Unix epoch seconds."
+          },
+          {
+            "key": "symlinkTarget",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.files.write",
+      "shortPath": "files.write",
+      "description": "Write a file in a running sandbox, replacing it if it exists. Parent directories must exist (see files.makeDirectory).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string",
+            "description": "Absolute path inside the sandbox."
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "File content, in the given encoding."
+          },
+          {
+            "key": "encoding",
+            "optional": true,
+            "type": "utf8 | base64",
+            "description": "\"utf8\" for text, \"base64\" for binary content. Defaults to \"utf8\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "bytesWritten",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.functionCalls.cancel",
+      "shortPath": "functionCalls.cancel",
+      "description": "Cancel a spawned call. With terminateContainers the containers running it are stopped too.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "functionCallId",
+            "optional": false,
+            "type": "string",
+            "description": "Function call id (fc-...), from functions.spawn or a pending call."
+          },
+          {
+            "key": "terminateContainers",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.functionCalls.get",
+      "shortPath": "functionCalls.get",
+      "description": "The result of a spawned call, waiting up to waitMs; status \"pending\" if it is still running.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "functionCallId",
+            "optional": false,
+            "type": "string",
+            "description": "Function call id (fc-...), from functions.spawn or a pending call."
+          },
+          {
+            "key": "waitMs",
+            "optional": true,
+            "type": "number",
+            "description": "How long to wait for it to finish (0 = check once). Defaults to 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "functionCallId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "completed | pending"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any",
+            "description": "Return value (bytes as { $bytes: base64 })."
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.functionCalls.logs",
+      "shortPath": "functionCalls.logs",
+      "description": "The most recent log lines of one function call.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "functionCallId",
+            "optional": false,
+            "type": "string",
+            "description": "Function call id (fc-...), from functions.spawn or a pending call."
+          },
+          {
+            "key": "entries",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 100."
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "system | stdout | stderr",
+            "description": "Only entries from this stream."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ message: string, source: string, timestamp: string, objectId?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.functions.call",
+      "shortPath": "functions.call",
+      "description": "Run a deployed function with arguments and wait for its result (billed for the compute it uses). The function must accept CBOR input (Modal 1.2+ deployments).",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "functionId",
+            "optional": true,
+            "type": "string",
+            "description": "Function id (fu-...). Give this, or appName and name."
+          },
+          {
+            "key": "appName",
+            "optional": true,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Function name inside the App."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number",
+            "description": "A specific deployed version of the App."
+          },
+          {
+            "key": "args",
+            "optional": true,
+            "type": "any[]",
+            "description": "Positional arguments (JSON values, sent CBOR-encoded). Defaults to []."
+          },
+          {
+            "key": "kwargs",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Keyword arguments. Defaults to {}."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ cpu?: number, cpuLimit?: number, memoryMiB?: number, memoryLimitMiB?: number, gpu?: string, env?: Record<string, string>, secrets?: string[], retries?: number, maxContainers?: number, bufferContainers?: number, scaledownWindowMs?: number, timeoutMs?: number, routingRegion?: string }",
+            "description": "Override the deployed resources and settings for these calls (creates a variant of the function)."
+          },
+          {
+            "key": "waitMs",
+            "optional": true,
+            "type": "number",
+            "description": "How long to wait for the result. If the call is still running then, the result has status \"pending\" and functionCalls.get fetches it later. Defaults to 120000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "functionCallId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "completed | pending"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any",
+            "description": "Return value (bytes as { $bytes: base64 })."
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.functions.currentStats",
+      "shortPath": "functions.currentStats",
+      "description": "Current backlog (queued inputs) and number of running containers.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "functionId",
+            "optional": true,
+            "type": "string",
+            "description": "Function id (fu-...). Give this, or appName and name."
+          },
+          {
+            "key": "appName",
+            "optional": true,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Function name inside the App."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number",
+            "description": "A specific deployed version of the App."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "backlog",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "numTotalRunners",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.functions.fetchLogs",
+      "shortPath": "functions.fetchLogs",
+      "description": "A function's logs over a time range, with optional text search.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "functionId",
+            "optional": true,
+            "type": "string",
+            "description": "Function id (fu-...). Give this, or appName and name."
+          },
+          {
+            "key": "appName",
+            "optional": true,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Function name inside the App."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number",
+            "description": "A specific deployed version of the App."
+          },
+          {
+            "key": "since",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "system | stdout | stderr",
+            "description": "Only entries from this stream."
+          },
+          {
+            "key": "searchText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most items to return (1-5000, default 500)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ message: string, source: string, timestamp: string, objectId?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.functions.get",
+      "shortPath": "functions.get",
+      "description": "Look up a deployed function by App and name (or by id) and return its id and web URL, if it has one.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "functionId",
+            "optional": true,
+            "type": "string",
+            "description": "Function id (fu-...). Give this, or appName and name."
+          },
+          {
+            "key": "appName",
+            "optional": true,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Function name inside the App."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number",
+            "description": "A specific deployed version of the App."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "functionId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webUrl",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.functions.info",
+      "shortPath": "functions.info",
+      "description": "A deployed function's configuration: CPU, memory, GPUs, image, timeouts, retries, regions, schedule, volumes, secrets, web endpoint and class methods.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "functionId",
+            "optional": true,
+            "type": "string",
+            "description": "Function id (fu-...). Give this, or appName and name."
+          },
+          {
+            "key": "appName",
+            "optional": true,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Function name inside the App."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number",
+            "description": "A specific deployed version of the App."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "modal.api.functions.logs",
+      "shortPath": "functions.logs",
+      "description": "The most recent log lines of a function.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "functionId",
+            "optional": true,
+            "type": "string",
+            "description": "Function id (fu-...). Give this, or appName and name."
+          },
+          {
+            "key": "appName",
+            "optional": true,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Function name inside the App."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number",
+            "description": "A specific deployed version of the App."
+          },
+          {
+            "key": "entries",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 100."
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "system | stdout | stderr",
+            "description": "Only entries from this stream."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ message: string, source: string, timestamp: string, objectId?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.functions.metrics",
+      "shortPath": "functions.metrics",
+      "description": "Time series metrics for a function (see functions.metricsSchema for the available groups and names).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "functionId",
+            "optional": true,
+            "type": "string",
+            "description": "Function id (fu-...). Give this, or appName and name."
+          },
+          {
+            "key": "appName",
+            "optional": true,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Function name inside the App."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number",
+            "description": "A specific deployed version of the App."
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bucketSizeSecs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "allVariants",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "modal.api.functions.metricsSchema",
+      "shortPath": "functions.metricsSchema",
+      "description": "The metric groups and definitions functions.metrics can export.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "functionId",
+            "optional": true,
+            "type": "string",
+            "description": "Function id (fu-...). Give this, or appName and name."
+          },
+          {
+            "key": "appName",
+            "optional": true,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Function name inside the App."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number",
+            "description": "A specific deployed version of the App."
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "modal.api.functions.spawn",
+      "shortPath": "functions.spawn",
+      "description": "Start a deployed function without waiting; returns a function call id for functionCalls.get or functionCalls.cancel.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "functionId",
+            "optional": true,
+            "type": "string",
+            "description": "Function id (fu-...). Give this, or appName and name."
+          },
+          {
+            "key": "appName",
+            "optional": true,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Function name inside the App."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number",
+            "description": "A specific deployed version of the App."
+          },
+          {
+            "key": "args",
+            "optional": true,
+            "type": "any[]",
+            "description": "Positional arguments (JSON values, sent CBOR-encoded). Defaults to []."
+          },
+          {
+            "key": "kwargs",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Keyword arguments. Defaults to {}."
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ cpu?: number, cpuLimit?: number, memoryMiB?: number, memoryLimitMiB?: number, gpu?: string, env?: Record<string, string>, secrets?: string[], retries?: number, maxContainers?: number, bufferContainers?: number, scaledownWindowMs?: number, timeoutMs?: number, routingRegion?: string }",
+            "description": "Override the deployed resources and settings for these calls (creates a variant of the function)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "functionCallId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.functions.stats",
+      "shortPath": "functions.stats",
+      "description": "Input and container counts and latency percentiles for a function over a time window.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "functionId",
+            "optional": true,
+            "type": "string",
+            "description": "Function id (fu-...). Give this, or appName and name."
+          },
+          {
+            "key": "appName",
+            "optional": true,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Function name inside the App."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number",
+            "description": "A specific deployed version of the App."
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allVariants",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include variants made with options overrides."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "modal.api.functions.updateAutoscaler",
+      "shortPath": "functions.updateAutoscaler",
+      "description": "Change min/max/buffer containers and the scale-down window of a deployed function. Warm containers (minContainers, bufferContainers) are billed while idle.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "functionId",
+            "optional": true,
+            "type": "string",
+            "description": "Function id (fu-...). Give this, or appName and name."
+          },
+          {
+            "key": "appName",
+            "optional": true,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Function name inside the App."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number",
+            "description": "A specific deployed version of the App."
+          },
+          {
+            "key": "minContainers",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxContainers",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bufferContainers",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "scaledownWindowMs",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "minContainers",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "maxContainers",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "bufferContainers",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "scaledownWindowMs",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.images.build",
+      "shortPath": "images.build",
+      "description": "Build an image (registry base plus optional Dockerfile commands) on Modal and return its id. The build runs on Modal compute; later sandboxes reuse the cached image.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "appName",
+            "optional": true,
+            "type": "string",
+            "description": "App to build in; created if missing (default \"corsair-sandboxes\")."
+          },
+          {
+            "key": "image",
+            "optional": false,
+            "type": "{ imageId?: string, registry?: string, registryType?: public | aws_ecr | gcp_artifact_registry, registrySecret?: string, publishedName?: string, dockerfileCommands?: string[], dockerfileEnv?: Record<string, string>, dockerfileSecrets?: string[], forceBuild?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "imageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.images.delete",
+      "shortPath": "images.delete",
+      "description": "Delete an image. Sandboxes and functions using it keep running, but it cannot be used again.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "imageId",
+            "optional": false,
+            "type": "string",
+            "description": "Image id (im-...)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.images.get",
+      "shortPath": "images.get",
+      "description": "Check that an image id exists and return it.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "imageId",
+            "optional": false,
+            "type": "string",
+            "description": "Image id (im-...)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "imageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.images.getByName",
+      "shortPath": "images.getByName",
+      "description": "Look up an image published with images.publish by its name.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "imageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.images.publish",
+      "shortPath": "images.publish",
+      "description": "Give a built image a name in the environment, so images.getByName and sandboxes.create (publishedName) can use it.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "imageId",
+            "optional": false,
+            "type": "string",
+            "description": "Image id (im-...)."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.proxies.get",
+      "shortPath": "proxies.get",
+      "description": "Look up a Modal Proxy (static outbound IP, set up in the dashboard) by name; pass its name as proxyName to sandboxes.create.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "proxyId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.queues.clear",
+      "shortPath": "queues.clear",
+      "description": "Remove every value from a Queue partition, or from all partitions with all. Cannot be undone.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Queue name."
+          },
+          {
+            "key": "partition",
+            "optional": true,
+            "type": "string",
+            "description": "Partition key (1-64 bytes); omit for the default partition."
+          },
+          {
+            "key": "all",
+            "optional": true,
+            "type": "boolean",
+            "description": "Clear every partition."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.queues.create",
+      "shortPath": "queues.create",
+      "description": "Get a named Queue, creating it if it does not exist. Values are pickled, so Python code reads them as ordinary objects.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Queue name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "queueId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.queues.delete",
+      "shortPath": "queues.delete",
+      "description": "Delete a Queue and everything in it. Cannot be undone.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Queue name."
+          },
+          {
+            "key": "allowMissing",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.queues.get",
+      "shortPath": "queues.get",
+      "description": "Remove and return up to `count` values from the front of a Queue, waiting up to timeoutMs for one to arrive. Returns [] when it stays empty. Python tuples and sets come back as arrays, bytes as { $bytes }, other objects as { $pickle: base64 }.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Queue name."
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 1."
+          },
+          {
+            "key": "partition",
+            "optional": true,
+            "type": "string",
+            "description": "Partition key (1-64 bytes); omit for the default partition."
+          },
+          {
+            "key": "timeoutMs",
+            "optional": true,
+            "type": "number",
+            "description": "How long to wait for a value (0 = do not wait). Defaults to 0."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "values",
+            "optional": false,
+            "type": "any[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.queues.len",
+      "shortPath": "queues.len",
+      "description": "Number of values in a Queue partition, or in all partitions with total.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Queue name."
+          },
+          {
+            "key": "partition",
+            "optional": true,
+            "type": "string",
+            "description": "Partition key (1-64 bytes); omit for the default partition."
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "boolean",
+            "description": "Count all partitions."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "length",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.queues.list",
+      "shortPath": "queues.list",
+      "description": "List the named Queues in an environment with their partition count and size.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most items to return (1-1000, default 100)."
+          },
+          {
+            "key": "createdBefore",
+            "optional": true,
+            "type": "number",
+            "description": "Cursor: only objects created before this Unix time (pass nextCreatedBefore from the previous page)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "queues",
+            "optional": false,
+            "type": "{ queueId: string, name: string, numPartitions: number, totalSize: number, createdAt?: string }[]"
+          },
+          {
+            "key": "nextCreatedBefore",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.queues.peek",
+      "shortPath": "queues.peek",
+      "description": "Read values from a Queue in order without removing them (decoded as in queues.get).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Queue name."
+          },
+          {
+            "key": "partition",
+            "optional": true,
+            "type": "string",
+            "description": "Partition key (1-64 bytes); omit for the default partition."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most items to return (1-1000, default 100)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "values",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "truncated",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.queues.put",
+      "shortPath": "queues.put",
+      "description": "Add values (JSON) to the end of a Queue. { $bytes: base64 } is stored as Python bytes.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Queue name."
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "any[]"
+          },
+          {
+            "key": "partition",
+            "optional": true,
+            "type": "string",
+            "description": "Partition key (1-64 bytes); omit for the default partition."
+          },
+          {
+            "key": "partitionTtlMs",
+            "optional": true,
+            "type": "number",
+            "description": "How long the partition lives without writes (default 24 hours)."
+          },
+          {
+            "key": "timeoutMs",
+            "optional": true,
+            "type": "number",
+            "description": "How long to retry while the Queue is full. Defaults to 10000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.create",
+      "shortPath": "sandboxes.create",
+      "description": "Start a Modal Sandbox (a container billed per second for CPU, memory and any GPU) from a registry image, a built image or a published one. Returns its id, plus tunnel URLs when ports are exposed.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "appName",
+            "optional": true,
+            "type": "string",
+            "description": "App the sandbox belongs to; created if missing (default \"corsair-sandboxes\")."
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "{ imageId?: string, registry?: string, registryType?: public | aws_ecr | gcp_artifact_registry, registrySecret?: string, publishedName?: string, dockerfileCommands?: string[], dockerfileEnv?: Record<string, string>, dockerfileSecrets?: string[], forceBuild?: boolean }",
+            "description": "Image to run. Defaults to the registry image \"python:3.13-slim\"."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Name, unique within the App; lets sandboxes.getByName find it."
+          },
+          {
+            "key": "command",
+            "optional": true,
+            "type": "string[]",
+            "description": "Entrypoint program and arguments. By default the sandbox sleeps until its timeout."
+          },
+          {
+            "key": "workdir",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "env",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Environment variables to set."
+          },
+          {
+            "key": "secrets",
+            "optional": true,
+            "type": "string[]",
+            "description": "Names of Modal Secrets to inject as environment variables."
+          },
+          {
+            "key": "volumes",
+            "optional": true,
+            "type": "Record<string, { name: string, readOnly?: boolean, subPath?: string }>",
+            "description": "Volumes to mount, keyed by mount path (e.g. \"/data\")."
+          },
+          {
+            "key": "cloudBucketMounts",
+            "optional": true,
+            "type": "Record<string, { bucketName: string, secretName?: string, readOnly?: boolean, requesterPays?: boolean, bucketEndpointUrl?: string, keyPrefix?: string, oidcAuthRoleArn?: string }>",
+            "description": "S3/R2/GCS buckets to mount, keyed by mount path."
+          },
+          {
+            "key": "cpu",
+            "optional": true,
+            "type": "number",
+            "description": "Reserved CPU cores (can be fractional)."
+          },
+          {
+            "key": "cpuLimit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "memoryMiB",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "memoryLimitMiB",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "gpu",
+            "optional": true,
+            "type": "string",
+            "description": "GPU type and count, e.g. \"T4\", \"A100-80GB:2\". GPUs cost more."
+          },
+          {
+            "key": "timeoutMs",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum lifetime in ms (Modal default 5 minutes)."
+          },
+          {
+            "key": "idleTimeoutMs",
+            "optional": true,
+            "type": "number",
+            "description": "Terminate after this long without activity."
+          },
+          {
+            "key": "encryptedPorts",
+            "optional": true,
+            "type": "number[]",
+            "description": "Ports to expose through TLS tunnels."
+          },
+          {
+            "key": "h2Ports",
+            "optional": true,
+            "type": "number[]",
+            "description": "Ports to expose through HTTP/2 TLS tunnels."
+          },
+          {
+            "key": "unencryptedPorts",
+            "optional": true,
+            "type": "number[]",
+            "description": "Ports to expose through plain TCP tunnels."
+          },
+          {
+            "key": "blockNetwork",
+            "optional": true,
+            "type": "boolean",
+            "description": "Block all network access."
+          },
+          {
+            "key": "outboundCidrAllowlist",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "outboundDomainAllowlist",
+            "optional": true,
+            "type": "string[]",
+            "description": "Domains the sandbox may reach; wildcards like *.example.com."
+          },
+          {
+            "key": "inboundCidrAllowlist",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "cloud",
+            "optional": true,
+            "type": "string",
+            "description": "Cloud provider, e.g. \"aws\", \"gcp\"."
+          },
+          {
+            "key": "regions",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "runtime",
+            "optional": true,
+            "type": "gvisor | vm"
+          },
+          {
+            "key": "pty",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Tags, filterable with sandboxes.list."
+          },
+          {
+            "key": "proxyName",
+            "optional": true,
+            "type": "string",
+            "description": "Name of a Modal Proxy (static outbound IP) to route through."
+          },
+          {
+            "key": "readinessProbe",
+            "optional": true,
+            "type": "{ tcpPort?: number, execCommand?: string[], intervalMs?: number }"
+          },
+          {
+            "key": "includeOidcIdentityToken",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "enableMemorySnapshot",
+            "optional": true,
+            "type": "boolean",
+            "description": "Allow sandboxes.snapshotMemory on this sandbox (no GPUs or Volumes; not with enableExitSnapshot)."
+          },
+          {
+            "key": "enableExitSnapshot",
+            "optional": true,
+            "type": "boolean",
+            "description": "Capture the filesystem when the sandbox exits (read it with sandboxes.getExitSnapshot). Not with enableMemorySnapshot."
+          },
+          {
+            "key": "persistent",
+            "optional": true,
+            "type": "boolean",
+            "description": "Experimental: allow sandboxes.pause and sandboxes.resume. Not enabled on every workspace (Modal answers 403); takes no timeoutMs or idleTimeoutMs."
+          },
+          {
+            "key": "backend",
+            "optional": true,
+            "type": "default | v2",
+            "description": "\"v2\" uses the experimental V2 backend (no GPUs; not returned by sandboxes.list)."
+          },
+          {
+            "key": "tunnelTimeoutMs",
+            "optional": true,
+            "type": "number",
+            "description": "When ports are exposed, how long to wait for their tunnels. Defaults to 30000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "appId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "tunnels",
+            "optional": true,
+            "type": "{ port: number, host: string, url: string, tlsPort: number, unencryptedHost?: string, unencryptedPort?: number }[]"
+          },
+          {
+            "key": "tunnelsError",
+            "optional": true,
+            "type": "string",
+            "description": "Set when the sandbox started but its tunnels failed or were not ready within tunnelTimeoutMs. The sandbox keeps running."
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.createConnectToken",
+      "shortPath": "sandboxes.createConnectToken",
+      "description": "Create a URL and bearer token for HTTP requests into a sandbox port (default 8080). Treat the token as a secret.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "port",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "userMetadata",
+            "optional": true,
+            "type": "string",
+            "description": "Added to forwarded requests as a header by the proxy."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "token",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.exec",
+      "shortPath": "sandboxes.exec",
+      "description": "Run a command in a running sandbox and wait for it: returns exit code, stdout and stderr. For a shell line pass [\"sh\", \"-c\", \"...\"].",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "command",
+            "optional": false,
+            "type": "string[]",
+            "description": "Program and arguments, e.g. [\"python\", \"-c\", \"print(1)\"]."
+          },
+          {
+            "key": "stdin",
+            "optional": true,
+            "type": "string",
+            "description": "Text written to the command's stdin, which is then closed."
+          },
+          {
+            "key": "workdir",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "env",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Environment variables to set."
+          },
+          {
+            "key": "secrets",
+            "optional": true,
+            "type": "string[]",
+            "description": "Names of Modal Secrets to inject as environment variables."
+          },
+          {
+            "key": "timeoutMs",
+            "optional": true,
+            "type": "number",
+            "description": "Kill the command after this long (default: no limit)."
+          },
+          {
+            "key": "pty",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "maxOutputBytes",
+            "optional": true,
+            "type": "number",
+            "description": "Keep at most this many bytes of stdout and of stderr. Defaults to 1000000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exitCode",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "stdout",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stderr",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "stdoutTruncated",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "stderrTruncated",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.fetchLogs",
+      "shortPath": "sandboxes.fetchLogs",
+      "description": "A sandbox's entrypoint logs over a time range, with optional text search.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "since",
+            "optional": false,
+            "type": "string",
+            "description": "Range start (ISO 8601)."
+          },
+          {
+            "key": "until",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "system | stdout | stderr",
+            "description": "Only entries from this stream."
+          },
+          {
+            "key": "searchText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most items to return (1-5000, default 500)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ message: string, source: string, timestamp: string, objectId?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.get",
+      "shortPath": "sandboxes.get",
+      "description": "Whether a sandbox is still running, and its exit code once it has finished.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "running",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "exitCode",
+            "optional": false,
+            "type": "number | null",
+            "description": "Exit code once the sandbox has finished, else null."
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.getByName",
+      "shortPath": "sandboxes.getByName",
+      "description": "Find a running sandbox by the name it was created with, inside a deployed App.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "appName",
+            "optional": false,
+            "type": "string",
+            "description": "Name of a Modal App (as deployed or as created by apps.create)."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includeTerminated",
+            "optional": true,
+            "type": "boolean",
+            "description": "If none is running, return the most recent terminated one instead."
+          },
+          {
+            "key": "backend",
+            "optional": true,
+            "type": "default | v2",
+            "description": "\"v2\" for sandboxes created with backend \"v2\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "running",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "exitCode",
+            "optional": false,
+            "type": "number | null",
+            "description": "Exit code once the sandbox has finished, else null."
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.getExitSnapshot",
+      "shortPath": "sandboxes.getExitSnapshot",
+      "description": "The filesystem Image captured when a sandbox created with enableExitSnapshot exited.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "timeoutMs",
+            "optional": true,
+            "type": "number",
+            "description": "How long to wait for the snapshot (0 = check once). Defaults to 60000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "imageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.getTags",
+      "shortPath": "sandboxes.getTags",
+      "description": "The tags on a sandbox.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "Record<string, string>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.list",
+      "shortPath": "sandboxes.list",
+      "description": "List running sandboxes in the environment, or in one App, optionally filtered by tags.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "appName",
+            "optional": true,
+            "type": "string",
+            "description": "Only sandboxes of this App."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Only sandboxes that have all of these tags."
+          },
+          {
+            "key": "includeV2",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also list sandboxes created with backend \"v2\"."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most items to return (1-1000, default 100)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxes",
+            "optional": false,
+            "type": "{ sandboxId: string }[]"
+          },
+          {
+            "key": "truncated",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.logs",
+      "shortPath": "sandboxes.logs",
+      "description": "The most recent entrypoint log lines of a sandbox (not the output of sandboxes.exec commands).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "entries",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 100."
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "system | stdout | stderr",
+            "description": "Only entries from this stream."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ message: string, source: string, timestamp: string, objectId?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.mountImage",
+      "shortPath": "sandboxes.mountImage",
+      "description": "Mount an Image (e.g. from sandboxes.snapshotDirectory) at a path in a running sandbox; without imageId an empty directory is mounted.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "imageId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.pause",
+      "shortPath": "sandboxes.pause",
+      "description": "Stop the container of a persistent sandbox, keeping its state for sandboxes.resume. Persistent sandboxes are not enabled on every workspace yet.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.reloadVolumes",
+      "shortPath": "sandboxes.reloadVolumes",
+      "description": "Reload the Volumes mounted in a sandbox to see changes committed elsewhere.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "timeoutMs",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.restoreSnapshot",
+      "shortPath": "sandboxes.restoreSnapshot",
+      "description": "Start a new sandbox from a memory snapshot (billed like any sandbox).",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "snapshotId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Name for the new sandbox; omit to reuse the original's, null for none."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.resume",
+      "shortPath": "sandboxes.resume",
+      "description": "Start a paused persistent sandbox again from its saved state (billed while running).",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.setName",
+      "shortPath": "sandboxes.setName",
+      "description": "Name a running V2 sandbox that has none (once only), so sandboxes.getByName can find it.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.setTags",
+      "shortPath": "sandboxes.setTags",
+      "description": "Replace all tags on a sandbox (an empty object clears them).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "Record<string, string>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.snapshotDirectory",
+      "shortPath": "sandboxes.snapshotDirectory",
+      "description": "Save one directory of a running sandbox as an Image (mount it elsewhere with sandboxes.mountImage).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "timeoutMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ttlMs",
+            "optional": true,
+            "type": "number | null",
+            "description": "Keep the image this long in ms (default 30 days); null keeps it until deleted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "imageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.snapshotFilesystem",
+      "shortPath": "sandboxes.snapshotFilesystem",
+      "description": "Save a sandbox's filesystem as an Image; pass its id to sandboxes.create to start a copy.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "timeoutMs",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "ttlMs",
+            "optional": true,
+            "type": "number | null",
+            "description": "Keep the image this long in ms (default 30 days); null keeps it until deleted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "imageId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.snapshotMemory",
+      "shortPath": "sandboxes.snapshotMemory",
+      "description": "Snapshot filesystem and memory of a sandbox created with enableMemorySnapshot (and no Volumes). The sandbox stops once the snapshot is taken; sandboxes.restoreSnapshot starts a copy.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "snapshotId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.terminate",
+      "shortPath": "sandboxes.terminate",
+      "description": "Stop a sandbox and end its billing. Its filesystem is lost unless it was snapshotted.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "wait",
+            "optional": true,
+            "type": "boolean",
+            "description": "Wait for it to finish and return the exit code."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "terminated",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "exitCode",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.tunnels",
+      "shortPath": "sandboxes.tunnels",
+      "description": "Public URLs and TCP endpoints for the ports a sandbox exposes (encryptedPorts, h2Ports, unencryptedPorts).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "timeoutMs",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 30000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tunnels",
+            "optional": false,
+            "type": "{ port: number, host: string, url: string, tlsPort: number, unencryptedHost?: string, unencryptedPort?: number }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.unmountImage",
+      "shortPath": "sandboxes.unmountImage",
+      "description": "Unmount an Image mounted with sandboxes.mountImage.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.updateNetworkPolicy",
+      "shortPath": "sandboxes.updateNetworkPolicy",
+      "description": "Replace the outbound allowlists of a running sandbox. Pass both lists; [] blocks that dimension, [\"0.0.0.0/0\"] or [\"*\"] allows all. Only works on a sandbox created with outboundCidrAllowlist/outboundDomainAllowlist (to start open, create it with [\"0.0.0.0/0\"] and [\"*\"]); Modal answers 409 otherwise.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "outboundCidrAllowlist",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "outboundDomainAllowlist",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.wait",
+      "shortPath": "sandboxes.wait",
+      "description": "Wait for a sandbox to finish (up to timeoutMs) and return its exit code.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "timeoutMs",
+            "optional": true,
+            "type": "number",
+            "description": "Stop waiting after this long (max 10 minutes). Defaults to 60000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "running",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "exitCode",
+            "optional": false,
+            "type": "number | null",
+            "description": "Exit code once the sandbox has finished, else null."
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.sandboxes.waitUntilReady",
+      "shortPath": "sandboxes.waitUntilReady",
+      "description": "Wait until a sandbox is ready: its readiness probe passes, or it has started when it has none.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sandboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Sandbox id (sb-...), as returned by sandboxes.create."
+          },
+          {
+            "key": "timeoutMs",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 60000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ready",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.secrets.create",
+      "shortPath": "secrets.create",
+      "description": "Create a named Secret from key/value pairs (injected into sandboxes and functions as environment variables). Fails if it exists unless overwrite is set.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Secret name."
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "Record<string, string>",
+            "description": "Environment variable names mapped to their values."
+          },
+          {
+            "key": "overwrite",
+            "optional": true,
+            "type": "boolean",
+            "description": "Replace an existing Secret of the same name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secretId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.secrets.delete",
+      "shortPath": "secrets.delete",
+      "description": "Delete a Secret. Apps that use it fail on their next start. Cannot be undone.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Secret name."
+          },
+          {
+            "key": "allowMissing",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.secrets.get",
+      "shortPath": "secrets.get",
+      "description": "Look up a Secret by name and return its id (values are never returned). With requiredKeys, fails if any key is missing.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Secret name."
+          },
+          {
+            "key": "requiredKeys",
+            "optional": true,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secretId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.secrets.list",
+      "shortPath": "secrets.list",
+      "description": "List the Secrets in an environment with their key names and last use (values are never returned).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most items to return (1-1000, default 100)."
+          },
+          {
+            "key": "createdBefore",
+            "optional": true,
+            "type": "number",
+            "description": "Cursor: only objects created before this Unix time (pass nextCreatedBefore from the previous page)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secrets",
+            "optional": false,
+            "type": "{ secretId: string, name: string, keys?: string[], createdAt?: string, createdBy?: string, lastUsedAt?: string }[]"
+          },
+          {
+            "key": "nextCreatedBefore",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.volumes.create",
+      "shortPath": "volumes.create",
+      "description": "Get a Volume by name, creating it if it does not exist. Volumes are persistent network file systems for sandboxes and functions (storage is billed).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Volume name."
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "1 | 2",
+            "description": "File system version for a new Volume (2 is the newer, faster one)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "volumeId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.volumes.delete",
+      "shortPath": "volumes.delete",
+      "description": "Delete a Volume and all its files. Running Apps that mount it lose access. Cannot be undone.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Volume name."
+          },
+          {
+            "key": "allowMissing",
+            "optional": true,
+            "type": "boolean",
+            "description": "Succeed even if the Volume does not exist."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.volumes.get",
+      "shortPath": "volumes.get",
+      "description": "Look up a Volume by name and return its id. 404 if it does not exist.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Volume name."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "volumeId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.volumes.list",
+      "shortPath": "volumes.list",
+      "description": "List the Volumes in an environment, newest first.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most items to return (1-1000, default 100)."
+          },
+          {
+            "key": "createdBefore",
+            "optional": true,
+            "type": "number",
+            "description": "Cursor: only objects created before this Unix time (pass nextCreatedBefore from the previous page)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "volumes",
+            "optional": false,
+            "type": "{ volumeId: string, name: string, createdAt?: string, createdBy?: string, version?: number }[]"
+          },
+          {
+            "key": "nextCreatedBefore",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.volumes.listFiles",
+      "shortPath": "volumes.listFiles",
+      "description": "List files and directories in a Volume under a path.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Volume name."
+          },
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string",
+            "description": "Directory inside the Volume. Defaults to \"/\"."
+          },
+          {
+            "key": "recursive",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Most items to return (1-10000, default 1000)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ path: string, type: string, size: number, mtime?: string }[]"
+          },
+          {
+            "key": "truncated",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "modal.api.volumes.removeFile",
+      "shortPath": "volumes.removeFile",
+      "description": "Delete a file, or with recursive a directory, from a Volume. Cannot be undone.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "environment",
+            "optional": true,
+            "type": "string",
+            "description": "Modal environment to run in. Defaults to the account environment, else the workspace default."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Volume name."
+          },
+          {
+            "key": "path",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recursive",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -1,0 +1,2739 @@
+{
+  "id": "crawl4ai",
+  "displayName": "Crawl4AI",
+  "description": "Crawl4AI web crawling, both ways: a self-hosted Crawl4AI server (crawl to Markdown, HTML, screenshots and PDFs, JavaScript runs, crawl and LLM jobs, browser pool monitoring) and Crawl4AI Cloud (scrape, search, answer, Google SERP, extract, site scans and crawls, pricing pages, email verification, leads, page watches, 98 site tools, batch jobs, billing), plus job webhooks (66 operations).",
+  "npmPackageName": "@corsair-dev/crawl4ai",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 66,
+    "webhooks": 1,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "server_url"]
+    }
+  ],
+  "api": [
+    {
+      "path": "crawl4ai.api.cloud.answer",
+      "shortPath": "cloud.answer",
+      "description": "Answer a question directly from the web (optionally as JSON matching a schema), with the sources it drew on; experimental",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "The question or a whole prompt (max 4,000 characters)."
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "A JSON Schema the answer must match."
+          },
+          {
+            "key": "deep",
+            "optional": true,
+            "type": "boolean",
+            "description": "Read a couple of pages when needed (default true); false = only a readily available answer."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "took_ms",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ credits?: number | null } | null"
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.batch",
+      "shortPath": "cloud.batch",
+      "description": "Run one tool over many inputs: as a job (up to 10,000; follow with cloud.jobs.*) or streamed in the call (stream true, up to 50, returned as a list)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool",
+            "optional": false,
+            "type": "string",
+            "description": "The tool id, e.g. scrape."
+          },
+          {
+            "key": "inputs",
+            "optional": false,
+            "type": "Record<string, any>[]",
+            "description": "One input per page; the first one's options apply to all."
+          },
+          {
+            "key": "stream",
+            "optional": true,
+            "type": "boolean",
+            "description": "Answer in the call, one result per line (up to 50)."
+          },
+          {
+            "key": "idempotency_key",
+            "optional": true,
+            "type": "string",
+            "description": "Send the same key again on a retry to get the first job back, billed once."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.billing.balance",
+      "shortPath": "cloud.billing.balance",
+      "description": "Your account's credit balance and this month's plan allowance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.billing.subscribe",
+      "shortPath": "cloud.billing.subscribe",
+      "description": "Start a monthly plan: returns a Stripe checkout page made for this account (a person pays there)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "plan",
+            "optional": false,
+            "type": "string",
+            "description": "The plan id: starter, builder or scale."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.billing.topup",
+      "shortPath": "cloud.billing.topup",
+      "description": "Buy extra credits on a plan, charged to the account's saved card (10 to 1,000 dollars)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number",
+            "description": "Dollars, 10 to 1000."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.billing.topups",
+      "shortPath": "cloud.billing.topups",
+      "description": "Your payments, newest first: top-ups, auto recharges and plan charges, with receipts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Payments a page."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "next_cursor from the last page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "topups",
+            "optional": true,
+            "type": "{ at?: string | number | null, usd?: number | null, credits?: number | null, kind?: string | number | null, status?: string | number | null, receipt_url?: string | number | null }[] | null"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null | null",
+            "description": "The cursor for the next page; null on the last page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.extract",
+      "shortPath": "cloud.extract",
+      "description": "Extract typed records from a page (or your own content) by a plain-English instruction and/or a JSON schema",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "The page to read."
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "Your own text, Markdown or HTML instead of a URL."
+          },
+          {
+            "key": "instruction",
+            "optional": true,
+            "type": "string",
+            "description": "What to pull out, in plain English."
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "JSON Schema each record must match."
+          },
+          {
+            "key": "example",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "A sample of the shape you want."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "took_ms",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ credits?: number | null } | null"
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.jobs.cancel",
+      "shortPath": "cloud.jobs.cancel",
+      "description": "Stop a job; it ends as paused and keeps what it fetched",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string",
+            "description": "The job id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.jobs.get",
+      "shortPath": "cloud.jobs.get",
+      "description": "Get a job's state (pending, running, done, paused), counts and cost; free",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string",
+            "description": "The job id."
+          },
+          {
+            "key": "full",
+            "optional": true,
+            "type": "1",
+            "description": "1 for per-URL detail."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.jobs.results",
+      "shortPath": "cloud.jobs.results",
+      "description": "Read a job's rows (500 a page, each with seq); page with after = the last seq + 1; free",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string",
+            "description": "The job id."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number",
+            "description": "Rows already read (the last seq + 1)."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Rows a page (1 to 500)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]",
+            "description": "One entry per NDJSON line, in order."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.jobs.retry",
+      "shortPath": "cloud.jobs.retry",
+      "description": "Run a job's failed pages again (billed like the first run)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job_id",
+            "optional": false,
+            "type": "string",
+            "description": "The job id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.lead",
+      "shortPath": "cloud.lead",
+      "description": "Find people, companies or industries by filters, or enrich a person or company (email, phone)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "find",
+            "optional": true,
+            "type": "string",
+            "description": "What to find: people, companies, industries, enrich, email, phone, company."
+          },
+          {
+            "key": "where",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Filters, e.g. { company: { industry, country } }."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "took_ms",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ credits?: number | null } | null"
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.monitors.changes",
+      "shortPath": "cloud.monitors.changes",
+      "description": "The feed of new matched changes across your watches",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.monitors.delete",
+      "shortPath": "cloud.monitors.delete",
+      "description": "Stop and delete a page watch",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The watch id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.monitors.events",
+      "shortPath": "cloud.monitors.events",
+      "description": "List a watch's checks and matched changes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The watch id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.monitors.get",
+      "shortPath": "cloud.monitors.get",
+      "description": "Get one page watch",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The watch id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.monitors.list",
+      "shortPath": "cloud.monitors.list",
+      "description": "List your page watches",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.monitors.update",
+      "shortPath": "cloud.monitors.update",
+      "description": "Change a page watch (what to watch, how often, who to tell) or pause and resume it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The watch id."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "The fields to change, as cloud.watch takes them, e.g. { every, paused, notify }."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.price",
+      "shortPath": "cloud.price",
+      "description": "Read websites' pricing pages: every plan, tier, billing period, add-on, trial and discount, per country, each with the page text it came from",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sites",
+            "optional": false,
+            "type": "string[]",
+            "description": "Domains (hubspot.com) or pricing page URLs; at most 20."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "any",
+            "description": "Two-letter country, or a list of up to 5 (sites x countries at most 20)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "took_ms",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ credits?: number | null } | null"
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.priceHistory",
+      "shortPath": "cloud.priceHistory",
+      "description": "Every price read on a site, newest first (one point per change), up to 1,000; 1 credit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "The site: hubspot.com."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter country."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.prices",
+      "shortPath": "cloud.prices",
+      "description": "The public price table: credits per tool, the free grants, the plans and their limits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.report",
+      "shortPath": "cloud.report",
+      "description": "Send Crawl4AI's team a report about a failed, slow or wrong call (never include keys or personal data); at most 5 an hour",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "agent",
+            "description": "agent"
+          },
+          {
+            "key": "category",
+            "optional": false,
+            "type": "failed | slow | wrong | could-be-better | ux",
+            "description": "failed, slow, wrong, could-be-better or ux."
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "One line."
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string",
+            "description": "What you tried, what came back, what you expected."
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "{ receipt: <request_id> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.scan",
+      "shortPath": "cloud.scan",
+      "description": "List every URL of a site from its sitemaps and home page links (optionally Common Crawl and the Wayback Machine), without crawling",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "The site's host: docs.crawl4ai.com."
+          },
+          {
+            "key": "extended",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also ask Common Crawl and the Wayback Machine (20 s or more longer)."
+          },
+          {
+            "key": "max_urls",
+            "optional": true,
+            "type": "number",
+            "description": "Most URLs returned (default 5000, max 50000)."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string",
+            "description": "Keep only matching URLs: a path prefix (/docs) or a glob (*/blog/*)."
+          },
+          {
+            "key": "include_subdomains",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also list subdomains."
+          },
+          {
+            "key": "bypass_cache",
+            "optional": true,
+            "type": "boolean",
+            "description": "Scan again even when cached (7 days)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "took_ms",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ credits?: number | null } | null"
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.scrape",
+      "shortPath": "cloud.scrape",
+      "description": "Fetch one page as clean Markdown and/or HTML (cache, then HTTP, then a browser), with optional links, media, metadata and tables",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "A public http(s) URL."
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "both | md | html",
+            "description": "both (default), md or html."
+          },
+          {
+            "key": "proxy",
+            "optional": true,
+            "type": "standard | extra",
+            "description": "standard (default) or extra: rented residential addresses when ours are refused; a page served that way costs 4x."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter country to fetch from, e.g. us, gb."
+          },
+          {
+            "key": "parse",
+            "optional": true,
+            "type": "any",
+            "description": "Also return page structure: true, a list (links, media, metadata, tables) or an object."
+          },
+          {
+            "key": "engine",
+            "optional": true,
+            "type": "auto | browser-light | browser",
+            "description": "auto (default), browser-light or browser."
+          },
+          {
+            "key": "bypass_cache",
+            "optional": true,
+            "type": "boolean",
+            "description": "Fetch fresh, never from the cache."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Answer within this many seconds (5 to 120); set it a little below your client timeout."
+          },
+          {
+            "key": "fresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Skip the cache and fetch fresh (the Crawl4AI-Fresh header)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "took_ms",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ credits?: number | null } | null"
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.search",
+      "shortPath": "cloud.search",
+      "description": "Web search: ranked results (title, url, snippet), with rich blocks (follow-ups, entity card, news) or the top pages read in full (deep)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "The query (max 512 characters)."
+          },
+          {
+            "key": "rich",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return follow-up questions, related queries, an entity card, videos and news."
+          },
+          {
+            "key": "deep",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also read the top 10 result pages into each result's markdown (0.1 credit a page)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "took_ms",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ credits?: number | null } | null"
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.serp",
+      "shortPath": "cloud.serp",
+      "description": "Google's results page as data: organic ranks plus every block (AI overview, people also ask, local pack, ads ...), localised to a country or city; beta",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "The query (max 512 characters)."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Two letters, default us."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Google language code, default en."
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "A city or region: \"Austin, TX\"."
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number",
+            "description": "Results asked: a multiple of 10 up to 100 (10 per Google page, 1 credit each)."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page over num (1 to 30)."
+          },
+          {
+            "key": "time",
+            "optional": true,
+            "type": "hour | day | week | month | year",
+            "description": "Google's time filter."
+          },
+          {
+            "key": "fresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Skip the cache."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "took_ms",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ credits?: number | null } | null"
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.site",
+      "shortPath": "cloud.site",
+      "description": "Crawl a site level by level from a start URL into Markdown or HTML, as a job (follow it with cloud.jobs.get and cloud.jobs.results)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The start page."
+          },
+          {
+            "key": "depth",
+            "optional": true,
+            "type": "number",
+            "description": "Levels of links below the start page (default 2, max 5)."
+          },
+          {
+            "key": "max_pages",
+            "optional": true,
+            "type": "number",
+            "description": "Most pages fetched (default 100, max 500)."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string",
+            "description": "Follow only matching URLs."
+          },
+          {
+            "key": "exclude",
+            "optional": true,
+            "type": "string",
+            "description": "Never follow matching URLs."
+          },
+          {
+            "key": "include_subdomains",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also follow subdomains."
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "md | html | none",
+            "description": "md (default), html or none."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "took_ms",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ credits?: number | null } | null"
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.tools.estimate",
+      "shortPath": "cloud.tools.estimate",
+      "description": "Price a run before it runs, with the same inputs; free",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The tool id."
+          },
+          {
+            "key": "input",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "The tool's inputs."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "took_ms",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ credits?: number | null } | null"
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.tools.get",
+      "shortPath": "cloud.tools.get",
+      "description": "Get one tool's full definition: inputs, output columns, cost, examples and status; free",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The tool id, e.g. scrape, youtube-captions."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.tools.list",
+      "shortPath": "cloud.tools.list",
+      "description": "Find tools in the catalog (11 essentials for any site and site tools for named sites): search with q, or filter by category, source (site), kind, status or essential; free, no credits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Words or a sentence: \"video transcript\", \"amazon reviews\"."
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string",
+            "description": "A category id: video, jobs, shopping, social, people-companies ..."
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string",
+            "description": "A site id: youtube, amazon, linkedin, google-maps, x ..."
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "pages | search | people | sites",
+            "description": "pages, search, people or sites."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "verified | beta | failing",
+            "description": "verified, beta or failing."
+          },
+          {
+            "key": "essential",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only the 11 essentials."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Tools a page (default 50, at most 200)."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "next_cursor from the last page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.tools.run",
+      "shortPath": "cloud.tools.run",
+      "description": "Run any tool by id with its inputs (site tools such as amazon-reviews, youtube-captions, linkedin-profile; read the inputs with cloud.tools.get first); costs credits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The tool id."
+          },
+          {
+            "key": "input",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "The tool's inputs, as cloud.tools.get lists them."
+          },
+          {
+            "key": "fresh",
+            "optional": true,
+            "type": "boolean",
+            "description": "Skip the cache and fetch fresh (the Crawl4AI-Fresh header)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "took_ms",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ credits?: number | null } | null"
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.tools.status",
+      "shortPath": "cloud.tools.status",
+      "description": "Get a tool's status from its daily check (verified, beta, failing); free",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The tool id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.verify",
+      "shortPath": "cloud.verify",
+      "description": "Check whether an email address can receive mail (no mail is sent), a list of up to 1,000, or a domain's mail setup",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "check",
+            "optional": true,
+            "type": "email | list | domain",
+            "description": "email (default), list or domain."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "One address (check email)."
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[]",
+            "description": "Up to 1,000 addresses (check list)."
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string",
+            "description": "A domain (check domain)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "took_ms",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ credits?: number | null } | null"
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.cloud.watch",
+      "shortPath": "cloud.watch",
+      "description": "Watch a page and get told (email, webhook or the changes feed) when the change you describe happens; each check costs credits",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The page to watch."
+          },
+          {
+            "key": "watch",
+            "optional": true,
+            "type": "string",
+            "description": "The change you care about, in plain words."
+          },
+          {
+            "key": "every",
+            "optional": true,
+            "type": "string",
+            "description": "How often to check (default auto)."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Email to tell."
+          },
+          {
+            "key": "webhook",
+            "optional": true,
+            "type": "string",
+            "description": "URL to POST changes to."
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string",
+            "description": "Signs the webhook."
+          },
+          {
+            "key": "trigger",
+            "optional": true,
+            "type": "any",
+            "description": "When to tell."
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string",
+            "description": "Where to check from."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "A name for the watch."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tool",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "request_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "took_ms",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ credits?: number | null } | null"
+          },
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.artifacts.get",
+      "shortPath": "server.artifacts.get",
+      "description": "Download an artifact a crawl stored (a screenshot, PDF or MHTML), as a file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "artifact_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file, base64-encoded. Missing when the file came back as text or contentOmitted is set."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string",
+            "description": "Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.ask",
+      "shortPath": "server.ask",
+      "description": "Search Crawl4AI's own library documentation and code context (for agents writing Crawl4AI code)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "context_type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string | null",
+            "description": "search query to filter chunks"
+          },
+          {
+            "key": "score_ratio",
+            "optional": true,
+            "type": "number",
+            "description": "min score as fraction of max_score"
+          },
+          {
+            "key": "max_results",
+            "optional": true,
+            "type": "number",
+            "description": "absolute cap on returned chunks"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.configDump",
+      "shortPath": "server.configDump",
+      "description": "Check a config in its JSON form ({ type: CrawlerRunConfig or BrowserConfig, params }) and get it back with every default the server fills in",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "CrawlerRunConfig | BrowserConfig",
+            "description": "Which config."
+          },
+          {
+            "key": "params",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "The config fields, e.g. { word_count_threshold: 10 }."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.crawl",
+      "shortPath": "server.crawl",
+      "description": "Crawl one or more URLs and wait for the results: Markdown, HTML, links, media, tables, metadata, extracted content, with browser and crawler configs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "browser_config",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "crawler_config",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "crawler_configs",
+            "optional": true,
+            "type": "{}[] | null",
+            "description": "List of per-URL CrawlerRunConfig dicts for arun_many(). When provided, each config can include a 'url_matcher' pattern to match against specific URLs. Takes precedence over crawler_config."
+          },
+          {
+            "key": "hooks",
+            "optional": true,
+            "type": "{ hooks?: { action: string, params?: {} }[], timeout?: number, code?: any | null } | null",
+            "description": "Optional user-provided hook functions"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ url?: string | number | null, success?: boolean | null, status_code?: number | null | null, error_message?: string | number | null | null, html?: string | number | null | null, cleaned_html?: string | number | null | null, fit_html?: string | number | null | null, markdown?: any | null, links?: Record<string, any> | null, media?: Record<string, any> | null, metadata?: Record<string, any> | null | null, tables?: any[] | null, extracted_content?: string | number | null | null, screenshot?: string | number | null | null, pdf?: string | number | null | null, redirected_url?: string | number | null | null, response_headers?: Record<string, any> | null | null, js_execution_result?: Record<string, any> | null | null, session_id?: string | number | null | null }[] | null"
+          },
+          {
+            "key": "server_processing_time_s",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "server_memory_delta_mb",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "server_peak_memory_mb",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.crawlJobs.create",
+      "shortPath": "server.crawlJobs.create",
+      "description": "Queue a crawl of one or more URLs with browser and crawler configs; poll server.crawlJobs.get or pass webhook_config",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "browser_config",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "crawler_config",
+            "optional": true,
+            "type": "{}"
+          },
+          {
+            "key": "webhook_config",
+            "optional": true,
+            "type": "{ webhook_url: string, webhook_data_in_payload?: boolean, webhook_headers?: Record<string, string> | null } | null",
+            "description": "Configuration for webhook notifications."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.crawlJobs.get",
+      "shortPath": "server.crawlJobs.get",
+      "description": "Get the state and, once completed, the results of a crawl job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "processing, completed or failed."
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any | null",
+            "description": "The crawl result once completed."
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | number | null | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.crawlStream",
+      "shortPath": "server.crawlStream",
+      "description": "Crawl URLs and collect each result as the server streams it (NDJSON, returned as a list)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "urls",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "browser_config",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "crawler_config",
+            "optional": true,
+            "type": "{} | null"
+          },
+          {
+            "key": "crawler_configs",
+            "optional": true,
+            "type": "{}[] | null",
+            "description": "List of per-URL CrawlerRunConfig dicts for arun_many(). When provided, each config can include a 'url_matcher' pattern to match against specific URLs. Takes precedence over crawler_config."
+          },
+          {
+            "key": "hooks",
+            "optional": true,
+            "type": "{ hooks?: { action: string, params?: {} }[], timeout?: number, code?: any | null } | null",
+            "description": "Optional user-provided hook functions"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "Record<string, any>[]",
+            "description": "One entry per NDJSON line, in order."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.executeJs",
+      "shortPath": "server.executeJs",
+      "description": "Run JavaScript snippets in a page (they can click, type and submit) and return the crawl result with each snippet's return value",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scripts",
+            "optional": false,
+            "type": "string[]",
+            "description": "List of separated JavaScript snippets to execute"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.health",
+      "shortPath": "server.health",
+      "description": "Check the server is up and get its version",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.hooks",
+      "shortPath": "server.hooks",
+      "description": "List the declarative hook actions the server allows, with their parameters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.html",
+      "shortPath": "server.html",
+      "description": "Fetch a page as preprocessed HTML (scripts and styles removed), for schema building",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.llm",
+      "shortPath": "server.llm",
+      "description": "Answer a question about a page with the server's configured LLM",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The page URL (https://...)."
+          },
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string | null",
+            "description": "LLM provider override, e.g. 'openai/gpt-6-luna'"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number | null",
+            "description": "LLM temperature override"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.llmJobs.create",
+      "shortPath": "server.llmJobs.create",
+      "description": "Queue an LLM extraction of a page: a question or instruction `q` (and optional JSON schema) answered from the page by the server's configured LLM; poll server.llmJobs.get or pass webhook_config",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "schema",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cache",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "webhook_config",
+            "optional": true,
+            "type": "{ webhook_url: string, webhook_data_in_payload?: boolean, webhook_headers?: Record<string, string> | null } | null",
+            "description": "Configuration for webhook notifications."
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.llmJobs.get",
+      "shortPath": "server.llmJobs.get",
+      "description": "Get the state and, once completed, the result of an LLM extraction job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "processing, completed or failed."
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any | null",
+            "description": "The extraction once completed."
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | number | null | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.markdown",
+      "shortPath": "server.markdown",
+      "description": "Fetch a page as Markdown, raw or filtered (fit, bm25 with a query, llm with an instruction)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Absolute http/https URL to fetch"
+          },
+          {
+            "key": "f",
+            "optional": true,
+            "type": "raw | fit | bm25 | llm"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string | null",
+            "description": "Query string used by BM25/LLM filters"
+          },
+          {
+            "key": "c",
+            "optional": true,
+            "type": "string | null",
+            "description": "Cache‑bust / revision counter"
+          },
+          {
+            "key": "provider",
+            "optional": true,
+            "type": "string | null",
+            "description": "LLM provider override (e.g., 'anthropic/claude-3-opus')"
+          },
+          {
+            "key": "temperature",
+            "optional": true,
+            "type": "number | null",
+            "description": "LLM temperature override (0.0-2.0)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string | number | null | null"
+          },
+          {
+            "key": "cache",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "markdown",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.mcpSchema",
+      "shortPath": "server.mcpSchema",
+      "description": "Get the server's MCP tools and resources as JSON",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.metrics",
+      "shortPath": "server.metrics",
+      "description": "Prometheus metrics of the server (returned as text)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "The body the server answered with."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.monitor.browsers",
+      "shortPath": "server.monitor.browsers",
+      "description": "List the browsers in the pool (hot, cold, permanent) with their age and use",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.monitor.cleanup",
+      "shortPath": "server.monitor.cleanup",
+      "description": "Close idle browsers and free memory now",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.monitor.endpointStats",
+      "shortPath": "server.monitor.endpointStats",
+      "description": "Get request counts, latency and errors per endpoint",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.monitor.errorLog",
+      "shortPath": "server.monitor.errorLog",
+      "description": "Read the server error log",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.monitor.health",
+      "shortPath": "server.monitor.health",
+      "description": "Get the server health: memory, CPU, uptime and the browser pool",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.monitor.janitorLog",
+      "shortPath": "server.monitor.janitorLog",
+      "description": "Read the browser-pool janitor log",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.monitor.killBrowser",
+      "shortPath": "server.monitor.killBrowser",
+      "description": "Kill one browser of the pool by its signature (crawls running in it fail)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sig",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.monitor.requests",
+      "shortPath": "server.monitor.requests",
+      "description": "List recent requests to the server, filtered by status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.monitor.resetStats",
+      "shortPath": "server.monitor.resetStats",
+      "description": "Reset the server's request statistics (they can't be restored)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.monitor.restartBrowser",
+      "shortPath": "server.monitor.restartBrowser",
+      "description": "Restart one browser of the pool by its signature",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sig",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.monitor.timeline",
+      "shortPath": "server.monitor.timeline",
+      "description": "Get a metric (memory, requests, browsers) over a time window",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metric",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "window",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.pdf",
+      "shortPath": "server.pdf",
+      "description": "Render a page as a PDF (returned as a file)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "output_path",
+            "optional": true,
+            "type": "string | null",
+            "description": "REMOVED in 0.9.0 and ignored - no file is written. Results are stored server-side; fetch via GET /artifacts/{artifact_id}."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file, base64-encoded. Missing when the file came back as text or contentOmitted is set."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string",
+            "description": "Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
+          },
+          {
+            "key": "artifact_id",
+            "optional": true,
+            "type": "string",
+            "description": "The id server.artifacts.get reads this file back with, when the server kept it."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.schema",
+      "shortPath": "server.schema",
+      "description": "Get the default BrowserConfig and CrawlerRunConfig as JSON, to start a config from",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.screenshot",
+      "shortPath": "server.screenshot",
+      "description": "Take a full-page screenshot of a page (returned as a PNG file)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "screenshot_wait_for",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "wait_for_images",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "output_path",
+            "optional": true,
+            "type": "string | null",
+            "description": "REMOVED in 0.9.0 and ignored - no file is written. Results are stored server-side; fetch via GET /artifacts/{artifact_id}."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file, base64-encoded. Missing when the file came back as text or contentOmitted is set."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string",
+            "description": "Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
+          },
+          {
+            "key": "artifact_id",
+            "optional": true,
+            "type": "string",
+            "description": "The id server.artifacts.get reads this file back with, when the server kept it."
+          }
+        ]
+      }
+    },
+    {
+      "path": "crawl4ai.api.server.token",
+      "shortPath": "server.token",
+      "description": "Get a JWT for an email address (servers with JWT auth on; api_token is the server secret when one is set)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "api_token",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "crawl4ai.webhooks.jobFinished",
+      "shortPath": "jobFinished",
+      "description": "A crawl or LLM job on the self-hosted server completed or failed (checked by the X-Webhook-Secret header)",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "task_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "crawl or llm_extraction."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "completed or failed."
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null",
+            "description": "Why it failed."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any | null",
+            "description": "The results, when webhook_data_in_payload was true."
+          }
+        ]
+      },
+      "responseType": "{ task_id?: string | null, task_type?: string | null, status?: string | null, timestamp?: string | null, urls?: string[] | null, error?: string | null, data?: any | null }",
+      "usageExample": "crawl4ai({\n    webhookHooks: {\n        jobFinished: {\n            before(ctx, args) {\n                return { ctx, args };\n            },\n            after(ctx, response) {\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}
