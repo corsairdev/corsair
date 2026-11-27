@@ -23,15 +23,25 @@ describe('crawl4ai plugin', () => {
 			);
 		const testDb = createTestDatabase();
 		await createIntegrationAndAccount(testDb.db, 'crawl4ai', 'default');
-		const corsair = createCorsair({
+		const cloud = createCorsair({
+			plugins: [crawl4ai({ key: 'sk_live_test' })],
+			database: testDb.db,
+			kek: '0123456789abcdef0123456789abcdef',
+		});
+		const server = createCorsair({
 			plugins: [
-				crawl4ai({ key: 'sk_live_test', serverUrl: 'http://localhost:11235' }),
+				crawl4ai({ key: 'server-token', serverUrl: 'http://localhost:11235' }),
 			],
 			database: testDb.db,
 			kek: '0123456789abcdef0123456789abcdef',
 		});
-		await corsair.crawl4ai.api.cloud.scrape({ url: 'https://example.com' });
-		await corsair.crawl4ai.api.server.markdown({ url: 'https://example.com' });
+		await cloud.crawl4ai.api.cloud.scrape({ url: 'https://example.com' });
+		await server.crawl4ai.api.server.markdown({ url: 'https://example.com' });
+		// The server's token never goes to the Cloud.
+		await expect(
+			server.crawl4ai.api.cloud.scrape({ url: 'https://example.com' }),
+		).rejects.toMatchObject({ name: 'AuthMissingError' });
+		expect(fetchSpy).toHaveBeenCalledTimes(2);
 		const [cloudUrl, cloudInit] = fetchSpy.mock.calls[0] as [
 			string,
 			RequestInit,

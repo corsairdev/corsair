@@ -1,12 +1,10 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 
-// Crawl4AI answers errors with a meaningful HTTP status and a WP_Error code
-// (400 rest_invalid_param, 401 rest_not_logged_in or a wrong application
-// password, 403 rest_forbidden / rest_cannot_* for a missing capability, 404
-// rest_no_route or a missing record, 409 a conflict, 410 rest_already_trashed,
-// 429 from a host or security plugin). The status is the signal; the message
-// text is a fallback for an error that lost it.
+// Crawl4AI answers errors with a meaningful HTTP status: 400/422 a bad
+// request, 401/403 a wrong key or token, 402 no credit or a plan cap (Cloud),
+// 404 an unknown job, watch or artifact, 429 the rate limit. The status is the
+// signal; the message text is a fallback for an error that lost it.
 function text(error: Error): string {
 	return error.message.toLowerCase();
 }
@@ -74,8 +72,8 @@ export const errorHandlers = {
 			const code = status(error);
 			return code !== undefined && code >= 500;
 		},
-		// Only reads are retried: a write (a post created, a plugin installed)
-		// may already have happened, and Crawl4AI has no idempotency keys.
+		// Only reads are retried: a write (a watch created, a job queued) may
+		// already have happened.
 		handler: async (error: Error) =>
 			isRead(error)
 				? { maxRetries: 2, retryStrategy: 'exponential_backoff' as const }

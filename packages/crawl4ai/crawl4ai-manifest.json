@@ -206,7 +206,43 @@
       },
       "output": {
         "type": "object",
-        "additionalProperties": {}
+        "properties": {
+          "topups": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "at": {
+                  "type": "string",
+                  "description": "When it was paid."
+                },
+                "usd": {
+                  "type": "number",
+                  "description": "Dollars paid."
+                },
+                "credits": {
+                  "type": "number",
+                  "description": "Credits it added."
+                },
+                "kind": {
+                  "type": "string",
+                  "description": "topup, auto_recharge or plan."
+                },
+                "status": {
+                  "type": "string"
+                },
+                "receipt_url": {
+                  "type": "string",
+                  "description": "The Stripe receipt."
+                }
+              }
+            }
+          },
+          "next_cursor": {
+            "type": ["string", "null"],
+            "description": "The cursor for the next page; null on the last page."
+          }
+        }
       }
     },
     {
@@ -1296,12 +1332,6 @@
           "essential": {
             "type": "boolean",
             "description": "Only the 11 essentials.",
-            "x-corsair-in": "query"
-          },
-          "format": {
-            "type": "string",
-            "description": "text: one line per tool instead of JSON.",
-            "enum": ["text"],
             "x-corsair-in": "query"
           },
           "limit": {
@@ -2731,7 +2761,7 @@
     {
       "id": "jobFinished",
       "summary": "A crawl or LLM job on the self-hosted server completed or failed",
-      "eventTypes": ["crawl", "llm"],
+      "eventTypes": ["crawl", "llm_extraction"],
       "payload": {
         "type": "object",
         "description": "A job the self-hosted server finished (webhook_config on a crawl or LLM job).",
@@ -2741,7 +2771,7 @@
           },
           "task_type": {
             "type": "string",
-            "description": "crawl or llm."
+            "description": "crawl or llm_extraction."
           },
           "status": {
             "type": "string",

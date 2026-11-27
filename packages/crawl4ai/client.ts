@@ -122,6 +122,26 @@ export async function resolveServerUrl(
 	return normalizeServerUrl(url);
 }
 
+/**
+ * The Cloud URL, when the call's key is a Cloud key. An account with a
+ * server_url (or a serverUrl option) holds its server's token, which must
+ * never go to the Cloud: such an account needs its own Cloud connection.
+ */
+async function cloudUrlFor(ctx: Crawl4aiCallContext): Promise<string> {
+	const getter = ctx.keys?.get_server_url;
+	const server =
+		ctx.options?.serverUrl?.trim() ||
+		(getter ? (await tryGetStoredKey(getter))?.trim() : '');
+	if (server) {
+		throw new AuthMissingError(
+			'crawl4ai',
+			'api_key',
+			'[crawl4ai] this account holds a self-hosted server token, which is not sent to Crawl4AI Cloud: connect a Cloud API key (an account without server_url) for cloud.* operations',
+		);
+	}
+	return CRAWL4AI_CLOUD_URL;
+}
+
 /** One path value, encoded (a page URL in /llm/{url} included). */
 export function encodeCrawl4aiPathValue(value: string): string {
 	if (value === '' || value === '.' || value === '..') {
@@ -174,7 +194,7 @@ export async function makeCrawl4aiRequest(
 	const base =
 		options.host === 'server'
 			? await resolveServerUrl(ctx)
-			: CRAWL4AI_CLOUD_URL;
+			: await cloudUrlFor(ctx);
 	const config = {
 		BASE: base,
 		VERSION: '1',

@@ -116,7 +116,11 @@ describe('every operation', () => {
 				}
 				return { status: 200, body: {} };
 			});
-			await call(id, docs.apiExamples[id]?.args ?? {});
+			await call(
+				id,
+				docs.apiExamples[id]?.args ?? {},
+				operation.host === 'cloud' ? ctx('') : ctx(),
+			);
 			const sent = new URL(calls[0]?.url ?? '');
 			expect(calls[0]?.method).toBe(operation.method);
 			expect(sent.origin).toBe(
@@ -140,11 +144,11 @@ describe('requests', () => {
 			status: 200,
 			body: { tool: 'youtube-captions', rows: [{ text: 'hi' }] },
 		}));
-		await call('cloud.tools.run', {
-			id: 'youtube-captions',
-			input: { video: 'abc' },
-			fresh: true,
-		});
+		await call(
+			'cloud.tools.run',
+			{ id: 'youtube-captions', input: { video: 'abc' }, fresh: true },
+			ctx(''),
+		);
 		expect(new URL(calls[0]?.url ?? '').pathname).toBe(
 			'/tools/youtube-captions',
 		);
@@ -166,6 +170,7 @@ describe('requests', () => {
 			body: {
 				success: true,
 				screenshot: Buffer.from('png').toString('base64'),
+				artifact_id: 'art_1',
 			},
 		}));
 		await expect(
@@ -173,18 +178,44 @@ describe('requests', () => {
 		).resolves.toMatchObject({
 			contentType: 'image/png',
 			filename: 'crawl4ai-screenshot.png',
+			artifact_id: 'art_1',
 		});
+		// A failed page: the server's error text (it can quote the URL) stays out.
+		reply(() => ({
+			status: 200,
+			body: { success: false, error: 'failed https://example.com/?token=abc' },
+		}));
+		await expect(
+			call('server.pdf', { url: 'https://example.com/?token=abc' }),
+		).rejects.toThrow(/^Crawl4AI server\.pdf answered without a pdf$/);
 		reply(() => ({
 			status: 200,
 			body: '{"seq":0}\n{"seq":1}\n',
 			contentType: 'application/x-ndjson',
 		}));
 		await expect(
-			call('cloud.jobs.results', { job_id: 'j_1', after: 0 }),
+			call('cloud.jobs.results', { job_id: 'j_1', after: 0 }, ctx('')),
 		).resolves.toEqual({
 			items: [{ seq: 0 }, { seq: 1 }],
 		});
 		expect(() => parseNdjson('x', '{"a":1}\nnot json')).toThrow('not JSON');
+	});
+
+	it('refuses a streamed server.crawl, a watch through tools.run and bad URLs', async () => {
+		reply(() => ({ status: 200, body: {} }));
+		await expect(
+			call('server.crawl', {
+				urls: ['https://example.com'],
+				crawler_config: { stream: true },
+			}),
+		).rejects.toThrow(/use server\.crawlStream/);
+		await expect(
+			call('cloud.tools.run', { id: 'watch', input: {} }, ctx('')),
+		).rejects.toThrow(/use cloud\.watch/);
+		await expect(
+			call('cloud.scrape', { url: 'not a URL' }, ctx('')),
+		).rejects.toThrow(/Invalid URL/);
+		expect(calls).toHaveLength(0);
 	});
 
 	it('refuses a server op without a server, and a non-local http server', async () => {
@@ -221,9 +252,11 @@ describe('errors', () => {
 				request_id: 'req_1',
 			},
 		}));
-		const error = (await call('cloud.scrape', {
-			url: 'https://example.com/private-page',
-		}).catch((e) => e)) as ApiError;
+		const error = (await call(
+			'cloud.scrape',
+			{ url: 'https://example.com/private-page' },
+			ctx(''),
+		).catch((e) => e)) as ApiError;
 		expect(error).toBeInstanceOf(ApiError);
 		expect(error.status).toBe(402);
 		expect(error.message).toBe(

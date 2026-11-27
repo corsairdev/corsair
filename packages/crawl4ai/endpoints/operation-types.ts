@@ -88,7 +88,7 @@ export type Crawl4aiOperationId = (typeof CRAWL4AI_OPERATION_IDS)[number];
 export type Crawl4aiWebhookPayloads = {
 	jobFinished: {
 		task_id?: string | null;
-		/** crawl or llm. */
+		/** crawl or llm_extraction. */
 		task_type?: string | null;
 		/** completed or failed. */
 		status?: string | null;
@@ -320,8 +320,6 @@ export type Crawl4aiOperationInputs = {
 		status?: 'verified' | 'beta' | 'failing';
 		/** Only the 11 essentials. */
 		essential?: boolean;
-		/** text: one line per tool instead of JSON. */
-		format?: 'text';
 		/** Tools a page (default 50, at most 200). */
 		limit?: number;
 		/** next_cursor from the last page. */
@@ -540,8 +538,8 @@ export type Crawl4aiOperationInputs = {
 
 export type Crawl4aiOperationOutputs = {
 	'cloud.answer': {
-		tool?: string | null;
-		request_id?: string | null;
+		tool?: string | number | null;
+		request_id?: string | number | null;
 		took_ms?: number | null;
 		usage?: {
 			/** Credits the run cost. */
@@ -558,10 +556,28 @@ export type Crawl4aiOperationOutputs = {
 	'cloud.billing.balance': Record<string, Crawl4aiJsonValue>;
 	'cloud.billing.subscribe': Record<string, Crawl4aiJsonValue>;
 	'cloud.billing.topup': Record<string, Crawl4aiJsonValue>;
-	'cloud.billing.topups': Record<string, Crawl4aiJsonValue>;
+	'cloud.billing.topups': {
+		topups?: Array<{
+			/** When it was paid. */
+			at?: string | number | null;
+			/** Dollars paid. */
+			usd?: number | null;
+			/** Credits it added. */
+			credits?: number | null;
+			/** topup, auto_recharge or plan. */
+			kind?: string | number | null;
+			status?: string | number | null;
+			/** The Stripe receipt. */
+			receipt_url?: string | number | null;
+			[key: string]: unknown;
+		}> | null;
+		/** The cursor for the next page; null on the last page. */
+		next_cursor?: string | number | null;
+		[key: string]: unknown;
+	};
 	'cloud.extract': {
-		tool?: string | null;
-		request_id?: string | null;
+		tool?: string | number | null;
+		request_id?: string | number | null;
 		took_ms?: number | null;
 		usage?: {
 			/** Credits the run cost. */
@@ -582,8 +598,8 @@ export type Crawl4aiOperationOutputs = {
 	};
 	'cloud.jobs.retry': Record<string, Crawl4aiJsonValue>;
 	'cloud.lead': {
-		tool?: string | null;
-		request_id?: string | null;
+		tool?: string | number | null;
+		request_id?: string | number | null;
 		took_ms?: number | null;
 		usage?: {
 			/** Credits the run cost. */
@@ -603,8 +619,8 @@ export type Crawl4aiOperationOutputs = {
 	'cloud.monitors.list': Record<string, Crawl4aiJsonValue>;
 	'cloud.monitors.update': Record<string, Crawl4aiJsonValue>;
 	'cloud.price': {
-		tool?: string | null;
-		request_id?: string | null;
+		tool?: string | number | null;
+		request_id?: string | number | null;
 		took_ms?: number | null;
 		usage?: {
 			/** Credits the run cost. */
@@ -621,8 +637,8 @@ export type Crawl4aiOperationOutputs = {
 	'cloud.prices': Record<string, Crawl4aiJsonValue>;
 	'cloud.report': Record<string, Crawl4aiJsonValue>;
 	'cloud.scan': {
-		tool?: string | null;
-		request_id?: string | null;
+		tool?: string | number | null;
+		request_id?: string | number | null;
 		took_ms?: number | null;
 		usage?: {
 			/** Credits the run cost. */
@@ -636,8 +652,8 @@ export type Crawl4aiOperationOutputs = {
 		[key: string]: unknown;
 	};
 	'cloud.scrape': {
-		tool?: string | null;
-		request_id?: string | null;
+		tool?: string | number | null;
+		request_id?: string | number | null;
 		took_ms?: number | null;
 		usage?: {
 			/** Credits the run cost. */
@@ -651,8 +667,8 @@ export type Crawl4aiOperationOutputs = {
 		[key: string]: unknown;
 	};
 	'cloud.search': {
-		tool?: string | null;
-		request_id?: string | null;
+		tool?: string | number | null;
+		request_id?: string | number | null;
 		took_ms?: number | null;
 		usage?: {
 			/** Credits the run cost. */
@@ -666,8 +682,8 @@ export type Crawl4aiOperationOutputs = {
 		[key: string]: unknown;
 	};
 	'cloud.serp': {
-		tool?: string | null;
-		request_id?: string | null;
+		tool?: string | number | null;
+		request_id?: string | number | null;
 		took_ms?: number | null;
 		usage?: {
 			/** Credits the run cost. */
@@ -681,8 +697,8 @@ export type Crawl4aiOperationOutputs = {
 		[key: string]: unknown;
 	};
 	'cloud.site': {
-		tool?: string | null;
-		request_id?: string | null;
+		tool?: string | number | null;
+		request_id?: string | number | null;
 		took_ms?: number | null;
 		usage?: {
 			/** Credits the run cost. */
@@ -696,8 +712,8 @@ export type Crawl4aiOperationOutputs = {
 		[key: string]: unknown;
 	};
 	'cloud.tools.estimate': {
-		tool?: string | null;
-		request_id?: string | null;
+		tool?: string | number | null;
+		request_id?: string | number | null;
 		took_ms?: number | null;
 		usage?: {
 			/** Credits the run cost. */
@@ -713,8 +729,8 @@ export type Crawl4aiOperationOutputs = {
 	'cloud.tools.get': Record<string, Crawl4aiJsonValue>;
 	'cloud.tools.list': Record<string, Crawl4aiJsonValue>;
 	'cloud.tools.run': {
-		tool?: string | null;
-		request_id?: string | null;
+		tool?: string | number | null;
+		request_id?: string | number | null;
 		took_ms?: number | null;
 		usage?: {
 			/** Credits the run cost. */
@@ -729,8 +745,8 @@ export type Crawl4aiOperationOutputs = {
 	};
 	'cloud.tools.status': Record<string, Crawl4aiJsonValue>;
 	'cloud.verify': {
-		tool?: string | null;
-		request_id?: string | null;
+		tool?: string | number | null;
+		request_id?: string | number | null;
 		took_ms?: number | null;
 		usage?: {
 			/** Credits the run cost. */
@@ -744,8 +760,8 @@ export type Crawl4aiOperationOutputs = {
 		[key: string]: unknown;
 	};
 	'cloud.watch': {
-		tool?: string | null;
-		request_id?: string | null;
+		tool?: string | number | null;
+		request_id?: string | number | null;
 		took_ms?: number | null;
 		usage?: {
 			/** Credits the run cost. */
@@ -764,27 +780,27 @@ export type Crawl4aiOperationOutputs = {
 	'server.crawl': {
 		success?: boolean | null;
 		results?: Array<{
-			url?: string | null;
+			url?: string | number | null;
 			success?: boolean | null;
 			status_code?: number | null;
-			error_message?: string | null;
-			html?: string | null;
-			cleaned_html?: string | null;
-			fit_html?: string | null;
+			error_message?: string | number | null;
+			html?: string | number | null;
+			cleaned_html?: string | number | null;
+			fit_html?: string | number | null;
 			/** Markdown: raw_markdown, markdown_with_citations, references_markdown, fit_markdown. */
 			markdown?: Crawl4aiJsonValue | null;
 			links?: Record<string, Crawl4aiJsonValue> | null;
 			media?: Record<string, Crawl4aiJsonValue> | null;
 			metadata?: Record<string, Crawl4aiJsonValue> | null;
 			tables?: Array<Crawl4aiJsonValue> | null;
-			extracted_content?: string | null;
+			extracted_content?: string | number | null;
 			/** Base64 PNG when screenshot was on. */
-			screenshot?: string | null;
-			pdf?: string | null;
-			redirected_url?: string | null;
+			screenshot?: string | number | null;
+			pdf?: string | number | null;
+			redirected_url?: string | number | null;
 			response_headers?: Record<string, Crawl4aiJsonValue> | null;
 			js_execution_result?: Record<string, Crawl4aiJsonValue> | null;
-			session_id?: string | null;
+			session_id?: string | number | null;
 			[key: string]: unknown;
 		}> | null;
 		server_processing_time_s?: number | null;
@@ -793,18 +809,18 @@ export type Crawl4aiOperationOutputs = {
 		[key: string]: unknown;
 	};
 	'server.crawlJobs.create': {
-		task_id?: string | null;
+		task_id?: string | number | null;
 		[key: string]: unknown;
 	};
 	'server.crawlJobs.get': {
-		task_id?: string | null;
+		task_id?: string | number | null;
 		/** processing, completed or failed. */
-		status?: string | null;
-		created_at?: string | null;
-		url?: string | null;
+		status?: string | number | null;
+		created_at?: string | number | null;
+		url?: string | number | null;
 		/** The crawl result once completed. */
 		result?: Crawl4aiJsonValue | null;
-		error?: string | null;
+		error?: string | number | null;
 		[key: string]: unknown;
 	};
 	'server.crawlStream': {
@@ -813,40 +829,40 @@ export type Crawl4aiOperationOutputs = {
 	};
 	'server.executeJs': Record<string, Crawl4aiJsonValue>;
 	'server.health': {
-		status?: string | null;
+		status?: string | number | null;
 		timestamp?: number | null;
-		version?: string | null;
+		version?: string | number | null;
 		[key: string]: unknown;
 	};
 	'server.hooks': Record<string, Crawl4aiJsonValue>;
 	'server.html': {
-		url?: string | null;
-		html?: string | null;
+		url?: string | number | null;
+		html?: string | number | null;
 		success?: boolean | null;
 		[key: string]: unknown;
 	};
 	'server.llm': Record<string, Crawl4aiJsonValue>;
 	'server.llmJobs.create': {
-		task_id?: string | null;
+		task_id?: string | number | null;
 		[key: string]: unknown;
 	};
 	'server.llmJobs.get': {
-		task_id?: string | null;
+		task_id?: string | number | null;
 		/** processing, completed or failed. */
-		status?: string | null;
-		created_at?: string | null;
-		url?: string | null;
+		status?: string | number | null;
+		created_at?: string | number | null;
+		url?: string | number | null;
 		/** The extraction once completed. */
 		result?: Crawl4aiJsonValue | null;
-		error?: string | null;
+		error?: string | number | null;
 		[key: string]: unknown;
 	};
 	'server.markdown': {
-		url?: string | null;
-		filter?: string | null;
-		query?: string | null;
-		cache?: string | null;
-		markdown?: string | null;
+		url?: string | number | null;
+		filter?: string | number | null;
+		query?: string | number | null;
+		cache?: string | number | null;
+		markdown?: string | number | null;
 		success?: boolean | null;
 		[key: string]: unknown;
 	};
@@ -866,8 +882,14 @@ export type Crawl4aiOperationOutputs = {
 	'server.monitor.resetStats': Record<string, Crawl4aiJsonValue>;
 	'server.monitor.restartBrowser': Record<string, Crawl4aiJsonValue>;
 	'server.monitor.timeline': Record<string, Crawl4aiJsonValue>;
-	'server.pdf': FileOutput;
+	'server.pdf': FileOutput & {
+		/** The id server.artifacts.get reads this file back with, when the server kept it. */
+		artifact_id?: string;
+	};
 	'server.schema': Record<string, Crawl4aiJsonValue>;
-	'server.screenshot': FileOutput;
+	'server.screenshot': FileOutput & {
+		/** The id server.artifacts.get reads this file back with, when the server kept it. */
+		artifact_id?: string;
+	};
 	'server.token': Record<string, Crawl4aiJsonValue>;
 };

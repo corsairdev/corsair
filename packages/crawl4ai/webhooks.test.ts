@@ -26,6 +26,14 @@ const ctx = {
 describe('crawl4ai job webhook', () => {
 	it('matches job notifications only', () => {
 		expect(isCrawl4aiDelivery(request('x') as never)).toBe(true);
+		const llm = { ...EVENT, task_type: 'llm_extraction' };
+		expect(
+			isCrawl4aiDelivery({
+				headers: {},
+				body: JSON.stringify(llm),
+				payload: llm,
+			} as never),
+		).toBe(true);
 		expect(
 			isCrawl4aiDelivery({ headers: {}, body: '{"event":"other"}' } as never),
 		).toBe(false);
@@ -54,5 +62,17 @@ describe('crawl4ai job webhook', () => {
 			valid: false,
 			error: 'Missing X-Webhook-Secret header',
 		});
+	});
+
+	it('refuses a payload whose strings are numbers', async () => {
+		const bad = { ...EVENT, urls: [123] };
+		await expect(
+			crawl4aiWebhooksNested.jobFinished.handler(ctx, {
+				headers: { 'x-webhook-secret': 'hook-secret' },
+				body: JSON.stringify(bad),
+				rawBody: JSON.stringify(bad),
+				payload: bad,
+			} as never),
+		).resolves.toMatchObject({ success: false });
 	});
 });

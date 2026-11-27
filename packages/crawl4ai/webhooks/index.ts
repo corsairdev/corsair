@@ -59,7 +59,7 @@ function bodyOf(request: Pick<RawWebhookRequest, 'body'>): unknown {
 	}
 }
 
-/** A job notification: `{ task_id, task_type: crawl | llm, status, ... }`. */
+/** A job notification: `{ task_id, task_type: crawl | llm_extraction, status, ... }`. */
 export function isCrawl4aiDelivery(request: RawWebhookRequest): boolean {
 	const body = bodyOf(request);
 	if (typeof body !== 'object' || body === null) return false;
@@ -67,7 +67,7 @@ export function isCrawl4aiDelivery(request: RawWebhookRequest): boolean {
 	const fields = body as Record<string, unknown>;
 	return (
 		typeof fields.task_id === 'string' &&
-		(fields.task_type === 'crawl' || fields.task_type === 'llm') &&
+		(fields.task_type === 'crawl' || fields.task_type === 'llm_extraction') &&
 		typeof fields.status === 'string'
 	);
 }

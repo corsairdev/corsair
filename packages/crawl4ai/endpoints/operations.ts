@@ -123,6 +123,25 @@ export function createCrawl4aiOperation<Id extends Crawl4aiOperationId>(
 				`Invalid input for crawl4ai ${id}: ${describeIssues(id, parsedInput.error.issues, 'input', 5)}`,
 			);
 		}
+		// `server.crawl` with crawler_config.stream answers NDJSON, which is
+		// what server.crawlStream reads; a watch made through the generic tool
+		// runner would be a write filed as a read.
+		const config = (
+			input as { crawler_config?: { stream?: unknown } } | undefined
+		)?.crawler_config;
+		if (id === 'server.crawl' && config?.stream === true) {
+			throw new Error(
+				'Invalid input for crawl4ai server.crawl: crawler_config.stream: use server.crawlStream for a streamed crawl',
+			);
+		}
+		if (
+			id === 'cloud.tools.run' &&
+			(input as { id?: unknown } | undefined)?.id === 'watch'
+		) {
+			throw new Error(
+				'Invalid input for crawl4ai cloud.tools.run: id: use cloud.watch to create a watch',
+			);
+		}
 		// Send what was validated, not the caller's object.
 		// `unknown` is necessary because the fields differ per operation; each was just validated.
 		const valid: Record<string, unknown> = { ...parsedInput.data };
@@ -217,18 +236,23 @@ export function createCrawl4aiOperation<Id extends Crawl4aiOperationId>(
 						? (parsed as Record<string, unknown>)[field]
 						: undefined;
 				if (typeof encoded !== 'string' || encoded.length === 0) {
-					// The server answers success false and an error when the page failed.
-					const reason =
-						typeof parsed === 'object' && parsed !== null
-							? (parsed as Record<string, unknown>).error
-							: undefined;
-					throw new Error(
-						`Crawl4AI ${id} answered without a ${field}${typeof reason === 'string' ? `: ${reason.slice(0, 200)}` : ''}`,
-					);
+					// The server answers success false and an error when the page
+					// failed; its text can quote the page URL, so it stays out.
+					throw new Error(`Crawl4AI ${id} answered without a ${field}`);
 				}
-				response = toFileOutput(Buffer.from(encoded, 'base64'), contentType, {
-					filename: `crawl4ai-${field}.${EXTENSIONS[contentType] ?? 'bin'}`,
-				});
+				const artifactId =
+					typeof parsed === 'object' && parsed !== null
+						? (parsed as Record<string, unknown>).artifact_id
+						: undefined;
+				response = {
+					...toFileOutput(Buffer.from(encoded, 'base64'), contentType, {
+						filename: `crawl4ai-${field}.${EXTENSIONS[contentType] ?? 'bin'}`,
+					}),
+					// server.artifacts.get reads the same file back later.
+					...(typeof artifactId === 'string'
+						? { artifact_id: artifactId }
+						: {}),
+				};
 			}
 		}
 

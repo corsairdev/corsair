@@ -19,6 +19,19 @@ function isRecord(value: unknown): value is OpenApiDocument {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+/** `format: uri` on a request field: an absolute URL. */
+function isAbsoluteUrl(value: string): boolean {
+	try {
+		new URL(value);
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+/** `format: email` on a request field: one @ with text on both sides and a dotted domain. */
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 /**
  * `request` keeps the published contract for what a caller sends: required
  * fields, closed enums, patterns, and length and number limits. Objects keep
@@ -31,7 +44,12 @@ function isRecord(value: unknown): value is OpenApiDocument {
  * or leaves empty doesn't fail a read. Types the spec declares (string, number,
  * array, object) are still checked.
  */
-type SchemaMode = 'request' | 'response';
+/**
+ * `request`: strict checks on what is sent. `response`: lenient, and a
+ * string field also takes a number. `payload` (webhook deliveries): lenient
+ * like `response` but without that widening.
+ */
+type SchemaMode = 'request' | 'response' | 'payload';
 
 function unionOf(options: z.ZodType[]): z.ZodType {
 	const [first, second, ...rest] = options;
@@ -287,10 +305,19 @@ function schemaFromOpenApi(
 		}
 		const pattern = strict ? patternOf(value.pattern) : undefined;
 		if (pattern) stringSchema = stringSchema.regex(pattern);
-		// Crawl4AI declares many numbers as strings and the other way round
-		// (report totals, gateway order, state codes, shipping class ids: live
-		// 11-27), so a response scalar may be either.
-		schema = strict ? stringSchema : z.union([stringSchema, z.number()]);
+		if (strict && value.format === 'uri') {
+			stringSchema = stringSchema.refine(isAbsoluteUrl, {
+				message: 'Invalid URL',
+			});
+		}
+		if (strict && value.format === 'email') {
+			stringSchema = stringSchema.regex(EMAIL, 'Invalid email address');
+		}
+		// A response string may arrive as a number (an id, a count): Crawl4AI's
+		// specs type some numeric fields as strings. The generated output types
+		// say `string | number` for the same fields.
+		schema =
+			mode === 'response' ? z.union([stringSchema, z.number()]) : stringSchema;
 	} else if (type === 'integer' || type === 'number') {
 		let numberSchema = z.number();
 		// A cursor or count that comes back fractional would be refused when sent back.
@@ -393,15 +420,6 @@ function schemaFromOpenApi(
 			}
 			schema = objectSchema;
 		}
-		if (!strict) {
-			// PHP's json_encode writes an empty associative array (no meta, no
-			// block hooks, no menu locations) as `[]`: that is the empty object.
-			schema = z.preprocess(
-				// `unknown` because the raw value is untrusted until parsed.
-				(raw: unknown) => (Array.isArray(raw) && raw.length === 0 ? {} : raw),
-				schema,
-			);
-		}
 	} else {
 		// `unknown` is necessary because the spec leaves this JSON value untyped.
 		schema = z.unknown();
@@ -457,11 +475,16 @@ export const Crawl4aiTextResponseSchema = z
 	.strict();
 
 function buildOutputSchema(operation: Crawl4aiOperationDefinition): z.ZodType {
-	if (
-		operation.response === 'file' ||
-		operation.response.startsWith('base64:')
-	) {
-		return FileOutputSchema;
+	if (operation.response === 'file') return FileOutputSchema;
+	if (operation.response.startsWith('base64:')) {
+		return FileOutputSchema.extend({
+			artifact_id: z
+				.string()
+				.optional()
+				.describe(
+					'The id server.artifacts.get reads this file back with, when the server kept it.',
+				),
+		});
 	}
 	if (operation.response === 'text') return Crawl4aiTextResponseSchema;
 	// The top-level response stays non-null: a null or empty body is malformed.
@@ -512,7 +535,7 @@ export function getCrawl4aiWebhookPayloadSchema(id: string): z.ZodType {
 	if (!schema) {
 		schema = schemaFromOpenApi(
 			crawl4aiWebhookFor(id).payload,
-			'response',
+			'payload',
 			definitionCache,
 		);
 		webhookSchemaCache.set(id, schema);

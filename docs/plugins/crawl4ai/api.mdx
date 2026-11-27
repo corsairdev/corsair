@@ -32,7 +32,28 @@ await corsair.crawl4ai.api.cloud.answer({ q: 'rust web crawler' });
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool` | `string \| number \| null` | No | — |
+| `request_id` | `string \| number \| null` | No | — |
+| `took_ms` | `number \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+| `rows` | `Record<string, any>[] \| null` | No | The records: search results, extracted items, URLs, prices, site tool rows. |
+| `data` | `Record<string, any> \| null` | No | The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch. |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  credits?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -63,7 +84,7 @@ await corsair.crawl4ai.api.cloud.batch({
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -83,7 +104,7 @@ await corsair.crawl4ai.api.cloud.billing.balance({});
 **Input:** _empty object_
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -108,7 +129,7 @@ await corsair.crawl4ai.api.cloud.billing.subscribe({ plan: 'starter' });
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -133,7 +154,7 @@ await corsair.crawl4ai.api.cloud.billing.topup({ amount: 10 });
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -159,7 +180,29 @@ await corsair.crawl4ai.api.cloud.billing.topups({});
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topups` | `object[] \| null` | No | — |
+| `next_cursor` | `string \| number \| null \| null` | No | The cursor for the next page; null on the last page. |
+
+<AccordionGroup>
+<Accordion title="topups full type">
+
+```ts
+{
+  at?: string | number | null,
+  usd?: number | null,
+  credits?: number | null,
+  kind?: string | number | null,
+  status?: string | number | null,
+  receipt_url?: string | number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -188,7 +231,28 @@ await corsair.crawl4ai.api.cloud.extract({ url: 'https://news.ycombinator.com', 
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool` | `string \| number \| null` | No | — |
+| `request_id` | `string \| number \| null` | No | — |
+| `took_ms` | `number \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+| `rows` | `Record<string, any>[] \| null` | No | The records: search results, extracted items, URLs, prices, site tool rows. |
+| `data` | `Record<string, any> \| null` | No | The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch. |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  credits?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -213,7 +277,7 @@ await corsair.crawl4ai.api.cloud.jobs.cancel({ job_id: 'j_7f3c2a' });
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -239,7 +303,7 @@ await corsair.crawl4ai.api.cloud.jobs.get({ job_id: 'j_7f3c2a' });
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -270,7 +334,7 @@ await corsair.crawl4ai.api.cloud.jobs.results({ job_id: 'j_7f3c2a' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `unknown[]` | Yes | One entry per NDJSON line, in order. |
+| `items` | `Record<string, any>[]` | Yes | One entry per NDJSON line, in order. |
 
 
 
@@ -296,7 +360,7 @@ await corsair.crawl4ai.api.cloud.jobs.retry({ job_id: 'j_7f3c2a' });
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -322,7 +386,28 @@ await corsair.crawl4ai.api.cloud.lead({});
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool` | `string \| number \| null` | No | — |
+| `request_id` | `string \| number \| null` | No | — |
+| `took_ms` | `number \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+| `rows` | `Record<string, any>[] \| null` | No | The records: search results, extracted items, URLs, prices, site tool rows. |
+| `data` | `Record<string, any> \| null` | No | The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch. |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  credits?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -342,7 +427,7 @@ await corsair.crawl4ai.api.cloud.monitors.changes({});
 **Input:** _empty object_
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -367,7 +452,7 @@ await corsair.crawl4ai.api.cloud.monitors.delete({ id: 'youtube-captions' });
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -392,7 +477,7 @@ await corsair.crawl4ai.api.cloud.monitors.events({ id: 'youtube-captions' });
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -417,7 +502,7 @@ await corsair.crawl4ai.api.cloud.monitors.get({ id: 'youtube-captions' });
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -437,7 +522,7 @@ await corsair.crawl4ai.api.cloud.monitors.list({});
 **Input:** _empty object_
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -466,7 +551,7 @@ await corsair.crawl4ai.api.cloud.monitors.update({
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -494,7 +579,28 @@ await corsair.crawl4ai.api.cloud.price({
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool` | `string \| number \| null` | No | — |
+| `request_id` | `string \| number \| null` | No | — |
+| `took_ms` | `number \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+| `rows` | `Record<string, any>[] \| null` | No | The records: search results, extracted items, URLs, prices, site tool rows. |
+| `data` | `Record<string, any> \| null` | No | The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch. |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  credits?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -520,7 +626,7 @@ await corsair.crawl4ai.api.cloud.priceHistory({ domain: 'docs.crawl4ai.com' });
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -540,7 +646,7 @@ await corsair.crawl4ai.api.cloud.prices({});
 **Input:** _empty object_
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -569,7 +675,7 @@ await corsair.crawl4ai.api.cloud.report({ category: 'slow', title: 'scrape took 
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -599,7 +705,28 @@ await corsair.crawl4ai.api.cloud.scan({ domain: 'docs.crawl4ai.com' });
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool` | `string \| number \| null` | No | — |
+| `request_id` | `string \| number \| null` | No | — |
+| `took_ms` | `number \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+| `rows` | `Record<string, any>[] \| null` | No | The records: search results, extracted items, URLs, prices, site tool rows. |
+| `data` | `Record<string, any> \| null` | No | The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch. |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  credits?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -632,7 +759,28 @@ await corsair.crawl4ai.api.cloud.scrape({ url: 'https://example.com', format: 'm
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool` | `string \| number \| null` | No | — |
+| `request_id` | `string \| number \| null` | No | — |
+| `took_ms` | `number \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+| `rows` | `Record<string, any>[] \| null` | No | The records: search results, extracted items, URLs, prices, site tool rows. |
+| `data` | `Record<string, any> \| null` | No | The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch. |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  credits?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -659,7 +807,28 @@ await corsair.crawl4ai.api.cloud.search({ q: 'rust web crawler' });
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool` | `string \| number \| null` | No | — |
+| `request_id` | `string \| number \| null` | No | — |
+| `took_ms` | `number \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+| `rows` | `Record<string, any>[] \| null` | No | The records: search results, extracted items, URLs, prices, site tool rows. |
+| `data` | `Record<string, any> \| null` | No | The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch. |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  credits?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -691,7 +860,28 @@ await corsair.crawl4ai.api.cloud.serp({ q: 'rust web crawler' });
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool` | `string \| number \| null` | No | — |
+| `request_id` | `string \| number \| null` | No | — |
+| `took_ms` | `number \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+| `rows` | `Record<string, any>[] \| null` | No | The records: search results, extracted items, URLs, prices, site tool rows. |
+| `data` | `Record<string, any> \| null` | No | The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch. |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  credits?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -727,7 +917,28 @@ await corsair.crawl4ai.api.cloud.site({
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool` | `string \| number \| null` | No | — |
+| `request_id` | `string \| number \| null` | No | — |
+| `took_ms` | `number \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+| `rows` | `Record<string, any>[] \| null` | No | The records: search results, extracted items, URLs, prices, site tool rows. |
+| `data` | `Record<string, any> \| null` | No | The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch. |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  credits?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -753,7 +964,28 @@ await corsair.crawl4ai.api.cloud.tools.estimate({ id: 'youtube-captions' });
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool` | `string \| number \| null` | No | — |
+| `request_id` | `string \| number \| null` | No | — |
+| `took_ms` | `number \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+| `rows` | `Record<string, any>[] \| null` | No | The records: search results, extracted items, URLs, prices, site tool rows. |
+| `data` | `Record<string, any> \| null` | No | The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch. |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  credits?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -778,7 +1010,7 @@ await corsair.crawl4ai.api.cloud.tools.get({ id: 'youtube-captions' });
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -805,13 +1037,12 @@ await corsair.crawl4ai.api.cloud.tools.list({ q: 'amazon reviews' });
 | `kind` | `pages \| search \| people \| sites` | No | pages, search, people or sites. |
 | `status` | `verified \| beta \| failing` | No | verified, beta or failing. |
 | `essential` | `boolean` | No | Only the 11 essentials. |
-| `format` | `text` | No | text: one line per tool instead of JSON. |
 | `limit` | `number` | No | Tools a page (default 50, at most 200). |
 | `cursor` | `string` | No | next_cursor from the last page. |
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -841,7 +1072,28 @@ await corsair.crawl4ai.api.cloud.tools.run({
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool` | `string \| number \| null` | No | — |
+| `request_id` | `string \| number \| null` | No | — |
+| `took_ms` | `number \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+| `rows` | `Record<string, any>[] \| null` | No | The records: search results, extracted items, URLs, prices, site tool rows. |
+| `data` | `Record<string, any> \| null` | No | The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch. |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  credits?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -866,7 +1118,7 @@ await corsair.crawl4ai.api.cloud.tools.status({ id: 'youtube-captions' });
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -894,7 +1146,28 @@ await corsair.crawl4ai.api.cloud.verify({});
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool` | `string \| number \| null` | No | — |
+| `request_id` | `string \| number \| null` | No | — |
+| `took_ms` | `number \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+| `rows` | `Record<string, any>[] \| null` | No | The records: search results, extracted items, URLs, prices, site tool rows. |
+| `data` | `Record<string, any> \| null` | No | The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch. |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  credits?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -927,7 +1200,28 @@ await corsair.crawl4ai.api.cloud.watch({ url: 'https://example.com/pricing', wat
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool` | `string \| number \| null` | No | — |
+| `request_id` | `string \| number \| null` | No | — |
+| `took_ms` | `number \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+| `rows` | `Record<string, any>[] \| null` | No | The records: search results, extracted items, URLs, prices, site tool rows. |
+| `data` | `Record<string, any> \| null` | No | The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch. |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  credits?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -993,7 +1287,7 @@ await corsair.crawl4ai.api.server.ask({});
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1022,7 +1316,7 @@ await corsair.crawl4ai.api.server.configDump({
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1098,7 +1392,45 @@ await corsair.crawl4ai.api.server.crawl({
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+| `server_processing_time_s` | `number \| null` | No | — |
+| `server_memory_delta_mb` | `number \| null` | No | — |
+| `server_peak_memory_mb` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  url?: string | number | null,
+  success?: boolean | null,
+  status_code?: number | null | null,
+  error_message?: string | number | null | null,
+  html?: string | number | null | null,
+  cleaned_html?: string | number | null | null,
+  fit_html?: string | number | null | null,
+  markdown?: any | null,
+  links?: Record<string, any> | null,
+  media?: Record<string, any> | null,
+  metadata?: Record<string, any> | null | null,
+  tables?: any[] | null,
+  extracted_content?: string | number | null | null,
+  screenshot?: string | number | null | null,
+  pdf?: string | number | null | null,
+  redirected_url?: string | number | null | null,
+  response_headers?: Record<string, any> | null | null,
+  js_execution_result?: Record<string, any> | null | null,
+  session_id?: string | number | null | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -1161,7 +1493,12 @@ await corsair.crawl4ai.api.server.crawlJobs.create({
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string \| number \| null` | No | — |
+
 
 
 ---
@@ -1186,7 +1523,17 @@ await corsair.crawl4ai.api.server.crawlJobs.get({ task_id: 'crawl_a1b2c3d4' });
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string \| number \| null` | No | — |
+| `status` | `string \| number \| null` | No | processing, completed or failed. |
+| `created_at` | `string \| number \| null` | No | — |
+| `url` | `string \| number \| null` | No | — |
+| `result` | `any \| null` | No | The crawl result once completed. |
+| `error` | `string \| number \| null \| null` | No | — |
+
 
 
 ---
@@ -1262,7 +1609,7 @@ await corsair.crawl4ai.api.server.crawlStream({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `unknown[]` | Yes | One entry per NDJSON line, in order. |
+| `items` | `Record<string, any>[]` | Yes | One entry per NDJSON line, in order. |
 
 
 
@@ -1292,7 +1639,7 @@ await corsair.crawl4ai.api.server.executeJs({
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1312,7 +1659,14 @@ await corsair.crawl4ai.api.server.health({});
 **Input:** _empty object_
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| number \| null` | No | — |
+| `timestamp` | `number \| null` | No | — |
+| `version` | `string \| number \| null` | No | — |
+
 
 
 ---
@@ -1332,7 +1686,7 @@ await corsair.crawl4ai.api.server.hooks({});
 **Input:** _empty object_
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1357,7 +1711,14 @@ await corsair.crawl4ai.api.server.html({ url: 'https://example.com' });
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string \| number \| null` | No | — |
+| `html` | `string \| number \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+
 
 
 ---
@@ -1385,7 +1746,7 @@ await corsair.crawl4ai.api.server.llm({ url: 'https://example.com', q: 'rust web
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1429,7 +1790,12 @@ await corsair.crawl4ai.api.server.llmJobs.create({ url: 'https://example.com', q
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string \| number \| null` | No | — |
+
 
 
 ---
@@ -1454,7 +1820,17 @@ await corsair.crawl4ai.api.server.llmJobs.get({ task_id: 'crawl_a1b2c3d4' });
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string \| number \| null` | No | — |
+| `status` | `string \| number \| null` | No | processing, completed or failed. |
+| `created_at` | `string \| number \| null` | No | — |
+| `url` | `string \| number \| null` | No | — |
+| `result` | `any \| null` | No | The extraction once completed. |
+| `error` | `string \| number \| null \| null` | No | — |
+
 
 
 ---
@@ -1484,7 +1860,17 @@ await corsair.crawl4ai.api.server.markdown({ url: 'https://example.com', f: 'fit
 
 
 
-**Output:** `unknown`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string \| number \| null` | No | — |
+| `filter` | `string \| number \| null` | No | — |
+| `query` | `string \| number \| null \| null` | No | — |
+| `cache` | `string \| number \| null` | No | — |
+| `markdown` | `string \| number \| null` | No | — |
+| `success` | `boolean \| null` | No | — |
+
 
 
 ---
@@ -1504,7 +1890,7 @@ await corsair.crawl4ai.api.server.mcpSchema({});
 **Input:** _empty object_
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1549,7 +1935,7 @@ await corsair.crawl4ai.api.server.monitor.browsers({});
 **Input:** _empty object_
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1569,7 +1955,7 @@ await corsair.crawl4ai.api.server.monitor.cleanup({});
 **Input:** _empty object_
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1589,7 +1975,7 @@ await corsair.crawl4ai.api.server.monitor.endpointStats({});
 **Input:** _empty object_
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1614,7 +2000,7 @@ await corsair.crawl4ai.api.server.monitor.errorLog({});
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1634,7 +2020,7 @@ await corsair.crawl4ai.api.server.monitor.health({});
 **Input:** _empty object_
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1659,7 +2045,7 @@ await corsair.crawl4ai.api.server.monitor.janitorLog({});
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1684,7 +2070,7 @@ await corsair.crawl4ai.api.server.monitor.killBrowser({ sig: 'browser-1a2b' });
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1710,7 +2096,7 @@ await corsair.crawl4ai.api.server.monitor.requests({});
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1730,7 +2116,7 @@ await corsair.crawl4ai.api.server.monitor.resetStats({});
 **Input:** _empty object_
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1755,7 +2141,7 @@ await corsair.crawl4ai.api.server.monitor.restartBrowser({ sig: 'browser-1a2b' }
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1781,7 +2167,7 @@ await corsair.crawl4ai.api.server.monitor.timeline({});
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1818,6 +2204,7 @@ await corsair.crawl4ai.api.server.pdf({ url: 'https://example.com' });
 | `filename` | `string` | No | The file name, when known. |
 | `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
 | `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+| `artifact_id` | `string` | No | The id server.artifacts.get reads this file back with, when the server kept it. |
 
 
 
@@ -1838,7 +2225,7 @@ await corsair.crawl4ai.api.server.schema({});
 **Input:** _empty object_
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---
@@ -1877,6 +2264,7 @@ await corsair.crawl4ai.api.server.screenshot({ url: 'https://example.com' });
 | `filename` | `string` | No | The file name, when known. |
 | `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
 | `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+| `artifact_id` | `string` | No | The id server.artifacts.get reads this file back with, when the server kept it. |
 
 
 
@@ -1903,7 +2291,7 @@ await corsair.crawl4ai.api.server.token({ email: 'ada@example.com' });
 
 
 
-**Output:** `unknown`
+**Output:** `Record<string, any>`
 
 
 ---

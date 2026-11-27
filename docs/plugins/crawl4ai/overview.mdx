@@ -18,7 +18,9 @@ Finding and reading tools is free. Every run answers
 --shm-size=1g -e CRAWL4AI_API_TOKEN=<token> unclecode/crawl4ai` and
 connect with that token as the key and the server's address as
 `server_url` (https, or http on localhost). Without a token the server
-only listens on its own loopback.
+only listens on its own loopback. An account with a `server_url` holds the
+server's token, which never goes to the Cloud: use a second account for
+`cloud.*`.
 
 - **Site tools.** `cloud.tools.list` (search with `q`, or `source` for one
 site) finds tested tools for 47 sites (Amazon, LinkedIn, YouTube, Google

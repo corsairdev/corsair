@@ -52,11 +52,36 @@ export async function POST(request: Request) {
 
 A crawl or LLM job on the self-hosted server completed or failed (checked by the X-Webhook-Secret header)
 
-**Payload:** `unknown`
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string \| null` | No | — |
+| `task_type` | `string \| null` | No | crawl or llm_extraction. |
+| `status` | `string \| null` | No | completed or failed. |
+| `timestamp` | `string \| null` | No | — |
+| `urls` | `string[] \| null` | No | — |
+| `error` | `string \| null` | No | Why it failed. |
+| `data` | `any \| null` | No | The results, when webhook_data_in_payload was true. |
 
 
-**Response `data`:** `unknown`
 
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  task_id?: string | null,
+  task_type?: string | null,
+  status?: string | null,
+  timestamp?: string | null,
+  urls?: string[] | null,
+  error?: string | null,
+  data?: any | null
+}
+```
+</Accordion>
+</AccordionGroup>
 
 **`webhookHooks` example**
 
