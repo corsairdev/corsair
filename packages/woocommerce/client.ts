@@ -331,10 +331,11 @@ export async function makeWoocommerceRequest(
 const REDACTED = '[REDACTED]';
 
 /**
- * WooCommerce's error `code` (`woocommerce_rest_invalid_page_number`) is an
- * identifier, not request data, and the past-last-page check reads it: a
- * filter value such as `number` must not rewrite it. Put the sent code back
- * when it is identifier-shaped.
+ * The past-last-page check reads WooCommerce's `code`
+ * (`woocommerce_rest_invalid_page_number`), and a filter value such as
+ * `number` must not rewrite it. Only that code is put back after the scrub;
+ * any other code stays scrubbed, so a code that echoes a credential is never
+ * restored.
  */
 // `unknown` because error bodies are untrusted.
 function keepErrorCode(original: unknown, scrubbed: unknown): unknown {
@@ -348,11 +349,13 @@ function keepErrorCode(original: unknown, scrubbed: unknown): unknown {
 		return scrubbed;
 	}
 	const code = (original as { code?: unknown }).code;
-	if (typeof code !== 'string' || !/^[a-z0-9_.-]{1,100}$/i.test(code)) {
+	if (typeof code !== 'string' || !PAST_LAST_PAGE_CODE.test(code)) {
 		return scrubbed;
 	}
 	return { ...(scrubbed as Record<string, unknown>), code };
 }
+
+const PAST_LAST_PAGE_CODE = /^[a-z_]{1,80}_invalid_page_number$/;
 
 /** How deep into an error body values are checked; anything deeper is replaced. */
 const MAX_ERROR_DEPTH = 6;

@@ -113,7 +113,7 @@ pnpm add @corsair-dev/woocommerce
 | `products.variations.batch` | `woocommerce.api.products.variations.batch` | `destructive` | Create, update and delete up to 100 variations in one call |
 | `products.variations.create` | `woocommerce.api.products.variations.create` | `write` | Create a variation for a product |
 | `products.variations.delete` | `woocommerce.api.products.variations.delete` | `destructive` | Delete a variation; without force true it goes to the trash |
-| `products.variations.generate` | `woocommerce.api.products.variations.generate` | `destructive` | Create every missing variation from a variable product's attributes; with delete true it also permanently deletes variations that no longer match |
+| `products.variations.generate` | `woocommerce.api.products.variations.generate` | `destructive` | Create every missing variation from a variable product's attributes; with delete true it also permanently deletes variations that no longer match and duplicate variations (even ones with a valid attribute combination) |
 | `products.variations.get` | `woocommerce.api.products.variations.get` | `read` | Get one variation |
 | `products.variations.list` | `woocommerce.api.products.variations.list` | `read` | List the variations of a product, one page at a time, with search and filters |
 | `products.variations.update` | `woocommerce.api.products.variations.update` | `write` | Update a variation: only the fields you pass change |

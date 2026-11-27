@@ -170,6 +170,18 @@ describe('requests', () => {
 		}
 	});
 
+	it('never restores a code that echoes the secret', async () => {
+		reply(400, { code: 'cs_secret_value', message: 'bad key cs_secret_value' });
+		const error = await call('products.get', { id: 5 }).catch(
+			(e: unknown) => e,
+		);
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).message).not.toContain('cs_secret_value');
+		expect(JSON.stringify((error as ApiError).body)).not.toContain(
+			'cs_secret_value',
+		);
+	});
+
 	it('keeps an explicit null in the body', async () => {
 		reply(200, { id: 3 });
 		await call('coupons.update', { id: 3, date_expires: null });

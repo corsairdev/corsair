@@ -897,7 +897,7 @@ export const woocommerceEndpointMeta = {
 	'products.variations.generate': {
 		riskLevel: 'destructive',
 		description:
-			"Create every missing variation from a variable product's attributes; with delete true it also permanently deletes variations that no longer match",
+			"Create every missing variation from a variable product's attributes; with delete true it also permanently deletes variations that no longer match and duplicate variations (even ones with a valid attribute combination)",
 	},
 	'products.variations.get': {
 		riskLevel: 'read',
