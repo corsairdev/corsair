@@ -538,6 +538,8 @@ export type ZepInputField = {
 	header?: string;
 	/** A query list sent as one joined value (`include=chunks,memories`). */
 	join?: string;
+	/** A path value that may hold slashes (a file path): each segment is encoded on its own. */
+	slashes?: boolean;
 };
 
 const fieldCache = new Map<string, readonly ZepInputField[]>();
@@ -569,10 +571,47 @@ export function zepInputFields(id: string): readonly ZepInputField[] {
 			...(typeof record['x-corsair-join'] === 'string'
 				? { join: record['x-corsair-join'] }
 				: {}),
+			...(record['x-corsair-slashes'] === true ? { slashes: true } : {}),
 		};
 	});
 	fieldCache.set(id, fields);
 	return fields;
+}
+
+/**
+ * The keys a caller chose inside map-shaped fields (metadata, filters by
+ * key): customer data the transport can't tell from field names, so the
+ * client scrubs them from error bodies too. Declared field names are not
+ * collected.
+ */
+// `unknown` because the walk pairs a validated value with its raw JSON Schema.
+export function customerMapKeys(
+	schema: unknown,
+	value: unknown,
+	depth = 0,
+): string[] {
+	if (depth > 10 || value === null || typeof value !== 'object') return [];
+	const options = alternatives(schema);
+	if (Array.isArray(value)) {
+		const items = options.find((option) => option.items !== undefined)?.items;
+		return value.flatMap((item) => customerMapKeys(items, item, depth + 1));
+	}
+	const keys: string[] = [];
+	for (const [key, inner] of Object.entries(value)) {
+		const declared = options.find(
+			(option) => isRecord(option.properties) && key in option.properties,
+		);
+		if (declared && isRecord(declared.properties)) {
+			keys.push(...customerMapKeys(declared.properties[key], inner, depth + 1));
+			continue;
+		}
+		keys.push(key);
+		const map = options.find((option) =>
+			isRecord(option.additionalProperties),
+		)?.additionalProperties;
+		keys.push(...customerMapKeys(map, inner, depth + 1));
+	}
+	return keys;
 }
 
 /** Shown in place of a map key (a metadata key, a header name) in an issue path. */

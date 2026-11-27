@@ -7,6 +7,7 @@ import {
 } from './client';
 import { zepEndpointsNested } from './endpoints/catalog';
 import { zepDefinitions, zepOperations } from './endpoints/manifest';
+import { customerMapKeys } from './endpoints/openapi-schema';
 import { queryValue } from './endpoints/operations';
 import type { ZepContext } from './index';
 
@@ -332,6 +333,75 @@ describe('errors', () => {
 		expect(text).not.toContain(KEY);
 		expect(clean.url).toBe(`${ZEP_API_BASE}/things/{id}`);
 		expect(clean.status).toBe(422);
+	});
+
+	it('scrubs file names and map keys the caller chose', () => {
+		const form = new FormData();
+		form.append('note', 'quarterly plan');
+		form.append(
+			'file',
+			new File([new Uint8Array([1])], 'alice@example.test.pdf'),
+		);
+		const error = new ApiError(
+			{ method: 'POST', url: '/upload', formData: undefined, body: form },
+			{
+				url: `${ZEP_API_BASE}/upload`,
+				ok: false,
+				status: 400,
+				statusText: 'Bad',
+				body: {
+					message:
+						'alice@example.test.pdf rejected; key bob@example.test unknown; quarterly plan',
+				},
+			},
+			'x',
+		);
+		const clean = withoutRequestData(error, KEY, ZEP_API_BASE, [
+			'bob@example.test',
+		]);
+		expect(clean.message).not.toContain('alice@example.test');
+		expect(clean.message).not.toContain('bob@example.test');
+		expect(clean.message).not.toContain('quarterly plan');
+	});
+
+	it('finds the keys a caller chose inside map fields', () => {
+		const schema = {
+			type: 'object',
+			properties: {
+				name: { type: 'string' },
+				metadata: { type: 'object', additionalProperties: { type: 'string' } },
+			},
+		};
+		expect(
+			customerMapKeys(schema, {
+				name: 'x',
+				metadata: { 'carol@example.test': 'y' },
+			}),
+		).toEqual(['carol@example.test']);
+	});
+
+	it('sends a single-attempt route once, even on a 429', async () => {
+		const operation = zepOperations.find((o) => o.singleAttempt);
+		if (!operation) return;
+		reply(429, { message: 'daily limit reached' });
+		const error = await endpointFor(operation.id)(
+			ctx(),
+			docs.apiExamples[operation.id]?.args ?? {},
+		).catch((e: unknown) => e);
+		expect((error as ApiError).status).toBe(429);
+		expect(calls).toHaveLength(1);
+	});
+
+	it('refuses an HTML page on a text route', async () => {
+		const operation = zepOperations.find((o) => o.response === 'text');
+		if (!operation) return;
+		reply(200, '<html>login</html>', 'text/html');
+		await expect(
+			endpointFor(operation.id)(
+				ctx(),
+				docs.apiExamples[operation.id]?.args ?? {},
+			),
+		).rejects.toThrow(/not text/);
 	});
 
 	it('reads the common error body shapes', () => {
