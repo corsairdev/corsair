@@ -634,6 +634,10 @@ const CreateCampaignInputSchema = z
 		}
 	});
 
+// The spec's UpdateCampaignRequest also carries abTest and boosterSettings
+// update trees; they were cut as too large to type. Create accepts them
+// verbatim; callers needing to change them on an existing campaign should
+// recreate it.
 const UpdateCampaignInputSchema = z.object({
 	id: z.string().min(1),
 	name: z.string().max(250).optional(),
@@ -784,15 +788,28 @@ const UtmResponseSchema = z
 	})
 	.loose();
 
-const SetUtmInputSchema = z.object({
-	id: z.string().min(1),
-	tags: UtmtagsSchema.optional().describe('UTM tags for a regular campaign.'),
-	variants: z
-		.object({ a: UtmtagsSchema.optional(), b: UtmtagsSchema.optional() })
-		.loose()
-		.optional()
-		.describe('UTM variants for an A/B test campaign.'),
-});
+const SetUtmInputSchema = z
+	.object({
+		id: z.string().min(1),
+		tags: UtmtagsSchema.optional().describe('UTM tags for a regular campaign.'),
+		variants: z
+			.object({ a: UtmtagsSchema.optional(), b: UtmtagsSchema.optional() })
+			.loose()
+			.optional()
+			.describe('UTM variants for an A/B test campaign.'),
+	})
+	.superRefine((value, ctx) => {
+		// The spec: exactly one of tags/variants must be present; providing
+		// both (or neither) is a validation error.
+		if ((value.tags === undefined) === (value.variants === undefined)) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				path: [value.tags === undefined ? 'tags' : 'variants'],
+				message:
+					'Exactly one of tags (regular campaign) or variants (A/B campaign) must be set.',
+			});
+		}
+	});
 
 // ── events ──────────────────────────────────────────────────────────────────
 

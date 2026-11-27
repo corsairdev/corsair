@@ -3,6 +3,7 @@ import {
 	batchesCreate,
 	batchesGet,
 	campaignsCreate,
+	campaignsSetUtm,
 	contactsList,
 	contactsUpsert,
 	eventsQueryMetadata,
@@ -30,6 +31,8 @@ const API_KEY = 'omnisend_test_key';
 
 type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>; // unknown: each endpoint returns its own type.
 
+// unknown: each test passes a differently-shaped input; the endpoint's input
+// schema validates it.
 function invoke(endpoint: AnyEndpoint, input: unknown) {
 	// unknown: see AnyEndpoint.
 	// unknown: see AnyEndpoint.
@@ -206,6 +209,24 @@ describe('input rejections', () => {
 				contact: { firstName: 'John' },
 			}),
 		);
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects campaigns.setUtm with both tags and variants set', async () => {
+		const error = await failure(
+			invoke(campaignsSetUtm, {
+				id: 'camp-1',
+				tags: { source: 'omnisend' },
+				variants: { a: { source: 'a' }, b: { source: 'b' } },
+			}),
+		);
+		expect(error.name).toBe('ZodError');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects campaigns.setUtm with neither tags nor variants', async () => {
+		const error = await failure(invoke(campaignsSetUtm, { id: 'camp-1' }));
 		expect(error.name).toBe('ZodError');
 		expect(fetchMock).not.toHaveBeenCalled();
 	});

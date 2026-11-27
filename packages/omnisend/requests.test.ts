@@ -82,6 +82,8 @@ const API_KEY = 'omnisend_test_key';
 type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>; // unknown: each endpoint returns its own type.
 
 // Safe: the fake context carries only ctx.key, which is all any endpoint reads.
+// unknown: each test passes a differently-shaped input; the endpoint's input
+// schema validates it.
 function invoke(endpoint: AnyEndpoint, input: unknown) {
 	// unknown: see AnyEndpoint.
 	// unknown: see AnyEndpoint.
