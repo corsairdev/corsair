@@ -1,0 +1,2580 @@
+---
+title: "Dub API reference"
+sidebarTitle: "API"
+description: "API reference for the Dub plugin in Corsair: every `dub.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Analytics
+
+### retrieve
+
+`analytics.retrieve`
+
+Read aggregated click, lead and sale analytics, grouped by count, timeseries, country, device, link and more
+
+**Risk:** `read`
+
+```ts
+await corsair.dub.api.analytics.retrieve({ groupBy: 'countries', interval: '7d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `key` | `string` | No | — |
+| `linkId` | `string` | No | — |
+| `externalId` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+| `tagId` | `string` | No | — |
+| `folderId` | `string` | No | — |
+| `partnerTagId` | `string` | No | — |
+| `groupId` | `string` | No | — |
+| `partnerId` | `string` | No | — |
+| `customerId` | `string` | No | — |
+| `interval` | `24h \| 7d \| 30d \| 90d \| 1y \| mtd \| qtd \| ytd \| all` | No | Defaults to 24h. Ignored when start or end is set. |
+| `start` | `string` | No | Start date, taking precedence over interval. Accepts natural language such as "4 hours ago". |
+| `end` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `country` | `string` | No | — |
+| `city` | `string` | No | — |
+| `region` | `string` | No | — |
+| `continent` | `string` | No | — |
+| `device` | `string` | No | — |
+| `browser` | `string` | No | — |
+| `os` | `string` | No | — |
+| `trigger` | `string` | No | — |
+| `eventName` | `string` | No | — |
+| `referer` | `string` | No | — |
+| `refererUrl` | `string` | No | — |
+| `url` | `string` | No | — |
+| `utm_source` | `string` | No | — |
+| `utm_medium` | `string` | No | — |
+| `utm_campaign` | `string` | No | — |
+| `utm_term` | `string` | No | — |
+| `utm_content` | `string` | No | — |
+| `root` | `boolean` | No | — |
+| `saleType` | `new \| recurring` | No | — |
+| `query` | `string` | No | — |
+| `event` | `clicks \| leads \| sales \| composite` | No | — |
+| `groupBy` | `count \| timeseries \| continents \| regions \| countries \| cities \| devices \| browsers \| os \| trigger \| triggers \| event_names \| referers \| referer_urls \| top_folders \| top_link_tags \| top_domains \| top_links \| top_urls \| top_base_urls \| top_partners \| top_groups \| top_partner_tags \| utm_sources \| utm_mediums \| utm_campaigns \| utm_terms \| utm_contents` | No | — |
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  clicks?: number | null,
+  leads?: number | null,
+  sales?: number | null,
+  saleAmount?: number | null
+} | {
+  start?: string | null,
+  continent?: string | null,
+  country?: string | null,
+  region?: string | null,
+  city?: string | null,
+  device?: string | null,
+  browser?: string | null,
+  os?: string | null,
+  trigger?: string | null,
+  eventName?: string | null,
+  referer?: string | null,
+  refererUrl?: string | null,
+  url?: string | null,
+  link?: string | null,
+  id?: string | null,
+  domain?: string | null,
+  key?: string | null,
+  shortLink?: string | null,
+  createdAt?: string | null,
+  clicks?: number | null,
+  leads?: number | null,
+  sales?: number | null,
+  saleAmount?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Customers
+
+### delete
+
+`customers.delete`
+
+Permanently delete a customer; past events keep their recorded data
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.dub.api.customers.delete({ id: 'cus_1KAP4CXQ2W' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of the customer to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`customers.get`
+
+Retrieve one customer by their Dub id, or their externalId prefixed with ext_
+
+**Risk:** `read`
+
+```ts
+await corsair.dub.api.customers.get({ id: 'cus_1KAP4CXQ2W' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The customer's ID on Dub, or their externalId prefixed with ext_. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `externalId` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `avatar` | `string \| null` | No | — |
+| `stripeCustomerId` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `sales` | `number \| null` | No | — |
+| `saleAmount` | `number \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `firstSaleAt` | `string \| null` | No | — |
+| `subscriptionCanceledAt` | `string \| null` | No | — |
+| `link` | `object \| null` | No | — |
+| `programId` | `string \| null` | No | — |
+| `partner` | `object \| null` | No | — |
+| `discount` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="link full type">
+
+```ts
+{
+  id?: string | null,
+  domain?: string | null,
+  key?: string | null,
+  shortLink?: string | null,
+  url?: string | null,
+  programId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="partner full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null,
+  image?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="discount full type">
+
+```ts
+{
+  id?: string | null,
+  amount?: number | null,
+  type?: string | null,
+  maxDuration?: number | null,
+  couponId?: string | null,
+  couponTestId?: string | null,
+  description?: string | null,
+  partnersCount?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customers.list`
+
+List customers with filters and cursor paging; the next cursor is the last customer id
+
+**Risk:** `read`
+
+```ts
+await corsair.dub.api.customers.list({ search: 'jordan', pageSize: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | — |
+| `externalId` | `string` | No | — |
+| `search` | `string` | No | — |
+| `country` | `string` | No | — |
+| `linkId` | `string` | No | — |
+| `programId` | `string` | No | — |
+| `partnerId` | `string` | No | — |
+| `includeExpandedFields` | `boolean` | No | — |
+| `sortBy` | `createdAt \| saleAmount \| firstSaleAt \| subscriptionCanceledAt` | No | — |
+| `sortOrder` | `asc \| desc` | No | — |
+| `startingAfter` | `string` | No | — |
+| `endingBefore` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `nextCursor` | `string \| null` | Yes | The startingAfter cursor for the next page while this one is full; null once a page comes back short. |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  externalId?: string | null,
+  name?: string | null,
+  email?: string | null,
+  avatar?: string | null,
+  stripeCustomerId?: string | null,
+  country?: string | null,
+  sales?: number | null,
+  saleAmount?: number | null,
+  createdAt?: string | null,
+  firstSaleAt?: string | null,
+  subscriptionCanceledAt?: string | null,
+  link?: {
+    id?: string | null,
+    domain?: string | null,
+    key?: string | null,
+    shortLink?: string | null,
+    url?: string | null,
+    programId?: string | null
+  } | null,
+  programId?: string | null,
+  partner?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null,
+    image?: string | null
+  } | null,
+  discount?: {
+    id?: string | null,
+    amount?: number | null,
+    type?: string | null,
+    maxDuration?: number | null,
+    couponId?: string | null,
+    couponTestId?: string | null,
+    description?: string | null,
+    partnersCount?: number | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`customers.update`
+
+Update a customer email, name, avatar or country
+
+**Risk:** `write`
+
+```ts
+await corsair.dub.api.customers.update({ id: 'cus_1KAP4CXQ2W', name: 'Jordan Lee' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `avatar` | `string \| null` | No | — |
+| `externalId` | `string` | No | — |
+| `stripeCustomerId` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `subscriptionCanceledAt` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `externalId` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `avatar` | `string \| null` | No | — |
+| `stripeCustomerId` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `sales` | `number \| null` | No | — |
+| `saleAmount` | `number \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `firstSaleAt` | `string \| null` | No | — |
+| `subscriptionCanceledAt` | `string \| null` | No | — |
+| `link` | `object \| null` | No | — |
+| `programId` | `string \| null` | No | — |
+| `partner` | `object \| null` | No | — |
+| `discount` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="link full type">
+
+```ts
+{
+  id?: string | null,
+  domain?: string | null,
+  key?: string | null,
+  shortLink?: string | null,
+  url?: string | null,
+  programId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="partner full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null,
+  image?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="discount full type">
+
+```ts
+{
+  id?: string | null,
+  amount?: number | null,
+  type?: string | null,
+  maxDuration?: number | null,
+  couponId?: string | null,
+  couponTestId?: string | null,
+  description?: string | null,
+  partnersCount?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Domains
+
+### create
+
+`domains.create`
+
+Add a domain to the workspace; it still needs DNS verification in the dashboard
+
+**Risk:** `write`
+
+```ts
+await corsair.dub.api.domains.create({ slug: 'acme.link' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+| `expiredUrl` | `string \| null` | No | — |
+| `notFoundUrl` | `string \| null` | No | — |
+| `archived` | `boolean` | No | — |
+| `placeholder` | `string \| null` | No | — |
+| `logo` | `string \| string \| null` | No | — |
+| `assetLinks` | `string \| null` | No | — |
+| `appleAppSiteAssociation` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string \| null` | No | — |
+| `verified` | `boolean \| null` | No | — |
+| `primary` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `placeholder` | `string \| null` | No | — |
+| `expiredUrl` | `string \| null` | No | — |
+| `notFoundUrl` | `string \| null` | No | — |
+| `logo` | `string \| null` | No | — |
+| `assetLinks` | `string \| null` | No | — |
+| `appleAppSiteAssociation` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `registeredDomain` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="registeredDomain full type">
+
+```ts
+{
+  id?: string | null,
+  autoRenewalDisabledAt?: string | null,
+  createdAt?: string | null,
+  expiresAt?: string | null,
+  renewalFee?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`domains.delete`
+
+Permanently delete a domain; its links stop resolving and analytics are not restored on recreate
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.dub.api.domains.delete({ slug: 'acme.link' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | The domain name to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`domains.list`
+
+List the workspace domains with search and page paging
+
+**Risk:** `read`
+
+```ts
+await corsair.dub.api.domains.list({ archived: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `archived` | `boolean` | No | — |
+| `search` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `page` | `number` | Yes | — |
+| `pageSize` | `number` | Yes | — |
+| `nextPage` | `number \| null` | Yes | The next page while this one came back full; null once it came back short. A full last page leads to one empty page. |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  slug?: string | null,
+  verified?: boolean | null,
+  primary?: boolean | null,
+  archived?: boolean | null,
+  placeholder?: string | null,
+  expiredUrl?: string | null,
+  notFoundUrl?: string | null,
+  logo?: string | null,
+  assetLinks?: string | null,
+  appleAppSiteAssociation?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  registeredDomain?: {
+    id?: string | null,
+    autoRenewalDisabledAt?: string | null,
+    createdAt?: string | null,
+    expiresAt?: string | null,
+    renewalFee?: number | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`domains.update`
+
+Update a domain or rename it with newSlug; redirects and branding are editable here
+
+**Risk:** `write`
+
+```ts
+await corsair.dub.api.domains.update({ slug: 'acme.link', newSlug: 'acme.io' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | The current domain name to update. |
+| `newSlug` | `string` | No | A new domain name, to rename the domain. |
+| `expiredUrl` | `string \| null` | No | — |
+| `notFoundUrl` | `string \| null` | No | — |
+| `archived` | `boolean` | No | — |
+| `placeholder` | `string \| null` | No | — |
+| `logo` | `string \| string \| null` | No | — |
+| `assetLinks` | `string \| null` | No | — |
+| `appleAppSiteAssociation` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `slug` | `string \| null` | No | — |
+| `verified` | `boolean \| null` | No | — |
+| `primary` | `boolean \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `placeholder` | `string \| null` | No | — |
+| `expiredUrl` | `string \| null` | No | — |
+| `notFoundUrl` | `string \| null` | No | — |
+| `logo` | `string \| null` | No | — |
+| `assetLinks` | `string \| null` | No | — |
+| `appleAppSiteAssociation` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `registeredDomain` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="registeredDomain full type">
+
+```ts
+{
+  id?: string | null,
+  autoRenewalDisabledAt?: string | null,
+  createdAt?: string | null,
+  expiresAt?: string | null,
+  renewalFee?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Events
+
+### list
+
+`events.list`
+
+List raw click, lead and sale events with filters, newest first
+
+**Risk:** `read`
+
+```ts
+await corsair.dub.api.events.list({ event: 'clicks', limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `key` | `string` | No | — |
+| `linkId` | `string` | No | — |
+| `externalId` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+| `tagId` | `string` | No | — |
+| `folderId` | `string` | No | — |
+| `partnerTagId` | `string` | No | — |
+| `groupId` | `string` | No | — |
+| `partnerId` | `string` | No | — |
+| `customerId` | `string` | No | — |
+| `interval` | `24h \| 7d \| 30d \| 90d \| 1y \| mtd \| qtd \| ytd \| all` | No | Defaults to 24h. Ignored when start or end is set. |
+| `start` | `string` | No | Start date, taking precedence over interval. Accepts natural language such as "4 hours ago". |
+| `end` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `country` | `string` | No | — |
+| `city` | `string` | No | — |
+| `region` | `string` | No | — |
+| `continent` | `string` | No | — |
+| `device` | `string` | No | — |
+| `browser` | `string` | No | — |
+| `os` | `string` | No | — |
+| `trigger` | `string` | No | — |
+| `eventName` | `string` | No | — |
+| `referer` | `string` | No | — |
+| `refererUrl` | `string` | No | — |
+| `url` | `string` | No | — |
+| `utm_source` | `string` | No | — |
+| `utm_medium` | `string` | No | — |
+| `utm_campaign` | `string` | No | — |
+| `utm_term` | `string` | No | — |
+| `utm_content` | `string` | No | — |
+| `root` | `boolean` | No | — |
+| `saleType` | `new \| recurring` | No | — |
+| `query` | `string` | No | — |
+| `event` | `clicks \| leads \| sales` | No | — |
+| `page` | `number` | No | — |
+| `limit` | `number` | No | Defaults to 100. |
+| `sortBy` | `timestamp` | No | — |
+| `sortOrder` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `page` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `nextPage` | `number \| null` | Yes | The next page while this one came back full; null once it came back short. A full last page leads to one empty page. |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+(
+  {
+    event: click,
+    timestamp?: string | null,
+    click?: {
+      id: string,
+      timestamp?: string | null,
+      url?: string | null,
+      country?: string | null,
+      city?: string | null,
+      region?: string | null,
+      continent?: string | null,
+      device?: string | null,
+      browser?: string | null,
+      os?: string | null,
+      ua?: string | null,
+      trigger?: string | null,
+      referer?: string | null,
+      refererUrl?: string | null,
+      qr?: boolean | null,
+      ip?: string | null
+    } | null,
+    link?: {
+      id: string,
+      domain?: string | null,
+      key?: string | null,
+      url?: string | null,
+      trackConversion?: boolean | null,
+      externalId?: string | null,
+      tenantId?: string | null,
+      programId?: string | null,
+      partnerId?: string | null,
+      archived?: boolean | null,
+      expiresAt?: string | null,
+      expiredUrl?: string | null,
+      disabledAt?: string | null,
+      password?: string | null,
+      proxy?: boolean | null,
+      title?: string | null,
+      description?: string | null,
+      image?: string | null,
+      video?: string | null,
+      rewrite?: boolean | null,
+      doIndex?: boolean | null,
+      ios?: string | null,
+      android?: string | null,
+      geo?: Record<string, unknown> | null,
+      publicStats?: boolean | null,
+      tags?: {
+        id: string,
+        name?: string | null,
+        color?: string | null
+      }[] | null,
+      folderId?: string | null,
+      comments?: string | null,
+      shortLink?: string | null,
+      qrCode?: string | null,
+      utm_source?: string | null,
+      utm_medium?: string | null,
+      utm_campaign?: string | null,
+      utm_term?: string | null,
+      utm_content?: string | null,
+      testVariants?: {
+        url?: string | null,
+        percentage?: number | null
+      }[] | null,
+      testStartedAt?: string | null,
+      testCompletedAt?: string | null,
+      userId?: string | null,
+      workspaceId?: string | null,
+      clicks?: number | null,
+      leads?: number | null,
+      conversions?: number | null,
+      sales?: number | null,
+      saleAmount?: number | null,
+      lastClicked?: string | null,
+      createdAt?: string | null,
+      updatedAt?: string | null,
+      projectId?: string | null
+    } | null,
+    click_id?: string | null,
+    link_id?: string | null,
+    domain?: string | null,
+    key?: string | null,
+    url?: string | null,
+    continent?: string | null,
+    country?: string | null,
+    city?: string | null,
+    device?: string | null,
+    browser?: string | null,
+    os?: string | null,
+    qr?: boolean | null,
+    ip?: string | null
+  } | {
+    event: lead,
+    timestamp?: string | null,
+    eventId?: string | null,
+    eventName?: string | null,
+    metadata?: Record<string, unknown> | null,
+    customer?: {
+      id?: string | null,
+      name?: string | null,
+      email?: string | null,
+      avatar?: string | null,
+      externalId?: string | null,
+      createdAt?: string | null
+    } | null,
+    click?: {
+      id: string,
+      timestamp?: string | null,
+      url?: string | null,
+      country?: string | null,
+      city?: string | null,
+      region?: string | null,
+      continent?: string | null,
+      device?: string | null,
+      browser?: string | null,
+      os?: string | null,
+      ua?: string | null,
+      trigger?: string | null,
+      referer?: string | null,
+      refererUrl?: string | null,
+      qr?: boolean | null,
+      ip?: string | null
+    } | null,
+    link?: {
+      id: string,
+      domain?: string | null,
+      key?: string | null,
+      url?: string | null,
+      trackConversion?: boolean | null,
+      externalId?: string | null,
+      tenantId?: string | null,
+      programId?: string | null,
+      partnerId?: string | null,
+      archived?: boolean | null,
+      expiresAt?: string | null,
+      expiredUrl?: string | null,
+      disabledAt?: string | null,
+      password?: string | null,
+      proxy?: boolean | null,
+      title?: string | null,
+      description?: string | null,
+      image?: string | null,
+      video?: string | null,
+      rewrite?: boolean | null,
+      doIndex?: boolean | null,
+      ios?: string | null,
+      android?: string | null,
+      geo?: Record<string, unknown> | null,
+      publicStats?: boolean | null,
+      tags?: {
+        id: string,
+        name?: string | null,
+        color?: string | null
+      }[] | null,
+      folderId?: string | null,
+      comments?: string | null,
+      shortLink?: string | null,
+      qrCode?: string | null,
+      utm_source?: string | null,
+      utm_medium?: string | null,
+      utm_campaign?: string | null,
+      utm_term?: string | null,
+      utm_content?: string | null,
+      testVariants?: {
+        url?: string | null,
+        percentage?: number | null
+      }[] | null,
+      testStartedAt?: string | null,
+      testCompletedAt?: string | null,
+      userId?: string | null,
+      workspaceId?: string | null,
+      clicks?: number | null,
+      leads?: number | null,
+      conversions?: number | null,
+      sales?: number | null,
+      saleAmount?: number | null,
+      lastClicked?: string | null,
+      createdAt?: string | null,
+      updatedAt?: string | null,
+      projectId?: string | null
+    } | null,
+    click_id?: string | null,
+    link_id?: string | null,
+    domain?: string | null,
+    key?: string | null,
+    url?: string | null,
+    continent?: string | null,
+    country?: string | null,
+    city?: string | null,
+    device?: string | null,
+    browser?: string | null,
+    os?: string | null,
+    qr?: boolean | null,
+    ip?: string | null
+  } | {
+    event: sale,
+    timestamp?: string | null,
+    eventId?: string | null,
+    eventName?: string | null,
+    sale?: {
+      amount?: number | null,
+      currency?: string | null,
+      paymentProcessor?: string | null,
+      invoiceId?: string | null,
+      metadata?: Record<string, unknown> | null
+    } | null,
+    saleAmount?: number | null,
+    invoice_id?: string | null,
+    payment_processor?: string | null,
+    metadata?: Record<string, unknown> | null,
+    customer?: {
+      id?: string | null,
+      name?: string | null,
+      email?: string | null,
+      avatar?: string | null,
+      externalId?: string | null,
+      createdAt?: string | null
+    } | null,
+    click?: {
+      id: string,
+      timestamp?: string | null,
+      url?: string | null,
+      country?: string | null,
+      city?: string | null,
+      region?: string | null,
+      continent?: string | null,
+      device?: string | null,
+      browser?: string | null,
+      os?: string | null,
+      ua?: string | null,
+      trigger?: string | null,
+      referer?: string | null,
+      refererUrl?: string | null,
+      qr?: boolean | null,
+      ip?: string | null
+    } | null,
+    link?: {
+      id: string,
+      domain?: string | null,
+      key?: string | null,
+      url?: string | null,
+      trackConversion?: boolean | null,
+      externalId?: string | null,
+      tenantId?: string | null,
+      programId?: string | null,
+      partnerId?: string | null,
+      archived?: boolean | null,
+      expiresAt?: string | null,
+      expiredUrl?: string | null,
+      disabledAt?: string | null,
+      password?: string | null,
+      proxy?: boolean | null,
+      title?: string | null,
+      description?: string | null,
+      image?: string | null,
+      video?: string | null,
+      rewrite?: boolean | null,
+      doIndex?: boolean | null,
+      ios?: string | null,
+      android?: string | null,
+      geo?: Record<string, unknown> | null,
+      publicStats?: boolean | null,
+      tags?: {
+        id: string,
+        name?: string | null,
+        color?: string | null
+      }[] | null,
+      folderId?: string | null,
+      comments?: string | null,
+      shortLink?: string | null,
+      qrCode?: string | null,
+      utm_source?: string | null,
+      utm_medium?: string | null,
+      utm_campaign?: string | null,
+      utm_term?: string | null,
+      utm_content?: string | null,
+      testVariants?: {
+        url?: string | null,
+        percentage?: number | null
+      }[] | null,
+      testStartedAt?: string | null,
+      testCompletedAt?: string | null,
+      userId?: string | null,
+      workspaceId?: string | null,
+      clicks?: number | null,
+      leads?: number | null,
+      conversions?: number | null,
+      sales?: number | null,
+      saleAmount?: number | null,
+      lastClicked?: string | null,
+      createdAt?: string | null,
+      updatedAt?: string | null,
+      projectId?: string | null
+    } | null,
+    click_id?: string | null,
+    link_id?: string | null,
+    domain?: string | null,
+    key?: string | null,
+    url?: string | null,
+    continent?: string | null,
+    country?: string | null,
+    city?: string | null,
+    device?: string | null,
+    browser?: string | null,
+    os?: string | null,
+    qr?: boolean | null,
+    ip?: string | null
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Folders
+
+### create
+
+`folders.create`
+
+Create a folder to group links, with an access level
+
+**Risk:** `write`
+
+```ts
+await corsair.dub.api.folders.create({ name: 'Campaigns' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `accessLevel` | `write \| read \| null` | No | Defaults to write. read and null need Business plans. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `accessLevel` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`folders.delete`
+
+Permanently delete a folder; its links keep existing
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.dub.api.folders.delete({ id: 'fold_1KAP4CZF3T' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of the folder to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`folders.list`
+
+List folders with search and page paging
+
+**Risk:** `read`
+
+```ts
+await corsair.dub.api.folders.list({ search: 'camp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `page` | `number` | Yes | — |
+| `pageSize` | `number` | Yes | — |
+| `nextPage` | `number \| null` | Yes | The next page while this one came back full; null once it came back short. A full last page leads to one empty page. |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  description?: string | null,
+  type?: string | null,
+  accessLevel?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`folders.update`
+
+Rename a folder, change its description or access level
+
+**Risk:** `write`
+
+```ts
+await corsair.dub.api.folders.update({ id: 'fold_1KAP4CZF3T', name: 'Q4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of the folder to update. |
+| `name` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `accessLevel` | `write \| read \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `accessLevel` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+## Links
+
+### bulkCreate
+
+`links.bulkCreate`
+
+Create up to 100 links in one call; the answer carries one row per link, including per-link errors
+
+**Risk:** `write`
+
+```ts
+await corsair.dub.api.links.bulkCreate([{ url: 'https://dub.co', key: 'try' }, { url: 'https://dub.co/help', key: 'help' }]);
+```
+
+**Input:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  url: string,
+  domain?: string,
+  key?: string,
+  keyLength?: number,
+  externalId?: string | null,
+  tenantId?: string | null,
+  programId?: string | null,
+  partnerId?: string | null,
+  prefix?: string,
+  trackConversion?: boolean,
+  archived?: boolean,
+  tagIds?: string | string[],
+  tagNames?: string | string[],
+  folderId?: string | null,
+  comments?: string | null,
+  expiresAt?: string | null,
+  expiredUrl?: string | null,
+  password?: string | null,
+  proxy?: boolean,
+  title?: string | null,
+  description?: string | null,
+  image?: string | null,
+  video?: string | null,
+  rewrite?: boolean,
+  ios?: string | null,
+  android?: string | null,
+  geo?: Record<string, string> | null,
+  doIndex?: boolean,
+  utm_source?: string | null,
+  utm_medium?: string | null,
+  utm_campaign?: string | null,
+  utm_term?: string | null,
+  utm_content?: string | null,
+  ref?: string | null,
+  testVariants?: {
+    url: string,
+    percentage: number
+  }[] | null,
+  testStartedAt?: string | null,
+  testCompletedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+(
+  {
+    id: string,
+    domain?: string | null,
+    key?: string | null,
+    url?: string | null,
+    trackConversion?: boolean | null,
+    externalId?: string | null,
+    tenantId?: string | null,
+    programId?: string | null,
+    partnerId?: string | null,
+    archived?: boolean | null,
+    expiresAt?: string | null,
+    expiredUrl?: string | null,
+    disabledAt?: string | null,
+    password?: string | null,
+    proxy?: boolean | null,
+    title?: string | null,
+    description?: string | null,
+    image?: string | null,
+    video?: string | null,
+    rewrite?: boolean | null,
+    doIndex?: boolean | null,
+    ios?: string | null,
+    android?: string | null,
+    geo?: Record<string, unknown> | null,
+    publicStats?: boolean | null,
+    tags?: {
+      id: string,
+      name?: string | null,
+      color?: string | null
+    }[] | null,
+    folderId?: string | null,
+    comments?: string | null,
+    shortLink?: string | null,
+    qrCode?: string | null,
+    utm_source?: string | null,
+    utm_medium?: string | null,
+    utm_campaign?: string | null,
+    utm_term?: string | null,
+    utm_content?: string | null,
+    testVariants?: {
+      url?: string | null,
+      percentage?: number | null
+    }[] | null,
+    testStartedAt?: string | null,
+    testCompletedAt?: string | null,
+    userId?: string | null,
+    workspaceId?: string | null,
+    clicks?: number | null,
+    leads?: number | null,
+    conversions?: number | null,
+    sales?: number | null,
+    saleAmount?: number | null,
+    lastClicked?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+    projectId?: string | null
+  } | {
+    link: unknown,
+    error?: string | null,
+    code?: string | null
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### bulkDelete
+
+`links.bulkDelete`
+
+Permanently delete up to 100 links in one call; their analytics are not recoverable
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.dub.api.links.bulkDelete({ linkIds: ['link_1KAP4CQ4Y1'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `linkIds` | `string[]` | Yes | Up to 100 link IDs. Non-existing IDs are ignored. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deletedCount` | `number` | Yes | — |
+
+
+
+---
+
+### bulkUpdate
+
+`links.bulkUpdate`
+
+Apply one set of field changes to up to 100 links named by id or externalId
+
+**Risk:** `write`
+
+```ts
+await corsair.dub.api.links.bulkUpdate({ linkIds: ['link_1KAP4CQ4Y1'], data: { archived: true } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `linkIds` | `string[]` | No | The IDs of the links to update. |
+| `externalIds` | `string[]` | No | The external IDs of the links to update. |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  url?: string,
+  domain?: string,
+  key?: string,
+  externalId?: string | null,
+  tenantId?: string | null,
+  programId?: string | null,
+  partnerId?: string | null,
+  trackConversion?: boolean,
+  archived?: boolean,
+  tagIds?: string | string[],
+  tagNames?: string | string[],
+  folderId?: string | null,
+  comments?: string | null,
+  expiresAt?: string | null,
+  expiredUrl?: string | null,
+  password?: string | null,
+  proxy?: boolean,
+  title?: string | null,
+  description?: string | null,
+  image?: string | null,
+  video?: string | null,
+  rewrite?: boolean,
+  ios?: string | null,
+  android?: string | null,
+  geo?: Record<string, string> | null,
+  doIndex?: boolean,
+  utm_source?: string | null,
+  utm_medium?: string | null,
+  utm_campaign?: string | null,
+  utm_term?: string | null,
+  utm_content?: string | null,
+  ref?: string | null,
+  testVariants?: {
+    url: string,
+    percentage: number
+  }[] | null,
+  testStartedAt?: string | null,
+  testCompletedAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  domain?: string | null,
+  key?: string | null,
+  url?: string | null,
+  trackConversion?: boolean | null,
+  externalId?: string | null,
+  tenantId?: string | null,
+  programId?: string | null,
+  partnerId?: string | null,
+  archived?: boolean | null,
+  expiresAt?: string | null,
+  expiredUrl?: string | null,
+  disabledAt?: string | null,
+  password?: string | null,
+  proxy?: boolean | null,
+  title?: string | null,
+  description?: string | null,
+  image?: string | null,
+  video?: string | null,
+  rewrite?: boolean | null,
+  doIndex?: boolean | null,
+  ios?: string | null,
+  android?: string | null,
+  geo?: Record<string, unknown> | null,
+  publicStats?: boolean | null,
+  tags?: {
+    id: string,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  folderId?: string | null,
+  comments?: string | null,
+  shortLink?: string | null,
+  qrCode?: string | null,
+  utm_source?: string | null,
+  utm_medium?: string | null,
+  utm_campaign?: string | null,
+  utm_term?: string | null,
+  utm_content?: string | null,
+  testVariants?: {
+    url?: string | null,
+    percentage?: number | null
+  }[] | null,
+  testStartedAt?: string | null,
+  testCompletedAt?: string | null,
+  userId?: string | null,
+  workspaceId?: string | null,
+  clicks?: number | null,
+  leads?: number | null,
+  conversions?: number | null,
+  sales?: number | null,
+  saleAmount?: number | null,
+  lastClicked?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  projectId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### count
+
+`links.count`
+
+Count links matching the filters, optionally grouped by domain, tag, folder or user
+
+**Risk:** `read`
+
+```ts
+await corsair.dub.api.links.count({ groupBy: 'domain' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `tagIds` | `string[]` | No | — |
+| `tagNames` | `string[]` | No | — |
+| `folderId` | `string` | No | — |
+| `search` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+| `showArchived` | `boolean` | No | — |
+| `groupBy` | `domain \| tagId \| folderId \| userId` | No | — |
+
+
+
+**Output:** `number \| Record<string, unknown>`
+
+
+---
+
+### create
+
+`links.create`
+
+Create a short link; a duplicate domain and slug answers 409 conflict
+
+**Risk:** `write`
+
+```ts
+await corsair.dub.api.links.create({ url: 'https://dub.co', domain: 'dub.sh', key: 'try' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The destination URL of the short link. |
+| `domain` | `string` | No | — |
+| `key` | `string` | No | — |
+| `keyLength` | `number` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `tenantId` | `string \| null` | No | — |
+| `programId` | `string \| null` | No | — |
+| `partnerId` | `string \| null` | No | — |
+| `prefix` | `string` | No | — |
+| `trackConversion` | `boolean` | No | — |
+| `archived` | `boolean` | No | — |
+| `tagIds` | `string \| string[]` | No | — |
+| `tagNames` | `string \| string[]` | No | — |
+| `folderId` | `string \| null` | No | — |
+| `comments` | `string \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+| `expiredUrl` | `string \| null` | No | — |
+| `password` | `string \| null` | No | — |
+| `proxy` | `boolean` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `image` | `string \| null` | No | — |
+| `video` | `string \| null` | No | — |
+| `rewrite` | `boolean` | No | — |
+| `ios` | `string \| null` | No | — |
+| `android` | `string \| null` | No | — |
+| `geo` | `Record<string, string> \| null` | No | — |
+| `doIndex` | `boolean` | No | — |
+| `utm_source` | `string \| null` | No | — |
+| `utm_medium` | `string \| null` | No | — |
+| `utm_campaign` | `string \| null` | No | — |
+| `utm_term` | `string \| null` | No | — |
+| `utm_content` | `string \| null` | No | — |
+| `ref` | `string \| null` | No | — |
+| `testVariants` | `object[] \| null` | No | — |
+| `testStartedAt` | `string \| null` | No | — |
+| `testCompletedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="testVariants full type">
+
+```ts
+{
+  url: string,
+  percentage: number
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `domain` | `string \| null` | No | — |
+| `key` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `trackConversion` | `boolean \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `tenantId` | `string \| null` | No | — |
+| `programId` | `string \| null` | No | — |
+| `partnerId` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+| `expiredUrl` | `string \| null` | No | — |
+| `disabledAt` | `string \| null` | No | — |
+| `password` | `string \| null` | No | — |
+| `proxy` | `boolean \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `image` | `string \| null` | No | — |
+| `video` | `string \| null` | No | — |
+| `rewrite` | `boolean \| null` | No | — |
+| `doIndex` | `boolean \| null` | No | — |
+| `ios` | `string \| null` | No | — |
+| `android` | `string \| null` | No | — |
+| `geo` | `Record<string, unknown> \| null` | No | — |
+| `publicStats` | `boolean \| null` | No | — |
+| `tags` | `object[] \| null` | No | — |
+| `folderId` | `string \| null` | No | — |
+| `comments` | `string \| null` | No | — |
+| `shortLink` | `string \| null` | No | — |
+| `qrCode` | `string \| null` | No | — |
+| `utm_source` | `string \| null` | No | — |
+| `utm_medium` | `string \| null` | No | — |
+| `utm_campaign` | `string \| null` | No | — |
+| `utm_term` | `string \| null` | No | — |
+| `utm_content` | `string \| null` | No | — |
+| `testVariants` | `object[] \| null` | No | — |
+| `testStartedAt` | `string \| null` | No | — |
+| `testCompletedAt` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `clicks` | `number \| null` | No | — |
+| `leads` | `number \| null` | No | — |
+| `conversions` | `number \| null` | No | — |
+| `sales` | `number \| null` | No | — |
+| `saleAmount` | `number \| null` | No | — |
+| `lastClicked` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  color?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="testVariants full type">
+
+```ts
+{
+  url?: string | null,
+  percentage?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`links.delete`
+
+Permanently delete a short link; recreating it does not restore its analytics
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.dub.api.links.delete({ linkId: 'link_1KAP4CQ4Y1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `linkId` | `string` | Yes | The ID of the link to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`links.get`
+
+Retrieve one link by id, externalId, or a domain and slug pair
+
+**Risk:** `read`
+
+```ts
+await corsair.dub.api.links.get({ linkId: 'link_1KAP4CQ4Y1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `linkId` | `string` | No | — |
+| `externalId` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `key` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `domain` | `string \| null` | No | — |
+| `key` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `trackConversion` | `boolean \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `tenantId` | `string \| null` | No | — |
+| `programId` | `string \| null` | No | — |
+| `partnerId` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+| `expiredUrl` | `string \| null` | No | — |
+| `disabledAt` | `string \| null` | No | — |
+| `password` | `string \| null` | No | — |
+| `proxy` | `boolean \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `image` | `string \| null` | No | — |
+| `video` | `string \| null` | No | — |
+| `rewrite` | `boolean \| null` | No | — |
+| `doIndex` | `boolean \| null` | No | — |
+| `ios` | `string \| null` | No | — |
+| `android` | `string \| null` | No | — |
+| `geo` | `Record<string, unknown> \| null` | No | — |
+| `publicStats` | `boolean \| null` | No | — |
+| `tags` | `object[] \| null` | No | — |
+| `folderId` | `string \| null` | No | — |
+| `comments` | `string \| null` | No | — |
+| `shortLink` | `string \| null` | No | — |
+| `qrCode` | `string \| null` | No | — |
+| `utm_source` | `string \| null` | No | — |
+| `utm_medium` | `string \| null` | No | — |
+| `utm_campaign` | `string \| null` | No | — |
+| `utm_term` | `string \| null` | No | — |
+| `utm_content` | `string \| null` | No | — |
+| `testVariants` | `object[] \| null` | No | — |
+| `testStartedAt` | `string \| null` | No | — |
+| `testCompletedAt` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `clicks` | `number \| null` | No | — |
+| `leads` | `number \| null` | No | — |
+| `conversions` | `number \| null` | No | — |
+| `sales` | `number \| null` | No | — |
+| `saleAmount` | `number \| null` | No | — |
+| `lastClicked` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  color?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="testVariants full type">
+
+```ts
+{
+  url?: string | null,
+  percentage?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`links.list`
+
+List short links with filters and cursor paging; the next cursor is the last link id
+
+**Risk:** `read`
+
+```ts
+await corsair.dub.api.links.list({ search: 'try', pageSize: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `tagIds` | `string[]` | No | — |
+| `tagNames` | `string[]` | No | — |
+| `folderId` | `string` | No | — |
+| `search` | `string` | No | — |
+| `userId` | `string` | No | — |
+| `tenantId` | `string` | No | — |
+| `showArchived` | `boolean` | No | — |
+| `startingAfter` | `string` | No | — |
+| `endingBefore` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `nextCursor` | `string \| null` | Yes | The startingAfter cursor for the next page while this one is full; null once a page comes back short. |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  domain?: string | null,
+  key?: string | null,
+  url?: string | null,
+  trackConversion?: boolean | null,
+  externalId?: string | null,
+  tenantId?: string | null,
+  programId?: string | null,
+  partnerId?: string | null,
+  archived?: boolean | null,
+  expiresAt?: string | null,
+  expiredUrl?: string | null,
+  disabledAt?: string | null,
+  password?: string | null,
+  proxy?: boolean | null,
+  title?: string | null,
+  description?: string | null,
+  image?: string | null,
+  video?: string | null,
+  rewrite?: boolean | null,
+  doIndex?: boolean | null,
+  ios?: string | null,
+  android?: string | null,
+  geo?: Record<string, unknown> | null,
+  publicStats?: boolean | null,
+  tags?: {
+    id: string,
+    name?: string | null,
+    color?: string | null
+  }[] | null,
+  folderId?: string | null,
+  comments?: string | null,
+  shortLink?: string | null,
+  qrCode?: string | null,
+  utm_source?: string | null,
+  utm_medium?: string | null,
+  utm_campaign?: string | null,
+  utm_term?: string | null,
+  utm_content?: string | null,
+  testVariants?: {
+    url?: string | null,
+    percentage?: number | null
+  }[] | null,
+  testStartedAt?: string | null,
+  testCompletedAt?: string | null,
+  userId?: string | null,
+  workspaceId?: string | null,
+  clicks?: number | null,
+  leads?: number | null,
+  conversions?: number | null,
+  sales?: number | null,
+  saleAmount?: number | null,
+  lastClicked?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  projectId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`links.update`
+
+Update a short link by id (or externalId prefixed with ext_)
+
+**Risk:** `write`
+
+```ts
+await corsair.dub.api.links.update({ linkId: 'link_1KAP4CQ4Y1', archived: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `linkId` | `string` | Yes | The ID of the link to update, or its externalId prefixed with ext_. |
+| `url` | `string` | No | — |
+| `domain` | `string` | No | — |
+| `key` | `string` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `tenantId` | `string \| null` | No | — |
+| `programId` | `string \| null` | No | — |
+| `partnerId` | `string \| null` | No | — |
+| `trackConversion` | `boolean` | No | — |
+| `archived` | `boolean` | No | — |
+| `tagIds` | `string \| string[]` | No | — |
+| `tagNames` | `string \| string[]` | No | — |
+| `folderId` | `string \| null` | No | — |
+| `comments` | `string \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+| `expiredUrl` | `string \| null` | No | — |
+| `password` | `string \| null` | No | — |
+| `proxy` | `boolean` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `image` | `string \| null` | No | — |
+| `video` | `string \| null` | No | — |
+| `rewrite` | `boolean` | No | — |
+| `ios` | `string \| null` | No | — |
+| `android` | `string \| null` | No | — |
+| `geo` | `Record<string, string> \| null` | No | — |
+| `doIndex` | `boolean` | No | — |
+| `utm_source` | `string \| null` | No | — |
+| `utm_medium` | `string \| null` | No | — |
+| `utm_campaign` | `string \| null` | No | — |
+| `utm_term` | `string \| null` | No | — |
+| `utm_content` | `string \| null` | No | — |
+| `ref` | `string \| null` | No | — |
+| `testVariants` | `object[] \| null` | No | — |
+| `testStartedAt` | `string \| null` | No | — |
+| `testCompletedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="testVariants full type">
+
+```ts
+{
+  url: string,
+  percentage: number
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `domain` | `string \| null` | No | — |
+| `key` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `trackConversion` | `boolean \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `tenantId` | `string \| null` | No | — |
+| `programId` | `string \| null` | No | — |
+| `partnerId` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+| `expiredUrl` | `string \| null` | No | — |
+| `disabledAt` | `string \| null` | No | — |
+| `password` | `string \| null` | No | — |
+| `proxy` | `boolean \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `image` | `string \| null` | No | — |
+| `video` | `string \| null` | No | — |
+| `rewrite` | `boolean \| null` | No | — |
+| `doIndex` | `boolean \| null` | No | — |
+| `ios` | `string \| null` | No | — |
+| `android` | `string \| null` | No | — |
+| `geo` | `Record<string, unknown> \| null` | No | — |
+| `publicStats` | `boolean \| null` | No | — |
+| `tags` | `object[] \| null` | No | — |
+| `folderId` | `string \| null` | No | — |
+| `comments` | `string \| null` | No | — |
+| `shortLink` | `string \| null` | No | — |
+| `qrCode` | `string \| null` | No | — |
+| `utm_source` | `string \| null` | No | — |
+| `utm_medium` | `string \| null` | No | — |
+| `utm_campaign` | `string \| null` | No | — |
+| `utm_term` | `string \| null` | No | — |
+| `utm_content` | `string \| null` | No | — |
+| `testVariants` | `object[] \| null` | No | — |
+| `testStartedAt` | `string \| null` | No | — |
+| `testCompletedAt` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `clicks` | `number \| null` | No | — |
+| `leads` | `number \| null` | No | — |
+| `conversions` | `number \| null` | No | — |
+| `sales` | `number \| null` | No | — |
+| `saleAmount` | `number \| null` | No | — |
+| `lastClicked` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  color?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="testVariants full type">
+
+```ts
+{
+  url?: string | null,
+  percentage?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`links.upsert`
+
+Idempotent create-or-update keyed on domain and slug (or externalId); safe to retry
+
+**Risk:** `write`
+
+```ts
+await corsair.dub.api.links.upsert({ url: 'https://dub.co', domain: 'dub.sh', key: 'try' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The destination URL of the short link. |
+| `domain` | `string` | No | — |
+| `key` | `string` | No | — |
+| `keyLength` | `number` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `tenantId` | `string \| null` | No | — |
+| `programId` | `string \| null` | No | — |
+| `partnerId` | `string \| null` | No | — |
+| `prefix` | `string` | No | — |
+| `trackConversion` | `boolean` | No | — |
+| `archived` | `boolean` | No | — |
+| `tagIds` | `string \| string[]` | No | — |
+| `tagNames` | `string \| string[]` | No | — |
+| `folderId` | `string \| null` | No | — |
+| `comments` | `string \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+| `expiredUrl` | `string \| null` | No | — |
+| `password` | `string \| null` | No | — |
+| `proxy` | `boolean` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `image` | `string \| null` | No | — |
+| `video` | `string \| null` | No | — |
+| `rewrite` | `boolean` | No | — |
+| `ios` | `string \| null` | No | — |
+| `android` | `string \| null` | No | — |
+| `geo` | `Record<string, string> \| null` | No | — |
+| `doIndex` | `boolean` | No | — |
+| `utm_source` | `string \| null` | No | — |
+| `utm_medium` | `string \| null` | No | — |
+| `utm_campaign` | `string \| null` | No | — |
+| `utm_term` | `string \| null` | No | — |
+| `utm_content` | `string \| null` | No | — |
+| `ref` | `string \| null` | No | — |
+| `testVariants` | `object[] \| null` | No | — |
+| `testStartedAt` | `string \| null` | No | — |
+| `testCompletedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="testVariants full type">
+
+```ts
+{
+  url: string,
+  percentage: number
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `domain` | `string \| null` | No | — |
+| `key` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `trackConversion` | `boolean \| null` | No | — |
+| `externalId` | `string \| null` | No | — |
+| `tenantId` | `string \| null` | No | — |
+| `programId` | `string \| null` | No | — |
+| `partnerId` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+| `expiredUrl` | `string \| null` | No | — |
+| `disabledAt` | `string \| null` | No | — |
+| `password` | `string \| null` | No | — |
+| `proxy` | `boolean \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `image` | `string \| null` | No | — |
+| `video` | `string \| null` | No | — |
+| `rewrite` | `boolean \| null` | No | — |
+| `doIndex` | `boolean \| null` | No | — |
+| `ios` | `string \| null` | No | — |
+| `android` | `string \| null` | No | — |
+| `geo` | `Record<string, unknown> \| null` | No | — |
+| `publicStats` | `boolean \| null` | No | — |
+| `tags` | `object[] \| null` | No | — |
+| `folderId` | `string \| null` | No | — |
+| `comments` | `string \| null` | No | — |
+| `shortLink` | `string \| null` | No | — |
+| `qrCode` | `string \| null` | No | — |
+| `utm_source` | `string \| null` | No | — |
+| `utm_medium` | `string \| null` | No | — |
+| `utm_campaign` | `string \| null` | No | — |
+| `utm_term` | `string \| null` | No | — |
+| `utm_content` | `string \| null` | No | — |
+| `testVariants` | `object[] \| null` | No | — |
+| `testStartedAt` | `string \| null` | No | — |
+| `testCompletedAt` | `string \| null` | No | — |
+| `userId` | `string \| null` | No | — |
+| `workspaceId` | `string \| null` | No | — |
+| `clicks` | `number \| null` | No | — |
+| `leads` | `number \| null` | No | — |
+| `conversions` | `number \| null` | No | — |
+| `sales` | `number \| null` | No | — |
+| `saleAmount` | `number \| null` | No | — |
+| `lastClicked` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  color?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="testVariants full type">
+
+```ts
+{
+  url?: string | null,
+  percentage?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Qr
+
+### get
+
+`qr.get`
+
+Generate an SVG QR code for a URL; the document comes back as the svg string
+
+**Risk:** `read`
+
+```ts
+await corsair.dub.api.qr.get({ url: 'https://dub.sh/try', size: 512 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL to encode into the QR code. |
+| `size` | `number` | No | — |
+| `level` | `L \| M \| Q \| H` | No | — |
+| `fgColor` | `string` | No | — |
+| `bgColor` | `string` | No | — |
+| `margin` | `number` | No | — |
+| `format` | `svg` | No | SVG only. PNG is left out because it answers binary, which the plugin does not decode. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `svg` | `string` | Yes | — |
+
+
+
+---
+
+## Tags
+
+### create
+
+`tags.create`
+
+Create a tag with an optional color
+
+**Risk:** `write`
+
+```ts
+await corsair.dub.api.tags.create({ name: 'Announcement', color: 'red' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `color` | `red \| yellow \| green \| blue \| purple \| brown \| gray \| pink` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`tags.delete`
+
+Permanently delete a tag and remove it from every link
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.dub.api.tags.delete({ id: 'tag_1KAP4C9G2F' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of the tag to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`tags.list`
+
+List tags with search, sorting and page paging
+
+**Risk:** `read`
+
+```ts
+await corsair.dub.api.tags.list({ search: 'ann', pageSize: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sortBy` | `name \| createdAt` | No | — |
+| `sortOrder` | `asc \| desc` | No | — |
+| `search` | `string` | No | — |
+| `ids` | `string[]` | No | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `page` | `number` | Yes | — |
+| `pageSize` | `number` | Yes | — |
+| `nextPage` | `number \| null` | Yes | The next page while this one came back full; null once it came back short. A full last page leads to one empty page. |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  color?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tags.update`
+
+Rename a tag or change its color
+
+**Risk:** `write`
+
+```ts
+await corsair.dub.api.tags.update({ id: 'tag_1KAP4C9G2F', name: 'Launch' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of the tag to update. |
+| `name` | `string` | No | — |
+| `color` | `red \| yellow \| green \| blue \| purple \| brown \| gray \| pink` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
+
+
+
+---
+
+## Track
+
+### lead
+
+`track.lead`
+
+Record a lead conversion attributed to a click; there is no delete, so a tracked lead cannot be undone
+
+**Risk:** `write` · **Irreversible**
+
+```ts
+await corsair.dub.api.track.lead({ clickId: 'click_1KAP4CD1E2', eventName: 'Sign up', customerExternalId: 'ext_123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clickId` | `string` | Yes | The click ID from the dub_id cookie. An empty string asks Dub to reuse the last click of the customer. |
+| `eventName` | `string` | Yes | — |
+| `customerExternalId` | `string` | Yes | — |
+| `customerName` | `string \| null` | No | — |
+| `customerEmail` | `string \| null` | No | — |
+| `customerAvatar` | `string \| null` | No | — |
+| `mode` | `async \| wait \| deferred` | No | — |
+| `eventQuantity` | `number \| null` | No | — |
+| `metadata` | `Record<string, unknown> \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `click` | `object \| null` | No | — |
+| `link` | `object \| null` | No | — |
+| `customer` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="click full type">
+
+```ts
+{
+  id?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="link full type">
+
+```ts
+{
+  id?: string | null,
+  domain?: string | null,
+  key?: string | null,
+  shortLink?: string | null,
+  url?: string | null,
+  partnerId?: string | null,
+  programId?: string | null,
+  tenantId?: string | null,
+  externalId?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null,
+  avatar?: string | null,
+  externalId?: string | null,
+  createdAt?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sale
+
+`track.sale`
+
+Record a sale conversion in cents attributed to a customer; invoiceId deduplicates, but a tracked sale cannot be undone
+
+**Risk:** `write` · **Irreversible**
+
+```ts
+await corsair.dub.api.track.sale({ customerExternalId: 'ext_123456', amount: 4900, eventName: 'Invoice paid' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customerExternalId` | `string` | Yes | — |
+| `amount` | `number` | Yes | The sale amount in cents, or the full integer for zero-decimal currencies. |
+| `currency` | `string` | No | — |
+| `eventName` | `string` | No | — |
+| `paymentProcessor` | `stripe \| shopify \| polar \| paddle \| apple \| revenuecat \| lemonsqueezy \| dub \| custom` | No | — |
+| `invoiceId` | `string \| null` | No | Acts as an idempotency key: only one sale is recorded per invoice ID. |
+| `metadata` | `Record<string, unknown> \| null` | No | — |
+| `leadEventName` | `string \| null` | No | — |
+| `clickId` | `string \| null` | No | — |
+| `customerName` | `string \| null` | No | — |
+| `customerEmail` | `string \| null` | No | — |
+| `customerAvatar` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventName` | `string \| null` | No | — |
+| `customer` | `object \| null` | No | — |
+| `sale` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null,
+  avatar?: string | null,
+  externalId?: string | null,
+  createdAt?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="sale full type">
+
+```ts
+{
+  amount?: number | null,
+  currency?: string | null,
+  paymentProcessor?: string | null,
+  invoiceId?: string | null,
+  metadata?: Record<string, unknown> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

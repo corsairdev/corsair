@@ -2053,6 +2053,14 @@
                 ]
               },
               {
+                "group": "Dub",
+                "pages": [
+                  "plugins/dub/overview",
+                  "plugins/dub/api",
+                  "plugins/dub/database"
+                ]
+              },
+              {
                 "group": "Dynapictures",
                 "pages": [
                   "plugins/dynapictures/overview",
