@@ -439,7 +439,7 @@ export const steelEndpointMeta = {
 	'sessions.events': {
 		riskLevel: 'read',
 		description:
-			'Get recorded events. This endpoint allows you to get the recorded session events in the RRWeb format. Steel puts the next page token in a Next-Cursor response header, which the plugin cannot read yet; page by time instead.',
+			'Get recorded events. This endpoint allows you to get the recorded session events in the RRWeb format. Returns one page of at most limit events (up to 1000). Steel sends the next page token only in a Next-Cursor response header, which this operation does not return, so it cannot read events past the first page.',
 	},
 	'sessions.files.delete': {
 		riskLevel: 'destructive',

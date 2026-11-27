@@ -6469,7 +6469,7 @@ await corsair.steel.api.sessions.credentials.replace({ id: '3f0e6a2c-8b1d-4c7e-9
 
 `sessions.events`
 
-Get recorded events. This endpoint allows you to get the recorded session events in the RRWeb format. Steel puts the next page token in a Next-Cursor response header, which the plugin cannot read yet; page by time instead.
+Get recorded events. This endpoint allows you to get the recorded session events in the RRWeb format. Returns one page of at most limit events (up to 1000). Steel sends the next page token only in a Next-Cursor response header, which this operation does not return, so it cannot read events past the first page.
 
 **Risk:** `read`
 

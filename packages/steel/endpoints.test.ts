@@ -5,7 +5,7 @@ import {
 	steelErrorMessage,
 	withoutRequestData,
 } from './client';
-import { steelEndpointsNested } from './endpoints/catalog';
+import { steelEndpointMeta, steelEndpointsNested } from './endpoints/catalog';
 import { steelDefinitions, steelOperations } from './endpoints/manifest';
 import { customerMapKeys } from './endpoints/openapi-schema';
 import { queryValue } from './endpoints/operations';
@@ -429,5 +429,41 @@ describe('errors', () => {
 		expect(steelErrorMessage(502, 'Bad Gateway', '<html></html>')).toBe(
 			'Steel 502: Bad Gateway',
 		);
+	});
+});
+
+describe('sessions.events paging', () => {
+	it('returns one page and says the Next-Cursor token is not returned', async () => {
+		const page = Array.from({ length: 1000 }, (_, i) => ({
+			type: 3,
+			timestamp: 1764547200000 + i,
+		}));
+		jest.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
+			calls.push({
+				url: String(input),
+				method: 'GET',
+				headers: {},
+				body: null,
+			});
+			return new Response(JSON.stringify(page), {
+				status: 200,
+				headers: {
+					'content-type': 'application/json',
+					'next-cursor': 'cursor-page-2',
+				},
+			});
+		});
+		const result = await endpointFor('sessions.events')(ctx(), {
+			id: '3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c',
+			limit: 1000,
+			pointer: 'cursor-page-1',
+		});
+		expect(result).toEqual(page);
+		const url = new URL(String(calls[0]?.url));
+		expect(url.searchParams.get('pointer')).toBe('cursor-page-1');
+		expect(url.searchParams.get('limit')).toBe('1000');
+		const description = steelEndpointMeta['sessions.events'].description;
+		expect(description).toMatch(/one page of at most limit events/);
+		expect(description).not.toMatch(/by time/);
 	});
 });
