@@ -1,0 +1,872 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from Google's discovery documents;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Firebase
+domain: firebase.google.com
+description: "Cloud Firestore documents, queries, transactions, indexes, backups and import/export; Authentication users, sign-in, tenants, providers and project config; Realtime Database data, rules and instances; Cloud Storage objects and buckets; Hosting sites, versions, releases, channels and domains; Remote Config; Cloud Messaging; App Distribution; Security Rules; App Check; and the Firebase Management API for projects and apps (405 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Connect with a service account's JSON key (Firebase console > Project
+  settings > Service accounts > Generate new private key), stored whole as
+  the key. The plugin signs a JWT with it and trades it at
+  oauth2.googleapis.com for an access token (scopes cloud-platform,
+  firebase, firebase.database, firebase.messaging, userinfo.email), cached
+  until a minute before it expires. A ready OAuth access token works too.
+  Give the service account the roles the calls need (Firebase Admin covers
+  most).
+
+  - **Resource names.** Google's APIs address everything by its full name:
+  `projects/<project>/databases/(default)/documents/users/ada`,
+  `projects/<project>/sites/<site>`, `projects/<project>/apps/<app>`. Pass
+  them whole in `name` or `parent`; slashes are kept.
+  - **Groups.** `firestore.*` (documents, queries, transactions, indexes,
+  databases, backups), `auth.*` (Identity Toolkit v1: users and sign-in) and
+  `authAdmin.*` (v2: project config, tenants, providers), `database.*` (the
+  Realtime Database's data and rules, by `databaseUrl`) and
+  `databaseInstances.*`, `storage.*` (Cloud Storage objects and buckets;
+  `storage.objects.insert` with `file` uploads, `storage.objects.download`
+  returns the bytes) and `storageBuckets.*`, `hosting.*`, `remoteConfig.*`,
+  `messaging.*` (FCM v1), `appDistribution.*`, `rules.*`, `appCheck.*` and
+  `management.*` (projects and apps).
+  - **Lists** page with `pageSize` and `pageToken`; pass the response's
+  `nextPageToken` for the next page. Cloud Storage lists (`storage.*`) take
+  `maxResults` instead of `pageSize`.
+  - **Client sign-in calls** (`auth.accounts.*`, `auth.getPublicKeys` and
+  the other top-level `auth.get*` reads) take the project's Web API key as
+  `apiKey` (Project settings > General).
+  - **Remote Config.** The get operations return the template's `etag`;
+  pass it as `ifMatch` when you publish, so a change someone published in
+  between is refused instead of overwritten.
+  - **Emulators.** `emulatorUrls` in the plugin options points groups at the
+  Firebase Local Emulator Suite (calls then send `Bearer owner`).
+  - **Risk.** Reads (GETs and the POSTs that only read, such as
+  `runQuery` and `accounts.lookup`) are `read`. Deletes, sends (FCM
+  messages, email and SMS codes including MFA starts, tester invitations),
+  bulk document deletes, bucket retention locks, imports, restores
+  and rollbacks, publishing Remote Config, rules and Hosting releases,
+  writing a whole Realtime Database path (`database.set`) or its rules,
+  adding Firebase or Analytics to a project and minting credentials are
+  `destructive`; other writes are `write`.
+  - Not wrapped: Firestore's streaming Listen and Write RPCs, Cloud Storage
+  push channels, and the rest of Cloud Storage (ACLs, HMAC keys, caches,
+  folders, notifications), Data Connect, App Hosting, Crashlytics and ML.
+examples:
+  read:
+    path: firestore.databases.documents.get
+    title: Get a Firestore document
+    args: {"name": "projects/demo-project/databases/(default)/documents/users/ada"}
+  write:
+    path: database.set
+    title: Write to the Realtime Database
+    args: {"databaseUrl": "https://demo-project-default-rtdb.firebaseio.com", "path": "users/ada", "data": {"name": "Ada", "born": 1815}}
+apiExamples:
+  appCheck.apps.appAttestConfig.batchGet:
+    args: {"parent": "projects/demo-project", "names": ["projects/demo-project/apps/1:1234567890:web:abc123/appAttestConfig"]}
+  appCheck.apps.appAttestConfig.get:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/appAttestConfig"}
+  appCheck.apps.appAttestConfig.patch:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/appAttestConfig", "updateMask": "tokenTtl", "tokenTtl": "3600s"}
+  appCheck.apps.debugTokens.create:
+    args: {"parent": "projects/demo-project/apps/1:1234567890:web:abc123"}
+  appCheck.apps.debugTokens.delete:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/debugTokens/dt-1"}
+  appCheck.apps.debugTokens.get:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/debugTokens/dt-1"}
+  appCheck.apps.debugTokens.list:
+    args: {"parent": "projects/demo-project/apps/1:1234567890:web:abc123"}
+  appCheck.apps.debugTokens.patch:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/debugTokens/dt-1", "updateMask": "displayName"}
+  appCheck.apps.deviceCheckConfig.batchGet:
+    args: {"parent": "projects/demo-project", "names": ["projects/demo-project/apps/1:1234567890:web:abc123/deviceCheckConfig"]}
+  appCheck.apps.deviceCheckConfig.get:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/deviceCheckConfig"}
+  appCheck.apps.deviceCheckConfig.patch:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/deviceCheckConfig", "updateMask": "tokenTtl", "tokenTtl": "3600s"}
+  appCheck.apps.exchangeAppAttestAssertion:
+    args: {"app": "projects/demo-project/apps/1:1234567890:web:abc123"}
+  appCheck.apps.exchangeAppAttestAttestation:
+    args: {"app": "projects/demo-project/apps/1:1234567890:web:abc123"}
+  appCheck.apps.exchangeCustomToken:
+    args: {"app": "projects/demo-project/apps/1:1234567890:web:abc123"}
+  appCheck.apps.exchangeDebugToken:
+    args: {"app": "projects/demo-project/apps/1:1234567890:web:abc123"}
+  appCheck.apps.exchangeDeviceCheckToken:
+    args: {"app": "projects/demo-project/apps/1:1234567890:web:abc123"}
+  appCheck.apps.exchangePlayIntegrityToken:
+    args: {"app": "projects/demo-project/apps/1:1234567890:web:abc123"}
+  appCheck.apps.exchangeRecaptchaEnterpriseToken:
+    args: {"app": "projects/demo-project/apps/1:1234567890:web:abc123"}
+  appCheck.apps.exchangeRecaptchaV3Token:
+    args: {"app": "projects/demo-project/apps/1:1234567890:web:abc123"}
+  appCheck.apps.generateAppAttestChallenge:
+    args: {"app": "projects/demo-project/apps/1:1234567890:web:abc123"}
+  appCheck.apps.generatePlayIntegrityChallenge:
+    args: {"app": "projects/demo-project/apps/1:1234567890:web:abc123"}
+  appCheck.apps.mintAppCheckToken:
+    args: {"app": "projects/demo-project/apps/1:1234567890:web:abc123"}
+  appCheck.apps.playIntegrityConfig.batchGet:
+    args: {"parent": "projects/demo-project", "names": ["projects/demo-project/apps/1:1234567890:web:abc123/playIntegrityConfig"]}
+  appCheck.apps.playIntegrityConfig.get:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/playIntegrityConfig"}
+  appCheck.apps.playIntegrityConfig.patch:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/playIntegrityConfig", "updateMask": "tokenTtl", "tokenTtl": "3600s"}
+  appCheck.apps.recaptchaEnterpriseConfig.batchGet:
+    args: {"parent": "projects/demo-project", "names": ["projects/demo-project/apps/1:1234567890:web:abc123/recaptchaEnterpriseConfig"]}
+  appCheck.apps.recaptchaEnterpriseConfig.get:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/recaptchaEnterpriseConfig"}
+  appCheck.apps.recaptchaEnterpriseConfig.patch:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/recaptchaEnterpriseConfig", "updateMask": "tokenTtl", "tokenTtl": "3600s"}
+  appCheck.apps.recaptchaV3Config.batchGet:
+    args: {"parent": "projects/demo-project", "names": ["projects/demo-project/apps/1:1234567890:web:abc123/recaptchaV3Config"]}
+  appCheck.apps.recaptchaV3Config.get:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/recaptchaV3Config"}
+  appCheck.apps.recaptchaV3Config.patch:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/recaptchaV3Config", "updateMask": "tokenTtl", "tokenTtl": "3600s"}
+  appCheck.jwks.get:
+    args: {"name": "jwks"}
+  appCheck.oauthClients.exchangeAppAttestAssertion:
+    args: {"app": "oauthClients/x1"}
+  appCheck.oauthClients.exchangeAppAttestAttestation:
+    args: {"app": "oauthClients/x1"}
+  appCheck.oauthClients.exchangeDebugToken:
+    args: {"app": "oauthClients/x1"}
+  appCheck.oauthClients.generateAppAttestChallenge:
+    args: {"app": "oauthClients/x1"}
+  appCheck.services.batchUpdate:
+    args: {"parent": "projects/demo-project"}
+  appCheck.services.get:
+    args: {"name": "projects/demo-project/services/firestore.googleapis.com"}
+  appCheck.services.list:
+    args: {"parent": "projects/demo-project"}
+  appCheck.services.patch:
+    args: {"name": "projects/demo-project/services/firestore.googleapis.com", "updateMask": "enforcementMode", "enforcementMode": "ENFORCED"}
+  appCheck.services.resourcePolicies.batchUpdate:
+    args: {"parent": "projects/demo-project/services/firestore.googleapis.com"}
+  appCheck.services.resourcePolicies.create:
+    args: {"parent": "projects/demo-project/services/firestore.googleapis.com"}
+  appCheck.services.resourcePolicies.delete:
+    args: {"name": "projects/demo-project/services/firestore.googleapis.com/resourcePolicies/rp-1"}
+  appCheck.services.resourcePolicies.get:
+    args: {"name": "projects/demo-project/services/firestore.googleapis.com/resourcePolicies/rp-1"}
+  appCheck.services.resourcePolicies.list:
+    args: {"parent": "projects/demo-project/services/firestore.googleapis.com"}
+  appCheck.services.resourcePolicies.patch:
+    args: {"name": "projects/demo-project/services/oauth2.googleapis.com/resourcePolicies/rp-1", "updateMask": "enforcementMode", "enforcementMode": "UNENFORCED"}
+  appDistribution.apps.getAabInfo:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/aabInfo"}
+  appDistribution.apps.releases.batchDelete:
+    args: {"parent": "projects/demo-project/apps/1:1234567890:web:abc123"}
+  appDistribution.apps.releases.distribute:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/releases/r1a2b3"}
+  appDistribution.apps.releases.feedbackReports.delete:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/releases/r1a2b3/feedbackReports/fb-1"}
+  appDistribution.apps.releases.feedbackReports.get:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/releases/r1a2b3/feedbackReports/fb-1"}
+  appDistribution.apps.releases.feedbackReports.list:
+    args: {"parent": "projects/demo-project/apps/1:1234567890:web:abc123/releases/r1a2b3"}
+  appDistribution.apps.releases.get:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/releases/r1a2b3"}
+  appDistribution.apps.releases.list:
+    args: {"parent": "projects/demo-project/apps/1:1234567890:web:abc123"}
+  appDistribution.apps.releases.operations.cancel:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/releases/r1a2b3/operations/op-123"}
+  appDistribution.apps.releases.operations.delete:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/releases/r1a2b3/operations/op-123"}
+  appDistribution.apps.releases.operations.get:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/releases/r1a2b3/operations/op-123"}
+  appDistribution.apps.releases.operations.list:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/releases/r1a2b3"}
+  appDistribution.apps.releases.operations.wait:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/releases/r1a2b3/operations/op-123"}
+  appDistribution.apps.releases.patch:
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/releases/r1a2b3"}
+  appDistribution.groups.batchJoin:
+    args: {"group": "projects/demo-project/groups/qa-team"}
+  appDistribution.groups.batchLeave:
+    args: {"group": "projects/demo-project/groups/qa-team"}
+  appDistribution.groups.create:
+    args: {"parent": "projects/demo-project"}
+  appDistribution.groups.delete:
+    args: {"name": "projects/demo-project/groups/qa-team"}
+  appDistribution.groups.get:
+    args: {"name": "projects/demo-project/groups/qa-team"}
+  appDistribution.groups.list:
+    args: {"parent": "projects/demo-project"}
+  appDistribution.groups.patch:
+    args: {"name": "projects/demo-project/groups/qa-team"}
+  appDistribution.media.upload:
+    args: {"app": "projects/demo-project/apps/1:1234567890:web:abc123"}
+  appDistribution.testers.batchAdd:
+    args: {"project": "projects/demo-project"}
+  appDistribution.testers.batchRemove:
+    args: {"project": "projects/demo-project"}
+  appDistribution.testers.list:
+    args: {"parent": "projects/demo-project"}
+  appDistribution.testers.patch:
+    args: {"name": "projects/demo-project/testers/ada@example.com"}
+  auth.accounts.createAuthUri:
+    args: {}
+  auth.accounts.delete:
+    args: {}
+  auth.accounts.issueSamlResponse:
+    args: {}
+  auth.accounts.lookup:
+    args: {}
+  auth.accounts.resetPassword:
+    args: {}
+  auth.accounts.sendOobCode:
+    args: {}
+  auth.accounts.sendVerificationCode:
+    args: {}
+  auth.accounts.signInWithCustomToken:
+    args: {}
+  auth.accounts.signInWithEmailLink:
+    args: {}
+  auth.accounts.signInWithGameCenter:
+    args: {"iosBundleId": "example"}
+  auth.accounts.signInWithIdp:
+    args: {}
+  auth.accounts.signInWithPassword:
+    args: {"apiKey": "AIzaSyExampleWebApiKey", "email": "ada@example.com", "password": "correct-horse-battery-staple", "returnSecureToken": true}
+  auth.accounts.signInWithPhoneNumber:
+    args: {}
+  auth.accounts.signUp:
+    args: {}
+  auth.accounts.update:
+    args: {}
+  auth.accounts.verifyIosClient:
+    args: {"iosBundleId": "example"}
+  auth.getProjects:
+    args: {}
+  auth.getPublicKeys:
+    args: {}
+  auth.getRecaptchaParams:
+    args: {}
+  auth.getSessionCookiePublicKeys:
+    args: {}
+  auth.projects.accounts.batchCreate:
+    args: {"targetProjectId": "x1"}
+  auth.projects.accounts.batchDelete:
+    args: {"targetProjectId": "x1"}
+  auth.projects.accounts.batchGet:
+    args: {"targetProjectId": "x1"}
+  auth.projects.accounts.create:
+    args: {"targetProjectId": "demo-project", "email": "ada@example.com", "password": "correct-horse-battery-staple"}
+  auth.projects.accounts.delete:
+    args: {"targetProjectId": "x1"}
+  auth.projects.accounts.lookup:
+    args: {"targetProjectId": "x1"}
+  auth.projects.accounts.query:
+    args: {"targetProjectId": "x1"}
+  auth.projects.accounts.sendOobCode:
+    args: {"targetProjectId": "x1"}
+  auth.projects.accounts.update:
+    args: {"targetProjectId": "x1"}
+  auth.projects.createSessionCookie:
+    args: {"targetProjectId": "x1"}
+  auth.projects.queryAccounts:
+    args: {"targetProjectId": "x1"}
+  auth.projects.tenants.accounts.batchCreate:
+    args: {"tenantId": "x1", "targetProjectId": "x1"}
+  auth.projects.tenants.accounts.batchDelete:
+    args: {"targetProjectId": "x1", "tenantId": "x1"}
+  auth.projects.tenants.accounts.batchGet:
+    args: {"targetProjectId": "x1", "tenantId": "x1"}
+  auth.projects.tenants.accounts.create:
+    args: {"targetProjectId": "x1", "tenantId": "x1"}
+  auth.projects.tenants.accounts.delete:
+    args: {"targetProjectId": "x1", "tenantId": "x1"}
+  auth.projects.tenants.accounts.lookup:
+    args: {"targetProjectId": "x1", "tenantId": "x1"}
+  auth.projects.tenants.accounts.query:
+    args: {"targetProjectId": "x1", "tenantId": "x1"}
+  auth.projects.tenants.accounts.sendOobCode:
+    args: {"targetProjectId": "x1", "tenantId": "x1"}
+  auth.projects.tenants.accounts.update:
+    args: {"tenantId": "x1", "targetProjectId": "x1"}
+  auth.projects.tenants.createSessionCookie:
+    args: {"targetProjectId": "x1", "tenantId": "x1"}
+  authAdmin.accounts.mfaEnrollment.finalize:
+    args: {}
+  authAdmin.accounts.mfaEnrollment.start:
+    args: {}
+  authAdmin.accounts.mfaEnrollment.withdraw:
+    args: {}
+  authAdmin.accounts.mfaSignIn.finalize:
+    args: {}
+  authAdmin.accounts.mfaSignIn.start:
+    args: {}
+  authAdmin.accounts.revokeToken:
+    args: {}
+  authAdmin.defaultSupportedIdpConfigs.create:
+    args: {"parent": "projects/demo-project"}
+  authAdmin.defaultSupportedIdpConfigs.delete:
+    args: {"name": "projects/demo-project/defaultSupportedIdpConfigs/google.com"}
+  authAdmin.defaultSupportedIdpConfigs.get:
+    args: {"name": "projects/demo-project/defaultSupportedIdpConfigs/google.com"}
+  authAdmin.defaultSupportedIdpConfigs.list:
+    args: {"parent": "projects/demo-project"}
+  authAdmin.defaultSupportedIdpConfigs.patch:
+    args: {"name": "projects/demo-project/defaultSupportedIdpConfigs/google.com"}
+  authAdmin.defaultSupportedIdps.list:
+    args: {}
+  authAdmin.getPasswordPolicy:
+    args: {}
+  authAdmin.getRecaptchaConfig:
+    args: {}
+  authAdmin.identityPlatform.initializeAuth:
+    args: {"project": "projects/demo-project"}
+  authAdmin.inboundSamlConfigs.create:
+    args: {"parent": "projects/demo-project"}
+  authAdmin.inboundSamlConfigs.delete:
+    args: {"name": "projects/demo-project/inboundSamlConfigs/saml.example"}
+  authAdmin.inboundSamlConfigs.get:
+    args: {"name": "projects/demo-project/inboundSamlConfigs/saml.example"}
+  authAdmin.inboundSamlConfigs.list:
+    args: {"parent": "projects/demo-project"}
+  authAdmin.inboundSamlConfigs.patch:
+    args: {"name": "projects/demo-project/inboundSamlConfigs/saml.example"}
+  authAdmin.oauthIdpConfigs.create:
+    args: {"parent": "projects/demo-project"}
+  authAdmin.oauthIdpConfigs.delete:
+    args: {"name": "projects/demo-project/oauthIdpConfigs/oidc.example"}
+  authAdmin.oauthIdpConfigs.get:
+    args: {"name": "projects/demo-project/oauthIdpConfigs/oidc.example"}
+  authAdmin.oauthIdpConfigs.list:
+    args: {"parent": "projects/demo-project"}
+  authAdmin.oauthIdpConfigs.patch:
+    args: {"name": "projects/demo-project/oauthIdpConfigs/oidc.example"}
+  authAdmin.projects.getConfig:
+    args: {"name": "projects/demo-project/config"}
+  authAdmin.projects.updateConfig:
+    args: {"name": "projects/demo-project/config"}
+  authAdmin.tenants.create:
+    args: {"parent": "projects/demo-project"}
+  authAdmin.tenants.defaultSupportedIdpConfigs.create:
+    args: {"parent": "projects/demo-project/tenants/tenant-1"}
+  authAdmin.tenants.defaultSupportedIdpConfigs.delete:
+    args: {"name": "projects/demo-project/tenants/tenant-1/defaultSupportedIdpConfigs/google.com"}
+  authAdmin.tenants.defaultSupportedIdpConfigs.get:
+    args: {"name": "projects/demo-project/tenants/tenant-1/defaultSupportedIdpConfigs/google.com"}
+  authAdmin.tenants.defaultSupportedIdpConfigs.list:
+    args: {"parent": "projects/demo-project/tenants/tenant-1"}
+  authAdmin.tenants.defaultSupportedIdpConfigs.patch:
+    args: {"name": "projects/demo-project/tenants/tenant-1/defaultSupportedIdpConfigs/google.com"}
+  authAdmin.tenants.delete:
+    args: {"name": "projects/demo-project/tenants/tenant-1"}
+  authAdmin.tenants.get:
+    args: {"name": "projects/demo-project/tenants/tenant-1"}
+  authAdmin.tenants.getIamPolicy:
+    args: {"resource": "projects/demo-project/tenants/tenant-1"}
+  authAdmin.tenants.inboundSamlConfigs.create:
+    args: {"parent": "projects/demo-project/tenants/tenant-1"}
+  authAdmin.tenants.inboundSamlConfigs.delete:
+    args: {"name": "projects/demo-project/tenants/tenant-1/inboundSamlConfigs/saml.example"}
+  authAdmin.tenants.inboundSamlConfigs.get:
+    args: {"name": "projects/demo-project/tenants/tenant-1/inboundSamlConfigs/saml.example"}
+  authAdmin.tenants.inboundSamlConfigs.list:
+    args: {"parent": "projects/demo-project/tenants/tenant-1"}
+  authAdmin.tenants.inboundSamlConfigs.patch:
+    args: {"name": "projects/demo-project/tenants/tenant-1/inboundSamlConfigs/saml.example"}
+  authAdmin.tenants.list:
+    args: {"parent": "projects/demo-project"}
+  authAdmin.tenants.oauthIdpConfigs.create:
+    args: {"parent": "projects/demo-project/tenants/tenant-1"}
+  authAdmin.tenants.oauthIdpConfigs.delete:
+    args: {"name": "projects/demo-project/tenants/tenant-1/oauthIdpConfigs/oidc.example"}
+  authAdmin.tenants.oauthIdpConfigs.get:
+    args: {"name": "projects/demo-project/tenants/tenant-1/oauthIdpConfigs/oidc.example"}
+  authAdmin.tenants.oauthIdpConfigs.list:
+    args: {"parent": "projects/demo-project/tenants/tenant-1"}
+  authAdmin.tenants.oauthIdpConfigs.patch:
+    args: {"name": "projects/demo-project/tenants/tenant-1/oauthIdpConfigs/oidc.example"}
+  authAdmin.tenants.patch:
+    args: {"name": "projects/demo-project/tenants/tenant-1"}
+  authAdmin.tenants.setIamPolicy:
+    args: {"resource": "projects/demo-project/tenants/tenant-1"}
+  authAdmin.tenants.testIamPermissions:
+    args: {"resource": "projects/demo-project/tenants/tenant-1"}
+  database.delete:
+    args: {"databaseUrl": "https://demo-project-default-rtdb.firebaseio.com", "path": "users/ada"}
+  database.get:
+    args: {"databaseUrl": "https://demo-project-default-rtdb.firebaseio.com", "path": "users", "orderBy": "$key", "limitToFirst": 10}
+  database.push:
+    args: {"databaseUrl": "https://demo-project-default-rtdb.firebaseio.com", "path": "messages", "data": {"text": "Hello", "from": "ada"}}
+  database.rules.get:
+    args: {"databaseUrl": "https://demo-project-default-rtdb.firebaseio.com"}
+  database.rules.set:
+    args: {"databaseUrl": "https://demo-project-default-rtdb.firebaseio.com", "rules": {}}
+  database.set:
+    args: {"databaseUrl": "https://demo-project-default-rtdb.firebaseio.com", "path": "users/ada", "data": {"name": "Ada", "born": 1815}}
+  database.update:
+    args: {"databaseUrl": "https://demo-project-default-rtdb.firebaseio.com", "path": "users/ada", "data": {"born": 1815, "title": "Countess of Lovelace"}}
+  databaseInstances.locations.instances.create:
+    args: {"parent": "projects/demo-project/locations/us-central1"}
+  databaseInstances.locations.instances.delete:
+    args: {"name": "projects/demo-project/locations/us-central1/instances/demo-project-default-rtdb"}
+  databaseInstances.locations.instances.disable:
+    args: {"name": "projects/demo-project/locations/us-central1/instances/demo-project-default-rtdb"}
+  databaseInstances.locations.instances.get:
+    args: {"name": "projects/demo-project/locations/us-central1/instances/demo-project-default-rtdb"}
+  databaseInstances.locations.instances.list:
+    args: {"parent": "projects/demo-project/locations/us-central1"}
+  databaseInstances.locations.instances.reenable:
+    args: {"name": "projects/demo-project/locations/us-central1/instances/demo-project-default-rtdb"}
+  databaseInstances.locations.instances.undelete:
+    args: {"name": "projects/demo-project/locations/us-central1/instances/demo-project-default-rtdb"}
+  firestore.databases.backupSchedules.create:
+    args: {"parent": "projects/demo-project/databases/(default)"}
+  firestore.databases.backupSchedules.delete:
+    args: {"name": "projects/demo-project/databases/(default)/backupSchedules/schedule-1"}
+  firestore.databases.backupSchedules.get:
+    args: {"name": "projects/demo-project/databases/(default)/backupSchedules/schedule-1"}
+  firestore.databases.backupSchedules.list:
+    args: {"parent": "projects/demo-project/databases/(default)"}
+  firestore.databases.backupSchedules.patch:
+    args: {"name": "projects/demo-project/databases/(default)/backupSchedules/schedule-1"}
+  firestore.databases.bulkDeleteDocuments:
+    args: {"name": "projects/demo-project/databases/(default)", "collectionIds": ["scratch"], "namespaceIds": [""]}
+  firestore.databases.changeStreams.create:
+    args: {"parent": "projects/demo-project/databases/(default)"}
+  firestore.databases.changeStreams.delete:
+    args: {"name": "projects/demo-project/databases/(default)/changeStreams/x1"}
+  firestore.databases.changeStreams.get:
+    args: {"name": "projects/demo-project/databases/(default)/changeStreams/x1"}
+  firestore.databases.changeStreams.list:
+    args: {"parent": "projects/demo-project/databases/(default)"}
+  firestore.databases.clone:
+    args: {"parent": "projects/demo-project"}
+  firestore.databases.collectionGroups.fields.get:
+    args: {"name": "projects/demo-project/databases/(default)/collectionGroups/users/fields/email"}
+  firestore.databases.collectionGroups.fields.list:
+    args: {"parent": "projects/demo-project/databases/(default)/collectionGroups/users"}
+  firestore.databases.collectionGroups.fields.patch:
+    args: {"name": "projects/demo-project/databases/(default)/collectionGroups/users/fields/email"}
+  firestore.databases.collectionGroups.indexes.create:
+    args: {"parent": "projects/demo-project/databases/(default)/collectionGroups/users"}
+  firestore.databases.collectionGroups.indexes.delete:
+    args: {"name": "projects/demo-project/databases/(default)/collectionGroups/users/indexes/CICAgJiUpoMK"}
+  firestore.databases.collectionGroups.indexes.get:
+    args: {"name": "projects/demo-project/databases/(default)/collectionGroups/users/indexes/CICAgJiUpoMK"}
+  firestore.databases.collectionGroups.indexes.list:
+    args: {"parent": "projects/demo-project/databases/(default)/collectionGroups/users"}
+  firestore.databases.create:
+    args: {"parent": "projects/demo-project"}
+  firestore.databases.delete:
+    args: {"name": "projects/demo-project/databases/(default)"}
+  firestore.databases.documents.batchGet:
+    args: {"database": "projects/demo-project/databases/(default)"}
+  firestore.databases.documents.batchWrite:
+    args: {"database": "projects/demo-project/databases/(default)"}
+  firestore.databases.documents.beginTransaction:
+    args: {"database": "projects/demo-project/databases/(default)"}
+  firestore.databases.documents.commit:
+    args: {"database": "projects/demo-project/databases/(default)"}
+  firestore.databases.documents.createDocument:
+    args: {"parent": "projects/demo-project/databases/(default)/documents", "collectionId": "users", "documentId": "ada", "fields": {"name": {"stringValue": "Ada"}, "born": {"integerValue": "1815"}}}
+  firestore.databases.documents.delete:
+    args: {"name": "projects/demo-project/databases/(default)/documents/users/ada"}
+  firestore.databases.documents.executePipeline:
+    args: {"database": "projects/demo-project/databases/(default)"}
+  firestore.databases.documents.get:
+    args: {"name": "projects/demo-project/databases/(default)/documents/users/ada"}
+  firestore.databases.documents.list:
+    args: {"collectionId": "users", "parent": "projects/demo-project/databases/(default)/documents/users/ada"}
+  firestore.databases.documents.listCollectionIds:
+    args: {"parent": "projects/demo-project/databases/(default)/documents/users/ada"}
+  firestore.databases.documents.listDocuments:
+    args: {"collectionId": "users", "parent": "projects/demo-project/databases/(default)/documents"}
+  firestore.databases.documents.partitionQuery:
+    args: {"parent": "projects/demo-project/databases/(default)/documents", "structuredQuery": {"from": [{"collectionId": "users", "allDescendants": true}], "orderBy": [{"field": {"fieldPath": "__name__"}, "direction": "ASCENDING"}]}, "partitionCount": "4"}
+  firestore.databases.documents.patch:
+    args: {"name": "projects/demo-project/databases/(default)/documents/users/ada"}
+  firestore.databases.documents.rollback:
+    args: {"database": "projects/demo-project/databases/(default)"}
+  firestore.databases.documents.runAggregationQuery:
+    args: {"parent": "projects/demo-project/databases/(default)/documents/users/ada"}
+  firestore.databases.documents.runQuery:
+    args: {"parent": "projects/demo-project/databases/(default)/documents", "structuredQuery": {"from": [{"collectionId": "users"}], "where": {"fieldFilter": {"field": {"fieldPath": "born"}, "op": "LESS_THAN", "value": {"integerValue": "1900"}}}, "limit": 10}}
+  firestore.databases.exportDocuments:
+    args: {"name": "projects/demo-project/databases/(default)"}
+  firestore.databases.get:
+    args: {"name": "projects/demo-project/databases/(default)"}
+  firestore.databases.importDocuments:
+    args: {"name": "projects/demo-project/databases/(default)"}
+  firestore.databases.list:
+    args: {"parent": "projects/demo-project"}
+  firestore.databases.operations.cancel:
+    args: {"name": "projects/demo-project/databases/(default)/operations/op-123"}
+  firestore.databases.operations.delete:
+    args: {"name": "projects/demo-project/databases/(default)/operations/op-123"}
+  firestore.databases.operations.get:
+    args: {"name": "projects/demo-project/databases/(default)/operations/op-123"}
+  firestore.databases.operations.list:
+    args: {"name": "projects/demo-project/databases/(default)"}
+  firestore.databases.patch:
+    args: {"name": "projects/demo-project/databases/(default)"}
+  firestore.databases.restore:
+    args: {"parent": "projects/demo-project"}
+  firestore.databases.userCreds.create:
+    args: {"parent": "projects/demo-project/databases/(default)"}
+  firestore.databases.userCreds.delete:
+    args: {"name": "projects/demo-project/databases/(default)/userCreds/x1"}
+  firestore.databases.userCreds.disable:
+    args: {"name": "projects/demo-project/databases/(default)/userCreds/x1"}
+  firestore.databases.userCreds.enable:
+    args: {"name": "projects/demo-project/databases/(default)/userCreds/x1"}
+  firestore.databases.userCreds.get:
+    args: {"name": "projects/demo-project/databases/(default)/userCreds/x1"}
+  firestore.databases.userCreds.list:
+    args: {"parent": "projects/demo-project/databases/(default)"}
+  firestore.databases.userCreds.resetPassword:
+    args: {"name": "projects/demo-project/databases/(default)/userCreds/x1"}
+  firestore.locations.backups.delete:
+    args: {"name": "projects/demo-project/locations/us-central1/backups/backup-1"}
+  firestore.locations.backups.get:
+    args: {"name": "projects/demo-project/locations/us-central1/backups/backup-1"}
+  firestore.locations.backups.list:
+    args: {"parent": "projects/demo-project/locations/us-central1"}
+  firestore.locations.get:
+    args: {"name": "projects/demo-project/locations/us-central1"}
+  firestore.locations.list:
+    args: {"name": "projects/demo-project"}
+  hosting.operations.get:
+    args: {"name": "projects/demo-project/operations/op-123"}
+  hosting.sites.channels.create:
+    args: {"parent": "sites/demo-project"}
+  hosting.sites.channels.delete:
+    args: {"name": "sites/demo-project/channels/preview"}
+  hosting.sites.channels.get:
+    args: {"name": "sites/demo-project/channels/preview"}
+  hosting.sites.channels.list:
+    args: {"parent": "sites/demo-project"}
+  hosting.sites.channels.patch:
+    args: {"name": "sites/demo-project/channels/preview"}
+  hosting.sites.channels.releases.create:
+    args: {"parent": "sites/demo-project/channels/preview"}
+  hosting.sites.channels.releases.get:
+    args: {"name": "sites/demo-project/channels/preview/releases/r1a2b3"}
+  hosting.sites.channels.releases.list:
+    args: {"parent": "sites/demo-project/channels/preview"}
+  hosting.sites.create:
+    args: {"parent": "projects/demo-project"}
+  hosting.sites.customDomains.create:
+    args: {"parent": "projects/demo-project/sites/demo-project"}
+  hosting.sites.customDomains.delete:
+    args: {"name": "projects/demo-project/sites/demo-project/customDomains/www.example.com"}
+  hosting.sites.customDomains.get:
+    args: {"name": "projects/demo-project/sites/demo-project/customDomains/www.example.com"}
+  hosting.sites.customDomains.list:
+    args: {"parent": "projects/demo-project/sites/demo-project"}
+  hosting.sites.customDomains.operations.get:
+    args: {"name": "projects/demo-project/sites/demo-project/customDomains/www.example.com/operations/op-123"}
+  hosting.sites.customDomains.operations.list:
+    args: {"name": "projects/demo-project/sites/demo-project/customDomains/www.example.com"}
+  hosting.sites.customDomains.patch:
+    args: {"name": "projects/demo-project/sites/demo-project/customDomains/www.example.com"}
+  hosting.sites.customDomains.undelete:
+    args: {"name": "projects/demo-project/sites/demo-project/customDomains/www.example.com"}
+  hosting.sites.delete:
+    args: {"name": "projects/demo-project/sites/demo-project"}
+  hosting.sites.domains.create:
+    args: {"parent": "sites/demo-project"}
+  hosting.sites.domains.delete:
+    args: {"name": "sites/demo-project/domains/www.example.com"}
+  hosting.sites.domains.get:
+    args: {"name": "sites/demo-project/domains/www.example.com"}
+  hosting.sites.domains.list:
+    args: {"parent": "sites/demo-project"}
+  hosting.sites.domains.update:
+    args: {"name": "sites/demo-project/domains/www.example.com"}
+  hosting.sites.get:
+    args: {"name": "projects/demo-project/sites/demo-project"}
+  hosting.sites.getConfig:
+    args: {"name": "sites/demo-project/config"}
+  hosting.sites.list:
+    args: {"parent": "projects/demo-project"}
+  hosting.sites.patch:
+    args: {"name": "projects/demo-project/sites/demo-project"}
+  hosting.sites.releases.create:
+    args: {"parent": "sites/demo-project"}
+  hosting.sites.releases.get:
+    args: {"name": "sites/demo-project/releases/r1a2b3"}
+  hosting.sites.releases.list:
+    args: {"parent": "sites/demo-project"}
+  hosting.sites.updateConfig:
+    args: {"name": "sites/demo-project/config"}
+  hosting.sites.versions.clone:
+    args: {"parent": "sites/demo-project"}
+  hosting.sites.versions.create:
+    args: {"parent": "sites/demo-project"}
+  hosting.sites.versions.delete:
+    args: {"name": "sites/demo-project/versions/v1a2b3"}
+  hosting.sites.versions.files.list:
+    args: {"parent": "sites/demo-project/versions/v1a2b3"}
+  hosting.sites.versions.get:
+    args: {"name": "sites/demo-project/versions/v1a2b3"}
+  hosting.sites.versions.list:
+    args: {"parent": "sites/demo-project"}
+  hosting.sites.versions.patch:
+    args: {"name": "sites/demo-project/versions/v1a2b3"}
+  hosting.sites.versions.populateFiles:
+    args: {"parent": "sites/demo-project/versions/v1a2b3"}
+  management.androidApps.create:
+    args: {"parent": "projects/demo-project"}
+  management.androidApps.get:
+    args: {"name": "projects/demo-project/androidApps/1:1234567890:android:abc123"}
+  management.androidApps.getConfig:
+    args: {"name": "projects/demo-project/androidApps/1:1234567890:android:abc123/config"}
+  management.androidApps.list:
+    args: {"parent": "projects/demo-project"}
+  management.androidApps.patch:
+    args: {"name": "projects/demo-project/androidApps/1:1234567890:android:abc123"}
+  management.androidApps.remove:
+    args: {"name": "projects/demo-project/androidApps/1:1234567890:android:abc123"}
+  management.androidApps.sha.create:
+    args: {"parent": "projects/demo-project/androidApps/1:1234567890:android:abc123"}
+  management.androidApps.sha.delete:
+    args: {"name": "projects/demo-project/androidApps/1:1234567890:android:abc123/sha/abc123"}
+  management.androidApps.sha.list:
+    args: {"parent": "projects/demo-project/androidApps/1:1234567890:android:abc123"}
+  management.androidApps.undelete:
+    args: {"name": "projects/demo-project/androidApps/1:1234567890:android:abc123"}
+  management.availableProjects.list:
+    args: {}
+  management.iosApps.create:
+    args: {"parent": "projects/demo-project"}
+  management.iosApps.get:
+    args: {"name": "projects/demo-project/iosApps/1:1234567890:ios:abc123"}
+  management.iosApps.getConfig:
+    args: {"name": "projects/demo-project/iosApps/1:1234567890:ios:abc123/config"}
+  management.iosApps.list:
+    args: {"parent": "projects/demo-project"}
+  management.iosApps.patch:
+    args: {"name": "projects/demo-project/iosApps/1:1234567890:ios:abc123"}
+  management.iosApps.remove:
+    args: {"name": "projects/demo-project/iosApps/1:1234567890:ios:abc123"}
+  management.iosApps.undelete:
+    args: {"name": "projects/demo-project/iosApps/1:1234567890:ios:abc123"}
+  management.operations.get:
+    args: {"name": "operations/ada"}
+  management.projects.addFirebase:
+    args: {"project": "projects/demo-project"}
+  management.projects.addGoogleAnalytics:
+    args: {"parent": "projects/demo-project"}
+  management.projects.get:
+    args: {"name": "projects/demo-project"}
+  management.projects.getAdminSdkConfig:
+    args: {"name": "projects/demo-project/adminSdkConfig"}
+  management.projects.getAnalyticsDetails:
+    args: {"name": "projects/demo-project/analyticsDetails"}
+  management.projects.list:
+    args: {}
+  management.projects.patch:
+    args: {"name": "projects/demo-project"}
+  management.projects.removeAnalytics:
+    args: {"parent": "projects/demo-project"}
+  management.projects.searchApps:
+    args: {"parent": "projects/demo-project"}
+  management.webApps.create:
+    args: {"parent": "projects/demo-project"}
+  management.webApps.get:
+    args: {"name": "projects/demo-project/webApps/1:1234567890:web:abc123"}
+  management.webApps.getConfig:
+    args: {"name": "projects/demo-project/webApps/1:1234567890:web:abc123/config"}
+  management.webApps.list:
+    args: {"parent": "projects/demo-project"}
+  management.webApps.patch:
+    args: {"name": "projects/demo-project/webApps/1:1234567890:web:abc123"}
+  management.webApps.remove:
+    args: {"name": "projects/demo-project/webApps/1:1234567890:web:abc123"}
+  management.webApps.undelete:
+    args: {"name": "projects/demo-project/webApps/1:1234567890:web:abc123"}
+  messaging.messages.send:
+    args: {"parent": "projects/demo-project", "message": {"topic": "news", "notification": {"title": "Hello", "body": "Sent with Corsair"}}}
+  messaging.registrations.topicSubscriptions.create:
+    args: {"parent": "projects/demo-project/registrations/x1"}
+  messaging.registrations.topicSubscriptions.delete:
+    args: {"name": "projects/demo-project/registrations/x1/topicSubscriptions/x1"}
+  messaging.registrations.topicSubscriptions.get:
+    args: {"name": "projects/demo-project/registrations/x1/topicSubscriptions/x1"}
+  messaging.registrations.topicSubscriptions.list:
+    args: {"parent": "projects/demo-project/registrations/x1"}
+  messaging.registrations.topicSubscriptions.patch:
+    args: {"name": "projects/demo-project/registrations/x1/topicSubscriptions/x1"}
+  remoteConfig.namespaces.experiments.delete:
+    args: {"name": "projects/demo-project/namespaces/firebase/experiments/x1"}
+  remoteConfig.namespaces.experiments.get:
+    args: {"name": "projects/demo-project/namespaces/firebase/experiments/x1"}
+  remoteConfig.namespaces.experiments.list:
+    args: {"parent": "projects/demo-project/namespaces/firebase"}
+  remoteConfig.namespaces.fetch:
+    args: {"project": "demo-project", "namespace": "x1"}
+  remoteConfig.namespaces.get:
+    args: {"name": "projects/demo-project/namespaces/firebase"}
+  remoteConfig.namespaces.getConditionOrder:
+    args: {"name": "projects/demo-project/namespaces/firebase/conditionOrder"}
+  remoteConfig.namespaces.getRemoteConfig:
+    args: {"name": "projects/demo-project/namespaces/firebase/remoteConfig"}
+  remoteConfig.namespaces.getServerRemoteConfig:
+    args: {"name": "projects/demo-project/namespaces/firebase/serverRemoteConfig"}
+  remoteConfig.namespaces.list:
+    args: {"parent": "projects/demo-project"}
+  remoteConfig.namespaces.remoteConfig.downloadDefaults:
+    args: {"name": "projects/demo-project/namespaces/firebase/remoteConfig"}
+  remoteConfig.namespaces.remoteConfig.listVersions:
+    args: {"parent": "projects/demo-project/namespaces/firebase/remoteConfig"}
+  remoteConfig.namespaces.remoteConfig.rollback:
+    args: {"name": "projects/demo-project/namespaces/firebase/remoteConfig"}
+  remoteConfig.namespaces.remoteConfigConditions.create:
+    args: {"parent": "projects/demo-project/namespaces/firebase"}
+  remoteConfig.namespaces.remoteConfigConditions.delete:
+    args: {"name": "projects/demo-project/namespaces/firebase/remoteConfigConditions/x1"}
+  remoteConfig.namespaces.remoteConfigConditions.get:
+    args: {"name": "projects/demo-project/namespaces/firebase/remoteConfigConditions/x1"}
+  remoteConfig.namespaces.remoteConfigConditions.list:
+    args: {"parent": "projects/demo-project/namespaces/firebase"}
+  remoteConfig.namespaces.remoteConfigConditions.patch:
+    args: {"name": "projects/demo-project/namespaces/firebase/remoteConfigConditions/x1"}
+  remoteConfig.namespaces.remoteConfigParameterGroups.create:
+    args: {"parent": "projects/demo-project/namespaces/firebase"}
+  remoteConfig.namespaces.remoteConfigParameterGroups.delete:
+    args: {"name": "projects/demo-project/namespaces/firebase/remoteConfigParameterGroups/x1"}
+  remoteConfig.namespaces.remoteConfigParameterGroups.get:
+    args: {"name": "projects/demo-project/namespaces/firebase/remoteConfigParameterGroups/x1"}
+  remoteConfig.namespaces.remoteConfigParameterGroups.list:
+    args: {"parent": "projects/demo-project/namespaces/firebase"}
+  remoteConfig.namespaces.remoteConfigParameterGroups.patch:
+    args: {"name": "projects/demo-project/namespaces/firebase/remoteConfigParameterGroups/x1"}
+  remoteConfig.namespaces.remoteConfigParameters.create:
+    args: {"parent": "projects/demo-project/namespaces/firebase"}
+  remoteConfig.namespaces.remoteConfigParameters.delete:
+    args: {"name": "projects/demo-project/namespaces/firebase/remoteConfigParameters/x1"}
+  remoteConfig.namespaces.remoteConfigParameters.get:
+    args: {"name": "projects/demo-project/namespaces/firebase/remoteConfigParameters/x1"}
+  remoteConfig.namespaces.remoteConfigParameters.list:
+    args: {"parent": "projects/demo-project/namespaces/firebase"}
+  remoteConfig.namespaces.remoteConfigParameters.patch:
+    args: {"name": "projects/demo-project/namespaces/firebase/remoteConfigParameters/x1"}
+  remoteConfig.namespaces.rollouts.delete:
+    args: {"name": "projects/demo-project/namespaces/firebase/rollouts/x1"}
+  remoteConfig.namespaces.rollouts.get:
+    args: {"name": "projects/demo-project/namespaces/firebase/rollouts/x1"}
+  remoteConfig.namespaces.rollouts.list:
+    args: {"parent": "projects/demo-project/namespaces/firebase"}
+  remoteConfig.namespaces.updateConditionOrder:
+    args: {"name": "projects/demo-project/namespaces/firebase/conditionOrder"}
+  remoteConfig.namespaces.updateRemoteConfig:
+    args: {"name": "projects/demo-project/namespaces/firebase/remoteConfig", "ifMatch": "example"}
+  remoteConfig.projects.getRemoteConfig:
+    args: {"project": "projects/demo-project"}
+  remoteConfig.projects.updateRemoteConfig:
+    args: {"project": "projects/demo-project", "ifMatch": "example"}
+  remoteConfig.remoteConfig.downloadDefaults:
+    args: {"project": "projects/demo-project"}
+  remoteConfig.remoteConfig.listVersions:
+    args: {"project": "projects/demo-project"}
+  remoteConfig.remoteConfig.rollback:
+    args: {"project": "projects/demo-project"}
+  rules.projects.test:
+    args: {"name": "projects/ada"}
+  rules.releases.create:
+    args: {"name": "projects/demo-project"}
+  rules.releases.delete:
+    args: {"name": "projects/demo-project/releases/ada"}
+  rules.releases.get:
+    args: {"name": "projects/demo-project/releases/ada"}
+  rules.releases.getExecutable:
+    args: {"name": "projects/demo-project/releases/ada"}
+  rules.releases.list:
+    args: {"name": "projects/demo-project"}
+  rules.releases.patch:
+    args: {"name": "projects/demo-project/releases/ada"}
+  rules.rulesets.create:
+    args: {"name": "projects/demo-project"}
+  rules.rulesets.delete:
+    args: {"name": "projects/demo-project/rulesets/ruleset-1"}
+  rules.rulesets.get:
+    args: {"name": "projects/demo-project/rulesets/ruleset-1"}
+  rules.rulesets.list:
+    args: {"name": "projects/demo-project"}
+  storage.buckets.delete:
+    args: {"bucket": "demo-project.appspot.com"}
+  storage.buckets.get:
+    args: {"bucket": "demo-project.appspot.com"}
+  storage.buckets.getIamPolicy:
+    args: {"bucket": "demo-project.appspot.com"}
+  storage.buckets.getStorageLayout:
+    args: {"bucket": "demo-project.appspot.com"}
+  storage.buckets.insert:
+    args: {"project": "demo-project"}
+  storage.buckets.list:
+    args: {"project": "demo-project"}
+  storage.buckets.lockRetentionPolicy:
+    args: {"bucket": "demo-project.appspot.com", "ifMetagenerationMatch": "example"}
+  storage.buckets.operations.advanceRelocateBucket:
+    args: {"bucket": "demo-project.appspot.com", "operationId": "x1"}
+  storage.buckets.operations.cancel:
+    args: {"bucket": "demo-project.appspot.com", "operationId": "x1"}
+  storage.buckets.operations.get:
+    args: {"bucket": "demo-project.appspot.com", "operationId": "x1"}
+  storage.buckets.operations.list:
+    args: {"bucket": "demo-project.appspot.com"}
+  storage.buckets.patch:
+    args: {"bucket": "demo-project.appspot.com"}
+  storage.buckets.relocate:
+    args: {"bucket": "demo-project.appspot.com"}
+  storage.buckets.restore:
+    args: {"bucket": "demo-project.appspot.com", "generation": "example"}
+  storage.buckets.setIamPolicy:
+    args: {"bucket": "demo-project.appspot.com"}
+  storage.buckets.testIamPermissions:
+    args: {"bucket": "demo-project.appspot.com", "permissions": ["example"]}
+  storage.buckets.update:
+    args: {"bucket": "demo-project.appspot.com"}
+  storage.objects.bulkRestore:
+    args: {"bucket": "demo-project.appspot.com"}
+  storage.objects.compose:
+    args: {"destinationBucket": "x1", "destinationObject": "x1"}
+  storage.objects.copy:
+    args: {"destinationBucket": "x1", "destinationObject": "x1", "sourceBucket": "x1", "sourceObject": "x1"}
+  storage.objects.delete:
+    args: {"bucket": "demo-project.appspot.com", "object": "uploads/report.pdf"}
+  storage.objects.download:
+    args: {"bucket": "demo-project.appspot.com", "object": "uploads/report.pdf"}
+  storage.objects.get:
+    args: {"bucket": "demo-project.appspot.com", "object": "uploads/report.pdf"}
+  storage.objects.getIamPolicy:
+    args: {"bucket": "demo-project.appspot.com", "object": "uploads/report.pdf"}
+  storage.objects.insert:
+    args: {"bucket": "demo-project.appspot.com", "name": "uploads/hello.txt", "file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "hello.txt", "contentType": "text/plain"}}
+  storage.objects.list:
+    args: {"bucket": "demo-project.appspot.com"}
+  storage.objects.move:
+    args: {"bucket": "demo-project.appspot.com", "sourceObject": "x1", "destinationObject": "x1"}
+  storage.objects.patch:
+    args: {"bucket": "demo-project.appspot.com", "object": "uploads/report.pdf"}
+  storage.objects.restore:
+    args: {"bucket": "demo-project.appspot.com", "generation": "example", "object": "uploads/report.pdf"}
+  storage.objects.rewrite:
+    args: {"destinationBucket": "x1", "destinationObject": "x1", "sourceBucket": "x1", "sourceObject": "x1"}
+  storage.objects.setIamPolicy:
+    args: {"bucket": "demo-project.appspot.com", "object": "uploads/report.pdf"}
+  storage.objects.testIamPermissions:
+    args: {"bucket": "demo-project.appspot.com", "object": "uploads/report.pdf", "permissions": ["example"]}
+  storage.objects.update:
+    args: {"bucket": "demo-project.appspot.com", "object": "uploads/report.pdf"}
+  storage.objects.viewFullContext:
+    args: {"bucket": "demo-project.appspot.com", "object": "uploads/report.pdf", "contextKey": "example"}
+  storageBuckets.buckets.addFirebase:
+    args: {"bucket": "projects/demo-project/buckets/demo-project.appspot.com"}
+  storageBuckets.buckets.get:
+    args: {"name": "projects/demo-project/buckets/demo-project.appspot.com"}
+  storageBuckets.buckets.list:
+    args: {"parent": "projects/demo-project"}
+  storageBuckets.buckets.removeFirebase:
+    args: {"bucket": "projects/demo-project/buckets/demo-project.appspot.com"}
+  storageBuckets.defaultBucket.create:
+    args: {"parent": "projects/demo-project"}
+  storageBuckets.projects.deleteDefaultBucket:
+    args: {"name": "projects/demo-project/defaultBucket"}
+  storageBuckets.projects.getDefaultBucket:
+    args: {"name": "projects/demo-project/defaultBucket"}
