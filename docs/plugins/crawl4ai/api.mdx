@@ -1,0 +1,1910 @@
+---
+title: "Crawl4AI API reference"
+sidebarTitle: "API"
+description: "API reference for the Crawl4AI plugin in Corsair: every `crawl4ai.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Cloud
+
+### answer
+
+`cloud.answer`
+
+Answer a question directly from the web (optionally as JSON matching a schema), with the sources it drew on; experimental
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.answer({ q: 'rust web crawler' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | The question or a whole prompt (max 4,000 characters). |
+| `schema` | `Record<string, any>` | No | A JSON Schema the answer must match. |
+| `deep` | `boolean` | No | Read a couple of pages when needed (default true); false = only a readily available answer. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### batch
+
+`cloud.batch`
+
+Run one tool over many inputs: as a job (up to 10,000; follow with cloud.jobs.*) or streamed in the call (stream true, up to 50, returned as a list)
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.batch({
+	tool: 'scrape',
+	inputs: [{ url: 'https://example.com' }, { url: 'https://example.org' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool` | `string` | Yes | The tool id, e.g. scrape. |
+| `inputs` | `Record<string, any>[]` | Yes | One input per page; the first one's options apply to all. |
+| `stream` | `boolean` | No | Answer in the call, one result per line (up to 50). |
+| `idempotency_key` | `string` | No | Send the same key again on a retry to get the first job back, billed once. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### billing.balance
+
+`cloud.billing.balance`
+
+Your account's credit balance and this month's plan allowance
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.billing.balance({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### billing.subscribe
+
+`cloud.billing.subscribe`
+
+Start a monthly plan: returns a Stripe checkout page made for this account (a person pays there)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.crawl4ai.api.cloud.billing.subscribe({ plan: 'starter' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `plan` | `string` | Yes | The plan id: starter, builder or scale. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### billing.topup
+
+`cloud.billing.topup`
+
+Buy extra credits on a plan, charged to the account's saved card (10 to 1,000 dollars)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.crawl4ai.api.cloud.billing.topup({ amount: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `amount` | `number` | Yes | Dollars, 10 to 1000. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### billing.topups
+
+`cloud.billing.topups`
+
+Your payments, newest first: top-ups, auto recharges and plan charges, with receipts
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.billing.topups({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Payments a page. |
+| `cursor` | `string` | No | next_cursor from the last page. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### extract
+
+`cloud.extract`
+
+Extract typed records from a page (or your own content) by a plain-English instruction and/or a JSON schema
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.extract({ url: 'https://news.ycombinator.com', instruction: 'the top stories on the front page' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | No | The page to read. |
+| `content` | `string` | No | Your own text, Markdown or HTML instead of a URL. |
+| `instruction` | `string` | No | What to pull out, in plain English. |
+| `schema` | `Record<string, any>` | No | JSON Schema each record must match. |
+| `example` | `Record<string, any>` | No | A sample of the shape you want. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### jobs.cancel
+
+`cloud.jobs.cancel`
+
+Stop a job; it ends as paused and keeps what it fetched
+
+**Risk:** `destructive`
+
+```ts
+await corsair.crawl4ai.api.cloud.jobs.cancel({ job_id: 'j_7f3c2a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | The job id. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### jobs.get
+
+`cloud.jobs.get`
+
+Get a job's state (pending, running, done, paused), counts and cost; free
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.jobs.get({ job_id: 'j_7f3c2a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | The job id. |
+| `full` | `1` | No | 1 for per-URL detail. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### jobs.results
+
+`cloud.jobs.results`
+
+Read a job's rows (500 a page, each with seq); page with after = the last seq + 1; free
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.jobs.results({ job_id: 'j_7f3c2a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | The job id. |
+| `after` | `number` | No | Rows already read (the last seq + 1). |
+| `limit` | `number` | No | Rows a page (1 to 500). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One entry per NDJSON line, in order. |
+
+
+
+---
+
+### jobs.retry
+
+`cloud.jobs.retry`
+
+Run a job's failed pages again (billed like the first run)
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.jobs.retry({ job_id: 'j_7f3c2a' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | Yes | The job id. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### lead
+
+`cloud.lead`
+
+Find people, companies or industries by filters, or enrich a person or company (email, phone)
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.lead({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `find` | `string` | No | What to find: people, companies, industries, enrich, email, phone, company. |
+| `where` | `Record<string, any>` | No | Filters, e.g. &#123; company: &#123; industry, country &#125; &#125;. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### monitors.changes
+
+`cloud.monitors.changes`
+
+The feed of new matched changes across your watches
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.monitors.changes({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### monitors.delete
+
+`cloud.monitors.delete`
+
+Stop and delete a page watch
+
+**Risk:** `destructive`
+
+```ts
+await corsair.crawl4ai.api.cloud.monitors.delete({ id: 'youtube-captions' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The watch id. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### monitors.events
+
+`cloud.monitors.events`
+
+List a watch's checks and matched changes
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.monitors.events({ id: 'youtube-captions' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The watch id. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### monitors.get
+
+`cloud.monitors.get`
+
+Get one page watch
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.monitors.get({ id: 'youtube-captions' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The watch id. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### monitors.list
+
+`cloud.monitors.list`
+
+List your page watches
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.monitors.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### monitors.update
+
+`cloud.monitors.update`
+
+Change a page watch (what to watch, how often, who to tell) or pause and resume it
+
+**Risk:** `write`
+
+```ts
+await corsair.crawl4ai.api.cloud.monitors.update({
+	id: 'm_123',
+	fields: { every: '1d' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The watch id. |
+| `fields` | `Record<string, any>` | No | The fields to change, as cloud.watch takes them, e.g. &#123; every, paused, notify &#125;. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### price
+
+`cloud.price`
+
+Read websites' pricing pages: every plan, tier, billing period, add-on, trial and discount, per country, each with the page text it came from
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.price({
+	sites: ['example'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sites` | `string[]` | Yes | Domains (hubspot.com) or pricing page URLs; at most 20. |
+| `country` | `any` | No | Two-letter country, or a list of up to 5 (sites x countries at most 20). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### priceHistory
+
+`cloud.priceHistory`
+
+Every price read on a site, newest first (one point per change), up to 1,000; 1 credit
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.priceHistory({ domain: 'docs.crawl4ai.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The site: hubspot.com. |
+| `country` | `string` | No | Two-letter country. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### prices
+
+`cloud.prices`
+
+The public price table: credits per tool, the free grants, the plans and their limits
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.prices({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### report
+
+`cloud.report`
+
+Send Crawl4AI's team a report about a failed, slow or wrong call (never include keys or personal data); at most 5 an hour
+
+**Risk:** `write`
+
+```ts
+await corsair.crawl4ai.api.cloud.report({ category: 'slow', title: 'scrape took 40 s on a blog page' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `agent` | No | agent |
+| `category` | `failed \| slow \| wrong \| could-be-better \| ux` | Yes | failed, slow, wrong, could-be-better or ux. |
+| `title` | `string` | Yes | One line. |
+| `note` | `string` | No | What you tried, what came back, what you expected. |
+| `context` | `Record<string, any>` | No | &#123; receipt: &lt;request_id&gt; &#125; |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### scan
+
+`cloud.scan`
+
+List every URL of a site from its sitemaps and home page links (optionally Common Crawl and the Wayback Machine), without crawling
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.scan({ domain: 'docs.crawl4ai.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The site's host: docs.crawl4ai.com. |
+| `extended` | `boolean` | No | Also ask Common Crawl and the Wayback Machine (20 s or more longer). |
+| `max_urls` | `number` | No | Most URLs returned (default 5000, max 50000). |
+| `include` | `string` | No | Keep only matching URLs: a path prefix (/docs) or a glob (*/blog/*). |
+| `include_subdomains` | `boolean` | No | Also list subdomains. |
+| `bypass_cache` | `boolean` | No | Scan again even when cached (7 days). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### scrape
+
+`cloud.scrape`
+
+Fetch one page as clean Markdown and/or HTML (cache, then HTTP, then a browser), with optional links, media, metadata and tables
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.scrape({ url: 'https://example.com', format: 'md' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | A public http(s) URL. |
+| `format` | `both \| md \| html` | No | both (default), md or html. |
+| `proxy` | `standard \| extra` | No | standard (default) or extra: rented residential addresses when ours are refused; a page served that way costs 4x. |
+| `country` | `string` | No | Two-letter country to fetch from, e.g. us, gb. |
+| `parse` | `any` | No | Also return page structure: true, a list (links, media, metadata, tables) or an object. |
+| `engine` | `auto \| browser-light \| browser` | No | auto (default), browser-light or browser. |
+| `bypass_cache` | `boolean` | No | Fetch fresh, never from the cache. |
+| `timeout` | `number` | No | Answer within this many seconds (5 to 120); set it a little below your client timeout. |
+| `fresh` | `boolean` | No | Skip the cache and fetch fresh (the Crawl4AI-Fresh header). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### search
+
+`cloud.search`
+
+Web search: ranked results (title, url, snippet), with rich blocks (follow-ups, entity card, news) or the top pages read in full (deep)
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.search({ q: 'rust web crawler' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | The query (max 512 characters). |
+| `rich` | `boolean` | No | Also return follow-up questions, related queries, an entity card, videos and news. |
+| `deep` | `boolean` | No | Also read the top 10 result pages into each result's markdown (0.1 credit a page). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### serp
+
+`cloud.serp`
+
+Google's results page as data: organic ranks plus every block (AI overview, people also ask, local pack, ads ...), localised to a country or city; beta
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.serp({ q: 'rust web crawler' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | The query (max 512 characters). |
+| `country` | `string` | No | Two letters, default us. |
+| `language` | `string` | No | Google language code, default en. |
+| `location` | `string` | No | A city or region: "Austin, TX". |
+| `num` | `number` | No | Results asked: a multiple of 10 up to 100 (10 per Google page, 1 credit each). |
+| `page` | `number` | No | Page over num (1 to 30). |
+| `time` | `hour \| day \| week \| month \| year` | No | Google's time filter. |
+| `fresh` | `boolean` | No | Skip the cache. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### site
+
+`cloud.site`
+
+Crawl a site level by level from a start URL into Markdown or HTML, as a job (follow it with cloud.jobs.get and cloud.jobs.results)
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.site({
+	url: 'https://docs.crawl4ai.com/',
+	depth: 2,
+	max_pages: 50,
+	include: '/core',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The start page. |
+| `depth` | `number` | No | Levels of links below the start page (default 2, max 5). |
+| `max_pages` | `number` | No | Most pages fetched (default 100, max 500). |
+| `include` | `string` | No | Follow only matching URLs. |
+| `exclude` | `string` | No | Never follow matching URLs. |
+| `include_subdomains` | `boolean` | No | Also follow subdomains. |
+| `content` | `md \| html \| none` | No | md (default), html or none. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### tools.estimate
+
+`cloud.tools.estimate`
+
+Price a run before it runs, with the same inputs; free
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.tools.estimate({ id: 'youtube-captions' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The tool id. |
+| `input` | `Record<string, any>` | No | The tool's inputs. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### tools.get
+
+`cloud.tools.get`
+
+Get one tool's full definition: inputs, output columns, cost, examples and status; free
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.tools.get({ id: 'youtube-captions' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The tool id, e.g. scrape, youtube-captions. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### tools.list
+
+`cloud.tools.list`
+
+Find tools in the catalog (11 essentials for any site and site tools for named sites): search with q, or filter by category, source (site), kind, status or essential; free, no credits
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.tools.list({ q: 'amazon reviews' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Words or a sentence: "video transcript", "amazon reviews". |
+| `category` | `string` | No | A category id: video, jobs, shopping, social, people-companies ... |
+| `source` | `string` | No | A site id: youtube, amazon, linkedin, google-maps, x ... |
+| `kind` | `pages \| search \| people \| sites` | No | pages, search, people or sites. |
+| `status` | `verified \| beta \| failing` | No | verified, beta or failing. |
+| `essential` | `boolean` | No | Only the 11 essentials. |
+| `format` | `text` | No | text: one line per tool instead of JSON. |
+| `limit` | `number` | No | Tools a page (default 50, at most 200). |
+| `cursor` | `string` | No | next_cursor from the last page. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### tools.run
+
+`cloud.tools.run`
+
+Run any tool by id with its inputs (site tools such as amazon-reviews, youtube-captions, linkedin-profile; read the inputs with cloud.tools.get first); costs credits
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.tools.run({
+	id: 'youtube-captions',
+	input: { video: 'aircAruvnKk' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The tool id. |
+| `input` | `Record<string, any>` | No | The tool's inputs, as cloud.tools.get lists them. |
+| `fresh` | `boolean` | No | Skip the cache and fetch fresh (the Crawl4AI-Fresh header). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### tools.status
+
+`cloud.tools.status`
+
+Get a tool's status from its daily check (verified, beta, failing); free
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.tools.status({ id: 'youtube-captions' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The tool id. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### verify
+
+`cloud.verify`
+
+Check whether an email address can receive mail (no mail is sent), a list of up to 1,000, or a domain's mail setup
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.cloud.verify({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `check` | `email \| list \| domain` | No | email (default), list or domain. |
+| `email` | `string` | No | One address (check email). |
+| `emails` | `string[]` | No | Up to 1,000 addresses (check list). |
+| `domain` | `string` | No | A domain (check domain). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### watch
+
+`cloud.watch`
+
+Watch a page and get told (email, webhook or the changes feed) when the change you describe happens; each check costs credits
+
+**Risk:** `write`
+
+```ts
+await corsair.crawl4ai.api.cloud.watch({ url: 'https://example.com/pricing', watch: 'a plan gets more expensive', email: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page to watch. |
+| `watch` | `string` | No | The change you care about, in plain words. |
+| `every` | `string` | No | How often to check (default auto). |
+| `email` | `string` | No | Email to tell. |
+| `webhook` | `string` | No | URL to POST changes to. |
+| `secret` | `string` | No | Signs the webhook. |
+| `trigger` | `any` | No | When to tell. |
+| `region` | `string` | No | Where to check from. |
+| `name` | `string` | No | A name for the watch. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Server
+
+### artifacts.get
+
+`server.artifacts.get`
+
+Download an artifact a crawl stored (a screenshot, PDF or MHTML), as a file
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.artifacts.get({ artifact_id: 'a_123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `artifact_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+
+
+
+---
+
+### ask
+
+`server.ask`
+
+Search Crawl4AI's own library documentation and code context (for agents writing Crawl4AI code)
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.ask({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context_type` | `string` | No | — |
+| `query` | `string \| null` | No | search query to filter chunks |
+| `score_ratio` | `number` | No | min score as fraction of max_score |
+| `max_results` | `number` | No | absolute cap on returned chunks |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### configDump
+
+`server.configDump`
+
+Check a config in its JSON form (&#123; type: CrawlerRunConfig or BrowserConfig, params &#125;) and get it back with every default the server fills in
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.configDump({
+	type: 'CrawlerRunConfig',
+	params: { word_count_threshold: 10 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `CrawlerRunConfig \| BrowserConfig` | Yes | Which config. |
+| `params` | `Record<string, any>` | No | The config fields, e.g. &#123; word_count_threshold: 10 &#125;. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### crawl
+
+`server.crawl`
+
+Crawl one or more URLs and wait for the results: Markdown, HTML, links, media, tables, metadata, extracted content, with browser and crawler configs
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.crawl({
+	urls: ['https://example.com'],
+	crawler_config: {
+		type: 'CrawlerRunConfig',
+		params: { cache_mode: 'bypass' },
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urls` | `string[]` | Yes | — |
+| `browser_config` | `object \| null` | No | — |
+| `crawler_config` | `object \| null` | No | — |
+| `crawler_configs` | `object[] \| null` | No | List of per-URL CrawlerRunConfig dicts for arun_many(). When provided, each config can include a 'url_matcher' pattern to match against specific URLs. Takes precedence over crawler_config. |
+| `hooks` | `object \| null` | No | Optional user-provided hook functions |
+
+<AccordionGroup>
+<Accordion title="browser_config full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="crawler_config full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="crawler_configs full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="hooks full type">
+
+```ts
+{
+  hooks?: {
+    action: string,
+    params?: {
+    }
+  }[],
+  timeout?: number,
+  code?: any | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### crawlJobs.create
+
+`server.crawlJobs.create`
+
+Queue a crawl of one or more URLs with browser and crawler configs; poll server.crawlJobs.get or pass webhook_config
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.crawlJobs.create({
+	urls: ['https://example.com'],
+	webhook_config: {
+		webhook_url: 'https://example.com/hooks/corsair',
+		webhook_headers: { X-Webhook-Secret: 'a-long-random-secret' },
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urls` | `string[]` | Yes | — |
+| `browser_config` | `object` | No | — |
+| `crawler_config` | `object` | No | — |
+| `webhook_config` | `object \| null` | No | Configuration for webhook notifications. |
+
+<AccordionGroup>
+<Accordion title="browser_config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="crawler_config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="webhook_config full type">
+
+```ts
+{
+  webhook_url: string,
+  webhook_data_in_payload?: boolean,
+  webhook_headers?: Record<string, string> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### crawlJobs.get
+
+`server.crawlJobs.get`
+
+Get the state and, once completed, the results of a crawl job
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.crawlJobs.get({ task_id: 'crawl_a1b2c3d4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### crawlStream
+
+`server.crawlStream`
+
+Crawl URLs and collect each result as the server streams it (NDJSON, returned as a list)
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.crawlStream({
+	urls: ['https://example.com'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `urls` | `string[]` | Yes | — |
+| `browser_config` | `object \| null` | No | — |
+| `crawler_config` | `object \| null` | No | — |
+| `crawler_configs` | `object[] \| null` | No | List of per-URL CrawlerRunConfig dicts for arun_many(). When provided, each config can include a 'url_matcher' pattern to match against specific URLs. Takes precedence over crawler_config. |
+| `hooks` | `object \| null` | No | Optional user-provided hook functions |
+
+<AccordionGroup>
+<Accordion title="browser_config full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="crawler_config full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="crawler_configs full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="hooks full type">
+
+```ts
+{
+  hooks?: {
+    action: string,
+    params?: {
+    }
+  }[],
+  timeout?: number,
+  code?: any | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One entry per NDJSON line, in order. |
+
+
+
+---
+
+### executeJs
+
+`server.executeJs`
+
+Run JavaScript snippets in a page (they can click, type and submit) and return the crawl result with each snippet's return value
+
+**Risk:** `write`
+
+```ts
+await corsair.crawl4ai.api.server.executeJs({
+	url: 'https://example.com',
+	scripts: ['document.title'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `scripts` | `string[]` | Yes | List of separated JavaScript snippets to execute |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### health
+
+`server.health`
+
+Check the server is up and get its version
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.health({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### hooks
+
+`server.hooks`
+
+List the declarative hook actions the server allows, with their parameters
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.hooks({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### html
+
+`server.html`
+
+Fetch a page as preprocessed HTML (scripts and styles removed), for schema building
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.html({ url: 'https://example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### llm
+
+`server.llm`
+
+Answer a question about a page with the server's configured LLM
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.llm({ url: 'https://example.com', q: 'rust web crawler' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The page URL (`https://`...). |
+| `q` | `string` | Yes | — |
+| `provider` | `string \| null` | No | LLM provider override, e.g. 'openai/gpt-6-luna' |
+| `temperature` | `number \| null` | No | LLM temperature override |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### llmJobs.create
+
+`server.llmJobs.create`
+
+Queue an LLM extraction of a page: a question or instruction `q` (and optional JSON schema) answered from the page by the server's configured LLM; poll server.llmJobs.get or pass webhook_config
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.llmJobs.create({ url: 'https://example.com', q: 'rust web crawler' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `q` | `string` | Yes | — |
+| `schema` | `string \| null` | No | — |
+| `cache` | `boolean` | No | — |
+| `provider` | `string \| null` | No | — |
+| `webhook_config` | `object \| null` | No | Configuration for webhook notifications. |
+| `temperature` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="webhook_config full type">
+
+```ts
+{
+  webhook_url: string,
+  webhook_data_in_payload?: boolean,
+  webhook_headers?: Record<string, string> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### llmJobs.get
+
+`server.llmJobs.get`
+
+Get the state and, once completed, the result of an LLM extraction job
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.llmJobs.get({ task_id: 'crawl_a1b2c3d4' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | — |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### markdown
+
+`server.markdown`
+
+Fetch a page as Markdown, raw or filtered (fit, bm25 with a query, llm with an instruction)
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.markdown({ url: 'https://example.com', f: 'fit' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Absolute http/https URL to fetch |
+| `f` | `raw \| fit \| bm25 \| llm` | No | — |
+| `q` | `string \| null` | No | Query string used by BM25/LLM filters |
+| `c` | `string \| null` | No | Cache‑bust / revision counter |
+| `provider` | `string \| null` | No | LLM provider override (e.g., 'anthropic/claude-3-opus') |
+| `temperature` | `number \| null` | No | LLM temperature override (0.0-2.0) |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### mcpSchema
+
+`server.mcpSchema`
+
+Get the server's MCP tools and resources as JSON
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.mcpSchema({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### metrics
+
+`server.metrics`
+
+Prometheus metrics of the server (returned as text)
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.metrics({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | The body the server answered with. |
+
+
+
+---
+
+### monitor.browsers
+
+`server.monitor.browsers`
+
+List the browsers in the pool (hot, cold, permanent) with their age and use
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.monitor.browsers({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### monitor.cleanup
+
+`server.monitor.cleanup`
+
+Close idle browsers and free memory now
+
+**Risk:** `write`
+
+```ts
+await corsair.crawl4ai.api.server.monitor.cleanup({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### monitor.endpointStats
+
+`server.monitor.endpointStats`
+
+Get request counts, latency and errors per endpoint
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.monitor.endpointStats({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### monitor.errorLog
+
+`server.monitor.errorLog`
+
+Read the server error log
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.monitor.errorLog({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### monitor.health
+
+`server.monitor.health`
+
+Get the server health: memory, CPU, uptime and the browser pool
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.monitor.health({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### monitor.janitorLog
+
+`server.monitor.janitorLog`
+
+Read the browser-pool janitor log
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.monitor.janitorLog({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### monitor.killBrowser
+
+`server.monitor.killBrowser`
+
+Kill one browser of the pool by its signature (crawls running in it fail)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.crawl4ai.api.server.monitor.killBrowser({ sig: 'browser-1a2b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sig` | `string` | Yes | — |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### monitor.requests
+
+`server.monitor.requests`
+
+List recent requests to the server, filtered by status
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.monitor.requests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### monitor.resetStats
+
+`server.monitor.resetStats`
+
+Reset the server's request statistics (they can't be restored)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.crawl4ai.api.server.monitor.resetStats({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### monitor.restartBrowser
+
+`server.monitor.restartBrowser`
+
+Restart one browser of the pool by its signature
+
+**Risk:** `write`
+
+```ts
+await corsair.crawl4ai.api.server.monitor.restartBrowser({ sig: 'browser-1a2b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sig` | `string` | Yes | — |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### monitor.timeline
+
+`server.monitor.timeline`
+
+Get a metric (memory, requests, browsers) over a time window
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.monitor.timeline({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metric` | `string` | No | — |
+| `window` | `string` | No | — |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### pdf
+
+`server.pdf`
+
+Render a page as a PDF (returned as a file)
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.pdf({ url: 'https://example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `output_path` | `string \| null` | No | REMOVED in 0.9.0 and ignored - no file is written. Results are stored server-side; fetch via GET /artifacts/&#123;artifact_id&#125;. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+
+
+
+---
+
+### schema
+
+`server.schema`
+
+Get the default BrowserConfig and CrawlerRunConfig as JSON, to start a config from
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.schema({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### screenshot
+
+`server.screenshot`
+
+Take a full-page screenshot of a page (returned as a PNG file)
+
+**Risk:** `read`
+
+```ts
+await corsair.crawl4ai.api.server.screenshot({ url: 'https://example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `screenshot_wait_for` | `number \| null` | No | — |
+| `wait_for_images` | `boolean \| null` | No | — |
+| `output_path` | `string \| null` | No | REMOVED in 0.9.0 and ignored - no file is written. Results are stored server-side; fetch via GET /artifacts/&#123;artifact_id&#125;. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+
+
+
+---
+
+### token
+
+`server.token`
+
+Get a JWT for an email address (servers with JWT auth on; api_token is the server secret when one is set)
+
+**Risk:** `write`
+
+```ts
+await corsair.crawl4ai.api.server.token({ email: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `api_token` | `string \| null` | No | — |
+
+
+
+**Output:** `unknown`
+
+
+---
+

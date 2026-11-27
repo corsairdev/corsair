@@ -1635,6 +1635,15 @@
                 ]
               },
               {
+                "group": "Crawl4AI",
+                "pages": [
+                  "plugins/crawl4ai/overview",
+                  "plugins/crawl4ai/api",
+                  "plugins/crawl4ai/database",
+                  "plugins/crawl4ai/webhooks"
+                ]
+              },
+              {
                 "group": "Crow Terminal",
                 "pages": [
                   "plugins/crowterminal/overview",
