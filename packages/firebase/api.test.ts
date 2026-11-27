@@ -12,8 +12,14 @@ import { firebase } from './index';
  *   FIREBASE_SERVICE_ACCOUNT="$(cat key.json)" FIREBASE_PROJECT=<id> npx jest api.test.ts
  *
  * Skipped unless one of them is set (CI never runs files named api.test.ts).
- * It writes and deletes one Firestore document and one Realtime Database
- * path, and creates and deletes one Authentication user.
+ * On a real project it first runs the control plane, which works on a new
+ * Spark (free) project with no setup: project and web app management, a
+ * Hosting site and version, a Rules ruleset, Remote Config (validate only)
+ * and FCM (validate only), each created and deleted again. Then it writes and
+ * deletes one Firestore document and one Realtime Database path, and creates
+ * and deletes one Authentication user; each of those three runs only when the
+ * project has that product turned on (Firestore and Realtime Database
+ * created, Authentication started in the console) and says so otherwise.
  */
 const emulator = process.env.FIREBASE_EMULATOR === '1';
 const key = process.env.FIREBASE_SERVICE_ACCOUNT;
@@ -28,7 +34,21 @@ if (!ready) {
 
 const STAMP = Date.now().toString(36);
 
+const live = !emulator && ready;
+/** Why a product can't run in this project, or undefined when it can. */
+function notSetUp(error: unknown): string | undefined {
+	const message = error instanceof Error ? error.message : String(error);
+	if (/has not been used in project|is disabled/.test(message)) {
+		return message.slice(0, 120);
+	}
+	if (/CONFIGURATION_NOT_FOUND/.test(message)) {
+		return 'Authentication has not been started in the console';
+	}
+	return undefined;
+}
+
 describeIfLive('firebase live', () => {
+	jest.setTimeout(120_000);
 	const corsair = createCorsair({
 		plugins: [
 			firebase({
@@ -47,10 +67,104 @@ describeIfLive('firebase live', () => {
 		],
 	});
 	const api = corsair.firebase.api;
-	const docs = `projects/${project}/databases/(default)/documents`;
-	const databaseUrl = `https://${project}-default-rtdb.firebaseio.com`;
+	const projectName = `projects/${project}`;
+	const docs = `${projectName}/databases/(default)/documents`;
+	let databaseUrl = `https://${project}-default-rtdb.firebaseio.com`;
+	const skip = (product: string, why: string) =>
+		console.warn(`Firebase live: ${product} skipped: ${why}`);
+
+	(live ? it : it.skip)(
+		'manages the project, a web app, Hosting, Rules, Remote Config and FCM',
+		async () => {
+			const info = await api.management.projects.get({ name: projectName });
+			expect(info.projectId).toBe(project);
+			const sdk = await api.management.projects.getAdminSdkConfig({
+				name: `${projectName}/adminSdkConfig`,
+			});
+			expect(sdk.projectId).toBe(project);
+
+			const op = await api.management.webApps.create({
+				parent: projectName,
+				displayName: `corsair-live-${STAMP}`,
+			});
+			let appName: string | undefined;
+			for (let i = 0; i < 15 && op.name && !appName; i++) {
+				const done = await api.management.operations.get({ name: op.name });
+				if (done.done) appName = String(done.response?.name);
+				else await new Promise((resolve) => setTimeout(resolve, 2000));
+			}
+			expect(appName).toMatch(/\/webApps\//);
+			const app = String(appName);
+			const config = await api.management.webApps.getConfig({
+				name: `${app}/config`,
+			});
+			expect(config.projectId).toBe(project);
+			await api.management.webApps.patch({
+				name: app,
+				updateMask: 'displayName',
+				displayName: `corsair-live-${STAMP}-2`,
+			});
+			await api.management.webApps.remove({ name: app, immediate: true });
+
+			const site = await api.hosting.sites.create({
+				parent: projectName,
+				siteId: `corsair-live-${STAMP}`,
+			});
+			const siteName = String(site.name);
+			const version = await api.hosting.sites.versions.create({
+				parent: siteName,
+				config: { headers: [{ glob: '**', headers: { 'X-Corsair': 'live' } }] },
+			});
+			expect(version.status).toBe('CREATED');
+			await api.hosting.sites.versions.delete({ name: String(version.name) });
+			await expect(
+				api.hosting.sites.delete({ name: siteName }),
+			).resolves.toEqual({ success: true });
+
+			const ruleset = await api.rules.rulesets.create({
+				name: projectName,
+				source: {
+					files: [
+						{
+							name: 'storage.rules',
+							content:
+								"rules_version = '2';\nservice firebase.storage { match /b/{bucket}/o { match /{all=**} { allow read, write: if false; } } }",
+						},
+					],
+				},
+			});
+			expect(ruleset.metadata?.services).toContain('firebase.storage');
+			await api.rules.rulesets.delete({ name: String(ruleset.name) });
+
+			await api.remoteConfig.projects.getRemoteConfig({ project: projectName });
+			const draft = await api.remoteConfig.projects.updateRemoteConfig({
+				project: projectName,
+				ifMatch: '*',
+				validateOnly: true,
+				parameters: { corsair_live: { defaultValue: { value: 'on' } } },
+			});
+			expect(draft.parameters?.corsair_live).toBeDefined();
+
+			// validateOnly: FCM checks the message and delivers nothing.
+			const sent = await api.messaging.messages.send({
+				parent: projectName,
+				validateOnly: true,
+				message: { topic: 'corsair-live', notification: { title: 'Live run' } },
+			});
+			expect(sent.name).toContain(`${projectName}/messages/`);
+		},
+	);
 
 	it('writes, reads, queries and deletes a Firestore document', async () => {
+		if (live) {
+			try {
+				await api.firestore.databases.list({ parent: projectName });
+			} catch (error) {
+				const why = notSetUp(error);
+				if (why) return skip('Firestore', why);
+				throw error;
+			}
+		}
 		const name = `${docs}/corsair-live/${STAMP}`;
 		await api.firestore.databases.documents.createDocument({
 			parent: docs,
@@ -71,6 +185,24 @@ describeIfLive('firebase live', () => {
 	});
 
 	it('writes and reads a Realtime Database path', async () => {
+		if (live) {
+			try {
+				const found = await api.databaseInstances.locations.instances.list({
+					parent: `${projectName}/locations/-`,
+				});
+				const instance = found.instances?.find(
+					(candidate) => candidate.type === 'DEFAULT_DATABASE',
+				);
+				if (!instance?.databaseUrl) {
+					return skip('Realtime Database', 'the project has no database yet');
+				}
+				databaseUrl = instance.databaseUrl;
+			} catch (error) {
+				const why = notSetUp(error);
+				if (why) return skip('Realtime Database', why);
+				throw error;
+			}
+		}
 		await api.database.set({
 			databaseUrl,
 			path: `corsair-live/${STAMP}`,
@@ -83,6 +215,17 @@ describeIfLive('firebase live', () => {
 	});
 
 	it('creates, looks up and deletes an Authentication user', async () => {
+		if (live) {
+			try {
+				await api.authAdmin.projects.getConfig({
+					name: `${projectName}/config`,
+				});
+			} catch (error) {
+				const why = notSetUp(error);
+				if (why) return skip('Authentication', why);
+				throw error;
+			}
+		}
 		const user = await api.auth.projects.accounts.create({
 			targetProjectId: String(project),
 			email: `corsair-${STAMP}@example.com`,
