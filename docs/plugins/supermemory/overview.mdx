@@ -1,0 +1,144 @@
+---
+title: "Supermemory plugin"
+sidebarTitle: "Overview"
+description: "Memory for AI agents with Supermemory: add documents, files and URLs to a namespace, search memories and document chunks, read user profiles, forget memories, and manage namespaces, connectors (Notion, Google Drive, OneDrive, Gmail, GitHub and more) and organization settings. Covers the v5 API and the legacy v3/v4 routes (74 operations)."
+---
+
+Use **Supermemory** through Corsair: one client, typed API calls.
+
+Create a key in the Supermemory console (console.supermemory.ai, API Keys). An organization key reaches every namespace; a scoped key only its own namespace and answers 403 elsewhere. Things to know before you write:
+
+- **Namespaces scope everything.** A namespace (formerly a container tag) is one user, project or tenant. Every v5 route except `namespaces.list`, `connectors.listAll`, `organization.*` and `feedback.send` takes `namespace`, and a document belongs to exactly one.
+- **Ingestion is asynchronous.** `documents.add`, `documents.batchAdd` and `documents.uploadFile` answer once the work is queued; extraction and memory formation continue in the background. Read `documents.get` (or `resources.list` with `type: documents`) for the status before you search for the new content. Reusing a document `id` appends to that document and keeps its history.
+- **Search modes.** `search.query` searches memories and document chunks together by default (`searchMode` changes that); `profiles.get` returns the static and dynamic facts Supermemory keeps about the namespace.
+- **Forgetting is permanent.** `memories.forget` removes memories by id, `memories.forgetMatching` removes every memory a natural-language query matches (pass `dryRun: true` first to preview the set), and `documents.delete`, `namespaces.delete` and `connectors.delete` (with `deleteDocuments`) remove content. `namespaces.delete` with `moveTo` moves the content into another namespace instead. All are `destructive`.
+- **Connectors** link Notion, Google Drive, OneDrive, Gmail, GitHub and other apps: `connectors.create` returns an authorization link the account owner opens, and syncs then write documents into the namespace. Connectors need the Pro plan; the free plan answers 403.
+- **Moves and merges wait for processing.** `namespaces.delete` with `moveTo` and `legacy.containerTags.merge` answer 409 while any document in either namespace is still being ingested or forming memories, which can take several minutes. Documents added with `taskType: "superrag"` skip memory formation.
+- **Legacy routes.** Everything under `legacy.` is the v3/v4 API, still served and still in the API reference. Use it for what v5 doesn't have yet: direct memory writes (`legacy.memories.create`), conversations (`legacy.conversations.ingest`), document chunks and presigned file URLs, and container-tag merges. `legacy.settings.reset` deletes every document, memory and connection in the organization.
+- **Feedback.** `feedback.send` sends a bug report or feature request to Supermemory's team, so it is `destructive`.
+- **Limits.** A 429 is retried by core with backoff; a plan limit answers 402.
+
+**What you get:**
+
+- 74 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/supermemory better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/supermemory better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/supermemory better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/supermemory better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { supermemory } from '@corsair-dev/supermemory';
+
+export const corsair = createCorsair({
+	plugins: [
+		supermemory(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Supermemory API key before the first call: `pnpm corsair setup --plugin=supermemory --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+supermemory()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'supermemory',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Search a user's memories**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.supermemory.api.search.query({ namespace: 'user_ada', query: 'When does Ada like to meet?', limit: 5 });
+```
+
+
+**Remember a note about a user**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.supermemory.api.documents.add({
+	namespace: 'user_ada',
+	content: 'Ada prefers morning meetings and works in Lisbon.',
+	id: 'doc_ada_notes',
+	metadata: { source: 'onboarding' },
+});
+```
+
+
+See the full list on the [API](/plugins/supermemory/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/supermemory/api">
+    Every `supermemory.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

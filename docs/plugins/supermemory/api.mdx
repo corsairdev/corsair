@@ -1,0 +1,5807 @@
+---
+title: "Supermemory API reference"
+sidebarTitle: "API"
+description: "API reference for the Supermemory plugin in Corsair: every `supermemory.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Connectors
+
+### create
+
+`connectors.create`
+
+Create connector. Connect an external source to this namespace. OAuth providers return an authorization url to send the user to; providers that authenticate with config start syncing right away. Needs the Pro plan (the free plan answers 403).
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.connectors.create({ namespace: 'user_ada', provider: 'notion' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | Namespace identifier. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope documents and memories. |
+| `provider` | `notion \| gmail \| onedrive \| github \| google-drive \| s3 \| web-crawler \| granola` | Yes | — |
+| `redirectUrl` | `string` | No | Where the user returns after authorizing with the provider |
+| `documentLimit` | `number` | No | Maximum documents this connector imports |
+| `config` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+  syncScope?: selected | full
+} | {
+  syncScope?: selected | full
+} | {
+  bucket: string,
+  region: string,
+  accessKeyId: string,
+  secretAccessKey: string,
+  endpoint?: string,
+  prefix?: string
+} | {
+  startUrl: string,
+  crawlDepth?: number
+} | {
+  apiKey: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Connector identifier |
+| `authorization` | `object \| null` | No | Null for providers that authenticate with config only |
+
+<AccordionGroup>
+<Accordion title="authorization full type">
+
+```ts
+{
+  url?: string | null,
+  expiresAt?: string | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`connectors.delete`
+
+Delete connector. Disconnect a connector and stop its webhooks. Its imported documents are deleted too unless deleteDocuments is false.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supermemory.api.connectors.delete({ namespace: 'user_ada', id: 'doc_ada_notes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | Namespace identifier. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope documents and memories. |
+| `id` | `string` | Yes | Connector identifier returned when the connector was created |
+| `deleteDocuments` | `boolean` | No | Also delete documents this connector imported. Defaults to true. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `deleted` | `boolean \| null` | No | — |
+
+
+
+---
+
+### get
+
+`connectors.get`
+
+Get connector. Read one connector. Add include=syncs to include its recent sync runs and the items that failed. include=picker needs an admin with write access, since the link changes what syncs.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.connectors.get({ namespace: 'user_ada', id: 'doc_ada_notes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | Namespace identifier. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope documents and memories. |
+| `id` | `string` | Yes | Connector identifier returned when the connector was created |
+| `include` | `(syncs \| picker)[]` | No | Comma-separated extras. syncs: the 10 most recent sync runs with their failed items. picker: a one-time hosted picker URL. |
+| `returnUrl` | `string` | No | Where the hosted picker sends the user when they finish |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `provider` | `string \| null` | No | External source |
+| `authorization` | `object \| null` | No | Present while pending, when the caller can create connectors in this namespace |
+| `namespace` | `string \| null \| null` | No | Namespace the connector syncs into. Connectors created without one report sm_project_default. |
+| `account` | `string \| null \| null` | No | Account on the provider side, usually an email |
+| `capabilities` | `object \| null` | No | — |
+| `config` | `Record<string, string \| number \| boolean> \| null \| null` | No | Non-secret setup, such as the S3 bucket, crawler start URL or Notion workspace. Credentials are never returned. |
+| `selection` | `object \| null` | No | What syncs, grouped by kind (repos, labels, files or folders), each a list of &#123; id, name &#125;. Null for connectors that sync everything. |
+| `documentLimit` | `number \| null` | No | — |
+| `documentCount` | `number \| null` | No | — |
+| `latestRun` | `object \| null` | No | The most recent sync run, which may still be running or may have failed |
+| `system` | `object \| null` | No | Lifecycle status and timestamps maintained by Supermemory |
+| `syncs` | `object[] \| null` | No | Present when include=syncs |
+| `picker` | `object \| null` | No | Present when include=picker. Null for connectors that sync everything. |
+
+<AccordionGroup>
+<Accordion title="authorization full type">
+
+```ts
+{
+  url?: string | null,
+  expiresAt?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="capabilities full type">
+
+```ts
+{
+  selectable?: boolean | null,
+  webhooks?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="selection full type">
+
+```ts
+Record<string, {
+  id?: string | null,
+  name?: string | null
+}[]> | null | null
+```
+</Accordion>
+
+<Accordion title="latestRun full type">
+
+```ts
+{
+  errorCode?: string | null | null,
+  error?: string | null | null,
+  system?: {
+    status?: string | null,
+    startedAt?: string | null,
+    completedAt?: string | null | null
+  } | null
+} | null | null
+```
+</Accordion>
+
+<Accordion title="system full type">
+
+```ts
+{
+  status?: string | null,
+  createdAt?: string | null,
+  lastSuccessfulSyncAt?: string | null | null
+} | null
+```
+</Accordion>
+
+<Accordion title="syncs full type">
+
+```ts
+{
+  errorCode?: string | null | null,
+  error?: string | null | null,
+  system?: {
+    status?: string | null,
+    startedAt?: string | null,
+    completedAt?: string | null | null
+  } | null,
+  id?: string | null,
+  trigger?: string | null,
+  itemsProcessed?: number | null,
+  itemsFailed?: number | null,
+  failures?: {
+    documentId?: string | null,
+    title?: string | null | null,
+    errorCode?: string | null,
+    errorMessage?: string | null,
+    failedAt?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="picker full type">
+
+```ts
+{
+  url?: string | null,
+  expiresAt?: string | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`connectors.list`
+
+List connectors. List the connectors that sync into this namespace.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.connectors.list({ namespace: 'user_ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | Namespace identifier. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope documents and memories. |
+| `provider` | `notion \| google-drive \| onedrive \| gmail \| github \| web-crawler \| s3 \| granola` | No | Only return connectors for this provider |
+| `page` | `number` | No | One-based page number |
+| `limit` | `number` | No | Maximum connectors to return per page |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectors` | `object[] \| null` | No | — |
+| `pagination` | `object \| null` | No | Pagination metadata |
+
+<AccordionGroup>
+<Accordion title="connectors full type">
+
+```ts
+{
+  id?: string | null,
+  provider?: string | null,
+  authorization?: {
+    url?: string | null,
+    expiresAt?: string | null
+  } | null,
+  namespace?: string | null | null,
+  account?: string | null | null,
+  capabilities?: {
+    selectable?: boolean | null,
+    webhooks?: boolean | null
+  } | null,
+  config?: Record<string, string | number | boolean> | null | null,
+  selection?: Record<string, {
+    id?: string | null,
+    name?: string | null
+  }[]> | null | null,
+  documentLimit?: number | null,
+  documentCount?: number | null,
+  latestRun?: {
+    errorCode?: string | null | null,
+    error?: string | null | null,
+    system?: {
+      status?: string | null,
+      startedAt?: string | null,
+      completedAt?: string | null | null
+    } | null
+  } | null | null,
+  system?: {
+    status?: string | null,
+    createdAt?: string | null,
+    lastSuccessfulSyncAt?: string | null | null
+  } | null,
+  syncs?: {
+    errorCode?: string | null | null,
+    error?: string | null | null,
+    system?: {
+      status?: string | null,
+      startedAt?: string | null,
+      completedAt?: string | null | null
+    } | null,
+    id?: string | null,
+    trigger?: string | null,
+    itemsProcessed?: number | null,
+    itemsFailed?: number | null,
+    failures?: {
+      documentId?: string | null,
+      title?: string | null | null,
+      errorCode?: string | null,
+      errorMessage?: string | null,
+      failedAt?: string | null
+    }[] | null
+  }[] | null,
+  picker?: {
+    url?: string | null,
+    expiresAt?: string | null
+  } | null | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  currentPage?: number | null,
+  limit?: number | null,
+  totalItems?: number | null,
+  totalPages?: number | null,
+  hasMore?: boolean | null,
+  nextCursor?: string | null | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAll
+
+`connectors.listAll`
+
+List all connectors. List connectors across every namespace this key can read. Use it for admin views that span users or projects.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.connectors.listAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `notion \| google-drive \| onedrive \| gmail \| github \| web-crawler \| s3 \| granola` | No | Only return connectors for this provider |
+| `page` | `number` | No | One-based page number |
+| `limit` | `number` | No | Maximum connectors to return per page |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectors` | `object[] \| null` | No | — |
+| `pagination` | `object \| null` | No | Pagination metadata |
+
+<AccordionGroup>
+<Accordion title="connectors full type">
+
+```ts
+{
+  id?: string | null,
+  provider?: string | null,
+  authorization?: {
+    url?: string | null,
+    expiresAt?: string | null
+  } | null,
+  namespace?: string | null | null,
+  account?: string | null | null,
+  capabilities?: {
+    selectable?: boolean | null,
+    webhooks?: boolean | null
+  } | null,
+  config?: Record<string, string | number | boolean> | null | null,
+  selection?: Record<string, {
+    id?: string | null,
+    name?: string | null
+  }[]> | null | null,
+  documentLimit?: number | null,
+  documentCount?: number | null,
+  latestRun?: {
+    errorCode?: string | null | null,
+    error?: string | null | null,
+    system?: {
+      status?: string | null,
+      startedAt?: string | null,
+      completedAt?: string | null | null
+    } | null
+  } | null | null,
+  system?: {
+    status?: string | null,
+    createdAt?: string | null,
+    lastSuccessfulSyncAt?: string | null | null
+  } | null,
+  syncs?: {
+    errorCode?: string | null | null,
+    error?: string | null | null,
+    system?: {
+      status?: string | null,
+      startedAt?: string | null,
+      completedAt?: string | null | null
+    } | null,
+    id?: string | null,
+    trigger?: string | null,
+    itemsProcessed?: number | null,
+    itemsFailed?: number | null,
+    failures?: {
+      documentId?: string | null,
+      title?: string | null | null,
+      errorCode?: string | null,
+      errorMessage?: string | null,
+      failedAt?: string | null
+    }[] | null
+  }[] | null,
+  picker?: {
+    url?: string | null,
+    expiresAt?: string | null
+  } | null | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  currentPage?: number | null,
+  limit?: number | null,
+  totalItems?: number | null,
+  totalPages?: number | null,
+  hasMore?: boolean | null,
+  nextCursor?: string | null | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sync
+
+`connectors.sync`
+
+Sync connector. Start a sync now. Returns 409 while a sync for this connector is already running.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.connectors.sync({ namespace: 'user_ada', id: 'doc_ada_notes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | Namespace identifier. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope documents and memories. |
+| `id` | `string` | Yes | Connector identifier returned when the connector was created |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Connector identifier |
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+### update
+
+`connectors.update`
+
+Update connector. Change what a connector syncs. A new selection replaces the old one and starts a sync.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.connectors.update({ namespace: 'user_ada', id: 'doc_ada_notes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | Namespace identifier. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope documents and memories. |
+| `id` | `string` | Yes | Connector identifier returned when the connector was created |
+| `selection` | `object` | No | What to sync, as ids grouped by kind. GitHub takes repos, Gmail takes labels, Google Drive takes files and folders, OneDrive takes folders. Replaces the current selection. |
+| `documentLimit` | `number` | No | Maximum documents this connector imports |
+
+<AccordionGroup>
+<Accordion title="selection full type">
+
+```ts
+{
+  repos?: string[],
+  labels?: string[],
+  files?: string[],
+  folders?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `provider` | `string \| null` | No | External source |
+| `authorization` | `object \| null` | No | Present while pending, when the caller can create connectors in this namespace |
+| `namespace` | `string \| null \| null` | No | Namespace the connector syncs into. Connectors created without one report sm_project_default. |
+| `account` | `string \| null \| null` | No | Account on the provider side, usually an email |
+| `capabilities` | `object \| null` | No | — |
+| `config` | `Record<string, string \| number \| boolean> \| null \| null` | No | Non-secret setup, such as the S3 bucket, crawler start URL or Notion workspace. Credentials are never returned. |
+| `selection` | `object \| null` | No | What syncs, grouped by kind (repos, labels, files or folders), each a list of &#123; id, name &#125;. Null for connectors that sync everything. |
+| `documentLimit` | `number \| null` | No | — |
+| `documentCount` | `number \| null` | No | — |
+| `latestRun` | `object \| null` | No | The most recent sync run, which may still be running or may have failed |
+| `system` | `object \| null` | No | Lifecycle status and timestamps maintained by Supermemory |
+| `syncs` | `object[] \| null` | No | Present when include=syncs |
+| `picker` | `object \| null` | No | Present when include=picker. Null for connectors that sync everything. |
+
+<AccordionGroup>
+<Accordion title="authorization full type">
+
+```ts
+{
+  url?: string | null,
+  expiresAt?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="capabilities full type">
+
+```ts
+{
+  selectable?: boolean | null,
+  webhooks?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="selection full type">
+
+```ts
+Record<string, {
+  id?: string | null,
+  name?: string | null
+}[]> | null | null
+```
+</Accordion>
+
+<Accordion title="latestRun full type">
+
+```ts
+{
+  errorCode?: string | null | null,
+  error?: string | null | null,
+  system?: {
+    status?: string | null,
+    startedAt?: string | null,
+    completedAt?: string | null | null
+  } | null
+} | null | null
+```
+</Accordion>
+
+<Accordion title="system full type">
+
+```ts
+{
+  status?: string | null,
+  createdAt?: string | null,
+  lastSuccessfulSyncAt?: string | null | null
+} | null
+```
+</Accordion>
+
+<Accordion title="syncs full type">
+
+```ts
+{
+  errorCode?: string | null | null,
+  error?: string | null | null,
+  system?: {
+    status?: string | null,
+    startedAt?: string | null,
+    completedAt?: string | null | null
+  } | null,
+  id?: string | null,
+  trigger?: string | null,
+  itemsProcessed?: number | null,
+  itemsFailed?: number | null,
+  failures?: {
+    documentId?: string | null,
+    title?: string | null | null,
+    errorCode?: string | null,
+    errorMessage?: string | null,
+    failedAt?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="picker full type">
+
+```ts
+{
+  url?: string | null,
+  expiresAt?: string | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Documents
+
+### add
+
+`documents.add`
+
+Add document. Turn text or a supported URL into searchable, evolving memory. Supply a new ID to create a document, or reuse an existing ID to append new information while preserving its history.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.documents.add({
+	namespace: 'user_ada',
+	content: 'Ada prefers morning meetings and works in Lisbon.',
+	id: 'doc_ada_notes',
+	metadata: { source: 'onboarding' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | The isolated namespace. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope documents. |
+| `content` | `string` | Yes | The content to process. This may be plaintext or a URL to supported rich content. |
+| `id` | `string` | No | An optional caller-defined document ID |
+| `supportingContext` | `string` | No | Context used to guide memory extraction within this namespace. Max 1500 characters. |
+| `metadata` | `Record<string, string \| number \| boolean \| string[]>` | No | Arbitrary metadata attached to the document and derived data |
+| `group` | `Record<string, string \| number \| boolean \| string[]>` | No | Metadata values that isolate related context within the namespace |
+| `date` | `string` | No | When the source content is from, in ISO 8601 format |
+| `taskType` | `memory \| superrag` | No | Processing pipeline. "memory" builds durable learned context; "superrag" optimizes the document for retrieval without generating memories. |
+| `dreaming` | `dynamic \| instant` | No | Processing mode. "dynamic" (default) groups related documents so memories form from coherent context. "instant" processes each document independently right away and bills one extra operation per document. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Document identifier to poll or retrieve |
+| `status` | `string \| null` | No | The document's processing state after this request. queued when new work was queued; otherwise its current state, e.g. done for an unchanged duplicate or failed for a metadata-only update to a failed document. |
+
+
+
+---
+
+### batchAdd
+
+`documents.batchAdd`
+
+Batch add documents. Build a knowledge base efficiently by ingesting up to 600 text or URL documents at once. Existing caller-defined IDs append new information using the same semantics as single-document ingestion.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.documents.batchAdd({
+	namespace: 'user_ada',
+	documents: [{ content: 'Ada prefers morning meetings and works in Lisbon.' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | The isolated namespace. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope documents. |
+| `documents` | `object[]` | Yes | Documents to ingest or append in one request |
+| `taskType` | `memory \| superrag` | No | Processing pipeline. "memory" builds durable learned context; "superrag" optimizes the document for retrieval without generating memories. |
+| `dreaming` | `dynamic \| instant` | No | Processing mode. "dynamic" (default) groups related documents so memories form from coherent context. "instant" processes each document independently right away and bills one extra operation per document. |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  content: string,
+  id?: string,
+  supportingContext?: string,
+  metadata?: Record<string, string | number | boolean | string[]>,
+  group?: Record<string, string | number | boolean | string[]>,
+  date?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | One result per submitted document: accepted documents first, in request order, then failed ones. Match results by id, or by url for a failed item with no id. |
+| `count` | `number \| null` | No | Number of documents accepted |
+| `failed` | `number \| null` | No | Number of documents that failed |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  status?: string | null,
+  error?: string | null,
+  details?: string | null,
+  url?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`documents.delete`
+
+Delete documents. Permanently remove documents and their derived knowledge by document ID or caller-defined ID. Each requested ID is handled independently so successful deletions are preserved when another ID fails. Deletes the documents and the memories extracted from them; cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supermemory.api.documents.delete({
+	namespace: 'user_ada',
+	ids: ['doc_ada_notes'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | The isolated namespace. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope documents. |
+| `ids` | `string[]` | Yes | Document identifiers to permanently delete from this namespace |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| null` | No | Number of documents successfully deleted |
+| `errors` | `object[] \| null` | No | Per-document failures; successful deletions are not rolled back |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  id?: string | null,
+  error?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`documents.get`
+
+Get document. Retrieve a document's canonical content, metadata, and processing state by document ID or caller-defined ID. Optionally include its source chunks, derived memories, or both in the same response.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.documents.get({
+	namespace: 'user_ada',
+	id: 'doc_ada_notes',
+	include: ['chunks', 'memories'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | The isolated namespace. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope documents. |
+| `id` | `string` | Yes | The public document ID |
+| `include` | `(chunks \| memories)[]` | No | Comma-separated child resources to include: chunks, memories, or both. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Stable document identifier |
+| `title` | `string \| null \| null` | No | Extracted or caller-provided document title |
+| `type` | `string \| null` | No | Detected source or content type |
+| `summary` | `string \| null \| null` | No | Generated summary of the document, when available |
+| `content` | `string \| null \| null` | No | Canonical extracted text used for processing and recall |
+| `metadata` | `Record<string, any> \| null` | No | Caller metadata with internal fields removed |
+| `system` | `object \| null` | No | Ingestion source, processing status, lifecycle timestamps, and storage path maintained by Supermemory |
+| `chunks` | `object[] \| null` | No | Ordered document chunks; included only when requested |
+| `memories` | `object[] \| null` | No | Memories derived from the document; included only when requested |
+
+<AccordionGroup>
+<Accordion title="system full type">
+
+```ts
+{
+  source?: string | null | null,
+  status?: string | null,
+  dreamingStatus?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="chunks full type">
+
+```ts
+{
+  id?: string | null,
+  position?: number | null,
+  content?: string | null,
+  type?: string | null,
+  metadata?: Record<string, any> | null,
+  system?: {
+    createdAt?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="memories full type">
+
+```ts
+{
+  id?: string | null,
+  memory?: string | null,
+  metadata?: Record<string, any> | null,
+  isStatic?: boolean | null,
+  isInference?: boolean | null,
+  isLatest?: boolean | null,
+  isForgotten?: boolean | null,
+  version?: number | null,
+  system?: {
+    createdAt?: string | null,
+    updatedAt?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### memoryCounts
+
+`documents.memoryCounts`
+
+Count document memories. Count live memories in this namespace for up to 100 public document IDs. Missing or inaccessible documents are omitted, not reported as zero.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.documents.memoryCounts({
+	namespace: 'user_ada',
+	ids: ['doc_ada_notes'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | The isolated namespace. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope documents. |
+| `ids` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `counts` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="counts full type">
+
+```ts
+{
+  id?: string | null,
+  memoryCount?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replaceWithFile
+
+`documents.replaceWithFile`
+
+Replace document with file. Replace an existing document with a new file while keeping its stable document ID. Content and caller metadata are overwritten, then the document is reprocessed asynchronously.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supermemory.api.documents.replaceWithFile({
+	namespace: 'user_ada',
+	id: 'doc_ada_notes',
+	file: { base64: 'SGVsbG8gZnJvbSBDb3JzYWly', filename: 'notes.txt', contentType: 'text/plain' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | The isolated namespace. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope documents. |
+| `id` | `string` | Yes | The public document ID |
+| `file` | `string \| object \| custom` | Yes | File contents to upload |
+| `supportingContext` | `string` | No | Context used to guide memory extraction within this namespace. Max 1500 characters. |
+| `metadata` | `string` | No | JSON-encoded metadata to attach to the document and its derived memories |
+| `group` | `string` | No | JSON-encoded metadata used to keep related context isolated during processing and recall |
+| `date` | `string` | No | When the source content is from, in ISO 8601 format |
+| `taskType` | `memory \| superrag` | No | Processing pipeline. "memory" builds durable learned context; "superrag" optimizes the document for retrieval without generating memories. |
+| `dreaming` | `dynamic \| instant` | No | Processing mode. "dynamic" (default) groups related documents so memories form from coherent context. "instant" processes each document independently right away and bills one extra operation per document. |
+| `fileType` | `text \| pdf \| image \| video \| audio` | No | Explicit source type used when automatic inference is insufficient |
+| `mimeType` | `string` | No | Explicit MIME type used when upload metadata is insufficient |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Document identifier to poll or retrieve |
+| `status` | `string \| null` | No | The document's processing state after this request. queued when new work was queued; otherwise its current state, e.g. done for an unchanged duplicate or failed for a metadata-only update to a failed document. |
+
+
+
+---
+
+### update
+
+`documents.update`
+
+Update document. Refresh an existing document without changing its stable ID. Supplied content replaces the canonical content and is reprocessed; omitted fields remain unchanged.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.documents.update({ namespace: 'user_ada', id: 'doc_ada_notes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | The isolated namespace. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope documents. |
+| `id` | `string` | Yes | The public document ID |
+| `content` | `string` | No | The content to process. This may be plaintext or a URL to supported rich content. |
+| `supportingContext` | `string` | No | Context used to guide memory extraction within this namespace. Max 1500 characters. |
+| `metadata` | `Record<string, string \| number \| boolean \| string[]>` | No | Arbitrary metadata attached to the document and derived data |
+| `group` | `Record<string, string \| number \| boolean \| string[]>` | No | Metadata values that isolate related context within the namespace |
+| `date` | `string` | No | When the source content is from, in ISO 8601 format |
+| `taskType` | `memory \| superrag` | No | Processing pipeline. "memory" builds durable learned context; "superrag" optimizes the document for retrieval without generating memories. |
+| `dreaming` | `dynamic \| instant` | No | Processing mode. "dynamic" (default) groups related documents so memories form from coherent context. "instant" processes each document independently right away and bills one extra operation per document. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Document identifier to poll or retrieve |
+| `status` | `string \| null` | No | The document's processing state after this request. queued when new work was queued; otherwise its current state, e.g. done for an unchanged duplicate or failed for a metadata-only update to a failed document. |
+
+
+
+---
+
+### updateFile
+
+`documents.updateFile`
+
+Partially update document file. Refresh only the file-backed fields you provide. Supplying a file replaces the canonical content; omitted metadata and processing context remain unchanged.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.documents.updateFile({ namespace: 'user_ada', id: 'doc_ada_notes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | The isolated namespace. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope documents. |
+| `id` | `string` | Yes | The public document ID |
+| `file` | `string \| object \| custom` | No | File contents to upload |
+| `supportingContext` | `string` | No | Context used to guide memory extraction within this namespace. Max 1500 characters. |
+| `metadata` | `string` | No | JSON-encoded metadata to attach to the document and its derived memories |
+| `group` | `string` | No | JSON-encoded metadata used to keep related context isolated during processing and recall |
+| `date` | `string` | No | When the source content is from, in ISO 8601 format |
+| `taskType` | `memory \| superrag` | No | Processing pipeline. "memory" builds durable learned context; "superrag" optimizes the document for retrieval without generating memories. |
+| `dreaming` | `dynamic \| instant` | No | Processing mode. "dynamic" (default) groups related documents so memories form from coherent context. "instant" processes each document independently right away and bills one extra operation per document. |
+| `fileType` | `text \| pdf \| image \| video \| audio` | No | Explicit source type used when automatic inference is insufficient |
+| `mimeType` | `string` | No | Explicit MIME type used when upload metadata is insufficient |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Document identifier to poll or retrieve |
+| `status` | `string \| null` | No | The document's processing state after this request. queued when new work was queued; otherwise its current state, e.g. done for an unchanged duplicate or failed for a metadata-only update to a failed document. |
+
+
+
+---
+
+### uploadFile
+
+`documents.uploadFile`
+
+Upload file. Transform an uploaded file into searchable knowledge and learned memory. The response returns as soon as ingestion is safely queued while extraction and memory formation continue asynchronously.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.documents.uploadFile({
+	namespace: 'user_ada',
+	file: { base64: 'SGVsbG8gZnJvbSBDb3JzYWly', filename: 'notes.txt', contentType: 'text/plain' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | The isolated namespace. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope documents. |
+| `file` | `string \| object \| custom` | Yes | File contents to upload |
+| `supportingContext` | `string` | No | Context used to guide memory extraction within this namespace. Max 1500 characters. |
+| `metadata` | `string` | No | JSON-encoded metadata to attach to the document and its derived memories |
+| `group` | `string` | No | JSON-encoded metadata used to keep related context isolated during processing and recall |
+| `date` | `string` | No | When the source content is from, in ISO 8601 format |
+| `taskType` | `memory \| superrag` | No | Processing pipeline. "memory" builds durable learned context; "superrag" optimizes the document for retrieval without generating memories. |
+| `dreaming` | `dynamic \| instant` | No | Processing mode. "dynamic" (default) groups related documents so memories form from coherent context. "instant" processes each document independently right away and bills one extra operation per document. |
+| `fileType` | `text \| pdf \| image \| video \| audio` | No | Explicit source type used when automatic inference is insufficient |
+| `mimeType` | `string` | No | Explicit MIME type used when upload metadata is insufficient |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Document identifier to poll or retrieve |
+| `status` | `string \| null` | No | The document's processing state after this request. queued when new work was queued; otherwise its current state, e.g. done for an unchanged duplicate or failed for a metadata-only update to a failed document. |
+
+
+
+---
+
+## Feedback
+
+### send
+
+`feedback.send`
+
+Send feedback. Report a bug, request a feature or flag a docs problem to the Supermemory team. Built for AI agents: send structured JSON and an engineer picks it up. Authentication is optional for requests with a usable client IP. Cross-zone Cloudflare Worker requests and requests without a client IP must provide an API key. Sends a message to Supermemory; it is not undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supermemory.api.feedback.send({ type: 'bug', title: 'Search missed a recent document', description: 'A document added a minute ago did not show up in search results.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `bug \| feature_request \| docs \| other` | Yes | Kind of feedback |
+| `title` | `string` | Yes | One-line summary |
+| `description` | `string` | Yes | What happened, with enough detail for an engineer to act on it |
+| `endpoint` | `string` | No | API operation the feedback is about |
+| `requestId` | `string` | No | Request ID of a failing call, if there is one |
+| `expected` | `string` | No | What you expected to happen |
+| `actual` | `string` | No | What actually happened |
+| `client` | `string` | No | Agent, tool or SDK sending the feedback |
+| `contactEmail` | `string` | No | Where to reach you about this feedback |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Feedback reference |
+| `remaining` | `number \| null` | No | Submissions left for this caller until 00:00 UTC |
+
+
+
+---
+
+## Graph
+
+### get
+
+`graph.get`
+
+Get memory graph. Page through a namespace's documents with their memories as graph nodes and edges, for example to render @supermemory/memory-graph. Pass nextCursor back as cursor until it is null.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.graph.get({ namespace: 'user_ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | The isolated namespace. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope documents. |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `filter` | `object` | No | A type-safe metadata filter predicate or nested and/or expression. The API validates up to 5 levels of nesting. |
+| `sort` | `createdAt \| updatedAt` | No | — |
+| `order` | `asc \| desc` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  field: string,
+  operator: eq | neq,
+  value: string,
+  caseSensitive?: boolean
+} | {
+  field: string,
+  operator: eq | neq,
+  value: number | boolean
+} | {
+  field: string,
+  operator: gt | gte | lt | lte,
+  value: number
+} | {
+  field: string,
+  operator: contains | notContains,
+  value: string,
+  caseSensitive?: boolean
+} | {
+  field: string,
+  operator: arrayContains | arrayNotContains,
+  value: string
+} | {
+  operator: and,
+  operands: (
+    {
+      field: string,
+      operator: eq | neq,
+      value: string,
+      caseSensitive?: boolean
+    } | {
+      field: string,
+      operator: eq | neq,
+      value: number | boolean
+    } | {
+      field: string,
+      operator: gt | gte | lt | lte,
+      value: number
+    } | {
+      field: string,
+      operator: contains | notContains,
+      value: string,
+      caseSensitive?: boolean
+    } | {
+      field: string,
+      operator: arrayContains | arrayNotContains,
+      value: string
+    } | {
+      operator: and,
+      operands: (recursive)[]
+    } | {
+      operator: or,
+      operands: (
+        {
+          field: string,
+          operator: eq | neq,
+          value: string,
+          caseSensitive?: boolean
+        } | {
+          field: string,
+          operator: eq | neq,
+          value: number | boolean
+        } | {
+          field: string,
+          operator: gt | gte | lt | lte,
+          value: number
+        } | {
+          field: string,
+          operator: contains | notContains,
+          value: string,
+          caseSensitive?: boolean
+        } | {
+          field: string,
+          operator: arrayContains | arrayNotContains,
+          value: string
+        } | {
+          operator: and,
+          operands: (recursive)[]
+        } | {
+          operator: or,
+          operands: (recursive)[]
+        }
+      )[]
+    }
+  )[]
+} | {
+  operator: or,
+  operands: (
+    {
+      field: string,
+      operator: eq | neq,
+      value: string,
+      caseSensitive?: boolean
+    } | {
+      field: string,
+      operator: eq | neq,
+      value: number | boolean
+    } | {
+      field: string,
+      operator: gt | gte | lt | lte,
+      value: number
+    } | {
+      field: string,
+      operator: contains | notContains,
+      value: string,
+      caseSensitive?: boolean
+    } | {
+      field: string,
+      operator: arrayContains | arrayNotContains,
+      value: string
+    } | {
+      operator: and,
+      operands: (
+        {
+          field: string,
+          operator: eq | neq,
+          value: string,
+          caseSensitive?: boolean
+        } | {
+          field: string,
+          operator: eq | neq,
+          value: number | boolean
+        } | {
+          field: string,
+          operator: gt | gte | lt | lte,
+          value: number
+        } | {
+          field: string,
+          operator: contains | notContains,
+          value: string,
+          caseSensitive?: boolean
+        } | {
+          field: string,
+          operator: arrayContains | arrayNotContains,
+          value: string
+        } | {
+          operator: and,
+          operands: (recursive)[]
+        } | {
+          operator: or,
+          operands: (recursive)[]
+        }
+      )[]
+    } | {
+      operator: or,
+      operands: (recursive)[]
+    }
+  )[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nodes` | `object[] \| null` | No | — |
+| `edges` | `object[] \| null` | No | — |
+| `nextCursor` | `string \| null \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+(
+  {
+    kind?: string | null,
+    id?: string | null,
+    customId?: string | null | null,
+    title?: string | null | null,
+    summary?: string | null | null,
+    type?: string | null,
+    namespaces?: string[] | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  } | {
+    kind?: string | null,
+    id?: string | null,
+    memory?: string | null,
+    namespace?: string | null | null,
+    isStatic?: boolean | null,
+    isLatest?: boolean | null,
+    isForgotten?: boolean | null,
+    isInference?: boolean | null,
+    forgetAfter?: string | null | null,
+    forgetReason?: string | null | null,
+    version?: number | null,
+    parentMemoryId?: string | null | null,
+    rootMemoryId?: string | null | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  }
+)[] | null
+```
+</Accordion>
+
+<Accordion title="edges full type">
+
+```ts
+(
+  {
+    type?: string | null,
+    source?: string | null,
+    target?: string | null,
+    sourceAddedAt?: string | null | null,
+    sourceRelevanceScore?: number | null | null
+  } | {
+    type?: string | null,
+    source?: string | null,
+    target?: string | null
+  }
+)[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Legacy
+
+### connections.configure
+
+`legacy.connections.configure`
+
+Legacy v3/v4 route. Configure connection. Configure resources for a connection (supported providers: GitHub for now)
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.legacy.connections.configure({
+	connectionId: 'PTzGiUYei7pgzg5buzZHgA',
+	resources: [{}],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectionId` | `string` | Yes | — |
+| `resources` | `Record<string, any>[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `message` | `string \| null` | No | — |
+| `webhooksRegistered` | `number \| null` | No | — |
+
+
+
+---
+
+### connections.create
+
+`legacy.connections.create`
+
+Legacy v3/v4 route. Create connection. Initialize connection and get authorization URL. Returns an authorization link the account owner opens to connect the app. Needs the Pro plan (the free plan answers 403).
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.legacy.connections.create({ provider: 'notion' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `notion \| google-drive \| onedrive \| gmail \| github \| web-crawler \| s3 \| granola` | Yes | — |
+| `containerTag` | `string` | No | — |
+| `containerTags` | `string[]` | No | — |
+| `documentLimit` | `number` | No | — |
+| `metadata` | `Record<string, string \| number \| boolean> \| null` | No | — |
+| `redirectUrl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `authLink` | `string \| null` | No | — |
+| `expiresIn` | `string \| null` | No | — |
+| `id` | `string \| null` | No | — |
+| `redirectsTo` | `string \| null` | No | — |
+
+
+
+---
+
+### connections.delete
+
+`legacy.connections.delete`
+
+Legacy v3/v4 route. Delete connection by ID. Delete a specific connection by ID.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supermemory.api.legacy.connections.delete({ connectionId: 'PTzGiUYei7pgzg5buzZHgA' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectionId` | `string` | Yes | — |
+| `deleteDocuments` | `string` | No | Whether to also delete documents imported by this connection. Defaults to true. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  provider?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### connections.deleteByProvider
+
+`legacy.connections.deleteByProvider`
+
+Legacy v3/v4 route. Delete connection for a specific provider and container tags.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supermemory.api.legacy.connections.deleteByProvider({
+	provider: 'notion',
+	containerTags: ['user_ada'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `notion \| google-drive \| onedrive \| gmail \| github \| web-crawler \| s3 \| granola` | Yes | — |
+| `containerTags` | `string[]` | Yes | Optional comma-separated list of container tags to filter connections by |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  provider?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### connections.documents
+
+`legacy.connections.documents`
+
+Legacy v3/v4 route. List documents indexed for a provider and container tags.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.connections.documents({ provider: 'notion' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `notion \| google-drive \| onedrive \| gmail \| github \| web-crawler \| s3 \| granola` | Yes | — |
+| `containerTags` | `string[]` | No | Optional comma-separated list of container tags to filter documents by |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  createdAt?: string | null,
+  id?: string | null | null,
+  status?: string | null,
+  summary?: string | null | null,
+  title?: string | null | null,
+  type?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### connections.get
+
+`legacy.connections.get`
+
+Legacy v3/v4 route. Get connection details with id.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.connections.get({ connectionId: 'PTzGiUYei7pgzg5buzZHgA' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createdAt` | `string \| null` | No | — |
+| `documentLimit` | `number \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+| `id` | `string \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `provider` | `string \| null` | No | — |
+| `containerTags` | `string[] \| null` | No | — |
+| `lastSyncRun` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="lastSyncRun full type">
+
+```ts
+{
+  status?: string | null,
+  errorCode?: string | null | null,
+  error?: string | null | null,
+  startedAt?: string | null,
+  completedAt?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### connections.getByProvider
+
+`legacy.connections.getByProvider`
+
+Legacy v3/v4 route. Get connection details with provider and container tags.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.connections.getByProvider({
+	provider: 'notion',
+	containerTags: ['user_ada'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `notion \| google-drive \| onedrive \| gmail \| github \| web-crawler \| s3 \| granola` | Yes | — |
+| `containerTags` | `string[]` | Yes | Comma-separated list of container tags to filter connection by |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createdAt` | `string \| null` | No | — |
+| `documentLimit` | `number \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+| `id` | `string \| null` | No | — |
+| `metadata` | `Record<string, any> \| null` | No | — |
+| `provider` | `string \| null` | No | — |
+| `containerTags` | `string[] \| null` | No | — |
+| `lastSyncRun` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="lastSyncRun full type">
+
+```ts
+{
+  status?: string | null,
+  errorCode?: string | null | null,
+  error?: string | null | null,
+  startedAt?: string | null,
+  completedAt?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### connections.list
+
+`legacy.connections.list`
+
+Legacy v3/v4 route. List connections. List all connections.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.connections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `containerTags` | `string[]` | No | Optional comma-separated list of container tags to filter documents by |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  createdAt?: string | null,
+  documentLimit?: number | null,
+  email?: string | null,
+  expiresAt?: string | null,
+  id?: string | null,
+  metadata?: Record<string, any> | null,
+  provider?: string | null,
+  containerTags?: string[] | null,
+  lastSyncRun?: {
+    status?: string | null,
+    errorCode?: string | null | null,
+    error?: string | null | null,
+    startedAt?: string | null,
+    completedAt?: string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### connections.resources
+
+`legacy.connections.resources`
+
+Legacy v3/v4 route. Fetch resources for a connection (supported providers: GitHub for now)
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.connections.resources({ connectionId: 'PTzGiUYei7pgzg5buzZHgA' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectionId` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `parent_id` | `string` | No | — |
+| `per_page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resources` | `Record<string, any>[] \| null` | No | — |
+| `total_count` | `number \| null` | No | — |
+
+
+
+---
+
+### connections.sync
+
+`legacy.connections.sync`
+
+Legacy v3/v4 route. Sync connection. Initiate a manual sync of connections.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.legacy.connections.sync({ provider: 'notion' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `notion \| google-drive \| onedrive \| gmail \| github \| web-crawler \| s3 \| granola` | Yes | — |
+| `containerTags` | `string[]` | No | Optional comma-separated list of container tags to filter connections by |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | The response body as text. |
+| `contentType` | `string \| null` | Yes | The content type Supermemory answered with. |
+
+
+
+---
+
+### containerTags.delete
+
+`legacy.containerTags.delete`
+
+Legacy v3/v4 route. Delete container tag. Delete a container tag and all its documents and memories. Only organization owners and admins can perform this action.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supermemory.api.legacy.containerTags.delete({ containerTag: 'user_ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `containerTag` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | Whether the deletion was successful |
+| `containerTag` | `string \| null` | No | The deleted container tag |
+| `deletedDocumentsCount` | `number \| null` | No | Number of documents deleted |
+| `deletedMemoriesCount` | `number \| null` | No | Number of memories marked as forgotten |
+
+
+
+---
+
+### containerTags.get
+
+`legacy.containerTags.get`
+
+Legacy v3/v4 route. Get container tag settings. Get settings for a container tag.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.containerTags.get({ containerTag: 'user_ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `containerTag` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `containerTag` | `string \| null` | No | The container tag identifier |
+| `name` | `string \| null \| null` | No | Display name for this container tag |
+| `entityContext` | `string \| null \| null` | No | Custom context prompt for this container tag. Used to provide additional context when processing documents in this container. |
+| `memoryFilesystemPaths` | `string[] \| null \| null` | No | Per-tag allowlist of filesystem paths that trigger memory generation for mount-ingested documents. Docs whose filepath does not match are ingested as 'superrag' (chunked and searchable, no memory extraction). |
+| `profileBuckets` | `object[] \| null` | No | Container-tag-level buckets added on top of the org buckets (add-only) |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+| `updatedAt` | `string \| null` | No | Last update timestamp |
+
+<AccordionGroup>
+<Accordion title="profileBuckets full type">
+
+```ts
+{
+  key?: string | null,
+  description?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### containerTags.list
+
+`legacy.containerTags.list`
+
+Legacy v3/v4 route. List all container tags with isNova flag.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.containerTags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `containerTags` | `string` | No | Comma-separated container tags to limit the list to |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  containerTag?: string | null,
+  description?: string | null | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  isExperimental?: boolean | null,
+  emoji?: string | null,
+  visibility?: string | null,
+  isNova?: boolean | null,
+  documentCount?: number | null,
+  memoryCount?: number | null,
+  lastActivityAt?: string | null | null,
+  mergeStatus?: string | null,
+  mergeId?: string | null,
+  mergeTargetTag?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### containerTags.merge
+
+`legacy.containerTags.merge`
+
+Legacy v3/v4 route. Merge container tags. Merge multiple container tags into a target tag. All documents from the source tags will be updated to reference the target tag, and the source tags will be deleted after successful merge.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supermemory.api.legacy.containerTags.merge({
+	containerTags: ['user_ada'],
+	targetContainerTag: 'example',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `containerTags` | `string[]` | Yes | List of container tags to merge (min: 2, max: 2). All documents from these tags will be merged into the target. |
+| `targetContainerTag` | `string` | Yes | The container tag to merge into. Must either be in the containerTags list or a completely new tag that doesn't exist in the org. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | Whether the merge job was queued successfully. |
+| `status` | `string \| null` | No | The queued status of the merge job. |
+| `mergeId` | `string \| null` | No | Identifier for the queued merge job. |
+| `targetTag` | `string \| null` | No | The target container tag that documents will be merged into. |
+| `sourceTags` | `string[] \| null` | No | List of source container tags queued for merge. |
+
+
+
+---
+
+### containerTags.mergeStatus
+
+`legacy.containerTags.mergeStatus`
+
+Legacy v3/v4 route. Get container tag merge status. Get queued container tag merge status.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.containerTags.mergeStatus({ mergeId: 'merge_01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mergeId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `sourceTags` | `string[] \| null` | No | — |
+| `targetTag` | `string \| null` | No | — |
+| `progress` | `object \| null` | No | — |
+| `lastError` | `string \| null \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="progress full type">
+
+```ts
+{
+  phase?: string | null,
+  currentSourceTag?: string | null,
+  currentKind?: string | null,
+  copiedRows?: number | null,
+  completedSourceTags?: string[] | null,
+  inFlightItems?: number | null,
+  attempt?: number | null,
+  renamedCustomIds?: {
+    documentId?: string | null,
+    from?: string | null,
+    to?: string | null
+  }[] | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### containerTags.update
+
+`legacy.containerTags.update`
+
+Legacy v3/v4 route. Update container tag settings. Update settings for a container tag.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.legacy.containerTags.update({ containerTag: 'user_ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `containerTag` | `string` | Yes | — |
+| `name` | `string` | No | Display name for this container tag. This does not change the container tag identifier. |
+| `entityContext` | `string \| null` | No | Custom context prompt for this container tag. Used to provide additional context when processing documents in this container. Maximum 1500 characters. |
+| `memoryFilesystemPaths` | `string[] \| null` | No | Per-tag allowlist of filesystem paths that trigger memory generation for mount-ingested documents. Docs whose filepath does not match are ingested as 'superrag' (chunked and searchable, no memory extraction). |
+| `profileBuckets` | `object[]` | No | Container-tag-level buckets to set (add-only on top of org buckets). Replaces this tag's own bucket list; cannot override or remove org buckets. |
+
+<AccordionGroup>
+<Accordion title="profileBuckets full type">
+
+```ts
+{
+  key: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `containerTag` | `string \| null` | No | The container tag identifier |
+| `name` | `string \| null \| null` | No | Display name for this container tag |
+| `entityContext` | `string \| null \| null` | No | Custom context prompt for this container tag. Used to provide additional context when processing documents in this container. |
+| `memoryFilesystemPaths` | `string[] \| null \| null` | No | Per-tag allowlist of filesystem paths that trigger memory generation for mount-ingested documents. Docs whose filepath does not match are ingested as 'superrag' (chunked and searchable, no memory extraction). |
+| `profileBuckets` | `object[] \| null` | No | Container-tag-level buckets added on top of the org buckets (add-only) |
+| `updatedAt` | `string \| null` | No | Last update timestamp |
+
+<AccordionGroup>
+<Accordion title="profileBuckets full type">
+
+```ts
+{
+  key?: string | null,
+  description?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### conversations.ingest
+
+`legacy.conversations.ingest`
+
+Legacy v3/v4 route. Ingest or update a conversation.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.legacy.conversations.ingest({
+	conversationId: 'example',
+	messages: [{ role: 'user', content: 'Ada prefers morning meetings and works in Lisbon.' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversationId` | `string` | Yes | — |
+| `messages` | `object[]` | Yes | — |
+| `containerTags` | `string[]` | No | — |
+| `metadata` | `Record<string, string \| number \| boolean>` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: user | assistant | system | tool,
+  content: string | (
+    {
+      type: text,
+      text: string
+    } | {
+      type: image_url,
+      imageUrl: {
+        url: string
+      }
+    }
+  )[],
+  name?: string,
+  tool_calls?: any[],
+  tool_call_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | ID of the document backing this conversation |
+| `conversationId` | `string \| null` | No | The conversation ID supplied in the request |
+| `status` | `string \| null` | No | Processing status of the document |
+
+
+
+---
+
+### documents.add
+
+`legacy.documents.add`
+
+Legacy v3/v4 route. Add document. Add a document with any content type (text, url, file, etc.) and metadata.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.legacy.documents.add({ content: 'Ada prefers morning meetings.', containerTag: 'user_ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `string` | Yes | The content to extract and process into a document. This can be a URL to a website, a PDF, an image, or a video. |
+| `containerTag` | `string` | No | Optional tag this document should be containerized by. Max 100 characters, alphanumeric with hyphens, underscores, and dots only. |
+| `containerTags` | `string[]` | No | — |
+| `entityContext` | `string` | No | Optional entity context for this container tag. Max 1500 characters. Used during document processing to guide memory extraction. |
+| `customId` | `string` | No | Optional custom ID of the document. Max 100 characters, alphanumeric with hyphens, underscores, and dots only. |
+| `metadata` | `Record<string, string \| number \| boolean \| string[]>` | No | Optional metadata for the document. |
+| `taskType` | `memory \| superrag` | No | Task type: "memory" (default) for full context layer with SuperRAG built in, "superrag" for managed RAG as a service. |
+| `filepath` | `string` | No | Optional file path for the document. Used by supermemoryfs to store the full path of the file. |
+| `filterByMetadata` | `Record<string, string \| number \| boolean \| string[]>` | No | Optional metadata filter to apply when pulling related memories and profile during ingestion. Only memories matching these filters will be used as context. |
+| `documentDate` | `string` | No | When this document's content is from, as opposed to when it was uploaded. Accepts YYYY-MM-DD or a full ISO 8601 timestamp. Memory extraction resolves relative dates against this instead of the ingestion time, and documents in a batch are processed oldest-first so newer facts correctly supersede older ones. Set this whenever you backfill historical content. |
+| `dreaming` | `instant \| dynamic` | No | Processing mode. "dynamic" (default) groups related documents together so memories form from coherent, logical units rather than one isolated entry at a time. "instant" processes each document on its own right away, and bills one extra operation per document. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique identifier of the document |
+| `status` | `string \| null` | No | Status of the document |
+
+
+
+---
+
+### documents.batchAdd
+
+`legacy.documents.batchAdd`
+
+Legacy v3/v4 route. Batch add documents. Add multiple documents in a single request. Each document can have any content type (text, url, file, etc.) and metadata.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.legacy.documents.batchAdd({
+	documents: [{ content: 'Ada prefers morning meetings and works in Lisbon.' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `containerTag` | `string` | No | Optional tag this document should be containerized by. This can be an ID for your user, a project ID, or any other identifier you wish to use to group documents. |
+| `containerTags` | `string[]` | No | (DEPRECATED: Use containerTag instead) Optional tags this document should be containerized by. This can be an ID for your user, a project ID, or any other identifier you wish to use to group documents. |
+| `metadata` | `Record<string, string \| number \| boolean \| string[]>` | No | Optional metadata for the document. This is used to store additional information about the document. You can use this to store any additional information you need about the document. Metadata can be filtered through. Keys must be strings and are case sensitive. Values can be strings, numbers, or booleans. You cannot nest objects. |
+| `taskType` | `memory \| superrag` | No | Task type: "memory" (default) for full context layer with SuperRAG built in, "superrag" for managed RAG as a service. |
+| `filepath` | `string` | No | Optional file path for the document (e.g., '/documents/reports/file.pdf'). Used by supermemoryfs to map documents to filesystem paths. |
+| `filterByMetadata` | `Record<string, string \| number \| boolean \| string[]>` | No | Optional metadata filter scoping which existing memories are pulled as context during ingestion. Scalar values match exactly (AND across keys); array values match ANY (OR within key). Only memories whose source documents match this filter are used as context. |
+| `documentDate` | `string` | No | When this document's content is from, as opposed to when it was uploaded. Accepts YYYY-MM-DD or a full ISO 8601 timestamp. Memory extraction resolves relative dates ('yesterday', 'last quarter') against this instead of the ingestion time, and documents in a batch are processed oldest-first so newer facts correctly supersede older ones. Set this whenever you backfill historical content. |
+| `entityContext` | `string` | No | Optional entity context for this container tag. Max 1500 characters. Used during document processing to guide memory extraction. |
+| `dreaming` | `instant \| dynamic` | No | Processing mode. "dynamic" (default) groups related documents together so memories form from coherent, logical units rather than one isolated entry at a time. "instant" processes each document on its own right away, and bills one extra operation per document. |
+| `documents` | `object[] \| string[]` | Yes | — |
+| `content` | `null` | No | — |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  containerTag?: string,
+  containerTags?: string[],
+  content: string,
+  customId?: string,
+  metadata?: Record<string, string | number | boolean | string[]>,
+  taskType?: memory | superrag,
+  filepath?: string,
+  filterByMetadata?: Record<string, string | number | boolean | string[]>,
+  documentDate?: string,
+  entityContext?: string,
+  dreaming?: instant | dynamic
+}[] | string[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | Array of results for each document in the batch |
+| `failed` | `number \| null` | No | Count of documents that failed to add |
+| `success` | `number \| null` | No | Count of documents successfully added |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  status?: string | null,
+  error?: string | null,
+  details?: string | null,
+  url?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### documents.bulkDelete
+
+`legacy.documents.bulkDelete`
+
+Legacy v3/v4 route. Bulk delete documents by IDs or container tags.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supermemory.api.legacy.documents.bulkDelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | No | Array of document IDs to delete (max 100 at once) |
+| `containerTags` | `string[]` | No | Array of container tags - all documents in these containers will be deleted |
+| `filepath` | `string` | No | Delete documents matching this filepath. Exact match for full paths, prefix match if ending with / |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | Whether the bulk deletion was successful |
+| `deletedCount` | `number \| null` | No | Number of documents successfully deleted |
+| `errors` | `object[] \| null` | No | Array of errors for documents that couldn't be deleted (only applicable when deleting by IDs) |
+| `containerTags` | `string[] \| null` | No | Container tags that were processed (only applicable when deleting by container tags) |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  id?: string | null,
+  error?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### documents.chunks
+
+`legacy.documents.chunks`
+
+Legacy v3/v4 route. Get document chunks. Get all chunks for a document, ordered by position.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.documents.chunks({ id: 'doc_ada_notes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string \| null` | No | The document ID |
+| `chunks` | `object[] \| null` | No | Ordered list of chunks |
+| `total` | `number \| null` | No | Total number of chunks |
+
+<AccordionGroup>
+<Accordion title="chunks full type">
+
+```ts
+{
+  id?: string | null,
+  position?: number | null,
+  content?: string | null,
+  type?: string | null,
+  metadata?: Record<string, any> | null | null,
+  createdAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### documents.delete
+
+`legacy.documents.delete`
+
+Legacy v3/v4 route. Delete document by ID or customId. Delete a document by ID or customId.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supermemory.api.legacy.documents.delete({ id: 'doc_ada_notes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Supermemory accepted the call; it answered with no body. |
+
+
+
+---
+
+### documents.fileUrl
+
+`legacy.documents.fileUrl`
+
+Legacy v3/v4 route. Get presigned file URL. Get a fresh presigned URL for a document's file. Returns a time-limited URL (24h) that can be used to download the file.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.documents.fileUrl({ id: 'doc_ada_notes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string \| null` | No | — |
+
+
+
+---
+
+### documents.get
+
+`legacy.documents.get`
+
+Legacy v3/v4 route. Get document. Get a document by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.documents.get({ id: 'doc_ada_notes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `namespace` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connectionId` | `string \| null \| null \| null` | No | Optional ID of connection the document was created from. This is useful for identifying the source of the document. |
+| `content` | `string \| null \| null` | No | The content to extract and process into a document. This can be a URL to a website, a PDF, an image, or a video. Plaintext: Any plaintext format URL: A URL to a website, PDF, image, or video We automatically detect the content type from the url's response format. |
+| `containerTags` | `string[] \| null` | No | Optional tags this document should be containerized by. This can be an ID for your user, a project ID, or any other identifier you wish to use to group documents. |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+| `customId` | `string \| null \| null` | No | Optional custom ID of the document. This could be an ID from your database that will uniquely identify this document. |
+| `id` | `string \| null` | No | Unique identifier of the document. |
+| `metadata` | `string \| number \| boolean \| null \| Record<string, any> \| any[] \| null \| null` | No | Optional metadata for the document. This is used to store additional information about the document. You can use this to store any additional information you need about the document. Metadata can be filtered through. Keys must be strings and are case sensitive. Values can be strings, numbers, or booleans. You cannot nest objects. |
+| `ogImage` | `string \| null \| null` | No | — |
+| `raw` | `any \| null \| null` | No | Raw content of the document |
+| `source` | `string \| null \| null` | No | Source of the document |
+| `taskType` | `string \| null` | No | Task type: "memory" (default) for full context layer with SuperRAG built in, "superrag" for managed RAG as a service. |
+| `latestRevision` | `number \| null` | No | — |
+| `activeContentUpdateId` | `string \| null \| null` | No | — |
+| `tombstonedAt` | `string \| null \| null` | No | — |
+| `status` | `string \| null` | No | Status of the document |
+| `dreamingStatus` | `string \| null` | No | — |
+| `summary` | `string \| null \| null` | No | Summary of the document content |
+| `title` | `string \| null \| null` | No | Title of the document |
+| `type` | `string \| null` | No | Type of the document |
+| `updatedAt` | `string \| null` | No | Last update timestamp |
+| `url` | `string \| null \| null \| null` | No | URL of the document |
+| `filepath` | `string \| null \| null` | No | — |
+| `memories` | `object[] \| null` | No | Memories extracted from this document. Omitted when the document has no memories (e.g. still processing). |
+
+<AccordionGroup>
+<Accordion title="memories full type">
+
+```ts
+{
+  id?: string | null,
+  memory?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null | null,
+  isLatest?: boolean | null,
+  isForgotten?: boolean | null,
+  isStatic?: boolean | null,
+  isInference?: boolean | null,
+  version?: number | null,
+  sourceCount?: number | null,
+  metadata?: string | number | boolean | null | Record<string, any> | any[] | null | null,
+  parentMemoryId?: string | null | null,
+  rootMemoryId?: string | null | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### documents.list
+
+`legacy.documents.list`
+
+Legacy v3/v4 route. List documents. Retrieves a paginated list of documents with their metadata and workflow status.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.documents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `containerTags` | `string[]` | No | Optional tags this document should be containerized by. This can be an ID for your user, a project ID, or any other identifier you wish to use to group documents. |
+| `filters` | `object` | No | Root query object that must contain either an AND or OR array of filter expressions |
+| `includeContent` | `boolean` | No | Whether to include the content field in the response. Warning: This can make responses significantly larger. |
+| `cursor` | `string` | No | Opaque cursor from a previous response's `pagination.nextCursor`. When present, `page` is ignored and results continue after the last item of the previous page. Filters, sort, order and limit must match the request that produced the cursor. |
+| `limit` | `string \| number` | No | Number of items per page |
+| `order` | `asc \| desc` | No | Sort order |
+| `page` | `string \| number` | No | Page number to fetch |
+| `sort` | `createdAt \| updatedAt` | No | Field to sort by |
+| `filepath` | `string` | No | Filter documents by filepath. Exact match for full paths, prefix match if ending with / |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  OR: (
+    {
+      filterType?: metadata | numeric | array_contains | string_contains,
+      key: string,
+      negate?: boolean | true | false,
+      ignoreCase?: boolean | true | false,
+      numericOperator?:
+    > | < |>= | <= | =, value: string} | {
+      OR: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (recursive)[]
+        } | {
+          AND: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        }
+      )[]
+    } | {
+      AND: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        } | {
+          AND: (recursive)[]
+        }
+      )[]
+    }
+  )[]
+} | {
+  AND: (
+    {
+      filterType?: metadata | numeric | array_contains | string_contains,
+      key: string,
+      negate?: boolean | true | false,
+      ignoreCase?: boolean | true | false,
+      numericOperator?:
+    > | < |>= | <= | =, value: string} | {
+      OR: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (recursive)[]
+        } | {
+          AND: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        }
+      )[]
+    } | {
+      AND: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        } | {
+          AND: (recursive)[]
+        }
+      )[]
+    }
+  )[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memories` | `object[] \| null` | No | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="memories full type">
+
+```ts
+{
+  connectionId?: string | null | null | null,
+  containerTags?: string[] | null,
+  createdAt?: string | null,
+  customId?: string | null | null,
+  filepath?: string | null | null,
+  id?: string | null,
+  metadata?: string | number | boolean | null | Record<string, any> | any[] | null | null,
+  status?: string | null,
+  summary?: string | null | null,
+  title?: string | null | null,
+  type?: string | null,
+  updatedAt?: string | null,
+  url?: string | null | null | null,
+  content?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  currentPage?: number | null,
+  limit?: number | null,
+  totalItems?: number | null,
+  totalPages?: number | null,
+  hasMore?: boolean | null,
+  nextCursor?: string | null | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### documents.listProcessing
+
+`legacy.documents.listProcessing`
+
+Legacy v3/v4 route. Get processing documents. Get documents that are currently being processed. Default view=active is the live in-flight queue. view=pending is every unfinished document with no time cutoff. view=all also includes failed documents, paginated.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.documents.listProcessing({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `view` | `active \| pending \| all` | No | `active` returns in-flight documents updated in the last 4 hours. `pending` returns every document that is not done or failed, with no time cutoff. `all` also includes failed documents, paginated. |
+| `containerTags` | `string` | No | Comma-separated container tags to filter by |
+| `page` | `string \| number` | No | Page number to fetch. Used with `view=all`. |
+| `limit` | `string \| number` | No | Number of items per page. Used with `view=all`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documents` | `object[] \| null` | No | — |
+| `totalCount` | `number \| null` | No | Total number of processing documents |
+| `pagination` | `object \| null` | No | Present when `view=all` |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  id?: string | null,
+  customId?: string | null | null,
+  title?: string | null | null,
+  type?: string | null,
+  status?: string | null,
+  summary?: string | null | null,
+  connectionId?: string | null | null | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  metadata?: string | number | boolean | null | Record<string, any> | any[] | null | null,
+  containerTags?: string[] | null,
+  stuck?: boolean | null,
+  errorCode?: string | null | null,
+  errorMessage?: string | null | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  currentPage?: number | null,
+  limit?: number | null,
+  totalItems?: number | null,
+  totalPages?: number | null,
+  hasMore?: boolean | null,
+  nextCursor?: string | null | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### documents.search
+
+`legacy.documents.search`
+
+Legacy v3/v4 route. Search documents. Search memories with advanced filtering.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.documents.search({
+	q: 'meeting preferences',
+	containerTags: ['user_ada'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `chunkThreshold` | `number` | No | Threshold / sensitivity for chunk selection. 0 is least sensitive (returns most chunks, more results), 1 is most sensitive (returns lesser chunks, accurate results) |
+| `containerTag` | `string` | No | Optional single container tag. Use this or containerTags. |
+| `containerTags` | `string[]` | No | Optional tags this search should be containerized by. This can be an ID for your user, a project ID, or any other identifier you wish to use to filter documents. |
+| `docId` | `string` | No | Optional document ID to search within. You can use this to find chunks in a very large document. |
+| `documentThreshold` | `number` | No | DEPRECATED: This field is no longer used in v3 search. The search now uses chunkThreshold only. This parameter will be ignored. |
+| `filters` | `object` | No | Root query object that must contain either an AND or OR array of filter expressions |
+| `includeFullDocs` | `boolean` | No | If true, include full document in the response. This is helpful if you want a chatbot to know the full context of the document. |
+| `includeSummary` | `boolean` | No | If true, include document summary in the response. This is helpful if you want a chatbot to know the full context of the document. |
+| `limit` | `number` | No | Maximum number of results to return |
+| `onlyMatchingChunks` | `boolean` | No | If true, only return matching chunks without context. Normally, we send the previous and next chunk to provide more context for LLMs. If you only want the matching chunk, set this to true. |
+| `q` | `string` | Yes | Search query string |
+| `rerank` | `boolean` | No | If true, rerank the results based on the query. This is helpful if you want to ensure the most relevant results are returned. |
+| `rewriteQuery` | `boolean` | No | If true, rewrites the query to make it easier to find documents. This increases the latency by about 400ms |
+| `categoriesFilter` | `string[]` | No | DEPRECATED: Optional category filters |
+| `filepath` | `string` | No | Filter search results by filepath. Exact match for full paths, prefix match if ending with / |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  OR: (
+    {
+      filterType?: metadata | numeric | array_contains | string_contains,
+      key: string,
+      negate?: boolean | true | false,
+      ignoreCase?: boolean | true | false,
+      numericOperator?:
+    > | < |>= | <= | =, value: string} | {
+      OR: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (recursive)[]
+        } | {
+          AND: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        }
+      )[]
+    } | {
+      AND: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        } | {
+          AND: (recursive)[]
+        }
+      )[]
+    }
+  )[]
+} | {
+  AND: (
+    {
+      filterType?: metadata | numeric | array_contains | string_contains,
+      key: string,
+      negate?: boolean | true | false,
+      ignoreCase?: boolean | true | false,
+      numericOperator?:
+    > | < |>= | <= | =, value: string} | {
+      OR: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (recursive)[]
+        } | {
+          AND: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        }
+      )[]
+    } | {
+      AND: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        } | {
+          AND: (recursive)[]
+        }
+      )[]
+    }
+  )[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | — |
+| `timing` | `number \| null` | No | — |
+| `total` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  chunks?: {
+    content?: string | null,
+    isRelevant?: boolean | null,
+    position?: number | null,
+    score?: number | null
+  }[] | null,
+  createdAt?: string | null,
+  documentId?: string | null,
+  metadata?: Record<string, any> | null | null,
+  score?: number | null,
+  summary?: string | null | null,
+  content?: string | null | null,
+  title?: string | null | null,
+  updatedAt?: string | null,
+  type?: string | null | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### documents.update
+
+`legacy.documents.update`
+
+Legacy v3/v4 route. Update document. Update a document with any content type (text, url, file, etc.) and metadata.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.legacy.documents.update({ id: 'doc_ada_notes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `containerTag` | `string` | No | Optional tag this document should be containerized by. This can be an ID for your user, a project ID, or any other identifier you wish to use to group documents. |
+| `containerTags` | `string[]` | No | (DEPRECATED: Use containerTag instead) Optional tags this document should be containerized by. This can be an ID for your user, a project ID, or any other identifier you wish to use to group documents. |
+| `content` | `string` | No | The content to extract and process into a document. This can be a URL to a website, a PDF, an image, or a video. Plaintext: Any plaintext format URL: A URL to a website, PDF, image, or video We automatically detect the content type from the url's response format. |
+| `customId` | `string` | No | Optional custom ID of the document. This could be an ID from your database that will uniquely identify this document. |
+| `metadata` | `Record<string, string \| number \| boolean \| string[]>` | No | Optional metadata for the document. This is used to store additional information about the document. You can use this to store any additional information you need about the document. Metadata can be filtered through. Keys must be strings and are case sensitive. Values can be strings, numbers, or booleans. You cannot nest objects. |
+| `taskType` | `memory \| superrag` | No | Task type: "memory" (default) for full context layer with SuperRAG built in, "superrag" for managed RAG as a service. |
+| `filepath` | `string` | No | Optional file path for the document (e.g., '/documents/reports/file.pdf'). Used by supermemoryfs to map documents to filesystem paths. |
+| `filterByMetadata` | `Record<string, string \| number \| boolean \| string[]>` | No | Optional metadata filter scoping which existing memories are pulled as context during ingestion. Scalar values match exactly (AND across keys); array values match ANY (OR within key). Only memories whose source documents match this filter are used as context. |
+| `documentDate` | `string` | No | When this document's content is from, as opposed to when it was uploaded. Accepts YYYY-MM-DD or a full ISO 8601 timestamp. Memory extraction resolves relative dates ('yesterday', 'last quarter') against this instead of the ingestion time, and documents in a batch are processed oldest-first so newer facts correctly supersede older ones. Set this whenever you backfill historical content. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique identifier of the document |
+| `status` | `string \| null` | No | Status of the document |
+
+
+
+---
+
+### documents.uploadFile
+
+`legacy.documents.uploadFile`
+
+Legacy v3/v4 route. Upload a file to be processed.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.legacy.documents.uploadFile({
+	file: { base64: 'SGVsbG8gZnJvbSBDb3JzYWly', filename: 'notes.txt', contentType: 'text/plain' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string \| object \| custom` | Yes | File to upload and process |
+| `containerTag` | `string` | No | Optional container tag (e.g., 'user_123'). Use this for a single tag. |
+| `containerTags` | `string` | No | Optional container tags. Can be either a JSON string of an array (e.g., '["user_123", "project_123"]') or a single string (e.g., 'user_123'). Single strings will be automatically converted to an array. |
+| `fileType` | `string` | No | Optional file type override to force specific processing behavior. Valid values: text, pdf, tweet, google_doc, google_slide, google_sheet, image, video, notion_doc, webpage, onedrive |
+| `mimeType` | `string` | No | Required when fileType is 'image' or 'video'. Specifies the exact MIME type to use (e.g., 'image/png', 'image/jpeg', 'video/mp4', 'video/webm') |
+| `metadata` | `string` | No | Optional metadata for the document as a JSON string. This is used to store additional information about the document. Keys must be strings and values can be strings, numbers, or booleans. |
+| `filterByMetadata` | `string` | No | Optional metadata filter as a JSON string. Scopes which existing memories are pulled as context during ingestion. Scalar values match exactly (AND across keys); array values match ANY (OR within key). |
+| `filepath` | `string` | No | Optional file path for the uploaded file (e.g., '/documents/reports/file.pdf'). Used by supermemoryfs to map documents to filesystem paths. |
+| `useAdvancedProcessing` | `string` | No | DEPRECATED: This field is no longer used. Advanced PDF processing is now automatic with our hybrid Mistral OCR + Gemini pipeline. This parameter will be accepted but ignored for backwards compatibility. |
+| `customId` | `string` | No | Optional custom ID of the document. Max 100 characters, alphanumeric with hyphens, underscores, and colons only. |
+| `entityContext` | `string` | No | Optional entity context for this container tag. Max 1500 characters. Used during document processing to guide memory extraction. |
+| `taskType` | `memory \| superrag` | No | Task type: "memory" (default) for full context layer with SuperRAG built in, "superrag" for managed RAG as a service. |
+| `dreaming` | `instant \| dynamic` | No | Processing mode. "dynamic" (default) groups related documents together so memories form from coherent, logical units rather than one isolated entry at a time. "instant" processes each document on its own right away, and bills one extra operation per document. |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique identifier of the document |
+| `status` | `string \| null` | No | Status of the document |
+
+
+
+---
+
+### memories.create
+
+`legacy.memories.create`
+
+Legacy v3/v4 route. Create memories directly, bypassing the document ingestion workflow. Generates embeddings and makes them immediately searchable.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.legacy.memories.create({
+	memories: [{ content: 'Ada prefers morning meetings and works in Lisbon.' }],
+	containerTag: 'user_ada',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memories` | `object[]` | Yes | Array of memories to create |
+| `containerTag` | `string` | Yes | The space / container tag these memories belong to. |
+
+<AccordionGroup>
+<Accordion title="memories full type">
+
+```ts
+{
+  content: string,
+  isStatic?: boolean,
+  metadata?: Record<string, string | number | boolean | string[]>,
+  forgetAfter?: string | null,
+  forgetReason?: string | null,
+  temporalContext?: {
+    documentDate?: string | null,
+    eventDate?: string[] | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentId` | `string \| null \| null` | No | ID of the source document created |
+| `memories` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="memories full type">
+
+```ts
+{
+  id?: string | null,
+  memory?: string | null,
+  isStatic?: boolean | null,
+  createdAt?: string | null,
+  forgetAfter?: string | null | null,
+  forgetReason?: string | null | null,
+  metadata?: Record<string, any> | null | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### memories.forget
+
+`legacy.memories.forget`
+
+Legacy v3/v4 route. Forget a memory. Forget (soft delete) a memory entry. The memory is marked as forgotten but not permanently deleted.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supermemory.api.legacy.memories.forget({ containerTag: 'user_ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | ID of the memory entry to operate on |
+| `content` | `string` | No | Exact content match of the memory entry to operate on. Use this when you don't have the ID. |
+| `containerTag` | `string` | Yes | Container tag / space identifier. Required to scope the operation. |
+| `reason` | `string` | No | Optional reason for forgetting this memory |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | ID of the memory that was forgotten |
+| `forgotten` | `boolean \| null` | No | Indicates the memory was successfully forgotten |
+
+
+
+---
+
+### memories.forgetMatching
+
+`legacy.memories.forgetMatching`
+
+Legacy v3/v4 route. Forget memories matching a prompt/query. Agentic mass-forget. Given a prompt or query, a tool-calling agent searches the container's memories and soft-deletes everything matching the target. Use dryRun to preview first.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supermemory.api.legacy.memories.forgetMatching({ containerTag: 'user_ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | Natural-language instruction ('forget everything about Project Titan') or a bare topic ('Project Titan'). The service searches the container's memories and selects matches to forget. Provide either query or ids. |
+| `ids` | `string[]` | No | Forget exactly these memory ids, with no semantic search. Ids are validated against the containerTag, so unknown or out-of-scope ids are ignored. Provide either query or ids. |
+| `containerTag` | `string` | Yes | Container tag / space the forget operation is scoped to. |
+| `dryRun` | `boolean` | No | When true, returns the memories that WOULD be forgotten without mutating anything. Defaults to false (forgets for real). |
+| `threshold` | `number` | No | Minimum cosine similarity a memory must have to be considered. Lower = wider net. Defaults to 0.5. |
+| `maxForget` | `number` | No | Maximum number of memories this call may forget. Defaults to 100, max 500. |
+| `reason` | `string` | No | Optional reason stored as forgetReason on each memory. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dryRun` | `boolean \| null` | No | Whether this was a preview (no mutation) or a real forget |
+| `count` | `number \| null` | No | Number of memories selected / forgotten |
+| `forgetBatchId` | `string \| null \| null` | No | ID tagged on every memory forgotten in this call (null on dryRun) |
+| `summary` | `string \| null` | No | The agent's one-line summary of what it did |
+| `candidates` | `object[] \| null` | No | On dryRun: the memories that would be forgotten |
+| `forgotten` | `object[] \| null` | No | On apply: the memories that were forgotten |
+
+<AccordionGroup>
+<Accordion title="candidates full type">
+
+```ts
+{
+  id?: string | null,
+  memory?: string | null,
+  score?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="forgotten full type">
+
+```ts
+{
+  id?: string | null,
+  memory?: string | null,
+  score?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### memories.list
+
+`legacy.memories.list`
+
+Legacy v3/v4 route. List memory entries with history. List all latest memory entries from specified container tags with their update history and source documents.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.memories.list({
+	containerTags: ['user_ada'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `containerTags` | `string[]` | Yes | Container tags to filter memory entries. At least one tag is required. |
+| `filters` | `object` | No | Root query object that must contain either an AND or OR array of filter expressions |
+| `cursor` | `string` | No | Opaque cursor from a previous response's `pagination.nextCursor`. When present, `page` is ignored and results continue after the last item of the previous page. Filters, sort, order and limit must match the request that produced the cursor. |
+| `limit` | `string \| number` | No | Number of items per page |
+| `order` | `asc \| desc` | No | Sort order |
+| `page` | `string \| number` | No | Page number to fetch |
+| `sort` | `createdAt \| updatedAt` | No | Field to sort by |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  OR: (
+    {
+      filterType?: metadata | numeric | array_contains | string_contains,
+      key: string,
+      negate?: boolean | true | false,
+      ignoreCase?: boolean | true | false,
+      numericOperator?:
+    > | < |>= | <= | =, value: string} | {
+      OR: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (recursive)[]
+        } | {
+          AND: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        }
+      )[]
+    } | {
+      AND: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        } | {
+          AND: (recursive)[]
+        }
+      )[]
+    }
+  )[]
+} | {
+  AND: (
+    {
+      filterType?: metadata | numeric | array_contains | string_contains,
+      key: string,
+      negate?: boolean | true | false,
+      ignoreCase?: boolean | true | false,
+      numericOperator?:
+    > | < |>= | <= | =, value: string} | {
+      OR: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (recursive)[]
+        } | {
+          AND: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        }
+      )[]
+    } | {
+      AND: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        } | {
+          AND: (recursive)[]
+        }
+      )[]
+    }
+  )[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memoryEntries` | `object[] \| null` | No | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="memoryEntries full type">
+
+```ts
+{
+  id?: string | null,
+  memory?: string | null,
+  version?: number | null,
+  isLatest?: boolean | null,
+  isForgotten?: boolean | null,
+  isStatic?: boolean | null,
+  isInference?: boolean | null | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  spaceId?: string | null,
+  orgId?: string | null,
+  sourceCount?: number | null,
+  parentMemoryId?: string | null | null,
+  rootMemoryId?: string | null | null,
+  forgetAfter?: string | null | null,
+  forgetReason?: string | null | null,
+  metadata?: Record<string, any> | null | null,
+  memoryRelations?: Record<string, string> | null | null,
+  temporalContext?: Record<string, any> | null | null,
+  history?: {
+    id?: string | null,
+    memory?: string | null,
+    version?: number | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+    parentMemoryId?: string | null | null,
+    rootMemoryId?: string | null | null,
+    isLatest?: boolean | null,
+    isForgotten?: boolean | null
+  }[] | null,
+  documentIds?: string[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  currentPage?: number | null,
+  limit?: number | null,
+  totalItems?: number | null,
+  totalPages?: number | null,
+  hasMore?: boolean | null,
+  nextCursor?: string | null | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### memories.search
+
+`legacy.memories.search`
+
+Legacy v3/v4 route. Search memory entries - Low latency for conversational.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.memories.search({ q: 'meeting preferences', containerTag: 'user_ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `containerTag` | `string` | No | Optional tag this search should be containerized by. This can be an ID for your user, a project ID, or any other identifier you wish to use to filter memories. |
+| `containerTags` | `string[]` | No | Optional tags this search should be containerized by. Search is scoped to memories under these tags. |
+| `threshold` | `number` | No | Threshold / sensitivity for memories selection. 0 is least sensitive (returns most memories, more results), 1 is most sensitive (returns lesser memories, accurate results) |
+| `filters` | `object` | No | Root query object that must contain either an AND or OR array of filter expressions |
+| `include` | `object` | No | — |
+| `limit` | `number` | No | Maximum number of results to return |
+| `q` | `string` | Yes | Search query string |
+| `rerank` | `boolean` | No | If true, rerank the results based on the query. This is helpful if you want to ensure the most relevant results are returned. |
+| `aggregate` | `boolean` | No | If true, aggregates information from multiple memories to create new synthesized memories. The result will be a mix of aggregated and non-aggregated memories, reranked by relevance to the query. Works in conjunction with reranking. |
+| `rewriteQuery` | `boolean` | No | If true, rewrites the query to make it easier to find documents. This increases the latency by about 400ms |
+| `searchMode` | `memories \| hybrid \| documents` | No | Search mode. 'memories' searches only memory entries (default). 'hybrid' searches both memories and document chunks. 'documents' searches only document chunks. |
+| `filepath` | `string` | No | Filter search results by filepath. Exact match for full paths, prefix match if ending with / |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  OR: (
+    {
+      filterType?: metadata | numeric | array_contains | string_contains,
+      key: string,
+      negate?: boolean | true | false,
+      ignoreCase?: boolean | true | false,
+      numericOperator?:
+    > | < |>= | <= | =, value: string} | {
+      OR: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (recursive)[]
+        } | {
+          AND: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        }
+      )[]
+    } | {
+      AND: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        } | {
+          AND: (recursive)[]
+        }
+      )[]
+    }
+  )[]
+} | {
+  AND: (
+    {
+      filterType?: metadata | numeric | array_contains | string_contains,
+      key: string,
+      negate?: boolean | true | false,
+      ignoreCase?: boolean | true | false,
+      numericOperator?:
+    > | < |>= | <= | =, value: string} | {
+      OR: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (recursive)[]
+        } | {
+          AND: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        }
+      )[]
+    } | {
+      AND: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        } | {
+          AND: (recursive)[]
+        }
+      )[]
+    }
+  )[]
+}
+```
+</Accordion>
+
+<Accordion title="include full type">
+
+```ts
+{
+  documents?: boolean,
+  summaries?: boolean,
+  relatedMemories?: boolean,
+  forgottenMemories?: boolean,
+  chunks?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | Array of matching memory entries and chunks with similarity scores. Contains memory results when searchMode='memories', both memory and chunk results when searchMode='hybrid', or only chunk results when searchMode='documents'. Memory results have 'memory' field, chunk results have 'chunk' field. BACKWARD COMPATIBILITY: When using deprecated include.chunks=true, only memory results are returned with chunks embedded in them (old format). |
+| `timing` | `number \| null` | No | Search execution time in milliseconds |
+| `total` | `number \| null` | No | Total number of results returned |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  memory?: string | null,
+  chunk?: string | null,
+  metadata?: Record<string, any> | null | null,
+  updatedAt?: string | null,
+  similarity?: number | null,
+  filepath?: string | null | null,
+  version?: number | null | null,
+  rootMemoryId?: string | null | null,
+  context?: {
+    parents?: {
+      id?: string | null,
+      relation?: string | null,
+      version?: number | null | null,
+      memory?: string | null,
+      metadata?: Record<string, any> | null | null,
+      updatedAt?: string | null
+    }[] | null,
+    children?: {
+      id?: string | null,
+      relation?: string | null,
+      version?: number | null | null,
+      memory?: string | null,
+      metadata?: Record<string, any> | null | null,
+      updatedAt?: string | null
+    }[] | null,
+    related?: {
+      id?: string | null,
+      relation?: string | null,
+      memory?: string | null,
+      metadata?: Record<string, any> | null | null,
+      updatedAt?: string | null
+    }[] | null
+  } | null,
+  documents?: {
+    id?: string | null,
+    title?: string | null,
+    type?: string | null,
+    metadata?: Record<string, any> | null | null,
+    summary?: string | null | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  }[] | null,
+  chunks?: {
+    content?: string | null,
+    position?: number | null,
+    documentId?: string | null
+  }[] | null,
+  isAggregated?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### memories.update
+
+`legacy.memories.update`
+
+Legacy v3/v4 route. Update a memory by creating a new version. The original memory is preserved with isLatest=false.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.legacy.memories.update({ containerTag: 'user_ada', newContent: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | ID of the memory entry to operate on |
+| `content` | `string` | No | Exact content match of the memory entry to operate on. Use this when you don't have the ID. |
+| `containerTag` | `string` | Yes | Container tag / space identifier. Required to scope the operation. |
+| `newContent` | `string` | Yes | The new content that will replace the existing memory |
+| `metadata` | `Record<string, string \| number \| boolean \| string[]>` | No | Optional metadata. If not provided, inherits from the previous version. |
+| `forgetAfter` | `string \| null` | No | ISO 8601 datetime string. The memory will be auto-forgotten after this time. Pass null to clear an existing expiry. Omit to inherit from the previous version. |
+| `forgetReason` | `string \| null` | No | Optional reason for the scheduled forgetting. Cleared automatically when forgetAfter is set to null. |
+| `temporalContext` | `object` | No | Structured temporal metadata. Merged into the metadata JSON column. If omitted, existing temporalContext is preserved. |
+
+<AccordionGroup>
+<Accordion title="temporalContext full type">
+
+```ts
+{
+  documentDate?: string | null,
+  eventDate?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | ID of the newly created memory version |
+| `memory` | `string \| null` | No | The content of the new memory version |
+| `version` | `number \| null` | No | Version number of this memory entry |
+| `parentMemoryId` | `string \| null \| null` | No | ID of the memory this version updates |
+| `rootMemoryId` | `string \| null \| null` | No | ID of the first memory in this version chain |
+| `createdAt` | `string \| null` | No | When this memory version was created |
+| `forgetAfter` | `string \| null \| null` | No | When this memory will be auto-forgotten, or null if no expiry |
+| `forgetReason` | `string \| null \| null` | No | Reason for the scheduled forgetting, or null |
+| `metadata` | `Record<string, any> \| null \| null` | No | Arbitrary key-value metadata attached to this memory, or null if none was provided |
+
+
+
+---
+
+### profile.buckets
+
+`legacy.profile.buckets`
+
+Legacy v3/v4 route. Get profile buckets. Returns the effective profile bucket definitions for a given container tag — org-level buckets merged with any container-tag-level additions.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.profile.buckets({ containerTag: 'user_ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `containerTag` | `string` | Yes | Tag to resolve effective bucket definitions for. Can be a user ID, project ID, or any identifier used to scope memories. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buckets` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="buckets full type">
+
+```ts
+{
+  key?: string | null,
+  description?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### profile.get
+
+`legacy.profile.get`
+
+Legacy v3/v4 route. Get user profile with optional search results.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.profile.get({ containerTag: 'user_ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Optional search query to include search results in the response |
+| `containerTag` | `string` | Yes | Tag to filter the profile by. This can be an ID for your user, a project ID, or any other identifier you wish to use to filter memories. |
+| `threshold` | `number` | No | Threshold for search results. Only results with a score above this threshold will be included. |
+| `filters` | `object` | No | Root query object that must contain either an AND or OR array of filter expressions |
+| `include` | `(static \| dynamic \| buckets)[]` | No | Profile sections to return. Omit to return all sections. Pass a subset to reduce payload — e.g. ["buckets"] skips static and dynamic entirely. |
+| `buckets` | `string[]` | No | Specific bucket keys to return. Omit to return all configured buckets. Only relevant when "buckets" is included. |
+
+<AccordionGroup>
+<Accordion title="filters full type">
+
+```ts
+{
+  OR: (
+    {
+      filterType?: metadata | numeric | array_contains | string_contains,
+      key: string,
+      negate?: boolean | true | false,
+      ignoreCase?: boolean | true | false,
+      numericOperator?:
+    > | < |>= | <= | =, value: string} | {
+      OR: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (recursive)[]
+        } | {
+          AND: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        }
+      )[]
+    } | {
+      AND: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        } | {
+          AND: (recursive)[]
+        }
+      )[]
+    }
+  )[]
+} | {
+  AND: (
+    {
+      filterType?: metadata | numeric | array_contains | string_contains,
+      key: string,
+      negate?: boolean | true | false,
+      ignoreCase?: boolean | true | false,
+      numericOperator?:
+    > | < |>= | <= | =, value: string} | {
+      OR: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (recursive)[]
+        } | {
+          AND: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        }
+      )[]
+    } | {
+      AND: (
+        {
+          filterType?: metadata | numeric | array_contains | string_contains,
+          key: string,
+          negate?: boolean | true | false,
+          ignoreCase?: boolean | true | false,
+          numericOperator?:
+        > | < |>= | <= | =, value: string} | {
+          OR: (
+            {
+              filterType?: metadata | numeric | array_contains | string_contains,
+              key: string,
+              negate?: boolean | true | false,
+              ignoreCase?: boolean | true | false,
+              numericOperator?:
+            > | < |>= | <= | =, value: string} | {
+              OR: (recursive)[]
+            } | {
+              AND: (recursive)[]
+            }
+          )[]
+        } | {
+          AND: (recursive)[]
+        }
+      )[]
+    }
+  )[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile` | `object \| null` | No | — |
+| `searchResults` | `object \| null` | No | Search results if a search query was provided |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  static?: string[] | null,
+  dynamic?: string[] | null,
+  buckets?: Record<string, string[]> | null
+} | null
+```
+</Accordion>
+
+<Accordion title="searchResults full type">
+
+```ts
+{
+  results?: {
+    id?: string | null,
+    memory?: string | null,
+    chunk?: string | null,
+    metadata?: Record<string, any> | null | null,
+    updatedAt?: string | null,
+    similarity?: number | null,
+    filepath?: string | null | null,
+    version?: number | null | null,
+    rootMemoryId?: string | null | null,
+    context?: {
+      parents?: {
+        id?: string | null,
+        relation?: string | null,
+        version?: number | null | null,
+        memory?: string | null,
+        metadata?: Record<string, any> | null | null,
+        updatedAt?: string | null
+      }[] | null,
+      children?: {
+        id?: string | null,
+        relation?: string | null,
+        version?: number | null | null,
+        memory?: string | null,
+        metadata?: Record<string, any> | null | null,
+        updatedAt?: string | null
+      }[] | null,
+      related?: {
+        id?: string | null,
+        relation?: string | null,
+        memory?: string | null,
+        metadata?: Record<string, any> | null | null,
+        updatedAt?: string | null
+      }[] | null
+    } | null,
+    documents?: {
+      id?: string | null,
+      title?: string | null,
+      type?: string | null,
+      metadata?: Record<string, any> | null | null,
+      summary?: string | null | null,
+      createdAt?: string | null,
+      updatedAt?: string | null
+    }[] | null,
+    chunks?: {
+      content?: string | null,
+      position?: number | null,
+      documentId?: string | null
+    }[] | null,
+    isAggregated?: boolean | null
+  }[] | null,
+  total?: number | null,
+  timing?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### settings.get
+
+`legacy.settings.get`
+
+Legacy v3/v4 route. Get settings for an organization.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.settings.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `excludeItems` | `string \| number \| boolean \| null \| Record<string, any> \| any[] \| null \| null` | No | — |
+| `filterPrompt` | `string \| null \| null` | No | — |
+| `googleDriveClientId` | `string \| null \| null` | No | — |
+| `googleDriveClientSecret` | `string \| null \| null` | No | — |
+| `googleDriveCustomKeyEnabled` | `boolean \| null \| null` | No | — |
+| `includeItems` | `string \| number \| boolean \| null \| Record<string, any> \| any[] \| null \| null` | No | — |
+| `notionClientId` | `string \| null \| null` | No | — |
+| `notionClientSecret` | `string \| null \| null` | No | — |
+| `notionCustomKeyEnabled` | `boolean \| null \| null` | No | — |
+| `onedriveClientId` | `string \| null \| null` | No | — |
+| `onedriveClientSecret` | `string \| null \| null` | No | — |
+| `onedriveCustomKeyEnabled` | `boolean \| null \| null` | No | — |
+| `githubClientId` | `string \| null \| null` | No | — |
+| `githubClientSecret` | `string \| null \| null` | No | — |
+| `githubCustomKeyEnabled` | `boolean \| null \| null` | No | — |
+| `shouldLLMFilter` | `boolean \| null \| null` | No | — |
+| `chunkSize` | `number \| null \| null` | No | — |
+| `profileBuckets` | `object[] \| null` | No | Profile bucket definitions |
+
+<AccordionGroup>
+<Accordion title="profileBuckets full type">
+
+```ts
+{
+  key?: string | null,
+  description?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### settings.reset
+
+`legacy.settings.reset`
+
+Legacy v3/v4 route. Reset organization content: removes documents, memories, spaces (except default project), connections, and org settings. Preserves the org, members, and billing. Deletes every document and memory in the organization; cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supermemory.api.legacy.settings.reset({ confirmation: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `confirmation` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean \| null` | No | — |
+| `deletedConnections` | `number \| null` | No | — |
+| `deletedDocumentBatches` | `number \| null` | No | — |
+| `deletedDocumentsApprox` | `number \| null` | No | — |
+| `deletedMemoryRows` | `number \| null` | No | — |
+| `deletedExtraSpaces` | `number \| null` | No | — |
+| `clearedDefaultSpaceContext` | `boolean \| null` | No | — |
+| `settingsReset` | `boolean \| null` | No | — |
+
+
+
+---
+
+### settings.suggestBuckets
+
+`legacy.settings.suggestBuckets`
+
+Legacy v3/v4 route. Suggest profile bucket definitions based on the organization context prompt. Returns 3–6 bucket suggestions tailored to the use-case described in the prompt.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.legacy.settings.suggestBuckets({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+  key?: string | null,
+  description?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### settings.update
+
+`legacy.settings.update`
+
+Legacy v3/v4 route. Update settings for an organization.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.legacy.settings.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `excludeItems` | `string \| number \| boolean \| null \| Record<string, any> \| any[] \| null` | No | — |
+| `filterPrompt` | `string \| null` | No | — |
+| `googleDriveClientId` | `string \| null` | No | — |
+| `googleDriveClientSecret` | `string \| null` | No | — |
+| `googleDriveCustomKeyEnabled` | `boolean \| null` | No | — |
+| `includeItems` | `string \| number \| boolean \| null \| Record<string, any> \| any[] \| null` | No | — |
+| `notionClientId` | `string \| null` | No | — |
+| `notionClientSecret` | `string \| null` | No | — |
+| `notionCustomKeyEnabled` | `boolean \| null` | No | — |
+| `onedriveClientId` | `string \| null` | No | — |
+| `onedriveClientSecret` | `string \| null` | No | — |
+| `onedriveCustomKeyEnabled` | `boolean \| null` | No | — |
+| `githubClientId` | `string \| null` | No | — |
+| `githubClientSecret` | `string \| null` | No | — |
+| `githubCustomKeyEnabled` | `boolean \| null` | No | — |
+| `shouldLLMFilter` | `boolean \| null` | No | — |
+| `chunkSize` | `number \| null` | No | — |
+| `profileBuckets` | `object[]` | No | Profile bucket definitions |
+
+<AccordionGroup>
+<Accordion title="profileBuckets full type">
+
+```ts
+{
+  key: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `orgId` | `string \| null` | No | — |
+| `orgSlug` | `string \| null` | No | — |
+| `updated` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="updated full type">
+
+```ts
+{
+  excludeItems?: string | number | boolean | null | Record<string, any> | any[] | null | null,
+  filterPrompt?: string | null | null,
+  googleDriveClientId?: string | null | null,
+  googleDriveClientSecret?: string | null | null,
+  googleDriveCustomKeyEnabled?: boolean | null | null,
+  includeItems?: string | number | boolean | null | Record<string, any> | any[] | null | null,
+  notionClientId?: string | null | null,
+  notionClientSecret?: string | null | null,
+  notionCustomKeyEnabled?: boolean | null | null,
+  onedriveClientId?: string | null | null,
+  onedriveClientSecret?: string | null | null,
+  onedriveCustomKeyEnabled?: boolean | null | null,
+  githubClientId?: string | null | null,
+  githubClientSecret?: string | null | null,
+  githubCustomKeyEnabled?: boolean | null | null,
+  shouldLLMFilter?: boolean | null | null,
+  chunkSize?: number | null | null,
+  profileBuckets?: {
+    key?: string | null,
+    description?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Memories
+
+### forget
+
+`memories.forget`
+
+Forget memories by ID. Remove exact memories from normal recall while preserving their audit history. Each ID is handled independently and any missing or ineligible memory is reported without rolling back successful changes. Forgets the memories with these ids; cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supermemory.api.memories.forget({
+	namespace: 'user_ada',
+	ids: ['doc_ada_notes'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | Namespace containing the memories to forget. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope memories. |
+| `ids` | `string[]` | Yes | Memory identifiers to remove from normal recall |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| null` | No | Number of memories matched by this operation |
+| `errors` | `object[] \| null` | No | Per-memory failures for exact-ID requests |
+| `matches` | `object[] \| null` | No | Memories selected by the operation, whether previewed or forgotten |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  id?: string | null,
+  error?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="matches full type">
+
+```ts
+{
+  id?: string | null,
+  memory?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### forgetMatching
+
+`memories.forgetMatching`
+
+Forget memories semantically. Describe what should be forgotten in natural language, then preview or apply the matching set. Use dry-run results with the exact-ID endpoint when you need a reviewable, drift-free workflow. Forgets every memory the query matches; cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supermemory.api.memories.forgetMatching({ namespace: 'user_ada', query: 'meeting preferences', dryRun: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | Namespace containing the memories to forget. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope memories. |
+| `query` | `string` | Yes | Natural-language description of the memories that should be forgotten |
+| `dryRun` | `boolean` | Yes | When true, preview matching memories without changing their recall state |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number \| null` | No | Number of memories matched by this operation |
+| `errors` | `object[] \| null` | No | Per-memory failures for exact-ID requests |
+| `matches` | `object[] \| null` | No | Memories selected by the operation, whether previewed or forgotten |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  id?: string | null,
+  error?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="matches full type">
+
+```ts
+{
+  id?: string | null,
+  memory?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`memories.get`
+
+Get memory. Retrieve one memory by ID. Optionally include its versions (up to three steps away, nearest first), its direct extends and derives links, up to relatedLimit each, and its source document.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.memories.get({ namespace: 'user_ada', id: 'doc_ada_notes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | Namespace containing the memories to forget. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope memories. |
+| `id` | `string` | Yes | Memory identifier |
+| `include` | `(related \| documents)[]` | No | Comma-separated extras. related: the memory's version history and connected memories. documents: the source document, also attached to each related memory when both are requested. |
+| `relatedLimit` | `number` | No | Maximum parents, children and siblings to return, applied to each list separately. Parents and children are earlier and later versions up to three steps away, nearest first; siblings are direct extends or derives links. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Stable memory identifier |
+| `memory` | `string \| null` | No | Learned fact or context extracted from the document |
+| `metadata` | `Record<string, any> \| null` | No | Memory metadata, including temporal context; empty object when none |
+| `isStatic` | `boolean \| null` | No | Whether the memory belongs to the stable profile section |
+| `isInference` | `boolean \| null` | No | Whether the memory was inferred rather than explicitly stated |
+| `isLatest` | `boolean \| null` | No | Whether this is the newest version in its memory chain |
+| `isForgotten` | `boolean \| null` | No | Whether this memory has been excluded from normal recall |
+| `version` | `number \| null` | No | Version number within the memory chain |
+| `system` | `object \| null` | No | Lifecycle timestamps maintained by Supermemory |
+| `included` | `object \| null` | No | Requested extras |
+
+<AccordionGroup>
+<Accordion title="system full type">
+
+```ts
+{
+  createdAt?: string | null,
+  updatedAt?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="included full type">
+
+```ts
+{
+  related?: {
+    parents?: {
+      id?: string | null,
+      relation?: string | null,
+      version?: number | null | null,
+      memory?: string | null,
+      metadata?: Record<string, any> | null,
+      system?: {
+        updatedAt?: string | null
+      } | null,
+      document?: {
+        id?: string | null,
+        title?: string | null | null,
+        type?: string | null | null,
+        metadata?: Record<string, any> | null,
+        summary?: string | null | null,
+        system?: {
+          createdAt?: string | null,
+          updatedAt?: string | null
+        } | null
+      } | null
+    }[] | null,
+    children?: {
+      id?: string | null,
+      relation?: string | null,
+      version?: number | null | null,
+      memory?: string | null,
+      metadata?: Record<string, any> | null,
+      system?: {
+        updatedAt?: string | null
+      } | null,
+      document?: {
+        id?: string | null,
+        title?: string | null | null,
+        type?: string | null | null,
+        metadata?: Record<string, any> | null,
+        summary?: string | null | null,
+        system?: {
+          createdAt?: string | null,
+          updatedAt?: string | null
+        } | null
+      } | null
+    }[] | null,
+    siblings?: {
+      id?: string | null,
+      relation?: string | null,
+      version?: number | null | null,
+      memory?: string | null,
+      metadata?: Record<string, any> | null,
+      system?: {
+        updatedAt?: string | null
+      } | null,
+      document?: {
+        id?: string | null,
+        title?: string | null | null,
+        type?: string | null | null,
+        metadata?: Record<string, any> | null,
+        summary?: string | null | null,
+        system?: {
+          createdAt?: string | null,
+          updatedAt?: string | null
+        } | null
+      } | null
+    }[] | null
+  } | null,
+  document?: {
+    id?: string | null,
+    title?: string | null | null,
+    type?: string | null | null,
+    metadata?: Record<string, any> | null,
+    summary?: string | null | null,
+    system?: {
+      createdAt?: string | null,
+      updatedAt?: string | null
+    } | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Namespaces
+
+### delete
+
+`namespaces.delete`
+
+Delete namespace. Retire a namespace by permanently deleting its content, or preserve that knowledge by moving everything into another namespace first. Moves are queued and complete asynchronously. Deletes the namespace and everything in it unless moveTo names a namespace to move the content into; cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supermemory.api.namespaces.delete({ namespace: 'user_ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | Namespace identifier. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope documents and memories. |
+| `moveTo` | `string` | No | Destination namespace that should receive this namespace's content before deletion. Omit to permanently delete the content. |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status?: string | null,
+  namespace?: string | null,
+  deletedDocumentsCount?: number | null,
+  deletedMemoriesCount?: number | null
+} | {
+  status?: string | null,
+  operationId?: string | null,
+  namespace?: string | null,
+  moveTo?: string | null
+} | {
+  status?: string | null,
+  operationId?: string | null,
+  namespace?: string | null,
+  moveTo?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`namespaces.get`
+
+Get namespace settings. Read the supporting context that helps Supermemory understand content and form better memories inside this namespace.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.namespaces.get({ namespace: 'user_ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | Namespace identifier. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope documents and memories. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string \| null` | No | Namespace identifier used in API paths |
+| `supportingContext` | `string \| null \| null` | No | Background that helps Supermemory interpret documents and form better memories in this namespace |
+| `system` | `object \| null` | No | Namespace lifecycle timestamps |
+
+<AccordionGroup>
+<Accordion title="system full type">
+
+```ts
+{
+  createdAt?: string | null,
+  updatedAt?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`namespaces.list`
+
+List namespaces. Discover every namespace available to the caller, including its purpose, document volume, memory count, and lifecycle timestamps.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.namespaces.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | One-based page number |
+| `limit` | `number` | No | Maximum namespaces to return per page |
+| `q` | `string` | No | Case-insensitive substring to match against namespace names |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespaces` | `object[] \| null` | No | Namespaces on this page, newest first |
+| `pagination` | `object \| null` | No | Pagination metadata |
+
+<AccordionGroup>
+<Accordion title="namespaces full type">
+
+```ts
+{
+  id?: string | null,
+  namespace?: string | null,
+  documentCount?: number | null,
+  memoryCount?: number | null,
+  description?: string | null | null,
+  system?: {
+    createdAt?: string | null,
+    updatedAt?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  currentPage?: number | null,
+  limit?: number | null,
+  totalItems?: number | null,
+  totalPages?: number | null,
+  hasMore?: boolean | null,
+  nextCursor?: string | null | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`namespaces.update`
+
+Update namespace settings. Shape how Supermemory understands an existing namespace by updating the background context used during ingestion and memory formation.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.namespaces.update({ namespace: 'user_ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | Namespace identifier. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope documents and memories. |
+| `supportingContext` | `string \| null` | No | Background that guides how Supermemory interprets documents and forms memories. Max 1500 characters. Set null to clear it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string \| null` | No | Namespace identifier used in API paths |
+| `supportingContext` | `string \| null \| null` | No | Background that helps Supermemory interpret documents and form better memories in this namespace |
+| `system` | `object \| null` | No | Namespace lifecycle timestamps |
+
+<AccordionGroup>
+<Accordion title="system full type">
+
+```ts
+{
+  createdAt?: string | null,
+  updatedAt?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organization
+
+### get
+
+`organization.get`
+
+Get organization settings. Read the shared background that guides memory formation across the organization, together with the number of active namespaces.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.organization.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationalContext` | `string \| null \| null` | No | Shared background that helps Supermemory interpret content consistently across every namespace |
+| `namespaceCount` | `number \| null` | No | Number of namespaces in the organization |
+
+
+
+---
+
+### update
+
+`organization.update`
+
+Update organization settings. Give Supermemory organization-wide background that improves how content is interpreted across every namespace. Send null to remove the existing context.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.organization.update({ organizationalContext: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationalContext` | `string \| null` | Yes | Shared background that guides memory formation across every namespace. Set null to clear it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationalContext` | `string \| null \| null` | No | Shared background that helps Supermemory interpret content consistently across every namespace |
+| `namespaceCount` | `number \| null` | No | Number of namespaces in the organization |
+
+
+
+---
+
+## Profiles
+
+### buckets.delete
+
+`profiles.buckets.delete`
+
+Delete profile buckets. Remove profile categories created specifically for this namespace. Unknown names are safely ignored, while organization-wide buckets remain protected.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.supermemory.api.profiles.buckets.delete({
+	namespace: 'user_ada',
+	buckets: ['work_style'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | The isolated namespace to search. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope memories. |
+| `buckets` | `string[]` | Yes | Namespace-owned bucket names to delete. Organization-level buckets are protected and cannot be removed here. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buckets` | `Record<string, string> \| null` | No | Effective bucket definitions keyed by name. Includes organization buckets and namespace-owned additions. |
+
+
+
+---
+
+### buckets.get
+
+`profiles.buckets.get`
+
+Get profile buckets. Inspect the profile taxonomy active in this namespace. The response combines organization-wide buckets with namespace-owned additions as a concise name-to-description map.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.profiles.buckets.get({ namespace: 'user_ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | The isolated namespace to search. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope memories. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buckets` | `Record<string, string> \| null` | No | Effective bucket definitions keyed by name. Includes organization buckets and namespace-owned additions. |
+
+
+
+---
+
+### buckets.set
+
+`profiles.buckets.set`
+
+Add or update profile buckets. Teach Supermemory new ways to organize this namespace's profile, or refine how existing namespace-owned buckets are classified. Omitted buckets remain unchanged and organization-wide buckets stay protected.
+
+**Risk:** `write`
+
+```ts
+await corsair.supermemory.api.profiles.buckets.set({
+	namespace: 'user_ada',
+	buckets: { work_style: 'How the user likes to work and meet' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | The isolated namespace to search. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope memories. |
+| `buckets` | `Record<string, string>` | Yes | Namespace-owned bucket names mapped to descriptions that guide memory classification. Existing names are updated; new names are added. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `buckets` | `Record<string, string> \| null` | No | Effective bucket definitions keyed by name. Includes organization buckets and namespace-owned additions. |
+
+
+
+---
+
+### get
+
+`profiles.get`
+
+Get profile. Read a continuously maintained understanding of the subject represented by this namespace. Stable facts, evolving context, and selected custom buckets are returned together without requiring a search query.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.profiles.get({ namespace: 'user_ada' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | The isolated namespace to search. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope memories. |
+| `filter` | `object` | No | A type-safe metadata filter predicate or nested and/or expression. The API validates up to 5 levels of nesting. |
+| `buckets` | `string[]` | No | Custom buckets to return. Omit to return every effective bucket. |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  field: string,
+  operator: eq | neq,
+  value: string,
+  caseSensitive?: boolean
+} | {
+  field: string,
+  operator: eq | neq,
+  value: number | boolean
+} | {
+  field: string,
+  operator: gt | gte | lt | lte,
+  value: number
+} | {
+  field: string,
+  operator: contains | notContains,
+  value: string,
+  caseSensitive?: boolean
+} | {
+  field: string,
+  operator: arrayContains | arrayNotContains,
+  value: string
+} | {
+  operator: and,
+  operands: (
+    {
+      field: string,
+      operator: eq | neq,
+      value: string,
+      caseSensitive?: boolean
+    } | {
+      field: string,
+      operator: eq | neq,
+      value: number | boolean
+    } | {
+      field: string,
+      operator: gt | gte | lt | lte,
+      value: number
+    } | {
+      field: string,
+      operator: contains | notContains,
+      value: string,
+      caseSensitive?: boolean
+    } | {
+      field: string,
+      operator: arrayContains | arrayNotContains,
+      value: string
+    } | {
+      operator: and,
+      operands: (recursive)[]
+    } | {
+      operator: or,
+      operands: (
+        {
+          field: string,
+          operator: eq | neq,
+          value: string,
+          caseSensitive?: boolean
+        } | {
+          field: string,
+          operator: eq | neq,
+          value: number | boolean
+        } | {
+          field: string,
+          operator: gt | gte | lt | lte,
+          value: number
+        } | {
+          field: string,
+          operator: contains | notContains,
+          value: string,
+          caseSensitive?: boolean
+        } | {
+          field: string,
+          operator: arrayContains | arrayNotContains,
+          value: string
+        } | {
+          operator: and,
+          operands: (recursive)[]
+        } | {
+          operator: or,
+          operands: (recursive)[]
+        }
+      )[]
+    }
+  )[]
+} | {
+  operator: or,
+  operands: (
+    {
+      field: string,
+      operator: eq | neq,
+      value: string,
+      caseSensitive?: boolean
+    } | {
+      field: string,
+      operator: eq | neq,
+      value: number | boolean
+    } | {
+      field: string,
+      operator: gt | gte | lt | lte,
+      value: number
+    } | {
+      field: string,
+      operator: contains | notContains,
+      value: string,
+      caseSensitive?: boolean
+    } | {
+      field: string,
+      operator: arrayContains | arrayNotContains,
+      value: string
+    } | {
+      operator: and,
+      operands: (
+        {
+          field: string,
+          operator: eq | neq,
+          value: string,
+          caseSensitive?: boolean
+        } | {
+          field: string,
+          operator: eq | neq,
+          value: number | boolean
+        } | {
+          field: string,
+          operator: gt | gte | lt | lte,
+          value: number
+        } | {
+          field: string,
+          operator: contains | notContains,
+          value: string,
+          caseSensitive?: boolean
+        } | {
+          field: string,
+          operator: arrayContains | arrayNotContains,
+          value: string
+        } | {
+          operator: and,
+          operands: (recursive)[]
+        } | {
+          operator: or,
+          operands: (recursive)[]
+        }
+      )[]
+    } | {
+      operator: or,
+      operands: (recursive)[]
+    }
+  )[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile` | `object \| null` | No | Continuously maintained understanding of the subject represented by this namespace |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  static?: {
+    id?: string | null,
+    memory?: string | null
+  }[] | null,
+  dynamic?: {
+    id?: string | null,
+    memory?: string | null
+  }[] | null,
+  buckets?: Record<string, {
+    id?: string | null,
+    memory?: string | null
+  }[]> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Resources
+
+### list
+
+`resources.list`
+
+List resources. Browse documents, source chunks, or learned memories through one predictable paginated contract. Choose the collection in the path; the other collection arrays remain empty for a stable response shape. When listing documents, set include.content to include the last published extracted text.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.resources.list({ namespace: 'user_ada', type: 'memories', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | Namespace containing the resources to list. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope resources. |
+| `type` | `documents \| chunks \| memories` | Yes | Resource collection to list: source documents, extracted chunks, or learned memories |
+| `cursor` | `string` | No | Opaque cursor from a previous response's `pagination.nextCursor`. When present, `page` is ignored and results continue after the last item of the previous page. Filters, sort, order and limit must match the request that produced the cursor. |
+| `page` | `number` | No | One-based page number |
+| `limit` | `number` | No | Maximum resources to return per page |
+| `sort` | `createdAt \| updatedAt \| position` | No | Field used to order results. Position is available only when listing chunks. |
+| `order` | `asc \| desc` | No | Ascending or descending sort direction |
+| `filter` | `object` | No | A type-safe metadata filter predicate or nested and/or expression. The API validates up to 5 levels of nesting. |
+| `include` | `object` | No | Optional extras |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  field: string,
+  operator: eq | neq,
+  value: string,
+  caseSensitive?: boolean
+} | {
+  field: string,
+  operator: eq | neq,
+  value: number | boolean
+} | {
+  field: string,
+  operator: gt | gte | lt | lte,
+  value: number
+} | {
+  field: string,
+  operator: contains | notContains,
+  value: string,
+  caseSensitive?: boolean
+} | {
+  field: string,
+  operator: arrayContains | arrayNotContains,
+  value: string
+} | {
+  operator: and,
+  operands: (
+    {
+      field: string,
+      operator: eq | neq,
+      value: string,
+      caseSensitive?: boolean
+    } | {
+      field: string,
+      operator: eq | neq,
+      value: number | boolean
+    } | {
+      field: string,
+      operator: gt | gte | lt | lte,
+      value: number
+    } | {
+      field: string,
+      operator: contains | notContains,
+      value: string,
+      caseSensitive?: boolean
+    } | {
+      field: string,
+      operator: arrayContains | arrayNotContains,
+      value: string
+    } | {
+      operator: and,
+      operands: (recursive)[]
+    } | {
+      operator: or,
+      operands: (
+        {
+          field: string,
+          operator: eq | neq,
+          value: string,
+          caseSensitive?: boolean
+        } | {
+          field: string,
+          operator: eq | neq,
+          value: number | boolean
+        } | {
+          field: string,
+          operator: gt | gte | lt | lte,
+          value: number
+        } | {
+          field: string,
+          operator: contains | notContains,
+          value: string,
+          caseSensitive?: boolean
+        } | {
+          field: string,
+          operator: arrayContains | arrayNotContains,
+          value: string
+        } | {
+          operator: and,
+          operands: (recursive)[]
+        } | {
+          operator: or,
+          operands: (recursive)[]
+        }
+      )[]
+    }
+  )[]
+} | {
+  operator: or,
+  operands: (
+    {
+      field: string,
+      operator: eq | neq,
+      value: string,
+      caseSensitive?: boolean
+    } | {
+      field: string,
+      operator: eq | neq,
+      value: number | boolean
+    } | {
+      field: string,
+      operator: gt | gte | lt | lte,
+      value: number
+    } | {
+      field: string,
+      operator: contains | notContains,
+      value: string,
+      caseSensitive?: boolean
+    } | {
+      field: string,
+      operator: arrayContains | arrayNotContains,
+      value: string
+    } | {
+      operator: and,
+      operands: (
+        {
+          field: string,
+          operator: eq | neq,
+          value: string,
+          caseSensitive?: boolean
+        } | {
+          field: string,
+          operator: eq | neq,
+          value: number | boolean
+        } | {
+          field: string,
+          operator: gt | gte | lt | lte,
+          value: number
+        } | {
+          field: string,
+          operator: contains | notContains,
+          value: string,
+          caseSensitive?: boolean
+        } | {
+          field: string,
+          operator: arrayContains | arrayNotContains,
+          value: string
+        } | {
+          operator: and,
+          operands: (recursive)[]
+        } | {
+          operator: or,
+          operands: (recursive)[]
+        }
+      )[]
+    } | {
+      operator: or,
+      operands: (recursive)[]
+    }
+  )[]
+}
+```
+</Accordion>
+
+<Accordion title="include full type">
+
+```ts
+{
+  content?: boolean,
+  memoryCount?: boolean,
+  forgotten?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documents` | `object[] \| null` | No | Documents on this page; empty when a different resource type is requested |
+| `chunks` | `object[] \| null` | No | Chunks on this page; empty when a different resource type is requested |
+| `memories` | `object[] \| null` | No | Memories on this page; empty when a different resource type is requested |
+| `pagination` | `object \| null` | No | Page metadata for the selected resource collection |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  id?: string | null,
+  title?: string | null | null,
+  type?: string | null,
+  content?: string | null | null,
+  summary?: string | null | null,
+  metadata?: Record<string, any> | null,
+  url?: string | null | null,
+  system?: {
+    status?: string | null,
+    dreamingStatus?: string | null,
+    memoryCount?: number | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="chunks full type">
+
+```ts
+{
+  id?: string | null,
+  position?: number | null,
+  content?: string | null,
+  type?: string | null,
+  metadata?: Record<string, any> | null,
+  system?: {
+    createdAt?: string | null
+  } | null,
+  documentId?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="memories full type">
+
+```ts
+{
+  id?: string | null,
+  memory?: string | null,
+  metadata?: Record<string, any> | null,
+  isStatic?: boolean | null,
+  isInference?: boolean | null,
+  isLatest?: boolean | null,
+  isForgotten?: boolean | null,
+  version?: number | null,
+  system?: {
+    createdAt?: string | null,
+    updatedAt?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  currentPage?: number | null,
+  limit?: number | null,
+  totalItems?: number | null,
+  totalPages?: number | null,
+  hasMore?: boolean | null,
+  nextCursor?: string | null | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### query
+
+`search.query`
+
+Search memories. Recall the most relevant learned context and source passages from a namespace. Hybrid search combines memories with document chunks by default, with optional query rewriting, reranking, and supporting context attachments.
+
+**Risk:** `read`
+
+```ts
+await corsair.supermemory.api.search.query({ namespace: 'user_ada', query: 'When does Ada like to meet?', limit: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | The isolated namespace to search. This can be an ID for your user, a project ID, or any other identifier you wish to use to scope memories. |
+| `query` | `string` | Yes | Natural-language question, topic, or phrase to retrieve relevant context for. Replaces the v4 `q` field. |
+| `filter` | `object` | No | A type-safe metadata filter predicate or nested and/or expression. The API validates up to 5 levels of nesting. |
+| `searchMode` | `hybrid \| memories \| chunks` | No | Search surface. "hybrid" combines learned memories with source chunks, "memories" returns learned context, and "chunks" returns source passages. |
+| `limit` | `number` | No | Maximum number of results to return |
+| `include` | `object` | No | Optional context to include alongside each matching result |
+| `threshold` | `number` | No | Minimum relevance score from 0 to 1. Raise it for precision (fewer, accurate results) or lower it for broader recall (more results). |
+| `rerank` | `none \| order \| aggregate` | No | Post-retrieval ranking. "order" improves result ordering; "aggregate" also combines overlapping context into cleaner answers. This is helpful if you want to ensure the most relevant results are returned. |
+| `rewriteQuery` | `boolean` | No | Expand and clarify the query before retrieval to improve recall for conversational or underspecified prompts. This increases the latency by about 400ms. |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  field: string,
+  operator: eq | neq,
+  value: string,
+  caseSensitive?: boolean
+} | {
+  field: string,
+  operator: eq | neq,
+  value: number | boolean
+} | {
+  field: string,
+  operator: gt | gte | lt | lte,
+  value: number
+} | {
+  field: string,
+  operator: contains | notContains,
+  value: string,
+  caseSensitive?: boolean
+} | {
+  field: string,
+  operator: arrayContains | arrayNotContains,
+  value: string
+} | {
+  operator: and,
+  operands: (
+    {
+      field: string,
+      operator: eq | neq,
+      value: string,
+      caseSensitive?: boolean
+    } | {
+      field: string,
+      operator: eq | neq,
+      value: number | boolean
+    } | {
+      field: string,
+      operator: gt | gte | lt | lte,
+      value: number
+    } | {
+      field: string,
+      operator: contains | notContains,
+      value: string,
+      caseSensitive?: boolean
+    } | {
+      field: string,
+      operator: arrayContains | arrayNotContains,
+      value: string
+    } | {
+      operator: and,
+      operands: (recursive)[]
+    } | {
+      operator: or,
+      operands: (
+        {
+          field: string,
+          operator: eq | neq,
+          value: string,
+          caseSensitive?: boolean
+        } | {
+          field: string,
+          operator: eq | neq,
+          value: number | boolean
+        } | {
+          field: string,
+          operator: gt | gte | lt | lte,
+          value: number
+        } | {
+          field: string,
+          operator: contains | notContains,
+          value: string,
+          caseSensitive?: boolean
+        } | {
+          field: string,
+          operator: arrayContains | arrayNotContains,
+          value: string
+        } | {
+          operator: and,
+          operands: (recursive)[]
+        } | {
+          operator: or,
+          operands: (recursive)[]
+        }
+      )[]
+    }
+  )[]
+} | {
+  operator: or,
+  operands: (
+    {
+      field: string,
+      operator: eq | neq,
+      value: string,
+      caseSensitive?: boolean
+    } | {
+      field: string,
+      operator: eq | neq,
+      value: number | boolean
+    } | {
+      field: string,
+      operator: gt | gte | lt | lte,
+      value: number
+    } | {
+      field: string,
+      operator: contains | notContains,
+      value: string,
+      caseSensitive?: boolean
+    } | {
+      field: string,
+      operator: arrayContains | arrayNotContains,
+      value: string
+    } | {
+      operator: and,
+      operands: (
+        {
+          field: string,
+          operator: eq | neq,
+          value: string,
+          caseSensitive?: boolean
+        } | {
+          field: string,
+          operator: eq | neq,
+          value: number | boolean
+        } | {
+          field: string,
+          operator: gt | gte | lt | lte,
+          value: number
+        } | {
+          field: string,
+          operator: contains | notContains,
+          value: string,
+          caseSensitive?: boolean
+        } | {
+          field: string,
+          operator: arrayContains | arrayNotContains,
+          value: string
+        } | {
+          operator: and,
+          operands: (recursive)[]
+        } | {
+          operator: or,
+          operands: (recursive)[]
+        }
+      )[]
+    } | {
+      operator: or,
+      operands: (recursive)[]
+    }
+  )[]
+}
+```
+</Accordion>
+
+<Accordion title="include full type">
+
+```ts
+{
+  documents?: boolean,
+  related?: boolean,
+  forgotten?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | Ranked memories and source chunks matching the query |
+| `searchTime` | `number \| null` | No | Server-side search duration in milliseconds |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  memory?: string | null,
+  chunk?: string | null,
+  metadata?: Record<string, any> | null,
+  similarity?: number | null,
+  isLatest?: boolean | null,
+  isInference?: boolean | null,
+  system?: {
+    updatedAt?: string | null,
+    createdAt?: string | null
+  } | null,
+  included?: {
+    related?: {
+      parents?: {
+        id?: string | null,
+        relation?: string | null,
+        version?: number | null | null,
+        memory?: string | null,
+        metadata?: Record<string, any> | null,
+        system?: {
+          updatedAt?: string | null
+        } | null
+      }[] | null,
+      children?: {
+        id?: string | null,
+        relation?: string | null,
+        version?: number | null | null,
+        memory?: string | null,
+        metadata?: Record<string, any> | null,
+        system?: {
+          updatedAt?: string | null
+        } | null
+      }[] | null,
+      siblings?: {
+        id?: string | null,
+        relation?: string | null,
+        version?: number | null | null,
+        memory?: string | null,
+        metadata?: Record<string, any> | null,
+        system?: {
+          updatedAt?: string | null
+        } | null
+      }[] | null
+    } | null,
+    document?: {
+      id?: string | null,
+      title?: string | null | null,
+      type?: string | null | null,
+      metadata?: Record<string, any> | null,
+      summary?: string | null | null,
+      system?: {
+        createdAt?: string | null,
+        updatedAt?: string | null
+      } | null
+    } | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

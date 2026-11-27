@@ -3799,6 +3799,14 @@
                 ]
               },
               {
+                "group": "Supermemory",
+                "pages": [
+                  "plugins/supermemory/overview",
+                  "plugins/supermemory/api",
+                  "plugins/supermemory/database"
+                ]
+              },
+              {
                 "group": "Microsoft Teams",
                 "pages": [
                   "plugins/teams/overview",

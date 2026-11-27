@@ -681,6 +681,7 @@ export const BaseProviders = [
 	'studiobyai21labs',
 	'suitedash',
 	'superchat',
+	'supermemory',
 	'supersaas',
 	'supabase',
 	'supadata',
@@ -1479,6 +1480,7 @@ export const ProviderDisplayNames = {
 	studiobyai21labs: 'StudioByAI21Labs',
 	suitedash: 'SuiteDash',
 	superchat: 'Superchat',
+	supermemory: 'Supermemory',
 	supersaas: 'SuperSaaS',
 	supabase: 'Supabase',
 	supadata: 'Supadata',
@@ -2284,6 +2286,7 @@ export type AllProviders =
 	| 'studiobyai21labs'
 	| 'suitedash'
 	| 'superchat'
+	| 'supermemory'
 	| 'supersaas'
 	| 'supabase'
 	| 'supadata'
