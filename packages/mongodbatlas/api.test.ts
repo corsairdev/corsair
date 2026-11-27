@@ -7,9 +7,11 @@ import { mongodbatlas } from './index';
  *   MONGODB_ATLAS_KEY=<clientId:clientSecret or publicKey:privateKey> npx jest api.test.ts
  *
  * Skipped unless MONGODB_ATLAS_KEY is set (CI never runs files named
- * api.test.ts). It reads the organizations and projects, creates a
- * throwaway project with an IP access list entry and a database user, and
- * deletes the project at the end. No cluster is created.
+ * api.test.ts). It reads the organizations, projects and any clusters
+ * (read only), creates a throwaway project with an IP access list entry, a
+ * database user, a custom role and an alert configuration, creates an
+ * organization API key and gives it the project, then deletes all of it. No
+ * cluster is created or changed.
  */
 const key = process.env.MONGODB_ATLAS_KEY;
 const describeIfLive = key ? describe : describe.skip;
@@ -62,5 +64,89 @@ describeIfLive('mongodbatlas live', () => {
 		});
 		const users = await api.databaseUsers.listDatabaseUsers({ groupId });
 		expect(users.results?.map((u) => u.username)).toContain(`corsair-${STAMP}`);
+	});
+
+	it('reads the clusters of every project', async () => {
+		const projects = await api.projects.listGroups({});
+		for (const project of projects.results ?? []) {
+			const clusters = await api.clusters.listClusters({
+				groupId: String(project.id),
+			});
+			for (const cluster of clusters.results ?? []) {
+				const one = await api.clusters.getCluster({
+					groupId: String(project.id),
+					clusterName: String(cluster.name),
+				});
+				expect(one.name).toBe(cluster.name);
+			}
+		}
+	});
+
+	it('adds a custom role, an alert and an org API key to the project', async () => {
+		expect(groupId).not.toBe('');
+		const roleName = `corsairLive${STAMP}`;
+		await api.customDatabaseRoles.createCustomDbRole({
+			groupId,
+			roleName,
+			actions: [
+				{
+					action: 'FIND',
+					resources: [{ db: 'corsair', collection: '', cluster: false }],
+				},
+			],
+		});
+		const role = await api.customDatabaseRoles.getCustomDbRole({
+			groupId,
+			roleName,
+		});
+		expect(role.roleName).toBe(roleName);
+		await api.customDatabaseRoles.deleteCustomDbRole({ groupId, roleName });
+
+		// Atlas refuses a project notification with neither email nor SMS on.
+		const alert = await api.alertConfigurations.createAlertConfig({
+			groupId,
+			body: {
+				eventTypeName: 'NO_PRIMARY',
+				enabled: true,
+				notifications: [
+					{
+						typeName: 'GROUP',
+						intervalMin: 60,
+						delayMin: 0,
+						emailEnabled: true,
+						smsEnabled: false,
+						roles: ['GROUP_OWNER'],
+					},
+				],
+			},
+		});
+		const alertConfigId = String(alert.id);
+		await api.alertConfigurations.toggleAlertConfig({
+			groupId,
+			alertConfigId,
+			enabled: false,
+		});
+		await api.alertConfigurations.deleteAlertConfig({ groupId, alertConfigId });
+
+		const orgs = await api.organizations.listOrgs({});
+		const orgId = String(orgs.results?.[0]?.id);
+		const apiKey = await api.programmaticApiKeys.createOrgApiKey({
+			orgId,
+			desc: `corsair live ${STAMP}`,
+			roles: ['ORG_READ_ONLY'],
+		});
+		const apiUserId = String(apiKey.id);
+		try {
+			await api.programmaticApiKeys.addGroupApiKey({
+				groupId,
+				apiUserId,
+				body: [{ roles: ['GROUP_READ_ONLY'] }],
+			});
+			const keys = await api.programmaticApiKeys.listGroupApiKeys({ groupId });
+			expect(keys.results?.map((k) => k.id)).toContain(apiUserId);
+			await api.programmaticApiKeys.removeGroupApiKey({ groupId, apiUserId });
+		} finally {
+			await api.programmaticApiKeys.deleteOrgApiKey({ orgId, apiUserId });
+		}
 	});
 });

@@ -196,7 +196,12 @@ describe('credentials', () => {
 
 describe('requests', () => {
 	it('pins the versioned media type and pages with itemsPerPage', async () => {
-		reply(200, { results: [{ name: 'Cluster0' }], totalCount: 1 });
+		// Atlas answers in the versioned type it was asked for, not application/json.
+		reply(
+			200,
+			{ results: [{ name: 'Cluster0' }], totalCount: 1 },
+			'application/vnd.atlas.2024-08-05+json;charset=utf-8',
+		);
 		const page = (await endpointFor('clusters.listClusters')(ctx(), {
 			groupId: GROUP,
 			pageNum: 2,
@@ -315,6 +320,46 @@ describe('errors', () => {
 		);
 		expect(JSON.stringify(error)).not.toContain('secret-cluster');
 		expect(JSON.stringify(error)).not.toContain('atlas-access-token');
+	});
+
+	it('keeps the error code whole and reads a versioned JSON error body', async () => {
+		reply(
+			400,
+			{
+				error: 400,
+				errorCode: 'EMAIL_OR_SMS_REQUIRED_FOR_GROUP_NOTIFICATION',
+				detail: 'Email and/or SMS must be enabled for group notifications.',
+				reason: 'Bad Request',
+			},
+			'application/vnd.atlas.2023-01-01+json;charset=utf-8',
+		);
+		const error = (await endpointFor('alertConfigurations.createAlertConfig')(
+			ctx(),
+			{
+				groupId: GROUP,
+				body: {
+					eventTypeName: 'NO_PRIMARY',
+					notifications: [{ typeName: 'GROUP', emailEnabled: false }],
+				},
+			},
+		).catch((e: unknown) => e)) as ApiError;
+		expect(error.message).toBe(
+			'MongoDB Atlas 400: EMAIL_OR_SMS_REQUIRED_FOR_GROUP_NOTIFICATION; Email and/or SMS must be enabled for group notifications.',
+		);
+	});
+
+	it('unwraps an error Atlas nests under content', () => {
+		expect(
+			mongodbatlasErrorMessage(500, 'Internal Server Error', {
+				content: {
+					detail: 'Unexpected error.',
+					error: 500,
+					errorCode: 'UNEXPECTED_ERROR',
+					reason: 'Internal Server Error',
+				},
+				status: 500,
+			}),
+		).toBe('MongoDBAtlas 500: UNEXPECTED_ERROR; Unexpected error.');
 	});
 
 	it('writes messages from JSON and plain bodies', () => {

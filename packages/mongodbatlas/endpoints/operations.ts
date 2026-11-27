@@ -93,7 +93,9 @@ export function decodeMaybeEmpty(id: string, value: unknown): unknown {
 		return JSON.parse(text);
 	} catch {
 		// The body itself stays out of the message: it can hold private data.
-		throw new Error(`MongoDBAtlas ${id} answered with a body that is not JSON`);
+		throw new Error(
+			`MongoDB Atlas ${id} answered with a body that is not JSON`,
+		);
 	}
 }
 
@@ -204,12 +206,12 @@ export function createMongoDBAtlasOperation<Id extends MongoDBAtlasOperationId>(
 			pathParameters,
 			query,
 			headers,
-			// A route that may answer with no body is read as bytes: core turns
-			// both an empty body and JSON it can't decode into `undefined`, and
-			// only the second is an error.
-			...(operation.emptyOk || operation.response === 'empty'
-				? { responseType: 'binary' as const }
-				: {}),
+			// Every route is read as bytes and decoded here: Atlas answers JSON as
+			// `application/vnd.atlas.<version>+json`, which core's transport hands
+			// back as a string (it only decodes `application/json`), and a route
+			// that may answer with no body needs an empty body told apart from
+			// one that isn't JSON.
+			responseType: 'binary',
 		};
 		if (operation.request === 'json') {
 			request.body = bodyRoot !== undefined ? bodyRoot : body;
@@ -232,11 +234,12 @@ export function createMongoDBAtlasOperation<Id extends MongoDBAtlasOperationId>(
 			decodeMaybeEmpty(id, await makeMongoDBAtlasRequest(ctx, request));
 			response = { success: true };
 		} else {
-			let raw = await makeMongoDBAtlasRequest(ctx, request);
-			if (operation.emptyOk) raw = decodeMaybeEmpty(id, raw);
-			else if (raw === undefined) {
-				// Core resolves a 2xx whose JSON it can't decode as `undefined`.
-				throw new Error(`MongoDB Atlas ${id} returned no decodable JSON body`);
+			const raw = decodeMaybeEmpty(
+				id,
+				await makeMongoDBAtlasRequest(ctx, request),
+			);
+			if (raw === EMPTY && !operation.emptyOk) {
+				throw new Error(`MongoDB Atlas ${id} returned no body`);
 			}
 			response = raw === EMPTY ? { success: true } : raw;
 		}

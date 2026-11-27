@@ -416,7 +416,9 @@ export function withoutRequestData(
 				})
 			: []),
 	].sort((a, b) => b.text.length - a.text.length);
-	const body = scrubSent(withoutEchoedValues(error.body), sent);
+	// Atlas sends some errors as `application/vnd.atlas.<version>+json`, which
+	// core keeps as text: read it as the JSON it is.
+	const body = scrubSent(withoutEchoedValues(jsonOrText(error.body)), sent);
 	const message = mongodbatlasErrorMessage(
 		error.status,
 		error.statusText,
@@ -471,7 +473,16 @@ export function mongodbatlasErrorMessage(
 			? // `unknown` because an error body's fields are narrowed one by one below.
 				(body as Record<string, unknown>)
 			: {};
-	const fields = outer;
+	// A few routes wrap the error once more: `{ "content": { "errorCode": ... }, "status": 500 }`.
+	const inner = outer.content;
+	const fields =
+		typeof inner === 'object' &&
+		inner !== null &&
+		!Array.isArray(inner) &&
+		('errorCode' in inner || 'detail' in inner)
+			? // `unknown` because the wrapped body's fields are narrowed one by one below.
+				(inner as Record<string, unknown>)
+			: outer;
 	const parts: string[] = [];
 	if (typeof fields.errorCode === 'string' && fields.errorCode.length > 0) {
 		parts.push(fields.errorCode);
@@ -621,11 +632,31 @@ function scrubSent(value: unknown, sent: SentString[], depth = 0): unknown {
 		// `unknown` because error detail items have no fixed shape.
 		const result: Record<string, unknown> = {};
 		for (const [key, inner] of Object.entries(value)) {
-			result[key] = scrubSent(inner, sent, depth + 1);
+			// Atlas's error code is one of its own constants
+			// (`EMAIL_OR_SMS_REQUIRED_FOR_GROUP_NOTIFICATION`), never a sent value.
+			result[key] =
+				key === 'errorCode' &&
+				typeof inner === 'string' &&
+				/^[A-Z0-9_]+$/.test(inner)
+					? inner
+					: scrubSent(inner, sent, depth + 1);
 		}
 		return result;
 	}
 	return value;
+}
+
+/** A text body that holds JSON, parsed; anything else as it came. */
+// `unknown` because an error body is whatever JSON (or text) Atlas sent.
+function jsonOrText(body: unknown): unknown {
+	if (typeof body !== 'string') return body;
+	const text = body.trim();
+	if (!text.startsWith('{') && !text.startsWith('[')) return body;
+	try {
+		return JSON.parse(text);
+	} catch {
+		return body;
+	}
 }
 
 // `unknown` because query and path values are scalars.
