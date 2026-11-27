@@ -96,7 +96,7 @@ Updates the AppAttestConfig for the specified app. While this configuration is i
 **Risk:** `write`
 
 ```ts
-await corsair.firebase.api.appCheck.apps.appAttestConfig.patch({ name: 'projects/demo-project/apps/1:1234567890:web:abc123/appAttestConfig', updateMask: 'displayName' });
+await corsair.firebase.api.appCheck.apps.appAttestConfig.patch({ name: 'projects/demo-project/apps/1:1234567890:web:abc123/appAttestConfig', updateMask: 'tokenTtl', tokenTtl: '3600s' });
 ```
 
 **Input**
@@ -398,7 +398,7 @@ Updates the DeviceCheckConfig for the specified app. While this configuration is
 **Risk:** `write`
 
 ```ts
-await corsair.firebase.api.appCheck.apps.deviceCheckConfig.patch({ updateMask: 'displayName', name: 'projects/demo-project/apps/1:1234567890:web:abc123/deviceCheckConfig' });
+await corsair.firebase.api.appCheck.apps.deviceCheckConfig.patch({ name: 'projects/demo-project/apps/1:1234567890:web:abc123/deviceCheckConfig', updateMask: 'tokenTtl', tokenTtl: '3600s' });
 ```
 
 **Input**
@@ -964,7 +964,7 @@ Updates the PlayIntegrityConfig for the specified app. While this configuration 
 **Risk:** `write`
 
 ```ts
-await corsair.firebase.api.appCheck.apps.playIntegrityConfig.patch({ name: 'projects/demo-project/apps/1:1234567890:web:abc123/playIntegrityConfig', updateMask: 'displayName' });
+await corsair.firebase.api.appCheck.apps.playIntegrityConfig.patch({ name: 'projects/demo-project/apps/1:1234567890:web:abc123/playIntegrityConfig', updateMask: 'tokenTtl', tokenTtl: '3600s' });
 ```
 
 **Input**
@@ -1156,7 +1156,7 @@ Updates the RecaptchaEnterpriseConfig for the specified app. While this configur
 **Risk:** `write`
 
 ```ts
-await corsair.firebase.api.appCheck.apps.recaptchaEnterpriseConfig.patch({ name: 'projects/demo-project/apps/1:1234567890:web:abc123/recaptchaEnterpriseConfig', updateMask: 'displayName' });
+await corsair.firebase.api.appCheck.apps.recaptchaEnterpriseConfig.patch({ name: 'projects/demo-project/apps/1:1234567890:web:abc123/recaptchaEnterpriseConfig', updateMask: 'tokenTtl', tokenTtl: '3600s' });
 ```
 
 **Input**
@@ -1299,7 +1299,7 @@ Updates the RecaptchaV3Config for the specified app. While this configuration is
 **Risk:** `write`
 
 ```ts
-await corsair.firebase.api.appCheck.apps.recaptchaV3Config.patch({ updateMask: 'displayName', name: 'projects/demo-project/apps/1:1234567890:web:abc123/recaptchaV3Config' });
+await corsair.firebase.api.appCheck.apps.recaptchaV3Config.patch({ name: 'projects/demo-project/apps/1:1234567890:web:abc123/recaptchaV3Config', updateMask: 'tokenTtl', tokenTtl: '3600s' });
 ```
 
 **Input**
@@ -1687,7 +1687,7 @@ Updates the specified Service configuration
 **Risk:** `write`
 
 ```ts
-await corsair.firebase.api.appCheck.services.patch({ name: 'projects/demo-project/services/firestore.googleapis.com', updateMask: 'displayName' });
+await corsair.firebase.api.appCheck.services.patch({ name: 'projects/demo-project/services/firestore.googleapis.com', updateMask: 'enforcementMode', enforcementMode: 'ENFORCED' });
 ```
 
 **Input**
@@ -1937,7 +1937,7 @@ Updates the specified ResourcePolicy configuration
 **Risk:** `write`
 
 ```ts
-await corsair.firebase.api.appCheck.services.resourcePolicies.patch({ name: 'projects/demo-project/services/firestore.googleapis.com/resourcePolicies/rp-1', updateMask: 'displayName' });
+await corsair.firebase.api.appCheck.services.resourcePolicies.patch({ name: 'projects/demo-project/services/firestore.googleapis.com/resourcePolicies/rp-1', updateMask: 'enforcementMode', enforcementMode: 'UNENFORCED' });
 ```
 
 **Input**
@@ -3667,6 +3667,7 @@ await corsair.firebase.api.auth.accounts.sendVerificationCode({});
 | `tenantId` | `string` | No | Tenant ID of the Identity Platform tenant the user is signing in to. |
 | `iosSecret` | `string` | No | Secret delivered to iOS app as a push notification. Should be passed with an `ios_receipt` as well as the `x-ios-bundle-identifier` header. |
 | `apiKey` | `string` | No | The project's Web API key (Firebase console &gt; Project settings &gt; General). The client sign-in calls need it; with the service account alone Google may refuse them. |
+| `iosBundleId` | `string` | No | The iOS app's bundle id (X-Ios-Bundle-Identifier); needed when verifying with an iOS receipt. |
 
 <AccordionGroup>
 <Accordion title="autoRetrievalInfo full type">
@@ -3801,7 +3802,7 @@ Signs in or signs up a user with iOS Game Center credentials. If the sign-in suc
 **Risk:** `write`
 
 ```ts
-await corsair.firebase.api.auth.accounts.signInWithGameCenter({});
+await corsair.firebase.api.auth.accounts.signInWithGameCenter({ iosBundleId: 'example' });
 ```
 
 **Input**
@@ -3819,6 +3820,7 @@ await corsair.firebase.api.auth.accounts.signInWithGameCenter({});
 | `displayName` | `string` | No | The user's Game Center display name. |
 | `teamPlayerId` | `string` | No | The user's Game Center team player ID. A unique identifier for a player of all the games that you distribute using your developer account. https://developer.apple.com/documentation/gamekit/gkplayer/3174857-teamplayerid |
 | `apiKey` | `string` | No | The project's Web API key (Firebase console &gt; Project settings &gt; General). The client sign-in calls need it; with the service account alone Google may refuse them. |
+| `iosBundleId` | `string` | Yes | The iOS app's bundle id (X-Ios-Bundle-Identifier). |
 
 
 
@@ -4275,7 +4277,7 @@ Verifies an iOS client is a real iOS device. If the request is valid, a receipt 
 **Risk:** `write`
 
 ```ts
-await corsair.firebase.api.auth.accounts.verifyIosClient({});
+await corsair.firebase.api.auth.accounts.verifyIosClient({ iosBundleId: 'example' });
 ```
 
 **Input**
@@ -4285,6 +4287,7 @@ await corsair.firebase.api.auth.accounts.verifyIosClient({});
 | `appToken` | `string` | No | A device token that the iOS client gets after registering to APNs (Apple Push Notification service). |
 | `isSandbox` | `boolean` | No | Whether the app token is in the iOS sandbox. If false, the app token is in the production environment. |
 | `apiKey` | `string` | No | The project's Web API key (Firebase console &gt; Project settings &gt; General). The client sign-in calls need it; with the service account alone Google may refuse them. |
+| `iosBundleId` | `string` | Yes | The iOS app's bundle id (X-Ios-Bundle-Identifier). |
 
 
 
@@ -10737,9 +10740,9 @@ await corsair.firebase.api.database.get({
 | `databaseUrl` | `string` | Yes | The database URL: https://&lt;name&gt;.firebaseio.com or https://&lt;name&gt;.&lt;region&gt;.firebasedatabase.app (databaseInstances.list returns it as databaseUrl). |
 | `path` | `string` | No | The location in the database, `users/ada` (empty for the root). |
 | `orderBy` | `string` | No | Order by "$key", "$value", "$priority" or a child key ("height"); the plugin adds the JSON quotes. Needs an index rule for child keys. |
-| `startAt` | `string \| number \| boolean` | No | Start at this value of orderBy (a string, number or boolean; the plugin JSON-encodes it). |
-| `endAt` | `string \| number \| boolean` | No | End at this value of orderBy (the plugin JSON-encodes it). |
-| `equalTo` | `string \| number \| boolean` | No | Only values equal to this (the plugin JSON-encodes it). |
+| `startAt` | `string \| number \| boolean \| null` | No | Start at this value of orderBy (a string, number, boolean or null, which selects children without the key; the plugin JSON-encodes it). |
+| `endAt` | `string \| number \| boolean \| null` | No | End at this value of orderBy (the plugin JSON-encodes it). |
+| `equalTo` | `string \| number \| boolean \| null` | No | Only values equal to this (the plugin JSON-encodes it). |
 | `limitToFirst` | `number` | No | — |
 | `limitToLast` | `number` | No | — |
 | `shallow` | `boolean` | No | Return only the keys below the path, each as true. |
@@ -10865,17 +10868,7 @@ await corsair.firebase.api.database.rules.set({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `rules` | `object \| null` | No | The rules: ".read", ".write", ".validate" and ".indexOn" entries, nested by path. |
-
-<AccordionGroup>
-<Accordion title="rules full type">
-
-```ts
-{
-} | null
-```
-</Accordion>
-</AccordionGroup>
+| `status` | `string \| null` | No | "ok" when the rules were saved. |
 
 
 
@@ -14146,7 +14139,7 @@ await corsair.firebase.api.firestore.databases.documents.partitionQuery({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `parent` | `string` | Yes | Required. The parent resource name. In the format: `projects/{project_id}/databases/{database_id}/documents`. Document resource names are not supported; only database resource names can be specified. Format: `projects/<id>/databases/<id>/documents/<id>/<path>`. |
+| `parent` | `string` | Yes | The documents root: `projects/<project>/databases/<database>/documents` (a document path is refused). |
 | `pageToken` | `string` | No | The `next_page_token` value returned from a previous call to PartitionQuery that may be used to get an additional set of results. There are no ordering guarantees between sets of results. Thus, using multiple sets of results will require merging the different result sets. |
 | `structuredQuery` | `object` | No | A Firestore query. The query stages are executed in the following order: 1. from 2. where 3. select 4. order_by + start_at + end_at 5. offset 6. limit 7. find_nearest |
 | `pageSize` | `number` | No | The maximum number of partitions to return in this call, subject to `partition_count`. For example, if `partition_count` = 10 and `page_size` = 8, the first call to PartitionQuery will return up to 8 partitions and a `next_page_token` if more results exist. A second call to PartitionQuery will return up to 2 partitions, to complete the total of 10 specified in `partition_count`. |
@@ -16303,7 +16296,7 @@ await corsair.firebase.api.firestore.locations.get({ name: 'projects/demo-projec
 
 `firestore.locations.list`
 
-Lists information about the supported locations for this service. This method lists locations based on the resource scope provided in the ListLocationsRequest.name field: * **Global locations**: If `name` is empty, the method lists the public locations available to all projects. * **Project-specific locations**: If `name` follows the format `projects/{project}`, the method lists locations... (paged with pageToken / nextPageToken)
+List the Firestore locations available to a project (name = projects/&lt;project&gt;) (paged with pageToken / nextPageToken)
 
 **Risk:** `read`
 
@@ -29773,7 +29766,7 @@ await corsair.firebase.api.storage.objects.compose({ destinationBucket: 'x1', de
   kmsKeyName?: string,
   md5Hash?: string,
   mediaLink?: string,
-  metadata?: Record<string, string | null>,
+  metadata?: Record<string, string | null> | null,
   contexts?: {
     custom?: Record<string, {
       value?: string,
@@ -29851,7 +29844,7 @@ await corsair.firebase.api.storage.objects.compose({ destinationBucket: 'x1', de
 | `kmsKeyName` | `string \| null` | No | Not currently supported. Specifying the parameter causes the request to fail with status code 400 - Bad Request. |
 | `md5Hash` | `string \| null` | No | MD5 hash of the data; encoded using base64. For more information about using the MD5 hash, see [Data Validation and Change Detection](https://cloud.google.com/storage/docs/data-validation). |
 | `mediaLink` | `string \| null` | No | Media download link. |
-| `metadata` | `Record<string, string \| null> \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. |
+| `metadata` | `Record<string, string \| null> \| null \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. |
 | `contexts` | `object \| null` | No | User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. |
 | `restoreToken` | `string \| null` | No | Restore token used to differentiate deleted objects with the same name and generation. This field is only returned for deleted objects in hierarchical namespace buckets. |
 | `metageneration` | `string \| number \| null` | No | The version of the metadata for this object at this generation. Used for preconditions and for detecting changes in metadata. A metageneration number is only meaningful in the context of a particular generation of a particular object. |
@@ -30012,7 +30005,7 @@ await corsair.firebase.api.storage.objects.copy({
 | `kmsKeyName` | `string` | No | Not currently supported. Specifying the parameter causes the request to fail with status code 400 - Bad Request. |
 | `md5Hash` | `string` | No | MD5 hash of the data; encoded using base64. For more information about using the MD5 hash, see [Data Validation and Change Detection](https://cloud.google.com/storage/docs/data-validation). |
 | `mediaLink` | `string` | No | Media download link. |
-| `metadata` | `Record<string, string \| null>` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. |
+| `metadata` | `Record<string, string \| null> \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. |
 | `contexts` | `object` | No | User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. |
 | `restoreToken` | `string` | No | Restore token used to differentiate deleted objects with the same name and generation. This field is only returned for deleted objects in hierarchical namespace buckets. |
 | `metageneration` | `string \| number` | No | The version of the metadata for this object at this generation. Used for preconditions and for detecting changes in metadata. A metageneration number is only meaningful in the context of a particular generation of a particular object. |
@@ -30137,7 +30130,7 @@ await corsair.firebase.api.storage.objects.copy({
 | `kmsKeyName` | `string \| null` | No | Not currently supported. Specifying the parameter causes the request to fail with status code 400 - Bad Request. |
 | `md5Hash` | `string \| null` | No | MD5 hash of the data; encoded using base64. For more information about using the MD5 hash, see [Data Validation and Change Detection](https://cloud.google.com/storage/docs/data-validation). |
 | `mediaLink` | `string \| null` | No | Media download link. |
-| `metadata` | `Record<string, string \| null> \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. |
+| `metadata` | `Record<string, string \| null> \| null \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. |
 | `contexts` | `object \| null` | No | User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. |
 | `restoreToken` | `string \| null` | No | Restore token used to differentiate deleted objects with the same name and generation. This field is only returned for deleted objects in hierarchical namespace buckets. |
 | `metageneration` | `string \| number \| null` | No | The version of the metadata for this object at this generation. Used for preconditions and for detecting changes in metadata. A metageneration number is only meaningful in the context of a particular generation of a particular object. |
@@ -30377,7 +30370,7 @@ await corsair.firebase.api.storage.objects.get({ bucket: 'demo-project.appspot.c
 | `kmsKeyName` | `string \| null` | No | Not currently supported. Specifying the parameter causes the request to fail with status code 400 - Bad Request. |
 | `md5Hash` | `string \| null` | No | MD5 hash of the data; encoded using base64. For more information about using the MD5 hash, see [Data Validation and Change Detection](https://cloud.google.com/storage/docs/data-validation). |
 | `mediaLink` | `string \| null` | No | Media download link. |
-| `metadata` | `Record<string, string \| null> \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. |
+| `metadata` | `Record<string, string \| null> \| null \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. |
 | `contexts` | `object \| null` | No | User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. |
 | `restoreToken` | `string \| null` | No | Restore token used to differentiate deleted objects with the same name and generation. This field is only returned for deleted objects in hierarchical namespace buckets. |
 | `metageneration` | `string \| number \| null` | No | The version of the metadata for this object at this generation. Used for preconditions and for detecting changes in metadata. A metageneration number is only meaningful in the context of a particular generation of a particular object. |
@@ -30586,7 +30579,7 @@ await corsair.firebase.api.storage.objects.insert({
 | `body_kmsKeyName` | `string` | No | Not currently supported. Specifying the parameter causes the request to fail with status code 400 - Bad Request. |
 | `md5Hash` | `string` | No | MD5 hash of the data; encoded using base64. For more information about using the MD5 hash, see [Data Validation and Change Detection](https://cloud.google.com/storage/docs/data-validation). |
 | `mediaLink` | `string` | No | Media download link. |
-| `metadata` | `Record<string, string \| null>` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. |
+| `metadata` | `Record<string, string \| null> \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. |
 | `contexts` | `object` | No | User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. |
 | `restoreToken` | `string` | No | Restore token used to differentiate deleted objects with the same name and generation. This field is only returned for deleted objects in hierarchical namespace buckets. |
 | `metageneration` | `string \| number` | No | The version of the metadata for this object at this generation. Used for preconditions and for detecting changes in metadata. A metageneration number is only meaningful in the context of a particular generation of a particular object. |
@@ -30727,7 +30720,7 @@ string | {
 | `kmsKeyName` | `string \| null` | No | Not currently supported. Specifying the parameter causes the request to fail with status code 400 - Bad Request. |
 | `md5Hash` | `string \| null` | No | MD5 hash of the data; encoded using base64. For more information about using the MD5 hash, see [Data Validation and Change Detection](https://cloud.google.com/storage/docs/data-validation). |
 | `mediaLink` | `string \| null` | No | Media download link. |
-| `metadata` | `Record<string, string \| null> \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. |
+| `metadata` | `Record<string, string \| null> \| null \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. |
 | `contexts` | `object \| null` | No | User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. |
 | `restoreToken` | `string \| null` | No | Restore token used to differentiate deleted objects with the same name and generation. This field is only returned for deleted objects in hierarchical namespace buckets. |
 | `metageneration` | `string \| number \| null` | No | The version of the metadata for this object at this generation. Used for preconditions and for detecting changes in metadata. A metageneration number is only meaningful in the context of a particular generation of a particular object. |
@@ -30918,7 +30911,7 @@ await corsair.firebase.api.storage.objects.list({ bucket: 'demo-project.appspot.
   kmsKeyName?: string | null,
   md5Hash?: string | null,
   mediaLink?: string | null,
-  metadata?: Record<string, string | null> | null,
+  metadata?: Record<string, string | null> | null | null,
   contexts?: {
     custom?: Record<string, {
       value?: string | null,
@@ -31017,7 +31010,7 @@ await corsair.firebase.api.storage.objects.move({ bucket: 'demo-project.appspot.
 | `kmsKeyName` | `string \| null` | No | Not currently supported. Specifying the parameter causes the request to fail with status code 400 - Bad Request. |
 | `md5Hash` | `string \| null` | No | MD5 hash of the data; encoded using base64. For more information about using the MD5 hash, see [Data Validation and Change Detection](https://cloud.google.com/storage/docs/data-validation). |
 | `mediaLink` | `string \| null` | No | Media download link. |
-| `metadata` | `Record<string, string \| null> \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. |
+| `metadata` | `Record<string, string \| null> \| null \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. |
 | `contexts` | `object \| null` | No | User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. |
 | `restoreToken` | `string \| null` | No | Restore token used to differentiate deleted objects with the same name and generation. This field is only returned for deleted objects in hierarchical namespace buckets. |
 | `metageneration` | `string \| number \| null` | No | The version of the metadata for this object at this generation. Used for preconditions and for detecting changes in metadata. A metageneration number is only meaningful in the context of a particular generation of a particular object. |
@@ -31167,7 +31160,7 @@ await corsair.firebase.api.storage.objects.patch({ bucket: 'demo-project.appspot
 | `kmsKeyName` | `string` | No | Not currently supported. Specifying the parameter causes the request to fail with status code 400 - Bad Request. |
 | `md5Hash` | `string` | No | MD5 hash of the data; encoded using base64. For more information about using the MD5 hash, see [Data Validation and Change Detection](https://cloud.google.com/storage/docs/data-validation). |
 | `mediaLink` | `string` | No | Media download link. |
-| `metadata` | `Record<string, string \| null>` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. |
+| `metadata` | `Record<string, string \| null> \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. |
 | `contexts` | `object` | No | User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. |
 | `restoreToken` | `string` | No | Restore token used to differentiate deleted objects with the same name and generation. This field is only returned for deleted objects in hierarchical namespace buckets. |
 | `metageneration` | `string \| number` | No | The version of the metadata for this object at this generation. Used for preconditions and for detecting changes in metadata. A metageneration number is only meaningful in the context of a particular generation of a particular object. |
@@ -31292,7 +31285,7 @@ await corsair.firebase.api.storage.objects.patch({ bucket: 'demo-project.appspot
 | `kmsKeyName` | `string \| null` | No | Not currently supported. Specifying the parameter causes the request to fail with status code 400 - Bad Request. |
 | `md5Hash` | `string \| null` | No | MD5 hash of the data; encoded using base64. For more information about using the MD5 hash, see [Data Validation and Change Detection](https://cloud.google.com/storage/docs/data-validation). |
 | `mediaLink` | `string \| null` | No | Media download link. |
-| `metadata` | `Record<string, string \| null> \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. |
+| `metadata` | `Record<string, string \| null> \| null \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. |
 | `contexts` | `object \| null` | No | User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. |
 | `restoreToken` | `string \| null` | No | Restore token used to differentiate deleted objects with the same name and generation. This field is only returned for deleted objects in hierarchical namespace buckets. |
 | `metageneration` | `string \| number \| null` | No | The version of the metadata for this object at this generation. Used for preconditions and for detecting changes in metadata. A metageneration number is only meaningful in the context of a particular generation of a particular object. |
@@ -31449,7 +31442,7 @@ await corsair.firebase.api.storage.objects.restore({ bucket: 'demo-project.appsp
 | `kmsKeyName` | `string \| null` | No | Not currently supported. Specifying the parameter causes the request to fail with status code 400 - Bad Request. |
 | `md5Hash` | `string \| null` | No | MD5 hash of the data; encoded using base64. For more information about using the MD5 hash, see [Data Validation and Change Detection](https://cloud.google.com/storage/docs/data-validation). |
 | `mediaLink` | `string \| null` | No | Media download link. |
-| `metadata` | `Record<string, string \| null> \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. |
+| `metadata` | `Record<string, string \| null> \| null \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. |
 | `contexts` | `object \| null` | No | User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. |
 | `restoreToken` | `string \| null` | No | Restore token used to differentiate deleted objects with the same name and generation. This field is only returned for deleted objects in hierarchical namespace buckets. |
 | `metageneration` | `string \| number \| null` | No | The version of the metadata for this object at this generation. Used for preconditions and for detecting changes in metadata. A metageneration number is only meaningful in the context of a particular generation of a particular object. |
@@ -31613,7 +31606,7 @@ await corsair.firebase.api.storage.objects.rewrite({
 | `kmsKeyName` | `string` | No | Not currently supported. Specifying the parameter causes the request to fail with status code 400 - Bad Request. |
 | `md5Hash` | `string` | No | MD5 hash of the data; encoded using base64. For more information about using the MD5 hash, see [Data Validation and Change Detection](https://cloud.google.com/storage/docs/data-validation). |
 | `mediaLink` | `string` | No | Media download link. |
-| `metadata` | `Record<string, string \| null>` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. |
+| `metadata` | `Record<string, string \| null> \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. |
 | `contexts` | `object` | No | User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. |
 | `restoreToken` | `string` | No | Restore token used to differentiate deleted objects with the same name and generation. This field is only returned for deleted objects in hierarchical namespace buckets. |
 | `metageneration` | `string \| number` | No | The version of the metadata for this object at this generation. Used for preconditions and for detecting changes in metadata. A metageneration number is only meaningful in the context of a particular generation of a particular object. |
@@ -31770,7 +31763,7 @@ await corsair.firebase.api.storage.objects.rewrite({
   kmsKeyName?: string | null,
   md5Hash?: string | null,
   mediaLink?: string | null,
-  metadata?: Record<string, string | null> | null,
+  metadata?: Record<string, string | null> | null | null,
   contexts?: {
     custom?: Record<string, {
       value?: string | null,
@@ -31977,7 +31970,7 @@ await corsair.firebase.api.storage.objects.update({ bucket: 'demo-project.appspo
 | `kmsKeyName` | `string` | No | Not currently supported. Specifying the parameter causes the request to fail with status code 400 - Bad Request. |
 | `md5Hash` | `string` | No | MD5 hash of the data; encoded using base64. For more information about using the MD5 hash, see [Data Validation and Change Detection](https://cloud.google.com/storage/docs/data-validation). |
 | `mediaLink` | `string` | No | Media download link. |
-| `metadata` | `Record<string, string \| null>` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. |
+| `metadata` | `Record<string, string \| null> \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. |
 | `contexts` | `object` | No | User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. |
 | `restoreToken` | `string` | No | Restore token used to differentiate deleted objects with the same name and generation. This field is only returned for deleted objects in hierarchical namespace buckets. |
 | `metageneration` | `string \| number` | No | The version of the metadata for this object at this generation. Used for preconditions and for detecting changes in metadata. A metageneration number is only meaningful in the context of a particular generation of a particular object. |
@@ -32102,7 +32095,7 @@ await corsair.firebase.api.storage.objects.update({ bucket: 'demo-project.appspo
 | `kmsKeyName` | `string \| null` | No | Not currently supported. Specifying the parameter causes the request to fail with status code 400 - Bad Request. |
 | `md5Hash` | `string \| null` | No | MD5 hash of the data; encoded using base64. For more information about using the MD5 hash, see [Data Validation and Change Detection](https://cloud.google.com/storage/docs/data-validation). |
 | `mediaLink` | `string \| null` | No | Media download link. |
-| `metadata` | `Record<string, string \| null> \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. |
+| `metadata` | `Record<string, string \| null> \| null \| null` | No | User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. |
 | `contexts` | `object \| null` | No | User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. |
 | `restoreToken` | `string \| null` | No | Restore token used to differentiate deleted objects with the same name and generation. This field is only returned for deleted objects in hierarchical namespace buckets. |
 | `metageneration` | `string \| number \| null` | No | The version of the metadata for this object at this generation. Used for preconditions and for detecting changes in metadata. A metageneration number is only meaningful in the context of a particular generation of a particular object. |

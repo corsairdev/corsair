@@ -3376,6 +3376,13 @@
 						"x-corsair-in": "query",
 						"x-corsair-wire": "key",
 						"description": "The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them."
+					},
+					"iosBundleId": {
+						"type": "string",
+						"minLength": 1,
+						"x-corsair-in": "header",
+						"x-corsair-wire": "X-Ios-Bundle-Identifier",
+						"description": "The iOS app's bundle id (X-Ios-Bundle-Identifier); needed when verifying with an iOS receipt."
 					}
 				}
 			},
@@ -3528,8 +3535,18 @@
 						"x-corsair-in": "query",
 						"x-corsair-wire": "key",
 						"description": "The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them."
+					},
+					"iosBundleId": {
+						"type": "string",
+						"minLength": 1,
+						"x-corsair-in": "header",
+						"x-corsair-wire": "X-Ios-Bundle-Identifier",
+						"description": "The iOS app's bundle id (X-Ios-Bundle-Identifier)."
 					}
-				}
+				},
+				"required": [
+					"iosBundleId"
+				]
 			},
 			"output": {
 				"$ref": "GoogleCloudIdentitytoolkitV1SignInWithGameCenterResponse"
@@ -4036,8 +4053,18 @@
 						"x-corsair-in": "query",
 						"x-corsair-wire": "key",
 						"description": "The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them."
+					},
+					"iosBundleId": {
+						"type": "string",
+						"minLength": 1,
+						"x-corsair-in": "header",
+						"x-corsair-wire": "X-Ios-Bundle-Identifier",
+						"description": "The iOS app's bundle id (X-Ios-Bundle-Identifier)."
 					}
-				}
+				},
+				"required": [
+					"iosBundleId"
+				]
 			},
 			"output": {
 				"$ref": "GoogleCloudIdentitytoolkitV1VerifyIosClientResponse"
@@ -8304,16 +8331,18 @@
 						"type": [
 							"string",
 							"number",
-							"boolean"
+							"boolean",
+							"null"
 						],
 						"x-corsair-in": "query",
-						"description": "Start at this value of orderBy (a string, number or boolean; the plugin JSON-encodes it)."
+						"description": "Start at this value of orderBy (a string, number, boolean or null, which selects children without the key; the plugin JSON-encodes it)."
 					},
 					"endAt": {
 						"type": [
 							"string",
 							"number",
-							"boolean"
+							"boolean",
+							"null"
 						],
 						"x-corsair-in": "query",
 						"description": "End at this value of orderBy (the plugin JSON-encodes it)."
@@ -8322,7 +8351,8 @@
 						"type": [
 							"string",
 							"number",
-							"boolean"
+							"boolean",
+							"null"
 						],
 						"x-corsair-in": "query",
 						"description": "Only values equal to this (the plugin JSON-encodes it)."
@@ -8459,9 +8489,9 @@
 			"output": {
 				"type": "object",
 				"properties": {
-					"rules": {
-						"type": "object",
-						"description": "The rules: \".read\", \".write\", \".validate\" and \".indexOn\" entries, nested by path."
+					"status": {
+						"type": "string",
+						"description": "\"ok\" when the rules were saved."
 					}
 				}
 			}
@@ -10343,7 +10373,7 @@
 					"parent": {
 						"required": true,
 						"type": "string",
-						"description": "Required. The parent resource name. In the format: `projects/{project_id}/databases/{database_id}/documents`. Document resource names are not supported; only database resource names can be specified. Format: `projects/<id>/databases/<id>/documents/<id>/<path>`.",
+						"description": "The documents root: `projects/<project>/databases/<database>/documents` (a document path is refused).",
 						"x-corsair-in": "path",
 						"x-corsair-pattern": "^projects/[^/]+/databases/[^/]+/documents/[^/]+/.*$",
 						"x-corsair-slashes": true,
@@ -20138,14 +20168,17 @@
 						"description": "Media download link."
 					},
 					"metadata": {
-						"type": "object",
+						"type": [
+							"object",
+							"null"
+						],
 						"additionalProperties": {
 							"type": [
 								"string",
 								"null"
 							]
 						},
-						"description": "User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry."
+						"description": "User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all."
 					},
 					"contexts": {
 						"type": "object",
@@ -20802,14 +20835,17 @@
 						"description": "Media download link."
 					},
 					"metadata": {
-						"type": "object",
+						"type": [
+							"object",
+							"null"
+						],
 						"additionalProperties": {
 							"type": [
 								"string",
 								"null"
 							]
 						},
-						"description": "User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry."
+						"description": "User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all."
 					},
 					"contexts": {
 						"type": "object",
@@ -21374,14 +21410,17 @@
 						"description": "Media download link."
 					},
 					"metadata": {
-						"type": "object",
+						"type": [
+							"object",
+							"null"
+						],
 						"additionalProperties": {
 							"type": [
 								"string",
 								"null"
 							]
 						},
-						"description": "User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry."
+						"description": "User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all."
 					},
 					"contexts": {
 						"type": "object",
@@ -21882,14 +21921,17 @@
 						"description": "Media download link."
 					},
 					"metadata": {
-						"type": "object",
+						"type": [
+							"object",
+							"null"
+						],
 						"additionalProperties": {
 							"type": [
 								"string",
 								"null"
 							]
 						},
-						"description": "User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry."
+						"description": "User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all."
 					},
 					"contexts": {
 						"type": "object",
@@ -22372,14 +22414,17 @@
 						"description": "Media download link."
 					},
 					"metadata": {
-						"type": "object",
+						"type": [
+							"object",
+							"null"
+						],
 						"additionalProperties": {
 							"type": [
 								"string",
 								"null"
 							]
 						},
-						"description": "User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry."
+						"description": "User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all."
 					},
 					"contexts": {
 						"type": "object",
@@ -31589,14 +31634,17 @@
 					"description": "Media download link."
 				},
 				"metadata": {
-					"type": "object",
+					"type": [
+						"object",
+						"null"
+					],
 					"additionalProperties": {
 						"type": [
 							"string",
 							"null"
 						]
 					},
-					"description": "User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry."
+					"description": "User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all."
 				},
 				"contexts": {
 					"type": "object",

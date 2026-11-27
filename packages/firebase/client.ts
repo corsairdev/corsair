@@ -621,7 +621,8 @@ function escapeRegExp(text: string): string {
 /** Replaces every sent string inside an error body with [REDACTED]. */
 // `unknown` because an error body is whatever JSON (or text) Firebase sent.
 function scrubSent(value: unknown, sent: SentString[], depth = 0): unknown {
-	if (sent.length === 0) return value;
+	// Nothing sent to look for in text; object keys are still checked below.
+	if (sent.length === 0 && typeof value === 'string') return value;
 	// A sent value echoed deeper than this is dropped with its subtree.
 	if (depth > MAX_ERROR_DEPTH) return REDACTED;
 	if (typeof value === 'string') {
@@ -645,7 +646,14 @@ function scrubSent(value: unknown, sent: SentString[], depth = 0): unknown {
 	if (typeof value === 'object' && value !== null) {
 		// `unknown` because error detail items have no fixed shape.
 		const result: Record<string, unknown> = {};
-		for (const [key, inner] of Object.entries(value)) {
+		let index = 0;
+		for (const [rawKey, inner] of Object.entries(value)) {
+			// A key can echo a value (an email keying an `errors` map): only a
+			// field-shaped key that isn't a sent value is kept as it is.
+			const key =
+				FIELD_NAME.test(rawKey) && scrubSent(rawKey, sent, depth + 1) === rawKey
+					? rawKey
+					: `${REDACTED}${index++}`;
 			result[key] = scrubSent(inner, sent, depth + 1);
 		}
 		return result;

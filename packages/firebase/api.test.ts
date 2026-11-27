@@ -93,6 +93,22 @@ describeIfLive('firebase live', () => {
 					displayName: `corsair-live-${STAMP}`,
 				});
 				let appName: string | undefined;
+				let appRemoved = false;
+				// Registered before polling, so an app made by an operation that is
+				// still running (or whose status call failed) is found and removed.
+				cleanup.push(async () => {
+					if (appRemoved) return;
+					let name = appName;
+					if (!name && op.name) {
+						const done = await api.management.operations.get({
+							name: op.name,
+						});
+						name = done.response?.name ? String(done.response.name) : undefined;
+					}
+					if (name) {
+						await api.management.webApps.remove({ name, immediate: true });
+					}
+				});
 				for (let i = 0; i < 15 && op.name && !appName; i++) {
 					const done = await api.management.operations.get({ name: op.name });
 					if (done.done) appName = String(done.response?.name);
@@ -100,12 +116,6 @@ describeIfLive('firebase live', () => {
 				}
 				expect(appName).toMatch(/\/webApps\//);
 				const app = String(appName);
-				let appRemoved = false;
-				cleanup.push(() =>
-					appRemoved
-						? Promise.resolve()
-						: api.management.webApps.remove({ name: app, immediate: true }),
-				);
 				const config = await api.management.webApps.getConfig({
 					name: `${app}/config`,
 				});

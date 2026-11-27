@@ -65,7 +65,7 @@ apiExamples:
   appCheck.apps.appAttestConfig.get:
     args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/appAttestConfig"}
   appCheck.apps.appAttestConfig.patch:
-    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/appAttestConfig", "updateMask": "displayName"}
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/appAttestConfig", "updateMask": "tokenTtl", "tokenTtl": "3600s"}
   appCheck.apps.debugTokens.create:
     args: {"parent": "projects/demo-project/apps/1:1234567890:web:abc123"}
   appCheck.apps.debugTokens.delete:
@@ -81,7 +81,7 @@ apiExamples:
   appCheck.apps.deviceCheckConfig.get:
     args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/deviceCheckConfig"}
   appCheck.apps.deviceCheckConfig.patch:
-    args: {"updateMask": "displayName", "name": "projects/demo-project/apps/1:1234567890:web:abc123/deviceCheckConfig"}
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/deviceCheckConfig", "updateMask": "tokenTtl", "tokenTtl": "3600s"}
   appCheck.apps.exchangeAppAttestAssertion:
     args: {"app": "projects/demo-project/apps/1:1234567890:web:abc123"}
   appCheck.apps.exchangeAppAttestAttestation:
@@ -109,19 +109,19 @@ apiExamples:
   appCheck.apps.playIntegrityConfig.get:
     args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/playIntegrityConfig"}
   appCheck.apps.playIntegrityConfig.patch:
-    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/playIntegrityConfig", "updateMask": "displayName"}
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/playIntegrityConfig", "updateMask": "tokenTtl", "tokenTtl": "3600s"}
   appCheck.apps.recaptchaEnterpriseConfig.batchGet:
     args: {"parent": "projects/demo-project", "names": ["projects/demo-project/apps/1:1234567890:web:abc123/recaptchaEnterpriseConfig"]}
   appCheck.apps.recaptchaEnterpriseConfig.get:
     args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/recaptchaEnterpriseConfig"}
   appCheck.apps.recaptchaEnterpriseConfig.patch:
-    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/recaptchaEnterpriseConfig", "updateMask": "displayName"}
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/recaptchaEnterpriseConfig", "updateMask": "tokenTtl", "tokenTtl": "3600s"}
   appCheck.apps.recaptchaV3Config.batchGet:
     args: {"parent": "projects/demo-project", "names": ["projects/demo-project/apps/1:1234567890:web:abc123/recaptchaV3Config"]}
   appCheck.apps.recaptchaV3Config.get:
     args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/recaptchaV3Config"}
   appCheck.apps.recaptchaV3Config.patch:
-    args: {"updateMask": "displayName", "name": "projects/demo-project/apps/1:1234567890:web:abc123/recaptchaV3Config"}
+    args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/recaptchaV3Config", "updateMask": "tokenTtl", "tokenTtl": "3600s"}
   appCheck.jwks.get:
     args: {"name": "jwks"}
   appCheck.oauthClients.exchangeAppAttestAssertion:
@@ -139,7 +139,7 @@ apiExamples:
   appCheck.services.list:
     args: {"parent": "projects/demo-project"}
   appCheck.services.patch:
-    args: {"name": "projects/demo-project/services/firestore.googleapis.com", "updateMask": "displayName"}
+    args: {"name": "projects/demo-project/services/firestore.googleapis.com", "updateMask": "enforcementMode", "enforcementMode": "ENFORCED"}
   appCheck.services.resourcePolicies.batchUpdate:
     args: {"parent": "projects/demo-project/services/firestore.googleapis.com"}
   appCheck.services.resourcePolicies.create:
@@ -151,7 +151,7 @@ apiExamples:
   appCheck.services.resourcePolicies.list:
     args: {"parent": "projects/demo-project/services/firestore.googleapis.com"}
   appCheck.services.resourcePolicies.patch:
-    args: {"name": "projects/demo-project/services/firestore.googleapis.com/resourcePolicies/rp-1", "updateMask": "displayName"}
+    args: {"name": "projects/demo-project/services/firestore.googleapis.com/resourcePolicies/rp-1", "updateMask": "enforcementMode", "enforcementMode": "UNENFORCED"}
   appDistribution.apps.getAabInfo:
     args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/aabInfo"}
   appDistribution.apps.releases.batchDelete:
@@ -223,7 +223,7 @@ apiExamples:
   auth.accounts.signInWithEmailLink:
     args: {}
   auth.accounts.signInWithGameCenter:
-    args: {}
+    args: {"iosBundleId": "example"}
   auth.accounts.signInWithIdp:
     args: {}
   auth.accounts.signInWithPassword:
@@ -235,7 +235,7 @@ apiExamples:
   auth.accounts.update:
     args: {}
   auth.accounts.verifyIosClient:
-    args: {}
+    args: {"iosBundleId": "example"}
   auth.getProjects:
     args: {}
   auth.getPublicKeys:

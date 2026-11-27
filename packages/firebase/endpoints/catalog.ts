@@ -2848,7 +2848,7 @@ export const firebaseEndpointMeta = {
 	'firestore.locations.list': {
 		riskLevel: 'read',
 		description:
-			'Lists information about the supported locations for this service. This method lists locations based on the resource scope provided in the ListLocationsRequest.name field: * **Global locations**: If `name` is empty, the method lists the public locations available to all projects. * **Project-specific locations**: If `name` follows the format `projects/{project}`, the method lists locations... (paged with pageToken / nextPageToken)',
+			'List the Firestore locations available to a project (name = projects/<project>) (paged with pageToken / nextPageToken)',
 	},
 	'hosting.operations.get': {
 		riskLevel: 'read',

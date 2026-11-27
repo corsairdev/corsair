@@ -227,7 +227,16 @@ export function createFirebaseOperation<Id extends FirebaseOperationId>(
 				hasBodyRoot = true;
 				continue;
 			}
-			if (value === undefined || value === null) continue;
+			if (value === undefined) continue;
+			// null clears a body field (`metadata: null`) and is a real Realtime
+			// Database bound (`endAt: null`); elsewhere it means "not set".
+			if (
+				value === null &&
+				field.in !== 'body' &&
+				!(field.in === 'query' && operation.api === 'rtdb')
+			) {
+				continue;
+			}
 			switch (field.in) {
 				case 'path':
 					pathParameters[field.wire] = encodeFirebasePathValue(
@@ -347,9 +356,11 @@ export function createFirebaseOperation<Id extends FirebaseOperationId>(
 				id,
 				await makeFirebaseRequest(ctx, request),
 			);
-			// google.protobuf.Empty is `{}`; anything else is not this route's answer.
+			// google.protobuf.Empty is `{}`; the Realtime Database answers a delete
+			// with JSON `null`. Anything else is not this route's answer.
 			if (
 				decoded !== EMPTY &&
+				!(operation.api === 'rtdb' && decoded === null) &&
 				!(
 					typeof decoded === 'object' &&
 					decoded !== null &&

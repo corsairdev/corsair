@@ -2313,8 +2313,8 @@ export type FirebaseObjectInput = {
 	md5Hash?: string;
 	/** Media download link. */
 	mediaLink?: string;
-	/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. */
-	metadata?: Record<string, string | null>;
+	/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. */
+	metadata?: Record<string, string | null> | null;
 	/** User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. */
 	contexts?: {
 		/** User-defined object contexts. */
@@ -6452,7 +6452,7 @@ export type FirebaseObject = {
 	md5Hash?: string | null;
 	/** Media download link. */
 	mediaLink?: string | null;
-	/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. */
+	/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. */
 	metadata?: Record<string, string | null> | null;
 	/** User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. */
 	contexts?: {
@@ -8506,6 +8506,8 @@ export type FirebaseOperationInputs = {
 		iosSecret?: string;
 		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
 		apiKey?: string;
+		/** The iOS app's bundle id (X-Ios-Bundle-Identifier); needed when verifying with an iOS receipt. */
+		iosBundleId?: string;
 	};
 	'auth.accounts.signInWithCustomToken': {
 		/** The ID of the Identity Platform tenant the user is signing in to. If present, the ID should match the tenant_id in the token. */
@@ -8554,6 +8556,8 @@ export type FirebaseOperationInputs = {
 		teamPlayerId?: string;
 		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
 		apiKey?: string;
+		/** The iOS app's bundle id (X-Ios-Bundle-Identifier). */
+		iosBundleId: string;
 	};
 	'auth.accounts.signInWithIdp': {
 		/** A valid Identity Platform ID token. If passed, the user's account at the IdP will be linked to the account represented by this ID token. */
@@ -8741,6 +8745,8 @@ export type FirebaseOperationInputs = {
 		isSandbox?: boolean;
 		/** The project's Web API key (Firebase console > Project settings > General). The client sign-in calls need it; with the service account alone Google may refuse them. */
 		apiKey?: string;
+		/** The iOS app's bundle id (X-Ios-Bundle-Identifier). */
+		iosBundleId: string;
 	};
 	'auth.getProjects': {
 		/** The Firebase app ID, for applications that use Firebase. This can be found in the Firebase console for your project. If set, a check will be performed to ensure that the app ID is valid for the retrieved project. If not valid, the request will be rejected with a client error. */
@@ -9956,12 +9962,12 @@ export type FirebaseOperationInputs = {
 		path?: string;
 		/** Order by "$key", "$value", "$priority" or a child key ("height"); the plugin adds the JSON quotes. Needs an index rule for child keys. */
 		orderBy?: string;
-		/** Start at this value of orderBy (a string, number or boolean; the plugin JSON-encodes it). */
-		startAt?: string | number | boolean;
+		/** Start at this value of orderBy (a string, number, boolean or null, which selects children without the key; the plugin JSON-encodes it). */
+		startAt?: (string | number | boolean) | null;
 		/** End at this value of orderBy (the plugin JSON-encodes it). */
-		endAt?: string | number | boolean;
+		endAt?: (string | number | boolean) | null;
 		/** Only values equal to this (the plugin JSON-encodes it). */
-		equalTo?: string | number | boolean;
+		equalTo?: (string | number | boolean) | null;
 		limitToFirst?: number;
 		limitToLast?: number;
 		/** Return only the keys below the path, each as true. */
@@ -10433,7 +10439,7 @@ export type FirebaseOperationInputs = {
 		pageSize?: number;
 	};
 	'firestore.databases.documents.partitionQuery': {
-		/** Required. The parent resource name. In the format: `projects/{project_id}/databases/{database_id}/documents`. Document resource names are not supported; only database resource names can be specified. Format: `projects/<id>/databases/<id>/documents/<id>/<path>`. */
+		/** The documents root: `projects/<project>/databases/<database>/documents` (a document path is refused). */
 		parent: string;
 		/** The `next_page_token` value returned from a previous call to PartitionQuery that may be used to get an additional set of results. There are no ordering guarantees between sets of results. Thus, using multiple sets of results will require merging the different result sets. */
 		pageToken?: string;
@@ -13122,8 +13128,8 @@ export type FirebaseOperationInputs = {
 		md5Hash?: string;
 		/** Media download link. */
 		mediaLink?: string;
-		/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. */
-		metadata?: Record<string, string | null>;
+		/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. */
+		metadata?: Record<string, string | null> | null;
 		/** User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. */
 		contexts?: {
 			/** User-defined object contexts. */
@@ -13327,8 +13333,8 @@ export type FirebaseOperationInputs = {
 		md5Hash?: string;
 		/** Media download link. */
 		mediaLink?: string;
-		/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. */
-		metadata?: Record<string, string | null>;
+		/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. */
+		metadata?: Record<string, string | null> | null;
 		/** User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. */
 		contexts?: {
 			/** User-defined object contexts. */
@@ -13518,8 +13524,8 @@ export type FirebaseOperationInputs = {
 		md5Hash?: string;
 		/** Media download link. */
 		mediaLink?: string;
-		/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. */
-		metadata?: Record<string, string | null>;
+		/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. */
+		metadata?: Record<string, string | null> | null;
 		/** User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. */
 		contexts?: {
 			/** User-defined object contexts. */
@@ -13689,8 +13695,8 @@ export type FirebaseOperationInputs = {
 		md5Hash?: string;
 		/** Media download link. */
 		mediaLink?: string;
-		/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. */
-		metadata?: Record<string, string | null>;
+		/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. */
+		metadata?: Record<string, string | null> | null;
 		/** User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. */
 		contexts?: {
 			/** User-defined object contexts. */
@@ -13857,8 +13863,8 @@ export type FirebaseOperationInputs = {
 		md5Hash?: string;
 		/** Media download link. */
 		mediaLink?: string;
-		/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry. */
-		metadata?: Record<string, string | null>;
+		/** User-provided metadata, in key/value pairs. On a patch, a key set to null deletes that entry and `metadata: null` deletes them all. */
+		metadata?: Record<string, string | null> | null;
 		/** User-defined or system-defined object contexts. Each object context is a key-payload pair, where the key provides the identification and the payload holds the associated value and additional metadata. */
 		contexts?: {
 			/** User-defined object contexts. */
@@ -14146,8 +14152,8 @@ export type FirebaseOperationOutputs = {
 		rules?: Record<string, FirebaseJsonValue> | null;
 	};
 	'database.rules.set': {
-		/** The rules: ".read", ".write", ".validate" and ".indexOn" entries, nested by path. */
-		rules?: Record<string, FirebaseJsonValue> | null;
+		/** "ok" when the rules were saved. */
+		status?: string | null;
 	};
 	'database.set': FirebaseJsonValue;
 	'database.update': FirebaseJsonValue;

@@ -491,6 +491,33 @@ describe('realtime database', () => {
 		expect(calls).toHaveLength(1);
 	});
 
+	it('takes the null a delete answers, and sends a null bound', async () => {
+		reply(200, null);
+		await expect(
+			endpointFor('database.delete')(ctx(), {
+				databaseUrl: 'https://demo-project-default-rtdb.firebaseio.com',
+				path: 'users/ada',
+			}),
+		).resolves.toEqual({ success: true });
+		await endpointFor('database.get')(ctx(), {
+			databaseUrl: 'https://demo-project-default-rtdb.firebaseio.com',
+			path: 'users',
+			orderBy: 'height',
+			endAt: null,
+		}).catch(() => undefined);
+		expect(url(1).searchParams.get('endAt')).toBe('null');
+	});
+
+	it('sends metadata: null to clear all custom metadata', async () => {
+		reply(200, { name: 'a.txt', bucket: 'b' });
+		await endpointFor('storage.objects.patch')(ctx(), {
+			bucket: 'b',
+			object: 'a.txt',
+			metadata: null,
+		});
+		expect(JSON.parse(String(calls[0]?.body))).toEqual({ metadata: null });
+	});
+
 	it('writes null (a delete by value) and reads null back', async () => {
 		reply(200, null);
 		await expect(
@@ -579,6 +606,9 @@ describe('errors', () => {
 		expect(error.message).not.toContain('ya29.minted-secret');
 		expect(error.message).not.toContain('ada@example.com');
 		expect(error.message).toContain('is not allowed');
+		expect(JSON.stringify((error as { body?: unknown }).body)).not.toContain(
+			'ada@example.com',
+		);
 	});
 
 	it('writes messages from Google, Realtime Database and plain bodies', () => {
