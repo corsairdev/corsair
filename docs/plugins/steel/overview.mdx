@@ -1,0 +1,139 @@
+---
+title: "Steel plugin"
+sidebarTitle: "Overview"
+description: "Cloud browsers for AI agents with Steel: start and release browser sessions, watch them live, read their events, logs and cost, run commands and computer actions, scrape, screenshot or PDF a page, and manage profiles, credentials, vaults, extensions, files and projects (71 operations)."
+---
+
+Use **Steel** through Corsair: one client, typed API calls.
+
+Create an API key at app.steel.dev under API Keys. A project key reaches one project; an organization key reaches all of them. Things to know before you write:
+
+- **Sessions cost money while they run.** `sessions.create` starts a cloud browser that bills by the minute until `sessions.release` (or `sessions.releaseAll`) ends it or its `timeout` passes, so all three are `destructive`. Connect to a session over CDP with the `websocketUrl` it returns, or drive it with `sessions.computer` and `sessions.commands.run`.
+- **One-shot tools.** `tools.scrape`, `tools.screenshot` and `tools.pdf` load a page in a short session and return the result; they spend wallet credit like a short session and are metered reads (`read`).
+- **Logins.** `credentials.*`, `vaults.*` and `secretConnections.*` store site logins that sessions can use (`sessions.credentials.attach`); `profiles.*` keep cookies and browser state between sessions.
+- **Files.** `files.*` are project files and `sessions.files.*` live in one session's browser. File paths may contain slashes (`downloads/report.pdf`); downloads come back as files.
+- **CAPTCHA solving and Steel's proxies** need a verified account (Steel asks for $10 of credit). `sessions.captchas.*` spend that credit.
+- **Self-hosted.** The `baseUrl` option points the plugin at a self-hosted Steel browser server; routes the open-source server doesn't have answer 404.
+
+**What you get:**
+
+- 71 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/steel better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/steel better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/steel better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/steel better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { steel } from '@corsair-dev/steel';
+
+export const corsair = createCorsair({
+	plugins: [
+		steel(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Steel API key before the first call: `pnpm corsair setup --plugin=steel --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+steel()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'steel',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List browser sessions**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.steel.api.sessions.list({});
+```
+
+
+**Scrape a page as Markdown**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.steel.api.tools.scrape({
+	url: 'https://example.com',
+	format: ['markdown'],
+});
+```
+
+
+See the full list on the [API](/plugins/steel/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/steel/api">
+    Every `steel.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
