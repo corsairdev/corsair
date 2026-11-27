@@ -192,8 +192,17 @@ describe('requests', () => {
 		await expect(call('server.health', {}, ctx(''))).rejects.toMatchObject({
 			name: 'AuthMissingError',
 		});
-		expect(() => normalizeServerUrl('http://crawl.example.com')).toThrow(
-			/https/,
+		// `.local` and `.test` names can resolve to another machine.
+		for (const url of [
+			'http://crawl.example.com',
+			'http://crawl.local',
+			'http://crawl.test',
+			'http://crawl.localhost',
+		]) {
+			expect(() => normalizeServerUrl(url)).toThrow(/https/);
+		}
+		expect(normalizeServerUrl('http://127.0.0.1:11235')).toBe(
+			'http://127.0.0.1:11235',
 		);
 		expect(normalizeServerUrl('https://crawl.example.com/c4/')).toBe(
 			'https://crawl.example.com/c4',
