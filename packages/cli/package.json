@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/cli",
-  "version": "0.1.120",
+  "version": "0.1.121",
   "description": "Command-line tool for Corsair, the open-source integration layer. Scaffold a project, add integrations, and run your app.",
   "type": "module",
   "main": "./dist/index.js",
