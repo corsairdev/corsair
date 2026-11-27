@@ -85,9 +85,6 @@ export const getBatch: YoutubeEndpoints['videosGetBatch'] = async (
 
 export const list: YoutubeEndpoints['videosList'] = async (ctx, input) => {
 	const part = input.part ?? 'snippet';
-	let nextPageToken: string | undefined;
-	let prevPageToken: string | undefined;
-	let pageInfo: YoutubeEndpointOutputs['videosList']['pageInfo'] | undefined;
 	const searchResponse = await makeYoutubeRequest<{
 		items?: Array<{ id?: { videoId?: string } }>;
 		nextPageToken?: string;
@@ -108,18 +105,10 @@ export const list: YoutubeEndpoints['videosList'] = async (ctx, input) => {
 	const videoIds = (searchResponse.items ?? [])
 		.map((item) => item.id?.videoId)
 		.filter((id): id is string => Boolean(id));
-	nextPageToken = searchResponse.nextPageToken;
-	prevPageToken = searchResponse.prevPageToken;
-	pageInfo = searchResponse.pageInfo;
 
-	const response =
+	const videosResponse =
 		videoIds.length === 0
-			? {
-					items: [],
-					nextPageToken,
-					prevPageToken,
-					pageInfo,
-				}
+			? { items: [] }
 			: await makeYoutubeRequest<YoutubeEndpointOutputs['videosList']>(
 					'/videos',
 					ctx.key,
@@ -131,6 +120,13 @@ export const list: YoutubeEndpoints['videosList'] = async (ctx, input) => {
 						},
 					},
 				);
+	// videos.list by id never pages, so the cursor has to come from search.list.
+	const response = {
+		...videosResponse,
+		nextPageToken: searchResponse.nextPageToken,
+		prevPageToken: searchResponse.prevPageToken,
+		pageInfo: searchResponse.pageInfo,
+	};
 
 	if (response.items && ctx.db.videos) {
 		for (const item of response.items) {
