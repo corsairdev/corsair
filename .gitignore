@@ -209,6 +209,7 @@ state.txt
 **/fixtures
 
 .mcp.json
+.local-door/
 
 # frpc binaries + frp attribution are materialized at publish time by
 # scripts/prepare-frpc-packages.mjs — never committed, only in the npm tarball.
