@@ -27,6 +27,8 @@ type Captured = {
 };
 
 let calls: Captured[] = [];
+// The redirect policy of each call, so the data plane's can be checked.
+let redirects: Array<string | undefined> = [];
 
 type Reply = {
 	status: number;
@@ -50,6 +52,7 @@ function replies(...queue: Reply[]) {
 			headers,
 			body: init?.body,
 		});
+		redirects.push(init?.redirect);
 		const next = queue[Math.min(index, queue.length - 1)] ?? { status: 200 };
 		index++;
 		const payload =
@@ -122,6 +125,7 @@ const BASE = 'https://api.maritime.sh';
 
 beforeEach(() => {
 	calls = [];
+	redirects = [];
 });
 
 afterEach(() => {
@@ -399,6 +403,7 @@ describe('the data plane', () => {
 		expect(calls[1]?.url).toBe(`${DATA_PLANE}/commands`);
 		expect(calls[1]?.headers['x-maritime-token']).toBe(SECRET);
 		expect(calls[1]?.headers.authorization).toBeUndefined();
+		expect(redirects[1]).toBe('error');
 		expect(JSON.parse(String(calls[1]?.body))).toEqual({
 			cmd: 'uname',
 			timeoutSeconds: 30,
@@ -483,6 +488,57 @@ describe('the data plane', () => {
 		expect(error.url).toBe(
 			'https://api-{sandbox}.sb.mtm.sh/v1/commands/{command_id}',
 		);
+	});
+});
+
+describe('review fixes', () => {
+	it('refuses a 200 whose body is not JSON, even with an open schema', async () => {
+		reply(200, 'not json', 'application/json');
+		await expect(
+			endpointFor('agents.chat.send')(ctx(), {
+				agent_id: 'ag_1',
+				message: 'hi',
+			}),
+		).rejects.toThrow(/answered without a JSON body/);
+	});
+
+	it('uploads an APK as a multipart file', async () => {
+		reply(201, { id: 'app_1' });
+		await endpointFor('apps.upload')(ctx(), {
+			file: { base64: 'UEsDBA==', filename: 'app.apk' },
+		});
+		const form = calls[0]?.body as FormData;
+		expect(form).toBeInstanceOf(FormData);
+		expect((form.get('file') as File).name).toBe('app.apk');
+	});
+
+	it('waits as long as an attached exec may run', async () => {
+		const timeouts: number[] = [];
+		const realTimeout = AbortSignal.timeout;
+		jest.spyOn(AbortSignal, 'timeout').mockImplementation((ms: number) => {
+			timeouts.push(ms);
+			return realTimeout(ms);
+		});
+		reply(200, { executionId: 'exe_1', status: 'completed' });
+		await endpointFor('agents.exec.run')(ctx(), {
+			agent_id: 'ag_1',
+			command: 'sleep 100',
+			timeout: 120,
+		});
+		expect(timeouts).toContain(150_000);
+	});
+
+	it('scrubs a query token the error body echoes', async () => {
+		reply(403, { detail: 'token tok_live_123456 is not valid for this agent' });
+		const error = (await endpointFor('agents.invoke')(ctx(), {
+			agent_id: 'ag_1',
+			token: 'tok_live_123456',
+		}).then(
+			() => undefined,
+			(e: unknown) => e,
+		)) as ApiError;
+		expect(error.message).not.toContain('tok_live_123456');
+		expect(JSON.stringify(error.body)).not.toContain('tok_live_123456');
 	});
 });
 

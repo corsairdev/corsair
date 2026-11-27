@@ -122,7 +122,6 @@ export const MARITIME_OPERATION_IDS = [
 	'apps.list',
 	'apps.upload',
 	'billing.agentPay.createLink',
-	'billing.agentPay.pay',
 	'billing.agents',
 	'billing.cancelSwitchToUsage',
 	'billing.config',
@@ -2117,12 +2116,12 @@ export type MaritimeOperationInputs = {
 		app_id: string;
 	};
 	'apps.list': Record<string, never>;
-	'apps.upload': Record<string, never>;
+	'apps.upload': {
+		/** The APK: a public URL, {url}, or {base64, filename}. */
+		file: FileInput;
+	};
 	'billing.agentPay.createLink': {
 		plan?: string;
-	};
-	'billing.agentPay.pay': {
-		token: string;
 	};
 	'billing.agents': Record<string, never>;
 	'billing.cancelSwitchToUsage': Record<string, never>;
@@ -3314,7 +3313,6 @@ export type MaritimeOperationOutputs = {
 	'apps.list': MaritimeMetalAppListOut;
 	'apps.upload': MaritimeMetalAppOut;
 	'billing.agentPay.createLink': MaritimeJsonValue;
-	'billing.agentPay.pay': MaritimeJsonValue;
 	'billing.agents': Array<MaritimeAgentBillingResponse>;
 	'billing.cancelSwitchToUsage': MaritimeJsonValue;
 	'billing.config': MaritimeBillingConfigResponse;

@@ -261,6 +261,20 @@ function maritimeWebhook<T extends MaritimeEventType>(
 				return { success: false, statusCode: 401, error: verification.error };
 			}
 			const parsed = schemaFor(type).safeParse(request.payload);
+			if (parsed.success) {
+				// X-Maritime-Event isn't signed; the body is. A delivery whose
+				// signed event differs from the header is refused, so a valid
+				// agent.error can't be replayed as agent.deployed.
+				const signed =
+					'event' in parsed.data ? parsed.data.event : parsed.data.type;
+				if (signed !== type) {
+					return {
+						success: false,
+						statusCode: 400,
+						error: `Maritime delivery header says ${type} but the signed body says another event`,
+					};
+				}
+			}
 			if (!parsed.success) {
 				// Paths only: the payload holds your customers' ids.
 				const where = parsed.error.issues

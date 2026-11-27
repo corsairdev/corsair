@@ -1196,7 +1196,7 @@ await corsair.maritime.api.agents.files.move({ agent_id: 'ag_3k9x2m7q', from: '/
 
 Upload a file to an agent's disk (dest_dir) or as a chat attachment
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.maritime.api.agents.files.upload({
@@ -3956,10 +3956,34 @@ Stores the APK in the multipart field ``file`` (at most 1 GiB)
 **Risk:** `write`
 
 ```ts
-await corsair.maritime.api.apps.upload({});
+await corsair.maritime.api.apps.upload({
+	file: { base64: 'aGVsbG8gZnJvbSBDb3JzYWly', filename: 'notes.md', contentType: 'text/markdown' },
+});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string \| object \| custom` | Yes | The APK: a public URL, &#123;url&#125;, or &#123;base64, filename&#125;. |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 **Output**
@@ -3996,31 +4020,6 @@ await corsair.maritime.api.billing.agentPay.createLink({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `plan` | `string` | No | — |
-
-
-
-**Output:** `any`
-
-
----
-
-### agentPay.pay
-
-`billing.agentPay.pay`
-
-The MPP endpoint: 402 with a Stripe Challenge, or, with a Credential in ``Authorization: Payment ...``, charge the SPT and start the plan
-
-**Risk:** `destructive`
-
-```ts
-await corsair.maritime.api.billing.agentPay.pay({ token: 'tok_example' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `token` | `string` | Yes | — |
 
 
 

@@ -368,11 +368,15 @@ export function createMaritimeOperation<Id extends MaritimeOperationId>(
 		const waitSeconds = operation.timeoutFromInput
 			? valid[operation.timeoutFromInput]
 			: undefined;
-		if (typeof waitSeconds === 'number') {
-			// A foreground command can run up to its own timeout: wait that long
+		if (valid.detached === true || valid.background === true) {
+			// A detached command answers once it is accepted.
+			request.timeoutMs = 90_000;
+		} else if (typeof waitSeconds === 'number') {
+			// An attached command can run up to its own timeout: wait that long
 			// plus a margin before giving up on the answer.
 			request.timeoutMs = (waitSeconds + 30) * 1000;
 		} else if (operation.timeoutFromInput) {
+			// Maritime's default limit is 60 seconds.
 			request.timeoutMs = 90_000;
 		}
 		if (operation.plane === 'data') {
@@ -425,6 +429,11 @@ export function createMaritimeOperation<Id extends MaritimeOperationId>(
 			let body = await makeMaritimeRequest(ctx, request);
 			if (operation.emptyOk) {
 				body = decodeMaybeEmpty(id, body);
+			} else if (body === undefined) {
+				// Core answers `undefined` for an empty body and for JSON it
+				// couldn't decode. This route documents a JSON body, so either
+				// is an error, even where the documented schema is open.
+				throw new Error(`Maritime ${id} answered without a JSON body`);
 			}
 			response = body === EMPTY ? { success: true } : body;
 		}

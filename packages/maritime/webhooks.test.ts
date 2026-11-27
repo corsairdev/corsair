@@ -185,6 +185,16 @@ describe('handlers', () => {
 		expect(out).toEqual({ success: true, data: SANDBOX_ENDED });
 	});
 
+	it('refuses a delivery whose header names another event than its signed body', async () => {
+		const out = await maritimeWebhooksNested.agent.deployed.handler(
+			ctx(),
+			accountDelivery('agent.deployed', AGENT_ERROR),
+		);
+		expect(out).toEqual(
+			expect.objectContaining({ success: false, statusCode: 400 }),
+		);
+	});
+
 	it('refuses a bad signature with 401 and a malformed payload with 400', async () => {
 		expect(
 			await maritimeWebhooksNested.agent.error.handler(

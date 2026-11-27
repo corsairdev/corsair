@@ -990,6 +990,7 @@
       "summary": "Exec In Agent",
       "request": "json",
       "response": "json",
+      "timeoutFromInput": "timeout",
       "input": {
         "type": "object",
         "properties": {
@@ -3134,11 +3135,18 @@
       "path": "/api/v1/apps",
       "tag": "metal",
       "summary": "Upload an APK for Metal phones",
-      "request": "none",
+      "request": "multipart",
       "response": "json",
       "input": {
         "type": "object",
-        "properties": {}
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary",
+            "description": "The APK: a public URL, {url}, or {base64, filename}."
+          }
+        },
+        "required": ["file"]
       },
       "output": {
         "$ref": "MetalAppOut"
@@ -3159,26 +3167,6 @@
             "type": "string"
           }
         }
-      },
-      "output": {}
-    },
-    {
-      "id": "billing.agentPay.pay",
-      "method": "POST",
-      "path": "/api/billing/agent-pay/{token}",
-      "tag": "usage-billing",
-      "summary": "Agent Pay With Token",
-      "request": "none",
-      "response": "json",
-      "input": {
-        "type": "object",
-        "properties": {
-          "token": {
-            "type": "string",
-            "x-corsair-in": "path"
-          }
-        },
-        "required": ["token"]
       },
       "output": {}
     },
@@ -3895,6 +3883,7 @@
       "summary": "Run a shell command inside the computer",
       "request": "json",
       "response": "json",
+      "timeoutFromInput": "timeoutS",
       "input": {
         "type": "object",
         "properties": {

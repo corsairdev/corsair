@@ -172,7 +172,6 @@ export const maritimeEndpointsNested = {
 	billing: {
 		agentPay: {
 			createLink: op('billing.agentPay.createLink'),
-			pay: op('billing.agentPay.pay'),
 		},
 		agents: op('billing.agents'),
 		cancelSwitchToUsage: op('billing.cancelSwitchToUsage'),
@@ -659,7 +658,6 @@ export const maritimeEndpointSchemas = {
 	'billing.agentPay.createLink': maritimeSchemaEntry(
 		'billing.agentPay.createLink',
 	),
-	'billing.agentPay.pay': maritimeSchemaEntry('billing.agentPay.pay'),
 	'billing.agents': maritimeSchemaEntry('billing.agents'),
 	'billing.cancelSwitchToUsage': maritimeSchemaEntry(
 		'billing.cancelSwitchToUsage',
@@ -1113,7 +1111,8 @@ export const maritimeEndpointMeta = {
 			"Rename or move a file/directory within the agent's persistent volume",
 	},
 	'agents.files.upload': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			"Upload a file to an agent's disk (dest_dir) or as a chat attachment",
 	},
@@ -1455,11 +1454,6 @@ export const maritimeEndpointMeta = {
 		riskLevel: 'destructive',
 		description:
 			'A short-lived link an agent pays at with an MPP client, for example ``link-cli mpp pay <payUrl> -X POST``',
-	},
-	'billing.agentPay.pay': {
-		riskLevel: 'destructive',
-		description:
-			'The MPP endpoint: 402 with a Stripe Challenge, or, with a Credential in ``Authorization: Payment ...``, charge the SPT and start the plan',
 	},
 	'billing.agents': {
 		riskLevel: 'read',

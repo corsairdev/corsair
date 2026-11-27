@@ -3,7 +3,7 @@
 # docs-examples.test.ts parses every example with its input schema.
 displayName: Maritime
 domain: maritime.sh
-description: "Maritime, the cloud for AI agents: agent boxes (chat, exec, files, triggers, channels, skills, env), virtual machines (create, run commands, files, snapshots, templates, keys), swarms and swarm servers, computers on demand (desktops and phones), end users, projects, private networks, domains, usage and billing, and signed webhooks (332 operations)."
+description: "Maritime, the cloud for AI agents: agent boxes (chat, exec, files, triggers, channels, skills, env), virtual machines (create, run commands, files, snapshots, templates, keys), swarms and swarm servers, computers on demand (desktops and phones), end users, projects, private networks, domains, usage and billing, and signed webhooks (331 operations)."
 recommendedAuth: api_key
 overviewNote: |
   The account stores one Maritime API key (`mk_...`, from `maritime keys
@@ -264,11 +264,9 @@ apiExamples:
   apps.list:
     args: {}
   apps.upload:
-    args: {}
+    args: {"file": {"base64": "aGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.md", "contentType": "text/markdown"}}
   billing.agentPay.createLink:
     args: {}
-  billing.agentPay.pay:
-    args: {"token": "tok_example"}
   billing.agents:
     args: {}
   billing.cancelSwitchToUsage:

@@ -29,16 +29,16 @@ describe('maritime-manifest.json', () => {
 		).toEqual([]);
 	});
 
-	it('has 332 operations, one per id and route', () => {
-		expect(ids).toHaveLength(332);
-		expect(new Set(ids).size).toBe(332);
+	it('has 331 operations, one per id and route', () => {
+		expect(ids).toHaveLength(331);
+		expect(new Set(ids).size).toBe(331);
 		expect([...MARITIME_OPERATION_IDS].sort()).toEqual([...ids].sort());
 		const routes = new Set(
 			maritimeOperations.map(
 				(o) => `${o.plane ?? 'api'} ${o.method} ${o.path}`,
 			),
 		);
-		expect(routes.size).toBe(332);
+		expect(routes.size).toBe(331);
 	});
 
 	it('covers the groups of the public API', () => {

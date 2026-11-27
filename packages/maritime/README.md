@@ -44,7 +44,7 @@ pnpm add @corsair-dev/maritime
 | `agents.files.list` | `maritime.api.agents.files.list` | `read` | List a directory inside the agent's container (file browser) |
 | `agents.files.mkdir` | `maritime.api.agents.files.mkdir` | `write` | Create a directory (mkdir -p) inside the agent's persistent volume |
 | `agents.files.move` | `maritime.api.agents.files.move` | `write` | Rename or move a file/directory within the agent's persistent volume |
-| `agents.files.upload` | `maritime.api.agents.files.upload` | `write` | Upload a file to an agent's disk (dest_dir) or as a chat attachment |
+| `agents.files.upload` | `maritime.api.agents.files.upload` | `destructive` | Upload a file to an agent's disk (dest_dir) or as a chat attachment |
 | `agents.files.write` | `maritime.api.agents.files.write` | `write` | Write text content to a file inside the agent container (workspace editor) |
 | `agents.get` | `maritime.api.agents.get` | `read` | Get one agent: status, template, size, URLs and end user |
 | `agents.getStopOperation` | `maritime.api.agents.getStopOperation` | `read` | Get the progress of a graceful agent stop |
@@ -119,7 +119,6 @@ pnpm add @corsair-dev/maritime
 | `apps.list` | `maritime.api.apps.list` | `read` | The account's apps, newest first |
 | `apps.upload` | `maritime.api.apps.upload` | `write` | Stores the APK in the multipart field ``file`` (at most 1 GiB) |
 | `billing.agentPay.createLink` | `maritime.api.billing.agentPay.createLink` | `destructive` | A short-lived link an agent pays at with an MPP client, for example ``link-cli mpp pay <payUrl> -X POST`` |
-| `billing.agentPay.pay` | `maritime.api.billing.agentPay.pay` | `destructive` | The MPP endpoint: 402 with a Stripe Challenge, or, with a Credential in ``Authorization: Payment ...``, charge the SPT and start the plan |
 | `billing.agents` | `maritime.api.billing.agents` | `read` | Get this billing period cost per agent |
 | `billing.cancelSwitchToUsage` | `maritime.api.billing.cancelSwitchToUsage` | `destructive` | Cancel a pending switch to usage billing |
 | `billing.config` | `maritime.api.billing.config` | `read` | Get the live price list Maritime bills with |

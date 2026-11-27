@@ -36,7 +36,7 @@ describe('maritime plugin', () => {
 		const ids = maritimeOperations.map((o) => o.id).sort();
 		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(ids);
 		expect(Object.keys(plugin.endpointSchemas ?? {}).sort()).toEqual(ids);
-		expect(ids).toHaveLength(332);
+		expect(ids).toHaveLength(331);
 		expect(plugin.endpoints?.sandboxes.commands.run).toEqual(
 			expect.any(Function),
 		);

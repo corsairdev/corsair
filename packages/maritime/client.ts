@@ -160,6 +160,19 @@ export async function makeMaritimeRequest(
 		// again so a keyless request never goes out.
 		throw new AuthMissingError('maritime', 'api_key');
 	}
+	// Core's ApiError keeps a redacted copy of the request, so values sent in
+	// the query (an invoke token, a path) are gathered here, before the call,
+	// to scrub them from an error body that echoes one back.
+	const secrets = [
+		ctx.key,
+		options.dataPlane?.secret,
+		...sentValues(options),
+	].filter(
+		(value): value is string => typeof value === 'string' && value.length > 0,
+	);
+	if (options.dataPlane) {
+		return dataPlaneRequest(options, options.dataPlane, secrets);
+	}
 	const config = configFor(options, ctx.key);
 	const requestOptions: ApiRequestOptions = {
 		method: options.method,
@@ -178,17 +191,115 @@ export async function makeMaritimeRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw withoutRequestData(
-				error,
-				[ctx.key, options.dataPlane?.secret].filter(
-					(value): value is string =>
-						typeof value === 'string' && value.length > 0,
-				),
-				options.dataPlane ? 'data' : 'api',
-			);
+			throw withoutRequestData(error, secrets);
 		}
 		throw error;
 	}
+}
+
+/** String query and path values of a request, for scrubbing an error that echoes one. */
+function sentValues(options: MaritimeRequest): string[] {
+	const values: string[] = [];
+	for (const record of [options.query, options.pathParameters]) {
+		for (const value of Object.values(record ?? {})) {
+			if (typeof value === 'string' && value.length >= 6) values.push(value);
+		}
+	}
+	return values;
+}
+
+/**
+ * One data plane call. It doesn't go through core's request() because core's
+ * fetch follows redirects, and fetch drops only `Authorization` on a
+ * cross-origin redirect, not `X-Maritime-Token`. Here a redirect is an
+ * error, so the sandbox secret only ever reaches the `*.sb.mtm.sh` host
+ * Maritime named. No retries: a command or write may already have run.
+ */
+// `unknown` because the response is untrusted JSON (or bytes) until the operation's output schema parses it.
+async function dataPlaneRequest(
+	options: MaritimeRequest,
+	plane: { url: string; secret: string },
+	secrets: readonly string[],
+): Promise<unknown> {
+	const config = configFor(options, '');
+	let path = options.path;
+	for (const [name, value] of Object.entries(options.pathParameters ?? {})) {
+		path = path.replace(`{${name}}`, encodeMaritimePathValue(value));
+	}
+	const url = new URL(`${config.BASE}${path}`);
+	for (const [name, value] of Object.entries(options.query ?? {})) {
+		if (value === undefined || value === null) continue;
+		for (const item of Array.isArray(value) ? value : [value]) {
+			url.searchParams.append(name, String(item));
+		}
+	}
+	const headers: Record<string, string> = {
+		Accept: 'application/json',
+		'X-Maritime-Token': plane.secret,
+		...options.headers,
+	};
+	let body: Blob | string | undefined;
+	if (options.body instanceof Blob) {
+		headers['Content-Type'] = 'application/octet-stream';
+		body = options.body;
+	} else if (
+		options.body !== undefined &&
+		!(options.body instanceof FormData)
+	) {
+		headers['Content-Type'] = 'application/json';
+		body = JSON.stringify(options.body);
+	}
+	const response = await fetch(url, {
+		method: options.method,
+		headers,
+		body,
+		redirect: 'error',
+		signal: AbortSignal.timeout(config.TIMEOUT),
+	});
+	const contentType = response.headers.get('Content-Type');
+	if (response.ok && options.responseType === 'binary') {
+		return {
+			bytes: new Uint8Array(await response.arrayBuffer()),
+			contentType,
+		};
+	}
+	const text = await response.text();
+	// `unknown` because the body is untrusted until parsed.
+	let parsed: unknown;
+	if (text.trim().length > 0) {
+		try {
+			parsed = JSON.parse(text);
+		} catch {
+			parsed = response.ok ? undefined : text;
+		}
+	}
+	if (!response.ok) {
+		const retryAfter = Number(response.headers.get('Retry-After'));
+		throw withoutRequestData(
+			new ApiError(
+				{
+					method: options.method,
+					url: options.path,
+					path: options.pathParameters,
+					query: options.query,
+				},
+				{
+					url: url.toString(),
+					ok: false,
+					status: response.status,
+					statusText: response.statusText,
+					body: parsed,
+				},
+				`Maritime ${response.status}`,
+				Number.isFinite(retryAfter) && retryAfter > 0
+					? { retryAfter: retryAfter * 1000 }
+					: undefined,
+			),
+			secrets,
+			'data',
+		);
+	}
+	return parsed;
 }
 
 // ── Errors ──────────────────────────────────────────────────────────────────
