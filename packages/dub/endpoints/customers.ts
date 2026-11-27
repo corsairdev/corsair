@@ -1,4 +1,5 @@
 import type { DubEndpoints } from '..';
+import { segment } from '../client';
 import { call } from './call';
 import {
 	DUB_CUSTOMERS_PAGE_SIZE,
@@ -53,13 +54,13 @@ export const list: DubEndpoints['customersList'] = (ctx, input) =>
 			// Bare array with no cursor field: the next cursor is the last
 			// customer's id, and a short page means the list is over.
 			shape: (raw, { pageSize }) => {
-				const items = Array.isArray(raw) ? raw : [];
+				// A non-array 2xx body is spec drift or an error envelope on 200;
+				// hand it to the output schema so it fails loudly instead of
+				// masquerading as an empty page.
+				if (!Array.isArray(raw)) return raw;
 				return {
-					items,
-					nextCursor: nextCursorFrom(
-						items,
-						pageSize ?? DUB_CUSTOMERS_PAGE_SIZE,
-					),
+					items: raw,
+					nextCursor: nextCursorFrom(raw, pageSize ?? DUB_CUSTOMERS_PAGE_SIZE),
 				};
 			},
 			log: (_, result) => ({ count: result.items.length }),
@@ -75,7 +76,7 @@ export const get: DubEndpoints['customersGet'] = (ctx, input) =>
 			output: Outputs.customersGet,
 		},
 		input,
-		({ id }) => ({ method: 'GET', path: `/customers/${id}` }),
+		({ id }) => ({ method: 'GET', path: `/customers/${segment(id)}` }),
 	);
 
 export const update: DubEndpoints['customersUpdate'] = (ctx, input) =>
@@ -89,7 +90,7 @@ export const update: DubEndpoints['customersUpdate'] = (ctx, input) =>
 		input,
 		({ id, ...body }) => ({
 			method: 'PATCH',
-			path: `/customers/${id}`,
+			path: `/customers/${segment(id)}`,
 			body,
 		}),
 	);
@@ -105,7 +106,7 @@ export const remove: DubEndpoints['customersDelete'] = (ctx, input) =>
 		input,
 		({ id }) => ({
 			method: 'DELETE',
-			path: `/customers/${id}`,
+			path: `/customers/${segment(id)}`,
 		}),
 		{
 			log: ({ id }) => ({ id }),

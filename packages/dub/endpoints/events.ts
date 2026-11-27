@@ -106,13 +106,16 @@ export const list: DubEndpoints['eventsList'] = (ctx, input) =>
 			// Dub answers a bare array with no pagination fields: a full page
 			// offers the next page number, a short one ends the list.
 			shape: (raw, { page, limit }) => {
-				const items = Array.isArray(raw) ? raw : [];
+				// A non-array 2xx body is spec drift or an error envelope on 200;
+				// hand it to the output schema so it fails loudly instead of
+				// masquerading as an empty page.
+				if (!Array.isArray(raw)) return raw;
 				const effectiveLimit = limit ?? DUB_EVENTS_LIMIT_DEFAULT;
 				return {
-					items,
+					items: raw,
 					page: page ?? 1,
 					limit: effectiveLimit,
-					nextPage: items.length >= effectiveLimit ? (page ?? 1) + 1 : null,
+					nextPage: raw.length >= effectiveLimit ? (page ?? 1) + 1 : null,
 				};
 			},
 			log: (_, result) => ({

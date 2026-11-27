@@ -129,6 +129,20 @@ describe('links', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
+	it('list fails loudly when a 2xx body is not the bare array', async () => {
+		respond(errorEnvelope, 200);
+
+		await expect(invoke(Links.list, {})).rejects.toThrow();
+	});
+
+	it('list answers an empty page with a null cursor', async () => {
+		respond([]);
+
+		const result = await invoke(Links.list, {});
+
+		expect(result).toEqual({ items: [], nextCursor: null });
+	});
+
 	it('list sends the filters and the cursor page', async () => {
 		respond([link, { ...link, id: 'link_2', key: 'go' }]);
 

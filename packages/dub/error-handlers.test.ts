@@ -43,6 +43,27 @@ function apiError(
 }
 
 describe('Dub error handlers', () => {
+	it('retries an idempotent read whose connection dropped before reaching Dub', async () => {
+		const dropped = new DubAPIError('fetch failed', {
+			method: 'GET',
+			idempotent: true,
+			cause: new Error('socket hang up'),
+		});
+		expect(classify(dropped)).toBe('TRANSPORT_ERROR');
+		expect(await strategy(dropped)).toEqual({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff',
+		});
+	});
+
+	it('does not retry a write whose connection dropped', async () => {
+		const dropped = new DubAPIError('fetch failed', {
+			method: 'POST',
+			cause: new Error('socket hang up'),
+		});
+		expect(classify(dropped)).toBe('DEFAULT');
+	});
+
 	it('retries a 429 with backoff', async () => {
 		const error = apiError(429);
 		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
@@ -172,7 +193,10 @@ describe('mergeErrorHandlers', () => {
 		});
 		const names = Object.keys(merged);
 		expect(names.at(-1)).toBe('DEFAULT');
-		expect(names).toContain('QUOTA_ERROR');
+		// Caller keys come FIRST, not merely before DEFAULT: core takes the
+		// first match in key order, so a builtin key sitting ahead of a caller
+		// key would claim overlapping errors before the caller's handler runs.
+		expect(names.indexOf('QUOTA_ERROR')).toBe(0);
 		expect(names).toContain('RATE_LIMIT_ERROR');
 	});
 

@@ -1,4 +1,5 @@
 import type { DubEndpoints } from '..';
+import { segment } from '../client';
 import { call } from './call';
 import {
 	DUB_DOMAINS_PAGE_SIZE,
@@ -34,13 +35,16 @@ export const list: DubEndpoints['domainsList'] = (ctx, input) =>
 		}),
 		{
 			shape: (raw, { page, pageSize }) => {
-				const items = Array.isArray(raw) ? raw : [];
+				// A non-array 2xx body is spec drift or an error envelope on 200;
+				// hand it to the output schema so it fails loudly instead of
+				// masquerading as an empty page.
+				if (!Array.isArray(raw)) return raw;
 				const effectivePageSize = pageSize ?? DUB_DOMAINS_PAGE_SIZE;
 				return {
-					items,
+					items: raw,
 					page: page ?? 1,
 					pageSize: effectivePageSize,
-					nextPage: items.length >= effectivePageSize ? (page ?? 1) + 1 : null,
+					nextPage: raw.length >= effectivePageSize ? (page ?? 1) + 1 : null,
 				};
 			},
 			log: (_, result) => ({ count: result.items.length }),
@@ -58,7 +62,7 @@ export const update: DubEndpoints['domainsUpdate'] = (ctx, input) =>
 		input,
 		({ slug, newSlug, ...rest }) => ({
 			method: 'PATCH',
-			path: `/domains/${slug}`,
+			path: `/domains/${segment(slug)}`,
 			body: { ...rest, slug: newSlug },
 		}),
 	);
@@ -74,7 +78,7 @@ export const remove: DubEndpoints['domainsDelete'] = (ctx, input) =>
 		input,
 		({ slug }) => ({
 			method: 'DELETE',
-			path: `/domains/${slug}`,
+			path: `/domains/${segment(slug)}`,
 		}),
 		{
 			log: ({ slug }) => ({ slug }),

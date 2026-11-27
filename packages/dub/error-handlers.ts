@@ -63,10 +63,21 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
+	// A dropped connection (reset, DNS, abort) never reached Dub, so replaying
+	// an idempotent request is safe; only GETs and links.upsert carry the flag.
+	TRANSPORT_ERROR: {
+		match: (error: Error) =>
+			error instanceof DubAPIError &&
+			error.status === undefined &&
+			error.idempotent,
+		handler: async () => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
+	},
 	// Dub documents no idempotency keys, so a 5xx write must not be replayed:
 	// it may have gone through. Reads are safe, and links.upsert is the one
 	// idempotent write (create-or-update by domain+key), so both replay here.
-	// A transport failure never reached Dub, but the same flag gates it.
 	SERVER_ERROR: {
 		match: (error: Error) =>
 			error instanceof DubAPIError &&
@@ -84,8 +95,10 @@ export const errorHandlers = {
 } satisfies CorsairErrorHandler;
 
 // Handlers match in key order and DEFAULT matches everything, so it stays
-// last even when the caller adds or overrides handlers. Caller keys win over
-// builtins on name collisions; builtins the caller did not name stay put.
+// last even when the caller adds or overrides handlers. Caller keys keep
+// their positions first: core takes the first matching key, so a caller
+// handler for a status no builtin covers would never run if builtin keys
+// came first.
 export function mergeErrorHandlers(
 	builtin: CorsairErrorHandler,
 	user: CorsairErrorHandler | undefined,
@@ -93,9 +106,9 @@ export function mergeErrorHandlers(
 	if (!user) return builtin;
 	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
 	const { DEFAULT: userDefault, ...userRest } = user;
-	const merged: CorsairErrorHandler = { ...builtinRest };
-	for (const [name, entry] of Object.entries(userRest)) {
-		merged[name] = entry;
+	const merged: CorsairErrorHandler = { ...userRest };
+	for (const [name, entry] of Object.entries(builtinRest)) {
+		if (!(name in merged)) merged[name] = entry;
 	}
 	const fallback = userDefault ?? builtinDefault;
 	if (fallback) merged.DEFAULT = fallback;
