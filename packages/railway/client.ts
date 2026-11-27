@@ -142,7 +142,14 @@ export function graphqlStatus(messages: readonly string[]): number {
 	)
 		return 403;
 	if (/rate limit|too many requests|too quickly/.test(text)) return 429;
-	if (/not found|does not exist|no .* found/.test(text)) return 404;
+	// Substring checks, not a regex with `.*`: the text is the provider's.
+	if (
+		text.includes('not found') ||
+		text.includes('does not exist') ||
+		text.includes('no such')
+	) {
+		return 404;
+	}
 	return 400;
 }
 
