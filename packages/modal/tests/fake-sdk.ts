@@ -253,9 +253,6 @@ export function createFakeSdk(actual: ModalSdkModule): FakeSdk {
 
 	const queue = {
 		queueId: 'qu-1',
-		putMany: recAsync('queue.putMany'),
-		getMany: recAsync('queue.getMany', () => [{ job: 1 }]),
-		iterate: recGen('queue.iterate', () => [1, 2]),
 		len: recAsync('queue.len', () => 2),
 		clear: recAsync('queue.clear'),
 	};
@@ -406,6 +403,19 @@ export function createFakeSdk(actual: ModalSdkModule): FakeSdk {
 						numPartitions: 1,
 						totalSize: 2,
 					},
+				],
+			})),
+			// pickle.dumps({'job': 1}, 4), 1 and 2
+			queuePut: recAsync('rpc.queuePut'),
+			queueGet: recAsync('rpc.queueGet', () => ({
+				values: [
+					Buffer.from('8004950c000000000000007d948c036a6f62944b01732e', 'hex'),
+				],
+			})),
+			queueNextItems: recAsync('rpc.queueNextItems', () => ({
+				items: [
+					{ entryId: 'e1', value: Buffer.from('80044b012e', 'hex') },
+					{ entryId: 'e2', value: Buffer.from('80044b022e', 'hex') },
 				],
 			})),
 			dictGetOrCreate: recAsync('rpc.dictGetOrCreate', () => ({

@@ -55,13 +55,17 @@ Creating sandboxes, running commands, building images and calling functions
 spend Modal credits and are marked `destructive`, like every delete.
 
 Queue and Dict values are Python pickles, so Python code on Modal reads what
-the plugin writes. Dict keys (strings, numbers, booleans, null) are encoded
-exactly as CPython does, so a key written from either side matches.
+the plugin writes. The plugin pickles them itself (`codec.ts`): Dict keys
+(strings, numbers, booleans, null) byte for byte as CPython does, so a key
+written from either side matches, and values with integers beyond 32 bits
+intact (the SDK's pickler truncates those and cannot read Python tuples, sets
+or big ints). Python data JSON has no form for comes back as
+`{ "$pickle": "<base64>" }`.
 
 The JS SDK has no wrappers for Dicts, for listing secrets, volumes, queues and
-dicts, for creating named Secrets, or for Volume file listings; those
-operations call the same gRPC methods through the SDK's client, as Modal's
-Python CLI does.
+dicts, for creating named Secrets, or for Volume file listings, and its Queue
+class uses its own pickler; those operations call the same gRPC methods
+through the SDK's client, as Modal's Python CLI does.
 
 ## Tests
 
@@ -69,3 +73,9 @@ Python CLI does.
 pnpm --filter @corsair-dev/modal test          # mocked, no network
 MODAL_TOKEN_ID=ak-... MODAL_TOKEN_SECRET=as-... pnpm --filter @corsair-dev/modal test:live
 ```
+
+The live suite makes short 0.125 CPU / 128 MiB alpine sandboxes and a few
+named objects, and deletes them all. To include the functions, classes and
+function call steps, deploy the small app in `tests/live_app.py` first
+(`modal deploy packages/modal/tests/live_app.py`) and set
+`MODAL_LIVE_APP=corsair-live-fn`.

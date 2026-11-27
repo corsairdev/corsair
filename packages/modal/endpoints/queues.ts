@@ -1,8 +1,7 @@
 import { z } from 'zod';
 import type { ModalRuntime } from '../client';
-import { toJsonValue } from '../codec';
+import { encodePickle, pickleToJson } from '../codec';
 import {
-	collect,
 	createdBeforeField,
 	defineOperation,
 	environmentField,
@@ -28,6 +27,24 @@ const QueueInput = z.object({
 function lookupQueue(runtime: ModalRuntime, name: string) {
 	return runtime.client.queues.fromName(name);
 }
+
+// put, get and peek call the gRPC methods behind the SDK's Queue directly,
+// with the plugin's own pickler: the SDK's pickler truncates integers beyond
+// 32 bits and cannot read Python tuples, sets or big ints (see codec.ts).
+// The loops mirror the SDK's Queue.put/getMany/iterate.
+
+function partitionKey(partition: string | undefined): Uint8Array {
+	if (!partition) return new Uint8Array();
+	const key = new TextEncoder().encode(partition);
+	if (key.length > 64) {
+		throw new Error('[modal] queue partition key must be 1 to 64 bytes');
+	}
+	return key;
+}
+
+const RESOURCE_EXHAUSTED = 8;
+const DEFAULT_PARTITION_TTL_MS = 24 * 3600 * 1000;
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export const createQueue = defineOperation({
 	group: 'queues',
@@ -114,7 +131,8 @@ export const deleteQueue = defineOperation({
 export const putQueue = defineOperation({
 	group: 'queues',
 	name: 'put',
-	description: 'Add values (JSON) to the end of a Queue.',
+	description:
+		'Add values (JSON) to the end of a Queue. { $bytes: base64 } is stored as Python bytes.',
 	riskLevel: 'write',
 	input: QueueInput.extend({
 		values: z.array(z.unknown()).min(1).max(5000),
@@ -138,12 +156,28 @@ export const putQueue = defineOperation({
 	output: z.object({ count: z.number() }),
 	run: async (runtime, input) => {
 		const queue = await lookupQueue(runtime, input.name);
-		await queue.putMany(input.values, {
-			partition: input.partition,
-			partitionTtlMs: input.partitionTtlMs,
-			timeoutMs: input.timeoutMs,
-		});
-		return { count: input.values.length };
+		const request = {
+			queueId: queue.queueId,
+			values: input.values.map(encodePickle),
+			partitionKey: partitionKey(input.partition),
+			partitionTtlSeconds:
+				(input.partitionTtlMs ?? DEFAULT_PARTITION_TTL_MS) / 1000,
+		};
+		const deadline = Date.now() + input.timeoutMs;
+		let delay = 100;
+		while (true) {
+			try {
+				await runtime.client.cpClient.queuePut(request);
+				return { count: input.values.length };
+			} catch (error) {
+				// A full Queue answers RESOURCE_EXHAUSTED: back off until timeoutMs.
+				const full = (error as { code?: unknown })?.code === RESOURCE_EXHAUSTED;
+				const remaining = deadline - Date.now();
+				if (!full || remaining <= 0) throw error;
+				delay = Math.min(delay * 2, 30_000, remaining);
+				await sleep(delay);
+			}
+		}
 	},
 });
 
@@ -151,7 +185,7 @@ export const getQueue = defineOperation({
 	group: 'queues',
 	name: 'get',
 	description:
-		'Remove and return up to `count` values from the front of a Queue, waiting up to timeoutMs for one to arrive. Returns [] when it stays empty.',
+		'Remove and return up to `count` values from the front of a Queue, waiting up to timeoutMs for one to arrive. Returns [] when it stays empty. Python tuples and sets come back as arrays, bytes as { $bytes }, other objects as { $pickle: base64 }.',
 	riskLevel: 'write',
 	input: QueueInput.extend({
 		count: z.number().int().min(1).max(1000).default(1),
@@ -167,15 +201,20 @@ export const getQueue = defineOperation({
 	output: z.object({ values: z.array(z.unknown()) }),
 	run: async (runtime, input) => {
 		const queue = await lookupQueue(runtime, input.name);
-		try {
-			const values = await queue.getMany(input.count, {
-				partition: input.partition,
-				timeoutMs: input.timeoutMs,
+		const key = partitionKey(input.partition);
+		const deadline = Date.now() + input.timeoutMs;
+		while (true) {
+			const remaining = Math.max(0, deadline - Date.now());
+			const response = await runtime.client.cpClient.queueGet({
+				queueId: queue.queueId,
+				partitionKey: key,
+				timeout: Math.min(50_000, remaining) / 1000,
+				nValues: input.count,
 			});
-			return { values: values.map(toJsonValue) };
-		} catch (error) {
-			if (error instanceof runtime.sdk.QueueEmptyError) return { values: [] };
-			throw error;
+			if (response.values?.length) {
+				return { values: response.values.map(pickleToJson) };
+			}
+			if (Date.now() >= deadline) return { values: [] };
 		}
 	},
 });
@@ -183,7 +222,8 @@ export const getQueue = defineOperation({
 export const peekQueue = defineOperation({
 	group: 'queues',
 	name: 'peek',
-	description: 'Read values from a Queue in order without removing them.',
+	description:
+		'Read values from a Queue in order without removing them (decoded as in queues.get).',
 	riskLevel: 'read',
 	input: QueueInput.extend({
 		partition: partitionField,
@@ -192,11 +232,23 @@ export const peekQueue = defineOperation({
 	output: z.object({ values: z.array(z.unknown()), truncated: z.boolean() }),
 	run: async (runtime, input) => {
 		const queue = await lookupQueue(runtime, input.name);
-		const { items, truncated } = await collect(
-			queue.iterate({ partition: input.partition, itemPollTimeoutMs: 0 }),
-			input.limit,
-		);
-		return { values: items.map(toJsonValue), truncated };
+		const key = partitionKey(input.partition);
+		const values: unknown[] = [];
+		let lastEntryId = '';
+		while (true) {
+			const response = await runtime.client.cpClient.queueNextItems({
+				queueId: queue.queueId,
+				partitionKey: key,
+				itemPollTimeout: 0,
+				lastEntryId,
+			});
+			if (!response.items?.length) return { values, truncated: false };
+			for (const item of response.items) {
+				if (values.length >= input.limit) return { values, truncated: true };
+				values.push(pickleToJson(item.value));
+				lastEntryId = item.entryId;
+			}
+		}
 	},
 });
 

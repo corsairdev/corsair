@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { ModalRuntime } from '../client';
-import { createPickleCodec, encodeDictKey, toJsonValue } from '../codec';
+import { encodeDictKey, encodePickle, pickleToJson } from '../codec';
 import {
 	createdBeforeField,
 	defineOperation,
@@ -139,7 +139,8 @@ const FoundValueSchema = z.object({
 export const getDictValue = defineOperation({
 	group: 'dicts',
 	name: 'get',
-	description: 'Read the value stored under a key.',
+	description:
+		'Read the value stored under a key. Python tuples and sets come back as arrays, bytes as { $bytes: base64 }, other objects (datetimes, class instances) as { $pickle: base64 }.',
 	riskLevel: 'read',
 	input: DictInput.extend({ key: DictKeySchema }),
 	output: FoundValueSchema,
@@ -150,10 +151,9 @@ export const getDictValue = defineOperation({
 			key: encodeDictKey(input.key),
 		});
 		if (!response.found || !response.value) return { found: false };
-		const codec = createPickleCodec(runtime.sdk);
 		return {
 			found: true,
-			value: toJsonValue(await codec.decode(response.value)),
+			value: pickleToJson(response.value),
 		};
 	},
 });
@@ -172,13 +172,12 @@ export const putDictValue = defineOperation({
 	output: z.object({ created: z.boolean() }),
 	run: async (runtime, input) => {
 		const id = await dictId(runtime, input.name);
-		const codec = createPickleCodec(runtime.sdk);
 		const response = await runtime.client.cpClient.dictUpdate({
 			dictId: id,
 			updates: [
 				{
 					key: encodeDictKey(input.key),
-					value: await codec.encode(input.value),
+					value: encodePickle(input.value),
 				},
 			],
 			ifNotExists: input.skipIfExists ?? false,
@@ -201,12 +200,11 @@ export const updateDict = defineOperation({
 	output: z.object({ count: z.number() }),
 	run: async (runtime, input) => {
 		const id = await dictId(runtime, input.name);
-		const codec = createPickleCodec(runtime.sdk);
 		const updates = [];
 		for (const entry of input.entries) {
 			updates.push({
 				key: encodeDictKey(entry.key),
-				value: await codec.encode(entry.value),
+				value: encodePickle(entry.value),
 			});
 		}
 		await runtime.client.cpClient.dictUpdate({
@@ -232,10 +230,9 @@ export const popDictValue = defineOperation({
 			key: encodeDictKey(input.key),
 		});
 		if (!response.found || !response.value) return { found: false };
-		const codec = createPickleCodec(runtime.sdk);
 		return {
 			found: true,
-			value: toJsonValue(await codec.decode(response.value)),
+			value: pickleToJson(response.value),
 		};
 	},
 });
@@ -275,7 +272,7 @@ export const dictItems = defineOperation({
 	group: 'dicts',
 	name: 'items',
 	description:
-		'Keys and values in the Dict. Keys of types JSON has no form for (tuples, bytes) come back as strings.',
+		'Keys and values in the Dict, decoded as in dicts.get (a tuple key comes back as an array).',
 	riskLevel: 'read',
 	input: DictInput.extend({
 		keysOnly: z.boolean().optional().describe('Return keys without values.'),
@@ -289,7 +286,6 @@ export const dictItems = defineOperation({
 	}),
 	run: async (runtime, input) => {
 		const id = await dictId(runtime, input.name);
-		const codec = createPickleCodec(runtime.sdk);
 		const stream = runtime.client.cpClient.dictContents({
 			dictId: id,
 			keys: true,
@@ -303,11 +299,11 @@ export const dictItems = defineOperation({
 				break;
 			}
 			entries.push({
-				key: toJsonValue(await codec.decode(entry.key)),
+				key: pickleToJson(entry.key),
 				value:
 					input.keysOnly || !entry.value?.length
 						? undefined
-						: toJsonValue(await codec.decode(entry.value)),
+						: pickleToJson(entry.value),
 			});
 		}
 		return { entries, truncated };

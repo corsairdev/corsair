@@ -40,7 +40,10 @@ with `modal({ environment: 'dev' })`.
 - **Queues and dicts** store Python pickles, so Python code on Modal reads
   what the plugin writes. Dict keys are strings, numbers, booleans or null,
   encoded byte for byte as Python does, so the same key matches from both
-  sides. Byte values come back as `{ "$bytes": "<base64>" }`.
+  sides. Integers keep their full value, Python tuples and sets come back as
+  arrays, bytes as `{ "$bytes": "<base64>" }` (send the same shape to store
+  bytes), and objects JSON has no form for (datetimes, class instances) as
+  `{ "$pickle": "<base64>" }`.
 - **Lists** of volumes, secrets, queues and dicts page newest first: pass the
   returned `nextCreatedBefore` as `createdBefore`.
 - Not wrapped: deploying Apps (Python CLI only), web endpoint URLs you call

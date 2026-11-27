@@ -813,19 +813,34 @@ const CASES: Record<string, Case> = {
 	'queues.put': {
 		input: { name: 'jobs', values: [{ a: 1 }, 'b'], partition: 'p1' },
 		check: (out, f) => {
-			expect(f.callsTo('queue.putMany')[0]).toEqual([
-				[{ a: 1 }, 'b'],
-				{ partition: 'p1', partitionTtlMs: undefined, timeoutMs: 10_000 },
-			]);
+			const [request] = f.callsTo('rpc.queuePut')[0] as [
+				{ queueId: string; values: Uint8Array[]; partitionKey: Uint8Array },
+			];
+			expect(request).toMatchObject({
+				queueId: 'qu-1',
+				partitionTtlSeconds: 86_400,
+			});
+			expect(Buffer.from(request.partitionKey).toString()).toBe('p1');
+			// CPython: pickle.dumps({'a': 1}, 4) and pickle.dumps('b', 4)
+			expect(request.values.map((v) => Buffer.from(v).toString('hex'))).toEqual(
+				[
+					'8004950a000000000000007d948c0161944b01732e',
+					'80049505000000000000008c0162942e',
+				],
+			);
 			expect(out).toEqual({ count: 2 });
 		},
 	},
 	'queues.get': {
 		input: { name: 'jobs', count: 2 },
 		check: (out, f) => {
-			expect(f.callsTo('queue.getMany')[0]).toEqual([
-				2,
-				{ partition: undefined, timeoutMs: 0 },
+			expect(f.callsTo('rpc.queueGet')[0]).toEqual([
+				{
+					queueId: 'qu-1',
+					partitionKey: new Uint8Array(),
+					timeout: 0,
+					nValues: 2,
+				},
 			]);
 			expect(out).toEqual({ values: [{ job: 1 }] });
 		},
@@ -1068,12 +1083,11 @@ describe('inputs and errors', () => {
 	});
 
 	it('returns an empty list when a queue stays empty', async () => {
-		fake.setResult('queue.getMany', () => {
-			throw new actualSdk.QueueEmptyError('empty');
-		});
+		fake.setResult('rpc.queueGet', () => ({ values: [] }));
 		await expect(run('queues.get', { name: 'jobs' })).resolves.toEqual({
 			values: [],
 		});
+		expect(fake.callsTo('rpc.queueGet')).toHaveLength(1);
 	});
 
 	it('caps exec output at maxOutputBytes', async () => {
