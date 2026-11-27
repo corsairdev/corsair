@@ -155,7 +155,7 @@ describe('dub plugin definition', () => {
 			.sort();
 		expect(marked).toEqual([...new Set(irreversible)].sort());
 		for (const name of irreversible) {
-			expect(meta[name].riskLevel).toBe(
+			expect(meta[name as keyof typeof meta]?.riskLevel).toBe(
 				name.startsWith('track.') ? 'write' : 'destructive',
 			);
 		}

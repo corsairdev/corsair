@@ -1,9 +1,14 @@
-import type { ErrorContext } from 'corsair/core';
+import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
 import { ZodError } from 'zod';
 import { DubAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
-type HandlerName = keyof typeof errorHandlers;
+// Core runs handlers through the CorsairErrorHandler interface, whose match
+// and handler receive the context; the plugin's own functions declare fewer
+// parameters, so the tests call through the interface type.
+const handlers: CorsairErrorHandler = errorHandlers;
+
+type HandlerName = keyof typeof handlers;
 
 const context: ErrorContext = {
 	pluginId: 'dub',
@@ -14,15 +19,15 @@ const context: ErrorContext = {
 
 // Mirrors corsair core: the first handler whose match() passes, in key order.
 function classify(error: Error): HandlerName {
-	const name = (Object.keys(errorHandlers) as HandlerName[]).find((key) =>
-		errorHandlers[key]?.match(error, context),
+	const name = (Object.keys(handlers) as HandlerName[]).find((key) =>
+		handlers[key]?.match(error, context),
 	);
 	if (!name) throw new Error('DEFAULT should always match');
 	return name;
 }
 
 async function strategy(error: Error) {
-	return errorHandlers[classify(error)]?.handler(error, context);
+	return handlers[classify(error)]?.handler(error, context);
 }
 
 function apiError(
@@ -224,7 +229,7 @@ describe('mergeErrorHandlers', () => {
 			status: 401,
 			code: 'unauthorized',
 		});
-		expect(errorHandlers.AUTH_ERROR?.match(error, context)).toBe(true);
-		expect(errorHandlers.RATE_LIMIT_ERROR?.match(error, context)).toBe(false);
+		expect(handlers.AUTH_ERROR?.match(error, context)).toBe(true);
+		expect(handlers.RATE_LIMIT_ERROR?.match(error, context)).toBe(false);
 	});
 });
