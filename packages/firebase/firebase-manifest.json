@@ -8335,7 +8335,7 @@
 							"null"
 						],
 						"x-corsair-in": "query",
-						"description": "Start at this value of orderBy (a string, number, boolean or null, which selects children without the key; the plugin JSON-encodes it)."
+						"description": "Start at this value of orderBy, inclusive (a string, number, boolean or null; the plugin JSON-encodes it). null sorts first, so `startAt: null` keeps everything; `equalTo: null` selects only children without the key."
 					},
 					"endAt": {
 						"type": [

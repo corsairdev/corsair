@@ -471,6 +471,23 @@ export function withoutRequestData(
 	);
 }
 
+/** Keys of Google's and the Realtime Database's error envelopes. */
+const ENVELOPE_KEYS: ReadonlySet<string> = new Set([
+	'error',
+	'errors',
+	'code',
+	'message',
+	'status',
+	'details',
+	'reason',
+	'domain',
+	'@type',
+	'metadata',
+	'fieldViolations',
+	'field',
+	'description',
+]);
+
 /** A field path such as `user.email` or `fields[0].name`. */
 const FIELD_NAME = /^[A-Za-z_][A-Za-z0-9_.[\]-]{0,80}$/;
 
@@ -650,8 +667,12 @@ function scrubSent(value: unknown, sent: SentString[], depth = 0): unknown {
 		for (const [rawKey, inner] of Object.entries(value)) {
 			// A key can echo a value (an email keying an `errors` map): only a
 			// field-shaped key that isn't a sent value is kept as it is.
+			// The envelope's own keys (`error`, `message`, `details`) stay where the
+			// message builder reads them, even when a sent value matches one.
 			const key =
-				FIELD_NAME.test(rawKey) && scrubSent(rawKey, sent, depth + 1) === rawKey
+				ENVELOPE_KEYS.has(rawKey) ||
+				(FIELD_NAME.test(rawKey) &&
+					scrubSent(rawKey, sent, depth + 1) === rawKey)
 					? rawKey
 					: `${REDACTED}${index++}`;
 			result[key] = scrubSent(inner, sent, depth + 1);

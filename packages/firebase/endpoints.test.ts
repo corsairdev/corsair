@@ -499,12 +499,14 @@ describe('realtime database', () => {
 				path: 'users/ada',
 			}),
 		).resolves.toEqual({ success: true });
-		await endpointFor('database.get')(ctx(), {
-			databaseUrl: 'https://demo-project-default-rtdb.firebaseio.com',
-			path: 'users',
-			orderBy: 'height',
-			endAt: null,
-		}).catch(() => undefined);
+		await expect(
+			endpointFor('database.get')(ctx(), {
+				databaseUrl: 'https://demo-project-default-rtdb.firebaseio.com',
+				path: 'users',
+				orderBy: 'height',
+				endAt: null,
+			}),
+		).resolves.toBeNull();
 		expect(url(1).searchParams.get('endAt')).toBe('null');
 	});
 
@@ -609,6 +611,15 @@ describe('errors', () => {
 		expect(JSON.stringify((error as { body?: unknown }).body)).not.toContain(
 			'ada@example.com',
 		);
+	});
+
+	it("keeps the envelope's keys when a sent value matches one", async () => {
+		reply(400, { error: { code: 400, message: 'Invalid prefix.' } });
+		const error = (await endpointFor('storage.objects.list')(ctx(), {
+			bucket: 'b',
+			prefix: 'error',
+		}).catch((e: unknown) => e)) as Error;
+		expect(error.message).toContain('Invalid prefix.');
 	});
 
 	it('writes messages from Google, Realtime Database and plain bodies', () => {

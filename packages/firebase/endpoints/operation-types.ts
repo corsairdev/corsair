@@ -9962,7 +9962,7 @@ export type FirebaseOperationInputs = {
 		path?: string;
 		/** Order by "$key", "$value", "$priority" or a child key ("height"); the plugin adds the JSON quotes. Needs an index rule for child keys. */
 		orderBy?: string;
-		/** Start at this value of orderBy (a string, number, boolean or null, which selects children without the key; the plugin JSON-encodes it). */
+		/** Start at this value of orderBy, inclusive (a string, number, boolean or null; the plugin JSON-encodes it). null sorts first, so `startAt: null` keeps everything; `equalTo: null` selects only children without the key. */
 		startAt?: (string | number | boolean) | null;
 		/** End at this value of orderBy (the plugin JSON-encodes it). */
 		endAt?: (string | number | boolean) | null;

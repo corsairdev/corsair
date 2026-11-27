@@ -151,7 +151,7 @@ apiExamples:
   appCheck.services.resourcePolicies.list:
     args: {"parent": "projects/demo-project/services/firestore.googleapis.com"}
   appCheck.services.resourcePolicies.patch:
-    args: {"name": "projects/demo-project/services/firestore.googleapis.com/resourcePolicies/rp-1", "updateMask": "enforcementMode", "enforcementMode": "UNENFORCED"}
+    args: {"name": "projects/demo-project/services/oauth2.googleapis.com/resourcePolicies/rp-1", "updateMask": "enforcementMode", "enforcementMode": "UNENFORCED"}
   appDistribution.apps.getAabInfo:
     args: {"name": "projects/demo-project/apps/1:1234567890:web:abc123/aabInfo"}
   appDistribution.apps.releases.batchDelete:

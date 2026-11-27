@@ -1937,7 +1937,7 @@ Updates the specified ResourcePolicy configuration
 **Risk:** `write`
 
 ```ts
-await corsair.firebase.api.appCheck.services.resourcePolicies.patch({ name: 'projects/demo-project/services/firestore.googleapis.com/resourcePolicies/rp-1', updateMask: 'enforcementMode', enforcementMode: 'UNENFORCED' });
+await corsair.firebase.api.appCheck.services.resourcePolicies.patch({ name: 'projects/demo-project/services/oauth2.googleapis.com/resourcePolicies/rp-1', updateMask: 'enforcementMode', enforcementMode: 'UNENFORCED' });
 ```
 
 **Input**
@@ -10740,7 +10740,7 @@ await corsair.firebase.api.database.get({
 | `databaseUrl` | `string` | Yes | The database URL: https://&lt;name&gt;.firebaseio.com or https://&lt;name&gt;.&lt;region&gt;.firebasedatabase.app (databaseInstances.list returns it as databaseUrl). |
 | `path` | `string` | No | The location in the database, `users/ada` (empty for the root). |
 | `orderBy` | `string` | No | Order by "$key", "$value", "$priority" or a child key ("height"); the plugin adds the JSON quotes. Needs an index rule for child keys. |
-| `startAt` | `string \| number \| boolean \| null` | No | Start at this value of orderBy (a string, number, boolean or null, which selects children without the key; the plugin JSON-encodes it). |
+| `startAt` | `string \| number \| boolean \| null` | No | Start at this value of orderBy, inclusive (a string, number, boolean or null; the plugin JSON-encodes it). null sorts first, so `startAt: null` keeps everything; `equalTo: null` selects only children without the key. |
 | `endAt` | `string \| number \| boolean \| null` | No | End at this value of orderBy (the plugin JSON-encodes it). |
 | `equalTo` | `string \| number \| boolean \| null` | No | Only values equal to this (the plugin JSON-encodes it). |
 | `limitToFirst` | `number` | No | — |
