@@ -1,5 +1,6 @@
 import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import type { WoocommerceRequest } from '../client';
 import { encodeWoocommercePathValue, makeWoocommerceRequest } from '../client';
 import type { WoocommerceContext } from '../index';
@@ -104,6 +105,8 @@ export function nextPageOf(
 	count: number,
 	defaultSize: number,
 ): number | null {
+	// With `offset`, WooCommerce ignores `page`: the caller pages by offset.
+	if (typeof input.offset === 'number') return null;
 	const page =
 		typeof input.page === 'number' && input.page > 0 ? input.page : 1;
 	const size =
@@ -111,6 +114,18 @@ export function nextPageOf(
 			? input.per_page
 			: defaultSize;
 	return count >= size && count > 0 ? page + 1 : null;
+}
+
+/** The answer to a page past the end of a list. */
+// `unknown` because anything can be thrown.
+export function isPastLastPage(error: unknown): boolean {
+	if (!(error instanceof ApiError) || error.status !== 400) return false;
+	const body = error.body;
+	const code =
+		typeof body === 'object' && body !== null && 'code' in body
+			? (body as { code?: unknown }).code
+			: undefined;
+	return typeof code === 'string' && code.endsWith('_invalid_page_number');
 }
 
 /**
@@ -143,7 +158,10 @@ export function createWoocommerceOperation<Id extends WoocommerceOperationId>(
 		for (const field of woocommerceInputFields(id)) {
 			named.add(field.name);
 			const value = valid[field.name];
-			if (value === undefined || value === null) continue;
+			if (value === undefined) continue;
+			// An explicit null is a value in a body (it clears the field); in a
+			// path or query string it means "not set".
+			if (value === null && field.in !== 'body') continue;
 			switch (field.in) {
 				case 'path':
 					pathParameters[field.wire] = encodeWoocommercePathValue(
@@ -177,7 +195,15 @@ export function createWoocommerceOperation<Id extends WoocommerceOperationId>(
 		}
 
 		// `unknown` because the response is untrusted until the output schema parses it.
-		let response: unknown = await makeWoocommerceRequest(ctx, request);
+		let response: unknown = await makeWoocommerceRequest(ctx, request).catch(
+			(error: unknown) => {
+				// A full last page still gets a next_page (core doesn't return
+				// X-WP-TotalPages); a 400 *_invalid_page_number for the page after
+				// it means that page is empty.
+				if (operation.paginated && isPastLastPage(error)) return [];
+				throw error;
+			},
+		);
 		if (operation.paginated && Array.isArray(response)) {
 			response = {
 				items: response,

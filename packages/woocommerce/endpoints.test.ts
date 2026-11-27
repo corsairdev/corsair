@@ -117,6 +117,43 @@ describe('requests', () => {
 		);
 	});
 
+	it('refuses an application password over non-local http, signs a key pair there', async () => {
+		reply(200, { id: 5 });
+		const appPassword = {
+			...ctx('http://shop.example.com'),
+			options: { siteUrl: 'http://shop.example.com', consumerKey: 'ada' },
+		} as WoocommerceContext;
+		await expect(call('products.get', { id: 5 }, appPassword)).rejects.toThrow(
+			/needs an https store URL/,
+		);
+		expect(calls).toHaveLength(0);
+		await call('products.get', { id: 5 }, ctx('http://shop.example.com'));
+		expect(url().searchParams.get('oauth_signature')).toBeTruthy();
+	});
+
+	it('pages by offset without a next page and ends past the last page', async () => {
+		reply(200, [{ id: 1 }]);
+		await expect(
+			call('orders.list', { per_page: 1, offset: 3 }),
+		).resolves.toEqual({ items: [{ id: 1 }], next_page: null });
+		reply(400, {
+			code: 'woocommerce_rest_invalid_page_number',
+			message:
+				'The page number requested is larger than the number of pages available.',
+			data: { status: 400 },
+		});
+		await expect(call('orders.list', { page: 9 })).resolves.toEqual({
+			items: [],
+			next_page: null,
+		});
+	});
+
+	it('keeps an explicit null in the body', async () => {
+		reply(200, { id: 3 });
+		await call('coupons.update', { id: 3, date_expires: null });
+		expect(JSON.parse(String(calls[0]?.body))).toEqual({ date_expires: null });
+	});
+
 	it('creates a refund as JSON with the order id in the path', async () => {
 		reply(201, { id: 9, amount: '10.00' });
 		await call('orders.refunds.create', {

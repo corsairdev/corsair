@@ -14,10 +14,14 @@ overviewNote: |
   plain HTTP (a local store) the plugin signs each call with OAuth 1.0a, as
   WooCommerce requires. A WordPress application password also works: put the
   WordPress username in `consumer_key` and the application password as the
-  key. SDK users can pass `siteUrl` and `consumerKey` as options.
+  key (HTTPS only, except on localhost and `.local`/`.test` hosts, since
+  Basic auth would cross the network in the clear). SDK users can pass
+  `siteUrl` and `consumerKey` as options.
 
   - **Lists** page with `page` and `per_page` (up to 100) and return
-  `{ items, next_page }`: `next_page` is set while a page comes back full.
+  `{ items, next_page }`: `next_page` is set while a page comes back full
+  (a full last page is followed by an empty one). With `offset`, `next_page`
+  is null: page by `offset`.
   - **Money** amounts are strings (`"19.99"`), as WooCommerce sends them.
   - **Batch** routes take `{ create, update, delete }` with up to 100 records
   in all.

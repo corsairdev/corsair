@@ -41,6 +41,22 @@ export async function tryGetStoredKey(
 }
 
 /**
+ * Hosts that never leave the machine or the local network's development
+ * names: loopback addresses and `.localhost`, `.local`, `.test` names.
+ */
+export function isLocalHost(hostname: string): boolean {
+	const host = hostname.toLowerCase().replace(/^\[|\]$/g, '');
+	return (
+		host === 'localhost' ||
+		host === '::1' ||
+		/^127(\.\d{1,3}){3}$/.test(host) ||
+		host.endsWith('.localhost') ||
+		host.endsWith('.local') ||
+		host.endsWith('.test')
+	);
+}
+
+/**
  * The REST root for a store URL. The account may store the site address
  * (`https://shop.example.com`) or the REST root (`.../wp-json`); both land on
  * `<site>/wp-json`.
@@ -264,6 +280,16 @@ export async function makeWoocommerceRequest(
 	const secret = ctx.key.replace(/\s+/g, '');
 	const overHttp = base.startsWith('http://');
 	const signed = overHttp && isConsumerKey(consumerKey);
+	if (overHttp && !signed && !isLocalHost(new URL(base).hostname)) {
+		// A WordPress login with an application password goes as Basic auth,
+		// which plain HTTP would carry in the clear. Consumer keys are signed
+		// instead, so the secret never travels.
+		throw new AuthMissingError(
+			'woocommerce',
+			'api_key',
+			'[woocommerce] an application password needs an https store URL (plain http only for localhost and .local/.test/.localhost hosts); use a REST API key pair (ck_/cs_) for an http store',
+		);
+	}
 	let query = options.query ?? {};
 	const headers: Record<string, string> = { Accept: 'application/json' };
 	if (signed) {
@@ -527,6 +553,12 @@ function scrubSent(value: unknown, sent: SentString[], depth = 0): unknown {
 			result[key] = scrubSent(inner, sent, depth + 1);
 		}
 		return result;
+	}
+	if (typeof value === 'number') {
+		// A number the call sent under a sensitive key (a phone number, a
+		// code), echoed back as a number.
+		const text = String(value);
+		if (sent.some((item) => item.text === text)) return REDACTED;
 	}
 	return value;
 }
