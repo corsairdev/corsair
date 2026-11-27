@@ -1,0 +1,4806 @@
+{
+  "source": "https://docs.browserbase.com/llms.txt",
+  "fetched": "2026-11-27",
+  "operations": [
+    {
+      "id": "agents.create",
+      "method": "POST",
+      "path": "/v1/agents",
+      "tag": "Other",
+      "summary": "Create an Agent",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Human-readable name for the agent. Used to identify the agent in the dashboard and API responses.",
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "systemPrompt": {
+            "description": "System prompt that steers the agent's behavior on every run that uses this agent.",
+            "type": "string",
+            "minLength": 1
+          },
+          "resultSchema": {
+            "description": "An optional [JSON Schema](https://json-schema.org/specification) object. If provided, runs that reference this agent will aim to return a `result` that conforms to this schema when they complete. Can be overridden per run by passing `resultSchema` on the run request.",
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {}
+          }
+        },
+        "additionalProperties": false,
+        "required": ["name"]
+      },
+      "output": {
+        "$ref": "Agent"
+      }
+    },
+    {
+      "id": "agents.delete",
+      "method": "DELETE",
+      "path": "/v1/agents/{agentId}",
+      "tag": "Other",
+      "summary": "Delete an Agent",
+      "request": "none",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "agentId": {
+            "type": "string",
+            "description": "The agent ID.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["agentId"]
+      }
+    },
+    {
+      "id": "agents.get",
+      "method": "GET",
+      "path": "/v1/agents/{agentId}",
+      "tag": "Other",
+      "summary": "Get an Agent",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "agentId": {
+            "type": "string",
+            "description": "The agent ID.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["agentId"]
+      },
+      "output": {
+        "$ref": "Agent"
+      }
+    },
+    {
+      "id": "agents.list",
+      "method": "GET",
+      "path": "/v1/agents",
+      "tag": "Other",
+      "summary": "List Agents",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "startAt": {
+            "type": "string",
+            "description": "Only return agents created on or after this timestamp (inclusive). RFC 3339, e.g. 2026-01-19T00:00:00Z.",
+            "x-corsair-in": "query"
+          },
+          "endAt": {
+            "type": "string",
+            "description": "Only return agents created on or before this timestamp (inclusive). RFC 3339, e.g. 2026-01-20T00:00:00Z.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 20,
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Maximum number of results to return.",
+            "x-corsair-in": "query"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor. Pass the nextCursor from the previous response to fetch the next page. Omit to start from the first page.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "description": "A page of agents.",
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "The page of matching agents.",
+            "type": "array",
+            "items": {
+              "$ref": "Agent"
+            }
+          },
+          "limit": {
+            "description": "The maximum number of results returned in this page.",
+            "type": "integer"
+          },
+          "nextCursor": {
+            "description": "Cursor for the next page. Pass it back as `cursor` on the next request to continue paging. null when there are no more results.",
+            "anyOf": [
+              {
+                "type": "string"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "required": ["data", "limit", "nextCursor"]
+      }
+    },
+    {
+      "id": "agents.runs.create",
+      "method": "POST",
+      "path": "/v1/agents/runs",
+      "tag": "Other",
+      "summary": "Run an Agent",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "agentId": {
+            "description": "Optionally run a specific [custom agent](/reference/api/create-an-agent) you've created by ID. The run will use the agent's `systemPrompt` and `resultSchema` unless overridden.",
+            "type": "string"
+          },
+          "task": {
+            "description": "A natural language description of the task the agent should accomplish.",
+            "type": "string",
+            "minLength": 1
+          },
+          "resultSchema": {
+            "description": "An optional [JSON Schema](https://json-schema.org/specification) object. If provided, the agent will aim to return a `result` that conforms to this schema when the run completes. Overrides the referenced agent's default `resultSchema` for this run only.",
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {}
+          },
+          "browserSettings": {
+            "description": "Browser configuration for the agent's session. When omitted, runner defaults apply.",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "context": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "description": "The Context ID.",
+                    "type": "string"
+                  },
+                  "persist": {
+                    "description": "Whether to persist the context after browsing. Defaults to false.",
+                    "type": "boolean"
+                  }
+                },
+                "required": ["id"]
+              },
+              "proxies": {
+                "description": "Proxy configuration. Can be true for default proxy, or an array of proxy configurations.",
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "anyOf": [
+                        {
+                          "$ref": "BrowserbaseProxyConfig"
+                        },
+                        {
+                          "$ref": "ExternalProxyConfig"
+                        },
+                        {
+                          "$ref": "NoneProxyConfig"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ]
+              },
+              "proxySettings": {
+                "description": "Proxy settings for the browser session. Optional.",
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "caCertificates": {
+                    "description": "The TLS certificate IDs to trust. Optional.",
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "allowedDomains": {
+                "description": "Domains the browser session may navigate to, including their subdomains. Restricts top-level navigations only. Omit or pass an empty list to allow every domain.",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "ignoreCertificateErrors": {
+                "description": "Set `true` to ignore TLS certificate errors in the browser session (for example, to reach hosts with expired or self-signed certificates). When omitted, your project's default applies.",
+                "type": "boolean"
+              },
+              "verified": {
+                "description": "Set true to enable Browserbase Verified for the session.",
+                "type": "boolean"
+              },
+              "recordSession": {
+                "description": "Enable or disable session recording. Defaults to `true`.",
+                "type": "boolean"
+              },
+              "logSession": {
+                "description": "Enable or disable session logging. Defaults to `true`.",
+                "type": "boolean"
+              }
+            }
+          },
+          "variables": {
+            "description": "Optional named variables the agent can reference as placeholders, i.e. `%variable%`. Each entry pairs a `value` the placeholder resolves to with an optional `description` that hints to the agent when it should be used. Values are not persisted.",
+            "type": "object",
+            "additionalProperties": {
+              "additionalProperties": false,
+              "type": "object",
+              "required": ["value"],
+              "properties": {
+                "value": {
+                  "description": "The value the placeholder resolves to when the agent uses it.",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "Optional hint to the agent describing what this variable represents and when to use it.",
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "pauseWhen": {
+            "description": "Optional description of when the agent should pause and wait for input from your application (e.g. a verification code, an approval, or an answer from another system). When set, the agent is given a `pause` tool; calling it transitions the run to `PAUSED` (the agent's request is the trailing `pause` tool call in the run's messages) until it is resumed via the resume endpoint.",
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false,
+        "required": ["task"]
+      },
+      "output": {
+        "$ref": "AgentRun"
+      }
+    },
+    {
+      "id": "agents.runs.get",
+      "method": "GET",
+      "path": "/v1/agents/runs/{runId}",
+      "tag": "Other",
+      "summary": "Get a Run",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "runId": {
+            "type": "string",
+            "description": "The run ID.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["runId"]
+      },
+      "output": {
+        "$ref": "AgentRun"
+      }
+    },
+    {
+      "id": "agents.runs.list",
+      "method": "GET",
+      "path": "/v1/agents/runs",
+      "tag": "Other",
+      "summary": "List Runs",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "RUNNING",
+              "COMPLETED",
+              "FAILED",
+              "STOPPED",
+              "TIMED_OUT",
+              "PAUSED"
+            ],
+            "description": "Current status of the run. - `PENDING` - agent will run soon - `RUNNING` - agent is currently running - `COMPLETED` - agent has finished running - `FAILED` - agent has failed the run - `STOPPED` - run was stopped by the user - `TIMED_OUT` - run exceeded maximum time - `PAUSED` - run is paused awaiting input from the caller; the agent's request is the trailing `pause` tool call in the run's messages",
+            "x-corsair-in": "query"
+          },
+          "agentId": {
+            "type": "string",
+            "description": "Only return runs that reference this agent ID.",
+            "x-corsair-in": "query"
+          },
+          "startAt": {
+            "type": "string",
+            "description": "Only return runs created on or after this timestamp (inclusive). RFC 3339, e.g. 2026-01-19T00:00:00Z.",
+            "x-corsair-in": "query"
+          },
+          "endAt": {
+            "type": "string",
+            "description": "Only return runs created on or before this timestamp (inclusive). RFC 3339, e.g. 2026-01-20T00:00:00Z.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 20,
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Maximum number of results to return.",
+            "x-corsair-in": "query"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor. Pass the nextCursor from the previous response to fetch the next page. Omit to start from the first page.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "description": "A page of agent runs.",
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "The page of matching agent runs.",
+            "type": "array",
+            "items": {
+              "$ref": "AgentRun"
+            }
+          },
+          "limit": {
+            "description": "The maximum number of results returned in this page.",
+            "type": "integer"
+          },
+          "nextCursor": {
+            "description": "Cursor for the next page. Pass it back as `cursor` on the next request to continue paging. null when there are no more results.",
+            "anyOf": [
+              {
+                "type": "string"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "required": ["data", "limit", "nextCursor"]
+      }
+    },
+    {
+      "id": "agents.runs.messages",
+      "method": "GET",
+      "path": "/v1/agents/runs/{runId}/messages",
+      "tag": "Other",
+      "summary": "List Run Messages",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "since": {
+            "type": "string",
+            "description": "The `id` of the last message you've already received. The response will contain messages produced after that one, in chronological order. Omit on the first call. Pass the previous response's `nextSince` value to continue paging or to poll for new messages.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of messages to return.",
+            "x-corsair-in": "query"
+          },
+          "all": {
+            "type": "boolean",
+            "default": false,
+            "description": "Return every message after `since` in one response, ignoring `limit`.",
+            "x-corsair-in": "query"
+          },
+          "runId": {
+            "type": "string",
+            "description": "The run ID.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["runId"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "The page of messages, in chronological order, with the oldest messages first.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "createdAt", "message"],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "createdAt": {
+                  "type": "string"
+                },
+                "message": {
+                  "description": "An AI SDK response message (assistant or tool).",
+                  "type": "object",
+                  "additionalProperties": true,
+                  "properties": {
+                    "role": {
+                      "type": "string",
+                      "enum": ["assistant", "tool"]
+                    },
+                    "content": {
+                      "description": "Plain string (assistant text) or an array of typed parts.",
+                      "oneOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "required": ["type"],
+                            "additionalProperties": true,
+                            "properties": {
+                              "type": {
+                                "description": "text | reasoning | file | tool-call | tool-result",
+                                "type": "string"
+                              },
+                              "text": {
+                                "type": "string"
+                              },
+                              "toolCallId": {
+                                "type": "string"
+                              },
+                              "toolName": {
+                                "type": "string"
+                              },
+                              "input": {},
+                              "output": {},
+                              "mediaType": {
+                                "type": "string"
+                              },
+                              "data": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "required": ["role", "content"]
+                }
+              }
+            }
+          },
+          "nextSince": {
+            "description": "The `id` of the last message in `data`. Pass it back as `since` on the next request to continue paging, or to poll for new messages. `null` only when the run has no messages yet; in that case, omit `since` and retry.",
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": ["data", "nextSince"]
+      }
+    },
+    {
+      "id": "agents.runs.resume",
+      "method": "POST",
+      "path": "/v1/agents/runs/{runId}/resume",
+      "tag": "Other",
+      "summary": "Resume a Run",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "runId": {
+            "type": "string",
+            "description": "The run ID.",
+            "x-corsair-in": "path"
+          },
+          "task": {
+            "description": "Additional input for the agent: the reply to its request for input, which is the trailing `pause` tool call in the run's messages (e.g. an answer or an approval). Delivered to the agent as the result of that pause call.",
+            "type": "string",
+            "minLength": 1
+          },
+          "variables": {
+            "description": "Optional named variables the agent can reference as placeholders, i.e. `%variable%`. Each entry pairs a `value` the placeholder resolves to with an optional `description` that hints to the agent when it should be used. Values are not persisted.",
+            "type": "object",
+            "additionalProperties": {
+              "additionalProperties": false,
+              "type": "object",
+              "required": ["value"],
+              "properties": {
+                "value": {
+                  "description": "The value the placeholder resolves to when the agent uses it.",
+                  "type": "string"
+                },
+                "description": {
+                  "description": "Optional hint to the agent describing what this variable represents and when to use it.",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "additionalProperties": false,
+        "required": ["runId"]
+      },
+      "output": {
+        "$ref": "AgentRun"
+      }
+    },
+    {
+      "id": "agents.runs.stop",
+      "method": "POST",
+      "path": "/v1/agents/runs/{runId}/stop",
+      "tag": "Other",
+      "summary": "Stop a Run",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "runId": {
+            "type": "string",
+            "description": "The run ID.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["runId"]
+      },
+      "output": {
+        "$ref": "AgentRun"
+      }
+    },
+    {
+      "id": "agents.update",
+      "method": "PATCH",
+      "path": "/v1/agents/{agentId}",
+      "tag": "Other",
+      "summary": "Update an Agent",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "agentId": {
+            "type": "string",
+            "description": "The agent ID.",
+            "x-corsair-in": "path"
+          },
+          "name": {
+            "description": "Human-readable name for the agent. Used to identify the agent in the dashboard and API responses.",
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1
+          },
+          "systemPrompt": {
+            "description": "New system prompt that steers the agent's behavior on every run that uses this agent.",
+            "type": "string",
+            "minLength": 1
+          },
+          "resultSchema": {
+            "description": "An optional [JSON Schema](https://json-schema.org/specification) object. If provided, runs that reference this agent will aim to return a `result` that conforms to this schema when they complete. Can be overridden per run by passing `resultSchema` on the run request.",
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {}
+          }
+        },
+        "additionalProperties": false,
+        "required": ["agentId"]
+      },
+      "output": {
+        "$ref": "Agent"
+      }
+    },
+    {
+      "id": "certificates.delete",
+      "method": "DELETE",
+      "path": "/v1/certificates/{id}",
+      "tag": "Other",
+      "summary": "Delete a Certificate",
+      "request": "none",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "id": "certificates.get",
+      "method": "GET",
+      "path": "/v1/certificates/{id}",
+      "tag": "Other",
+      "summary": "Get a Certificate",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "$ref": "Certificate"
+      }
+    },
+    {
+      "id": "certificates.list",
+      "method": "GET",
+      "path": "/v1/certificates",
+      "tag": "Other",
+      "summary": "List Certificates",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {}
+      },
+      "output": {
+        "type": "array",
+        "items": {
+          "$ref": "Certificate"
+        }
+      }
+    },
+    {
+      "id": "certificates.upload",
+      "method": "POST",
+      "path": "/v1/certificates",
+      "tag": "Other",
+      "summary": "Upload a Certificate",
+      "request": "multipart",
+      "response": "json",
+      "maxUploadBytes": 100000000,
+      "input": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary"
+          }
+        },
+        "required": ["file"]
+      },
+      "output": {
+        "$ref": "Certificate"
+      }
+    },
+    {
+      "id": "contexts.create",
+      "method": "POST",
+      "path": "/v1/contexts",
+      "tag": "Other",
+      "summary": "Create a Context",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "description": "The Project ID. Can be found in [Settings](https://www.browserbase.com/settings). Optional - if not provided, the project will be inferred from the API key.",
+            "type": "string"
+          },
+          "name": {
+            "description": "Optional user-defined name for the Context. Leading and trailing whitespace is trimmed before storage. Names are unique within the project among active Contexts, compared case-insensitively.",
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "publicKey": {
+            "description": "The public key to encrypt the user-data-directory.",
+            "type": "string"
+          },
+          "cipherAlgorithm": {
+            "description": "The cipher algorithm used to encrypt the user-data-directory. AES-256-CBC is currently the only supported algorithm.",
+            "type": "string"
+          },
+          "initializationVectorSize": {
+            "description": "The initialization vector size used to encrypt the user-data-directory. [Read more about how to use it](/features/contexts).",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "publicKey",
+          "cipherAlgorithm",
+          "initializationVectorSize"
+        ]
+      }
+    },
+    {
+      "id": "contexts.delete",
+      "method": "DELETE",
+      "path": "/v1/contexts/{id}",
+      "tag": "Other",
+      "summary": "Delete a Context",
+      "request": "none",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "id": "contexts.get",
+      "method": "GET",
+      "path": "/v1/contexts/{id}",
+      "tag": "Other",
+      "summary": "Get a Context",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "$ref": "Context"
+      }
+    },
+    {
+      "id": "downloads.delete",
+      "method": "DELETE",
+      "path": "/v1/downloads/{id}",
+      "tag": "Other",
+      "summary": "Delete a Download",
+      "request": "none",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The download ID to delete.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "id": "downloads.get",
+      "method": "GET",
+      "path": "/v1/downloads/{id}",
+      "tag": "Other",
+      "summary": "Get a Download",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The download ID.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "$ref": "Download"
+      }
+    },
+    {
+      "id": "downloads.list",
+      "method": "GET",
+      "path": "/v1/downloads",
+      "tag": "Other",
+      "summary": "List Downloads",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "sessionId": {
+            "type": "string",
+            "description": "Filter downloads by session ID (required).",
+            "x-corsair-in": "query"
+          },
+          "filename": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "Filter by exact filename match.",
+            "x-corsair-in": "query"
+          },
+          "mimeType": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "Filter by MIME type.",
+            "x-corsair-in": "query"
+          },
+          "minSize": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Minimum file size in bytes.",
+            "x-corsair-in": "query"
+          },
+          "maxSize": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Maximum file size in bytes.",
+            "x-corsair-in": "query"
+          },
+          "createdAfter": {
+            "type": "string",
+            "description": "Filter downloads created on or after this timestamp.",
+            "x-corsair-in": "query"
+          },
+          "createdBefore": {
+            "type": "string",
+            "description": "Filter downloads created on or before this timestamp.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of results to return.",
+            "x-corsair-in": "query"
+          },
+          "offset": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "description": "Number of results to skip for pagination.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["sessionId"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "downloads": {
+            "type": "array",
+            "items": {
+              "$ref": "Download"
+            }
+          },
+          "total": {
+            "description": "Total count of matching downloads.",
+            "type": "integer",
+            "minimum": 0
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "offset": {
+            "type": "integer"
+          }
+        },
+        "required": ["downloads", "total", "limit", "offset"]
+      }
+    },
+    {
+      "id": "extensions.delete",
+      "method": "DELETE",
+      "path": "/v1/extensions/{id}",
+      "tag": "Other",
+      "summary": "Delete an Extension",
+      "request": "none",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "id": "extensions.get",
+      "method": "GET",
+      "path": "/v1/extensions/{id}",
+      "tag": "Other",
+      "summary": "Get an Extension",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "$ref": "Extension"
+      }
+    },
+    {
+      "id": "extensions.upload",
+      "method": "POST",
+      "path": "/v1/extensions",
+      "tag": "Other",
+      "summary": "Upload an Extension",
+      "request": "multipart",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "format": "binary"
+          }
+        },
+        "required": ["file"]
+      },
+      "output": {
+        "$ref": "Extension"
+      }
+    },
+    {
+      "id": "fetch.page",
+      "method": "POST",
+      "path": "/v1/fetch",
+      "tag": "Other",
+      "summary": "Fetch a Page",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "description": "The URL to fetch",
+            "type": "string"
+          },
+          "allowRedirects": {
+            "description": "Whether to follow HTTP redirects",
+            "type": "boolean",
+            "default": false
+          },
+          "allowInsecureSsl": {
+            "description": "Whether to bypass TLS certificate verification",
+            "type": "boolean",
+            "default": false
+          },
+          "proxies": {
+            "description": "Whether to enable proxy support for the request",
+            "type": "boolean",
+            "default": false
+          },
+          "format": {
+            "description": "Output format for the response content. `raw` (default) returns the response body unchanged; `json` returns structured data (requires `schema`); `markdown` returns the page as markdown.",
+            "default": "raw",
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["raw"]
+              },
+              {
+                "type": "string",
+                "enum": ["json"]
+              },
+              {
+                "type": "string",
+                "enum": ["markdown"]
+              }
+            ]
+          },
+          "schema": {
+            "description": "JSON Schema describing the desired structure of the response. Only used when `format` is `json`.",
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "contextId": {
+            "description": "ID of a context whose persisted cookies are sent with the request.",
+            "type": "string"
+          },
+          "allowedDomains": {
+            "description": "Domains the fetch may reach, up to 1000. A listed domain also permits its subdomains: `example.com` permits `www.example.com`. A URL on any other host is rejected with a 400 before it is fetched, and so is a redirect to one when `allowRedirects` is set, before it is followed. An empty list (the default) allows any host.",
+            "type": "array",
+            "items": {
+              "minLength": 1,
+              "maxLength": 253,
+              "type": "string"
+            },
+            "maxItems": 1000
+          }
+        },
+        "required": ["url"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "Unique identifier for the fetch request",
+            "type": "string"
+          },
+          "statusCode": {
+            "description": "HTTP status code of the fetched response",
+            "type": "integer"
+          },
+          "headers": {
+            "description": "Response headers as key-value pairs",
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "content": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "object",
+                "additionalProperties": {}
+              }
+            ],
+            "description": "The response body content. A string for `raw` and `markdown` formats; a structured object for `json` format (the schema-extracted result)."
+          },
+          "contentType": {
+            "description": "The MIME type of the response",
+            "type": "string"
+          },
+          "encoding": {
+            "description": "The character encoding of the response",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "statusCode",
+          "headers",
+          "content",
+          "contentType",
+          "encoding"
+        ]
+      }
+    },
+    {
+      "id": "functions.builds.get",
+      "method": "GET",
+      "path": "/v1/functions/builds/{id}",
+      "tag": "Other",
+      "summary": "Get a Function Build",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "$ref": "FunctionBuild"
+      }
+    },
+    {
+      "id": "functions.builds.list",
+      "method": "GET",
+      "path": "/v1/functions/builds",
+      "tag": "Other",
+      "summary": "List Function Builds",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "x-corsair-in": "query"
+          },
+          "status": {
+            "type": "string",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "FunctionBuild"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": ["data", "total"]
+      }
+    },
+    {
+      "id": "functions.builds.logs",
+      "method": "GET",
+      "path": "/v1/functions/builds/{id}/logs",
+      "tag": "Other",
+      "summary": "Get Function Build Logs",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "logs": {
+            "type": "array",
+            "items": {
+              "$ref": "FunctionBuildLog"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": ["logs", "total"]
+      }
+    },
+    {
+      "id": "functions.get",
+      "method": "GET",
+      "path": "/v1/functions/{id}",
+      "tag": "Other",
+      "summary": "Get a Function",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "$ref": "Function"
+      }
+    },
+    {
+      "id": "functions.invocations.get",
+      "method": "GET",
+      "path": "/v1/functions/invocations/{id}",
+      "tag": "Other",
+      "summary": "Get an Invocation",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "allOf": [
+          {
+            "$ref": "Invocation"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "cause": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "enum": ["TIMED_OUT", "INTERNAL_ERROR", "WORKLOAD_ERROR"]
+                  },
+                  "message": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": ["code"]
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "functions.invocations.logs",
+      "method": "GET",
+      "path": "/v1/functions/invocations/{id}/logs",
+      "tag": "Other",
+      "summary": "Get Invocation Logs",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "logs": {
+            "type": "array",
+            "items": {
+              "$ref": "InvocationLog"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": ["logs", "total"]
+      }
+    },
+    {
+      "id": "functions.invoke",
+      "method": "POST",
+      "path": "/v1/functions/{id}/invoke",
+      "tag": "Other",
+      "summary": "Invoke a Function",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "params": {
+            "description": "JSON object that can be stored in a JSONB column",
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {}
+          },
+          "sessionCreateParams": {
+            "type": "object",
+            "properties": {
+              "labels": {
+                "description": "Label names to assign after creation. Creates missing labels automatically. Assignment is best-effort and does not delay or fail session creation.",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 1000
+              },
+              "extensionId": {
+                "description": "The uploaded Extension ID. See [Upload Extension](/reference/api/upload-an-extension).",
+                "type": "string"
+              },
+              "browserSettings": {
+                "type": "object",
+                "properties": {
+                  "context": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "description": "The Context ID.",
+                        "type": "string"
+                      },
+                      "persist": {
+                        "description": "Whether or not to persist the context after browsing. Defaults to `false`.",
+                        "type": "boolean"
+                      }
+                    },
+                    "required": ["id"]
+                  },
+                  "extensionId": {
+                    "description": "The uploaded Extension ID. See [Upload Extension](/reference/api/upload-an-extension).",
+                    "type": "string"
+                  },
+                  "viewport": {
+                    "type": "object",
+                    "properties": {
+                      "width": {
+                        "description": "The width of the browser.",
+                        "type": "integer"
+                      },
+                      "height": {
+                        "description": "The height of the browser.",
+                        "type": "integer"
+                      }
+                    }
+                  },
+                  "blockAds": {
+                    "description": "Enable or disable ad blocking in the browser. Defaults to `false`.",
+                    "type": "boolean"
+                  },
+                  "solveCaptchas": {
+                    "description": "Enable or disable captcha solving in the browser. Defaults to `true`.",
+                    "type": "boolean"
+                  },
+                  "recordSession": {
+                    "description": "Enable or disable session recording. Defaults to `true`.",
+                    "type": "boolean"
+                  },
+                  "logSession": {
+                    "description": "Enable or disable session logging. Defaults to `true`.",
+                    "type": "boolean"
+                  },
+                  "advancedStealth": {
+                    "description": "Advanced Browser Stealth Mode. Deprecated: use `verified` instead.",
+                    "type": "boolean",
+                    "deprecated": true
+                  },
+                  "verified": {
+                    "description": "Verified Browser Mode",
+                    "type": "boolean"
+                  },
+                  "captchaImageSelector": {
+                    "description": "Custom selector for captcha image. See [Custom Captcha Solving](/features/stealth-mode#custom-captcha-solving)",
+                    "type": "string"
+                  },
+                  "captchaInputSelector": {
+                    "description": "Custom selector for captcha input. See [Custom Captcha Solving](/features/stealth-mode#custom-captcha-solving)",
+                    "type": "string"
+                  },
+                  "os": {
+                    "description": "Operating system for stealth mode. Valid values: windows, mac, linux, mobile, tablet",
+                    "type": "string",
+                    "enum": ["windows", "mac", "linux", "mobile", "tablet"]
+                  },
+                  "size": {
+                    "description": "Size of the browser. Larger sizes provide more resources to improve performance for intensive tasks. Defaults to `regular`.",
+                    "type": "string",
+                    "default": "regular",
+                    "enum": ["regular", "large", "xlarge"]
+                  },
+                  "enableNativeSelectPolyfill": {
+                    "description": "[NOT IN DOCS] Enable native select polyfill. This gives support a break-glass option to disable the polyfill.",
+                    "type": "boolean"
+                  },
+                  "enablePdfViewer": {
+                    "description": "[NOT IN DOCS] Enable PDF viewer. This gives support a break-glass option to enable the viewer when users want to view PDFs in-browser.",
+                    "type": "boolean"
+                  },
+                  "extensions": {
+                    "description": "[NOT IN DOCS] List of pre-installed extension names and custom extension ids to enable on the browser",
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": ["onepassword", "browser-events"]
+                    }
+                  },
+                  "allowedDomains": {
+                    "description": "An optional list of allowed domains for the session. If you pass one or more domains, Browserbase restricts top-level (main-frame) page navigations to the listed domains and their subdomains. For example, `example.com` also permits `www.example.com` and `a.b.example.com`, but not `notexample.com`. Matching is domain-based, not full-URL. An empty list (the default) disables the restriction entirely. Browserbase enforces only main-frame navigations; it does not block iframe/subframe loads or other in-page resource requests (images, scripts, XHR, etc.).",
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "ignoreCertificateErrors": {
+                    "description": "Set `true` to ignore TLS certificate errors in the browser session (for example, to reach hosts with expired or self-signed certificates). When omitted, your project's default applies.",
+                    "type": "boolean"
+                  },
+                  "riskPolicyId": {
+                    "description": "Navigation policy to enforce for the session. Must belong to the session's project and be enabled. The session keeps the policy as it was when the session started; later edits apply to sessions that start afterwards. Browserbase enforces it only when navigation policy enforcement is enabled for the project.",
+                    "type": "string"
+                  }
+                }
+              },
+              "proxies": {
+                "description": "Proxy configuration. Can be true for default proxy, or an array of proxy configurations.",
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "anyOf": [
+                        {
+                          "$ref": "BrowserbaseProxyConfig"
+                        },
+                        {
+                          "$ref": "ExternalProxyConfig"
+                        },
+                        {
+                          "$ref": "NoneProxyConfig"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "boolean"
+                  }
+                ]
+              },
+              "proxySettings": {
+                "description": "Supplementary proxy settings. Optional.",
+                "type": "object",
+                "properties": {
+                  "caCertificates": {
+                    "description": "The TLS certificate IDs to trust. Optional.",
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "userMetadata": {
+                "description": "Arbitrary user metadata to attach to the session. To learn more about user metadata, see [User Metadata](/features/sessions#user-metadata).",
+                "type": "object",
+                "additionalProperties": true,
+                "properties": {}
+              },
+              "timeout": {
+                "description": "Duration in seconds after which the function invocation will automatically end. Defaults to 900 (15 minutes).",
+                "type": "integer",
+                "default": 900,
+                "maximum": 900,
+                "minimum": 60
+              }
+            }
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "$ref": "Invocation"
+      }
+    },
+    {
+      "id": "functions.list",
+      "method": "GET",
+      "path": "/v1/functions",
+      "tag": "Other",
+      "summary": "List Functions",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "Function"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": ["data", "total"]
+      }
+    },
+    {
+      "id": "functions.secrets.attach",
+      "method": "POST",
+      "path": "/v1/functions/{id}/secrets",
+      "tag": "Other",
+      "summary": "Attach a Secret to a Function",
+      "request": "json",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "secretId": {
+            "description": "The id of the project secret to attach (the `id` returned by POST /v1/secrets). Idempotent: re-attaching an already-attached secret succeeds.",
+            "type": "string"
+          }
+        },
+        "required": ["id", "secretId"]
+      }
+    },
+    {
+      "id": "functions.secrets.detach",
+      "method": "DELETE",
+      "path": "/v1/functions/{id}/secrets/{secretId}",
+      "tag": "Other",
+      "summary": "Detach a Secret from a Function",
+      "request": "none",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "secretId": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id", "secretId"]
+      }
+    },
+    {
+      "id": "functions.secrets.list",
+      "method": "GET",
+      "path": "/v1/functions/{id}/secrets",
+      "tag": "Other",
+      "summary": "List Function Secrets",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "startAt": {
+            "type": "string",
+            "description": "Only return secrets created on or after this timestamp (inclusive). RFC 3339, e.g. 2026-01-19T00:00:00Z.",
+            "x-corsair-in": "query"
+          },
+          "endAt": {
+            "type": "string",
+            "description": "Only return secrets created on or before this timestamp (inclusive). RFC 3339, e.g. 2026-01-20T00:00:00Z.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 20,
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Maximum number of results to return.",
+            "x-corsair-in": "query"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor. Pass the nextCursor from the previous response to fetch the next page. Keep the same filters across pages. Omit to start from the first page.",
+            "x-corsair-in": "query"
+          },
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "description": "A page of secrets.",
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "The page of matching secrets.",
+            "type": "array",
+            "items": {
+              "$ref": "Secret"
+            }
+          },
+          "limit": {
+            "description": "The maximum number of results returned in this page.",
+            "type": "integer"
+          },
+          "nextCursor": {
+            "description": "Cursor for the next page. Pass it back as `cursor` on the next request to continue paging. null when there are no more results.",
+            "anyOf": [
+              {
+                "type": "string"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "required": ["data", "limit", "nextCursor"]
+      }
+    },
+    {
+      "id": "functions.versions.get",
+      "method": "GET",
+      "path": "/v1/functions/versions/{id}",
+      "tag": "Other",
+      "summary": "Get a Function Version",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "$ref": "FunctionVersion"
+      }
+    },
+    {
+      "id": "functions.versions.invocations",
+      "method": "GET",
+      "path": "/v1/functions/versions/{id}/invocations",
+      "tag": "Other",
+      "summary": "List Invocations for a Function Version",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "x-corsair-in": "query"
+          },
+          "status": {
+            "type": "string",
+            "x-corsair-in": "query"
+          },
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "Invocation"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": ["results", "total"]
+      }
+    },
+    {
+      "id": "functions.versions.list",
+      "method": "GET",
+      "path": "/v1/functions/{id}/versions",
+      "tag": "Other",
+      "summary": "List Function Versions",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "x-corsair-in": "query"
+          },
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "FunctionVersion"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": ["results", "total"]
+      }
+    },
+    {
+      "id": "labels.create",
+      "method": "POST",
+      "path": "/v1/labels",
+      "tag": "Other",
+      "summary": "Create a Label",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Label name. Browserbase trims surrounding Unicode whitespace and preserves display capitalization. The trimmed name must contain 1–128 Unicode characters and no NUL characters. Names are unique ignoring case within the project.",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "required": ["name"]
+      },
+      "output": {
+        "$ref": "Label"
+      }
+    },
+    {
+      "id": "labels.delete",
+      "method": "DELETE",
+      "path": "/v1/labels/{labelId}",
+      "tag": "Other",
+      "summary": "Delete a Label",
+      "request": "none",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "labelId": {
+            "type": "string",
+            "description": "The label's identifier.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["labelId"]
+      }
+    },
+    {
+      "id": "labels.list",
+      "method": "GET",
+      "path": "/v1/labels",
+      "tag": "Other",
+      "summary": "List Labels",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "default": 20,
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Maximum number of results to return.",
+            "x-corsair-in": "query"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor. Pass the nextCursor from the previous response to fetch the next page. Omit to start from the first page.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "description": "A page of labels.",
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "The page of matching labels.",
+            "type": "array",
+            "items": {
+              "$ref": "Label"
+            }
+          },
+          "limit": {
+            "description": "The maximum number of results returned in this page.",
+            "type": "integer"
+          },
+          "nextCursor": {
+            "description": "Cursor for the next page. Pass it back as `cursor` on the next request to continue paging. null when there are no more results.",
+            "anyOf": [
+              {
+                "type": "string"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "required": ["data", "limit", "nextCursor"]
+      }
+    },
+    {
+      "id": "labels.update",
+      "method": "PATCH",
+      "path": "/v1/labels/{labelId}",
+      "tag": "Other",
+      "summary": "Update a Label",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "labelId": {
+            "type": "string",
+            "description": "The label's identifier.",
+            "x-corsair-in": "path"
+          },
+          "name": {
+            "description": "Label name. Browserbase trims surrounding Unicode whitespace and preserves display capitalization. The trimmed name must contain 1–128 Unicode characters and no NUL characters. Names are unique ignoring case within the project.",
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "required": ["labelId", "name"]
+      },
+      "output": {
+        "$ref": "Label"
+      }
+    },
+    {
+      "id": "navigationPolicies.create",
+      "method": "POST",
+      "path": "/v1/navigation-policies",
+      "tag": "Other",
+      "summary": "Create a Navigation Policy",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "description": "Display name. A policy's id identifies it, not its name.",
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "description": {
+            "description": "Free-form notes about the policy.",
+            "type": "string",
+            "maxLength": 1024
+          },
+          "enabled": {
+            "description": "Whether the policy can be bound to new sessions. Running sessions keep the policy they started with. A disabled policy stays editable and can be re-enabled.",
+            "type": "boolean"
+          },
+          "defaultDecision": {
+            "description": "Decision for each of a domain's categories that has no category rule. The strictest of a domain's category decisions applies, and overrides take precedence.",
+            "type": "string",
+            "enum": ["allow", "block"]
+          },
+          "allowedCategories": {
+            "description": "Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "adult",
+                "ai-tools",
+                "alcohol-tobacco",
+                "business",
+                "child-abuse",
+                "communication",
+                "dating",
+                "drugs",
+                "education",
+                "entertainment",
+                "finance",
+                "gambling",
+                "games",
+                "government-military",
+                "hacking",
+                "hate",
+                "health",
+                "illegal-activity",
+                "infrastructure",
+                "kids",
+                "lifestyle",
+                "malware",
+                "newly-registered",
+                "news",
+                "parked-inactive",
+                "phishing-scams",
+                "piracy",
+                "proxy-anonymizer",
+                "search-portal",
+                "self-harm",
+                "shopping",
+                "social-media",
+                "society-culture",
+                "sports",
+                "technology",
+                "terrorism-extremism",
+                "travel",
+                "url-shortener",
+                "violence",
+                "weapons"
+              ]
+            }
+          },
+          "blockedCategories": {
+            "description": "Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "adult",
+                "ai-tools",
+                "alcohol-tobacco",
+                "business",
+                "child-abuse",
+                "communication",
+                "dating",
+                "drugs",
+                "education",
+                "entertainment",
+                "finance",
+                "gambling",
+                "games",
+                "government-military",
+                "hacking",
+                "hate",
+                "health",
+                "illegal-activity",
+                "infrastructure",
+                "kids",
+                "lifestyle",
+                "malware",
+                "newly-registered",
+                "news",
+                "parked-inactive",
+                "phishing-scams",
+                "piracy",
+                "proxy-anonymizer",
+                "search-portal",
+                "self-harm",
+                "shopping",
+                "social-media",
+                "society-culture",
+                "sports",
+                "technology",
+                "terrorism-extremism",
+                "travel",
+                "url-shortener",
+                "violence",
+                "weapons"
+              ]
+            }
+          },
+          "unknownDomainBehavior": {
+            "description": "Decision for a domain, or one of its categories, that Browserbase can't classify. It counts as one of the domain's category decisions, so the strictest still applies.",
+            "type": "string",
+            "enum": ["allow", "block"]
+          },
+          "domainOverrides": {
+            "description": "Per-host decisions that take precedence over category rules and the default. Each host may appear once.",
+            "type": "array",
+            "items": {
+              "additionalProperties": false,
+              "type": "object",
+              "required": ["domain", "decision"],
+              "properties": {
+                "domain": {
+                  "description": "Host the override applies to, for example `example.com`. Matching is case-insensitive and covers subdomains.",
+                  "type": "string",
+                  "maxLength": 253,
+                  "minLength": 1
+                },
+                "decision": {
+                  "description": "Decision for navigations to this host.",
+                  "type": "string",
+                  "enum": ["allow", "block"]
+                }
+              }
+            },
+            "maxItems": 500
+          }
+        },
+        "additionalProperties": false,
+        "required": ["name"]
+      },
+      "output": {
+        "$ref": "NavigationPolicy"
+      }
+    },
+    {
+      "id": "navigationPolicies.delete",
+      "method": "DELETE",
+      "path": "/v1/navigation-policies/{id}",
+      "tag": "Other",
+      "summary": "Delete a Navigation Policy",
+      "request": "none",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The navigation policy ID.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "id": "navigationPolicies.get",
+      "method": "GET",
+      "path": "/v1/navigation-policies/{id}",
+      "tag": "Other",
+      "summary": "Get a Navigation Policy",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The navigation policy ID.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "$ref": "NavigationPolicy"
+      }
+    },
+    {
+      "id": "navigationPolicies.list",
+      "method": "GET",
+      "path": "/v1/navigation-policies",
+      "tag": "Other",
+      "summary": "List Navigation Policies",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {}
+      },
+      "output": {
+        "description": "The project's navigation policies.",
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "The project's navigation policies, ordered by name.",
+            "type": "array",
+            "items": {
+              "$ref": "NavigationPolicy"
+            }
+          }
+        },
+        "required": ["data"]
+      }
+    },
+    {
+      "id": "navigationPolicies.update",
+      "method": "PATCH",
+      "path": "/v1/navigation-policies/{id}",
+      "tag": "Other",
+      "summary": "Update a Navigation Policy",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The navigation policy ID.",
+            "x-corsair-in": "path"
+          },
+          "name": {
+            "description": "Display name. A policy's id identifies it, not its name.",
+            "type": "string",
+            "maxLength": 128,
+            "minLength": 1
+          },
+          "description": {
+            "description": "Free-form notes about the policy.",
+            "type": "string",
+            "maxLength": 1024
+          },
+          "enabled": {
+            "description": "Whether the policy can be bound to new sessions. Running sessions keep the policy they started with. A disabled policy stays editable and can be re-enabled.",
+            "type": "boolean"
+          },
+          "defaultDecision": {
+            "description": "Decision for each of a domain's categories that has no category rule. The strictest of a domain's category decisions applies, and overrides take precedence.",
+            "type": "string",
+            "enum": ["allow", "block"]
+          },
+          "allowedCategories": {
+            "description": "Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "adult",
+                "ai-tools",
+                "alcohol-tobacco",
+                "business",
+                "child-abuse",
+                "communication",
+                "dating",
+                "drugs",
+                "education",
+                "entertainment",
+                "finance",
+                "gambling",
+                "games",
+                "government-military",
+                "hacking",
+                "hate",
+                "health",
+                "illegal-activity",
+                "infrastructure",
+                "kids",
+                "lifestyle",
+                "malware",
+                "newly-registered",
+                "news",
+                "parked-inactive",
+                "phishing-scams",
+                "piracy",
+                "proxy-anonymizer",
+                "search-portal",
+                "self-harm",
+                "shopping",
+                "social-media",
+                "society-culture",
+                "sports",
+                "technology",
+                "terrorism-extremism",
+                "travel",
+                "url-shortener",
+                "violence",
+                "weapons"
+              ]
+            }
+          },
+          "blockedCategories": {
+            "description": "Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "adult",
+                "ai-tools",
+                "alcohol-tobacco",
+                "business",
+                "child-abuse",
+                "communication",
+                "dating",
+                "drugs",
+                "education",
+                "entertainment",
+                "finance",
+                "gambling",
+                "games",
+                "government-military",
+                "hacking",
+                "hate",
+                "health",
+                "illegal-activity",
+                "infrastructure",
+                "kids",
+                "lifestyle",
+                "malware",
+                "newly-registered",
+                "news",
+                "parked-inactive",
+                "phishing-scams",
+                "piracy",
+                "proxy-anonymizer",
+                "search-portal",
+                "self-harm",
+                "shopping",
+                "social-media",
+                "society-culture",
+                "sports",
+                "technology",
+                "terrorism-extremism",
+                "travel",
+                "url-shortener",
+                "violence",
+                "weapons"
+              ]
+            }
+          },
+          "unknownDomainBehavior": {
+            "description": "Decision for a domain, or one of its categories, that Browserbase can't classify. It counts as one of the domain's category decisions, so the strictest still applies.",
+            "type": "string",
+            "enum": ["allow", "block"]
+          },
+          "domainOverrides": {
+            "description": "Per-host decisions that take precedence over category rules and the default. Each host may appear once.",
+            "type": "array",
+            "items": {
+              "additionalProperties": false,
+              "type": "object",
+              "required": ["domain", "decision"],
+              "properties": {
+                "domain": {
+                  "description": "Host the override applies to, for example `example.com`. Matching is case-insensitive and covers subdomains.",
+                  "type": "string",
+                  "maxLength": 253,
+                  "minLength": 1
+                },
+                "decision": {
+                  "description": "Decision for navigations to this host.",
+                  "type": "string",
+                  "enum": ["allow", "block"]
+                }
+              }
+            },
+            "maxItems": 500
+          }
+        },
+        "additionalProperties": false,
+        "required": ["id"]
+      },
+      "output": {
+        "$ref": "NavigationPolicy"
+      }
+    },
+    {
+      "id": "projects.get",
+      "method": "GET",
+      "path": "/v1/projects/{id}",
+      "tag": "Other",
+      "summary": "Get a Project",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "$ref": "Project"
+      }
+    },
+    {
+      "id": "projects.list",
+      "method": "GET",
+      "path": "/v1/projects",
+      "tag": "Other",
+      "summary": "List Projects",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {}
+      },
+      "output": {
+        "type": "array",
+        "items": {
+          "$ref": "Project"
+        }
+      }
+    },
+    {
+      "id": "projects.usage",
+      "method": "GET",
+      "path": "/v1/projects/{id}/usage",
+      "tag": "Other",
+      "summary": "Get Project Usage",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "$ref": "ProjectUsage"
+      }
+    },
+    {
+      "id": "search.web",
+      "method": "POST",
+      "path": "/v1/search",
+      "tag": "Other",
+      "summary": "Web Search",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "description": "The search query string",
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1
+          },
+          "numResults": {
+            "description": "Number of results to return",
+            "type": "integer",
+            "default": 10,
+            "maximum": 25,
+            "minimum": 1
+          },
+          "includeDomains": {
+            "description": "Only return results from these domains. Entries can be a hostname (example.com), a hostname with a path prefix (example.com/docs), or a wildcard subdomain (*.example.com). The `parallel` provider allows one list, not both, with at most 200 domains and no scheme, port, query string, or fragment.",
+            "type": "array",
+            "items": {
+              "minLength": 1,
+              "maxLength": 512,
+              "type": "string"
+            },
+            "maxItems": 1200,
+            "minItems": 1
+          },
+          "excludeDomains": {
+            "description": "Never return results from these domains. Accepts the same entry formats as includeDomains. Not supported with the people category.",
+            "type": "array",
+            "items": {
+              "minLength": 1,
+              "maxLength": 512,
+              "type": "string"
+            },
+            "maxItems": 1200,
+            "minItems": 1
+          },
+          "startPublishedDate": {
+            "description": "Only return results published after this date-time (RFC 3339, for example 2026-01-01T00:00:00Z). The `parallel` provider rounds it up to a whole UTC day. Not supported with the company or people categories.",
+            "type": "string"
+          },
+          "endPublishedDate": {
+            "description": "Only return results published before this date-time (RFC 3339, for example 2026-01-01T00:00:00Z). Only the `exa` provider supports this filter. Not supported with the company or people categories.",
+            "type": "string"
+          },
+          "category": {
+            "description": "Focus the search on a category of content. Only the `exa` provider supports this filter.",
+            "type": "string",
+            "enum": [
+              "company",
+              "publication",
+              "news",
+              "personal site",
+              "financial report",
+              "people"
+            ]
+          },
+          "userLocation": {
+            "description": "Two-letter ISO 3166-1 country code of the end user. Localizes ranking without restricting results to sources from that country. The `parallel` provider supports only [some countries](https://docs.browserbase.com/platform/search/overview#appendix-supported-countries).",
+            "type": "string",
+            "maxLength": 2,
+            "minLength": 2,
+            "pattern": "^[A-Za-z]{2}$"
+          },
+          "moderation": {
+            "description": "Filter unsafe content from the results. Defaults to `false`. Only the `exa` provider supports `true`.",
+            "type": "boolean"
+          },
+          "objective": {
+            "description": "The task intent and soft preferences for the search, in natural language. Adds context to query without replacing it.",
+            "type": "string",
+            "maxLength": 4096,
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "maxAgeHours": {
+            "description": "Refetch a page when the cached copy is older than this many hours. Omit to use the provider default. A provider can return an older cached copy when a live fetch fails.",
+            "type": "integer",
+            "maximum": 720,
+            "minimum": 1
+          },
+          "excerpts": {
+            "description": "Return the passages of each page most relevant to the query. Defaults to false.",
+            "type": "boolean"
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "description": "Search provider to serve this request. Defaults to `parallel`, which uses `advanced` mode unless `mode` is set. If you omit it and `parallel` can't apply one of your filters, `exa` serves the request at `exa` pricing. The response `provider` field shows which one served it.",
+                "default": "parallel",
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": ["parallel"]
+                  },
+                  {
+                    "type": "string",
+                    "enum": ["exa"]
+                  }
+                ]
+              },
+              {
+                "type": "string",
+                "enum": ["parallel"]
+              },
+              {
+                "type": "string",
+                "enum": ["exa"]
+              }
+            ]
+          },
+          "mode": {
+            "anyOf": [
+              {
+                "description": "The search mode used by the underlying provider. Defaults to `advanced` for `parallel` and `fast` for `exa`. See the [Search docs](https://docs.browserbase.com/platform/search/overview) for the available modes.",
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": ["fast"]
+                  },
+                  {
+                    "type": "string",
+                    "enum": ["advanced"]
+                  },
+                  {
+                    "type": "string",
+                    "enum": ["deep-lite"]
+                  },
+                  {
+                    "type": "string",
+                    "enum": ["deep"]
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": ["fast"]
+                  },
+                  {
+                    "type": "string",
+                    "enum": ["advanced"]
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": ["fast"]
+                  },
+                  {
+                    "type": "string",
+                    "enum": ["deep-lite"]
+                  },
+                  {
+                    "type": "string",
+                    "enum": ["deep"]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "required": ["query"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "description": "Unique identifier for the request",
+            "type": "string"
+          },
+          "query": {
+            "description": "The search query that was executed",
+            "type": "string"
+          },
+          "provider": {
+            "description": "The search provider that served the request. Can differ from the documented default when the project or the filters select another provider.",
+            "type": "string",
+            "enum": ["parallel", "exa"]
+          },
+          "mode": {
+            "description": "The search mode that served the request.",
+            "type": "string",
+            "enum": ["fast", "advanced", "deep-lite", "deep"]
+          },
+          "results": {
+            "description": "List of search results",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "url", "title"],
+              "properties": {
+                "id": {
+                  "description": "Unique identifier for the result",
+                  "type": "string"
+                },
+                "url": {
+                  "description": "The URL of the search result",
+                  "type": "string"
+                },
+                "title": {
+                  "description": "The title of the search result",
+                  "type": "string"
+                },
+                "author": {
+                  "description": "Author of the content if available",
+                  "type": "string"
+                },
+                "publishedDate": {
+                  "description": "Publication date in RFC 3339 format",
+                  "type": "string"
+                },
+                "image": {
+                  "description": "Image URL if available",
+                  "type": "string"
+                },
+                "favicon": {
+                  "description": "Favicon URL",
+                  "type": "string"
+                },
+                "excerpts": {
+                  "description": "Passages from the page most relevant to the query. Only set when the request asks for excerpts.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": ["requestId", "query", "results"]
+      }
+    },
+    {
+      "id": "secrets.create",
+      "method": "POST",
+      "path": "/v1/secrets",
+      "tag": "Other",
+      "summary": "Create a Secret",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "secretKey": {
+            "description": "The name to store the secret value under.",
+            "type": "string"
+          },
+          "sealedSecretValue": {
+            "description": "The secret value encrypted with HPKE. To seal the secret value before sending, get the project's public key from GET /v1/secrets/keypair. Decode the publicKey using base64 into the raw 32-byte public key. Then, use HPKE Base mode (RFC 9180) with the following algorithm suite: DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, and AES-256-GCM. Set both info and additional authenticated data (AAD) to an empty byte string. Then, create a new sender context using the public key and these settings, and encrypt the secret value as one message. Put the 32-byte encapsulated key before the ciphertext and keep the authentication tag at the end of the ciphertext. Encode the combined bytes with standard base64. Send the result as sealedSecretValue: base64(enc || ciphertext)",
+            "type": "string"
+          },
+          "keypairId": {
+            "description": "The `id` returned by GET /v1/secrets/keypair, identifying the keypair whose public key encrypted the value. Recorded with the secret so decryption stays correct across keypair rotation.",
+            "type": "string"
+          }
+        },
+        "required": ["secretKey", "sealedSecretValue", "keypairId"]
+      },
+      "output": {
+        "$ref": "Secret"
+      }
+    },
+    {
+      "id": "secrets.delete",
+      "method": "DELETE",
+      "path": "/v1/secrets/{id}",
+      "tag": "Other",
+      "summary": "Delete a Secret",
+      "request": "none",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The id of the project secret to delete.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "id": "secrets.get",
+      "method": "GET",
+      "path": "/v1/secrets/{id}",
+      "tag": "Other",
+      "summary": "Get a Secret",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The id of the project secret to retrieve.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "$ref": "Secret"
+      }
+    },
+    {
+      "id": "secrets.keypair",
+      "method": "GET",
+      "path": "/v1/secrets/keypair",
+      "tag": "Other",
+      "summary": "Get a Keypair",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {}
+      },
+      "output": {
+        "$ref": "SecretsKeypair"
+      }
+    },
+    {
+      "id": "secrets.list",
+      "method": "GET",
+      "path": "/v1/secrets",
+      "tag": "Other",
+      "summary": "List Secrets",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "startAt": {
+            "type": "string",
+            "description": "Only return secrets created on or after this timestamp (inclusive). RFC 3339, e.g. 2026-01-19T00:00:00Z.",
+            "x-corsair-in": "query"
+          },
+          "endAt": {
+            "type": "string",
+            "description": "Only return secrets created on or before this timestamp (inclusive). RFC 3339, e.g. 2026-01-20T00:00:00Z.",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "type": "integer",
+            "default": 20,
+            "maximum": 1000,
+            "minimum": 1,
+            "description": "Maximum number of results to return.",
+            "x-corsair-in": "query"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Pagination cursor. Pass the nextCursor from the previous response to fetch the next page. Omit to start from the first page.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "description": "A page of secrets.",
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "The page of matching secrets.",
+            "type": "array",
+            "items": {
+              "$ref": "Secret"
+            }
+          },
+          "limit": {
+            "description": "The maximum number of results returned in this page.",
+            "type": "integer"
+          },
+          "nextCursor": {
+            "description": "Cursor for the next page. Pass it back as `cursor` on the next request to continue paging. null when there are no more results.",
+            "anyOf": [
+              {
+                "type": "string"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "required": ["data", "limit", "nextCursor"]
+      }
+    },
+    {
+      "id": "secrets.update",
+      "method": "PATCH",
+      "path": "/v1/secrets/{id}",
+      "tag": "Other",
+      "summary": "Update a Secret",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The id of the project secret to update.",
+            "x-corsair-in": "path"
+          },
+          "sealedSecretValue": {
+            "description": "The new secret value encrypted with HPKE. To seal the secret value before sending, get the project's public key from GET /v1/secrets/keypair. Decode the publicKey using base64 into the raw 32-byte public key. Then, use HPKE Base mode (RFC 9180) with the following algorithm suite: DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, and AES-256-GCM. Set both info and additional authenticated data (AAD) to an empty byte string. Then, create a new sender context using the public key and these settings, and encrypt the secret value as one message. Put the 32-byte encapsulated key before the ciphertext and keep the authentication tag at the end of the ciphertext. Encode the combined bytes with standard base64. Send the result as sealedSecretValue: base64(enc || ciphertext)",
+            "type": "string"
+          },
+          "keypairId": {
+            "description": "The `id` returned by GET /v1/secrets/keypair, identifying the keypair whose public key encrypted the value. Recorded with the secret so decryption stays correct across keypair rotation.",
+            "type": "string"
+          }
+        },
+        "required": ["id", "sealedSecretValue", "keypairId"]
+      },
+      "output": {
+        "$ref": "Secret"
+      }
+    },
+    {
+      "id": "sessions.create",
+      "method": "POST",
+      "path": "/v1/sessions",
+      "tag": "Other",
+      "summary": "Create a Session",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "labels": {
+            "description": "Label names to assign after creation. Creates missing labels automatically. Assignment is best-effort and does not delay or fail session creation.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 1000
+          },
+          "projectId": {
+            "description": "The Project ID. Can be found in [Settings](https://www.browserbase.com/settings). Optional - if not provided, the project will be inferred from the API key.",
+            "type": "string"
+          },
+          "extensionId": {
+            "description": "The uploaded Extension ID. See [Upload Extension](/reference/api/upload-an-extension).",
+            "type": "string"
+          },
+          "browserSettings": {
+            "type": "object",
+            "properties": {
+              "context": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "The Context ID.",
+                    "type": "string"
+                  },
+                  "persist": {
+                    "description": "Whether or not to persist the context after browsing. Defaults to `false`.",
+                    "type": "boolean"
+                  }
+                },
+                "required": ["id"]
+              },
+              "extensionId": {
+                "description": "The uploaded Extension ID. See [Upload Extension](/reference/api/upload-an-extension).",
+                "type": "string"
+              },
+              "viewport": {
+                "type": "object",
+                "properties": {
+                  "width": {
+                    "description": "The width of the browser.",
+                    "type": "integer"
+                  },
+                  "height": {
+                    "description": "The height of the browser.",
+                    "type": "integer"
+                  }
+                }
+              },
+              "blockAds": {
+                "description": "Enable or disable ad blocking in the browser. Defaults to `false`.",
+                "type": "boolean"
+              },
+              "solveCaptchas": {
+                "description": "Enable or disable captcha solving in the browser. Defaults to `true`.",
+                "type": "boolean"
+              },
+              "recordSession": {
+                "description": "Enable or disable session recording. Defaults to `true`.",
+                "type": "boolean"
+              },
+              "logSession": {
+                "description": "Enable or disable session logging. Defaults to `true`.",
+                "type": "boolean"
+              },
+              "advancedStealth": {
+                "description": "Advanced Browser Stealth Mode. Deprecated: use `verified` instead.",
+                "type": "boolean",
+                "deprecated": true
+              },
+              "verified": {
+                "description": "Verified Browser Mode",
+                "type": "boolean"
+              },
+              "captchaImageSelector": {
+                "description": "Custom selector for captcha image. See [Custom Captcha Solving](/features/stealth-mode#custom-captcha-solving)",
+                "type": "string"
+              },
+              "captchaInputSelector": {
+                "description": "Custom selector for captcha input. See [Custom Captcha Solving](/features/stealth-mode#custom-captcha-solving)",
+                "type": "string"
+              },
+              "os": {
+                "description": "Operating system for stealth mode. Valid values: windows, mac, linux, mobile, tablet",
+                "type": "string",
+                "enum": ["windows", "mac", "linux", "mobile", "tablet"]
+              },
+              "size": {
+                "description": "Size of the browser. Larger sizes provide more resources to improve performance for intensive tasks. Defaults to `regular`.",
+                "type": "string",
+                "default": "regular",
+                "enum": ["regular", "large", "xlarge"]
+              },
+              "allowedDomains": {
+                "description": "An optional list of allowed domains for the session. If you pass one or more domains, Browserbase restricts top-level (main-frame) page navigations to the listed domains and their subdomains. For example, `example.com` also permits `www.example.com` and `a.b.example.com`, but not `notexample.com`. Matching is domain-based, not full-URL. An empty list (the default) disables the restriction entirely. Browserbase enforces only main-frame navigations; it does not block iframe/subframe loads or other in-page resource requests (images, scripts, XHR, etc.).",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "ignoreCertificateErrors": {
+                "description": "Set `true` to ignore TLS certificate errors in the browser session (for example, to reach hosts with expired or self-signed certificates). When omitted, your project's default applies.",
+                "type": "boolean"
+              },
+              "riskPolicyId": {
+                "description": "Navigation policy to enforce for the session. Must belong to the session's project and be enabled. The session keeps the policy as it was when the session started; later edits apply to sessions that start afterwards. Browserbase enforces it only when navigation policy enforcement is enabled for the project.",
+                "type": "string"
+              }
+            }
+          },
+          "timeout": {
+            "description": "Duration in seconds after which the session will automatically end. Defaults to the Project's `defaultTimeout`. Minimum 60 seconds, maximum 21600 seconds (6 hours).",
+            "type": "integer",
+            "maximum": 21600,
+            "minimum": 60
+          },
+          "keepAlive": {
+            "description": "Set to true to keep the session alive even after disconnections. Available on the Hobby Plan and above.",
+            "type": "boolean"
+          },
+          "proxies": {
+            "description": "Proxy configuration. Can be true for default proxy, or an array of proxy configurations.",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "$ref": "BrowserbaseProxyConfig"
+                    },
+                    {
+                      "$ref": "ExternalProxyConfig"
+                    },
+                    {
+                      "$ref": "NoneProxyConfig"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "boolean"
+              }
+            ]
+          },
+          "proxySettings": {
+            "description": "Supplementary proxy settings. Optional.",
+            "type": "object",
+            "properties": {
+              "caCertificates": {
+                "description": "The TLS certificate IDs to trust. Optional.",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "region": {
+            "description": "The region where the Session should run.",
+            "type": "string",
+            "default": "us-west-2",
+            "enum": ["us-west-2", "us-east-1", "eu-central-1", "ap-southeast-1"]
+          },
+          "userMetadata": {
+            "description": "Arbitrary user metadata to attach to the session. To learn more about user metadata, see [User Metadata](/features/sessions#user-metadata).",
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {}
+          }
+        }
+      },
+      "output": {
+        "allOf": [
+          {
+            "$ref": "Session"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "connectUrl": {
+                "description": "WebSocket URL to connect to the Session.",
+                "type": "string"
+              },
+              "seleniumRemoteUrl": {
+                "description": "HTTP URL to connect to the Session.",
+                "type": "string"
+              },
+              "signingKey": {
+                "description": "Signing key to use when connecting to the Session via HTTP.",
+                "type": "string"
+              }
+            },
+            "required": ["connectUrl", "seleniumRemoteUrl", "signingKey"]
+          }
+        ]
+      }
+    },
+    {
+      "id": "sessions.debug",
+      "method": "GET",
+      "path": "/v1/sessions/{id}/debug",
+      "tag": "Other",
+      "summary": "Session Live URLs",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "expiresIn": {
+            "type": "integer",
+            "maximum": 21600,
+            "minimum": 60,
+            "description": "Time-to-live of the generated live view URLs, in seconds. If omitted, the URLs expire with the session, up to a maximum of 21600 seconds (6 hours).",
+            "x-corsair-in": "query"
+          },
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "$ref": "SessionLiveUrls"
+      }
+    },
+    {
+      "id": "sessions.get",
+      "method": "GET",
+      "path": "/v1/sessions/{id}",
+      "tag": "Other",
+      "summary": "Get a Session",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "includeLabels": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include the session's label IDs and current names.",
+            "x-corsair-in": "query"
+          },
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "allOf": [
+          {
+            "$ref": "Session"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "labels": {
+                "description": "Browserbase returns label IDs and current names only when includeLabels is true. An empty array means the session has no labels.",
+                "type": "array",
+                "items": {
+                  "description": "A project-owned session label.",
+                  "type": "object",
+                  "required": ["id", "name"],
+                  "properties": {
+                    "id": {
+                      "description": "Stable identifier of the label.",
+                      "type": "string"
+                    },
+                    "name": {
+                      "description": "Display name, unique ignoring case within the project.",
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "connectUrl": {
+                "description": "WebSocket URL to connect to the Session.",
+                "type": "string"
+              },
+              "seleniumRemoteUrl": {
+                "description": "HTTP URL to connect to the Session.",
+                "type": "string"
+              },
+              "signingKey": {
+                "description": "Signing key to use when connecting to the Session via HTTP.",
+                "type": "string"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "sessions.list",
+      "method": "GET",
+      "path": "/v1/sessions",
+      "tag": "Other",
+      "summary": "List Sessions",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": ["PENDING", "RUNNING", "ERROR", "TIMED_OUT", "COMPLETED"],
+            "x-corsair-in": "query"
+          },
+          "q": {
+            "type": "string",
+            "description": "Query sessions by user metadata. See [Querying Sessions by User Metadata](/features/sessions#querying-sessions-by-user-metadata) for the schema of this query.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "array",
+        "items": {
+          "$ref": "Session"
+        }
+      }
+    },
+    {
+      "id": "sessions.logs",
+      "method": "GET",
+      "path": "/v1/sessions/{id}/logs",
+      "tag": "Other",
+      "summary": "Session Logs",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "array",
+        "items": {
+          "$ref": "SessionLog"
+        }
+      }
+    },
+    {
+      "id": "sessions.recordingDownloads.create",
+      "method": "POST",
+      "path": "/v1/sessions/{id}/recording/downloads",
+      "tag": "Other",
+      "summary": "Create Session Recording Downloads",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Session ID",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "downloads": {
+            "type": "array",
+            "items": {
+              "$ref": "RecordingDownload"
+            }
+          }
+        },
+        "required": ["downloads"]
+      }
+    },
+    {
+      "id": "sessions.recordingDownloads.list",
+      "method": "GET",
+      "path": "/v1/sessions/{id}/recording/downloads",
+      "tag": "Other",
+      "summary": "List Session Recording Downloads",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Session ID",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "downloads": {
+            "type": "array",
+            "items": {
+              "$ref": "RecordingDownload"
+            }
+          }
+        },
+        "required": ["downloads"]
+      }
+    },
+    {
+      "id": "sessions.replays.get",
+      "method": "GET",
+      "path": "/v1/sessions/{id}/replays",
+      "tag": "Other",
+      "summary": "Get Session Replay",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Session ID",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "pages": {
+            "type": "array",
+            "items": {
+              "$ref": "ReplayPage"
+            }
+          },
+          "pageCount": {
+            "type": "integer"
+          }
+        },
+        "required": ["pages", "pageCount"]
+      }
+    },
+    {
+      "id": "sessions.replays.page",
+      "method": "GET",
+      "path": "/v1/sessions/{id}/replays/{pageId}",
+      "tag": "Other",
+      "summary": "Get Replay Page",
+      "request": "none",
+      "response": "file",
+      "fileTypes": ["application/vnd.apple.mpegurl"],
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Session ID",
+            "x-corsair-in": "path"
+          },
+          "pageId": {
+            "type": "string",
+            "maxLength": 3,
+            "pattern": "^\\d+$",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id", "pageId"]
+      }
+    },
+    {
+      "id": "sessions.setLabels",
+      "method": "PUT",
+      "path": "/v1/sessions/{id}/labels",
+      "tag": "Other",
+      "summary": "Set Session Labels",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "labels": {
+            "description": "Complete replacement set of label names. Empty clears assignments; missing names create labels.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 1000
+          }
+        },
+        "additionalProperties": false,
+        "required": ["id", "labels"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "labels": {
+            "type": "array",
+            "items": {
+              "$ref": "Label"
+            }
+          }
+        },
+        "required": ["labels"]
+      }
+    },
+    {
+      "id": "sessions.update",
+      "method": "POST",
+      "path": "/v1/sessions/{id}",
+      "tag": "Other",
+      "summary": "Update a Session",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "status": {
+            "description": "Set to `REQUEST_RELEASE` to request that the session complete. Use before session's timeout to avoid additional charges.",
+            "type": "string",
+            "enum": ["REQUEST_RELEASE"]
+          }
+        },
+        "required": ["id", "status"]
+      },
+      "output": {
+        "$ref": "Session"
+      }
+    },
+    {
+      "id": "sessions.uploadFile",
+      "method": "POST",
+      "path": "/v1/sessions/{id}/uploads",
+      "tag": "Other",
+      "summary": "Create Session Uploads",
+      "request": "multipart",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "x-corsair-in": "path"
+          },
+          "file": {
+            "type": "string",
+            "format": "binary"
+          }
+        },
+        "required": ["id", "file"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": ["message"]
+      }
+    },
+    {
+      "id": "webhooks.create",
+      "method": "POST",
+      "path": "/v1/webhooks",
+      "tag": "Other",
+      "summary": "Create a Webhook",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "endpoint": {
+            "description": "HTTPS URL that event deliveries are POSTed to. Must be publicly reachable.",
+            "type": "string",
+            "maxLength": 2048,
+            "pattern": "^https://[^/?#]+"
+          },
+          "eventTypes": {
+            "description": "Event types this webhook subscribes to. Unknown types are rejected.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "functions.builds.running",
+                "functions.builds.completed",
+                "functions.builds.failed",
+                "functions.invocations.pending",
+                "functions.invocations.running",
+                "functions.invocations.completed",
+                "functions.invocations.failed"
+              ]
+            },
+            "minItems": 1
+          }
+        },
+        "additionalProperties": false,
+        "required": ["endpoint", "eventTypes"]
+      },
+      "output": {
+        "description": "The created webhook, including its signing secret.",
+        "allOf": [
+          {
+            "$ref": "Webhook"
+          },
+          {
+            "type": "object",
+            "required": ["secret"],
+            "properties": {
+              "secret": {
+                "description": "HMAC-SHA256 signing secret, prefixed `whsec_`. Shown once here; store it now. Use it to verify the signature on every delivery.",
+                "type": "string"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "webhooks.delete",
+      "method": "DELETE",
+      "path": "/v1/webhooks/{id}",
+      "tag": "Other",
+      "summary": "Delete a Webhook",
+      "request": "none",
+      "response": "empty",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The webhook ID.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      }
+    },
+    {
+      "id": "webhooks.get",
+      "method": "GET",
+      "path": "/v1/webhooks/{id}",
+      "tag": "Other",
+      "summary": "Get a Webhook",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The webhook ID.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "$ref": "Webhook"
+      }
+    },
+    {
+      "id": "webhooks.list",
+      "method": "GET",
+      "path": "/v1/webhooks",
+      "tag": "Other",
+      "summary": "List Webhooks",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "default": 20,
+            "maximum": 100,
+            "minimum": 1,
+            "description": "Maximum number of results to return.",
+            "x-corsair-in": "query"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "Cursor from a previous response's `nextCursor`. Omit for the first page.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "description": "A page of webhooks. Signing secrets are not included.",
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "The page of webhooks, newest first.",
+            "type": "array",
+            "items": {
+              "$ref": "Webhook"
+            }
+          },
+          "limit": {
+            "description": "The maximum number of results returned in this page.",
+            "type": "integer"
+          },
+          "nextCursor": {
+            "description": "Cursor for the next page. Pass it back as `cursor` to continue paging. null when there are no more results.",
+            "anyOf": [
+              {
+                "type": "string"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "required": ["data", "limit", "nextCursor"]
+      }
+    },
+    {
+      "id": "webhooks.rotateSecret",
+      "method": "POST",
+      "path": "/v1/webhooks/{id}/secret",
+      "tag": "Other",
+      "summary": "Rotate a Webhook signing secret",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The webhook ID.",
+            "x-corsair-in": "path"
+          },
+          "revokeImmediately": {
+            "description": "Expire the old secret at once instead of honouring it for 24 hours. Use when responding to a leak; deliveries signed with the old secret stop verifying immediately.",
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "required": ["id"]
+      },
+      "output": {
+        "description": "The new signing secret. Shown once; store it now.",
+        "type": "object",
+        "properties": {
+          "secret": {
+            "description": "The new signing secret, prefixed `whsec_`.",
+            "type": "string"
+          }
+        },
+        "required": ["secret"]
+      }
+    },
+    {
+      "id": "webhooks.update",
+      "method": "PATCH",
+      "path": "/v1/webhooks/{id}",
+      "tag": "Other",
+      "summary": "Update a Webhook",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The webhook ID.",
+            "x-corsair-in": "path"
+          },
+          "endpoint": {
+            "description": "HTTPS URL that event deliveries are POSTed to. Must be publicly reachable.",
+            "type": "string",
+            "maxLength": 2048,
+            "pattern": "^https://[^/?#]+"
+          },
+          "eventTypes": {
+            "description": "Event types this webhook subscribes to. Unknown types are rejected.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "functions.builds.running",
+                "functions.builds.completed",
+                "functions.builds.failed",
+                "functions.invocations.pending",
+                "functions.invocations.running",
+                "functions.invocations.completed",
+                "functions.invocations.failed"
+              ]
+            },
+            "minItems": 1
+          }
+        },
+        "additionalProperties": false,
+        "required": ["id"]
+      },
+      "output": {
+        "$ref": "Webhook"
+      }
+    }
+  ],
+  "definitions": {
+    "Agent": {
+      "description": "A reusable agent. Referenced by `agentId` to apply a system prompt to every run that uses the agent.",
+      "type": "object",
+      "properties": {
+        "agentId": {
+          "description": "Unique identifier for the agent. Use this value as `agentId` when creating an agent run.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Human-readable name for the agent. Used to identify the agent in the dashboard and API responses.",
+          "type": "string"
+        },
+        "systemPrompt": {
+          "description": "System prompt applied to every run that uses this agent.",
+          "type": "string"
+        },
+        "resultSchema": {
+          "description": "[JSON Schema](https://json-schema.org/specification) that runs referencing this agent will aim to conform their `result` to. Can be overridden per run by passing `resultSchema` on the run request.",
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {}
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "required": ["agentId", "name", "createdAt", "updatedAt"]
+    },
+    "AgentRun": {
+      "description": "One execution of an agent against a task. Created in `pending` and transitioned through `running` → `completed`/`failed` by the runner.",
+      "type": "object",
+      "properties": {
+        "runId": {
+          "description": "Unique identifier for the run.",
+          "type": "string"
+        },
+        "agentId": {
+          "description": "The ID of the agent applied to this run, if any. Omitted for ad-hoc runs.",
+          "type": "string"
+        },
+        "task": {
+          "description": "The original task description.",
+          "type": "string"
+        },
+        "status": {
+          "description": "Current status of the run. - `PENDING` - agent will run soon - `RUNNING` - agent is currently running - `COMPLETED` - agent has finished running - `FAILED` - agent has failed the run - `STOPPED` - run was stopped by the user - `TIMED_OUT` - run exceeded maximum time - `PAUSED` - run is paused awaiting input from the caller; the agent's request is the trailing `pause` tool call in the run's messages",
+          "type": "string",
+          "enum": [
+            "PENDING",
+            "RUNNING",
+            "COMPLETED",
+            "FAILED",
+            "STOPPED",
+            "TIMED_OUT",
+            "PAUSED"
+          ]
+        },
+        "sessionId": {
+          "description": "The Browserbase session ID powering this run.",
+          "type": "string"
+        },
+        "sandboxId": {
+          "description": "External sandbox identifier assigned by the runner. Optional.",
+          "type": "string"
+        },
+        "resultSchema": {
+          "description": "Per-run [JSON Schema](https://json-schema.org/specification) override for the result shape. When unset, the agent's default `resultSchema` applies.",
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {}
+        },
+        "result": {
+          "description": "The agent's structured result for the run. Only present when the run has finished and output is available. The result conforms to the provided [JSON Schema](https://json-schema.org/specification) when one is set.",
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {}
+        },
+        "cause": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "description": "Structured failure code (e.g., RUNNER_HEARTBEAT_LOST).",
+              "type": "string",
+              "maxLength": 64
+            },
+            "message": {
+              "description": "Human-readable failure detail.",
+              "type": "string",
+              "maxLength": 500
+            }
+          },
+          "required": ["code"]
+        },
+        "startedAt": {
+          "type": "string"
+        },
+        "endedAt": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "required": ["runId", "task", "status", "createdAt", "updatedAt"]
+    },
+    "BrowserbaseProxyConfig": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "Type of proxy. Always use 'browserbase' for the Browserbase managed proxy network.",
+          "type": "string",
+          "enum": ["browserbase"]
+        },
+        "proxyId": {
+          "description": "ID of a managed static proxy assigned to your organization. Cannot be combined with geolocation.",
+          "type": "string"
+        },
+        "geolocation": {
+          "description": "Geographic location for the proxy. Optional.",
+          "type": "object",
+          "properties": {
+            "city": {
+              "description": "Name of the city. Use spaces for multi-word city names. Optional.",
+              "type": "string"
+            },
+            "state": {
+              "description": "US state code (2 characters). Must also specify US as the country. Optional.",
+              "type": "string",
+              "maxLength": 2,
+              "minLength": 2,
+              "pattern": "^[A-Za-z]{2}$"
+            },
+            "country": {
+              "description": "Country code in ISO 3166-1 alpha-2 format",
+              "type": "string",
+              "maxLength": 2,
+              "minLength": 2,
+              "pattern": "^[A-Za-z]{2}$"
+            }
+          },
+          "required": ["country"]
+        },
+        "domainPattern": {
+          "description": "Domain pattern for which this proxy should be used. If omitted, defaults to all domains. Optional.",
+          "type": "string"
+        }
+      },
+      "required": ["type"]
+    },
+    "Certificate": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "projectId": {
+          "description": "The Project ID linked to the uploaded Certificate.",
+          "type": "string"
+        }
+      },
+      "required": ["id", "createdAt", "updatedAt", "projectId"]
+    },
+    "Context": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "projectId": {
+          "description": "The Project ID linked to the uploaded Context.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Optional user-defined name for the Context. Leading and trailing whitespace is trimmed before storage. Names are unique within the project among active Contexts, compared case-insensitively.",
+          "type": "string",
+          "maxLength": 128,
+          "minLength": 1
+        }
+      },
+      "required": ["id", "createdAt", "updatedAt", "projectId"]
+    },
+    "Download": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the download.",
+          "type": "string"
+        },
+        "sessionId": {
+          "description": "The Session ID this download belongs to.",
+          "type": "string"
+        },
+        "filename": {
+          "description": "The filename of the downloaded file.",
+          "type": "string"
+        },
+        "mimeType": {
+          "description": "The MIME type of the file.",
+          "type": "string"
+        },
+        "size": {
+          "description": "File size in bytes.",
+          "type": "number"
+        },
+        "checksum": {
+          "description": "SHA256 checksum of the file.",
+          "type": "string"
+        },
+        "createdAt": {
+          "description": "Timestamp when the file was downloaded.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "sessionId",
+        "filename",
+        "mimeType",
+        "size",
+        "checksum",
+        "createdAt"
+      ]
+    },
+    "Extension": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "fileName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "projectId": {
+          "description": "The Project ID linked to the uploaded Extension.",
+          "type": "string"
+        }
+      },
+      "required": ["id", "createdAt", "updatedAt", "fileName", "projectId"]
+    },
+    "ExternalProxyConfig": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "Type of proxy. Always 'external' for this config.",
+          "type": "string",
+          "enum": ["external"]
+        },
+        "server": {
+          "description": "Server URL for external proxy. Required.",
+          "type": "string"
+        },
+        "domainPattern": {
+          "description": "Domain pattern for which this proxy should be used. If omitted, defaults to all domains. Optional.",
+          "type": "string"
+        },
+        "username": {
+          "description": "Username for external proxy authentication. Optional.",
+          "type": "string"
+        },
+        "password": {
+          "description": "Password for external proxy authentication. Optional.",
+          "type": "string"
+        }
+      },
+      "required": ["type", "server"]
+    },
+    "Function": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "projectId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "projectId", "name", "createdAt", "updatedAt"]
+    },
+    "FunctionBuild": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "projectId": {
+          "type": "string"
+        },
+        "request": {
+          "type": "object",
+          "properties": {
+            "entrypoint": {
+              "type": "string",
+              "minLength": 1
+            },
+            "functionNames": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": ["entrypoint"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["PENDING", "RUNNING", "COMPLETED", "FAILED"]
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "startedAt": {
+          "type": "string"
+        },
+        "endedAt": {
+          "type": "string"
+        },
+        "expiresAt": {
+          "type": "string"
+        },
+        "builtFunctions": {
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "Function"
+              },
+              {
+                "type": "object",
+                "required": ["createdVersion"],
+                "properties": {
+                  "createdVersion": {
+                    "$ref": "FunctionVersion"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "cause": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string",
+              "enum": [
+                "NO_MANIFESTS_FOUND",
+                "TOO_MANY_MANIFESTS",
+                "MANIFEST_TOO_LARGE",
+                "INVALID_SESSION_CREATE_PARAMS",
+                "TIMED_OUT"
+              ]
+            },
+            "message": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "required": ["code"]
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "request",
+        "status",
+        "createdAt",
+        "updatedAt",
+        "startedAt",
+        "expiresAt"
+      ]
+    },
+    "FunctionBuildLog": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "number"
+        }
+      },
+      "required": ["message", "timestamp"]
+    },
+    "FunctionVersion": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "projectId": {
+          "type": "string"
+        },
+        "functionId": {
+          "type": "string"
+        },
+        "functionBuildId": {
+          "type": "string"
+        },
+        "sessionCreateParams": {
+          "description": "JSON object that can be stored in a JSONB column",
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {}
+        },
+        "userParamsSchema": {
+          "description": "JSON object that can be stored in a JSONB column",
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {}
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "functionId",
+        "functionBuildId",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Invocation": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "projectId": {
+          "type": "string"
+        },
+        "functionId": {
+          "type": "string"
+        },
+        "versionId": {
+          "type": "string"
+        },
+        "sessionId": {
+          "type": "string"
+        },
+        "region": {
+          "type": "string",
+          "minLength": 1
+        },
+        "params": {
+          "description": "JSON object that can be stored in a JSONB column",
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {}
+        },
+        "status": {
+          "type": "string",
+          "enum": ["PENDING", "RUNNING", "COMPLETED", "FAILED"]
+        },
+        "results": {
+          "description": "Any JSON-serializable value that can be stored in a JSONB column",
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "array",
+              "items": {}
+            },
+            {
+              "additionalProperties": true,
+              "type": "object",
+              "properties": {}
+            }
+          ],
+          "nullable": true
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "startedAt": {
+          "type": "string"
+        },
+        "endedAt": {
+          "type": "string"
+        },
+        "expiresAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "functionId",
+        "versionId",
+        "sessionId",
+        "status",
+        "createdAt",
+        "updatedAt",
+        "startedAt",
+        "expiresAt"
+      ]
+    },
+    "InvocationLog": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "number"
+        }
+      },
+      "required": ["message", "timestamp"]
+    },
+    "Label": {
+      "description": "A project-owned session label.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Stable identifier of the label.",
+          "type": "string"
+        },
+        "projectId": {
+          "description": "The project that owns the label.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Display name, unique ignoring case within the project.",
+          "type": "string"
+        },
+        "createdAt": {
+          "description": "UTC timestamp when the label was created.",
+          "type": "string"
+        },
+        "updatedAt": {
+          "description": "UTC timestamp when the label was last renamed.",
+          "type": "string"
+        }
+      },
+      "required": ["id", "projectId", "name", "createdAt", "updatedAt"]
+    },
+    "NavigationPolicy": {
+      "description": "Rules for which domains a browser session may navigate to. Bind a policy to a session with `browserSettings.riskPolicyId`; Browserbase then allows or blocks each navigation by the policy's overrides, its category rules, and finally its default decision. A session keeps the policy as it was when the session started: edits, disables, and deletes apply to sessions that start afterwards. A policy checks navigations: page loads, iframes, popups, and each redirect. It doesn't check requests a page makes itself, such as scripts, images, and `fetch` calls. In a session that loads a Context, pages skip their service workers so that the policy checks every navigation.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the navigation policy.",
+          "type": "string"
+        },
+        "projectId": {
+          "description": "The project the policy belongs to.",
+          "type": "string"
+        },
+        "name": {
+          "description": "Display name. A policy's id identifies it, not its name.",
+          "type": "string",
+          "maxLength": 128,
+          "minLength": 1
+        },
+        "description": {
+          "description": "Free-form notes about the policy.",
+          "type": "string",
+          "maxLength": 1024
+        },
+        "enabled": {
+          "description": "Whether the policy can be bound to new sessions. Running sessions keep the policy they started with. A disabled policy stays editable and can be re-enabled.",
+          "type": "boolean"
+        },
+        "defaultDecision": {
+          "description": "Decision for each of a domain's categories that has no category rule. The strictest of a domain's category decisions applies, and overrides take precedence.",
+          "type": "string",
+          "enum": ["allow", "block"]
+        },
+        "allowedCategories": {
+          "description": "Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "adult",
+              "ai-tools",
+              "alcohol-tobacco",
+              "business",
+              "child-abuse",
+              "communication",
+              "dating",
+              "drugs",
+              "education",
+              "entertainment",
+              "finance",
+              "gambling",
+              "games",
+              "government-military",
+              "hacking",
+              "hate",
+              "health",
+              "illegal-activity",
+              "infrastructure",
+              "kids",
+              "lifestyle",
+              "malware",
+              "newly-registered",
+              "news",
+              "parked-inactive",
+              "phishing-scams",
+              "piracy",
+              "proxy-anonymizer",
+              "search-portal",
+              "self-harm",
+              "shopping",
+              "social-media",
+              "society-culture",
+              "sports",
+              "technology",
+              "terrorism-extremism",
+              "travel",
+              "url-shortener",
+              "violence",
+              "weapons"
+            ]
+          }
+        },
+        "blockedCategories": {
+          "description": "Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "adult",
+              "ai-tools",
+              "alcohol-tobacco",
+              "business",
+              "child-abuse",
+              "communication",
+              "dating",
+              "drugs",
+              "education",
+              "entertainment",
+              "finance",
+              "gambling",
+              "games",
+              "government-military",
+              "hacking",
+              "hate",
+              "health",
+              "illegal-activity",
+              "infrastructure",
+              "kids",
+              "lifestyle",
+              "malware",
+              "newly-registered",
+              "news",
+              "parked-inactive",
+              "phishing-scams",
+              "piracy",
+              "proxy-anonymizer",
+              "search-portal",
+              "self-harm",
+              "shopping",
+              "social-media",
+              "society-culture",
+              "sports",
+              "technology",
+              "terrorism-extremism",
+              "travel",
+              "url-shortener",
+              "violence",
+              "weapons"
+            ]
+          }
+        },
+        "unknownDomainBehavior": {
+          "description": "Decision for a domain, or one of its categories, that Browserbase can't classify. It counts as one of the domain's category decisions, so the strictest still applies.",
+          "type": "string",
+          "enum": ["allow", "block"]
+        },
+        "domainOverrides": {
+          "description": "Per-host decisions that take precedence over category rules and the default. Each host may appear once.",
+          "type": "array",
+          "items": {
+            "additionalProperties": false,
+            "type": "object",
+            "required": ["domain", "decision"],
+            "properties": {
+              "domain": {
+                "description": "Host the override applies to, for example `example.com`. Matching is case-insensitive and covers subdomains.",
+                "type": "string",
+                "maxLength": 253,
+                "minLength": 1
+              },
+              "decision": {
+                "description": "Decision for navigations to this host.",
+                "type": "string",
+                "enum": ["allow", "block"]
+              }
+            }
+          },
+          "maxItems": 500
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "name",
+        "description",
+        "enabled",
+        "defaultDecision",
+        "allowedCategories",
+        "blockedCategories",
+        "unknownDomainBehavior",
+        "domainOverrides",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "NoneProxyConfig": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "description": "Type of proxy. Always 'none' for this config.",
+          "type": "string",
+          "enum": ["none"]
+        },
+        "domainPattern": {
+          "description": "Domain pattern for which this proxy should be used. If omitted, defaults to all domains. Optional.",
+          "type": "string"
+        }
+      },
+      "required": ["type"]
+    },
+    "Project": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ownerId": {
+          "type": "string"
+        },
+        "defaultTimeout": {
+          "type": "integer",
+          "maximum": 21600,
+          "minimum": 60
+        },
+        "concurrency": {
+          "description": "The maximum number of sessions that this project can run concurrently.",
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": [
+        "id",
+        "createdAt",
+        "updatedAt",
+        "name",
+        "ownerId",
+        "defaultTimeout",
+        "concurrency"
+      ]
+    },
+    "ProjectUsage": {
+      "type": "object",
+      "properties": {
+        "browserMinutes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "proxyBytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": ["browserMinutes", "proxyBytes"]
+    },
+    "RecordingDownload": {
+      "type": "object",
+      "properties": {
+        "pageId": {
+          "description": "Recorded page (tab) within the session, e.g. \"0\", \"1\".",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "RecordingDownloadStatus"
+        },
+        "downloadUrl": {
+          "description": "Short-lived signed CDN URL, re-minted each GET. Present only when COMPLETED on a standard (non-BYOS) project.",
+          "type": "string"
+        },
+        "completedAt": {
+          "description": "When the MP4 was created. Present only when COMPLETED on a standard (non-BYOS) project.",
+          "type": "string"
+        }
+      },
+      "required": ["pageId", "status"]
+    },
+    "RecordingDownloadStatus": {
+      "description": "Per-page MP4 assembly state. `NOT_REQUESTED`: no download has been requested for the session yet. `PENDING`: assembly is enqueued or in progress. `COMPLETED`: the MP4 is ready. `FAILED`: assembly failed; POST again to retry.",
+      "type": "string",
+      "enum": ["NOT_REQUESTED", "PENDING", "COMPLETED", "FAILED"]
+    },
+    "ReplayPage": {
+      "type": "object",
+      "properties": {
+        "pageId": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "startTimeMs": {
+          "type": "integer"
+        },
+        "endTimeMs": {
+          "type": "integer"
+        }
+      },
+      "required": ["pageId", "url", "startTimeMs", "endTimeMs"]
+    },
+    "Secret": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique identifier of the secret.",
+          "type": "string"
+        },
+        "secretKey": {
+          "description": "The name the secret value is stored under.",
+          "type": "string"
+        },
+        "createdAt": {
+          "description": "Time at which the secret was created, in UTC, using RFC 3339 format, e.g. 2026-01-19T00:00:00.000Z.",
+          "type": "string"
+        },
+        "updatedAt": {
+          "description": "Time at which the secret's value was last set, in UTC, using RFC 3339 format, e.g. 2026-01-20T00:00:00.000Z.",
+          "type": "string"
+        }
+      },
+      "required": ["id", "secretKey"]
+    },
+    "SecretsKeypair": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Identifier of the keypair the public key was minted from. Pass this back when creating a secret so the ciphertext records which keypair sealed it, which keeps decryption correct across keypair rotation.",
+          "type": "string"
+        },
+        "publicKey": {
+          "description": "The project's HPKE public encryption key, base64-encoded. Encrypt secret values with this key before creating a secret.",
+          "type": "string"
+        }
+      },
+      "required": ["id", "publicKey"]
+    },
+    "Session": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        },
+        "projectId": {
+          "description": "The Project ID linked to the Session.",
+          "type": "string"
+        },
+        "startedAt": {
+          "type": "string"
+        },
+        "endedAt": {
+          "type": "string"
+        },
+        "expiresAt": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["PENDING", "RUNNING", "ERROR", "TIMED_OUT", "COMPLETED"]
+        },
+        "size": {
+          "description": "Size of the browser used for the session.",
+          "type": "string",
+          "enum": ["regular", "large", "xlarge"]
+        },
+        "proxyBytes": {
+          "description": "Bytes used via the [Proxy](/features/stealth-mode#proxies-and-residential-ips)",
+          "type": "integer"
+        },
+        "keepAlive": {
+          "description": "Indicates if the Session was created to be kept alive upon disconnections",
+          "type": "boolean"
+        },
+        "contextId": {
+          "description": "Optional. The Context linked to the Session.",
+          "type": "string"
+        },
+        "region": {
+          "description": "The region where the Session is running.",
+          "type": "string",
+          "enum": ["us-west-2", "us-east-1", "eu-central-1", "ap-southeast-1"]
+        },
+        "userMetadata": {
+          "description": "Arbitrary user metadata to attach to the session. To learn more about user metadata, see [User Metadata](/features/sessions#user-metadata).",
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {}
+        }
+      },
+      "required": [
+        "id",
+        "createdAt",
+        "updatedAt",
+        "projectId",
+        "status",
+        "proxyBytes",
+        "keepAlive",
+        "region",
+        "startedAt",
+        "expiresAt"
+      ]
+    },
+    "SessionLiveUrls": {
+      "type": "object",
+      "properties": {
+        "debuggerFullscreenUrl": {
+          "type": "string"
+        },
+        "debuggerUrl": {
+          "type": "string"
+        },
+        "pages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "url",
+              "faviconUrl",
+              "title",
+              "debuggerUrl",
+              "debuggerFullscreenUrl"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              },
+              "faviconUrl": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "debuggerUrl": {
+                "type": "string"
+              },
+              "debuggerFullscreenUrl": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "wsUrl": {
+          "type": "string"
+        }
+      },
+      "required": ["debuggerFullscreenUrl", "debuggerUrl", "pages", "wsUrl"]
+    },
+    "SessionLog": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": "string"
+        },
+        "pageId": {
+          "type": "integer"
+        },
+        "sessionId": {
+          "type": "string"
+        },
+        "request": {
+          "type": "object",
+          "properties": {
+            "timestamp": {
+              "description": "milliseconds that have elapsed since the UNIX epoch",
+              "type": "integer"
+            },
+            "params": {
+              "additionalProperties": true,
+              "type": "object",
+              "properties": {}
+            },
+            "rawBody": {
+              "type": "string"
+            }
+          },
+          "required": ["params", "rawBody"]
+        },
+        "response": {
+          "type": "object",
+          "properties": {
+            "timestamp": {
+              "description": "milliseconds that have elapsed since the UNIX epoch",
+              "type": "integer"
+            },
+            "result": {
+              "additionalProperties": true,
+              "type": "object",
+              "properties": {}
+            },
+            "rawBody": {
+              "type": "string"
+            }
+          },
+          "required": ["result", "rawBody"]
+        },
+        "timestamp": {
+          "description": "milliseconds that have elapsed since the UNIX epoch",
+          "type": "integer"
+        },
+        "frameId": {
+          "type": "string"
+        },
+        "loaderId": {
+          "type": "string"
+        }
+      },
+      "required": ["method", "pageId", "sessionId"]
+    },
+    "Webhook": {
+      "description": "A delivery endpoint for a project. Browserbase POSTs a signed event to it whenever one of its subscribed event types occurs. The signing secret is returned only when it is created or rotated.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Unique identifier for the webhook.",
+          "type": "string"
+        },
+        "projectId": {
+          "description": "The project the webhook belongs to.",
+          "type": "string"
+        },
+        "endpoint": {
+          "description": "HTTPS URL that event deliveries are POSTed to. Must be publicly reachable.",
+          "type": "string",
+          "maxLength": 2048,
+          "pattern": "^https://[^/?#]+"
+        },
+        "eventTypes": {
+          "description": "Event types this webhook subscribes to. Unknown types are rejected.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "functions.builds.running",
+              "functions.builds.completed",
+              "functions.builds.failed",
+              "functions.invocations.pending",
+              "functions.invocations.running",
+              "functions.invocations.completed",
+              "functions.invocations.failed"
+            ]
+          },
+          "minItems": 1
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "projectId",
+        "endpoint",
+        "eventTypes",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  }
+}

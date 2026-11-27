@@ -117,6 +117,7 @@ export const BaseProviders = [
 	'brex',
 	'brightdata',
 	'browseai',
+	'browserbase',
 	'browserless',
 	'browsertool',
 	'browseruse',
@@ -928,6 +929,7 @@ export const ProviderDisplayNames = {
 	brex: 'Brex',
 	brightdata: 'Bright Data',
 	browseai: 'Browse AI',
+	browserbase: 'Browserbase',
 	browserless: 'Browserless',
 	browsertool: 'Browser Tool',
 	browseruse: 'Browser Use',
@@ -1746,6 +1748,7 @@ export type AllProviders =
 	| 'brex'
 	| 'brightdata'
 	| 'browseai'
+	| 'browserbase'
 	| 'browserless'
 	| 'browsertool'
 	| 'browseruse'
