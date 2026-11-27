@@ -103,8 +103,11 @@ function configFor(options: InstaboxRequest, key: string) {
 /**
  * InstaBox answers a 429 for two things. `rate_limited` is a short burst
  * limit and carries `Retry-After` in seconds, which core reads and retries
- * three times. `quota_exceeded` is a plan limit (sandboxes, snapshots,
- * stored data): waiting doesn't help, so it is not retried.
+ * three times, except when its `reason` is a daily or hourly create/start
+ * quota (`creates_per_day`, `starts_per_day`, `starts_per_hour`), which
+ * resets far later. `quota_exceeded` is a plan limit (sandboxes, snapshots,
+ * stored data): waiting doesn't help, so it is retried only when InstaBox
+ * marks it `retryable` (a concurrency limit).
  */
 export const INSTABOX_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -116,8 +119,28 @@ export const INSTABOX_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 	// `unknown` because the error body is untrusted JSON.
 	isRateLimitError: (status: number, body: unknown) =>
-		status === 429 && errorCodeOf(body) !== 'quota_exceeded',
+		status === 429 && isRetryable429(body),
 };
+
+/** Quotas that reset hours away: retrying after `Retry-After` can't help. */
+const LONG_QUOTA_REASONS = new Set([
+	'creates_per_day',
+	'starts_per_day',
+	'starts_per_hour',
+]);
+
+// `unknown` because the error body is untrusted JSON.
+export function isRetryable429(body: unknown): boolean {
+	const error = asFields(asFields(body).error);
+	if (
+		typeof error.reason === 'string' &&
+		LONG_QUOTA_REASONS.has(error.reason)
+	) {
+		return false;
+	}
+	if (errorCodeOf(body) === 'quota_exceeded') return error.retryable === true;
+	return true;
+}
 
 /** The `error.code` of an InstaBox error body, if it has one. */
 // `unknown` because the error body is untrusted JSON.
@@ -402,7 +425,13 @@ function scrubSent(value: unknown, sent: SentString[], depth = 0): unknown {
 		// `unknown` because error detail items have no fixed shape.
 		const result: Record<string, unknown> = {};
 		for (const [key, inner] of Object.entries(value)) {
-			result[key] = scrubSent(inner, sent, depth + 1);
+			// A sent value used as a key (a details map) is scrubbed too.
+			const safeKey = scrubSent(key, sent, depth + 1);
+			result[typeof safeKey === 'string' ? safeKey : REDACTED] = scrubSent(
+				inner,
+				sent,
+				depth + 1,
+			);
 		}
 		return result;
 	}

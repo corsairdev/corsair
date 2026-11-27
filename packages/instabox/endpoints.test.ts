@@ -336,6 +336,21 @@ describe('errors', () => {
 		expect(isRateLimit?.(429, { error: { code: 'quota_exceeded' } })).toBe(
 			false,
 		);
+		expect(
+			isRateLimit?.(429, {
+				error: { code: 'rate_limited', reason: 'creates_per_day' },
+			}),
+		).toBe(false);
+		expect(
+			isRateLimit?.(429, {
+				error: { code: 'rate_limited', reason: 'starts_per_minute' },
+			}),
+		).toBe(true);
+		expect(
+			isRateLimit?.(429, {
+				error: { code: 'quota_exceeded', retryable: true },
+			}),
+		).toBe(true);
 		expect(errorCodeOf({ error: { code: 'x' } })).toBe('x');
 		expect(errorCodeOf('nope')).toBeUndefined();
 	});
@@ -357,6 +372,24 @@ describe('errors', () => {
 		expect(error.request.body).toBe('[REDACTED]');
 		expect(error.request.headers).toBeUndefined();
 		expect(error.url).toBe(`${BASE}/v1/machines/{id}/exec`);
+	});
+
+	it('scrubs a sent value used as a key in an error body', async () => {
+		reply(400, {
+			error: {
+				code: 'bad_request',
+				details: { 'ls secret-dir-name': 'not allowed' },
+			},
+		});
+		const error = (await endpointFor('machines.exec')(ctx(), {
+			id: MID,
+			cmd: 'ls secret-dir-name',
+		}).then(
+			() => undefined,
+			(e: unknown) => e,
+		)) as ApiError;
+		expect(JSON.stringify(error.body)).not.toContain('secret-dir-name');
+		expect(JSON.stringify(error.body)).toContain('not allowed');
 	});
 
 	it('keeps the key out of a body that echoes it', () => {

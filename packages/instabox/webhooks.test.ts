@@ -87,6 +87,12 @@ describe('signatures', () => {
 			verifyInstaboxWebhook({ ...request, headers: {} }, SECRET).valid,
 		).toBe(false);
 		expect(verifyInstaboxWebhook(request, '').valid).toBe(false);
+		// A secret that decodes to no bytes would sign with an empty key.
+		const forged = delivery(SUSPENDED, undefined, Buffer.alloc(0));
+		expect(verifyInstaboxWebhook(forged, 'whsec_')).toEqual({
+			valid: false,
+			error: 'The InstaBox webhook secret is empty',
+		});
 		expect(
 			verifyInstaboxWebhook({ ...request, rawBody: undefined }, SECRET).valid,
 		).toBe(false);

@@ -65,7 +65,12 @@ export function verifyInstaboxWebhook(
 	) {
 		return { valid: false, error: 'webhook-timestamp is too old' };
 	}
-	const want = createHmac('sha256', keyOf(secret))
+	const key = keyOf(secret);
+	if (key.length === 0) {
+		// `whsec_` alone (or a secret that decodes to nothing) is no key.
+		return { valid: false, error: 'The InstaBox webhook secret is empty' };
+	}
+	const want = createHmac('sha256', key)
 		.update(`${id}.${timestamp}.${raw}`)
 		.digest();
 	const ok = header.split(' ').some((part) => {
