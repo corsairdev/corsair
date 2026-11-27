@@ -43,18 +43,15 @@ export async function tryGetStoredKey(
 }
 
 /**
- * Hosts that never leave the machine or the local network's development
- * names: loopback addresses and `.localhost`, `.local`, `.test` names.
+ * Loopback hosts only: `localhost`, `127.x.x.x` and `::1`. A `.local` or
+ * `.test` name can resolve to another machine (mDNS, local DNS, a hosts
+ * file), so it does not count, and plain HTTP to it would carry the
+ * password across the network.
  */
 export function isLocalHost(hostname: string): boolean {
 	const host = hostname.toLowerCase().replace(/^\[|\]$/g, '');
 	return (
-		host === 'localhost' ||
-		host === '::1' ||
-		/^127(\.\d{1,3}){3}$/.test(host) ||
-		host.endsWith('.localhost') ||
-		host.endsWith('.local') ||
-		host.endsWith('.test')
+		host === 'localhost' || host === '::1' || /^127(\.\d{1,3}){3}$/.test(host)
 	);
 }
 
@@ -84,7 +81,7 @@ export function normalizeSiteUrl(raw: string | undefined): string {
 		// HTTP would carry in the clear. WordPress itself only allows
 		// application passwords over HTTP on a local environment.
 		throw new Error(
-			'[wordpress] site URL must use https (plain http is allowed only for localhost and .local/.test/.localhost hosts)',
+			'[wordpress] site URL must use https (plain http is allowed only for loopback hosts: localhost, 127.0.0.1, [::1])',
 		);
 	}
 	if (!parsed.hostname) {

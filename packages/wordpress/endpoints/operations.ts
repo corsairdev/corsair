@@ -198,9 +198,10 @@ export function createWordpressOperation<Id extends WordpressOperationId>(
 					for (const [key, inner] of Object.entries(
 						value as Record<string, unknown>,
 					)) {
-						if (key.toLowerCase().startsWith('_method')) {
+						if (phpQueryKey(key).startsWith('_method')) {
 							// WordPress runs a request as the `_method` it names, so a
 							// read could become a DELETE: the method is its own field.
+							// PHP turns `.method` or ` method` into `_method` too.
 							throw new Error(
 								`Invalid input for wordpress ${id}: query: _method is not allowed${id === 'rest.get' ? '; use rest.send with method' : ''}`,
 							);
@@ -307,4 +308,12 @@ export function createWordpressOperation<Id extends WordpressOperationId>(
 		);
 		return parsedOutput.data as WordpressOperationOutputs[Id];
 	};
+}
+
+/**
+ * A query key as PHP files it in `$_GET`, lowercased: leading spaces
+ * dropped, then spaces, dots and `[` become `_`.
+ */
+function phpQueryKey(key: string): string {
+	return key.replace(/^ +/, '').replace(/[ .[]/g, '_').toLowerCase();
 }

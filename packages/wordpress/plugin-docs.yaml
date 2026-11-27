@@ -11,8 +11,8 @@ overviewNote: |
   without `/wp-json`), the `username` of the user the password belongs to,
   and an application password as the key. Create one at Users → Profile →
   Application Passwords (WordPress 5.6+). The site must be served over HTTPS:
-  the plugin refuses plain `http://` except for localhost and `.local`,
-  `.test` or `.localhost` hosts (WordPress itself also needs
+  the plugin refuses plain `http://` except for loopback hosts
+  (`localhost`, `127.0.0.1`, `[::1]`; WordPress itself also needs
   `WP_ENVIRONMENT_TYPE` set to `local` there). Calls are sent as
   HTTP Basic auth, so what works depends on that user's role: an
   Administrator can manage plugins, users and settings, an Author only their

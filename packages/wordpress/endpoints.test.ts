@@ -111,9 +111,6 @@ describe('site URL', () => {
 		expect(normalizeSiteUrl('http://localhost:8093')).toBe(
 			'http://localhost:8093/wp-json',
 		);
-		expect(normalizeSiteUrl('http://shop.test')).toBe(
-			'http://shop.test/wp-json',
-		);
 		expect(normalizeSiteUrl('http://127.0.0.1:8080')).toBe(
 			'http://127.0.0.1:8080/wp-json',
 		);
@@ -130,6 +127,10 @@ describe('site URL', () => {
 			// The password would cross the network in the clear.
 			'http://example.com',
 			'http://10.0.0.5',
+			// These names can resolve to another machine (mDNS, local DNS).
+			'http://shop.local',
+			'http://shop.test',
+			'http://wp.localhost',
 		]) {
 			expect(() => normalizeSiteUrl(bad)).toThrow();
 		}
@@ -319,7 +320,16 @@ describe('requests', () => {
 		);
 		// `_method` would turn the GET into a write on WordPress's side.
 		calls = [];
-		for (const key of ['_method', '_METHOD', '_method[0]']) {
+		for (const key of [
+			'_method',
+			'_METHOD',
+			'_method[0]',
+			'.method',
+			' .method',
+			'_method.x',
+			'  _method',
+			'[method',
+		]) {
 			await expect(
 				call('rest.get', {
 					route: 'wp/v2/posts/1',
