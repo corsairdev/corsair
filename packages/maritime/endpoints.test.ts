@@ -528,6 +528,27 @@ describe('review fixes', () => {
 		expect(timeouts).toContain(150_000);
 	});
 
+	it('scrubs a sent env value a data plane error echoes', async () => {
+		replies(
+			{ status: 200, body: SANDBOX },
+			{
+				status: 400,
+				body: { code: 'invalid_request', message: 'bad env sk-live-abc123def' },
+			},
+		);
+		const error = (await endpointFor('sandboxes.commands.run')(ctx(), {
+			sandbox_id: 'sbx-k3m7q2ab',
+			cmd: 'env',
+			env: { OPENAI_API_KEY: 'sk-live-abc123def' },
+		}).then(
+			() => undefined,
+			(e: unknown) => e,
+		)) as ApiError;
+		expect(error.status).toBe(400);
+		expect(error.message).not.toContain('sk-live-abc123def');
+		expect(JSON.stringify(error.body)).not.toContain('sk-live-abc123def');
+	});
+
 	it('scrubs a query token the error body echoes', async () => {
 		reply(403, { detail: 'token tok_live_123456 is not valid for this agent' });
 		const error = (await endpointFor('agents.invoke')(ctx(), {

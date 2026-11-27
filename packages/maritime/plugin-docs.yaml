@@ -264,7 +264,7 @@ apiExamples:
   apps.list:
     args: {}
   apps.upload:
-    args: {"file": {"base64": "aGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.md", "contentType": "text/markdown"}}
+    args: {"file": {"base64": "UEsDBBQAAAAIAA==", "filename": "app-release.apk", "contentType": "application/vnd.android.package-archive"}}
   billing.agentPay.createLink:
     args: {}
   billing.agents:
