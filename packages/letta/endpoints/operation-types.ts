@@ -194,24 +194,24 @@ export type LettaApprovalCreateInput = {
 	/** The message ID of the approval request */
 	approval_request_id?: string;
 	/** The list of approval responses */
-	approvals?:
-		| {
-				/** Whether the tool has been approved */
-				approve: boolean;
-				/** The ID of the tool call that corresponds to this approval */
-				tool_call_id: string;
-				/** An optional explanation for the provided approval status */
-				reason?: string;
-				/** The message type to be created. */
-				type?: 'approval';
-		  }
-		| LettaToolReturnInput;
+	approvals?: Array<LettaApprovalReturnInput | LettaToolReturnInput>;
 	/** Whether the tool has been approved */
 	approve?: boolean;
 	/** The multi-agent group that the message was sent in */
 	group_id?: string;
 	/** The offline threading id (OTID). Set by the client to deduplicate requests. Used for idempotency in background streaming mode — each message in a request must have a unique OTID. Retries of the same request should reuse the same OTIDs. */
 	otid?: string;
+	/** An optional explanation for the provided approval status */
+	reason?: string;
+	/** The message type to be created. */
+	type?: 'approval';
+};
+
+export type LettaApprovalReturnInput = {
+	/** Whether the tool has been approved */
+	approve: boolean;
+	/** The ID of the tool call that corresponds to this approval */
+	tool_call_id: string;
 	/** An optional explanation for the provided approval status */
 	reason?: string;
 	/** The message type to be created. */
@@ -250,6 +250,24 @@ export type LettaBedrockModelSettingsInput = {
 		| LettaJsonObjectResponseFormatInput;
 	/** The temperature of the model. */
 	temperature?: number;
+};
+
+/** A ToolRule represents a tool that can be invoked by the agent. */
+export type LettaChildToolRuleInput = {
+	/** The children tools that can be invoked. */
+	children: Array<string>;
+	/** The name of the tool. Must exist in the database for the user's organization. */
+	tool_name: string;
+	/** Optional list of typed child argument overrides. Each node must reference a child in 'children'. */
+	child_arg_nodes?: Array<{
+		/** The name of the child tool to invoke next. */
+		name: string;
+		/** Optional prefilled arguments for this child tool. Keys must match the tool's parameter names and values must satisfy the tool's JSON schema. Supports partial prefill; non-overlapping parameters are left to the model. */
+		args?: Record<string, LettaJsonValue>;
+	}>;
+	/** Optional template string (ignored). */
+	prompt_template?: string;
+	type?: 'constrain_child_tools';
 };
 
 /** A ToolRule that conditionally maps to different child tools based on the output. */
@@ -832,6 +850,15 @@ export type LettaTerminalToolRuleInput = {
 	type?: 'exit_loop';
 };
 
+export type LettaTextContentInput = {
+	/** The text content of the message. */
+	text: string;
+	/** Stores a unique identifier for any reasoning associated with this text content. */
+	signature?: string;
+	/** The type of the message. */
+	type?: 'text';
+};
+
 /** Response format for plain text responses. */
 export type LettaTextResponseFormatInput = {
 	/** The type of the response format. */
@@ -872,20 +899,7 @@ export type LettaToolReturnInput = {
 	status: 'success' | 'error';
 	tool_call_id: string;
 	/** The tool return value - either a string or list of content parts (text/image) */
-	tool_return:
-		| (
-				| {
-						/** The text content of the message. */
-						text: string;
-						/** Stores a unique identifier for any reasoning associated with this text content. */
-						signature?: string;
-						/** The type of the message. */
-						type?: 'text';
-				  }
-				| LettaImageContentInput
-		  )
-		| LettaImageContentInput
-		| string;
+	tool_return: Array<LettaTextContentInput | LettaImageContentInput> | string;
 	stderr?: Array<string>;
 	stdout?: Array<string>;
 	/** The message type to be created. */
@@ -1541,34 +1555,17 @@ export type LettaAgentState = {
 	/** Deprecated: use `secrets` field instead. */
 	tool_exec_environment_variables?: Array<LettaAgentEnvironmentVariable> | null;
 	/** The list of tool rules. */
-	tool_rules?:
-		| (
-				| {
-						/** The children tools that can be invoked. */
-						children?: Array<string> | null;
-						/** The name of the tool. Must exist in the database for the user's organization. */
-						tool_name?: string | null;
-						/** Optional list of typed child argument overrides. Each node must reference a child in 'children'. */
-						child_arg_nodes?: Array<{
-							/** The name of the child tool to invoke next. */
-							name?: string | null;
-							/** Optional prefilled arguments for this child tool. Keys must match the tool's parameter names and values must satisfy the tool's JSON schema. Supports partial prefill; non-overlapping parameters are left to the model. */
-							args?: Record<string, LettaJsonValue> | null;
-						}> | null;
-						/** Optional template string (ignored). */
-						prompt_template?: string | null;
-						type?: string | null;
-				  }
-				| LettaInitToolRule
-				| LettaTerminalToolRule
-				| LettaConditionalToolRule
-				| LettaContinueToolRule
-				| LettaRequiredBeforeExitToolRule
-				| LettaMaxCountPerStepToolRule
-				| LettaParentToolRule
-				| LettaRequiresApprovalToolRule
-		  )
-		| null;
+	tool_rules?: Array<
+		| LettaChildToolRule
+		| LettaInitToolRule
+		| LettaTerminalToolRule
+		| LettaConditionalToolRule
+		| LettaContinueToolRule
+		| LettaRequiredBeforeExitToolRule
+		| LettaMaxCountPerStepToolRule
+		| LettaParentToolRule
+		| LettaRequiresApprovalToolRule
+	> | null;
 	/** The timestamp when the object was last updated. */
 	updated_at?: string | null;
 };
@@ -1635,21 +1632,7 @@ export type LettaApprovalResponseMessage = {
 	/** The message ID of the approval request */
 	approval_request_id?: string | null;
 	/** The list of approval responses */
-	approvals?:
-		| (
-				| {
-						/** Whether the tool has been approved */
-						approve?: boolean | null;
-						/** The ID of the tool call that corresponds to this approval */
-						tool_call_id?: string | null;
-						/** An optional explanation for the provided approval status */
-						reason?: string | null;
-						/** The message type to be created. */
-						type?: string | null;
-				  }
-				| LettaToolReturn
-		  )
-		| null;
+	approvals?: Array<LettaApprovalReturn | LettaToolReturn> | null;
 	/** Whether the tool has been approved */
 	approve?: boolean | null;
 	is_err?: boolean | null;
@@ -1664,6 +1647,17 @@ export type LettaApprovalResponseMessage = {
 	sender_id?: string | null;
 	seq_id?: number | null;
 	step_id?: string | null;
+};
+
+export type LettaApprovalReturn = {
+	/** Whether the tool has been approved */
+	approve?: boolean | null;
+	/** The ID of the tool call that corresponds to this approval */
+	tool_call_id?: string | null;
+	/** An optional explanation for the provided approval status */
+	reason?: string | null;
+	/** The message type to be created. */
+	type?: string | null;
 };
 
 /** Representation of an archive - a collection of archival passages that can be shared between agents. */
@@ -1829,6 +1823,24 @@ export type LettaBlockResponse = {
 	template_id?: string | null;
 	/** (Deprecated) The name of the block template (if it is a template). */
 	template_name?: string | null;
+};
+
+/** A ToolRule represents a tool that can be invoked by the agent. */
+export type LettaChildToolRule = {
+	/** The children tools that can be invoked. */
+	children?: Array<string> | null;
+	/** The name of the tool. Must exist in the database for the user's organization. */
+	tool_name?: string | null;
+	/** Optional list of typed child argument overrides. Each node must reference a child in 'children'. */
+	child_arg_nodes?: Array<{
+		/** The name of the child tool to invoke next. */
+		name?: string | null;
+		/** Optional prefilled arguments for this child tool. Keys must match the tool's parameter names and values must satisfy the tool's JSON schema. Supports partial prefill; non-overlapping parameters are left to the model. */
+		args?: Record<string, LettaJsonValue> | null;
+	}> | null;
+	/** Optional template string (ignored). */
+	prompt_template?: string | null;
+	type?: string | null;
 };
 
 export type LettaCompactionResponse = {
@@ -2287,79 +2299,48 @@ export type LettaInternalMessage = {
 	/** The id of the approval request if this message is associated with a tool call request. */
 	approval_request_id?: string | null;
 	/** The list of approvals for this message. */
-	approvals?:
-		| (
-				| {
-						/** Whether the tool has been approved */
-						approve?: boolean | null;
-						/** The ID of the tool call that corresponds to this approval */
-						tool_call_id?: string | null;
-						/** An optional explanation for the provided approval status */
-						reason?: string | null;
-						/** The message type to be created. */
-						type?: string | null;
-				  }
-				| {
-						/** The status of the tool call */
-						status?: string | null;
-						/** The function response - either a string or list of content parts (text/image) */
-						func_response?:
-							| (
-									| string
-									| (
-											| {
-													/** The text content of the message. */
-													text?: string | null;
-													/** Stores a unique identifier for any reasoning associated with this text content. */
-													signature?: string | null;
-													/** The type of the message. */
-													type?: string | null;
-											  }
-											| LettaImageContent
-									  )
-									| LettaImageContent
-							  )
-							| null;
-						/** Captured stderr from the tool invocation */
-						stderr?: Array<string> | null;
-						/** Captured stdout (e.g. prints, logs) from the tool invocation */
-						stdout?: Array<string> | null;
-						/** The ID for the tool call */
-						tool_call_id?: LettaJsonValue | null;
-				  }
-		  )
-		| null;
+	approvals?: Array<
+		| LettaApprovalReturn
+		| {
+				/** Whether the tool has been approved */
+				approve?: boolean | null;
+				/** The ID of the tool call that corresponds to this approval */
+				tool_call_id?: string | null;
+				/** An optional explanation for the provided approval status */
+				reason?: string | null;
+				/** The message type to be created. */
+				type?: string | null;
+		  }
+	> | null;
 	/** Whether tool call is approved. */
 	approve?: boolean | null;
 	/** The id of the LLMBatchItem that this message is associated with */
 	batch_item_id?: string | null;
 	/** The content of the message. */
-	content?:
-		| (
-				| Record<string, LettaJsonValue>
-				| LettaImageContent
-				| LettaToolCallContent
-				| LettaToolReturnContent
-				| LettaReasoningContent
-				| LettaRedactedReasoningContent
-				| LettaOmittedReasoningContent
-				| {
-						/** The unique identifier for this reasoning step. */
-						id?: string | null;
-						/** Summaries of the reasoning content. */
-						summary?: Array<{
-							/** The index of the summary part. */
-							index?: number | null;
-							/** The text of the summary part. */
-							text?: string | null;
-						}> | null;
-						/** The encrypted reasoning content. */
-						encrypted_content?: string | null;
-						/** Indicates this is a summarized reasoning step. */
-						type?: string | null;
-				  }
-		  )
-		| null;
+	content?: Array<
+		| LettaTextContent
+		| LettaImageContent
+		| LettaToolCallContent
+		| LettaToolReturnContent
+		| LettaReasoningContent
+		| LettaRedactedReasoningContent
+		| LettaOmittedReasoningContent
+		| {
+				/** The unique identifier for this reasoning step. */
+				id?: string | null;
+				/** Summaries of the reasoning content. */
+				summary?: Array<{
+					/** The index of the summary part. */
+					index?: number | null;
+					/** The text of the summary part. */
+					text?: string | null;
+				}> | null;
+				/** The encrypted reasoning content. */
+				encrypted_content?: string | null;
+				/** Indicates this is a summarized reasoning step. */
+				type?: string | null;
+		  }
+	> | null;
 	/** The conversation this message belongs to */
 	conversation_id?: string | null;
 	/** The timestamp when the object was created. */
@@ -2406,7 +2387,7 @@ export type LettaInternalMessage = {
 		func_response?:
 			| (
 					| string
-					| (Record<string, LettaJsonValue> | LettaImageContent)
+					| Array<LettaTextContent | LettaImageContent>
 					| LettaImageContent
 			  )
 			| null;
@@ -2993,30 +2974,21 @@ export type LettaSummaryMessage = {
 	step_id?: string | null;
 };
 
-/** A message generated by the system. Never streamed back on a response, only used for cursor pagination. Args: id (str): The ID of the message date (datetime): The date the message was created in ISO format name (Optional[str]): The name of the sender of the message content (str): The message… */
-export type LettaSystemMessage = {
-	id?: string | null;
-	/** The message content sent by the system */
-	content?: string | null;
-	date?: string | null;
-	is_err?: boolean | null;
-	/** The type of the message. */
-	message_type?: string | null;
-	name?: string | null;
-	/** The offline threading id (OTID). Set by the client to deduplicate requests. Used for idempotency in background streaming mode — each message in a request must have a unique OTID. Retries of the same request should reuse the same OTIDs. */
-	otid?: string | null;
-	run_id?: string | null;
-	sender_id?: string | null;
-	seq_id?: number | null;
-	step_id?: string | null;
-};
-
 /** Represents a terminal tool rule configuration where if this tool gets called, it must end the agent loop. */
 export type LettaTerminalToolRule = {
 	/** The name of the tool. Must exist in the database for the user's organization. */
 	tool_name?: string | null;
 	/** Optional template string (ignored). */
 	prompt_template?: string | null;
+	type?: string | null;
+};
+
+export type LettaTextContent = {
+	/** The text content of the message. */
+	text?: string | null;
+	/** Stores a unique identifier for any reasoning associated with this text content. */
+	signature?: string | null;
+	/** The type of the message. */
 	type?: string | null;
 };
 
@@ -3148,23 +3120,7 @@ export type LettaToolReturn = {
 	status?: string | null;
 	tool_call_id?: string | null;
 	/** The tool return value - either a string or list of content parts (text/image) */
-	tool_return?:
-		| (
-				| (
-						| {
-								/** The text content of the message. */
-								text?: string | null;
-								/** Stores a unique identifier for any reasoning associated with this text content. */
-								signature?: string | null;
-								/** The type of the message. */
-								type?: string | null;
-						  }
-						| LettaImageContent
-				  )
-				| LettaImageContent
-				| string
-		  )
-		| null;
+	tool_return?: (Array<LettaTextContent | LettaImageContent> | string) | null;
 	stderr?: Array<string> | null;
 	stdout?: Array<string> | null;
 	/** The message type to be created. */
@@ -3202,6 +3158,20 @@ export type LettaToolReturnMessage = {
 	stdout?: Array<string> | null;
 	step_id?: string | null;
 	tool_returns?: Array<LettaToolReturn> | null;
+};
+
+/** Result from a tool search operation. */
+export type LettaToolSearchResult = {
+	/** Combined relevance score (RRF for hybrid mode). */
+	combined_score?: number | null;
+	/** The matched tool. */
+	tool?: LettaTool | null;
+	/** The embedded text content used for matching. */
+	embedded_text?: string | null;
+	/** Full-text search rank position. */
+	fts_rank?: number | null;
+	/** Vector search rank position. */
+	vector_rank?: number | null;
 };
 
 export type LettaToolType = string;
@@ -3253,7 +3223,9 @@ export type LettaOperationInputs = {
 		hostname: string;
 		policy: Array<{
 			id: string;
-			access: 'read_messages' | 'write_messages' | 'read_agent' | 'write_agent';
+			access: Array<
+				'read_messages' | 'write_messages' | 'read_agent' | 'write_agent'
+			>;
 			type: 'agent';
 		}>;
 		/** The expiration date of the token. If not provided, the token will expire in 5 minutes */
@@ -3726,23 +3698,8 @@ export type LettaOperationInputs = {
 		/** The ids of the tools used by the agent. */
 		tool_ids?: Array<string>;
 		/** The tool rules governing the agent. */
-		tool_rules?:
-			| {
-					/** The children tools that can be invoked. */
-					children: Array<string>;
-					/** The name of the tool. Must exist in the database for the user's organization. */
-					tool_name: string;
-					/** Optional list of typed child argument overrides. Each node must reference a child in 'children'. */
-					child_arg_nodes?: Array<{
-						/** The name of the child tool to invoke next. */
-						name: string;
-						/** Optional prefilled arguments for this child tool. Keys must match the tool's parameter names and values must satisfy the tool's JSON schema. Supports partial prefill; non-overlapping parameters are left to the model. */
-						args?: Record<string, LettaJsonValue>;
-					}>;
-					/** Optional template string (ignored). */
-					prompt_template?: string;
-					type?: 'constrain_child_tools';
-			  }
+		tool_rules?: Array<
+			| LettaChildToolRuleInput
 			| LettaInitToolRuleInput
 			| LettaTerminalToolRuleInput
 			| LettaConditionalToolRuleInput
@@ -3750,7 +3707,8 @@ export type LettaOperationInputs = {
 			| LettaRequiredBeforeExitToolRuleInput
 			| LettaMaxCountPerStepToolRuleInput
 			| LettaParentToolRuleInput
-			| LettaRequiresApprovalToolRuleInput;
+			| LettaRequiresApprovalToolRuleInput
+		>;
 		/** The tools used by the agent. */
 		tools?: Array<string>;
 	};
@@ -3832,7 +3790,7 @@ export type LettaOperationInputs = {
 		/** The ID of the agent in the format 'agent-<uuid4>' */
 		agent_id: string;
 		/** Specify which relational fields to include in the response. No relationships are included by default. */
-		include?:
+		include?: Array<
 			| 'agent.blocks'
 			| 'agent.identities'
 			| 'agent.managed_group'
@@ -3840,7 +3798,8 @@ export type LettaOperationInputs = {
 			| 'agent.secrets'
 			| 'agent.sources'
 			| 'agent.tags'
-			| 'agent.tools';
+			| 'agent.tools'
+		>;
 		/** Specify which relational fields (e.g., 'tools', 'sources', 'memory') to include in the response. If not provided, all relationships are loaded by default. Using this can optimize performance by reducing unnecessary joins.This is a legacy parameter, and no longer supported after 1.0.0 SDK versions. */
 		include_relationships?: Array<string>;
 	};
@@ -3889,7 +3848,7 @@ export type LettaOperationInputs = {
 		/** Search agents by identity ID */
 		identity_id?: string;
 		/** Specify which relational fields to include in the response. No relationships are included by default. */
-		include?:
+		include?: Array<
 			| 'agent.blocks'
 			| 'agent.identities'
 			| 'agent.managed_group'
@@ -3897,7 +3856,8 @@ export type LettaOperationInputs = {
 			| 'agent.secrets'
 			| 'agent.sources'
 			| 'agent.tags'
-			| 'agent.tools';
+			| 'agent.tools'
+		>;
 		/** Specify which relational fields (e.g., 'tools', 'sources', 'memory') to include in the response. If not provided, all relationships are loaded by default. Using this can optimize performance by reducing unnecessary joins.This is a legacy parameter, and no longer supported after 1.0.0 SDK versions. */
 		include_relationships?: Array<string>;
 		/** Filter agents by their last stop reason. */
@@ -4137,15 +4097,8 @@ export type LettaOperationInputs = {
 		/** Syntactic sugar for a single user message. Equivalent to messages=[{'role': 'user', 'content': input}]. */
 		input?:
 			| string
-			| (
-					| {
-							/** The text content of the message. */
-							text: string;
-							/** Stores a unique identifier for any reasoning associated with this text content. */
-							signature?: string;
-							/** The type of the message. */
-							type?: 'text';
-					  }
+			| Array<
+					| LettaTextContentInput
 					| LettaImageContentInput
 					| LettaToolCallContentInput
 					| LettaToolReturnContentInput
@@ -4167,13 +4120,15 @@ export type LettaOperationInputs = {
 							/** Indicates this is a summarized reasoning step. */
 							type?: 'summarized_reasoning';
 					  }
-			  )
+			  >
 			| LettaImageContentInput
 			| LettaToolCallContentInput;
 		/** Maximum number of steps the agent should take to process the request. */
 		max_steps?: number;
 		/** The messages to be sent to the agent. */
-		messages?:
+		messages?: Array<
+			| LettaMessageCreateInput
+			| LettaApprovalCreateInput
 			| {
 					/** The content of the message. */
 					content: Array<LettaLettaMessageContentUnionInput> | string;
@@ -4192,34 +4147,7 @@ export type LettaOperationInputs = {
 					/** The message type to be created. */
 					type?: 'message';
 			  }
-			| LettaApprovalCreateInput
-			| {
-					/** The message ID of the approval request */
-					approval_request_id?: string;
-					/** The list of approval responses */
-					approvals?:
-						| {
-								/** Whether the tool has been approved */
-								approve: boolean;
-								/** The ID of the tool call that corresponds to this approval */
-								tool_call_id: string;
-								/** An optional explanation for the provided approval status */
-								reason?: string;
-								/** The message type to be created. */
-								type?: 'approval';
-						  }
-						| LettaToolReturnInput;
-					/** Whether the tool has been approved */
-					approve?: boolean;
-					/** The multi-agent group that the message was sent in */
-					group_id?: string;
-					/** The offline threading id (OTID). Set by the client to deduplicate requests. Used for idempotency in background streaming mode — each message in a request must have a unique OTID. Retries of the same request should reuse the same OTIDs. */
-					otid?: string;
-					/** An optional explanation for the provided approval status */
-					reason?: string;
-					/** The message type to be created. */
-					type?: 'approval';
-			  };
+		>;
 		/** Model handle to use for this request instead of the agent's default model. This allows sending a message to a different model without changing the agent's configuration. */
 		override_model?: string;
 		/** Optional per-request system prompt override. When set, this is passed directly to the underlying LLM request and bypasses the persisted/compiled system message for that request. */
@@ -4273,15 +4201,8 @@ export type LettaOperationInputs = {
 		/** Syntactic sugar for a single user message. Equivalent to messages=[{'role': 'user', 'content': input}]. */
 		input?:
 			| string
-			| (
-					| {
-							/** The text content of the message. */
-							text: string;
-							/** Stores a unique identifier for any reasoning associated with this text content. */
-							signature?: string;
-							/** The type of the message. */
-							type?: 'text';
-					  }
+			| Array<
+					| LettaTextContentInput
 					| LettaImageContentInput
 					| LettaToolCallContentInput
 					| LettaToolReturnContentInput
@@ -4303,13 +4224,15 @@ export type LettaOperationInputs = {
 							/** Indicates this is a summarized reasoning step. */
 							type?: 'summarized_reasoning';
 					  }
-			  )
+			  >
 			| LettaImageContentInput
 			| LettaToolCallContentInput;
 		/** Maximum number of steps the agent should take to process the request. */
 		max_steps?: number;
 		/** The messages to be sent to the agent. */
-		messages?:
+		messages?: Array<
+			| LettaMessageCreateInput
+			| LettaApprovalCreateInput
 			| {
 					/** The content of the message. */
 					content: Array<LettaLettaMessageContentUnionInput> | string;
@@ -4328,34 +4251,7 @@ export type LettaOperationInputs = {
 					/** The message type to be created. */
 					type?: 'message';
 			  }
-			| LettaApprovalCreateInput
-			| {
-					/** The message ID of the approval request */
-					approval_request_id?: string;
-					/** The list of approval responses */
-					approvals?:
-						| {
-								/** Whether the tool has been approved */
-								approve: boolean;
-								/** The ID of the tool call that corresponds to this approval */
-								tool_call_id: string;
-								/** An optional explanation for the provided approval status */
-								reason?: string;
-								/** The message type to be created. */
-								type?: 'approval';
-						  }
-						| LettaToolReturnInput;
-					/** Whether the tool has been approved */
-					approve?: boolean;
-					/** The multi-agent group that the message was sent in */
-					group_id?: string;
-					/** The offline threading id (OTID). Set by the client to deduplicate requests. Used for idempotency in background streaming mode — each message in a request must have a unique OTID. Retries of the same request should reuse the same OTIDs. */
-					otid?: string;
-					/** An optional explanation for the provided approval status */
-					reason?: string;
-					/** The message type to be created. */
-					type?: 'approval';
-			  };
+		>;
 		/** Model handle to use for this request instead of the agent's default model. This allows sending a message to a different model without changing the agent's configuration. */
 		override_model?: string;
 		/** Optional per-request system prompt override. When set, this is passed directly to the underlying LLM request and bypasses the persisted/compiled system message for that request. */
@@ -4441,15 +4337,8 @@ export type LettaOperationInputs = {
 		/** Syntactic sugar for a single user message. Equivalent to messages=[{'role': 'user', 'content': input}]. */
 		input?:
 			| string
-			| (
-					| {
-							/** The text content of the message. */
-							text: string;
-							/** Stores a unique identifier for any reasoning associated with this text content. */
-							signature?: string;
-							/** The type of the message. */
-							type?: 'text';
-					  }
+			| Array<
+					| LettaTextContentInput
 					| LettaImageContentInput
 					| LettaToolCallContentInput
 					| LettaToolReturnContentInput
@@ -4471,13 +4360,15 @@ export type LettaOperationInputs = {
 							/** Indicates this is a summarized reasoning step. */
 							type?: 'summarized_reasoning';
 					  }
-			  )
+			  >
 			| LettaImageContentInput
 			| LettaToolCallContentInput;
 		/** Maximum number of steps the agent should take to process the request. */
 		max_steps?: number;
 		/** The messages to be sent to the agent. */
-		messages?:
+		messages?: Array<
+			| LettaMessageCreateInput
+			| LettaApprovalCreateInput
 			| {
 					/** The content of the message. */
 					content: Array<LettaLettaMessageContentUnionInput> | string;
@@ -4496,34 +4387,7 @@ export type LettaOperationInputs = {
 					/** The message type to be created. */
 					type?: 'message';
 			  }
-			| LettaApprovalCreateInput
-			| {
-					/** The message ID of the approval request */
-					approval_request_id?: string;
-					/** The list of approval responses */
-					approvals?:
-						| {
-								/** Whether the tool has been approved */
-								approve: boolean;
-								/** The ID of the tool call that corresponds to this approval */
-								tool_call_id: string;
-								/** An optional explanation for the provided approval status */
-								reason?: string;
-								/** The message type to be created. */
-								type?: 'approval';
-						  }
-						| LettaToolReturnInput;
-					/** Whether the tool has been approved */
-					approve?: boolean;
-					/** The multi-agent group that the message was sent in */
-					group_id?: string;
-					/** The offline threading id (OTID). Set by the client to deduplicate requests. Used for idempotency in background streaming mode — each message in a request must have a unique OTID. Retries of the same request should reuse the same OTIDs. */
-					otid?: string;
-					/** An optional explanation for the provided approval status */
-					reason?: string;
-					/** The message type to be created. */
-					type?: 'approval';
-			  };
+		>;
 		/** Model handle to use for this request instead of the agent's default model. This allows sending a message to a different model without changing the agent's configuration. */
 		override_model?: string;
 		/** Optional per-request system prompt override. When set, this is passed directly to the underlying LLM request and bypasses the persisted/compiled system message for that request. */
@@ -4598,11 +4462,25 @@ export type LettaOperationInputs = {
 		agent_id: string;
 		messages: Array<{
 			content:
-				| {
-						text: string;
-						signature?: string;
-						type?: 'text';
-				  }
+				| Array<
+						| Array<
+								| {
+										text: string;
+										signature?: string;
+										type?: 'text';
+								  }
+								| {
+										source: {
+											data: string;
+											media_type: string;
+											detail?: string;
+											type?: 'base64';
+										};
+										type: 'image';
+								  }
+						  >
+						| string
+				  >
 				| string;
 			role: 'user' | 'assistant' | 'system';
 			name?: string;
@@ -4610,12 +4488,17 @@ export type LettaOperationInputs = {
 			sender_id?: string;
 			type?: 'message';
 		}>;
-		schedule: {
-			scheduled_at: number;
-			type?: 'one-time';
-		};
+		schedule:
+			| {
+					scheduled_at: number;
+					type?: 'one-time';
+			  }
+			| {
+					cron_expression: string;
+					type: 'recurring';
+			  };
 		callback_url?: string;
-		include_return_message_types?:
+		include_return_message_types?: Array<
 			| 'system_message'
 			| 'user_message'
 			| 'assistant_message'
@@ -4624,7 +4507,8 @@ export type LettaOperationInputs = {
 			| 'tool_call_message'
 			| 'tool_return_message'
 			| 'approval_request_message'
-			| 'approval_response_message';
+			| 'approval_response_message'
+		>;
 		max_steps?: number;
 	};
 	'agents.schedule.delete': {
@@ -5041,23 +4925,8 @@ export type LettaOperationInputs = {
 		/** The ids of the tools used by the agent. */
 		tool_ids?: Array<string>;
 		/** The tool rules governing the agent. */
-		tool_rules?:
-			| {
-					/** The children tools that can be invoked. */
-					children: Array<string>;
-					/** The name of the tool. Must exist in the database for the user's organization. */
-					tool_name: string;
-					/** Optional list of typed child argument overrides. Each node must reference a child in 'children'. */
-					child_arg_nodes?: Array<{
-						/** The name of the child tool to invoke next. */
-						name: string;
-						/** Optional prefilled arguments for this child tool. Keys must match the tool's parameter names and values must satisfy the tool's JSON schema. Supports partial prefill; non-overlapping parameters are left to the model. */
-						args?: Record<string, LettaJsonValue>;
-					}>;
-					/** Optional template string (ignored). */
-					prompt_template?: string;
-					type?: 'constrain_child_tools';
-			  }
+		tool_rules?: Array<
+			| LettaChildToolRuleInput
 			| LettaInitToolRuleInput
 			| LettaTerminalToolRuleInput
 			| LettaConditionalToolRuleInput
@@ -5065,7 +4934,8 @@ export type LettaOperationInputs = {
 			| LettaRequiredBeforeExitToolRuleInput
 			| LettaMaxCountPerStepToolRuleInput
 			| LettaParentToolRuleInput
-			| LettaRequiresApprovalToolRuleInput;
+			| LettaRequiresApprovalToolRuleInput
+		>;
 	};
 	'archives.create': {
 		name: string;
@@ -5146,7 +5016,7 @@ export type LettaOperationInputs = {
 		/** Cursor for pagination (agent ID). Returns results relative to this ID in the specified sort order. Expected format: 'agent-<uuid4>' */
 		before?: string;
 		/** Specify which relational fields to include in the response. No relationships are included by default. */
-		include?:
+		include?: Array<
 			| 'agent.blocks'
 			| 'agent.identities'
 			| 'agent.managed_group'
@@ -5154,7 +5024,8 @@ export type LettaOperationInputs = {
 			| 'agent.secrets'
 			| 'agent.sources'
 			| 'agent.tags'
-			| 'agent.tools';
+			| 'agent.tools'
+		>;
 		/** Specify which relational fields (e.g., 'tools', 'sources', 'memory') to include in the response. If not provided, all relationships are loaded by default. Using this can optimize performance by reducing unnecessary joins.This is a legacy parameter, and no longer supported after 1.0.0 SDK versions. */
 		include_relationships?: Array<string>;
 		/** Maximum number of agents to return */
@@ -5695,15 +5566,8 @@ export type LettaOperationInputs = {
 		/** Syntactic sugar for a single user message. Equivalent to messages=[{'role': 'user', 'content': input}]. */
 		input?:
 			| string
-			| (
-					| {
-							/** The text content of the message. */
-							text: string;
-							/** Stores a unique identifier for any reasoning associated with this text content. */
-							signature?: string;
-							/** The type of the message. */
-							type?: 'text';
-					  }
+			| Array<
+					| LettaTextContentInput
 					| LettaImageContentInput
 					| LettaToolCallContentInput
 					| LettaToolReturnContentInput
@@ -5725,13 +5589,15 @@ export type LettaOperationInputs = {
 							/** Indicates this is a summarized reasoning step. */
 							type?: 'summarized_reasoning';
 					  }
-			  )
+			  >
 			| LettaImageContentInput
 			| LettaToolCallContentInput;
 		/** Maximum number of steps the agent should take to process the request. */
 		max_steps?: number;
 		/** The messages to be sent to the agent. */
-		messages?:
+		messages?: Array<
+			| LettaMessageCreateInput
+			| LettaApprovalCreateInput
 			| {
 					/** The content of the message. */
 					content: Array<LettaLettaMessageContentUnionInput> | string;
@@ -5750,34 +5616,7 @@ export type LettaOperationInputs = {
 					/** The message type to be created. */
 					type?: 'message';
 			  }
-			| LettaApprovalCreateInput
-			| {
-					/** The message ID of the approval request */
-					approval_request_id?: string;
-					/** The list of approval responses */
-					approvals?:
-						| {
-								/** Whether the tool has been approved */
-								approve: boolean;
-								/** The ID of the tool call that corresponds to this approval */
-								tool_call_id: string;
-								/** An optional explanation for the provided approval status */
-								reason?: string;
-								/** The message type to be created. */
-								type?: 'approval';
-						  }
-						| LettaToolReturnInput;
-					/** Whether the tool has been approved */
-					approve?: boolean;
-					/** The multi-agent group that the message was sent in */
-					group_id?: string;
-					/** The offline threading id (OTID). Set by the client to deduplicate requests. Used for idempotency in background streaming mode — each message in a request must have a unique OTID. Retries of the same request should reuse the same OTIDs. */
-					otid?: string;
-					/** An optional explanation for the provided approval status */
-					reason?: string;
-					/** The message type to be created. */
-					type?: 'approval';
-			  };
+		>;
 		/** Model handle to use for this request instead of the agent's default model. This allows sending a message to a different model without changing the agent's configuration. */
 		override_model?: string;
 		/** Optional per-request system prompt override. When set, this is passed directly to the underlying LLM request and bypasses the persisted/compiled system message for that request. */
@@ -6184,17 +6023,44 @@ export type LettaOperationInputs = {
 	};
 	'environments.sendMessage': {
 		connectionId: string;
-		messages: {
-			client_message_id: string;
-			content:
-				| string
-				| Array<{
-						text: string;
-						type: 'text';
-				  }>;
-			role: 'user';
-			otid?: string;
-		};
+		messages: Array<
+			| {
+					client_message_id: string;
+					content:
+						| string
+						| Array<{
+								text: string;
+								type: 'text';
+						  }>;
+					role: 'user';
+					otid?: string;
+			  }
+			| {
+					approvals: Array<
+						| {
+								status: 'success' | 'error';
+								tool_call_id: string;
+								tool_return:
+									| string
+									| Array<{
+											text: string;
+											type: 'text';
+									  }>;
+								stderr?: Array<string>;
+								stdout?: Array<string>;
+								type?: 'tool';
+						  }
+						| {
+								approve: boolean;
+								tool_call_id: string;
+								reason?: string;
+								type?: 'approval';
+								updated_input?: Record<string, LettaJsonValue>;
+						  }
+					>;
+					type: 'approval';
+			  }
+		>;
 		agentId?: string;
 		conversationId?: string;
 	};
@@ -6772,7 +6638,7 @@ export type LettaOperationOutputs = {
 		policy?: {
 			data?: Array<{
 				id?: string | null;
-				access?: string | null;
+				access?: Array<string> | null;
 				type?: string | null;
 			}> | null;
 			version?: string | null;
@@ -6793,7 +6659,7 @@ export type LettaOperationOutputs = {
 					policy?: {
 						data?: Array<{
 							id?: string | null;
-							access?: string | null;
+							access?: Array<string> | null;
 							type?: string | null;
 						}> | null;
 						version?: string | null;
@@ -6809,7 +6675,7 @@ export type LettaOperationOutputs = {
 					policy?: {
 						data?: Array<{
 							id?: string | null;
-							access?: string | null;
+							access?: Array<string> | null;
 							type?: string | null;
 						}> | null;
 						version?: string | null;
@@ -7530,34 +7396,17 @@ export type LettaOperationOutputs = {
 		/** Deprecated: use `secrets` field instead. */
 		tool_exec_environment_variables?: Array<LettaAgentEnvironmentVariable> | null;
 		/** The list of tool rules. */
-		tool_rules?:
-			| (
-					| {
-							/** The children tools that can be invoked. */
-							children?: Array<string> | null;
-							/** The name of the tool. Must exist in the database for the user's organization. */
-							tool_name?: string | null;
-							/** Optional list of typed child argument overrides. Each node must reference a child in 'children'. */
-							child_arg_nodes?: Array<{
-								/** The name of the child tool to invoke next. */
-								name?: string | null;
-								/** Optional prefilled arguments for this child tool. Keys must match the tool's parameter names and values must satisfy the tool's JSON schema. Supports partial prefill; non-overlapping parameters are left to the model. */
-								args?: Record<string, LettaJsonValue> | null;
-							}> | null;
-							/** Optional template string (ignored). */
-							prompt_template?: string | null;
-							type?: string | null;
-					  }
-					| LettaInitToolRule
-					| LettaTerminalToolRule
-					| LettaConditionalToolRule
-					| LettaContinueToolRule
-					| LettaRequiredBeforeExitToolRule
-					| LettaMaxCountPerStepToolRule
-					| LettaParentToolRule
-					| LettaRequiresApprovalToolRule
-			  )
-			| null;
+		tool_rules?: Array<
+			| LettaChildToolRule
+			| LettaInitToolRule
+			| LettaTerminalToolRule
+			| LettaConditionalToolRule
+			| LettaContinueToolRule
+			| LettaRequiredBeforeExitToolRule
+			| LettaMaxCountPerStepToolRule
+			| LettaParentToolRule
+			| LettaRequiresApprovalToolRule
+		> | null;
 		/** The timestamp when the object was last updated. */
 		updated_at?: string | null;
 	}>;
@@ -7569,46 +7418,15 @@ export type LettaOperationOutputs = {
 	'agents.messages.compact': LettaCompactionResponse;
 	'agents.messages.create': LettaLettaResponse;
 	'agents.messages.createAsync': LettaRun;
-	'agents.messages.list': Array<LettaSystemMessage>;
-	'agents.messages.reset': LettaAgentState;
+	'agents.messages.list': Array<LettaMessage>;
+	'agents.messages.reset': LettaAgentState | null;
 	'agents.messages.stream': {
 		/** The response body as text. */
 		text: string;
 		/** The content type Letta answered with. */
 		contentType: string | null;
 	};
-	'agents.passages.create': {
-		/** The embedding of the passage. */
-		embedding?: Array<number> | null;
-		/** Configuration for embedding model connection and processing parameters. */
-		embedding_config?: LettaEmbeddingConfig | null;
-		/** The text of the passage. */
-		text?: string | null;
-		/** The human-friendly ID of the Passage */
-		id?: string | null;
-		/** The unique identifier of the archive containing this passage. */
-		archive_id?: string | null;
-		/** The creation date of the passage. */
-		created_at?: string | null;
-		/** The id of the user that made this object. */
-		created_by_id?: string | null;
-		/** The unique identifier of the file associated with the passage. */
-		file_id?: string | null;
-		/** The name of the file (only for source passages). */
-		file_name?: string | null;
-		/** Whether this passage is deleted or not. */
-		is_deleted?: boolean | null;
-		/** The id of the user that made this object. */
-		last_updated_by_id?: string | null;
-		/** The metadata of the passage. */
-		metadata?: Record<string, LettaJsonValue> | null;
-		/** Deprecated: Use `folder_id` field instead. The data source of the passage. */
-		source_id?: string | null;
-		/** Tags associated with this passage. */
-		tags?: Array<string> | null;
-		/** The timestamp when the object was last updated. */
-		updated_at?: string | null;
-	};
+	'agents.passages.create': Array<LettaPassage>;
 	'agents.passages.delete':
 		| LettaJsonValue
 		| {
@@ -7713,11 +7531,25 @@ export type LettaOperationOutputs = {
 			messages?: Array<{
 				content?:
 					| (
-							| {
-									text?: string | null;
-									signature?: string | null;
-									type?: string | null;
-							  }
+							| Array<
+									| Array<
+											| {
+													text?: string | null;
+													signature?: string | null;
+													type?: string | null;
+											  }
+											| {
+													source?: {
+														data?: string | null;
+														media_type?: string | null;
+														detail?: string | null;
+														type?: string | null;
+													} | null;
+													type?: string | null;
+											  }
+									  >
+									| string
+							  >
 							| string
 					  )
 					| null;
@@ -7728,14 +7560,22 @@ export type LettaOperationOutputs = {
 				type?: string | null;
 			}> | null;
 			callback_url?: string | null;
-			include_return_message_types?: string | null;
+			include_return_message_types?: Array<string> | null;
 			max_steps?: number | null;
 		} | null;
 		next_scheduled_time?: string | null;
-		schedule?: {
-			scheduled_at?: number | null;
-			type?: string | null;
-		} | null;
+		schedule?:
+			| (
+					| {
+							scheduled_at?: number | null;
+							type?: string | null;
+					  }
+					| {
+							cron_expression?: string | null;
+							type?: string | null;
+					  }
+			  )
+			| null;
 	};
 	'agents.schedule.list':
 		| Array<{
@@ -7747,11 +7587,25 @@ export type LettaOperationOutputs = {
 						messages?: Array<{
 							content?:
 								| (
-										| {
-												text?: string | null;
-												signature?: string | null;
-												type?: string | null;
-										  }
+										| Array<
+												| Array<
+														| {
+																text?: string | null;
+																signature?: string | null;
+																type?: string | null;
+														  }
+														| {
+																source?: {
+																	data?: string | null;
+																	media_type?: string | null;
+																	detail?: string | null;
+																	type?: string | null;
+																} | null;
+																type?: string | null;
+														  }
+												  >
+												| string
+										  >
 										| string
 								  )
 								| null;
@@ -7762,14 +7616,22 @@ export type LettaOperationOutputs = {
 							type?: string | null;
 						}> | null;
 						callback_url?: string | null;
-						include_return_message_types?: string | null;
+						include_return_message_types?: Array<string> | null;
 						max_steps?: number | null;
 					} | null;
 					next_scheduled_time?: string | null;
-					schedule?: {
-						scheduled_at?: number | null;
-						type?: string | null;
-					} | null;
+					schedule?:
+						| (
+								| {
+										scheduled_at?: number | null;
+										type?: string | null;
+								  }
+								| {
+										cron_expression?: string | null;
+										type?: string | null;
+								  }
+						  )
+						| null;
 				}> | null;
 		  }>
 		| {
@@ -7781,11 +7643,25 @@ export type LettaOperationOutputs = {
 						messages?: Array<{
 							content?:
 								| (
-										| {
-												text?: string | null;
-												signature?: string | null;
-												type?: string | null;
-										  }
+										| Array<
+												| Array<
+														| {
+																text?: string | null;
+																signature?: string | null;
+																type?: string | null;
+														  }
+														| {
+																source?: {
+																	data?: string | null;
+																	media_type?: string | null;
+																	detail?: string | null;
+																	type?: string | null;
+																} | null;
+																type?: string | null;
+														  }
+												  >
+												| string
+										  >
 										| string
 								  )
 								| null;
@@ -7796,14 +7672,22 @@ export type LettaOperationOutputs = {
 							type?: string | null;
 						}> | null;
 						callback_url?: string | null;
-						include_return_message_types?: string | null;
+						include_return_message_types?: Array<string> | null;
 						max_steps?: number | null;
 					} | null;
 					next_scheduled_time?: string | null;
-					schedule?: {
-						scheduled_at?: number | null;
-						type?: string | null;
-					} | null;
+					schedule?:
+						| (
+								| {
+										scheduled_at?: number | null;
+										type?: string | null;
+								  }
+								| {
+										cron_expression?: string | null;
+										type?: string | null;
+								  }
+						  )
+						| null;
 				}> | null;
 		  };
 	'agents.tools.attach': LettaAgentState;
@@ -7878,7 +7762,7 @@ export type LettaOperationOutputs = {
 		/** The vector database provider used for this archive's passages */
 		vector_db_provider?: LettaVectorDBProvider | null;
 	}>;
-	'archives.passages.create': LettaPassage;
+	'archives.passages.create': LettaPassage | Array<LettaPassage>;
 	'archives.passages.createMany': {
 		/** The embedding of the passage. */
 		embedding?: Array<number> | null;
@@ -8477,34 +8361,17 @@ export type LettaOperationOutputs = {
 		/** Deprecated: use `secrets` field instead. */
 		tool_exec_environment_variables?: Array<LettaAgentEnvironmentVariable> | null;
 		/** The list of tool rules. */
-		tool_rules?:
-			| (
-					| {
-							/** The children tools that can be invoked. */
-							children?: Array<string> | null;
-							/** The name of the tool. Must exist in the database for the user's organization. */
-							tool_name?: string | null;
-							/** Optional list of typed child argument overrides. Each node must reference a child in 'children'. */
-							child_arg_nodes?: Array<{
-								/** The name of the child tool to invoke next. */
-								name?: string | null;
-								/** Optional prefilled arguments for this child tool. Keys must match the tool's parameter names and values must satisfy the tool's JSON schema. Supports partial prefill; non-overlapping parameters are left to the model. */
-								args?: Record<string, LettaJsonValue> | null;
-							}> | null;
-							/** Optional template string (ignored). */
-							prompt_template?: string | null;
-							type?: string | null;
-					  }
-					| LettaInitToolRule
-					| LettaTerminalToolRule
-					| LettaConditionalToolRule
-					| LettaContinueToolRule
-					| LettaRequiredBeforeExitToolRule
-					| LettaMaxCountPerStepToolRule
-					| LettaParentToolRule
-					| LettaRequiresApprovalToolRule
-			  )
-			| null;
+		tool_rules?: Array<
+			| LettaChildToolRule
+			| LettaInitToolRule
+			| LettaTerminalToolRule
+			| LettaConditionalToolRule
+			| LettaContinueToolRule
+			| LettaRequiredBeforeExitToolRule
+			| LettaMaxCountPerStepToolRule
+			| LettaParentToolRule
+			| LettaRequiresApprovalToolRule
+		> | null;
 		/** The timestamp when the object was last updated. */
 		updated_at?: string | null;
 	}>;
@@ -8953,8 +8820,8 @@ export type LettaOperationOutputs = {
 				updated_at?: string | null;
 		  };
 	'conversations.messages.compact': LettaCompactionResponse;
-	'conversations.messages.create': LettaLettaResponse;
-	'conversations.messages.list': Array<LettaSystemMessage>;
+	'conversations.messages.create': LettaLettaResponse | string;
+	'conversations.messages.list': Array<LettaMessage>;
 	'conversations.messages.stream': {
 		/** The response body as text. */
 		text: string;
@@ -9303,9 +9170,9 @@ export type LettaOperationOutputs = {
 		  };
 	'mcpServers.tools.run': LettaToolExecutionResult;
 	'mcpServers.update': LettaStdioMcpServer;
-	'messages.get': LettaSystemMessage;
-	'messages.list': Array<LettaSystemMessage> | LettaSystemMessage;
-	'messages.search': LettaSystemMessage;
+	'messages.get': Array<LettaMessage>;
+	'messages.list': Array<LettaMessage>;
+	'messages.search': Array<Record<string, LettaJsonValue>>;
 	'models.embeddings.list':
 		| Array<{
 				/** Display name for the model shown in UI */
@@ -9566,7 +9433,7 @@ export type LettaOperationOutputs = {
 		/** Time to first token for a run in nanoseconds */
 		ttft_ns?: number | null;
 	}>;
-	'runs.messages.list': Array<LettaSystemMessage>;
+	'runs.messages.list': Array<LettaMessage>;
 	'runs.messages.stream': {
 		/** The response body as text. */
 		text: string;
@@ -9717,7 +9584,7 @@ export type LettaOperationOutputs = {
 		/** The trace id of the agent step. */
 		trace_id?: string | null;
 	}>;
-	'steps.messages.list': Array<LettaSystemMessage>;
+	'steps.messages.list': Array<LettaMessage>;
 	'steps.metrics.get': {
 		/** The id of the step this metric belongs to (matches steps.id). */
 		id?: string | null;
@@ -9842,18 +9709,7 @@ export type LettaOperationOutputs = {
 		/** The type of the tool. */
 		tool_type?: LettaToolType | null;
 	}>;
-	'tools.search': {
-		/** Combined relevance score (RRF for hybrid mode). */
-		combined_score?: number | null;
-		/** The matched tool. */
-		tool?: LettaTool | null;
-		/** The embedded text content used for matching. */
-		embedded_text?: string | null;
-		/** Full-text search rank position. */
-		fts_rank?: number | null;
-		/** Vector search rank position. */
-		vector_rank?: number | null;
-	};
+	'tools.search': Array<LettaToolSearchResult>;
 	'tools.update': LettaTool;
 	'tools.upsert': LettaTool;
 };

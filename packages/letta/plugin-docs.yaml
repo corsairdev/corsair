@@ -12,6 +12,7 @@ overviewNote: |
   - **Messages run the model.** `agents.messages.create` and `conversations.messages.create` call the agent's model and may run its tools, so they spend tokens and are `destructive`. `agents.messages.createAsync` runs in the background (poll `runs.get`); the streaming routes return the server-sent events as text.
   - **Tools.** `tools.*` manage custom tools, `mcpServers.*` connect MCP servers, and `agents.tools.attach` gives a tool to an agent. `agents.tools.run` and `mcpServers.tools.run` execute a tool directly.
   - **Templates and identities** (`templates.*`, `agents.identities.*`) are Letta Cloud features.
+  - **Routes Letta Cloud didn't serve (11-27).** On a free account, Letta Cloud had no route for `archives.*`, `folders.*`, `templates.*`, `passages.search` and `agents.importFile` (404, "Cannot GET"), though the reference lists them. They are kept as documented; expect a 404 until Letta serves them for your plan. Letta now steers new work to its Agent SDK and App Server; the REST API still answers.
   - **Undocumented returns.** Letta's reference gives no return type for some routes (deletes, attach and detach, file open and close, tags, traces); those return the JSON Letta sends, unchecked, or `{ success: true }` for an empty body.
 examples:
   read:
@@ -24,7 +25,7 @@ examples:
     args: {"agent_id": "agent-3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "input": "What do you remember about me?"}
 apiExamples:
   accessTokens.create:
-    args: {"hostname": "example", "policy": [{"id": "doc_8f2k1x9q", "access": "read_messages", "type": "agent"}]}
+    args: {"hostname": "example", "policy": [{"id": "doc_8f2k1x9q", "access": ["read_messages"], "type": "agent"}]}
   accessTokens.delete:
     args: {"token": "example"}
   accessTokens.list:
@@ -176,7 +177,7 @@ apiExamples:
   environments.list:
     args: {}
   environments.sendMessage:
-    args: {"connectionId": "example", "messages": {"client_message_id": "example", "content": "example", "role": "user"}}
+    args: {"connectionId": "example", "messages": [{"client_message_id": "example", "content": "example", "role": "user"}]}
   folders.agents.list:
     args: {"folder_id": "example"}
   folders.create:

@@ -375,13 +375,13 @@ export const lettaEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Create token (Cloud-only). Create a new client side access token with the specified configuration. Mints a client-side access token.',
+			'Create token (Cloud-only). Create a new client side access token with the specified configuration. Mints a client-side access token (it expires after 5 minutes unless expires_at says otherwise).',
 	},
 	'accessTokens.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete token (Cloud-only). Delete a client side access token. Cannot be undone.',
+			'Delete token (Cloud-only). Delete a client side access token. Letta Cloud refused every delete on 11-27 (400, its own body check fails even with no body); tokens expire on their own. Cannot be undone.',
 	},
 	'accessTokens.list': {
 		riskLevel: 'read',
@@ -390,11 +390,13 @@ export const lettaEndpointMeta = {
 	},
 	'agents.archives.attach': {
 		riskLevel: 'write',
-		description: 'Attach Archive To Agent. Attach an archive to an agent.',
+		description:
+			'Attach Archive To Agent. Attach an archive to an agent. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'agents.archives.detach': {
 		riskLevel: 'write',
-		description: 'Detach Archive From Agent. Detach an archive from an agent.',
+		description:
+			'Detach Archive From Agent. Detach an archive from an agent. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'agents.blocks.attach': {
 		riskLevel: 'write',
@@ -433,40 +435,42 @@ export const lettaEndpointMeta = {
 	'agents.exportFile': {
 		riskLevel: 'read',
 		description:
-			'Export Agent. Export the serialized JSON representation of an agent, formatted with indentation.',
+			'Export Agent. Export the serialized JSON representation of an agent, formatted with indentation. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'agents.files.close': {
 		riskLevel: 'write',
 		description:
-			"Close File For Agent. Closes a specific file for a given agent. This endpoint marks a specific file as closed in the agent's file state. The file will be removed from the agent's working memory view.",
+			"Close File For Agent. Closes a specific file for a given agent. This endpoint marks a specific file as closed in the agent's file state. The file will be removed from the agent's working memory view. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.",
 	},
 	'agents.files.closeAll': {
 		riskLevel: 'write',
 		description:
-			'Close All Files For Agent. Closes all currently open files for a given agent. This endpoint updates the file state for the agent so that no files are marked as open. Typically used to reset the working memory view for the agent.',
+			'Close All Files For Agent. Closes all currently open files for a given agent. This endpoint updates the file state for the agent so that no files are marked as open. Typically used to reset the working memory view for the agent. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'agents.files.list': {
 		riskLevel: 'read',
 		description:
-			'List Files For Agent. Get the files attached to an agent with their open/closed status.',
+			'List Files For Agent. Get the files attached to an agent with their open/closed status. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'agents.files.open': {
 		riskLevel: 'write',
 		description:
-			"Open File For Agent. Opens a specific file for a given agent. This endpoint marks a specific file as open in the agent's file state. The file will be included in the agent's working memory view. Returns a list of file names that were closed due to LRU eviction.",
+			"Open File For Agent. Opens a specific file for a given agent. This endpoint marks a specific file as open in the agent's file state. The file will be included in the agent's working memory view. Returns a list of file names that were closed due to LRU eviction. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.",
 	},
 	'agents.folders.attach': {
 		riskLevel: 'write',
-		description: 'Attach Folder To Agent. Attach a folder to an agent.',
+		description:
+			'Attach Folder To Agent. Attach a folder to an agent. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'agents.folders.detach': {
 		riskLevel: 'write',
-		description: 'Detach Folder From Agent. Detach a folder from an agent.',
+		description:
+			'Detach Folder From Agent. Detach a folder from an agent. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'agents.folders.list': {
 		riskLevel: 'read',
 		description:
-			'List Folders For Agent. Get the folders associated with an agent.',
+			'List Folders For Agent. Get the folders associated with an agent. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'agents.get': {
 		riskLevel: 'read',
@@ -474,17 +478,18 @@ export const lettaEndpointMeta = {
 	},
 	'agents.identities.attach': {
 		riskLevel: 'write',
-		description: 'Attach Identity To Agent. Attach an identity to an agent.',
+		description:
+			'Attach Identity To Agent. Attach an identity to an agent. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'agents.identities.detach': {
 		riskLevel: 'write',
 		description:
-			'Detach Identity From Agent. Detach an identity from an agent.',
+			'Detach Identity From Agent. Detach an identity from an agent. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'agents.importFile': {
 		riskLevel: 'write',
 		description:
-			'Import Agent. Import a serialized agent file and recreate the agent(s) in the system. Returns the IDs of all imported agents.',
+			'Import Agent. Import a serialized agent file and recreate the agent(s) in the system. Returns the IDs of all imported agents. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'agents.list': {
 		riskLevel: 'read',
@@ -511,7 +516,7 @@ export const lettaEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Create Message Async. Asynchronously process a user message and return a run object. The actual processing happens in the background, and the status can be checked using the run ID. This is "asynchronous" in the sense that it\'s a background run and explicitly must be fetched by the run ID. Runs the agent in the background and returns a run to poll with runs.get.',
+			'Create Message Async. Asynchronously process a user message and return a run object. The actual processing happens in the background, and the status can be checked using the run ID. This is "asynchronous" in the sense that it\'s a background run and explicitly must be fetched by the run ID. Runs the agent in the background and returns a run to poll with runs.get. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'agents.messages.list': {
 		riskLevel: 'read',
@@ -598,7 +603,7 @@ export const lettaEndpointMeta = {
 	'agents.tools.updateApproval': {
 		riskLevel: 'write',
 		description:
-			'Update Approval For Tool. Modify the approval requirement for a tool attached to an agent. Accepts requires_approval via request body (preferred) or query parameter (deprecated).',
+			'Update Approval For Tool. Modify the approval requirement for a tool attached to an agent. Accepts requires_approval via request body (preferred) or query parameter (deprecated). Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'agents.update': {
 		riskLevel: 'write',
@@ -607,43 +612,45 @@ export const lettaEndpointMeta = {
 	},
 	'archives.create': {
 		riskLevel: 'write',
-		description: 'Create Archive. Create a new archive. (POST /v1/archives/)',
+		description:
+			'Create Archive. Create a new archive. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'archives.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete Archive. Delete an archive by its ID. Cannot be undone.',
+			'Delete Archive. Delete an archive by its ID. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired. Cannot be undone.',
 	},
 	'archives.get': {
 		riskLevel: 'read',
-		description: 'Retrieve Archive. Get a single archive by its ID.',
+		description:
+			'Retrieve Archive. Get a single archive by its ID. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'archives.list': {
 		riskLevel: 'read',
 		description:
-			'List Archives. Get a list of all archives for the current organization with optional filters and pagination.',
+			'List Archives. Get a list of all archives for the current organization with optional filters and pagination. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'archives.passages.create': {
 		riskLevel: 'write',
 		description:
-			'Create Passage In Archive. Create a new passage in an archive. This adds a passage to the archive and creates embeddings for vector storage.',
+			'Create Passage In Archive. Create a new passage in an archive. This adds a passage to the archive and creates embeddings for vector storage. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'archives.passages.createMany': {
 		riskLevel: 'write',
 		description:
-			'Create Passages In Archive. Create multiple passages in an archive. This adds passages to the archive and creates embeddings for vector storage.',
+			'Create Passages In Archive. Create multiple passages in an archive. This adds passages to the archive and creates embeddings for vector storage. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'archives.passages.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete Passage From Archive. Delete a passage from an archive. This permanently removes the passage from both the database and vector storage (if applicable). Cannot be undone.',
+			'Delete Passage From Archive. Delete a passage from an archive. This permanently removes the passage from both the database and vector storage (if applicable). Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired. Cannot be undone.',
 	},
 	'archives.update': {
 		riskLevel: 'write',
 		description:
-			"Update Archive. Update an existing archive's name and/or description.",
+			"Update Archive. Update an existing archive's name and/or description. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.",
 	},
 	'blocks.agents.list': {
 		riskLevel: 'read',
@@ -716,7 +723,7 @@ export const lettaEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Send Conversation Message. Send a message to a conversation and get a response. This endpoint sends a message to an existing conversation. By default (streaming=true), returns a streaming response (Server-Sent Events). Set streaming=false to get a complete JSON response. Runs the agent in this conversation: it calls its model and may run tools.',
+			'Send Conversation Message. Send a message to a conversation and get a response. This endpoint sends a message to an existing conversation. By default (streaming=true), returns a streaming response (Server-Sent Events). Set streaming=false to get a complete JSON response. Runs the agent in this conversation: it calls its model and may run tools. Letta streams by default here: the answer is the server-sent event text as a string unless you pass streaming: false.',
 	},
 	'conversations.messages.list': {
 		riskLevel: 'read',
@@ -756,49 +763,54 @@ export const lettaEndpointMeta = {
 	'folders.agents.list': {
 		riskLevel: 'read',
 		description:
-			'List Agents For Folder. Get all agent IDs that have the specified folder attached.',
+			'List Agents For Folder. Get all agent IDs that have the specified folder attached. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'folders.create': {
 		riskLevel: 'write',
-		description: 'Create Folder. Create a new data folder.',
+		description:
+			'Create Folder. Create a new data folder. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'folders.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete Folder. Delete a data folder. Cannot be undone.',
+		description:
+			'Delete Folder. Delete a data folder. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired. Cannot be undone.',
 	},
 	'folders.files.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete File From Folder. Delete a file from a folder. Cannot be undone.',
+			'Delete File From Folder. Delete a file from a folder. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired. Cannot be undone.',
 	},
 	'folders.files.get': {
 		riskLevel: 'read',
-		description: 'Retrieve File. Retrieve a file from a folder by ID.',
+		description:
+			'Retrieve File. Retrieve a file from a folder by ID. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'folders.files.list': {
 		riskLevel: 'read',
 		description:
-			'List Files For Folder. List paginated files associated with a data folder.',
+			'List Files For Folder. List paginated files associated with a data folder. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'folders.files.upload': {
 		riskLevel: 'write',
-		description: 'Upload File To Folder. Upload a file to a data folder.',
+		description:
+			'Upload File To Folder. Upload a file to a data folder. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'folders.get': {
 		riskLevel: 'read',
 		description:
-			'Retrieve Folder. Get a folder by ID. (GET /v1/folders/{folder_id})',
+			'Retrieve Folder. Get a folder by ID. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'folders.list': {
 		riskLevel: 'read',
-		description: 'List Folders. List all data folders created by a user.',
+		description:
+			'List Folders. List all data folders created by a user. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'folders.update': {
 		riskLevel: 'write',
 		description:
-			'Update Folder. Update the name or documentation of an existing data folder.',
+			'Update Folder. Update the name or documentation of an existing data folder. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'mcpServers.create': {
 		riskLevel: 'write',
@@ -871,7 +883,7 @@ export const lettaEndpointMeta = {
 	'passages.search': {
 		riskLevel: 'read',
 		description:
-			'Search Passages. Search passages across the organization with optional agent and archive filtering. Returns passages with relevance scores.',
+			'Search Passages. Search passages across the organization with optional agent and archive filtering. Returns passages with relevance scores. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'runs.get': {
 		riskLevel: 'read',
@@ -895,12 +907,12 @@ export const lettaEndpointMeta = {
 	'runs.steps.list': {
 		riskLevel: 'read',
 		description:
-			'List Steps For Run. Get steps associated with a run with filtering options.',
+			'List Steps For Run. Get steps associated with a run with filtering options. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'runs.trace.get': {
 		riskLevel: 'read',
 		description:
-			'Retrieve Trace For Run. Retrieve OTEL trace spans for a run. Returns a filtered set of spans relevant for observability: - agent_step: Individual agent reasoning steps - tool executions: Tool call spans - Root span: The top-level request span - time_to_first_token: TTFT measurement span Requires ClickHouse to be…',
+			'Retrieve Trace For Run. Retrieve OTEL trace spans for a run. Returns a filtered set of spans relevant for observability: - agent_step: Individual agent reasoning steps - tool executions: Tool call spans - Root span: The top-level request span - time_to_first_token: TTFT measurement span Requires ClickHouse to be… Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'runs.usage.get': {
 		riskLevel: 'read',
@@ -908,28 +920,33 @@ export const lettaEndpointMeta = {
 	},
 	'steps.feedback.create': {
 		riskLevel: 'write',
-		description: 'Modify Feedback For Step. Modify feedback for a given step.',
+		description:
+			'Modify Feedback For Step. Modify feedback for a given step. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'steps.get': {
 		riskLevel: 'read',
-		description: 'Retrieve Step. Get a step by ID. (GET /v1/steps/{step_id})',
+		description:
+			'Retrieve Step. Get a step by ID. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'steps.list': {
 		riskLevel: 'read',
 		description:
-			'List Steps. List steps with optional pagination and date filters.',
+			'List Steps. List steps with optional pagination and date filters. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'steps.messages.list': {
 		riskLevel: 'read',
-		description: 'List Messages For Step. List messages for a given step.',
+		description:
+			'List Messages For Step. List messages for a given step. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'steps.metrics.get': {
 		riskLevel: 'read',
-		description: 'Retrieve Metrics For Step. Get step metrics by step ID.',
+		description:
+			'Retrieve Metrics For Step. Get step metrics by step ID. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'steps.trace.get': {
 		riskLevel: 'read',
-		description: 'Retrieve Trace For Step. (GET /v1/steps/{step_id}/trace)',
+		description:
+			'Retrieve Trace For Step. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'tags.list': {
 		riskLevel: 'read',
@@ -939,34 +956,34 @@ export const lettaEndpointMeta = {
 	'templates.agents.create': {
 		riskLevel: 'write',
 		description:
-			'Create Agents From Template. Creates an Agent or multiple Agents from a template.',
+			'Create Agents From Template. Creates an Agent or multiple Agents from a template. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'templates.create': {
 		riskLevel: 'write',
 		description:
-			'Create template (Cloud-only). Creates a new template from an existing agent or agent file.',
+			'Create template (Cloud-only). Creates a new template from an existing agent or agent file. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'templates.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Delete template (Cloud-only). Deletes all versions of a template with the specified name. Cannot be undone.',
+			'Delete template (Cloud-only). Deletes all versions of a template with the specified name. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired. Cannot be undone.',
 	},
 	'templates.rollback': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Rollback template to previous version (Cloud-only). Rollback the current working version of a template to a previous saved version. If the current version has unsaved changes, they will be automatically saved as a new version before rollback.',
+			'Rollback template to previous version (Cloud-only). Rollback the current working version of a template to a previous saved version. If the current version has unsaved changes, they will be automatically saved as a new version before rollback. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'templates.save': {
 		riskLevel: 'write',
 		description:
-			'Save template version (Cloud-only). Saves the current version of the template as a new version.',
+			'Save template version (Cloud-only). Saves the current version of the template as a new version. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'templates.update': {
 		riskLevel: 'write',
 		description:
-			'Update current template from agent file (Cloud-only). Updates the current working version of a template from an agent file.',
+			'Update current template from agent file (Cloud-only). Updates the current working version of a template from an agent file. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired.',
 	},
 	'tools.create': {
 		riskLevel: 'write',

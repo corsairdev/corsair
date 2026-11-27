@@ -26,20 +26,15 @@
                   "type": "string"
                 },
                 "access": {
-                  "anyOf": [
-                    {
-                      "enum": ["read_messages"]
-                    },
-                    {
-                      "enum": ["write_messages"]
-                    },
-                    {
-                      "enum": ["read_agent"]
-                    },
-                    {
-                      "enum": ["write_agent"]
-                    }
-                  ]
+                  "type": "array",
+                  "items": {
+                    "enum": [
+                      "read_messages",
+                      "write_messages",
+                      "read_agent",
+                      "write_agent"
+                    ]
+                  }
                 },
                 "type": {
                   "enum": ["agent"]
@@ -79,20 +74,15 @@
                       "type": "string"
                     },
                     "access": {
-                      "anyOf": [
-                        {
-                          "enum": ["read_messages"]
-                        },
-                        {
-                          "enum": ["write_messages"]
-                        },
-                        {
-                          "enum": ["read_agent"]
-                        },
-                        {
-                          "enum": ["write_agent"]
-                        }
-                      ]
+                      "type": "array",
+                      "items": {
+                        "enum": [
+                          "read_messages",
+                          "write_messages",
+                          "read_agent",
+                          "write_agent"
+                        ]
+                      }
                     },
                     "type": {
                       "enum": ["agent"]
@@ -197,20 +187,15 @@
                                   "type": "string"
                                 },
                                 "access": {
-                                  "anyOf": [
-                                    {
-                                      "enum": ["read_messages"]
-                                    },
-                                    {
-                                      "enum": ["write_messages"]
-                                    },
-                                    {
-                                      "enum": ["read_agent"]
-                                    },
-                                    {
-                                      "enum": ["write_agent"]
-                                    }
-                                  ]
+                                  "type": "array",
+                                  "items": {
+                                    "enum": [
+                                      "read_messages",
+                                      "write_messages",
+                                      "read_agent",
+                                      "write_agent"
+                                    ]
+                                  }
                                 },
                                 "type": {
                                   "enum": ["agent"]
@@ -265,20 +250,15 @@
                                 "type": "string"
                               },
                               "access": {
-                                "anyOf": [
-                                  {
-                                    "enum": ["read_messages"]
-                                  },
-                                  {
-                                    "enum": ["write_messages"]
-                                  },
-                                  {
-                                    "enum": ["read_agent"]
-                                  },
-                                  {
-                                    "enum": ["write_agent"]
-                                  }
-                                ]
+                                "type": "array",
+                                "items": {
+                                  "enum": [
+                                    "read_messages",
+                                    "write_messages",
+                                    "read_agent",
+                                    "write_agent"
+                                  ]
+                                }
                               },
                               "type": {
                                 "enum": ["agent"]
@@ -1532,75 +1512,38 @@
             "description": "The ids of the tools used by the agent."
           },
           "tool_rules": {
-            "anyOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "children": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "The children tools that can be invoked."
-                  },
-                  "tool_name": {
-                    "type": "string",
-                    "description": "The name of the tool. Must exist in the database for the user's organization."
-                  },
-                  "child_arg_nodes": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string",
-                          "description": "The name of the child tool to invoke next."
-                        },
-                        "args": {
-                          "type": "object",
-                          "additionalProperties": true,
-                          "description": "Optional prefilled arguments for this child tool. Keys must match the tool's parameter names and values must satisfy the tool's JSON schema. Supports partial prefill; non-overlapping parameters are left to the model."
-                        }
-                      },
-                      "required": ["name"]
-                    },
-                    "description": "Optional list of typed child argument overrides. Each node must reference a child in 'children'."
-                  },
-                  "prompt_template": {
-                    "type": "string",
-                    "description": "Optional template string (ignored)."
-                  },
-                  "type": {
-                    "enum": ["constrain_child_tools"]
-                  }
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "ChildToolRule"
                 },
-                "required": ["children", "tool_name"]
-              },
-              {
-                "$ref": "InitToolRule"
-              },
-              {
-                "$ref": "TerminalToolRule"
-              },
-              {
-                "$ref": "ConditionalToolRule"
-              },
-              {
-                "$ref": "ContinueToolRule"
-              },
-              {
-                "$ref": "RequiredBeforeExitToolRule"
-              },
-              {
-                "$ref": "MaxCountPerStepToolRule"
-              },
-              {
-                "$ref": "ParentToolRule"
-              },
-              {
-                "$ref": "RequiresApprovalToolRule"
-              }
-            ],
+                {
+                  "$ref": "InitToolRule"
+                },
+                {
+                  "$ref": "TerminalToolRule"
+                },
+                {
+                  "$ref": "ConditionalToolRule"
+                },
+                {
+                  "$ref": "ContinueToolRule"
+                },
+                {
+                  "$ref": "RequiredBeforeExitToolRule"
+                },
+                {
+                  "$ref": "MaxCountPerStepToolRule"
+                },
+                {
+                  "$ref": "ParentToolRule"
+                },
+                {
+                  "$ref": "RequiresApprovalToolRule"
+                }
+              ]
+            },
             "description": "The tool rules governing the agent."
           },
           "tools": {
@@ -2066,32 +2009,19 @@
             "x-corsair-in": "path"
           },
           "include": {
-            "anyOf": [
-              {
-                "enum": ["agent.blocks"]
-              },
-              {
-                "enum": ["agent.identities"]
-              },
-              {
-                "enum": ["agent.managed_group"]
-              },
-              {
-                "enum": ["agent.pending_approval"]
-              },
-              {
-                "enum": ["agent.secrets"]
-              },
-              {
-                "enum": ["agent.sources"]
-              },
-              {
-                "enum": ["agent.tags"]
-              },
-              {
-                "enum": ["agent.tools"]
-              }
-            ],
+            "type": "array",
+            "items": {
+              "enum": [
+                "agent.blocks",
+                "agent.identities",
+                "agent.managed_group",
+                "agent.pending_approval",
+                "agent.secrets",
+                "agent.sources",
+                "agent.tags",
+                "agent.tools"
+              ]
+            },
             "description": "Specify which relational fields to include in the response. No relationships are included by default.",
             "x-corsair-in": "query"
           },
@@ -2279,32 +2209,19 @@
             "x-corsair-in": "query"
           },
           "include": {
-            "anyOf": [
-              {
-                "enum": ["agent.blocks"]
-              },
-              {
-                "enum": ["agent.identities"]
-              },
-              {
-                "enum": ["agent.managed_group"]
-              },
-              {
-                "enum": ["agent.pending_approval"]
-              },
-              {
-                "enum": ["agent.secrets"]
-              },
-              {
-                "enum": ["agent.sources"]
-              },
-              {
-                "enum": ["agent.tags"]
-              },
-              {
-                "enum": ["agent.tools"]
-              }
-            ],
+            "type": "array",
+            "items": {
+              "enum": [
+                "agent.blocks",
+                "agent.identities",
+                "agent.managed_group",
+                "agent.pending_approval",
+                "agent.secrets",
+                "agent.sources",
+                "agent.tags",
+                "agent.tools"
+              ]
+            },
             "description": "Specify which relational fields to include in the response. No relationships are included by default.",
             "x-corsair-in": "query"
           },
@@ -3646,75 +3563,38 @@
               "description": "Deprecated: use `secrets` field instead."
             },
             "tool_rules": {
-              "anyOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "children": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "description": "The children tools that can be invoked."
-                    },
-                    "tool_name": {
-                      "type": "string",
-                      "description": "The name of the tool. Must exist in the database for the user's organization."
-                    },
-                    "child_arg_nodes": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "name": {
-                            "type": "string",
-                            "description": "The name of the child tool to invoke next."
-                          },
-                          "args": {
-                            "type": "object",
-                            "additionalProperties": true,
-                            "description": "Optional prefilled arguments for this child tool. Keys must match the tool's parameter names and values must satisfy the tool's JSON schema. Supports partial prefill; non-overlapping parameters are left to the model."
-                          }
-                        },
-                        "required": ["name"]
-                      },
-                      "description": "Optional list of typed child argument overrides. Each node must reference a child in 'children'."
-                    },
-                    "prompt_template": {
-                      "type": "string",
-                      "description": "Optional template string (ignored)."
-                    },
-                    "type": {
-                      "enum": ["constrain_child_tools"]
-                    }
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "ChildToolRule"
                   },
-                  "required": ["children", "tool_name"]
-                },
-                {
-                  "$ref": "InitToolRule"
-                },
-                {
-                  "$ref": "TerminalToolRule"
-                },
-                {
-                  "$ref": "ConditionalToolRule"
-                },
-                {
-                  "$ref": "ContinueToolRule"
-                },
-                {
-                  "$ref": "RequiredBeforeExitToolRule"
-                },
-                {
-                  "$ref": "MaxCountPerStepToolRule"
-                },
-                {
-                  "$ref": "ParentToolRule"
-                },
-                {
-                  "$ref": "RequiresApprovalToolRule"
-                }
-              ],
+                  {
+                    "$ref": "InitToolRule"
+                  },
+                  {
+                    "$ref": "TerminalToolRule"
+                  },
+                  {
+                    "$ref": "ConditionalToolRule"
+                  },
+                  {
+                    "$ref": "ContinueToolRule"
+                  },
+                  {
+                    "$ref": "RequiredBeforeExitToolRule"
+                  },
+                  {
+                    "$ref": "MaxCountPerStepToolRule"
+                  },
+                  {
+                    "$ref": "ParentToolRule"
+                  },
+                  {
+                    "$ref": "RequiresApprovalToolRule"
+                  }
+                ]
+              },
               "description": "The list of tool rules."
             },
             "updated_at": {
@@ -4249,80 +4129,68 @@
                 "type": "string"
               },
               {
-                "anyOf": [
-                  {
-                    "type": "object",
-                    "properties": {
-                      "text": {
-                        "type": "string",
-                        "description": "The text content of the message."
-                      },
-                      "signature": {
-                        "type": "string",
-                        "description": "Stores a unique identifier for any reasoning associated with this text content."
-                      },
-                      "type": {
-                        "enum": ["text"],
-                        "description": "The type of the message."
-                      }
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "$ref": "TextContent"
                     },
-                    "required": ["text"]
-                  },
-                  {
-                    "$ref": "ImageContent"
-                  },
-                  {
-                    "$ref": "ToolCallContent"
-                  },
-                  {
-                    "$ref": "ToolReturnContent"
-                  },
-                  {
-                    "$ref": "ReasoningContent"
-                  },
-                  {
-                    "$ref": "RedactedReasoningContent"
-                  },
-                  {
-                    "$ref": "OmittedReasoningContent"
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "description": "The unique identifier for this reasoning step."
-                      },
-                      "summary": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "index": {
-                              "type": "number",
-                              "description": "The index of the summary part."
-                            },
-                            "text": {
-                              "type": "string",
-                              "description": "The text of the summary part."
-                            }
-                          },
-                          "required": ["index", "text"]
+                    {
+                      "$ref": "ImageContent"
+                    },
+                    {
+                      "$ref": "ToolCallContent"
+                    },
+                    {
+                      "$ref": "ToolReturnContent"
+                    },
+                    {
+                      "$ref": "ReasoningContent"
+                    },
+                    {
+                      "$ref": "RedactedReasoningContent"
+                    },
+                    {
+                      "$ref": "OmittedReasoningContent"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "The unique identifier for this reasoning step."
                         },
-                        "description": "Summaries of the reasoning content."
+                        "summary": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "index": {
+                                "type": "number",
+                                "description": "The index of the summary part."
+                              },
+                              "text": {
+                                "type": "string",
+                                "description": "The text of the summary part."
+                              }
+                            },
+                            "required": ["index", "text"]
+                          },
+                          "description": "Summaries of the reasoning content."
+                        },
+                        "encrypted_content": {
+                          "type": "string",
+                          "description": "The encrypted reasoning content."
+                        },
+                        "type": {
+                          "enum": ["summarized_reasoning"],
+                          "description": "Indicates this is a summarized reasoning step."
+                        }
                       },
-                      "encrypted_content": {
-                        "type": "string",
-                        "description": "The encrypted reasoning content."
-                      },
-                      "type": {
-                        "enum": ["summarized_reasoning"],
-                        "description": "Indicates this is a summarized reasoning step."
-                      }
-                    },
-                    "required": ["id", "summary"]
-                  }
-                ]
+                      "required": ["id", "summary"]
+                    }
+                  ]
+                }
               },
               {
                 "$ref": "ImageContent"
@@ -4338,118 +4206,65 @@
             "description": "Maximum number of steps the agent should take to process the request."
           },
           "messages": {
-            "anyOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "content": {
-                    "anyOf": [
-                      {
-                        "type": "array",
-                        "items": {
-                          "$ref": "LettaMessageContentUnion"
-                        }
-                      },
-                      {
-                        "type": "string"
-                      }
-                    ],
-                    "description": "The content of the message."
-                  },
-                  "role": {
-                    "enum": ["user", "system", "assistant"],
-                    "description": "The role of the participant."
-                  },
-                  "batch_item_id": {
-                    "type": "string",
-                    "description": "The id of the LLMBatchItem that this message is associated with"
-                  },
-                  "group_id": {
-                    "type": "string",
-                    "description": "The multi-agent group that the message was sent in"
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "The name of the participant."
-                  },
-                  "otid": {
-                    "type": "string",
-                    "description": "The offline threading id (OTID). Set by the client to deduplicate requests. Used for idempotency in background streaming mode — each message in a request must have a unique OTID. Retries of the same request should reuse the same OTIDs."
-                  },
-                  "sender_id": {
-                    "type": "string",
-                    "description": "The id of the sender of the message, can be an identity id or agent id"
-                  },
-                  "type": {
-                    "enum": ["message"],
-                    "description": "The message type to be created."
-                  }
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "MessageCreate"
                 },
-                "required": ["content", "role"]
-              },
-              {
-                "$ref": "ApprovalCreate"
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "approval_request_id": {
-                    "type": "string",
-                    "description": "The message ID of the approval request"
-                  },
-                  "approvals": {
-                    "anyOf": [
-                      {
-                        "type": "object",
-                        "properties": {
-                          "approve": {
-                            "type": "boolean",
-                            "description": "Whether the tool has been approved"
-                          },
-                          "tool_call_id": {
-                            "type": "string",
-                            "description": "The ID of the tool call that corresponds to this approval"
-                          },
-                          "reason": {
-                            "type": "string",
-                            "description": "An optional explanation for the provided approval status"
-                          },
-                          "type": {
-                            "enum": ["approval"],
-                            "description": "The message type to be created."
+                {
+                  "$ref": "ApprovalCreate"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "LettaMessageContentUnion"
                           }
                         },
-                        "required": ["approve", "tool_call_id"]
-                      },
-                      {
-                        "$ref": "ToolReturn"
-                      }
-                    ],
-                    "description": "The list of approval responses"
+                        {
+                          "type": "string"
+                        }
+                      ],
+                      "description": "The content of the message."
+                    },
+                    "role": {
+                      "enum": ["user", "system", "assistant"],
+                      "description": "The role of the participant."
+                    },
+                    "batch_item_id": {
+                      "type": "string",
+                      "description": "The id of the LLMBatchItem that this message is associated with"
+                    },
+                    "group_id": {
+                      "type": "string",
+                      "description": "The multi-agent group that the message was sent in"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "The name of the participant."
+                    },
+                    "otid": {
+                      "type": "string",
+                      "description": "The offline threading id (OTID). Set by the client to deduplicate requests. Used for idempotency in background streaming mode — each message in a request must have a unique OTID. Retries of the same request should reuse the same OTIDs."
+                    },
+                    "sender_id": {
+                      "type": "string",
+                      "description": "The id of the sender of the message, can be an identity id or agent id"
+                    },
+                    "type": {
+                      "enum": ["message"],
+                      "description": "The message type to be created."
+                    }
                   },
-                  "approve": {
-                    "type": "boolean",
-                    "description": "Whether the tool has been approved"
-                  },
-                  "group_id": {
-                    "type": "string",
-                    "description": "The multi-agent group that the message was sent in"
-                  },
-                  "otid": {
-                    "type": "string",
-                    "description": "The offline threading id (OTID). Set by the client to deduplicate requests. Used for idempotency in background streaming mode — each message in a request must have a unique OTID. Retries of the same request should reuse the same OTIDs."
-                  },
-                  "reason": {
-                    "type": "string",
-                    "description": "An optional explanation for the provided approval status"
-                  },
-                  "type": {
-                    "enum": ["approval"],
-                    "description": "The message type to be created."
-                  }
+                  "required": ["content", "role"]
                 }
-              }
-            ],
+              ]
+            },
             "description": "The messages to be sent to the agent."
           },
           "override_model": {
@@ -4585,80 +4400,68 @@
                 "type": "string"
               },
               {
-                "anyOf": [
-                  {
-                    "type": "object",
-                    "properties": {
-                      "text": {
-                        "type": "string",
-                        "description": "The text content of the message."
-                      },
-                      "signature": {
-                        "type": "string",
-                        "description": "Stores a unique identifier for any reasoning associated with this text content."
-                      },
-                      "type": {
-                        "enum": ["text"],
-                        "description": "The type of the message."
-                      }
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "$ref": "TextContent"
                     },
-                    "required": ["text"]
-                  },
-                  {
-                    "$ref": "ImageContent"
-                  },
-                  {
-                    "$ref": "ToolCallContent"
-                  },
-                  {
-                    "$ref": "ToolReturnContent"
-                  },
-                  {
-                    "$ref": "ReasoningContent"
-                  },
-                  {
-                    "$ref": "RedactedReasoningContent"
-                  },
-                  {
-                    "$ref": "OmittedReasoningContent"
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "description": "The unique identifier for this reasoning step."
-                      },
-                      "summary": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "index": {
-                              "type": "number",
-                              "description": "The index of the summary part."
-                            },
-                            "text": {
-                              "type": "string",
-                              "description": "The text of the summary part."
-                            }
-                          },
-                          "required": ["index", "text"]
+                    {
+                      "$ref": "ImageContent"
+                    },
+                    {
+                      "$ref": "ToolCallContent"
+                    },
+                    {
+                      "$ref": "ToolReturnContent"
+                    },
+                    {
+                      "$ref": "ReasoningContent"
+                    },
+                    {
+                      "$ref": "RedactedReasoningContent"
+                    },
+                    {
+                      "$ref": "OmittedReasoningContent"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "The unique identifier for this reasoning step."
                         },
-                        "description": "Summaries of the reasoning content."
+                        "summary": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "index": {
+                                "type": "number",
+                                "description": "The index of the summary part."
+                              },
+                              "text": {
+                                "type": "string",
+                                "description": "The text of the summary part."
+                              }
+                            },
+                            "required": ["index", "text"]
+                          },
+                          "description": "Summaries of the reasoning content."
+                        },
+                        "encrypted_content": {
+                          "type": "string",
+                          "description": "The encrypted reasoning content."
+                        },
+                        "type": {
+                          "enum": ["summarized_reasoning"],
+                          "description": "Indicates this is a summarized reasoning step."
+                        }
                       },
-                      "encrypted_content": {
-                        "type": "string",
-                        "description": "The encrypted reasoning content."
-                      },
-                      "type": {
-                        "enum": ["summarized_reasoning"],
-                        "description": "Indicates this is a summarized reasoning step."
-                      }
-                    },
-                    "required": ["id", "summary"]
-                  }
-                ]
+                      "required": ["id", "summary"]
+                    }
+                  ]
+                }
               },
               {
                 "$ref": "ImageContent"
@@ -4674,118 +4477,65 @@
             "description": "Maximum number of steps the agent should take to process the request."
           },
           "messages": {
-            "anyOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "content": {
-                    "anyOf": [
-                      {
-                        "type": "array",
-                        "items": {
-                          "$ref": "LettaMessageContentUnion"
-                        }
-                      },
-                      {
-                        "type": "string"
-                      }
-                    ],
-                    "description": "The content of the message."
-                  },
-                  "role": {
-                    "enum": ["user", "system", "assistant"],
-                    "description": "The role of the participant."
-                  },
-                  "batch_item_id": {
-                    "type": "string",
-                    "description": "The id of the LLMBatchItem that this message is associated with"
-                  },
-                  "group_id": {
-                    "type": "string",
-                    "description": "The multi-agent group that the message was sent in"
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "The name of the participant."
-                  },
-                  "otid": {
-                    "type": "string",
-                    "description": "The offline threading id (OTID). Set by the client to deduplicate requests. Used for idempotency in background streaming mode — each message in a request must have a unique OTID. Retries of the same request should reuse the same OTIDs."
-                  },
-                  "sender_id": {
-                    "type": "string",
-                    "description": "The id of the sender of the message, can be an identity id or agent id"
-                  },
-                  "type": {
-                    "enum": ["message"],
-                    "description": "The message type to be created."
-                  }
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "MessageCreate"
                 },
-                "required": ["content", "role"]
-              },
-              {
-                "$ref": "ApprovalCreate"
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "approval_request_id": {
-                    "type": "string",
-                    "description": "The message ID of the approval request"
-                  },
-                  "approvals": {
-                    "anyOf": [
-                      {
-                        "type": "object",
-                        "properties": {
-                          "approve": {
-                            "type": "boolean",
-                            "description": "Whether the tool has been approved"
-                          },
-                          "tool_call_id": {
-                            "type": "string",
-                            "description": "The ID of the tool call that corresponds to this approval"
-                          },
-                          "reason": {
-                            "type": "string",
-                            "description": "An optional explanation for the provided approval status"
-                          },
-                          "type": {
-                            "enum": ["approval"],
-                            "description": "The message type to be created."
+                {
+                  "$ref": "ApprovalCreate"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "LettaMessageContentUnion"
                           }
                         },
-                        "required": ["approve", "tool_call_id"]
-                      },
-                      {
-                        "$ref": "ToolReturn"
-                      }
-                    ],
-                    "description": "The list of approval responses"
+                        {
+                          "type": "string"
+                        }
+                      ],
+                      "description": "The content of the message."
+                    },
+                    "role": {
+                      "enum": ["user", "system", "assistant"],
+                      "description": "The role of the participant."
+                    },
+                    "batch_item_id": {
+                      "type": "string",
+                      "description": "The id of the LLMBatchItem that this message is associated with"
+                    },
+                    "group_id": {
+                      "type": "string",
+                      "description": "The multi-agent group that the message was sent in"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "The name of the participant."
+                    },
+                    "otid": {
+                      "type": "string",
+                      "description": "The offline threading id (OTID). Set by the client to deduplicate requests. Used for idempotency in background streaming mode — each message in a request must have a unique OTID. Retries of the same request should reuse the same OTIDs."
+                    },
+                    "sender_id": {
+                      "type": "string",
+                      "description": "The id of the sender of the message, can be an identity id or agent id"
+                    },
+                    "type": {
+                      "enum": ["message"],
+                      "description": "The message type to be created."
+                    }
                   },
-                  "approve": {
-                    "type": "boolean",
-                    "description": "Whether the tool has been approved"
-                  },
-                  "group_id": {
-                    "type": "string",
-                    "description": "The multi-agent group that the message was sent in"
-                  },
-                  "otid": {
-                    "type": "string",
-                    "description": "The offline threading id (OTID). Set by the client to deduplicate requests. Used for idempotency in background streaming mode — each message in a request must have a unique OTID. Retries of the same request should reuse the same OTIDs."
-                  },
-                  "reason": {
-                    "type": "string",
-                    "description": "An optional explanation for the provided approval status"
-                  },
-                  "type": {
-                    "enum": ["approval"],
-                    "description": "The message type to be created."
-                  }
+                  "required": ["content", "role"]
                 }
-              }
-            ],
+              ]
+            },
             "description": "The messages to be sent to the agent."
           },
           "override_model": {
@@ -4904,7 +4654,7 @@
       "output": {
         "type": "array",
         "items": {
-          "$ref": "SystemMessage"
+          "$ref": "Message"
         }
       }
     },
@@ -4932,7 +4682,14 @@
         "required": ["agent_id"]
       },
       "output": {
-        "$ref": "AgentState"
+        "anyOf": [
+          {
+            "$ref": "AgentState"
+          },
+          {
+            "type": "null"
+          }
+        ]
       }
     },
     {
@@ -5033,80 +4790,68 @@
                 "type": "string"
               },
               {
-                "anyOf": [
-                  {
-                    "type": "object",
-                    "properties": {
-                      "text": {
-                        "type": "string",
-                        "description": "The text content of the message."
-                      },
-                      "signature": {
-                        "type": "string",
-                        "description": "Stores a unique identifier for any reasoning associated with this text content."
-                      },
-                      "type": {
-                        "enum": ["text"],
-                        "description": "The type of the message."
-                      }
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "$ref": "TextContent"
                     },
-                    "required": ["text"]
-                  },
-                  {
-                    "$ref": "ImageContent"
-                  },
-                  {
-                    "$ref": "ToolCallContent"
-                  },
-                  {
-                    "$ref": "ToolReturnContent"
-                  },
-                  {
-                    "$ref": "ReasoningContent"
-                  },
-                  {
-                    "$ref": "RedactedReasoningContent"
-                  },
-                  {
-                    "$ref": "OmittedReasoningContent"
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "description": "The unique identifier for this reasoning step."
-                      },
-                      "summary": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "index": {
-                              "type": "number",
-                              "description": "The index of the summary part."
-                            },
-                            "text": {
-                              "type": "string",
-                              "description": "The text of the summary part."
-                            }
-                          },
-                          "required": ["index", "text"]
+                    {
+                      "$ref": "ImageContent"
+                    },
+                    {
+                      "$ref": "ToolCallContent"
+                    },
+                    {
+                      "$ref": "ToolReturnContent"
+                    },
+                    {
+                      "$ref": "ReasoningContent"
+                    },
+                    {
+                      "$ref": "RedactedReasoningContent"
+                    },
+                    {
+                      "$ref": "OmittedReasoningContent"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "The unique identifier for this reasoning step."
                         },
-                        "description": "Summaries of the reasoning content."
+                        "summary": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "index": {
+                                "type": "number",
+                                "description": "The index of the summary part."
+                              },
+                              "text": {
+                                "type": "string",
+                                "description": "The text of the summary part."
+                              }
+                            },
+                            "required": ["index", "text"]
+                          },
+                          "description": "Summaries of the reasoning content."
+                        },
+                        "encrypted_content": {
+                          "type": "string",
+                          "description": "The encrypted reasoning content."
+                        },
+                        "type": {
+                          "enum": ["summarized_reasoning"],
+                          "description": "Indicates this is a summarized reasoning step."
+                        }
                       },
-                      "encrypted_content": {
-                        "type": "string",
-                        "description": "The encrypted reasoning content."
-                      },
-                      "type": {
-                        "enum": ["summarized_reasoning"],
-                        "description": "Indicates this is a summarized reasoning step."
-                      }
-                    },
-                    "required": ["id", "summary"]
-                  }
-                ]
+                      "required": ["id", "summary"]
+                    }
+                  ]
+                }
               },
               {
                 "$ref": "ImageContent"
@@ -5122,118 +4867,65 @@
             "description": "Maximum number of steps the agent should take to process the request."
           },
           "messages": {
-            "anyOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "content": {
-                    "anyOf": [
-                      {
-                        "type": "array",
-                        "items": {
-                          "$ref": "LettaMessageContentUnion"
-                        }
-                      },
-                      {
-                        "type": "string"
-                      }
-                    ],
-                    "description": "The content of the message."
-                  },
-                  "role": {
-                    "enum": ["user", "system", "assistant"],
-                    "description": "The role of the participant."
-                  },
-                  "batch_item_id": {
-                    "type": "string",
-                    "description": "The id of the LLMBatchItem that this message is associated with"
-                  },
-                  "group_id": {
-                    "type": "string",
-                    "description": "The multi-agent group that the message was sent in"
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "The name of the participant."
-                  },
-                  "otid": {
-                    "type": "string",
-                    "description": "The offline threading id (OTID). Set by the client to deduplicate requests. Used for idempotency in background streaming mode — each message in a request must have a unique OTID. Retries of the same request should reuse the same OTIDs."
-                  },
-                  "sender_id": {
-                    "type": "string",
-                    "description": "The id of the sender of the message, can be an identity id or agent id"
-                  },
-                  "type": {
-                    "enum": ["message"],
-                    "description": "The message type to be created."
-                  }
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "MessageCreate"
                 },
-                "required": ["content", "role"]
-              },
-              {
-                "$ref": "ApprovalCreate"
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "approval_request_id": {
-                    "type": "string",
-                    "description": "The message ID of the approval request"
-                  },
-                  "approvals": {
-                    "anyOf": [
-                      {
-                        "type": "object",
-                        "properties": {
-                          "approve": {
-                            "type": "boolean",
-                            "description": "Whether the tool has been approved"
-                          },
-                          "tool_call_id": {
-                            "type": "string",
-                            "description": "The ID of the tool call that corresponds to this approval"
-                          },
-                          "reason": {
-                            "type": "string",
-                            "description": "An optional explanation for the provided approval status"
-                          },
-                          "type": {
-                            "enum": ["approval"],
-                            "description": "The message type to be created."
+                {
+                  "$ref": "ApprovalCreate"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "LettaMessageContentUnion"
                           }
                         },
-                        "required": ["approve", "tool_call_id"]
-                      },
-                      {
-                        "$ref": "ToolReturn"
-                      }
-                    ],
-                    "description": "The list of approval responses"
+                        {
+                          "type": "string"
+                        }
+                      ],
+                      "description": "The content of the message."
+                    },
+                    "role": {
+                      "enum": ["user", "system", "assistant"],
+                      "description": "The role of the participant."
+                    },
+                    "batch_item_id": {
+                      "type": "string",
+                      "description": "The id of the LLMBatchItem that this message is associated with"
+                    },
+                    "group_id": {
+                      "type": "string",
+                      "description": "The multi-agent group that the message was sent in"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "The name of the participant."
+                    },
+                    "otid": {
+                      "type": "string",
+                      "description": "The offline threading id (OTID). Set by the client to deduplicate requests. Used for idempotency in background streaming mode — each message in a request must have a unique OTID. Retries of the same request should reuse the same OTIDs."
+                    },
+                    "sender_id": {
+                      "type": "string",
+                      "description": "The id of the sender of the message, can be an identity id or agent id"
+                    },
+                    "type": {
+                      "enum": ["message"],
+                      "description": "The message type to be created."
+                    }
                   },
-                  "approve": {
-                    "type": "boolean",
-                    "description": "Whether the tool has been approved"
-                  },
-                  "group_id": {
-                    "type": "string",
-                    "description": "The multi-agent group that the message was sent in"
-                  },
-                  "otid": {
-                    "type": "string",
-                    "description": "The offline threading id (OTID). Set by the client to deduplicate requests. Used for idempotency in background streaming mode — each message in a request must have a unique OTID. Retries of the same request should reuse the same OTIDs."
-                  },
-                  "reason": {
-                    "type": "string",
-                    "description": "An optional explanation for the provided approval status"
-                  },
-                  "type": {
-                    "enum": ["approval"],
-                    "description": "The message type to be created."
-                  }
+                  "required": ["content", "role"]
                 }
-              }
-            ],
+              ]
+            },
             "description": "The messages to be sent to the agent."
           },
           "override_model": {
@@ -5307,77 +4999,10 @@
         "required": ["agent_id", "text"]
       },
       "output": {
-        "type": "object",
-        "properties": {
-          "embedding": {
-            "type": "array",
-            "items": {
-              "type": "number"
-            },
-            "description": "The embedding of the passage."
-          },
-          "embedding_config": {
-            "$ref": "EmbeddingConfig",
-            "description": "Configuration for embedding model connection and processing parameters."
-          },
-          "text": {
-            "type": "string",
-            "description": "The text of the passage."
-          },
-          "id": {
-            "type": "string",
-            "description": "The human-friendly ID of the Passage"
-          },
-          "archive_id": {
-            "type": "string",
-            "description": "The unique identifier of the archive containing this passage."
-          },
-          "created_at": {
-            "type": "string",
-            "description": "The creation date of the passage."
-          },
-          "created_by_id": {
-            "type": "string",
-            "description": "The id of the user that made this object."
-          },
-          "file_id": {
-            "type": "string",
-            "description": "The unique identifier of the file associated with the passage."
-          },
-          "file_name": {
-            "type": "string",
-            "description": "The name of the file (only for source passages)."
-          },
-          "is_deleted": {
-            "type": "boolean",
-            "description": "Whether this passage is deleted or not."
-          },
-          "last_updated_by_id": {
-            "type": "string",
-            "description": "The id of the user that made this object."
-          },
-          "metadata": {
-            "type": "object",
-            "additionalProperties": true,
-            "description": "The metadata of the passage."
-          },
-          "source_id": {
-            "type": "string",
-            "description": "Deprecated: Use `folder_id` field instead. The data source of the passage."
-          },
-          "tags": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Tags associated with this passage."
-          },
-          "updated_at": {
-            "type": "string",
-            "description": "The timestamp when the object was last updated."
-          }
-        },
-        "required": ["embedding", "embedding_config", "text"]
+        "type": "array",
+        "items": {
+          "$ref": "Passage"
+        }
       }
     },
     {
@@ -5751,41 +5376,63 @@
                 "content": {
                   "anyOf": [
                     {
-                      "anyOf": [
-                        {
-                          "type": "object",
-                          "properties": {
-                            "text": {
-                              "type": "string"
-                            },
-                            "signature": {
-                              "type": "string"
-                            },
-                            "type": {
-                              "enum": ["text"]
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          {
+                            "type": "array",
+                            "items": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "text": {
+                                      "type": "string"
+                                    },
+                                    "signature": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "enum": ["text"]
+                                    }
+                                  },
+                                  "required": ["text"]
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "object",
+                                      "properties": {
+                                        "data": {
+                                          "type": "string"
+                                        },
+                                        "media_type": {
+                                          "type": "string"
+                                        },
+                                        "detail": {
+                                          "type": "string"
+                                        },
+                                        "type": {
+                                          "enum": ["base64"]
+                                        }
+                                      },
+                                      "required": ["data", "media_type"]
+                                    },
+                                    "type": {
+                                      "enum": ["image"]
+                                    }
+                                  },
+                                  "required": ["source", "type"]
+                                }
+                              ]
                             }
                           },
-                          "required": ["text"]
-                        },
-                        {
-                          "type": "object",
-                          "properties": {
-                            "text": {
-                              "type": "string"
-                            },
-                            "signature": {
-                              "type": "string"
-                            },
-                            "type": {
-                              "enum": ["text"]
-                            }
-                          },
-                          "required": ["text"]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "string"
+                          {
+                            "type": "string"
+                          }
+                        ]
+                      }
                     },
                     {
                       "type": "string"
@@ -5828,14 +5475,14 @@
               {
                 "type": "object",
                 "properties": {
-                  "scheduled_at": {
-                    "type": "number"
+                  "cron_expression": {
+                    "type": "string"
                   },
                   "type": {
-                    "enum": ["one-time"]
+                    "enum": ["recurring"]
                   }
                 },
-                "required": ["scheduled_at"]
+                "required": ["cron_expression", "type"]
               }
             ]
           },
@@ -5843,35 +5490,20 @@
             "type": "string"
           },
           "include_return_message_types": {
-            "anyOf": [
-              {
-                "enum": ["system_message"]
-              },
-              {
-                "enum": ["user_message"]
-              },
-              {
-                "enum": ["assistant_message"]
-              },
-              {
-                "enum": ["reasoning_message"]
-              },
-              {
-                "enum": ["hidden_reasoning_message"]
-              },
-              {
-                "enum": ["tool_call_message"]
-              },
-              {
-                "enum": ["tool_return_message"]
-              },
-              {
-                "enum": ["approval_request_message"]
-              },
-              {
-                "enum": ["approval_response_message"]
-              }
-            ]
+            "type": "array",
+            "items": {
+              "enum": [
+                "system_message",
+                "user_message",
+                "assistant_message",
+                "reasoning_message",
+                "hidden_reasoning_message",
+                "tool_call_message",
+                "tool_return_message",
+                "approval_request_message",
+                "approval_response_message"
+              ]
+            }
           },
           "max_steps": {
             "type": "number"
@@ -5966,41 +5598,63 @@
                     "content": {
                       "anyOf": [
                         {
-                          "anyOf": [
-                            {
-                              "type": "object",
-                              "properties": {
-                                "text": {
-                                  "type": "string"
-                                },
-                                "signature": {
-                                  "type": "string"
-                                },
-                                "type": {
-                                  "enum": ["text"]
+                          "type": "array",
+                          "items": {
+                            "anyOf": [
+                              {
+                                "type": "array",
+                                "items": {
+                                  "anyOf": [
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "text": {
+                                          "type": "string"
+                                        },
+                                        "signature": {
+                                          "type": "string"
+                                        },
+                                        "type": {
+                                          "enum": ["text"]
+                                        }
+                                      },
+                                      "required": ["text"]
+                                    },
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "source": {
+                                          "type": "object",
+                                          "properties": {
+                                            "data": {
+                                              "type": "string"
+                                            },
+                                            "media_type": {
+                                              "type": "string"
+                                            },
+                                            "detail": {
+                                              "type": "string"
+                                            },
+                                            "type": {
+                                              "enum": ["base64"]
+                                            }
+                                          },
+                                          "required": ["data", "media_type"]
+                                        },
+                                        "type": {
+                                          "enum": ["image"]
+                                        }
+                                      },
+                                      "required": ["source", "type"]
+                                    }
+                                  ]
                                 }
                               },
-                              "required": ["text"]
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "text": {
-                                  "type": "string"
-                                },
-                                "signature": {
-                                  "type": "string"
-                                },
-                                "type": {
-                                  "enum": ["text"]
-                                }
-                              },
-                              "required": ["text"]
-                            }
-                          ]
-                        },
-                        {
-                          "type": "string"
+                              {
+                                "type": "string"
+                              }
+                            ]
+                          }
                         },
                         {
                           "type": "string"
@@ -6030,35 +5684,20 @@
                 "type": "string"
               },
               "include_return_message_types": {
-                "anyOf": [
-                  {
-                    "enum": ["system_message"]
-                  },
-                  {
-                    "enum": ["user_message"]
-                  },
-                  {
-                    "enum": ["assistant_message"]
-                  },
-                  {
-                    "enum": ["reasoning_message"]
-                  },
-                  {
-                    "enum": ["hidden_reasoning_message"]
-                  },
-                  {
-                    "enum": ["tool_call_message"]
-                  },
-                  {
-                    "enum": ["tool_return_message"]
-                  },
-                  {
-                    "enum": ["approval_request_message"]
-                  },
-                  {
-                    "enum": ["approval_response_message"]
-                  }
-                ]
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "system_message",
+                    "user_message",
+                    "assistant_message",
+                    "reasoning_message",
+                    "hidden_reasoning_message",
+                    "tool_call_message",
+                    "tool_return_message",
+                    "approval_request_message",
+                    "approval_response_message"
+                  ]
+                }
               },
               "max_steps": {
                 "type": "number"
@@ -6086,14 +5725,14 @@
               {
                 "type": "object",
                 "properties": {
-                  "scheduled_at": {
-                    "type": "number"
+                  "cron_expression": {
+                    "type": "string"
                   },
                   "type": {
-                    "enum": ["one-time"]
+                    "enum": ["recurring"]
                   }
                 },
-                "required": ["scheduled_at"]
+                "required": ["cron_expression", "type"]
               }
             ]
           }
@@ -6165,41 +5804,66 @@
                                 "content": {
                                   "anyOf": [
                                     {
-                                      "anyOf": [
-                                        {
-                                          "type": "object",
-                                          "properties": {
-                                            "text": {
-                                              "type": "string"
-                                            },
-                                            "signature": {
-                                              "type": "string"
-                                            },
-                                            "type": {
-                                              "enum": ["text"]
+                                      "type": "array",
+                                      "items": {
+                                        "anyOf": [
+                                          {
+                                            "type": "array",
+                                            "items": {
+                                              "anyOf": [
+                                                {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "text": {
+                                                      "type": "string"
+                                                    },
+                                                    "signature": {
+                                                      "type": "string"
+                                                    },
+                                                    "type": {
+                                                      "enum": ["text"]
+                                                    }
+                                                  },
+                                                  "required": ["text"]
+                                                },
+                                                {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "source": {
+                                                      "type": "object",
+                                                      "properties": {
+                                                        "data": {
+                                                          "type": "string"
+                                                        },
+                                                        "media_type": {
+                                                          "type": "string"
+                                                        },
+                                                        "detail": {
+                                                          "type": "string"
+                                                        },
+                                                        "type": {
+                                                          "enum": ["base64"]
+                                                        }
+                                                      },
+                                                      "required": [
+                                                        "data",
+                                                        "media_type"
+                                                      ]
+                                                    },
+                                                    "type": {
+                                                      "enum": ["image"]
+                                                    }
+                                                  },
+                                                  "required": ["source", "type"]
+                                                }
+                                              ]
                                             }
                                           },
-                                          "required": ["text"]
-                                        },
-                                        {
-                                          "type": "object",
-                                          "properties": {
-                                            "text": {
-                                              "type": "string"
-                                            },
-                                            "signature": {
-                                              "type": "string"
-                                            },
-                                            "type": {
-                                              "enum": ["text"]
-                                            }
-                                          },
-                                          "required": ["text"]
-                                        }
-                                      ]
-                                    },
-                                    {
-                                      "type": "string"
+                                          {
+                                            "type": "string"
+                                          }
+                                        ]
+                                      }
                                     },
                                     {
                                       "type": "string"
@@ -6229,35 +5893,20 @@
                             "type": "string"
                           },
                           "include_return_message_types": {
-                            "anyOf": [
-                              {
-                                "enum": ["system_message"]
-                              },
-                              {
-                                "enum": ["user_message"]
-                              },
-                              {
-                                "enum": ["assistant_message"]
-                              },
-                              {
-                                "enum": ["reasoning_message"]
-                              },
-                              {
-                                "enum": ["hidden_reasoning_message"]
-                              },
-                              {
-                                "enum": ["tool_call_message"]
-                              },
-                              {
-                                "enum": ["tool_return_message"]
-                              },
-                              {
-                                "enum": ["approval_request_message"]
-                              },
-                              {
-                                "enum": ["approval_response_message"]
-                              }
-                            ]
+                            "type": "array",
+                            "items": {
+                              "enum": [
+                                "system_message",
+                                "user_message",
+                                "assistant_message",
+                                "reasoning_message",
+                                "hidden_reasoning_message",
+                                "tool_call_message",
+                                "tool_return_message",
+                                "approval_request_message",
+                                "approval_response_message"
+                              ]
+                            }
                           },
                           "max_steps": {
                             "type": "number"
@@ -6285,14 +5934,14 @@
                           {
                             "type": "object",
                             "properties": {
-                              "scheduled_at": {
-                                "type": "number"
+                              "cron_expression": {
+                                "type": "string"
                               },
                               "type": {
-                                "enum": ["one-time"]
+                                "enum": ["recurring"]
                               }
                             },
-                            "required": ["scheduled_at"]
+                            "required": ["cron_expression", "type"]
                           }
                         ]
                       }
@@ -6338,41 +5987,66 @@
                               "content": {
                                 "anyOf": [
                                   {
-                                    "anyOf": [
-                                      {
-                                        "type": "object",
-                                        "properties": {
-                                          "text": {
-                                            "type": "string"
-                                          },
-                                          "signature": {
-                                            "type": "string"
-                                          },
-                                          "type": {
-                                            "enum": ["text"]
+                                    "type": "array",
+                                    "items": {
+                                      "anyOf": [
+                                        {
+                                          "type": "array",
+                                          "items": {
+                                            "anyOf": [
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "text": {
+                                                    "type": "string"
+                                                  },
+                                                  "signature": {
+                                                    "type": "string"
+                                                  },
+                                                  "type": {
+                                                    "enum": ["text"]
+                                                  }
+                                                },
+                                                "required": ["text"]
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "source": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "data": {
+                                                        "type": "string"
+                                                      },
+                                                      "media_type": {
+                                                        "type": "string"
+                                                      },
+                                                      "detail": {
+                                                        "type": "string"
+                                                      },
+                                                      "type": {
+                                                        "enum": ["base64"]
+                                                      }
+                                                    },
+                                                    "required": [
+                                                      "data",
+                                                      "media_type"
+                                                    ]
+                                                  },
+                                                  "type": {
+                                                    "enum": ["image"]
+                                                  }
+                                                },
+                                                "required": ["source", "type"]
+                                              }
+                                            ]
                                           }
                                         },
-                                        "required": ["text"]
-                                      },
-                                      {
-                                        "type": "object",
-                                        "properties": {
-                                          "text": {
-                                            "type": "string"
-                                          },
-                                          "signature": {
-                                            "type": "string"
-                                          },
-                                          "type": {
-                                            "enum": ["text"]
-                                          }
-                                        },
-                                        "required": ["text"]
-                                      }
-                                    ]
-                                  },
-                                  {
-                                    "type": "string"
+                                        {
+                                          "type": "string"
+                                        }
+                                      ]
+                                    }
                                   },
                                   {
                                     "type": "string"
@@ -6402,35 +6076,20 @@
                           "type": "string"
                         },
                         "include_return_message_types": {
-                          "anyOf": [
-                            {
-                              "enum": ["system_message"]
-                            },
-                            {
-                              "enum": ["user_message"]
-                            },
-                            {
-                              "enum": ["assistant_message"]
-                            },
-                            {
-                              "enum": ["reasoning_message"]
-                            },
-                            {
-                              "enum": ["hidden_reasoning_message"]
-                            },
-                            {
-                              "enum": ["tool_call_message"]
-                            },
-                            {
-                              "enum": ["tool_return_message"]
-                            },
-                            {
-                              "enum": ["approval_request_message"]
-                            },
-                            {
-                              "enum": ["approval_response_message"]
-                            }
-                          ]
+                          "type": "array",
+                          "items": {
+                            "enum": [
+                              "system_message",
+                              "user_message",
+                              "assistant_message",
+                              "reasoning_message",
+                              "hidden_reasoning_message",
+                              "tool_call_message",
+                              "tool_return_message",
+                              "approval_request_message",
+                              "approval_response_message"
+                            ]
+                          }
                         },
                         "max_steps": {
                           "type": "number"
@@ -6458,14 +6117,14 @@
                         {
                           "type": "object",
                           "properties": {
-                            "scheduled_at": {
-                              "type": "number"
+                            "cron_expression": {
+                              "type": "string"
                             },
                             "type": {
-                              "enum": ["one-time"]
+                              "enum": ["recurring"]
                             }
                           },
-                          "required": ["scheduled_at"]
+                          "required": ["cron_expression", "type"]
                         }
                       ]
                     }
@@ -7570,75 +7229,38 @@
             "description": "The ids of the tools used by the agent."
           },
           "tool_rules": {
-            "anyOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "children": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "The children tools that can be invoked."
-                  },
-                  "tool_name": {
-                    "type": "string",
-                    "description": "The name of the tool. Must exist in the database for the user's organization."
-                  },
-                  "child_arg_nodes": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string",
-                          "description": "The name of the child tool to invoke next."
-                        },
-                        "args": {
-                          "type": "object",
-                          "additionalProperties": true,
-                          "description": "Optional prefilled arguments for this child tool. Keys must match the tool's parameter names and values must satisfy the tool's JSON schema. Supports partial prefill; non-overlapping parameters are left to the model."
-                        }
-                      },
-                      "required": ["name"]
-                    },
-                    "description": "Optional list of typed child argument overrides. Each node must reference a child in 'children'."
-                  },
-                  "prompt_template": {
-                    "type": "string",
-                    "description": "Optional template string (ignored)."
-                  },
-                  "type": {
-                    "enum": ["constrain_child_tools"]
-                  }
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "ChildToolRule"
                 },
-                "required": ["children", "tool_name"]
-              },
-              {
-                "$ref": "InitToolRule"
-              },
-              {
-                "$ref": "TerminalToolRule"
-              },
-              {
-                "$ref": "ConditionalToolRule"
-              },
-              {
-                "$ref": "ContinueToolRule"
-              },
-              {
-                "$ref": "RequiredBeforeExitToolRule"
-              },
-              {
-                "$ref": "MaxCountPerStepToolRule"
-              },
-              {
-                "$ref": "ParentToolRule"
-              },
-              {
-                "$ref": "RequiresApprovalToolRule"
-              }
-            ],
+                {
+                  "$ref": "InitToolRule"
+                },
+                {
+                  "$ref": "TerminalToolRule"
+                },
+                {
+                  "$ref": "ConditionalToolRule"
+                },
+                {
+                  "$ref": "ContinueToolRule"
+                },
+                {
+                  "$ref": "RequiredBeforeExitToolRule"
+                },
+                {
+                  "$ref": "MaxCountPerStepToolRule"
+                },
+                {
+                  "$ref": "ParentToolRule"
+                },
+                {
+                  "$ref": "RequiresApprovalToolRule"
+                }
+              ]
+            },
             "description": "The tool rules governing the agent."
           }
         },
@@ -7864,7 +7486,17 @@
         "required": ["archive_id", "text"]
       },
       "output": {
-        "$ref": "Passage"
+        "anyOf": [
+          {
+            "$ref": "Passage"
+          },
+          {
+            "type": "array",
+            "items": {
+              "$ref": "Passage"
+            }
+          }
+        ]
       }
     },
     {
@@ -8073,32 +7705,19 @@
             "x-corsair-in": "query"
           },
           "include": {
-            "anyOf": [
-              {
-                "enum": ["agent.blocks"]
-              },
-              {
-                "enum": ["agent.identities"]
-              },
-              {
-                "enum": ["agent.managed_group"]
-              },
-              {
-                "enum": ["agent.pending_approval"]
-              },
-              {
-                "enum": ["agent.secrets"]
-              },
-              {
-                "enum": ["agent.sources"]
-              },
-              {
-                "enum": ["agent.tags"]
-              },
-              {
-                "enum": ["agent.tools"]
-              }
-            ],
+            "type": "array",
+            "items": {
+              "enum": [
+                "agent.blocks",
+                "agent.identities",
+                "agent.managed_group",
+                "agent.pending_approval",
+                "agent.secrets",
+                "agent.sources",
+                "agent.tags",
+                "agent.tools"
+              ]
+            },
             "description": "Specify which relational fields to include in the response. No relationships are included by default.",
             "x-corsair-in": "query"
           },
@@ -9398,75 +9017,38 @@
               "description": "Deprecated: use `secrets` field instead."
             },
             "tool_rules": {
-              "anyOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "children": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "description": "The children tools that can be invoked."
-                    },
-                    "tool_name": {
-                      "type": "string",
-                      "description": "The name of the tool. Must exist in the database for the user's organization."
-                    },
-                    "child_arg_nodes": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "name": {
-                            "type": "string",
-                            "description": "The name of the child tool to invoke next."
-                          },
-                          "args": {
-                            "type": "object",
-                            "additionalProperties": true,
-                            "description": "Optional prefilled arguments for this child tool. Keys must match the tool's parameter names and values must satisfy the tool's JSON schema. Supports partial prefill; non-overlapping parameters are left to the model."
-                          }
-                        },
-                        "required": ["name"]
-                      },
-                      "description": "Optional list of typed child argument overrides. Each node must reference a child in 'children'."
-                    },
-                    "prompt_template": {
-                      "type": "string",
-                      "description": "Optional template string (ignored)."
-                    },
-                    "type": {
-                      "enum": ["constrain_child_tools"]
-                    }
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "ChildToolRule"
                   },
-                  "required": ["children", "tool_name"]
-                },
-                {
-                  "$ref": "InitToolRule"
-                },
-                {
-                  "$ref": "TerminalToolRule"
-                },
-                {
-                  "$ref": "ConditionalToolRule"
-                },
-                {
-                  "$ref": "ContinueToolRule"
-                },
-                {
-                  "$ref": "RequiredBeforeExitToolRule"
-                },
-                {
-                  "$ref": "MaxCountPerStepToolRule"
-                },
-                {
-                  "$ref": "ParentToolRule"
-                },
-                {
-                  "$ref": "RequiresApprovalToolRule"
-                }
-              ],
+                  {
+                    "$ref": "InitToolRule"
+                  },
+                  {
+                    "$ref": "TerminalToolRule"
+                  },
+                  {
+                    "$ref": "ConditionalToolRule"
+                  },
+                  {
+                    "$ref": "ContinueToolRule"
+                  },
+                  {
+                    "$ref": "RequiredBeforeExitToolRule"
+                  },
+                  {
+                    "$ref": "MaxCountPerStepToolRule"
+                  },
+                  {
+                    "$ref": "ParentToolRule"
+                  },
+                  {
+                    "$ref": "RequiresApprovalToolRule"
+                  }
+                ]
+              },
               "description": "The list of tool rules."
             },
             "updated_at": {
@@ -11759,80 +11341,68 @@
                 "type": "string"
               },
               {
-                "anyOf": [
-                  {
-                    "type": "object",
-                    "properties": {
-                      "text": {
-                        "type": "string",
-                        "description": "The text content of the message."
-                      },
-                      "signature": {
-                        "type": "string",
-                        "description": "Stores a unique identifier for any reasoning associated with this text content."
-                      },
-                      "type": {
-                        "enum": ["text"],
-                        "description": "The type of the message."
-                      }
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "$ref": "TextContent"
                     },
-                    "required": ["text"]
-                  },
-                  {
-                    "$ref": "ImageContent"
-                  },
-                  {
-                    "$ref": "ToolCallContent"
-                  },
-                  {
-                    "$ref": "ToolReturnContent"
-                  },
-                  {
-                    "$ref": "ReasoningContent"
-                  },
-                  {
-                    "$ref": "RedactedReasoningContent"
-                  },
-                  {
-                    "$ref": "OmittedReasoningContent"
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string",
-                        "description": "The unique identifier for this reasoning step."
-                      },
-                      "summary": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "index": {
-                              "type": "number",
-                              "description": "The index of the summary part."
-                            },
-                            "text": {
-                              "type": "string",
-                              "description": "The text of the summary part."
-                            }
-                          },
-                          "required": ["index", "text"]
+                    {
+                      "$ref": "ImageContent"
+                    },
+                    {
+                      "$ref": "ToolCallContent"
+                    },
+                    {
+                      "$ref": "ToolReturnContent"
+                    },
+                    {
+                      "$ref": "ReasoningContent"
+                    },
+                    {
+                      "$ref": "RedactedReasoningContent"
+                    },
+                    {
+                      "$ref": "OmittedReasoningContent"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "The unique identifier for this reasoning step."
                         },
-                        "description": "Summaries of the reasoning content."
+                        "summary": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "index": {
+                                "type": "number",
+                                "description": "The index of the summary part."
+                              },
+                              "text": {
+                                "type": "string",
+                                "description": "The text of the summary part."
+                              }
+                            },
+                            "required": ["index", "text"]
+                          },
+                          "description": "Summaries of the reasoning content."
+                        },
+                        "encrypted_content": {
+                          "type": "string",
+                          "description": "The encrypted reasoning content."
+                        },
+                        "type": {
+                          "enum": ["summarized_reasoning"],
+                          "description": "Indicates this is a summarized reasoning step."
+                        }
                       },
-                      "encrypted_content": {
-                        "type": "string",
-                        "description": "The encrypted reasoning content."
-                      },
-                      "type": {
-                        "enum": ["summarized_reasoning"],
-                        "description": "Indicates this is a summarized reasoning step."
-                      }
-                    },
-                    "required": ["id", "summary"]
-                  }
-                ]
+                      "required": ["id", "summary"]
+                    }
+                  ]
+                }
               },
               {
                 "$ref": "ImageContent"
@@ -11848,118 +11418,65 @@
             "description": "Maximum number of steps the agent should take to process the request."
           },
           "messages": {
-            "anyOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "content": {
-                    "anyOf": [
-                      {
-                        "type": "array",
-                        "items": {
-                          "$ref": "LettaMessageContentUnion"
-                        }
-                      },
-                      {
-                        "type": "string"
-                      }
-                    ],
-                    "description": "The content of the message."
-                  },
-                  "role": {
-                    "enum": ["user", "system", "assistant"],
-                    "description": "The role of the participant."
-                  },
-                  "batch_item_id": {
-                    "type": "string",
-                    "description": "The id of the LLMBatchItem that this message is associated with"
-                  },
-                  "group_id": {
-                    "type": "string",
-                    "description": "The multi-agent group that the message was sent in"
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "The name of the participant."
-                  },
-                  "otid": {
-                    "type": "string",
-                    "description": "The offline threading id (OTID). Set by the client to deduplicate requests. Used for idempotency in background streaming mode — each message in a request must have a unique OTID. Retries of the same request should reuse the same OTIDs."
-                  },
-                  "sender_id": {
-                    "type": "string",
-                    "description": "The id of the sender of the message, can be an identity id or agent id"
-                  },
-                  "type": {
-                    "enum": ["message"],
-                    "description": "The message type to be created."
-                  }
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "$ref": "MessageCreate"
                 },
-                "required": ["content", "role"]
-              },
-              {
-                "$ref": "ApprovalCreate"
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "approval_request_id": {
-                    "type": "string",
-                    "description": "The message ID of the approval request"
-                  },
-                  "approvals": {
-                    "anyOf": [
-                      {
-                        "type": "object",
-                        "properties": {
-                          "approve": {
-                            "type": "boolean",
-                            "description": "Whether the tool has been approved"
-                          },
-                          "tool_call_id": {
-                            "type": "string",
-                            "description": "The ID of the tool call that corresponds to this approval"
-                          },
-                          "reason": {
-                            "type": "string",
-                            "description": "An optional explanation for the provided approval status"
-                          },
-                          "type": {
-                            "enum": ["approval"],
-                            "description": "The message type to be created."
+                {
+                  "$ref": "ApprovalCreate"
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "content": {
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "LettaMessageContentUnion"
                           }
                         },
-                        "required": ["approve", "tool_call_id"]
-                      },
-                      {
-                        "$ref": "ToolReturn"
-                      }
-                    ],
-                    "description": "The list of approval responses"
+                        {
+                          "type": "string"
+                        }
+                      ],
+                      "description": "The content of the message."
+                    },
+                    "role": {
+                      "enum": ["user", "system", "assistant"],
+                      "description": "The role of the participant."
+                    },
+                    "batch_item_id": {
+                      "type": "string",
+                      "description": "The id of the LLMBatchItem that this message is associated with"
+                    },
+                    "group_id": {
+                      "type": "string",
+                      "description": "The multi-agent group that the message was sent in"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "The name of the participant."
+                    },
+                    "otid": {
+                      "type": "string",
+                      "description": "The offline threading id (OTID). Set by the client to deduplicate requests. Used for idempotency in background streaming mode — each message in a request must have a unique OTID. Retries of the same request should reuse the same OTIDs."
+                    },
+                    "sender_id": {
+                      "type": "string",
+                      "description": "The id of the sender of the message, can be an identity id or agent id"
+                    },
+                    "type": {
+                      "enum": ["message"],
+                      "description": "The message type to be created."
+                    }
                   },
-                  "approve": {
-                    "type": "boolean",
-                    "description": "Whether the tool has been approved"
-                  },
-                  "group_id": {
-                    "type": "string",
-                    "description": "The multi-agent group that the message was sent in"
-                  },
-                  "otid": {
-                    "type": "string",
-                    "description": "The offline threading id (OTID). Set by the client to deduplicate requests. Used for idempotency in background streaming mode — each message in a request must have a unique OTID. Retries of the same request should reuse the same OTIDs."
-                  },
-                  "reason": {
-                    "type": "string",
-                    "description": "An optional explanation for the provided approval status"
-                  },
-                  "type": {
-                    "enum": ["approval"],
-                    "description": "The message type to be created."
-                  }
+                  "required": ["content", "role"]
                 }
-              }
-            ],
+              ]
+            },
             "description": "The messages to be sent to the agent."
           },
           "override_model": {
@@ -11998,7 +11515,14 @@
         "required": ["conversation_id"]
       },
       "output": {
-        "$ref": "LettaResponse"
+        "anyOf": [
+          {
+            "$ref": "LettaResponse"
+          },
+          {
+            "type": "string"
+          }
+        ]
       }
     },
     {
@@ -12071,7 +11595,7 @@
       "output": {
         "type": "array",
         "items": {
-          "$ref": "SystemMessage"
+          "$ref": "Message"
         }
       }
     },
@@ -13317,82 +12841,139 @@
             "x-corsair-in": "path"
           },
           "messages": {
-            "anyOf": [
-              {
-                "type": "object",
-                "properties": {
-                  "client_message_id": {
-                    "type": "string"
-                  },
-                  "content": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "text": {
-                              "type": "string"
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "client_message_id": {
+                      "type": "string"
+                    },
+                    "content": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "text": {
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": ["text"]
+                              }
                             },
-                            "type": {
-                              "enum": ["text"]
-                            }
-                          },
-                          "required": ["text", "type"]
+                            "required": ["text", "type"]
+                          }
                         }
-                      }
-                    ]
+                      ]
+                    },
+                    "role": {
+                      "enum": ["user"]
+                    },
+                    "otid": {
+                      "type": "string"
+                    }
                   },
-                  "role": {
-                    "enum": ["user"]
-                  },
-                  "otid": {
-                    "type": "string"
-                  }
+                  "required": ["client_message_id", "content", "role"]
                 },
-                "required": ["client_message_id", "content", "role"]
-              },
-              {
-                "type": "object",
-                "properties": {
-                  "client_message_id": {
-                    "type": "string"
-                  },
-                  "content": {
-                    "anyOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "text": {
-                              "type": "string"
+                {
+                  "type": "object",
+                  "properties": {
+                    "approvals": {
+                      "type": "array",
+                      "items": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "status": {
+                                "enum": ["success", "error"]
+                              },
+                              "tool_call_id": {
+                                "type": "string"
+                              },
+                              "tool_return": {
+                                "anyOf": [
+                                  {
+                                    "type": "string"
+                                  },
+                                  {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "text": {
+                                          "type": "string"
+                                        },
+                                        "type": {
+                                          "enum": ["text"]
+                                        }
+                                      },
+                                      "required": ["text", "type"]
+                                    }
+                                  }
+                                ]
+                              },
+                              "stderr": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "stdout": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "type": {
+                                "enum": ["tool"]
+                              }
                             },
-                            "type": {
-                              "enum": ["text"]
-                            }
+                            "required": [
+                              "status",
+                              "tool_call_id",
+                              "tool_return"
+                            ]
                           },
-                          "required": ["text", "type"]
-                        }
+                          {
+                            "type": "object",
+                            "properties": {
+                              "approve": {
+                                "type": "boolean"
+                              },
+                              "tool_call_id": {
+                                "type": "string"
+                              },
+                              "reason": {
+                                "type": "string"
+                              },
+                              "type": {
+                                "enum": ["approval"]
+                              },
+                              "updated_input": {
+                                "type": "object",
+                                "additionalProperties": true
+                              }
+                            },
+                            "required": ["approve", "tool_call_id"]
+                          }
+                        ]
                       }
-                    ]
+                    },
+                    "type": {
+                      "enum": ["approval"]
+                    }
                   },
-                  "role": {
-                    "enum": ["user"]
-                  },
-                  "otid": {
-                    "type": "string"
-                  }
-                },
-                "required": ["client_message_id", "content", "role"]
-              }
-            ]
+                  "required": ["approvals", "type"]
+                }
+              ]
+            }
           },
           "agentId": {
             "type": "string"
@@ -14501,7 +14082,10 @@
         "required": ["message_id"]
       },
       "output": {
-        "$ref": "SystemMessage"
+        "type": "array",
+        "items": {
+          "$ref": "Message"
+        }
       }
     },
     {
@@ -14551,17 +14135,10 @@
         }
       },
       "output": {
-        "anyOf": [
-          {
-            "type": "array",
-            "items": {
-              "$ref": "SystemMessage"
-            }
-          },
-          {
-            "$ref": "SystemMessage"
-          }
-        ]
+        "type": "array",
+        "items": {
+          "$ref": "Message"
+        }
       }
     },
     {
@@ -14607,7 +14184,11 @@
         "required": ["query"]
       },
       "output": {
-        "$ref": "SystemMessage"
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        }
       }
     },
     {
@@ -15534,7 +15115,7 @@
       "output": {
         "type": "array",
         "items": {
-          "$ref": "SystemMessage"
+          "$ref": "Message"
         }
       }
     },
@@ -16176,7 +15757,7 @@
       "output": {
         "type": "array",
         "items": {
-          "$ref": "SystemMessage"
+          "$ref": "Message"
         }
       }
     },
@@ -17061,30 +16642,10 @@
         }
       },
       "output": {
-        "type": "object",
-        "properties": {
-          "combined_score": {
-            "type": "number",
-            "description": "Combined relevance score (RRF for hybrid mode)."
-          },
-          "tool": {
-            "$ref": "Tool",
-            "description": "The matched tool."
-          },
-          "embedded_text": {
-            "type": "string",
-            "description": "The embedded text content used for matching."
-          },
-          "fts_rank": {
-            "type": "number",
-            "description": "Full-text search rank position."
-          },
-          "vector_rank": {
-            "type": "number",
-            "description": "Vector search rank position."
-          }
-        },
-        "required": ["combined_score", "tool"]
+        "type": "array",
+        "items": {
+          "$ref": "ToolSearchResult"
+        }
       }
     },
     {
@@ -18553,75 +18114,38 @@
           "description": "Deprecated: use `secrets` field instead."
         },
         "tool_rules": {
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {
-                "children": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "The children tools that can be invoked."
-                },
-                "tool_name": {
-                  "type": "string",
-                  "description": "The name of the tool. Must exist in the database for the user's organization."
-                },
-                "child_arg_nodes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "description": "The name of the child tool to invoke next."
-                      },
-                      "args": {
-                        "type": "object",
-                        "additionalProperties": true,
-                        "description": "Optional prefilled arguments for this child tool. Keys must match the tool's parameter names and values must satisfy the tool's JSON schema. Supports partial prefill; non-overlapping parameters are left to the model."
-                      }
-                    },
-                    "required": ["name"]
-                  },
-                  "description": "Optional list of typed child argument overrides. Each node must reference a child in 'children'."
-                },
-                "prompt_template": {
-                  "type": "string",
-                  "description": "Optional template string (ignored)."
-                },
-                "type": {
-                  "enum": ["constrain_child_tools"]
-                }
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "ChildToolRule"
               },
-              "required": ["children", "tool_name"]
-            },
-            {
-              "$ref": "InitToolRule"
-            },
-            {
-              "$ref": "TerminalToolRule"
-            },
-            {
-              "$ref": "ConditionalToolRule"
-            },
-            {
-              "$ref": "ContinueToolRule"
-            },
-            {
-              "$ref": "RequiredBeforeExitToolRule"
-            },
-            {
-              "$ref": "MaxCountPerStepToolRule"
-            },
-            {
-              "$ref": "ParentToolRule"
-            },
-            {
-              "$ref": "RequiresApprovalToolRule"
-            }
-          ],
+              {
+                "$ref": "InitToolRule"
+              },
+              {
+                "$ref": "TerminalToolRule"
+              },
+              {
+                "$ref": "ConditionalToolRule"
+              },
+              {
+                "$ref": "ContinueToolRule"
+              },
+              {
+                "$ref": "RequiredBeforeExitToolRule"
+              },
+              {
+                "$ref": "MaxCountPerStepToolRule"
+              },
+              {
+                "$ref": "ParentToolRule"
+              },
+              {
+                "$ref": "RequiresApprovalToolRule"
+              }
+            ]
+          },
           "description": "The list of tool rules."
         },
         "updated_at": {
@@ -18744,33 +18268,17 @@
           "description": "The message ID of the approval request"
         },
         "approvals": {
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {
-                "approve": {
-                  "type": "boolean",
-                  "description": "Whether the tool has been approved"
-                },
-                "tool_call_id": {
-                  "type": "string",
-                  "description": "The ID of the tool call that corresponds to this approval"
-                },
-                "reason": {
-                  "type": "string",
-                  "description": "An optional explanation for the provided approval status"
-                },
-                "type": {
-                  "enum": ["approval"],
-                  "description": "The message type to be created."
-                }
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "ApprovalReturn"
               },
-              "required": ["approve", "tool_call_id"]
-            },
-            {
-              "$ref": "ToolReturn"
-            }
-          ],
+              {
+                "$ref": "ToolReturn"
+              }
+            ]
+          },
           "description": "The list of approval responses"
         },
         "approve": {
@@ -18874,33 +18382,17 @@
           "description": "The message ID of the approval request"
         },
         "approvals": {
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {
-                "approve": {
-                  "type": "boolean",
-                  "description": "Whether the tool has been approved"
-                },
-                "tool_call_id": {
-                  "type": "string",
-                  "description": "The ID of the tool call that corresponds to this approval"
-                },
-                "reason": {
-                  "type": "string",
-                  "description": "An optional explanation for the provided approval status"
-                },
-                "type": {
-                  "enum": ["approval"],
-                  "description": "The message type to be created."
-                }
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "ApprovalReturn"
               },
-              "required": ["approve", "tool_call_id"]
-            },
-            {
-              "$ref": "ToolReturn"
-            }
-          ],
+              {
+                "$ref": "ToolReturn"
+              }
+            ]
+          },
           "description": "The list of approval responses"
         },
         "approve": {
@@ -18940,6 +18432,28 @@
       },
       "required": ["id", "date"],
       "description": "A message representing a response form the user indicating whether a tool has been approved to run. Args: id (str): The ID of the message date (datetime): The date the message was created in ISO format name (Optional[str]): The name of the sender of the message approve: (bool) Whether the tool has been approved approval_request_id: The ID of the approval request reason: (Optional[str]) An optional explanation for the provided approval status"
+    },
+    "ApprovalReturn": {
+      "type": "object",
+      "properties": {
+        "approve": {
+          "type": "boolean",
+          "description": "Whether the tool has been approved"
+        },
+        "tool_call_id": {
+          "type": "string",
+          "description": "The ID of the tool call that corresponds to this approval"
+        },
+        "reason": {
+          "type": "string",
+          "description": "An optional explanation for the provided approval status"
+        },
+        "type": {
+          "enum": ["approval"],
+          "description": "The message type to be created."
+        }
+      },
+      "required": ["approve", "tool_call_id"]
     },
     "Archive": {
       "type": "object",
@@ -19286,6 +18800,50 @@
         }
       },
       "required": ["id", "value"]
+    },
+    "ChildToolRule": {
+      "type": "object",
+      "properties": {
+        "children": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The children tools that can be invoked."
+        },
+        "tool_name": {
+          "type": "string",
+          "description": "The name of the tool. Must exist in the database for the user's organization."
+        },
+        "child_arg_nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "The name of the child tool to invoke next."
+              },
+              "args": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Optional prefilled arguments for this child tool. Keys must match the tool's parameter names and values must satisfy the tool's JSON schema. Supports partial prefill; non-overlapping parameters are left to the model."
+              }
+            },
+            "required": ["name"]
+          },
+          "description": "Optional list of typed child argument overrides. Each node must reference a child in 'children'."
+        },
+        "prompt_template": {
+          "type": "string",
+          "description": "Optional template string (ignored)."
+        },
+        "type": {
+          "enum": ["constrain_child_tools"]
+        }
+      },
+      "required": ["children", "tool_name"],
+      "description": "A ToolRule represents a tool that can be invoked by the agent."
     },
     "CompactionResponse": {
       "type": "object",
@@ -20405,93 +19963,36 @@
           "description": "The id of the approval request if this message is associated with a tool call request."
         },
         "approvals": {
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {
-                "approve": {
-                  "type": "boolean",
-                  "description": "Whether the tool has been approved"
-                },
-                "tool_call_id": {
-                  "type": "string",
-                  "description": "The ID of the tool call that corresponds to this approval"
-                },
-                "reason": {
-                  "type": "string",
-                  "description": "An optional explanation for the provided approval status"
-                },
-                "type": {
-                  "enum": ["approval"],
-                  "description": "The message type to be created."
-                }
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "ApprovalReturn"
               },
-              "required": ["approve", "tool_call_id"]
-            },
-            {
-              "type": "object",
-              "properties": {
-                "status": {
-                  "enum": ["success", "error"],
-                  "description": "The status of the tool call"
-                },
-                "func_response": {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "anyOf": [
-                        {
-                          "type": "object",
-                          "properties": {
-                            "text": {
-                              "type": "string",
-                              "description": "The text content of the message."
-                            },
-                            "signature": {
-                              "type": "string",
-                              "description": "Stores a unique identifier for any reasoning associated with this text content."
-                            },
-                            "type": {
-                              "enum": ["text"],
-                              "description": "The type of the message."
-                            }
-                          },
-                          "required": ["text"]
-                        },
-                        {
-                          "$ref": "ImageContent"
-                        }
-                      ]
-                    },
-                    {
-                      "$ref": "ImageContent"
-                    }
-                  ],
-                  "description": "The function response - either a string or list of content parts (text/image)"
-                },
-                "stderr": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
+              {
+                "type": "object",
+                "properties": {
+                  "approve": {
+                    "type": "boolean",
+                    "description": "Whether the tool has been approved"
                   },
-                  "description": "Captured stderr from the tool invocation"
-                },
-                "stdout": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
+                  "tool_call_id": {
+                    "type": "string",
+                    "description": "The ID of the tool call that corresponds to this approval"
                   },
-                  "description": "Captured stdout (e.g. prints, logs) from the tool invocation"
+                  "reason": {
+                    "type": "string",
+                    "description": "An optional explanation for the provided approval status"
+                  },
+                  "type": {
+                    "enum": ["approval"],
+                    "description": "The message type to be created."
+                  }
                 },
-                "tool_call_id": {
-                  "description": "The ID for the tool call"
-                }
-              },
-              "required": ["status"]
-            }
-          ],
+                "required": ["approve", "tool_call_id"]
+              }
+            ]
+          },
           "description": "The list of approvals for this message."
         },
         "approve": {
@@ -20503,66 +20004,68 @@
           "description": "The id of the LLMBatchItem that this message is associated with"
         },
         "content": {
-          "anyOf": [
-            {
-              "type": "object",
-              "properties": {}
-            },
-            {
-              "$ref": "ImageContent"
-            },
-            {
-              "$ref": "ToolCallContent"
-            },
-            {
-              "$ref": "ToolReturnContent"
-            },
-            {
-              "$ref": "ReasoningContent"
-            },
-            {
-              "$ref": "RedactedReasoningContent"
-            },
-            {
-              "$ref": "OmittedReasoningContent"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "string",
-                  "description": "The unique identifier for this reasoning step."
-                },
-                "summary": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "index": {
-                        "type": "number",
-                        "description": "The index of the summary part."
-                      },
-                      "text": {
-                        "type": "string",
-                        "description": "The text of the summary part."
-                      }
-                    },
-                    "required": ["index", "text"]
-                  },
-                  "description": "Summaries of the reasoning content."
-                },
-                "encrypted_content": {
-                  "type": "string",
-                  "description": "The encrypted reasoning content."
-                },
-                "type": {
-                  "enum": ["summarized_reasoning"],
-                  "description": "Indicates this is a summarized reasoning step."
-                }
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "TextContent"
               },
-              "required": ["id", "summary"]
-            }
-          ],
+              {
+                "$ref": "ImageContent"
+              },
+              {
+                "$ref": "ToolCallContent"
+              },
+              {
+                "$ref": "ToolReturnContent"
+              },
+              {
+                "$ref": "ReasoningContent"
+              },
+              {
+                "$ref": "RedactedReasoningContent"
+              },
+              {
+                "$ref": "OmittedReasoningContent"
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "The unique identifier for this reasoning step."
+                  },
+                  "summary": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "index": {
+                          "type": "number",
+                          "description": "The index of the summary part."
+                        },
+                        "text": {
+                          "type": "string",
+                          "description": "The text of the summary part."
+                        }
+                      },
+                      "required": ["index", "text"]
+                    },
+                    "description": "Summaries of the reasoning content."
+                  },
+                  "encrypted_content": {
+                    "type": "string",
+                    "description": "The encrypted reasoning content."
+                  },
+                  "type": {
+                    "enum": ["summarized_reasoning"],
+                    "description": "Indicates this is a summarized reasoning step."
+                  }
+                },
+                "required": ["id", "summary"]
+              }
+            ]
+          },
           "description": "The content of the message."
         },
         "conversation_id": {
@@ -20665,15 +20168,17 @@
                     "type": "string"
                   },
                   {
-                    "anyOf": [
-                      {
-                        "type": "object",
-                        "properties": {}
-                      },
-                      {
-                        "$ref": "ImageContent"
-                      }
-                    ]
+                    "type": "array",
+                    "items": {
+                      "anyOf": [
+                        {
+                          "$ref": "TextContent"
+                        },
+                        {
+                          "$ref": "ImageContent"
+                        }
+                      ]
+                    }
                   },
                   {
                     "$ref": "ImageContent"
@@ -22347,6 +21852,24 @@
       "required": ["tool_name"],
       "description": "Represents a terminal tool rule configuration where if this tool gets called, it must end the agent loop."
     },
+    "TextContent": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "The text content of the message."
+        },
+        "signature": {
+          "type": "string",
+          "description": "Stores a unique identifier for any reasoning associated with this text content."
+        },
+        "type": {
+          "enum": ["text"],
+          "description": "The type of the message."
+        }
+      },
+      "required": ["text"]
+    },
     "TextResponseFormat": {
       "type": "object",
       "properties": {
@@ -22649,32 +22172,17 @@
         "tool_return": {
           "anyOf": [
             {
-              "anyOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "text": {
-                      "type": "string",
-                      "description": "The text content of the message."
-                    },
-                    "signature": {
-                      "type": "string",
-                      "description": "Stores a unique identifier for any reasoning associated with this text content."
-                    },
-                    "type": {
-                      "enum": ["text"],
-                      "description": "The type of the message."
-                    }
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "TextContent"
                   },
-                  "required": ["text"]
-                },
-                {
-                  "$ref": "ImageContent"
-                }
-              ]
-            },
-            {
-              "$ref": "ImageContent"
+                  {
+                    "$ref": "ImageContent"
+                  }
+                ]
+              }
             },
             {
               "type": "string"
@@ -22788,6 +22296,33 @@
       },
       "required": ["id", "date", "status", "tool_call_id", "tool_return"],
       "description": "A message representing the return value of a tool call (generated by Letta executing the requested tool). Args: id (str): The ID of the message date (datetime): The date the message was created in ISO format name (Optional[str]): The name of the sender of the message tool_return (str): The return value of the tool (deprecated, use tool_returns) status (Literal[\"success\", \"error\"]): The status of the tool call (deprecated, use tool_returns) tool_call_id (str): A unique identifier for the tool call that generated this message (deprecated, use tool_returns) stdout (Optional[List(str)]): Captured stdout (e.g. prints, logs) from the tool invocation (deprecated, use tool_returns) stderr (Optional[List(str)]): Captured stderr from the tool invocation (deprecated, use tool_returns) tool_returns (Optional[List[ToolReturn]]): List of tool returns for multi-tool support"
+    },
+    "ToolSearchResult": {
+      "type": "object",
+      "properties": {
+        "combined_score": {
+          "type": "number",
+          "description": "Combined relevance score (RRF for hybrid mode)."
+        },
+        "tool": {
+          "$ref": "Tool",
+          "description": "The matched tool."
+        },
+        "embedded_text": {
+          "type": "string",
+          "description": "The embedded text content used for matching."
+        },
+        "fts_rank": {
+          "type": "number",
+          "description": "Full-text search rank position."
+        },
+        "vector_rank": {
+          "type": "number",
+          "description": "Vector search rank position."
+        }
+      },
+      "required": ["combined_score", "tool"],
+      "description": "Result from a tool search operation."
     },
     "ToolType": {
       "anyOf": [
