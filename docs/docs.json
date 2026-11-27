@@ -3880,6 +3880,14 @@
                 ]
               },
               {
+                "group": "Modal",
+                "pages": [
+                  "plugins/modal/overview",
+                  "plugins/modal/api",
+                  "plugins/modal/database"
+                ]
+              },
+              {
                 "group": "Modelry",
                 "pages": [
                   "plugins/modelry/overview",
