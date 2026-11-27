@@ -30382,7 +30382,7 @@ await corsair.mongodbatlas.api.clusters.requestSampleDatasetLoad({ groupId: '5f4
 
 Test Failover for One Cluster: starts a failover test for the specified cluster in the specified project
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mongodbatlas.api.clusters.restartPrimaries({ groupId: '5f43e7f0a1b2c3d4e5f60718', clusterName: 'Cluster0' });
@@ -46690,7 +46690,7 @@ await corsair.mongodbatlas.api.programmaticApiKeys.addGroupApiKey({
 
 Create and Assign One Organization API Key to One Project: creates and assigns the specified organization API key to the specified project
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mongodbatlas.api.programmaticApiKeys.createGroupApiKey({
@@ -48185,7 +48185,7 @@ Return All Projects: returns details about all projects (paged with pageNum / it
 **Risk:** `read`
 
 ```ts
-await corsair.mongodbatlas.api.projects.listGroups({});
+await corsair.mongodbatlas.api.projects.listGroups({ itemsPerPage: 20 });
 ```
 
 **Input**
@@ -49496,8 +49496,8 @@ await corsair.mongodbatlas.api.rateLimiting.listRateLimits({});
 | `orgId` | `string` | No | Unique 24-hexadecimal digit string that identifies the Atlas Organization to request rate limits for. When this parameter is provided, only organization scoped endpoint sets are returned and the limits returned are applicable to the specified organization. The requesting user must have the Organization Read Only role for the specified organization. |
 | `userId` | `string` | No | A string that identifies the Atlas user to request rate limits for. The ID can for example be the Service Account Client ID or the API Public Key. When this parameter is provided, only user scoped endpoint sets are returned and the limits returned are applicable to the specified user. The requesting user must be the same as the specified user. |
 | `ipAddress` | `string` | No | An IP address to request rate limits for. When this parameter is provided, only IP scoped endpoint sets are returned and the limits returned are applicable to the specified IP address. The requesting user must have the same IP address as the one provided in the request. |
-| `name` | `string` | No | Filters the returned endpoint sets by the provided endpoint set name. Multiple names may be provided, for example `/rateLimits?name=Name1&name=Name2`. For names that use spaces, replace the space with its URL-encoded value (`%20`). |
-| `endpointPath` | `string` | No | Filters the returned endpoint sets by the provided endpoint path. Multiple paths may be provided, for example `/rateLimits?endpointPath=%2Fapi%2Fatlas%2Fv2%2Fclusters&endpointPath=%2Fapi%2Fatlas%2Fv2%2Fgroups%2F%7BgroupId%7D%2F`. Replace `/`, `{` and `}` with their URL-encoded values (`%2F`, `%7B` and `%7D` respectively). |
+| `name` | `string \| string[]` | No | Filters the returned endpoint sets by the provided endpoint set name. Multiple names may be provided, for example `/rateLimits?name=Name1&name=Name2`. For names that use spaces, replace the space with its URL-encoded value (`%20`). |
+| `endpointPath` | `string \| string[]` | No | Filters the returned endpoint sets by the provided endpoint path. Multiple paths may be provided, for example `/rateLimits?endpointPath=%2Fapi%2Fatlas%2Fv2%2Fclusters&endpointPath=%2Fapi%2Fatlas%2Fv2%2Fgroups%2F%7BgroupId%7D%2F`. Replace `/`, `{` and `}` with their URL-encoded values (`%2F`, `%7B` and `%7D` respectively). |
 
 
 
@@ -51260,7 +51260,7 @@ await corsair.mongodbatlas.api.serviceAccounts.createAccessList({
 
 Create One Project Service Account Secret: create a secret for the specified Service Account in the specified Project
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mongodbatlas.api.serviceAccounts.createGroupSecret({ groupId: '5f43e7f0a1b2c3d4e5f60718', clientId: 'mdb_sa_id_5f43e7f0a1b2c3d4e5f60718', secretExpiresAfterHours: 1 });
@@ -51297,7 +51297,7 @@ await corsair.mongodbatlas.api.serviceAccounts.createGroupSecret({ groupId: '5f4
 
 Create One Project Service Account: creates one Service Account for the specified Project
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mongodbatlas.api.serviceAccounts.createGroupServiceAccount({

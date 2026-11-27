@@ -14265,9 +14265,9 @@ export type MongoDBAtlasOperationInputs = {
 		/** An IP address to request rate limits for. When this parameter is provided, only IP scoped endpoint sets are returned and the limits returned are applicable to the specified IP address. The requesting user must have the same IP address as the one provided in the request. */
 		ipAddress?: string;
 		/** Filters the returned endpoint sets by the provided endpoint set name. Multiple names may be provided, for example `/rateLimits?name=Name1&name=Name2`. For names that use spaces, replace the space with its URL-encoded value (`%20`). */
-		name?: string;
+		name?: (string | Array<string>);
 		/** Filters the returned endpoint sets by the provided endpoint path. Multiple paths may be provided, for example `/rateLimits?endpointPath=%2Fapi%2Fatlas%2Fv2%2Fclusters&endpointPath=%2Fapi%2Fatlas%2Fv2%2Fgroups%2F%7BgroupId%7D%2F`. Replace `/`, `{` and `}` with their URL-encoded values (`%2F`,… */
-		endpointPath?: string;
+		endpointPath?: (string | Array<string>);
 	};
 	'remoteMcpConfigurations.createGroupMcpConfig': {
 		/** Unique 24-hexadecimal digit string that identifies your project. Use the [/groups](#tag/Projects/operation/listProjects) endpoint to retrieve all projects to which the authenticated user has access. **NOTE**: Groups and projects are synonymous terms. Your group id is the same as your project id.… */

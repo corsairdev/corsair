@@ -2731,7 +2731,7 @@ export const mongodbatlasEndpointMeta = {
 			'Load Sample Dataset into One Cluster: requests loading the MongoDB sample dataset into the specified cluster',
 	},
 	'clusters.restartPrimaries': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Test Failover for One Cluster: starts a failover test for the specified cluster in the specified project',
 	},
@@ -3755,7 +3755,7 @@ export const mongodbatlasEndpointMeta = {
 			'Assign One Organization API Key to One Project: assigns the specified organization API key to the specified project',
 	},
 	'programmaticApiKeys.createGroupApiKey': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create and Assign One Organization API Key to One Project: creates and assigns the specified organization API key to the specified project',
 	},
@@ -4175,12 +4175,12 @@ export const mongodbatlasEndpointMeta = {
 			'Add Access List Entries for One Project Service Account: add Access List Entries for the specified Service Account for the project (paged with pageNum / itemsPerPage)',
 	},
 	'serviceAccounts.createGroupSecret': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create One Project Service Account Secret: create a secret for the specified Service Account in the specified Project',
 	},
 	'serviceAccounts.createGroupServiceAccount': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create One Project Service Account: creates one Service Account for the specified Project',
 	},

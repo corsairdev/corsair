@@ -8,8 +8,8 @@ recommendedAuth: api_key
 overviewNote: |
   Connect with a service account (Organization > Access Manager >
   Applications > Service Accounts): store it as `clientId:clientSecret`
-  (`mdb_sa_id_...:mdb_sa_sk_...`) or as the JSON `{ "clientId",
-  "clientSecret" }`. The plugin trades it at `/api/oauth/token` for a bearer
+  (`mdb_sa_id_...:mdb_sa_sk_...`) or as the JSON
+  `{ "clientId": "mdb_sa_id_...", "clientSecret": "mdb_sa_sk_..." }`. The plugin trades it at `/api/oauth/token` for a bearer
   token (cached until a minute before it expires). A programmatic API key
   works too, as `publicKey:privateKey`; Atlas wants those with HTTP Digest
   authentication, which the plugin does. Add the IP addresses the calls come
@@ -18,7 +18,7 @@ overviewNote: |
   Owner covers most).
 
   - **Ids.** Atlas calls a project a group: `groupId` is the project id
-  (`projects.listProjects`), `orgId` the organization's
+  (`projects.listGroups`), `orgId` the organization's
   (`organizations.listOrgs`). Clusters, users and indexes go by name.
   - **Versions.** Every Atlas route is versioned by media type; each
   operation is pinned to the newest version the spec offers and sends it as
@@ -731,7 +731,7 @@ apiExamples:
   projects.listGroupLimits:
     args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
   projects.listGroups:
-    args: {}
+    args: {"itemsPerPage": 20}
   projects.migrateGroup:
     args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
   projects.setGroupLimit:

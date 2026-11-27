@@ -85,11 +85,26 @@ export function parseAtlasKey(key: string): MongoDBAtlasCredential {
 }
 
 type CachedToken = { token: string; expiresAt: number };
+/** Tokens by client id and a hash of the secret (never the secret itself). */
 const tokenCache = new Map<string, CachedToken>();
+/** Bumped by every clear, so an exchange already in flight doesn't refill the cache. */
+let tokenCacheGeneration = 0;
+/** How long the token exchange or the Digest probe may take, body included. */
+const AUTH_TIMEOUT_MS = 15_000;
+/** OAuth error codes that are safe to show (RFC 6749 5.2). */
+const OAUTH_ERRORS = new Set([
+	'invalid_request',
+	'invalid_client',
+	'invalid_grant',
+	'unauthorized_client',
+	'unsupported_grant_type',
+	'invalid_scope',
+]);
 
 /** Clears cached tokens and digest challenges (tests, or after rotating a key). */
 export function clearMongoDBAtlasAuthCache(): void {
 	tokenCache.clear();
+	tokenCacheGeneration += 1;
 	digestCache.clear();
 }
 
@@ -98,40 +113,65 @@ export async function serviceAccountToken(
 	clientId: string,
 	clientSecret: string,
 ): Promise<string> {
-	const cached = tokenCache.get(clientId);
+	// A changed secret for the same client id gets its own token.
+	const cacheKey = `${clientId}:${createHash('sha256')
+		.update(clientSecret, 'utf8')
+		.digest('hex')
+		.slice(0, 16)}`;
+	const cached = tokenCache.get(cacheKey);
 	if (cached && cached.expiresAt > Date.now() + 60_000) return cached.token;
-	const response = await fetch(MONGODBATLAS_TOKEN_URL, {
-		method: 'POST',
-		headers: {
-			Accept: 'application/json',
-			'Content-Type': 'application/x-www-form-urlencoded',
-			Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
-		},
-		body: 'grant_type=client_credentials',
-	});
+	const generation = tokenCacheGeneration;
+	let status = 0;
 	// `unknown` because the token response is untrusted JSON until checked.
-	const body = (await response.json().catch(() => ({}))) as Record<
-		string,
-		unknown
-	>;
-	if (!response.ok || typeof body.access_token !== 'string') {
-		const reason =
-			typeof body.error_description === 'string'
-				? body.error_description
-				: typeof body.error === 'string'
-					? body.error
-					: `HTTP ${response.status}`;
+	let parsed: unknown;
+	try {
+		const response = await fetch(MONGODBATLAS_TOKEN_URL, {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				'Content-Type': 'application/x-www-form-urlencoded',
+				Authorization: `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`,
+			},
+			body: 'grant_type=client_credentials',
+			// Covers the body read below too.
+			signal: AbortSignal.timeout(AUTH_TIMEOUT_MS),
+		});
+		status = response.status;
+		parsed = response.ok
+			? await response.json()
+			: await response.json().catch(() => null);
+	} catch (error) {
+		if (status === 0) {
+			throw new Error(
+				`[mongodbatlas] the token exchange with Atlas failed or timed out (${error instanceof Error ? error.name : 'error'})`,
+			);
+		}
+		parsed = null;
+	}
+	const body: Record<string, unknown> =
+		typeof parsed === 'object' && parsed !== null && !Array.isArray(parsed)
+			? (parsed as Record<string, unknown>)
+			: {};
+	if (status < 200 || status >= 300 || typeof body.access_token !== 'string') {
+		// error_description is free text that can echo the credential: only a
+		// known OAuth error code goes in the message.
+		const code =
+			typeof body.error === 'string' && OAUTH_ERRORS.has(body.error)
+				? body.error
+				: `HTTP ${status}`;
 		throw new AuthMissingError(
 			'mongodbatlas',
 			'api_key',
-			`[mongodbatlas] Atlas refused the service account (${reason.slice(0, 200)})`,
+			`[mongodbatlas] Atlas refused the service account (${code})`,
 		);
 	}
 	const lifetime = typeof body.expires_in === 'number' ? body.expires_in : 3600;
-	tokenCache.set(clientId, {
-		token: body.access_token,
-		expiresAt: Date.now() + lifetime * 1000,
-	});
+	if (generation === tokenCacheGeneration) {
+		tokenCache.set(cacheKey, {
+			token: body.access_token,
+			expiresAt: Date.now() + lifetime * 1000,
+		});
+	}
 	return body.access_token;
 }
 
@@ -178,6 +218,25 @@ function digestFields(text: string): Record<string, string> {
 	return fields;
 }
 
+/**
+ * The signer only does `qop=auth` (it never hashes the body), so `auth` is
+ * picked wherever it is in the list; an offer without it is refused rather
+ * than signed wrongly. No offer at all is the legacy RFC 2069 form.
+ */
+function qopOf(offer: string | undefined): { qop?: string } {
+	const options = (offer ?? '')
+		.split(',')
+		.map((option) => option.trim().toLowerCase())
+		.filter(Boolean);
+	if (options.length === 0) return {};
+	if (options.includes('auth')) return { qop: 'auth' };
+	throw new AuthMissingError(
+		'mongodbatlas',
+		'api_key',
+		'[mongodbatlas] Atlas offered Digest without qop=auth',
+	);
+}
+
 /** The fields of a `WWW-Authenticate: Digest ...` header. */
 export function parseDigestChallenge(
 	header: string,
@@ -188,7 +247,7 @@ export function parseDigestChallenge(
 	return {
 		realm: fields.realm,
 		nonce: fields.nonce,
-		...(fields.qop ? { qop: fields.qop.split(',')[0]?.trim() } : {}),
+		...qopOf(fields.qop),
 		...(fields.opaque ? { opaque: fields.opaque } : {}),
 		...(fields.algorithm ? { algorithm: fields.algorithm } : {}),
 		count: 0,
@@ -233,7 +292,10 @@ async function fetchDigestChallenge(url: string): Promise<DigestChallenge> {
 	const response = await fetch(url, {
 		method: 'GET',
 		headers: { Accept: 'application/json' },
+		signal: AbortSignal.timeout(AUTH_TIMEOUT_MS),
 	});
+	// The body isn't needed; drop it so the connection is freed.
+	await response.body?.cancel().catch(() => {});
 	const header = response.headers.get('www-authenticate') ?? '';
 	const challenge = parseDigestChallenge(header);
 	if (!challenge) {
@@ -527,7 +589,12 @@ export function mongodbatlasErrorMessage(
 		: typeof fields.errors === 'object' && fields.errors !== null
 			? Object.entries(fields.errors).flatMap(([field, messages]) =>
 					(Array.isArray(messages) ? messages : [messages]).map((message) =>
-						typeof message === 'string' ? `${field} ${message}` : undefined,
+						typeof message === 'string'
+							? // A key that isn't a field name (an email, a value) stays out.
+								FIELD_NAME.test(field)
+								? `${field} ${message}`
+								: message
+							: undefined,
 					),
 				)
 			: [];
@@ -554,6 +621,9 @@ export function mongodbatlasErrorMessage(
 	const text = `MongoDBAtlas ${status}: ${parts.join('; ') || statusText || 'request failed'}`;
 	return text.length > 500 ? `${text.slice(0, 497)}...` : text;
 }
+
+/** A field path such as `notifications.0.emailAddress` or `roles[1]`. */
+const FIELD_NAME = /^[A-Za-z_][A-Za-z0-9_.[\]-]{0,80}$/;
 
 /** Strings shorter than this are matched as whole words only... */
 const WHOLE_WORD_BELOW = 6;
@@ -661,7 +731,11 @@ function scrubSent(value: unknown, sent: SentString[], depth = 0): unknown {
 	if (typeof value === 'object' && value !== null) {
 		// `unknown` because error detail items have no fixed shape.
 		const result: Record<string, unknown> = {};
-		for (const [key, inner] of Object.entries(value)) {
+		let index = 0;
+		for (const [rawKey, inner] of Object.entries(value)) {
+			// A key can echo a value (an email keying an `errors` map): only
+			// field-name keys are kept as they are.
+			const key = FIELD_NAME.test(rawKey) ? rawKey : `${REDACTED}${index++}`;
 			// Atlas's error code is one of its own constants
 			// (`EMAIL_OR_SMS_REQUIRED_FOR_GROUP_NOTIFICATION`), never a sent value.
 			result[key] =

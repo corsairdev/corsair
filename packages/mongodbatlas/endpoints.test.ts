@@ -145,6 +145,58 @@ describe('credentials', () => {
 		expect(calls[1]?.headers.authorization).toBe('Bearer atlas-token');
 	});
 
+	it('keys the token by the secret and keeps OAuth text out of errors', async () => {
+		replies(
+			{ status: 200, body: { access_token: 'atlas-token', expires_in: 3600 } },
+			{ status: 200, body: { results: [], totalCount: 0 } },
+			{
+				status: 401,
+				body: {
+					error: 'invalid_client',
+					error_description: 'bad secret mdb_sa_sk_replaced',
+				},
+			},
+		);
+		await endpointFor('clusters.listClusters')(ctx(SA), { groupId: GROUP });
+		const replaced = SA.replace('secretvalue', 'replaced');
+		const error = (await endpointFor('clusters.listClusters')(ctx(replaced), {
+			groupId: GROUP,
+		}).catch((e: unknown) => e)) as Error;
+		expect(error.name).toBe('AuthMissingError');
+		expect(error.message).toContain('invalid_client');
+		expect(error.message).not.toContain('mdb_sa_sk');
+	});
+
+	it('sends a null that clears a body field, and a CIDR slash encoded once', async () => {
+		replies({ status: 200, body: {} });
+		await endpointFor('organizations.updateOrgSettings')(ctx(), {
+			orgId: GROUP,
+			operationsContact: null,
+		});
+		expect(JSON.parse(String(calls[0]?.body))).toEqual({
+			operationsContact: null,
+		});
+		for (const entryValue of ['192.0.2.0/24', '192.0.2.0%2F24']) {
+			await endpointFor('projectIpAccessList.getAccessListEntry')(ctx(), {
+				groupId: GROUP,
+				entryValue,
+			}).catch(() => undefined);
+		}
+		expect(calls.slice(1).map((c) => new URL(c.url).pathname)).toEqual([
+			`/api/atlas/v2/groups/${GROUP}/accessList/192.0.2.0%2F24`,
+			`/api/atlas/v2/groups/${GROUP}/accessList/192.0.2.0%2F24`,
+		]);
+	});
+
+	it('picks auth from a qop list and refuses an offer without it', () => {
+		expect(
+			parseDigestChallenge('Digest realm="r", nonce="n", qop="auth-int,auth"'),
+		).toMatchObject({ qop: 'auth' });
+		expect(() =>
+			parseDigestChallenge('Digest realm="r", nonce="n", qop="auth-int"'),
+		).toThrow(/without qop=auth/);
+	});
+
 	it('asks to connect when Atlas refuses the service account', async () => {
 		reply(401, { error: 'invalid_client' });
 		await expect(
@@ -301,6 +353,14 @@ describe('requests', () => {
 				clusterName: '..',
 			}),
 		).rejects.toThrow();
+		// Valid ids and one field the operation doesn't take.
+		await expect(
+			endpointFor('clusters.getCluster')(ctx(), {
+				groupId: GROUP,
+				clusterName: 'Cluster0',
+				notAField: true,
+			}),
+		).rejects.toThrow(/unknown field/);
 		expect(calls).toHaveLength(0);
 		expect(
 			atlasRequestTarget({

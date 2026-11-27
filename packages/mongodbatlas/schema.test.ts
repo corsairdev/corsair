@@ -47,8 +47,11 @@ describe('mongodbatlas-manifest.json', () => {
 
 	it('pins every operation to one versioned media type', () => {
 		for (const op of mongodbatlasOperations) {
-			expect(op.accept).toBe(
-				`application/vnd.atlas.${op.version}+${op.response === 'file' ? op.accept.split('+')[1] : 'json'}`,
+			// Files come as gzip (logs) or csv (invoices); everything else is json.
+			expect(op.accept).toMatch(
+				op.response === 'file'
+					? new RegExp(`^application/vnd\\.atlas\\.${op.version}\\+(gzip|csv)$`)
+					: new RegExp(`^application/vnd\\.atlas\\.${op.version}\\+json$`),
 			);
 		}
 		expect(operation('clusters.listClusters').version).toBe('2024-08-05');

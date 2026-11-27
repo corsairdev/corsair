@@ -136,6 +136,12 @@ export function fileNameFor(
 	return `atlas-${id.replace(/\./g, '-')}${ref}${ext ? `.${ext}` : ''}`;
 }
 
+/** Path fields that hold an IP address or a CIDR block (`192.0.2.0/24`). */
+const CIDR_PATH_FIELDS: ReadonlySet<string> = new Set([
+	'entryValue',
+	'ipAddress',
+]);
+
 /**
  * One endpoint per manifest operation. The caller passes one flat object;
  * each named field goes to the path, query or a header as the spec says, and
@@ -169,11 +175,23 @@ export function createMongoDBAtlasOperation<Id extends MongoDBAtlasOperationId>(
 		for (const field of mongodbatlasInputFields(id)) {
 			named.add(field.name);
 			const value = valid[field.name];
-			if (value === undefined || value === null) continue;
+			if (value === undefined) continue;
+			// null clears a body field (`operationsContact: null`); in a path,
+			// query or header it means "not set".
+			if (
+				value === null &&
+				(field.in === 'path' || field.in === 'query' || field.in === 'header')
+			) {
+				continue;
+			}
 			switch (field.in) {
 				case 'path':
 					pathParameters[field.wire] = encodeMongoDBAtlasPathValue(
-						String(value),
+						CIDR_PATH_FIELDS.has(field.wire)
+							? // Atlas's docs say to write a CIDR's slash as %2F; take
+								// that or a plain slash, and encode it once either way.
+								String(value).replace(/%2F/gi, '/')
+							: String(value),
 						field.slashes,
 					);
 					break;
