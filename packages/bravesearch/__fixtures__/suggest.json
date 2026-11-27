@@ -1,0 +1,5 @@
+{
+  "type": "suggest",
+  "query": { "original": "hello wor" },
+  "results": [{ "query": "hello world" }, { "query": "hello world program" }]
+}

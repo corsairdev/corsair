@@ -1,0 +1,5 @@
+{
+  "type": "spellcheck",
+  "query": { "original": "helo wrold" },
+  "results": [{ "query": "hello world" }]
+}

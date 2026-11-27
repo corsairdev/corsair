@@ -1,0 +1,130 @@
+{
+  "type": "rich",
+  "results": [
+    {
+      "type": "rich",
+      "subtype": "weather",
+      "provider": {
+        "type": "external",
+        "name": "OpenWeatherMap",
+        "url": "https://openweathermap.org/"
+      },
+      "weather": {
+        "location": {
+          "id": 2643743,
+          "name": "London",
+          "country": "GB",
+          "state": "",
+          "coords": {
+            "lat": 51.5072,
+            "lon": -0.1276
+          },
+          "population": 1000000,
+          "sunrise": 1795678585,
+          "sunset": 1795708769,
+          "tzoffset": 0,
+          "implicit_location": false
+        },
+        "current_time_iso": "2026-11-26T20:05:21",
+        "current_weather": {
+          "ts": 1795722939,
+          "sunrise": 1795678585,
+          "sunset": 1795708768,
+          "temp": 3.13,
+          "feels_like": -0.18,
+          "pressure": 1019,
+          "humidity": 81,
+          "dew_point": 0.19,
+          "uvi": 0.0,
+          "clouds": 75,
+          "visibility": 10000,
+          "wind": {
+            "speed": 3.6,
+            "deg": 110
+          },
+          "weather": {
+            "id": 803,
+            "main": "clouds",
+            "description": "broken clouds",
+            "icon": "04n"
+          }
+        },
+        "daily": [
+          {
+            "ts": 1795690800,
+            "date_i18n": "Thursday, Nov 26",
+            "sunrise": 1795678585,
+            "sunset": 1795708768,
+            "moonrise": 1795713360,
+            "moonset": 1795688400,
+            "temperature": {
+              "day": 5.69,
+              "min": 2.58,
+              "max": 5.83,
+              "night": 2.58,
+              "evening": 3.14,
+              "morning": 4.88
+            },
+            "feels_like": {
+              "day": 3.11,
+              "night": 0.19,
+              "evening": 0.78,
+              "morning": 2.11
+            },
+            "pressure": 1018,
+            "humidity": 76,
+            "dew_point": 1.41,
+            "wind": {
+              "speed": 3.63,
+              "deg": 86,
+              "gust": 8.71
+            },
+            "clouds": 95,
+            "pop": 0.0,
+            "uvi": 0.63,
+            "weather": {
+              "id": 804,
+              "main": "clouds",
+              "description": "overcast clouds",
+              "icon": "04d"
+            }
+          }
+        ],
+        "hours3": [
+          {
+            "ts": 1795726800,
+            "temperature": {
+              "temp": 3.17,
+              "feels_like": 1.38,
+              "min": 2.65,
+              "max": 3.17
+            },
+            "pressure": 1019,
+            "weather": {
+              "id": 803,
+              "main": "clouds",
+              "description": "broken clouds",
+              "icon": "04n"
+            },
+            "wind": {
+              "speed": 1.87,
+              "deg": 102,
+              "gust": 3.63
+            },
+            "humidity": 81,
+            "clouds": 75,
+            "pop": 0.0,
+            "visibility": 10000
+          }
+        ],
+        "alerts": []
+      }
+    }
+  ],
+  "response_callback_info": {
+    "vertical": "weather",
+    "callback_key": "c9b33a0598a146bf877cc739ba938ce5",
+    "callback_status": "success",
+    "search_lang": "en"
+  }
+}

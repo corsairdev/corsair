@@ -1,0 +1,11 @@
+{
+  "error": {
+    "code": "ADMIN_KEY_INVALID",
+    "detail": "Missing, invalid, revoked or expired admin key. Admin keys start with bsk_admin_; search API keys don't work here.",
+    "meta": {
+      "component": "authentication"
+    },
+    "status": 401
+  },
+  "type": "ErrorResponse"
+}

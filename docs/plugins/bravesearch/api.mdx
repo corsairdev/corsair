@@ -1,0 +1,1758 @@
+---
+title: "Brave Search API reference"
+sidebarTitle: "API"
+description: "API reference for the Brave Search plugin in Corsair: every `bravesearch.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Admin
+
+### listAdminKeys
+
+`admin.listAdminKeys`
+
+List the organization's admin keys (no secrets)
+
+**Risk:** `read`
+
+```ts
+await corsair.bravesearch.api.admin.listAdminKeys({ limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_deleted` | `boolean` | No | Include deleted keys (default false). |
+| `limit` | `number` | No | Keys per page, 1-1000 (default 100). |
+| `page` | `string` | No | next_page from the previous response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `next_page` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string,
+  id?: string,
+  name?: string | null,
+  hint?: string,
+  status?: string,
+  scopes?: string[],
+  expires_at?: string | null,
+  last_used_at?: string | null,
+  created_by_name?: string | null,
+  created_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listApiKeys
+
+`admin.listApiKeys`
+
+List the organization's search API keys (no secrets)
+
+**Risk:** `read`
+
+```ts
+await corsair.bravesearch.api.admin.listApiKeys({ limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_deleted` | `boolean` | No | Include deleted keys (default false). |
+| `limit` | `number` | No | Keys per page, 1-1000 (default 100). |
+| `page` | `string` | No | next_page from the previous response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `next_page` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string,
+  id?: string,
+  name?: string | null,
+  hint?: string,
+  status?: string,
+  plan?: {
+    id?: string,
+    name?: string,
+    billing_model?: string,
+    billed_on?: string[]
+  },
+  created_by_name?: string | null,
+  created_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### me
+
+`admin.me`
+
+Check the admin key and its organization
+
+**Risk:** `read`
+
+```ts
+await corsair.bravesearch.api.admin.me({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `id` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `scopes` | `string[]` | No | — |
+| `status` | `string` | No | — |
+| `expires_at` | `string \| null` | No | — |
+| `organization` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="organization full type">
+
+```ts
+{
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### usage
+
+`admin.usage`
+
+Get API usage in time buckets by key, endpoint or plan
+
+**Risk:** `read`
+
+```ts
+await corsair.bravesearch.api.admin.usage({
+	starting_at: '2026-11-01T00:00:00Z',
+	bucket_width: '1d',
+	group_by: ['endpoint'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `starting_at` | `string` | Yes | ISO 8601 start with an offset, e.g. 2026-11-01T00:00:00Z. Up to 12 months back. |
+| `ending_at` | `string` | No | ISO 8601 end with an offset (default now). |
+| `bucket_width` | `1h \| 1d \| 1mo` | No | Bucket size (default 1d). 1mo buckets are the billed totals. |
+| `group_by` | `(api_key_id \| endpoint \| plan_id)[]` | No | Split each bucket by these. |
+| `api_key_ids` | `string[]` | No | Only these search keys (key_...). |
+| `endpoints` | `string[]` | No | Only these endpoints: web, news, images, videos, llm_context, answers, ... |
+| `plan_ids` | `string[]` | No | Only these plans (plan_...). |
+| `limit` | `number` | No | Buckets per page (1h: 168, 1d: 31, 1mo: 12 at most). |
+| `page` | `string` | No | next_page from the previous response. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `api_keys` | `object` | No | — |
+| `plans` | `object` | No | — |
+| `has_more` | `boolean` | No | — |
+| `next_page` | `string \| null` | No | — |
+| `data_refreshed_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  object?: string,
+  starting_at?: string,
+  ending_at?: string,
+  results: {
+    api_key_id?: string | null,
+    endpoint?: string | null,
+    plan_id?: string | null,
+    requests?: number | null,
+    queries?: number | null,
+    input_tokens?: number | null,
+    output_tokens?: number | null
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="api_keys full type">
+
+```ts
+Record<string, {
+}>
+```
+</Accordion>
+
+<Accordion title="plans full type">
+
+```ts
+Record<string, {
+  id?: string,
+  name?: string,
+  billing_model?: string,
+  billed_on?: string[]
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Answers
+
+### create
+
+`answers.create`
+
+Answer a question from one web search, with optional inline citations (Answers plan)
+
+**Risk:** `read`
+
+```ts
+await corsair.bravesearch.api.answers.create({
+	messages: [{ role: 'user', content: 'What is the second highest mountain?' }],
+	enable_citations: true,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | Exactly one user message: [&#123; "role": "user", "content": "your question" &#125;]. |
+| `model` | `brave-pro \| brave` | No | brave-pro (default) or brave. |
+| `max_completion_tokens` | `number` | No | Cap on answer tokens. |
+| `country` | `string` | No | Country for the searches behind the answer (default us). |
+| `language` | `string` | No | Answer language (default: the question's language). |
+| `safesearch` | `off \| moderate \| strict` | No | Adult content filter (default moderate). |
+| `web_search_options` | `object` | No | OpenAI-style search options: context size and approximate user location. |
+| `enable_citations` | `boolean` | No | Collect inline citations into `citations` (start/end offsets into the answer, url, snippet). |
+| `enable_entities` | `boolean` | No | Collect inline entity tags into `tags`. |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role?: user,
+  content: string
+}[]
+```
+</Accordion>
+
+<Accordion title="web_search_options full type">
+
+```ts
+{
+  search_context_size?: low | medium | high,
+  user_location?: {
+    type?: approximate,
+    approximate: {
+      city?: string,
+      country?: string,
+      region?: string,
+      timezone?: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `model` | `string` | No | — |
+| `choices` | `object[]` | Yes | — |
+| `usage` | `object` | No | — |
+| `citations` | `any[]` | Yes | Citation objects: &#123; start_index, end_index, number, url, favicon, snippet &#125;. |
+| `cost` | `any` | No | Brave's usage line: X-Request-Queries, X-Request-Tokens-In/Out and their costs in USD. |
+| `tags` | `object[]` | Yes | Other tagged stream items (entities and anything new), in order. |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  index?: number,
+  message: {
+    role?: string,
+    content: string
+  },
+  finish_reason?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+{
+  tag: string,
+  value: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### research
+
+`answers.research`
+
+Answer a question with multi-search deep research; can run minutes and bills per search and token (Answers plan)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bravesearch.api.answers.research({
+	messages: [{ role: 'user', content: 'History of quantum mechanics' }],
+	research_maximum_number_of_seconds: 120,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | Exactly one user message: [&#123; "role": "user", "content": "your question" &#125;]. |
+| `model` | `brave-pro \| brave` | No | brave-pro (default) or brave. |
+| `max_completion_tokens` | `number` | No | Cap on answer tokens. |
+| `country` | `string` | No | Country for the searches behind the answer (default us). |
+| `language` | `string` | No | Answer language (default: the question's language). |
+| `safesearch` | `off \| moderate \| strict` | No | Adult content filter (default moderate). |
+| `web_search_options` | `object` | No | OpenAI-style search options: context size and approximate user location. |
+| `research_maximum_number_of_queries` | `number` | No | Most searches in total (default 20). |
+| `research_maximum_number_of_iterations` | `number` | No | Most research rounds (default 4). |
+| `research_maximum_number_of_seconds` | `number` | No | Time budget in seconds (default 180). |
+| `research_maximum_number_of_results_per_query` | `number` | No | Results read per search (default 30). |
+| `research_maximum_number_of_tokens_per_query` | `number` | No | Tokens gathered per search (default 8192). |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role?: user,
+  content: string
+}[]
+```
+</Accordion>
+
+<Accordion title="web_search_options full type">
+
+```ts
+{
+  search_context_size?: low | medium | high,
+  user_location?: {
+    type?: approximate,
+    approximate: {
+      city?: string,
+      country?: string,
+      region?: string,
+      timezone?: string
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `object` | `string` | No | — |
+| `created` | `number` | No | — |
+| `model` | `string` | No | — |
+| `choices` | `object[]` | Yes | — |
+| `usage` | `object` | No | — |
+| `citations` | `any[]` | Yes | Citation objects: &#123; start_index, end_index, number, url, favicon, snippet &#125;. |
+| `cost` | `any` | No | Brave's usage line: X-Request-Queries, X-Request-Tokens-In/Out and their costs in USD. |
+| `tags` | `object[]` | Yes | Other tagged stream items (entities and anything new), in order. |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  index?: number,
+  message: {
+    role?: string,
+    content: string
+  },
+  finish_reason?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+{
+  tag: string,
+  value: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Images
+
+### search
+
+`images.search`
+
+Search images
+
+**Risk:** `read`
+
+```ts
+await corsair.bravesearch.api.images.search({ q: 'golden gate bridge', count: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | The search query. Up to 400 characters; Brave search operators (site:, "quotes", -term) work unless operators is false. |
+| `country` | `string` | No | Two-letter country code the results come from (US, GB, DE, ...), or ALL for worldwide. Default US. |
+| `search_lang` | `string` | No | Language of the results: en, de, fr, pt-br, zh-hans, ... Default en. |
+| `spellcheck` | `boolean` | No | Spell-correct the query (default true). |
+| `api_version` | `string` | No | Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest. |
+| `no_cache` | `boolean` | No | Ask Brave not to serve cached results (Cache-Control: no-cache, best effort). |
+| `user_agent` | `string` | No | The end user's browser User-Agent, for device-specific results. |
+| `safesearch` | `off \| strict` | No | Adult content filter. Default strict. |
+| `count` | `number` | No | Results, 1-200 (default 50). Image search has no pages: raise count for more. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `query` | `object` | No | — |
+| `results` | `object[]` | No | — |
+| `extra` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  original?: string,
+  altered?: string,
+  cleaned?: string,
+  spellcheck_off?: boolean,
+  show_strict_warning?: boolean,
+  more_results_available?: boolean,
+  summary_key?: string
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  type?: string,
+  title?: string,
+  url?: string,
+  source?: string,
+  page_fetched?: string,
+  thumbnail?: {
+    src?: string,
+    original?: string,
+    width?: number,
+    height?: number,
+    logo?: boolean
+  },
+  properties?: {
+    url?: string,
+    placeholder?: string,
+    width?: number,
+    height?: number
+  },
+  meta_url?: {
+    scheme?: string,
+    netloc?: string,
+    hostname?: string,
+    favicon?: string,
+    path?: string
+  },
+  confidence?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="extra full type">
+
+```ts
+{
+  might_be_offensive?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Llm
+
+### context
+
+`llm.context`
+
+Search the web and get extracted page text, token-budgeted, for grounding an LLM
+
+**Risk:** `read`
+
+```ts
+await corsair.bravesearch.api.llm.context({ q: 'tallest mountains in the world', count: 5, maximum_number_of_tokens: 2048 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | The search query. Up to 600 characters; Brave search operators (site:, "quotes", -term) work unless operators is false. |
+| `country` | `string` | No | Two-letter country code the results come from (US, GB, DE, ...), or ALL for worldwide. Default US. |
+| `search_lang` | `string` | No | Language of the results: en, de, fr, pt-br, zh-hans, ... Default en. |
+| `count` | `number` | No | Search results considered when picking context, 1-50 (default 20). |
+| `safesearch` | `off \| moderate \| strict` | No | Adult content filter. Default: none. |
+| `spellcheck` | `boolean` | No | Spell-correct the query (default true). |
+| `operators` | `boolean` | No | Apply search operators (default true). |
+| `operators_fallback` | `boolean` | No | Relaxed operator matching first, then the original results (default true). |
+| `maximum_number_of_urls` | `number` | No | Most distinct URLs in the context. |
+| `maximum_number_of_tokens` | `number` | No | Approximate token budget for the whole context, 1024-32768 (default 8192). |
+| `maximum_number_of_tokens_per_url` | `number` | No | Token budget per URL, 512-8192 (default 4096). |
+| `context_threshold_mode` | `disabled \| strict \| lenient \| balanced` | No | How strictly content must match the query to be included. |
+| `goggles` | `string \| string[]` | No | Goggles re-rank results: the URL of a hosted Goggle or a Goggle definition, or a list of up to 3. |
+| `freshness` | `string` | No | Page age filter: pd (24 hours), pw (7 days), pm (31 days), py (365 days), or a range YYYY-MM-DDtoYYYY-MM-DD. |
+| `enable_local` | `boolean` | No | Local (POI and map) context. Default: on when a location is given. |
+| `enable_source_metadata` | `boolean` | No | Add site_name, favicon, thumbnail and description to each source. |
+| `location` | `object` | No | — |
+| `api_version` | `string` | No | Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest. |
+| `no_cache` | `boolean` | No | Ask Brave not to serve cached results (Cache-Control: no-cache, best effort). |
+| `user_agent` | `string` | No | The end user's browser User-Agent, for device-specific results. |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  lat?: number,
+  long?: number,
+  city?: string,
+  state?: string,
+  state_name?: string,
+  country?: string,
+  postal_code?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `grounding` | `object` | No | — |
+| `sources` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="grounding full type">
+
+```ts
+{
+  generic?: {
+    url?: string,
+    title?: string,
+    name?: string,
+    snippets?: string[]
+  }[],
+  poi?: {
+    url?: string,
+    title?: string,
+    name?: string,
+    snippets?: string[]
+  } | null,
+  map?: {
+    url?: string,
+    title?: string,
+    name?: string,
+    snippets?: string[]
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="sources full type">
+
+```ts
+Record<string, {
+  title?: string,
+  hostname?: string,
+  age?: string[] | null
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Local
+
+### descriptions
+
+`local.descriptions`
+
+Get AI-written descriptions for location ids from a search
+
+**Risk:** `read`
+
+```ts
+await corsair.bravesearch.api.local.descriptions({
+	ids: ['loc4YILSMUYF4NBEBWPOD2QPXGS6YCQ3PLJV35UGQWY='],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | Location ids (loc...) from web.search locations or local.placeSearch results. Ids expire after 8 hours. |
+| `api_version` | `string` | No | Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest. |
+| `no_cache` | `boolean` | No | Ask Brave not to serve cached results (Cache-Control: no-cache, best effort). |
+| `user_agent` | `string` | No | The end user's browser User-Agent, for device-specific results. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  description?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### placeSearch
+
+`local.placeSearch`
+
+Search businesses, landmarks and other places in an area by text or coordinates
+
+**Risk:** `read`
+
+```ts
+await corsair.bravesearch.api.local.placeSearch({ q: 'coffee', location: 'san francisco ca united states', count: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | What to look for (coffee, museums ...). Without it, general points of interest in the area. |
+| `location` | `string` | No | Area as text instead of coordinates: "san francisco ca united states", "tokyo japan". |
+| `latitude` | `number` | No | Latitude of the area centre. |
+| `longitude` | `number` | No | Longitude of the area centre. |
+| `radius` | `number` | No | Bias toward results within this many metres of the coordinates (not a hard limit). |
+| `count` | `number` | No | Results, 1-100 (default 20). |
+| `country` | `string` | No | Two-letter country code the results come from (US, GB, DE, ...), or ALL for worldwide. Default US. |
+| `search_lang` | `string` | No | Language of the results: en, de, fr, pt-br, zh-hans, ... Default en. |
+| `ui_lang` | `string` | No | Language of the response display strings, &lt;lang&gt;-&lt;COUNTRY&gt; such as en-US. Default en-US. |
+| `units` | `metric \| imperial` | No | Measurement units in results. |
+| `safesearch` | `off \| moderate \| strict` | No | Adult content filter. Default strict. |
+| `spellcheck` | `boolean` | No | Spell-correct the query (default true). |
+| `geoloc` | `string` | No | The user's position as &lt;latitude&gt;x&lt;longitude&gt;, used for distances. |
+| `api_version` | `string` | No | Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest. |
+| `no_cache` | `boolean` | No | Ask Brave not to serve cached results (Cache-Control: no-cache, best effort). |
+| `user_agent` | `string` | No | The end user's browser User-Agent, for device-specific results. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `query` | `object` | No | — |
+| `results` | `object[]` | No | — |
+| `cities` | `object[]` | No | — |
+| `countries` | `object[]` | No | — |
+| `regions` | `object[]` | No | — |
+| `neighborhoods` | `object[]` | No | — |
+| `addresses` | `object[]` | No | — |
+| `streets` | `object[]` | No | — |
+| `location` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  original?: string,
+  altered?: string,
+  cleaned?: string,
+  spellcheck_off?: boolean,
+  show_strict_warning?: boolean,
+  more_results_available?: boolean,
+  summary_key?: string
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  type?: string,
+  title?: string,
+  url?: string,
+  provider_url?: string,
+  description?: string,
+  coordinates?: number[],
+  zoom_level?: number,
+  thumbnail?: {
+    src?: string,
+    original?: string,
+    width?: number,
+    height?: number,
+    logo?: boolean
+  },
+  postal_address?: {
+  },
+  opening_hours?: {
+  },
+  contact?: {
+  },
+  price_range?: string,
+  rating?: {
+  },
+  distance?: {
+  },
+  profiles?: {
+    name?: string,
+    long_name?: string,
+    url?: string,
+    img?: string
+  }[],
+  categories?: string[],
+  serves_cuisine?: string[],
+  timezone?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="cities full type">
+
+```ts
+{
+  name?: string,
+  country?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="countries full type">
+
+```ts
+{
+  name?: string,
+  country?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="regions full type">
+
+```ts
+{
+  name?: string,
+  country?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="neighborhoods full type">
+
+```ts
+{
+  name?: string,
+  country?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="addresses full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="streets full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pois
+
+`local.pois`
+
+Get details (address, hours, rating, contact) for location ids from a search
+
+**Risk:** `read`
+
+```ts
+await corsair.bravesearch.api.local.pois({
+	ids: ['loc4YILSMUYF4NBEBWPOD2QPXGS6YCQ3PLJV35UGQWY='],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string[]` | Yes | Location ids (loc...) from web.search locations or local.placeSearch results. Ids expire after 8 hours. |
+| `search_lang` | `string` | No | Language of the results: en, de, fr, pt-br, zh-hans, ... Default en. |
+| `ui_lang` | `string` | No | Language of the response display strings, &lt;lang&gt;-&lt;COUNTRY&gt; such as en-US. Default en-US. |
+| `units` | `metric \| imperial` | No | Measurement units in results. |
+| `location` | `object` | No | — |
+| `api_version` | `string` | No | Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest. |
+| `no_cache` | `boolean` | No | Ask Brave not to serve cached results (Cache-Control: no-cache, best effort). |
+| `user_agent` | `string` | No | The end user's browser User-Agent, for device-specific results. |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  lat?: number,
+  long?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  type?: string,
+  title?: string,
+  url?: string,
+  provider_url?: string,
+  description?: string,
+  coordinates?: number[],
+  zoom_level?: number,
+  thumbnail?: {
+    src?: string,
+    original?: string,
+    width?: number,
+    height?: number,
+    logo?: boolean
+  },
+  postal_address?: {
+  },
+  opening_hours?: {
+  },
+  contact?: {
+  },
+  price_range?: string,
+  rating?: {
+  },
+  distance?: {
+  },
+  profiles?: {
+    name?: string,
+    long_name?: string,
+    url?: string,
+    img?: string
+  }[],
+  categories?: string[],
+  serves_cuisine?: string[],
+  timezone?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## News
+
+### search
+
+`news.search`
+
+Search news articles
+
+**Risk:** `read`
+
+```ts
+await corsair.bravesearch.api.news.search({ q: 'brave search api', count: 10, freshness: 'pw' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | The search query. Up to 400 characters; Brave search operators (site:, "quotes", -term) work unless operators is false. |
+| `country` | `string` | No | Two-letter country code the results come from (US, GB, DE, ...), or ALL for worldwide. Default US. |
+| `search_lang` | `string` | No | Language of the results: en, de, fr, pt-br, zh-hans, ... Default en. |
+| `spellcheck` | `boolean` | No | Spell-correct the query (default true). |
+| `api_version` | `string` | No | Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest. |
+| `no_cache` | `boolean` | No | Ask Brave not to serve cached results (Cache-Control: no-cache, best effort). |
+| `user_agent` | `string` | No | The end user's browser User-Agent, for device-specific results. |
+| `ui_lang` | `string` | No | Language of the response display strings, &lt;lang&gt;-&lt;COUNTRY&gt; such as en-US. Default en-US. |
+| `safesearch` | `off \| moderate \| strict` | No | Adult content filter. Default strict. |
+| `count` | `number` | No | Results per page, 1-50 (default 20). |
+| `offset` | `number` | No | Zero-based page index (pages of `count` results), at most 9. |
+| `freshness` | `string` | No | Page age filter: pd (24 hours), pw (7 days), pm (31 days), py (365 days), or a range YYYY-MM-DDtoYYYY-MM-DD. |
+| `extra_snippets` | `boolean` | No | Up to 5 extra excerpts per article. |
+| `goggles` | `string \| string[]` | No | Goggles re-rank results: the URL of a hosted Goggle or a Goggle definition, or a list of up to 3. |
+| `include_fetch_metadata` | `boolean` | No | Add when each page was fetched. |
+| `operators` | `boolean` | No | Apply search operators (default true). |
+| `operators_fallback` | `boolean` | No | Relaxed operator matching first (default false). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `query` | `object` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  original?: string,
+  altered?: string,
+  cleaned?: string,
+  spellcheck_off?: boolean,
+  show_strict_warning?: boolean,
+  more_results_available?: boolean,
+  summary_key?: string
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  type?: string,
+  title?: string,
+  url?: string,
+  description?: string,
+  age?: string,
+  page_age?: string,
+  page_fetched?: string,
+  language?: string,
+  family_friendly?: boolean,
+  profile?: {
+    name?: string,
+    long_name?: string,
+    url?: string,
+    img?: string
+  },
+  meta_url?: {
+    scheme?: string,
+    netloc?: string,
+    hostname?: string,
+    favicon?: string,
+    path?: string
+  },
+  thumbnail?: {
+    src?: string,
+    original?: string,
+    width?: number,
+    height?: number,
+    logo?: boolean
+  },
+  extra_snippets?: string[],
+  breaking?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Spellcheck
+
+### search
+
+`spellcheck.search`
+
+Get the spell-corrected form of a query
+
+**Risk:** `read`
+
+```ts
+await corsair.bravesearch.api.spellcheck.search({ q: 'helo wrold' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | The search query. Up to 400 characters; Brave search operators (site:, "quotes", -term) work unless operators is false. |
+| `lang` | `string` | No | Language of the results: en, de, fr, pt-br, zh-hans, ... Default en. |
+| `country` | `string` | No | Two-letter country code the results come from (US, GB, DE, ...), or ALL for worldwide. Default US. |
+| `api_version` | `string` | No | Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest. |
+| `no_cache` | `boolean` | No | Ask Brave not to serve cached results (Cache-Control: no-cache, best effort). |
+| `user_agent` | `string` | No | The end user's browser User-Agent, for device-specific results. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `query` | `object` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  original?: string,
+  altered?: string,
+  cleaned?: string,
+  spellcheck_off?: boolean,
+  show_strict_warning?: boolean,
+  more_results_available?: boolean,
+  summary_key?: string
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  query?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Suggest
+
+### search
+
+`suggest.search`
+
+Get query autocomplete suggestions
+
+**Risk:** `read`
+
+```ts
+await corsair.bravesearch.api.suggest.search({ q: 'hello wor', count: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | The search query. Up to 400 characters; Brave search operators (site:, "quotes", -term) work unless operators is false. |
+| `lang` | `string` | No | Language of the results: en, de, fr, pt-br, zh-hans, ... Default en. |
+| `country` | `string` | No | Two-letter country code the results come from (US, GB, DE, ...), or ALL for worldwide. Default US. |
+| `count` | `number` | No | Suggestions, 1-20 (default 5). |
+| `rich` | `boolean` | No | Add entity data (title, description, image) to suggestions. Needs the paid Autosuggest plan. |
+| `api_version` | `string` | No | Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest. |
+| `no_cache` | `boolean` | No | Ask Brave not to serve cached results (Cache-Control: no-cache, best effort). |
+| `user_agent` | `string` | No | The end user's browser User-Agent, for device-specific results. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `query` | `object` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  original?: string,
+  altered?: string,
+  cleaned?: string,
+  spellcheck_off?: boolean,
+  show_strict_warning?: boolean,
+  more_results_available?: boolean,
+  summary_key?: string
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  query?: string,
+  is_entity?: boolean,
+  title?: string,
+  description?: string,
+  img?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Videos
+
+### search
+
+`videos.search`
+
+Search videos
+
+**Risk:** `read`
+
+```ts
+await corsair.bravesearch.api.videos.search({ q: 'rust programming', count: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | The search query. Up to 400 characters; Brave search operators (site:, "quotes", -term) work unless operators is false. |
+| `country` | `string` | No | Two-letter country code the results come from (US, GB, DE, ...), or ALL for worldwide. Default US. |
+| `search_lang` | `string` | No | Language of the results: en, de, fr, pt-br, zh-hans, ... Default en. |
+| `spellcheck` | `boolean` | No | Spell-correct the query (default true). |
+| `api_version` | `string` | No | Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest. |
+| `no_cache` | `boolean` | No | Ask Brave not to serve cached results (Cache-Control: no-cache, best effort). |
+| `user_agent` | `string` | No | The end user's browser User-Agent, for device-specific results. |
+| `ui_lang` | `string` | No | Language of the response display strings, &lt;lang&gt;-&lt;COUNTRY&gt; such as en-US. Default en-US. |
+| `safesearch` | `off \| moderate \| strict` | No | Adult content filter. Default moderate. |
+| `count` | `number` | No | Results per page, 1-50 (default 20). |
+| `offset` | `number` | No | Zero-based page index (pages of `count` results), at most 9. |
+| `freshness` | `string` | No | Page age filter: pd (24 hours), pw (7 days), pm (31 days), py (365 days), or a range YYYY-MM-DDtoYYYY-MM-DD. |
+| `include_fetch_metadata` | `boolean` | No | Add when each page was fetched. |
+| `operators` | `boolean` | No | Apply search operators (default true). |
+| `operators_fallback` | `boolean` | No | Relaxed operator matching first (default false). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `query` | `object` | No | — |
+| `results` | `object[]` | No | — |
+| `extra` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  original?: string,
+  altered?: string,
+  cleaned?: string,
+  spellcheck_off?: boolean,
+  show_strict_warning?: boolean,
+  more_results_available?: boolean,
+  summary_key?: string
+}
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  type?: string,
+  url?: string,
+  title?: string,
+  description?: string,
+  age?: string,
+  page_age?: string,
+  video?: {
+    duration?: string,
+    views?: number,
+    creator?: string,
+    publisher?: string
+  },
+  meta_url?: {
+    scheme?: string,
+    netloc?: string,
+    hostname?: string,
+    favicon?: string,
+    path?: string
+  },
+  thumbnail?: {
+    src?: string,
+    original?: string,
+    width?: number,
+    height?: number,
+    logo?: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="extra full type">
+
+```ts
+{
+  might_be_offensive?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Web
+
+### rich
+
+`web.rich`
+
+Get live rich data (weather, stocks, sports, currency ...) for a web.search callback key
+
+**Risk:** `read`
+
+```ts
+await corsair.bravesearch.api.web.rich({ callback_key: 'c9b33a0598a146bf877cc739ba938ce5' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `callback_key` | `string` | Yes | rich.hint.callback_key from a web.search with enable_rich_callback. |
+| `api_version` | `string` | No | Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest. |
+| `no_cache` | `boolean` | No | Ask Brave not to serve cached results (Cache-Control: no-cache, best effort). |
+| `user_agent` | `string` | No | The end user's browser User-Agent, for device-specific results. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `results` | `object[]` | No | — |
+| `response_callback_info` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  type?: string,
+  subtype?: string,
+  provider?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="response_callback_info full type">
+
+```ts
+{
+  vertical?: string,
+  callback_key?: string,
+  callback_status?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`web.search`
+
+Search the web: ranked pages with snippets, plus news, videos, discussions, FAQ, infobox and local sections
+
+**Risk:** `read`
+
+```ts
+await corsair.bravesearch.api.web.search({ q: 'corsair mcp gateway', count: 5, freshness: 'pm' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | The search query. Up to 600 characters; Brave search operators (site:, "quotes", -term) work unless operators is false. |
+| `country` | `string` | No | Two-letter country code the results come from (US, GB, DE, ...), or ALL for worldwide. Default US. |
+| `search_lang` | `string` | No | Language of the results: en, de, fr, pt-br, zh-hans, ... Default en. |
+| `ui_lang` | `string` | No | Language of the response display strings, &lt;lang&gt;-&lt;COUNTRY&gt; such as en-US. Default en-US. |
+| `count` | `number` | No | Web results per page, 1-20 (default 20). Applies to web results only. |
+| `offset` | `number` | No | Zero-based page index (pages of `count` results), at most 9. |
+| `safesearch` | `off \| moderate \| strict` | No | Adult content filter. Default moderate. |
+| `spellcheck` | `boolean` | No | Spell-correct the query (default true); the corrected query is in query.altered. |
+| `freshness` | `string` | No | Page age filter: pd (24 hours), pw (7 days), pm (31 days), py (365 days), or a range YYYY-MM-DDtoYYYY-MM-DD. |
+| `text_decorations` | `boolean` | No | Keep highlight markers in snippets (default true). |
+| `result_filter` | `(discussions \| faq \| infobox \| news \| query \| summarizer \| videos \| web \| locations)[]` | No | Only these result sections. Default: every section the plan includes. |
+| `units` | `metric \| imperial` | No | Measurement units in results. |
+| `goggles` | `string \| string[]` | No | Goggles re-rank results: the URL of a hosted Goggle or a Goggle definition, or a list of up to 3. |
+| `extra_snippets` | `boolean` | No | Up to 5 extra excerpts per result. |
+| `enable_rich_callback` | `boolean` | No | Return a rich.hint.callback_key for live data (weather, stocks, sports ...); fetch it with web.rich. |
+| `include_fetch_metadata` | `boolean` | No | Add when each page was fetched. |
+| `operators` | `boolean` | No | Apply search operators (default true). |
+| `operators_fallback` | `boolean` | No | Try relaxed operator matching first, falling back to the original results (default false). |
+| `location` | `object` | No | Where the user is, for local results. Sent as X-Loc-* headers. |
+| `api_version` | `string` | No | Pin the response format to an API version (Api-Version header, YYYY-MM-DD). Default latest. |
+| `no_cache` | `boolean` | No | Ask Brave not to serve cached results (Cache-Control: no-cache, best effort). |
+| `user_agent` | `string` | No | The end user's browser User-Agent, for device-specific results. |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  lat?: number,
+  long?: number,
+  timezone?: string,
+  city?: string,
+  state?: string,
+  state_name?: string,
+  country?: string,
+  postal_code?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | No | — |
+| `query` | `object` | No | — |
+| `mixed` | `object` | No | — |
+| `web` | `object` | No | — |
+| `news` | `object` | No | — |
+| `videos` | `object` | No | — |
+| `discussions` | `object` | No | — |
+| `faq` | `object` | No | — |
+| `infobox` | `object` | No | — |
+| `locations` | `object` | No | — |
+| `rich` | `object` | No | — |
+| `summarizer` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  original?: string,
+  altered?: string,
+  cleaned?: string,
+  spellcheck_off?: boolean,
+  show_strict_warning?: boolean,
+  more_results_available?: boolean,
+  summary_key?: string
+}
+```
+</Accordion>
+
+<Accordion title="mixed full type">
+
+```ts
+{
+  type?: string,
+  main?: {
+  }[],
+  top?: {
+  }[],
+  side?: {
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="web full type">
+
+```ts
+{
+  type?: string,
+  results?: {
+    type?: string,
+    title?: string,
+    url?: string,
+    description?: string,
+    age?: string,
+    page_age?: string,
+    page_fetched?: string,
+    language?: string,
+    family_friendly?: boolean,
+    profile?: {
+      name?: string,
+      long_name?: string,
+      url?: string,
+      img?: string
+    },
+    meta_url?: {
+      scheme?: string,
+      netloc?: string,
+      hostname?: string,
+      favicon?: string,
+      path?: string
+    },
+    thumbnail?: {
+      src?: string,
+      original?: string,
+      width?: number,
+      height?: number,
+      logo?: boolean
+    },
+    extra_snippets?: string[]
+  }[],
+  mutated_by_goggles?: boolean,
+  family_friendly?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="news full type">
+
+```ts
+{
+  type?: string,
+  results?: {
+    type?: string,
+    title?: string,
+    url?: string,
+    description?: string,
+    age?: string,
+    page_age?: string,
+    page_fetched?: string,
+    language?: string,
+    family_friendly?: boolean,
+    profile?: {
+      name?: string,
+      long_name?: string,
+      url?: string,
+      img?: string
+    },
+    meta_url?: {
+      scheme?: string,
+      netloc?: string,
+      hostname?: string,
+      favicon?: string,
+      path?: string
+    },
+    thumbnail?: {
+      src?: string,
+      original?: string,
+      width?: number,
+      height?: number,
+      logo?: boolean
+    },
+    extra_snippets?: string[]
+  }[],
+  mutated_by_goggles?: boolean,
+  family_friendly?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="videos full type">
+
+```ts
+{
+  type?: string,
+  results?: {
+  }[],
+  mutated_by_goggles?: boolean,
+  family_friendly?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="discussions full type">
+
+```ts
+{
+  type?: string,
+  results?: {
+  }[],
+  mutated_by_goggles?: boolean,
+  family_friendly?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="faq full type">
+
+```ts
+{
+  type?: string,
+  results?: {
+  }[],
+  mutated_by_goggles?: boolean,
+  family_friendly?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="infobox full type">
+
+```ts
+{
+  type?: string,
+  results?: any[],
+  mutated_by_goggles?: boolean,
+  family_friendly?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="locations full type">
+
+```ts
+{
+  type?: string,
+  results?: {
+    id?: string,
+    type?: string,
+    title?: string,
+    url?: string,
+    provider_url?: string,
+    description?: string,
+    coordinates?: number[],
+    zoom_level?: number,
+    thumbnail?: {
+      src?: string,
+      original?: string,
+      width?: number,
+      height?: number,
+      logo?: boolean
+    },
+    postal_address?: {
+    },
+    opening_hours?: {
+    },
+    contact?: {
+    },
+    price_range?: string,
+    rating?: {
+    },
+    distance?: {
+    },
+    profiles?: {
+      name?: string,
+      long_name?: string,
+      url?: string,
+      img?: string
+    }[],
+    categories?: string[],
+    serves_cuisine?: string[],
+    timezone?: string
+  }[],
+  mutated_by_goggles?: boolean,
+  family_friendly?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="rich full type">
+
+```ts
+{
+  type?: string,
+  hint?: {
+    vertical?: string,
+    callback_key?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="summarizer full type">
+
+```ts
+{
+  type?: string,
+  key?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

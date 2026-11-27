@@ -1,0 +1,39 @@
+{
+  "type": "images",
+  "query": {
+    "original": "golden gate bridge",
+    "spellcheck_off": false,
+    "show_strict_warning": false
+  },
+  "results": [
+    {
+      "type": "image_result",
+      "title": "Golden Gate Bridge Sunrise San Francisco California USA Beautiful illuminated famous Golden Gate Bridge at early morning sunrise twilight. Long Time Exposure. Golden Gate Bridge, San Francisco, Califo",
+      "url": "https://www.istockphoto.com/photos/golden-gate-bridge",
+      "source": "istockphoto.com",
+      "page_fetched": "2026-11-17T17:36:39Z",
+      "thumbnail": {
+        "src": "https://imgs.search.brave.com/EeRWEGcOjcbB56JiJOEMIk5_3EHWK-zl-HIFXJtBPM0/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvNTM5/MzU5MzE2L3Bob3Rv/L2dvbGRlbi1nYXRl/LWJyaWRnZS1zdW5y/aX",
+        "width": 500,
+        "height": 333
+      },
+      "properties": {
+        "url": "https://media.istockphoto.com/id/539359316/photo/golden-gate-bridge-sunrise-san-francisco-california-usa.jpg?s=612x612&w=0&k=20&c=60Nepu-u9NQ2hkGnOru3Ke9P0zx1Rtvy0rTb1DQXGYc=",
+        "placeholder": "https://imgs.search.brave.com/x4dUcHw_hO1DElrUwn-MIFwtg-fXnEZ6cQ4RFmMeCyA/rs:fit:76:0:0:0/g:ce/q:10/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvNTM5/MzU5MzE2L3Bob3Rv/L2dvbGRlbi1nYXRl/LWJyaWRnZS1zdW5",
+        "width": 612,
+        "height": 408
+      },
+      "meta_url": {
+        "scheme": "https",
+        "netloc": "www.istockphoto.com",
+        "hostname": "www.istockphoto.com",
+        "favicon": "https://imgs.search.brave.com/wQVEF5FW73R4v-QNAbkgFGNk4JstIDlPCAWFFovD7Us/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYTJmNDZjOTkz/MGJjNmE2MGE0NDMw/NGUxYTBhNjI3MWFh/N2",
+        "path": "› photos  › golden-gate-bridge"
+      },
+      "confidence": "high"
+    }
+  ],
+  "extra": {
+    "might_be_offensive": false
+  }
+}
