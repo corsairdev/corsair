@@ -6616,6 +6616,14 @@
                 ]
               },
               {
+                "group": "Zep",
+                "pages": [
+                  "plugins/zep/overview",
+                  "plugins/zep/api",
+                  "plugins/zep/database"
+                ]
+              },
+              {
                 "group": "Zoho Bigin",
                 "pages": [
                   "plugins/zohobigin/overview",

@@ -1,0 +1,238 @@
+---
+title: "Zep webhooks"
+sidebarTitle: "Webhooks"
+description: "Zep incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Zep plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/zep/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `batches`
+  - `completed` (`batches.completed`)
+- `byom`
+  - `requestFailed` (`byom.requestFailed`)
+- `episodes`
+  - `processed` (`episodes.processed`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Batches
+
+### Completed
+
+`batches.completed`
+
+A Batch API batch finished as succeeded, canceled, or partial from canceled items (ingest.batch.completed).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_name` | `ingest.batch.completed` | Yes | — |
+| `account_uuid` | `string` | No | Your Zep account identifier. |
+| `project_uuid` | `string` | No | The project where the event occurred. |
+| `batch_id` | `string` | No | The uuid of the batch (as batches.create returns it). |
+| `completed_at` | `string` | No | RFC 3339 time the batch finished. |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_name: ingest.batch.completed,
+  account_uuid?: string,
+  project_uuid?: string,
+  batch_id?: string,
+  completed_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+zep({
+    webhookHooks: {
+        batches: {
+            completed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Byom
+
+### Request Failed
+
+`byom.requestFailed`
+
+Bring-your-own-LLM requests failed in the last window (byom.request_failed, aggregated per 60 s or more).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_name` | `byom.request_failed` | Yes | — |
+| `account_uuid` | `string` | No | Your Zep account identifier. |
+| `project_uuid` | `string` | No | The project where the event occurred. |
+| `provider` | `string` | No | The LLM provider (openai, anthropic, ...). |
+| `model` | `string` | No | The model name. |
+| `count` | `number` | No | Failures in the aggregation window. |
+| `first_occurrence` | `string` | No | — |
+| `last_occurrence` | `string` | No | — |
+| `window_seconds` | `number` | No | Length of the aggregation window (60 s or more). |
+| `error_code` | `string` | No | BYOM_CREDENTIALS_INVALID, BYOM_CREDENTIALS_EXPIRED, BYOM_PROVIDER_UNAVAILABLE or BYOM_MODEL_NOT_SUPPORTED. |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_name: byom.request_failed,
+  account_uuid?: string,
+  project_uuid?: string,
+  provider?: string,
+  model?: string,
+  count?: number,
+  first_occurrence?: string,
+  last_occurrence?: string,
+  window_seconds?: number,
+  error_code?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+zep({
+    webhookHooks: {
+        byom: {
+            requestFailed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Episodes
+
+### Processed
+
+`episodes.processed`
+
+An episode finished processing and was added to a graph (episode.processed).
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_name` | `episode.processed` | Yes | — |
+| `account_uuid` | `string` | No | Your Zep account identifier. |
+| `project_uuid` | `string` | No | The project where the event occurred. |
+| `episode_uuid` | `string` | No | The episode that finished processing. |
+| `source` | `string` | No | The source of the episode: text, json or message. |
+| `completed_at` | `string` | No | RFC 3339 time processing completed. |
+| `graph_type` | `string` | No | user or graph: whose graph the episode went into. |
+| `graph_uuid` | `string` | No | The graph the episode is in. |
+| `user_uuid` | `string` | No | The user, when graph_type is user. |
+| `graph_id` | `string` | No | The legacy v3 graph name, only for graphs that have one. |
+| `user_id` | `string` | No | The legacy v3 user name, only for users that have one. |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_name: episode.processed,
+  account_uuid?: string,
+  project_uuid?: string,
+  episode_uuid?: string,
+  source?: string,
+  completed_at?: string,
+  graph_type?: string,
+  graph_uuid?: string,
+  user_uuid?: string,
+  graph_id?: string,
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+zep({
+    webhookHooks: {
+        episodes: {
+            processed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
