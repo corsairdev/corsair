@@ -213,6 +213,23 @@ describe('requests', () => {
 		expect(JSON.parse(String(calls[1]?.body))).toEqual(patch);
 	});
 
+	it('asks invoicing creates for the representation, not a bare link', async () => {
+		reply(() => ({ status: 201, body: { id: 'TEMP-1', name: 'Monthly' } }));
+		await expect(
+			call(
+				'invoices.templates.create',
+				{
+					name: 'Monthly',
+					template_info: { detail: { currency_code: 'USD' } },
+				},
+				ctx('live-app', 'live'),
+			),
+		).resolves.toMatchObject({ id: 'TEMP-1' });
+		expect(calls[0]?.headers.prefer).toBe('return=representation');
+		await call('orders.get', { id: 'O1' }, ctx('live-app', 'live'));
+		expect(calls[1]?.headers.prefer).toBeUndefined();
+	});
+
 	it('sends dispute evidence as a multipart form with a JSON part', async () => {
 		reply(() => ({ status: 200, body: { links: [] } }));
 		await call(
@@ -256,6 +273,24 @@ describe('requests', () => {
 			contentType: 'image/png',
 			filename: 'paypal-invoices-generateQrCode.png',
 		});
+	});
+
+	it('unwraps the multipart QR answer the live API sends and accepts any type', async () => {
+		const png = Buffer.from([0x89, 0x50, 0x4e, 0x47, 1, 2, 3]);
+		const boundary = '07351a55-5cc4-4964-98da-4c0bda9d7f2e';
+		reply(() => ({
+			status: 200,
+			body: `--${boundary}\r\nContent-Disposition: form-data; name="image"\r\nContent-Type: text/plain\r\n\r\n${png.toString('base64')}\r\n--${boundary}--`,
+			contentType: `multipart/form-data; boundary=${boundary}`,
+		}));
+		const file = (await call(
+			'invoices.generateQrCode',
+			{ invoice_id: 'INV2-1' },
+			ctx('live-app', 'live'),
+		)) as { contentBase64?: string; byteLength?: number };
+		expect(calls[0]?.headers.accept).toBe('*/*');
+		expect(file.byteLength).toBe(png.byteLength);
+		expect(file.contentBase64).toBe(png.toString('base64'));
 	});
 });
 

@@ -156,6 +156,34 @@ export function decodeMaybeEmpty(id: string, value: unknown): unknown {
 	}
 }
 
+/** Invoicing routes that return a bare link unless sent `Prefer: return=representation`. */
+const PAYPAL_RETURN_REPRESENTATION: ReadonlySet<string> = new Set([
+	'invoices.create',
+	'invoices.update',
+	'invoices.templates.create',
+	'invoices.templates.update',
+]);
+
+/**
+ * The QR code route answers `multipart/form-data` with one part, `image`,
+ * whose body is the PNG in base64 (checked live on the sandbox, 11-27). Plain
+ * base64 text and raw PNG bytes are accepted too.
+ */
+export function decodePaypalQrBody(raw: Uint8Array): Uint8Array {
+	let text = new TextDecoder().decode(raw).trim();
+	if (text.startsWith('--')) {
+		const boundary = text.slice(0, text.search(/\r?\n/));
+		const headerEnd = text.search(/\r?\n\r?\n/);
+		const partEnd = text.indexOf(boundary, boundary.length);
+		if (headerEnd > 0 && partEnd > headerEnd) {
+			text = text.slice(headerEnd, partEnd).trim();
+		}
+	}
+	return /^[A-Za-z0-9+/=\s]+$/.test(text)
+		? Uint8Array.from(Buffer.from(text, 'base64'))
+		: raw;
+}
+
 /**
  * One endpoint per manifest operation. The caller passes one flat object;
  * each named field goes to the path or query string as the route says, and
@@ -211,6 +239,13 @@ export function createPaypalOperation<Id extends PaypalOperationId>(
 			if (!named.has(name) && value !== undefined) body[name] = value;
 		}
 
+		// Invoicing answers a create or update with only a link to the resource
+		// unless asked for the representation; ask, so the reply is the documented
+		// invoice or template (checked live on the sandbox, 11-27).
+		if (PAYPAL_RETURN_REPRESENTATION.has(id) && headers.Prefer === undefined) {
+			headers.Prefer = 'return=representation';
+		}
+
 		const request: PaypalRequest = {
 			method: operation.method,
 			path: operation.path,
@@ -233,15 +268,14 @@ export function createPaypalOperation<Id extends PaypalOperationId>(
 		let response: unknown;
 		if (operation.response === 'file') {
 			request.responseType = 'binary';
+			// The QR code route answers 406 to `Accept: application/json` (and to
+			// image/png or text/plain); it only serves a request that accepts anything.
+			request.headers = { ...request.headers, Accept: '*/*' };
 			const binary = await makePaypalRequest(ctx, request);
 			if (!isBinaryResponse(binary) || binary.bytes.byteLength === 0) {
 				throw new Error(`PayPal ${id} answered without a file`);
 			}
-			// The QR code route answers the PNG as base64 text or as raw bytes.
-			const text = new TextDecoder().decode(binary.bytes).trim();
-			const bytes = /^[A-Za-z0-9+/=\s]+$/.test(text)
-				? Uint8Array.from(Buffer.from(text, 'base64'))
-				: binary.bytes;
+			const bytes = decodePaypalQrBody(binary.bytes);
 			response = toFileOutput(bytes, 'image/png', {
 				filename: `paypal-${id.replace(/\./g, '-')}.png`,
 			});
