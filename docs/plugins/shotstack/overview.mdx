@@ -1,0 +1,142 @@
+---
+title: "Shotstack plugin"
+sidebarTitle: "Overview"
+description: "Cloud video editing and rendering: build a timeline as JSON, render video, image, GIF or audio, manage templates, generate AI assets, ingest source files and serve hosted assets."
+---
+
+Use **Shotstack** through Corsair: one client, typed API calls.
+
+Shotstack renders a video, image, GIF or audio file from a JSON timeline. `renders.create` queues the render and returns a render id at once; `renders.get` reports progress until status is `done` or `failed`. Templates store an edit with placeholders, AI generation and file ingestion poll the same way, and the Serve API returns the durable CDN URLs.
+
+- **Keys.** Create one at [app.shotstack.io](https://app.shotstack.io/register) and open API Keys under the account menu (top right). Each account gets a Production key and a free Sandbox key. This plugin always calls the production paths (`/edit/v1`, `/ingest/v1`, `/serve/v1`); sandbox keys work only on the `/stage` paths, which the plugin does not expose, so store the Production key here.
+- **Credits.** Renders spend credits: new accounts get 10 free production credits (about 10 minutes of video), and sandbox renders are watermarked and still need a credit balance. Quote an AI generation first with `generations.quote`. Sandbox renders also need at least 1 credit on the account, and generation is charged in sandbox too.
+- **The render URL expires.** `renders.get` returns `response.url`, a temporary download link that dies 24 hours after the render. For a permanent link, read the CDN URL from `assets.getByRenderId` (or `https://cdn.shotstack.io/...`).
+- **Long jobs.** `renders.create`, `templates.render`, `generations.create` and `sources.fetch` start work that runs after the call returns. Poll the matching get operation until the status is `done` (or `ready` for sources) or `failed`. Shotstack sends no cancel operation, and a render cannot be deleted once queued. A render takes roughly 20 seconds per minute of output video.
+- **Retries.** Rate limits are per key in a fixed 60-second window: edit 300 requests per minute, serve 600, ingest 300 (halved on sandbox). Over the limit the API answers 429 and the plugin retries up to three times with backoff, honouring a Retry-After header when one is sent. 5xx answers are replayed only for reads, and for `generations.create` when an `idempotencyKey` was sent: retrying with the same key returns the job it first created instead of generating and billing again.
+- **Merged renders.** `renders.get` sends `data: false` by default; pass `data: true` to include the full timeline echo in `response.data`, and `merged: true` with it to include the merged edit.
+- **Uploads.** `uploads.create` returns a signed S3 URL; PUT the bytes to it within one hour and the file appears as an ingest source. The binary upload goes to S3 directly, not through the plugin.
+- **Responses.** Output fields are typed from Shotstack's OpenAPI specs and were not verified against live responses (no key during the build): a field Shotstack adds or omits cannot fail a call, but a renamed field would pass unnoticed.
+- **Deletes.** `templates.delete`, `sources.delete` and `assets.delete` are permanent; there is no undo and no trash.
+
+**What you get:**
+
+- 23 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/shotstack better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/shotstack better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/shotstack better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/shotstack better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { shotstack } from '@corsair-dev/shotstack';
+
+export const corsair = createCorsair({
+	plugins: [
+		shotstack(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Shotstack API key before the first call: `pnpm corsair setup --plugin=shotstack --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+shotstack()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'shotstack',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Check where a render stands**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.shotstack.api.renders.get({ id: '2abd5c11-0f3d-4c6d-ba20-235fc9b8e8b7' });
+```
+
+
+**Render a template with placeholders filled in**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.shotstack.api.templates.render({
+	id: 'f5493c17-d01f-445c-bb49-535fae65f219',
+	merge: [{ find: 'NAME', replace: 'Jane' }],
+});
+```
+
+
+See the full list on the [API](/plugins/shotstack/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/shotstack/api">
+    Every `shotstack.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

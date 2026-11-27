@@ -5488,6 +5488,14 @@
                 ]
               },
               {
+                "group": "Shotstack",
+                "pages": [
+                  "plugins/shotstack/overview",
+                  "plugins/shotstack/api",
+                  "plugins/shotstack/database"
+                ]
+              },
+              {
                 "group": "SignPath",
                 "pages": [
                   "plugins/signpath/overview",
