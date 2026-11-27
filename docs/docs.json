@@ -3983,6 +3983,14 @@
                 ]
               },
               {
+                "group": "MongoDB Atlas",
+                "pages": [
+                  "plugins/mongodbatlas/overview",
+                  "plugins/mongodbatlas/api",
+                  "plugins/mongodbatlas/database"
+                ]
+              },
+              {
                 "group": "MoonClerk",
                 "pages": [
                   "plugins/moonclerk/overview",

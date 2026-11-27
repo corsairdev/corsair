@@ -1,0 +1,54 @@
+{
+  "name": "@corsair-dev/mongodbatlas",
+  "version": "0.1.0",
+  "description": "MongoDB Atlas integration for Corsair: the Atlas Administration API v2 (489 operations): organizations, projects, clusters and flex clusters, database users and custom roles, IP access lists, backups, snapshots and restores, Atlas Search indexes and nodes, Stream Processing, Data Federation, online archive, private endpoints and peering, monitoring, logs, performance advisor, alerts and alert settings, teams, users, service accounts and API keys, invoices and more.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "dev-source": "./index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc --build --force && tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=api\\.test\\.ts"
+  },
+  "peerDependencies": {
+    "corsair": ">=0.1.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "corsair": "workspace:*",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.9",
+    "tsup": "^8.0.1",
+    "typescript": "catalog:",
+    "zod": "^4.1.13"
+  },
+  "keywords": [
+    "corsair",
+    "mongodb",
+    "atlas",
+    "database",
+    "clusters",
+    "plugin"
+  ],
+  "author": "Corsair (https://corsair.dev)",
+  "license": "Apache-2.0",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsairdev/corsair.git",
+    "directory": "packages/mongodbatlas"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/mongodbatlas"
+}

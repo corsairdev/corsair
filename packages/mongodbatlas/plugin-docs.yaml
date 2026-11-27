@@ -1,0 +1,1024 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from MongoDB's Atlas Admin API v2 spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: MongoDB Atlas
+domain: mongodb.com
+description: "The Atlas Administration API v2 (489 operations): organizations, projects, clusters and flex clusters, database users and custom roles, IP access lists, backups, snapshots and restores, Atlas Search indexes and nodes, Stream Processing, Data Federation, online archive, private endpoints and peering, monitoring, logs, performance advisor, alerts, teams, users, service accounts and API keys, invoices and more."
+recommendedAuth: api_key
+overviewNote: |
+  Connect with a service account (Organization > Access Manager >
+  Applications > Service Accounts): store it as `clientId:clientSecret`
+  (`mdb_sa_id_...:mdb_sa_sk_...`) or as the JSON
+  `{ "clientId": "mdb_sa_id_...", "clientSecret": "mdb_sa_sk_..." }`. The plugin trades it at `/api/oauth/token` for a bearer
+  token (cached until a minute before it expires). A programmatic API key
+  works too, as `publicKey:privateKey`; Atlas wants those with HTTP Digest
+  authentication, which the plugin does. Add the IP addresses the calls come
+  from to the credential's API access list if your organization requires
+  one, and give it the roles the calls need (Organization Owner or Project
+  Owner covers most).
+
+  - **Ids.** Atlas calls a project a group: `groupId` is the project id
+  (`projects.listGroups`), `orgId` the organization's
+  (`organizations.listOrgs`). Clusters, users and indexes go by name.
+  - **Versions.** Every Atlas route is versioned by media type; each
+  operation is pinned to the newest version the spec offers and sends it as
+  `Accept: application/vnd.atlas.<date>+json`.
+  - **Lists** page with `pageNum` (1-based) and `itemsPerPage` (the plugin
+  sends 100 when it is left out) and return `{ results, totalCount, links }`.
+  - **Downloads** (database logs, invoices as CSV) come back as files.
+  - **Risk.** Reads are `read`. Deletes, anything that starts billed
+  infrastructure (clusters, search nodes, stream workspaces and processors,
+  data federation, private endpoints, peering, online archive, snapshots),
+  restores, failover and outage tests, invitations, new keys and service
+  accounts, and organization-level changes are `destructive`; other writes
+  are `write`.
+  - Not wrapped: the 53 operations the spec marks deprecated (each has a
+  newer replacement in the plugin).
+examples:
+  read:
+    path: clusters.listClusters
+    title: List the clusters in a project
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  write:
+    path: projectIpAccessList.createAccessListEntry
+    title: Allow an IP range to reach a project
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "body": [{"cidrBlock": "203.0.113.0/24", "comment": "Office"}]}
+apiExamples:
+  accessTracking.getAccessHistoryCluster:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  accessTracking.getAccessHistoryProcess:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "hostname": "example"}
+  activityFeed.getGroupActivityFeed:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  activityFeed.getOrgActivityFeed:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  aiModelApiKeys.createGroupModelKey:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloud": "ANY", "geography": "ANY", "name": "Cluster0"}
+  aiModelApiKeys.deleteGroupModelKey:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "apiKeyId": "example"}
+  aiModelApiKeys.getGroupModelKey:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "apiKeyId": "example"}
+  aiModelApiKeys.getOrgModelKey:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "apiKeyId": "example"}
+  aiModelApiKeys.listGroupModelKeys:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  aiModelApiKeys.listOrgModelKeys:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  aiModelApiKeys.updateGroupModelKey:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "apiKeyId": "example", "name": "Cluster0"}
+  aiModelRateLimits.getGroupModelLimits:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  aiModelRateLimits.getGroupRateLimits:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloud": "ANY", "geography": "ANY", "modelGroupName": "example"}
+  aiModelRateLimits.getOrgModelLimits:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  aiModelRateLimits.getOrgRateLimits:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "cloud": "ANY", "geography": "ANY", "modelGroupName": "example"}
+  aiModelRateLimits.resetGroupModelLimits:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloud": "ANY", "geography": "ANY", "modelGroupName": "example"}
+  aiModelRateLimits.resetGroupRateLimits:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  aiModelRateLimits.updateGroupRateLimits:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloud": "ANY", "geography": "ANY", "modelGroupName": "example", "requestsPerMinuteLimit": 1, "tokensPerMinuteLimit": 1}
+  alertConfigurations.createAlertConfig:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "body": {"eventTypeName": "CREDIT_CARD_ABOUT_TO_EXPIRE", "notifications": [{"typeName": "DATADOG"}]}}
+  alertConfigurations.deleteAlertConfig:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "alertConfigId": "5f43e7f0a1b2c3d4e5f60718"}
+  alertConfigurations.getAlertConfig:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "alertConfigId": "5f43e7f0a1b2c3d4e5f60718"}
+  alertConfigurations.getAlertConfigs:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "alertId": "5f43e7f0a1b2c3d4e5f60718"}
+  alertConfigurations.listAlertConfigs:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  alertConfigurations.listMatcherFieldNames:
+    args: {}
+  alertConfigurations.toggleAlertConfig:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "alertConfigId": "5f43e7f0a1b2c3d4e5f60718"}
+  alertConfigurations.updateAlertConfig:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "alertConfigId": "5f43e7f0a1b2c3d4e5f60718", "body": {"eventTypeName": "CREDIT_CARD_ABOUT_TO_EXPIRE", "notifications": [{"typeName": "DATADOG"}]}}
+  alerts.acknowledgeAlert:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "alertId": "5f43e7f0a1b2c3d4e5f60718"}
+  alerts.getAlert:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "alertId": "5f43e7f0a1b2c3d4e5f60718"}
+  alerts.getAlertConfigAlerts:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "alertConfigId": "5f43e7f0a1b2c3d4e5f60718"}
+  alerts.listAlerts:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  atlasSearch.createClusterSearchDeployment:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "specs": [{"instanceSize": "S10_HIGHCPU"}]}
+  atlasSearch.createClusterSearchIndex:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "collectionName": "movies", "database": "example", "name": "Cluster0"}
+  atlasSearch.deleteClusterSearchDeployment:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  atlasSearch.deleteClusterSearchIndex:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "indexId": "5f43e7f0a1b2c3d4e5f60718"}
+  atlasSearch.deleteIndexByName:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "collectionName": "movies", "databaseName": "sample_mflix", "indexName": "example"}
+  atlasSearch.getClusterSearchDeployment:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  atlasSearch.getClusterSearchIndex:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "indexId": "5f43e7f0a1b2c3d4e5f60718"}
+  atlasSearch.getIndexByName:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "collectionName": "movies", "databaseName": "sample_mflix", "indexName": "example"}
+  atlasSearch.listClusterSearchIndexes:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  atlasSearch.listSearchIndex:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "collectionName": "movies", "databaseName": "sample_mflix"}
+  atlasSearch.updateClusterSearchDeployment:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "specs": [{"instanceSize": "S10_HIGHCPU"}]}
+  atlasSearch.updateClusterSearchIndex:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "indexId": "5f43e7f0a1b2c3d4e5f60718", "definition": {"mappings": {}}}
+  atlasSearch.updateIndexByName:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "collectionName": "movies", "databaseName": "sample_mflix", "indexName": "example", "definition": {"mappings": {}}}
+  auditing.getGroupAuditLog:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  auditing.updateAuditLog:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  awsClustersDns.getAwsCustomDns:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  awsClustersDns.toggleAwsCustomDns:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "enabled": true}
+  cloudBackups.cancelBackupRestoreJob:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "restoreJobId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudBackups.createBackupExport:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "exportBucketId": "5f43e7f0a1b2c3d4e5f60718", "snapshotId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudBackups.createBackupPrivateEndpoint:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloudProvider": "AWS"}
+  cloudBackups.createBackupRestoreJob:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "deliveryType": "automated"}
+  cloudBackups.createCollectionRestoreJob:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "indexStrategy": "ALL", "targetClusterName": "example", "targetGroupId": "5f43e7f0a1b2c3d4e5f60718", "writeStrategy": "CREATE_NEW"}
+  cloudBackups.createExportBucket:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloudProvider": "AWS"}
+  cloudBackups.deleteBackupPrivateEndpoint:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloudProvider": "AWS", "endpointId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudBackups.deleteBackupShardedCluster:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "snapshotId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudBackups.deleteClusterBackupSchedule:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  cloudBackups.deleteClusterBackupSnapshot:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "snapshotId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudBackups.deleteExportBucket:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "exportBucketId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudBackups.disableCompliancePolicy:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudBackups.getBackupExport:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "exportId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudBackups.getBackupPrivateEndpoint:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloudProvider": "AWS", "endpointId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudBackups.getBackupRestoreJob:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "restoreJobId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudBackups.getBackupSchedule:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  cloudBackups.getBackupShardedCluster:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "snapshotId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudBackups.getBackupSnapshotDatabase:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "snapshotId": "5f43e7f0a1b2c3d4e5f60718", "databaseName": "sample_mflix"}
+  cloudBackups.getClusterBackupSnapshot:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "snapshotId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudBackups.getCollectionRestoreJob:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "jobId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudBackups.getCompliancePolicy:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudBackups.getExportBucket:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "exportBucketId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudBackups.getRestoreJobCollection:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "jobId": "5f43e7f0a1b2c3d4e5f60718", "sourceNamespace": "example"}
+  cloudBackups.getSnapshotDatabaseCollection:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "snapshotId": "5f43e7f0a1b2c3d4e5f60718", "databaseName": "sample_mflix", "collectionName": "movies"}
+  cloudBackups.listBackupExports:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  cloudBackups.listBackupPrivateEndpoints:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloudProvider": "AWS"}
+  cloudBackups.listBackupRestoreJobs:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  cloudBackups.listBackupShardedClusters:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  cloudBackups.listBackupSnapshotDatabases:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "snapshotId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudBackups.listBackupSnapshots:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  cloudBackups.listCollectionRestoreJobs:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  cloudBackups.listExportBuckets:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudBackups.listRestoreJobCollections:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "jobId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudBackups.listSnapshotDatabaseCollections:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "snapshotId": "5f43e7f0a1b2c3d4e5f60718", "databaseName": "sample_mflix"}
+  cloudBackups.takeSnapshots:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  cloudBackups.updateBackupExportBucket:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "exportBucketId": "5f43e7f0a1b2c3d4e5f60718", "requirePrivateNetworking": true}
+  cloudBackups.updateBackupSchedule:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "policies": [{"policyItems": [{"frequencyInterval": 1, "frequencyType": "daily", "retentionUnit": "days", "retentionValue": 1}]}]}
+  cloudBackups.updateBackupSnapshot:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "snapshotId": "5f43e7f0a1b2c3d4e5f60718", "retentionUnit": "DAYS", "retentionValue": 1}
+  cloudBackups.updateCompliancePolicy:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "authorizedEmail": "ada@example.com", "authorizedUserFirstName": "example", "authorizedUserLastName": "example"}
+  cloudMigrationService.createGroupLiveMigration:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "destination": {"clusterName": "Cluster0", "groupId": "5f43e7f0a1b2c3d4e5f60718", "hostnameSchemaType": "PUBLIC"}, "migrationHosts": ["example"], "source": {"clusterName": "Cluster0", "groupId": "5f43e7f0a1b2c3d4e5f60718", "managedAuthentication": true, "ssl": true}}
+  cloudMigrationService.createLinkToken:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudMigrationService.cutoverMigration:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "liveMigrationId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudMigrationService.deleteLinkTokens:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudMigrationService.getGroupLiveMigration:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "liveMigrationId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudMigrationService.getMigrationValidateStatus:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "validationId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudMigrationService.listAvailableProjects:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudMigrationService.validateLiveMigrations:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "destination": {"clusterName": "Cluster0", "groupId": "5f43e7f0a1b2c3d4e5f60718", "hostnameSchemaType": "PUBLIC"}, "migrationHosts": ["example"], "source": {"clusterName": "Cluster0", "groupId": "5f43e7f0a1b2c3d4e5f60718", "managedAuthentication": true, "ssl": true}}
+  cloudProviderAccess.authorizeProviderAccessRole:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "roleId": "5f43e7f0a1b2c3d4e5f60718", "providerName": "AWS"}
+  cloudProviderAccess.createCloudProviderAccess:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "body": {"providerName": "AWS"}}
+  cloudProviderAccess.deauthorizeProviderAccessRole:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloudProvider": "AWS", "roleId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudProviderAccess.getCloudProviderAccess:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "roleId": "5f43e7f0a1b2c3d4e5f60718"}
+  cloudProviderAccess.listCloudProviderAccess:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  clusterOutageSimulation.endOutageSimulation:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  clusterOutageSimulation.getOutageSimulation:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  clusterOutageSimulation.startOutageSimulation:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  clusters.createCluster:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  clusters.deleteCluster:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  clusters.getCluster:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  clusters.getClusterAdaptiveSettings:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  clusters.getClusterStatus:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  clusters.getProcessArgs:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  clusters.getSampleDatasetLoad:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "sampleDatasetId": "5f43e7f0a1b2c3d4e5f60718"}
+  clusters.grantMongoEmployeeAccess:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "expirationTime": "2026-04-09T10:00:00Z", "grantType": "CLUSTER_DATABASE_LOGS"}
+  clusters.listClusterDetails:
+    args: {}
+  clusters.listClusterProviderRegions:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  clusters.listClusters:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  clusters.pinFeatureCompatibilityVersion:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  clusters.requestSampleDatasetLoad:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "name": "Cluster0"}
+  clusters.restartPrimaries:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  clusters.revokeMongoEmployeeAccess:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  clusters.unpinFeatureCompatibilityVersion:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  clusters.updateCluster:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  clusters.updateClusterAdaptiveSettings:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  clusters.updateProcessArgs:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  clusters.upgradeTenantUpgrade:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "name": "Cluster0"}
+  clusters.validateGroupClusterConfigurations:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterDescription": {}, "editing": true}
+  collectionLevelMetrics.getClusterNamespaces:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "clusterView": "PRIMARY"}
+  collectionLevelMetrics.getProcessNamespaces:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "processId": "cluster0-shard-00-00.abcde.mongodb.net:27017"}
+  collectionLevelMetrics.listCollStatMeasurements:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "clusterView": "PRIMARY", "databaseName": "sample_mflix", "collectionName": "movies"}
+  collectionLevelMetrics.listCollStatMetrics:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  collectionLevelMetrics.listPinnedNamespaces:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  collectionLevelMetrics.listProcessMeasurements:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "processId": "cluster0-shard-00-00.abcde.mongodb.net:27017", "databaseName": "sample_mflix", "collectionName": "movies"}
+  collectionLevelMetrics.pinNamespaces:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  collectionLevelMetrics.unpinNamespaces:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  collectionLevelMetrics.updatePinnedNamespaces:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  customDatabaseRoles.createCustomDbRole:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "roleName": "readAnyDatabase"}
+  customDatabaseRoles.deleteCustomDbRole:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "roleName": "readAnyDatabase"}
+  customDatabaseRoles.getCustomDbRole:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "roleName": "readAnyDatabase"}
+  customDatabaseRoles.listCustomDbRoles:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  customDatabaseRoles.updateCustomDbRole:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "roleName": "readAnyDatabase"}
+  dataFederation.createDataFederation:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  dataFederation.createPrivateEndpointId:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "endpointId": "vpce-0123456789abcdef0"}
+  dataFederation.deleteDataFederation:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant"}
+  dataFederation.deleteDataFederationLimit:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "limitName": "bytesProcessed.query"}
+  dataFederation.deletePrivateEndpointId:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "endpointId": "vpce-0123456789abcdef0"}
+  dataFederation.downloadFederationQueryLogs:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant"}
+  dataFederation.getDataFederation:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant"}
+  dataFederation.getDataFederationLimit:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "limitName": "bytesProcessed.query"}
+  dataFederation.getPrivateEndpointId:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "endpointId": "vpce-0123456789abcdef0"}
+  dataFederation.listDataFederation:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  dataFederation.listDataFederationLimits:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant"}
+  dataFederation.listPrivateEndpointIds:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  dataFederation.setDataFederationLimit:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "limitName": "bytesProcessed.query", "value": 1}
+  dataFederation.updateDataFederation:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "skipRoleValidation": true}
+  databaseUsers.createDatabaseUser:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "databaseName": "admin", "username": "app-user", "password": "correct-horse-battery-staple", "roles": [{"databaseName": "sample_mflix", "roleName": "readWrite"}]}
+  databaseUsers.deleteDatabaseUser:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "databaseName": "sample_mflix", "username": "app-user"}
+  databaseUsers.getDatabaseUser:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "databaseName": "sample_mflix", "username": "app-user"}
+  databaseUsers.listDatabaseUsers:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  databaseUsers.updateDatabaseUser:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "databaseName": "sample_mflix", "username": "app-user", "roles": [{"databaseName": "sample_mflix", "roleName": "readAnyDatabase"}]}
+  encryptionAtRestUsingCustomerKeyManagement.createRestPrivateEndpoint:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloudProvider": "AWS", "body": {}}
+  encryptionAtRestUsingCustomerKeyManagement.getEncryptionAtRest:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  encryptionAtRestUsingCustomerKeyManagement.getRestPrivateEndpoint:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloudProvider": "AWS", "endpointId": "5f43e7f0a1b2c3d4e5f60718"}
+  encryptionAtRestUsingCustomerKeyManagement.listRestPrivateEndpoints:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloudProvider": "AWS"}
+  encryptionAtRestUsingCustomerKeyManagement.requestPrivateEndpointDeletion:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloudProvider": "AWS", "endpointId": "5f43e7f0a1b2c3d4e5f60718"}
+  encryptionAtRestUsingCustomerKeyManagement.updateEncryptionAtRest:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  events.getGroupEvent:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "eventId": "5f43e7f0a1b2c3d4e5f60718"}
+  events.getOrgEvent:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "eventId": "5f43e7f0a1b2c3d4e5f60718"}
+  events.listEventTypes:
+    args: {}
+  events.listGroupEvents:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  events.listOrgEvents:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  federatedAuthentication.createIdentityProvider:
+    args: {"federationSettingsId": "5f43e7f0a1b2c3d4e5f60718", "body": {}}
+  federatedAuthentication.createRoleMapping:
+    args: {"federationSettingsId": "5f43e7f0a1b2c3d4e5f60718", "orgId": "5f43e7f0a1b2c3d4e5f60718", "externalGroupName": "example", "roleAssignments": [{}]}
+  federatedAuthentication.deleteFederationSetting:
+    args: {"federationSettingsId": "5f43e7f0a1b2c3d4e5f60718"}
+  federatedAuthentication.deleteIdentityProvider:
+    args: {"federationSettingsId": "5f43e7f0a1b2c3d4e5f60718", "identityProviderId": "example"}
+  federatedAuthentication.deleteRoleMapping:
+    args: {"federationSettingsId": "5f43e7f0a1b2c3d4e5f60718", "id": "5f43e7f0a1b2c3d4e5f60718", "orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  federatedAuthentication.getConnectedOrgConfig:
+    args: {"federationSettingsId": "5f43e7f0a1b2c3d4e5f60718", "orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  federatedAuthentication.getFederationSettings:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  federatedAuthentication.getIdentityProvider:
+    args: {"federationSettingsId": "5f43e7f0a1b2c3d4e5f60718", "identityProviderId": "example"}
+  federatedAuthentication.getIdentityProviderMetadata:
+    args: {"federationSettingsId": "5f43e7f0a1b2c3d4e5f60718", "identityProviderId": "5f43e7f0a1b2c3d4e5f6"}
+  federatedAuthentication.getRoleMapping:
+    args: {"federationSettingsId": "5f43e7f0a1b2c3d4e5f60718", "id": "5f43e7f0a1b2c3d4e5f60718", "orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  federatedAuthentication.listConnectedOrgConfigs:
+    args: {"federationSettingsId": "5f43e7f0a1b2c3d4e5f60718"}
+  federatedAuthentication.listIdentityProviders:
+    args: {"federationSettingsId": "5f43e7f0a1b2c3d4e5f60718"}
+  federatedAuthentication.listRoleMappings:
+    args: {"federationSettingsId": "5f43e7f0a1b2c3d4e5f60718", "orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  federatedAuthentication.removeConnectedOrgConfig:
+    args: {"federationSettingsId": "5f43e7f0a1b2c3d4e5f60718", "orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  federatedAuthentication.revokeIdentityProviderJwks:
+    args: {"federationSettingsId": "5f43e7f0a1b2c3d4e5f60718", "identityProviderId": "example"}
+  federatedAuthentication.updateConnectedOrgConfig:
+    args: {"federationSettingsId": "5f43e7f0a1b2c3d4e5f60718", "orgId": "5f43e7f0a1b2c3d4e5f60718", "domainRestrictionEnabled": true}
+  federatedAuthentication.updateIdentityProvider:
+    args: {"federationSettingsId": "5f43e7f0a1b2c3d4e5f60718", "identityProviderId": "example", "body": {"ssoDebugEnabled": true}}
+  federatedAuthentication.updateRoleMapping:
+    args: {"federationSettingsId": "5f43e7f0a1b2c3d4e5f60718", "id": "5f43e7f0a1b2c3d4e5f60718", "orgId": "5f43e7f0a1b2c3d4e5f60718", "externalGroupName": "example", "roleAssignments": [{}]}
+  flexClusters.createFlexCluster:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "name": "Cluster0", "providerSettings": {"backingProviderName": "AWS", "regionName": "US_EAST_1"}}
+  flexClusters.deleteFlexCluster:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "name": "Cluster0"}
+  flexClusters.getFlexCluster:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "name": "Cluster0"}
+  flexClusters.listFlexClusters:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  flexClusters.tenantUpgrade:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "name": "Cluster0"}
+  flexClusters.updateFlexCluster:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "name": "Cluster0"}
+  flexRestoreJobs.createFlexRestoreJob:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "name": "Cluster0", "snapshotId": "5f43e7f0a1b2c3d4e5f60718", "targetDeploymentItemName": "example"}
+  flexRestoreJobs.getFlexRestoreJob:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "name": "Cluster0", "restoreJobId": "5f43e7f0a1b2c3d4e5f60718"}
+  flexRestoreJobs.listFlexRestoreJobs:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "name": "Cluster0"}
+  flexSnapshots.downloadFlexBackup:
+    args: {"name": "Cluster0", "groupId": "5f43e7f0a1b2c3d4e5f60718", "snapshotId": "5f43e7f0a1b2c3d4e5f60718"}
+  flexSnapshots.getFlexBackupSnapshot:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "name": "Cluster0", "snapshotId": "5f43e7f0a1b2c3d4e5f60718"}
+  flexSnapshots.listFlexBackupSnapshots:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "name": "Cluster0"}
+  globalClusters.createCustomZoneMapping:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "customZoneMappings": [{"location": "example", "zone": "example"}]}
+  globalClusters.createManagedNamespace:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "collection": "example", "customShardKey": "example", "db": "example"}
+  globalClusters.deleteCustomZoneMapping:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  globalClusters.deleteManagedNamespaces:
+    args: {"clusterName": "Cluster0", "groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  globalClusters.getClusterGlobalWrites:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  invoices.createCostExplorerProcess:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "endDate": "2026-04-09", "startDate": "2026-04-09"}
+  invoices.createOrgInvoiceReport:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "invoiceId": "5f43e7f0a1b2c3d4e5f60718", "reportFormat": "CSV", "reportType": "FOCUS"}
+  invoices.getCostExplorerUsage:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "token": "example"}
+  invoices.getInvoice:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "invoiceId": "5f43e7f0a1b2c3d4e5f60718"}
+  invoices.getInvoiceCsv:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "invoiceId": "5f43e7f0a1b2c3d4e5f60718"}
+  invoices.getOrgAssociatedInvoices:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  invoices.getOrgInvoiceReport:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "invoiceId": "5f43e7f0a1b2c3d4e5f60718", "reportId": "example"}
+  invoices.getSku:
+    args: {"skuId": "example"}
+  invoices.listInvoicePending:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  invoices.listInvoices:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  invoices.listOrgInvoiceReports:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "invoiceId": "5f43e7f0a1b2c3d4e5f60718"}
+  invoices.listSkuServices:
+    args: {}
+  invoices.listSkus:
+    args: {}
+  invoices.searchInvoiceLineItems:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "invoiceId": "5f43e7f0a1b2c3d4e5f60718"}
+  ldapConfiguration.deleteLdapUserMapping:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  ldapConfiguration.getUserSecurity:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  ldapConfiguration.getUserSecurityVerify:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "requestId": "5f43e7f0a1b2c3d4e5f60718"}
+  ldapConfiguration.updateUserSecurity:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  ldapConfiguration.verifyUserSecurityLdap:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "bindPassword": "example", "bindUsername": "CN=ada,DC=example,DC=com", "hostname": "example", "port": 1}
+  maintenanceWindows.deferMaintenanceWindow:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  maintenanceWindows.getMaintenanceWindow:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  maintenanceWindows.resetMaintenanceWindow:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  maintenanceWindows.toggleMaintenanceAutoDefer:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  maintenanceWindows.updateMaintenanceWindow:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  metricIntegrations.createGroupMetricIntegration:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "aggregationTemporality": "DELTA", "authType": "HEADER", "endpoint": "example", "integrationType": "OTEL", "metricSelection": ["ATLAS_STREAM_PROCESSING"], "providerType": "CUSTOM"}
+  metricIntegrations.deleteGroupMetricIntegration:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "metricIntegrationId": "example"}
+  metricIntegrations.getGroupMetricIntegration:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "metricIntegrationId": "example"}
+  metricIntegrations.listGroupMetricIntegrations:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  metricIntegrations.updateGroupMetricIntegration:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "metricIntegrationId": "example", "aggregationTemporality": "DELTA", "authType": "HEADER", "endpoint": "example", "integrationType": "OTEL", "metricSelection": ["ATLAS_STREAM_PROCESSING"], "providerType": "CUSTOM"}
+  mongoDbCloudUsers.addGroupUserRole:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "userId": "5f43e7f0a1b2c3d4e5f60718", "groupRole": "example"}
+  mongoDbCloudUsers.addGroupUsers:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "roles": ["example"], "username": "app-user"}
+  mongoDbCloudUsers.addOrgRole:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "userId": "5f43e7f0a1b2c3d4e5f60718", "orgRole": "ORG_OWNER"}
+  mongoDbCloudUsers.addOrgTeamUser:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "teamId": "5f43e7f0a1b2c3d4e5f60718", "id": "5f43e7f0a1b2c3d4e5f60718"}
+  mongoDbCloudUsers.createOrgUser:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "roles": {"orgRoles": ["ORG_OWNER"]}, "username": "app-user"}
+  mongoDbCloudUsers.getGroupUser:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "userId": "5f43e7f0a1b2c3d4e5f60718"}
+  mongoDbCloudUsers.getOrgUser:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "userId": "5f43e7f0a1b2c3d4e5f60718"}
+  mongoDbCloudUsers.listGroupUsers:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  mongoDbCloudUsers.listOrgUsers:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  mongoDbCloudUsers.listTeamUsers:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "teamId": "5f43e7f0a1b2c3d4e5f60718"}
+  mongoDbCloudUsers.removeGroupUser:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "userId": "5f43e7f0a1b2c3d4e5f60718"}
+  mongoDbCloudUsers.removeGroupUserRole:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "userId": "5f43e7f0a1b2c3d4e5f60718", "groupRole": "example"}
+  mongoDbCloudUsers.removeOrgRole:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "userId": "5f43e7f0a1b2c3d4e5f60718", "orgRole": "ORG_OWNER"}
+  mongoDbCloudUsers.removeOrgTeamUser:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "teamId": "5f43e7f0a1b2c3d4e5f60718", "id": "5f43e7f0a1b2c3d4e5f60718"}
+  mongoDbCloudUsers.removeOrgUser:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "userId": "5f43e7f0a1b2c3d4e5f60718"}
+  mongoDbCloudUsers.updateOrgUser:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "userId": "5f43e7f0a1b2c3d4e5f60718"}
+  monitoringAndLogs.downloadClusterLog:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "hostName": "cluster0-shard-00-00.abcde.mongodb.net", "logName": "mongodb"}
+  monitoringAndLogs.getDatabase:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "databaseName": "sample_mflix", "processId": "cluster0-shard-00-00.abcde.mongodb.net:27017"}
+  monitoringAndLogs.getDatabaseMeasurements:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "databaseName": "sample_mflix", "processId": "cluster0-shard-00-00.abcde.mongodb.net:27017", "granularity": "PT1M"}
+  monitoringAndLogs.getGroupProcess:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "processId": "cluster0-shard-00-00.abcde.mongodb.net:27017"}
+  monitoringAndLogs.getIndexMeasurements:
+    args: {"processId": "cluster0-shard-00-00.abcde.mongodb.net:27017", "indexName": "example", "databaseName": "sample_mflix", "collectionName": "movies", "groupId": "5f43e7f0a1b2c3d4e5f60718", "granularity": "PT1M", "metrics": ["INDEX_SIZE_ON_DISK"]}
+  monitoringAndLogs.getProcessDisk:
+    args: {"partitionName": "example", "groupId": "5f43e7f0a1b2c3d4e5f60718", "processId": "cluster0-shard-00-00.abcde.mongodb.net:27017"}
+  monitoringAndLogs.getProcessDiskMeasurements:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "partitionName": "example", "processId": "cluster0-shard-00-00.abcde.mongodb.net:27017", "granularity": "PT1M"}
+  monitoringAndLogs.getProcessMeasurements:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "processId": "cluster0-shard-00-00.abcde.mongodb.net:27017", "granularity": "PT1M"}
+  monitoringAndLogs.listDatabases:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "processId": "cluster0-shard-00-00.abcde.mongodb.net:27017"}
+  monitoringAndLogs.listGroupProcesses:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  monitoringAndLogs.listHostFtsMetrics:
+    args: {"processId": "cluster0-shard-00-00.abcde.mongodb.net:27017", "groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  monitoringAndLogs.listIndexMeasurements:
+    args: {"processId": "cluster0-shard-00-00.abcde.mongodb.net:27017", "databaseName": "sample_mflix", "collectionName": "movies", "groupId": "5f43e7f0a1b2c3d4e5f60718", "granularity": "PT1M", "metrics": ["INDEX_SIZE_ON_DISK"]}
+  monitoringAndLogs.listMeasurements:
+    args: {"processId": "cluster0-shard-00-00.abcde.mongodb.net:27017", "groupId": "5f43e7f0a1b2c3d4e5f60718", "granularity": "PT1M", "metrics": ["FTS_DISK_USAGE"]}
+  monitoringAndLogs.listProcessDisks:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "processId": "cluster0-shard-00-00.abcde.mongodb.net:27017"}
+  networkPeering.createGroupContainer:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "body": {}}
+  networkPeering.createGroupPeer:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "body": {"containerId": "5f43e7f0a1b2c3d4e5f60718"}}
+  networkPeering.deleteGroupContainer:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "containerId": "5f43e7f0a1b2c3d4e5f60718"}
+  networkPeering.deleteGroupPeer:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "peerId": "5f43e7f0a1b2c3d4e5f60718"}
+  networkPeering.getGroupContainer:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "containerId": "5f43e7f0a1b2c3d4e5f60718"}
+  networkPeering.getGroupPeer:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "peerId": "5f43e7f0a1b2c3d4e5f60718"}
+  networkPeering.listGroupContainerAll:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  networkPeering.listGroupContainers:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "providerName": "AWS"}
+  networkPeering.listGroupPeers:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  networkPeering.updateGroupContainer:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "containerId": "5f43e7f0a1b2c3d4e5f60718", "body": {}}
+  networkPeering.updateGroupPeer:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "peerId": "5f43e7f0a1b2c3d4e5f60718", "body": {"containerId": "5f43e7f0a1b2c3d4e5f60718"}}
+  onlineArchive.createOnlineArchive:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "collName": "example", "criteria": {}, "dbName": "example"}
+  onlineArchive.deleteOnlineArchive:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "archiveId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  onlineArchive.downloadQueryLogs:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  onlineArchive.getOnlineArchive:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "archiveId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  onlineArchive.listOnlineArchives:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  onlineArchive.updateOnlineArchive:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "archiveId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  organizations.createOrg:
+    args: {"name": "Cluster0"}
+  organizations.deleteOrg:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  organizations.getOrg:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  organizations.getOrgDelegationSettings:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  organizations.getOrgGroups:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  organizations.getOrgMaintenanceSettings:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  organizations.getOrgSettings:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  organizations.listOrgs:
+    args: {}
+  organizations.resetOrgMaintenanceSettings:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  organizations.updateOrg:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "name": "Cluster0"}
+  organizations.updateOrgDelegationSettings:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  organizations.updateOrgMaintenanceSettings:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  organizations.updateOrgSettings:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  overloadProtectionSimulation.createClusterOverloadSimulation:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "durationSeconds": 1}
+  overloadProtectionSimulation.deleteClusterOverloadSimulation:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "simulationId": "example"}
+  overloadProtectionSimulation.getClusterOverloadSimulation:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "simulationId": "example"}
+  overloadProtectionSimulation.listClusterOverloadSimulations:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  performanceAdvisor.disableManagedSlowMs:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  performanceAdvisor.enableManagedSlowMs:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  performanceAdvisor.getManagedSlowMs:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  performanceAdvisor.listClusterSuggestedIndexes:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  performanceAdvisor.listDropIndexSuggestions:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  performanceAdvisor.listPerformanceAdvisorNamespaces:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "processId": "cluster0-shard-00-00.abcde.mongodb.net:27017"}
+  performanceAdvisor.listSchemaAdvice:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  performanceAdvisor.listSlowQueryLogs:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "processId": "cluster0-shard-00-00.abcde.mongodb.net:27017"}
+  performanceAdvisor.listSuggestedIndexes:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "processId": "cluster0-shard-00-00.abcde.mongodb.net:27017"}
+  privateEndpointServices.createPrivateEndpoint:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloudProvider": "AWS", "endpointServiceId": "5f43e7f0a1b2c3d4e5f60718", "body": {}}
+  privateEndpointServices.createPrivateEndpointService:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "providerName": "AWS", "region": "example"}
+  privateEndpointServices.deletePrivateEndpoint:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloudProvider": "AWS", "endpointId": "vpce-0123456789abcdef0", "endpointServiceId": "5f43e7f0a1b2c3d4e5f60718"}
+  privateEndpointServices.deletePrivateEndpointService:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloudProvider": "AWS", "endpointServiceId": "5f43e7f0a1b2c3d4e5f60718"}
+  privateEndpointServices.getPrivateEndpoint:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloudProvider": "AWS", "endpointId": "vpce-0123456789abcdef0", "endpointServiceId": "5f43e7f0a1b2c3d4e5f60718"}
+  privateEndpointServices.getPrivateEndpointService:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloudProvider": "AWS", "endpointServiceId": "5f43e7f0a1b2c3d4e5f60718"}
+  privateEndpointServices.getRegionalEndpointMode:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  privateEndpointServices.listPrivateEndpointService:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloudProvider": "AWS"}
+  privateEndpointServices.toggleRegionalEndpointMode:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "enabled": true}
+  privateEndpointServices.updatePrivateEndpointService:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "endpointServiceId": "5f43e7f0a1b2c3d4e5f60718", "cloudProvider": "AWS"}
+  programmaticApiKeys.addGroupApiKey:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "apiUserId": "5f43e7f0a1b2c3d4e5f60718", "body": [{}]}
+  programmaticApiKeys.createGroupApiKey:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "desc": "example", "roles": ["example"]}
+  programmaticApiKeys.createOrgAccessEntry:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "apiUserId": "5f43e7f0a1b2c3d4e5f60718", "body": [{}]}
+  programmaticApiKeys.createOrgApiKey:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "desc": "example", "roles": ["ORG_OWNER"]}
+  programmaticApiKeys.deleteAccessEntry:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "apiUserId": "5f43e7f0a1b2c3d4e5f60718", "ipAddress": "203.0.113.10"}
+  programmaticApiKeys.deleteOrgApiKey:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "apiUserId": "5f43e7f0a1b2c3d4e5f60718"}
+  programmaticApiKeys.getOrgAccessEntry:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "ipAddress": "203.0.113.10", "apiUserId": "5f43e7f0a1b2c3d4e5f60718"}
+  programmaticApiKeys.getOrgApiKey:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "apiUserId": "5f43e7f0a1b2c3d4e5f60718"}
+  programmaticApiKeys.listGroupApiKeys:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  programmaticApiKeys.listOrgAccessEntries:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "apiUserId": "5f43e7f0a1b2c3d4e5f60718"}
+  programmaticApiKeys.listOrgApiKeys:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  programmaticApiKeys.removeGroupApiKey:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "apiUserId": "5f43e7f0a1b2c3d4e5f60718"}
+  programmaticApiKeys.updateApiKeyRoles:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "apiUserId": "5f43e7f0a1b2c3d4e5f60718"}
+  programmaticApiKeys.updateOrgApiKey:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "apiUserId": "5f43e7f0a1b2c3d4e5f60718"}
+  projectIpAccessList.createAccessListEntry:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "body": [{"cidrBlock": "203.0.113.0/24", "comment": "Office"}]}
+  projectIpAccessList.deleteAccessListEntry:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "entryValue": "203.0.113.0/24"}
+  projectIpAccessList.getAccessListEntry:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "entryValue": "203.0.113.0/24"}
+  projectIpAccessList.getAccessListStatus:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "entryValue": "203.0.113.0/24"}
+  projectIpAccessList.listAccessListEntries:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  projects.createGroup:
+    args: {"name": "Cluster0", "orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  projects.deleteGroup:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  projects.deleteGroupLimit:
+    args: {"limitName": "atlas.project.security.databaseAccess.users", "groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  projects.getGroup:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  projects.getGroupByName:
+    args: {"groupName": "example"}
+  projects.getGroupIpAddresses:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  projects.getGroupLimit:
+    args: {"limitName": "atlas.project.security.databaseAccess.users", "groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  projects.getGroupSettings:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  projects.getMongoDbVersions:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  projects.listGroupLimits:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  projects.listGroups:
+    args: {"itemsPerPage": 20}
+  projects.migrateGroup:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  projects.setGroupLimit:
+    args: {"limitName": "atlas.project.security.databaseAccess.users", "groupId": "5f43e7f0a1b2c3d4e5f60718", "value": 1}
+  projects.updateGroup:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  projects.updateGroupSettings:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  pushBasedLogExport.createGroupLogIntegration:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "body": {"logTypes": ["MONGOD"], "type": "S3_LOG_EXPORT"}}
+  pushBasedLogExport.createOrgLogIntegration:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "body": {"logTypes": ["EVENTS"], "type": "OTEL_LOG_EXPORT"}}
+  pushBasedLogExport.deleteGroupLogIntegration:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "id": "example"}
+  pushBasedLogExport.deleteOrgLogIntegration:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "logIntegrationId": "example"}
+  pushBasedLogExport.getGroupLogIntegration:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "id": "example"}
+  pushBasedLogExport.getOrgLogIntegration:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "logIntegrationId": "example"}
+  pushBasedLogExport.listGroupLogIntegrations:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  pushBasedLogExport.listOrgLogIntegrations:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  pushBasedLogExport.updateGroupLogIntegration:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "id": "example", "body": {"logTypes": ["MONGOD"], "type": "S3_LOG_EXPORT"}}
+  pushBasedLogExport.updateOrgLogIntegration:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "logIntegrationId": "example", "body": {"logTypes": ["EVENTS"], "type": "OTEL_LOG_EXPORT"}}
+  querySampling.createClusterQuerySampling:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "namespace": "example"}
+  querySampling.deleteClusterQuerySampling:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "namespace": "example"}
+  querySampling.getClusterQuerySampling:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "namespace": "example"}
+  queryShapeInsights.getClusterQueryShape:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "queryShapeHash": "5f43e7f0a1b2c3d4e5f607185f43e7f0a1b2c3d4e5f607185f43e7f0a1b2c3d4"}
+  queryShapeInsights.getQueryShapeDetails:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "queryShapeHash": "5f43e7f0a1b2c3d4e5f607185f43e7f0a1b2c3d4e5f607185f43e7f0a1b2c3d4"}
+  queryShapeInsights.listClusterQueryShapes:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  queryShapeInsights.listQueryShapeSummaries:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  queryShapeInsights.updateClusterQueryShape:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "queryShapeHash": "5f43e7f0a1b2c3d4e5f607185f43e7f0a1b2c3d4e5f607185f43e7f0a1b2c3d4", "status": "REJECTED"}
+  rateLimiting.getRateLimit:
+    args: {"endpointSetId": "example"}
+  rateLimiting.listRateLimits:
+    args: {}
+  remoteMcpConfigurations.createGroupMcpConfig:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "mcpConfigName": "example", "roles": ["example"]}
+  remoteMcpConfigurations.createGroupMcpSecret:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "mcpConfigId": "5f43e7f0a1b2c3d4e5f60718", "secretExpiresAfterHours": 1}
+  remoteMcpConfigurations.createOrgMcpConfig:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "mcpConfigName": "example", "roles": ["ORG_MEMBER"]}
+  remoteMcpConfigurations.createOrgMcpSecret:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "mcpConfigId": "5f43e7f0a1b2c3d4e5f60718", "secretExpiresAfterHours": 1}
+  remoteMcpConfigurations.deleteGroupMcpConfig:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "mcpConfigId": "3f2b8c1e-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  remoteMcpConfigurations.deleteGroupMcpSecret:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "mcpConfigId": "5f43e7f0a1b2c3d4e5f60718", "secretId": "5f43e7f0a1b2c3d4e5f60718"}
+  remoteMcpConfigurations.deleteOrgMcpConfig:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "mcpConfigId": "3f2b8c1e-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  remoteMcpConfigurations.deleteOrgMcpSecret:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "mcpConfigId": "5f43e7f0a1b2c3d4e5f60718", "secretId": "5f43e7f0a1b2c3d4e5f60718"}
+  remoteMcpConfigurations.getGroupMcpConfig:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "mcpConfigId": "3f2b8c1e-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  remoteMcpConfigurations.getGroupMcpSecret:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "mcpConfigId": "5f43e7f0a1b2c3d4e5f60718", "secretId": "5f43e7f0a1b2c3d4e5f60718"}
+  remoteMcpConfigurations.getOrgMcpConfig:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "mcpConfigId": "3f2b8c1e-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  remoteMcpConfigurations.getOrgMcpSecret:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "mcpConfigId": "5f43e7f0a1b2c3d4e5f60718", "secretId": "5f43e7f0a1b2c3d4e5f60718"}
+  remoteMcpConfigurations.listGroupMcpConfigs:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  remoteMcpConfigurations.listGroupMcpSecrets:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "mcpConfigId": "5f43e7f0a1b2c3d4e5f60718"}
+  remoteMcpConfigurations.listOrgMcpConfigs:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  remoteMcpConfigurations.listOrgMcpSecrets:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "mcpConfigId": "5f43e7f0a1b2c3d4e5f60718"}
+  remoteMcpConfigurations.updateGroupMcpConfig:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "mcpConfigId": "3f2b8c1e-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  remoteMcpConfigurations.updateOrgMcpConfig:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "mcpConfigId": "3f2b8c1e-5c1e-4d8a-9f43-2b6e1c0a9d17"}
+  resourcePolicies.createOrgResourcePolicy:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "name": "Cluster0", "policies": [{"body": "example"}]}
+  resourcePolicies.deleteOrgResourcePolicy:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "resourcePolicyId": "5f43e7f0a1b2c3d4e5f60718"}
+  resourcePolicies.getNonCompliantResources:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  resourcePolicies.getOrgResourcePolicy:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "resourcePolicyId": "5f43e7f0a1b2c3d4e5f60718"}
+  resourcePolicies.listOrgResourcePolicies:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  resourcePolicies.updateOrgResourcePolicy:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "resourcePolicyId": "5f43e7f0a1b2c3d4e5f60718"}
+  resourcePolicies.validateResourcePolicies:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "name": "Cluster0", "policies": [{"body": "example"}]}
+  rollingIndex.createRollingIndex:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "collection": "example", "db": "example", "keys": [{}]}
+  root.getSystemStatus:
+    args: {}
+  root.listControlPlaneAddresses:
+    args: {}
+  serviceAccounts.createAccessList:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clientId": "mdb_sa_id_5f43e7f0a1b2c3d4e5f60718", "body": [{}]}
+  serviceAccounts.createGroupSecret:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clientId": "mdb_sa_id_5f43e7f0a1b2c3d4e5f60718", "secretExpiresAfterHours": 1}
+  serviceAccounts.createGroupServiceAccount:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "description": "example", "name": "Cluster0", "roles": ["example"]}
+  serviceAccounts.createOrgAccessList:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "clientId": "mdb_sa_id_5f43e7f0a1b2c3d4e5f60718", "body": [{}]}
+  serviceAccounts.createOrgSecret:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "clientId": "mdb_sa_id_5f43e7f0a1b2c3d4e5f60718", "secretExpiresAfterHours": 1}
+  serviceAccounts.createOrgServiceAccount:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "description": "example", "name": "Cluster0", "roles": ["ORG_MEMBER"]}
+  serviceAccounts.deleteGroupAccessEntry:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clientId": "mdb_sa_id_5f43e7f0a1b2c3d4e5f60718", "ipAddress": "203.0.113.10"}
+  serviceAccounts.deleteGroupSecret:
+    args: {"clientId": "mdb_sa_id_5f43e7f0a1b2c3d4e5f60718", "secretId": "example", "groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  serviceAccounts.deleteGroupServiceAccount:
+    args: {"clientId": "mdb_sa_id_5f43e7f0a1b2c3d4e5f60718", "groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  serviceAccounts.deleteOrgAccessEntry:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "clientId": "mdb_sa_id_5f43e7f0a1b2c3d4e5f60718", "ipAddress": "203.0.113.10"}
+  serviceAccounts.deleteOrgSecret:
+    args: {"clientId": "mdb_sa_id_5f43e7f0a1b2c3d4e5f60718", "secretId": "example", "orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  serviceAccounts.deleteOrgServiceAccount:
+    args: {"clientId": "mdb_sa_id_5f43e7f0a1b2c3d4e5f60718", "orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  serviceAccounts.getGroupServiceAccount:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clientId": "mdb_sa_id_5f43e7f0a1b2c3d4e5f60718"}
+  serviceAccounts.getOrgServiceAccount:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "clientId": "mdb_sa_id_5f43e7f0a1b2c3d4e5f60718"}
+  serviceAccounts.getServiceAccountGroups:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "clientId": "mdb_sa_id_5f43e7f0a1b2c3d4e5f60718"}
+  serviceAccounts.inviteGroupServiceAccount:
+    args: {"clientId": "mdb_sa_id_5f43e7f0a1b2c3d4e5f60718", "groupId": "5f43e7f0a1b2c3d4e5f60718", "roles": ["example"]}
+  serviceAccounts.listAccessList:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clientId": "mdb_sa_id_5f43e7f0a1b2c3d4e5f60718"}
+  serviceAccounts.listGroupServiceAccounts:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  serviceAccounts.listOrgAccessList:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "clientId": "mdb_sa_id_5f43e7f0a1b2c3d4e5f60718"}
+  serviceAccounts.listOrgServiceAccounts:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  serviceAccounts.updateGroupServiceAccount:
+    args: {"clientId": "mdb_sa_id_5f43e7f0a1b2c3d4e5f60718", "groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  serviceAccounts.updateOrgServiceAccount:
+    args: {"clientId": "mdb_sa_id_5f43e7f0a1b2c3d4e5f60718", "orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  shardKeyAnalyzer.createShardKeyAnalysis:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "namespace": "example", "shardKey": [{}]}
+  shardKeyAnalyzer.getAnalysisOperation:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "operationId": "5f43e7f0a1b2c3d4e5f60718"}
+  shardKeyAnalyzer.getShardKeyAnalysis:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "analysisId": "5f43e7f0a1b2c3d4e5f60718"}
+  shardKeyAnalyzer.listAnalysisOperations:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  shardKeyAnalyzer.listShardKeyAnalyses:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  shardingInsights.getClusterShardMetric:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "replicaSetName": "example"}
+  shardingInsights.getClusterShardingInsights:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  shardingInsights.getShardMetricMeasurements:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0", "replicaSetName": "example"}
+  shardingInsights.listClusterShardMetrics:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  shardingInsights.listShardMetricMeasurements:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  shardingRecommendations.getClusterShardingRecommendations:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "clusterName": "Cluster0"}
+  streams.acceptVpcPeeringConnection:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "id": "example"}
+  streams.createFailoverConnection:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "connectionName": "example", "body": {}}
+  streams.createPrivateLinkConnection:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "provider": "example"}
+  streams.createStreamConnection:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "body": {}}
+  streams.createStreamProcessor:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "name": "Cluster0", "pipeline": [{}]}
+  streams.createStreamWorkspace:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  streams.createWorkspacePrivateEndpoint:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "customerDnsName": "example", "id": "example", "region": "example"}
+  streams.deletePrivateLinkConnection:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "connectionId": "example"}
+  streams.deleteStreamConnection:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "connectionName": "example"}
+  streams.deleteStreamFailoverConnection:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "connectionName": "example", "failoverConnectionId": "example"}
+  streams.deleteStreamProcessor:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "processorName": "example-processor"}
+  streams.deleteStreamWorkspace:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant"}
+  streams.deleteVpcPeeringConnection:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "id": "example"}
+  streams.deleteWorkspacePrivateEndpoint:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "endpointId": "vpce-0123456789abcdef0"}
+  streams.downloadAuditLogs:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant"}
+  streams.downloadOperationalLogs:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant"}
+  streams.getAccountDetails:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "cloudProvider": "AWS", "regionName": "US_EAST_1"}
+  streams.getPrivateLinkConnection:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "connectionId": "example"}
+  streams.getStreamConnection:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "connectionName": "example"}
+  streams.getStreamFailoverConnection:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "connectionName": "example", "failoverConnectionId": "example"}
+  streams.getStreamProcessor:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "processorName": "example-processor"}
+  streams.getStreamProcessors:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant"}
+  streams.getStreamWorkspace:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant"}
+  streams.getWorkspacePrivateEndpoint:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "endpointId": "vpce-0123456789abcdef0"}
+  streams.listActivePeeringConnections:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  streams.listFailoverConnections:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "connectionName": "example"}
+  streams.listPrivateLinkConnections:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  streams.listStreamConnections:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant"}
+  streams.listStreamWorkspaces:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  streams.listVpcPeeringConnections:
+    args: {"requesterAccountId": "example", "groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  streams.listWorkspacePrivateEndpoints:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  streams.rejectVpcPeeringConnection:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "id": "example"}
+  streams.startStreamProcessor:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "processorName": "example-processor"}
+  streams.startStreamProcessorWith:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "processorName": "example-processor"}
+  streams.stopStreamProcessor:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "processorName": "example-processor"}
+  streams.updatePrivateLinkConnection:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "connectionId": "example"}
+  streams.updateStreamConnection:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "connectionName": "example", "body": {}}
+  streams.updateStreamFailoverConnection:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "connectionName": "example", "failoverConnectionId": "example", "body": {}}
+  streams.updateStreamProcessor:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant", "processorName": "example-processor"}
+  streams.updateStreamWorkspace:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "tenantName": "example-tenant"}
+  streams.withStreamSampleConnections:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "body": {}}
+  teams.addGroupTeams:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "body": [{"roleNames": ["readAnyDatabase"], "teamId": "5f43e7f0a1b2c3d4e5f60718"}]}
+  teams.createOrgTeam:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "name": "Cluster0", "usernames": ["app-user"]}
+  teams.deleteOrgTeam:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "teamId": "5f43e7f0a1b2c3d4e5f60718"}
+  teams.getGroupTeam:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "teamId": "5f43e7f0a1b2c3d4e5f60718"}
+  teams.getOrgTeam:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "teamId": "5f43e7f0a1b2c3d4e5f60718"}
+  teams.getTeamByName:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "teamName": "example"}
+  teams.listGroupTeams:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  teams.listOrgTeams:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718"}
+  teams.removeGroupTeam:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "teamId": "5f43e7f0a1b2c3d4e5f60718"}
+  teams.renameOrgTeam:
+    args: {"orgId": "5f43e7f0a1b2c3d4e5f60718", "teamId": "5f43e7f0a1b2c3d4e5f60718", "name": "Cluster0"}
+  teams.updateGroupTeam:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "teamId": "5f43e7f0a1b2c3d4e5f60718", "roleNames": ["readAnyDatabase"]}
+  thirdPartyIntegrations.createGroupIntegration:
+    args: {"integrationType": "PAGER_DUTY", "groupId": "5f43e7f0a1b2c3d4e5f60718", "body": {}}
+  thirdPartyIntegrations.deleteGroupIntegration:
+    args: {"integrationType": "PAGER_DUTY", "groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  thirdPartyIntegrations.getGroupIntegration:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "integrationType": "PAGER_DUTY"}
+  thirdPartyIntegrations.listGroupIntegrations:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  thirdPartyIntegrations.updateGroupIntegration:
+    args: {"integrationType": "PAGER_DUTY", "groupId": "5f43e7f0a1b2c3d4e5f60718", "body": {}}
+  x509Authentication.createDatabaseUserCert:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "username": "app-user"}
+  x509Authentication.disableSecurityCustomerX509:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718"}
+  x509Authentication.listDatabaseUserCerts:
+    args: {"groupId": "5f43e7f0a1b2c3d4e5f60718", "username": "app-user"}
