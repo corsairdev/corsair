@@ -1,0 +1,596 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from Polymarket's API references;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Polymarket
+domain: polymarket.com
+description: "Polymarket prediction markets and perps: markets, events, tags, series, sports and search (Gamma), positions, trades, activity, holders and leaderboards (Data API), order books, prices, price history, orders, API keys and rewards (CLOB), deposits and withdrawals (Bridge), gasless transactions (Relayer), RFQ and combo quotes, and the Perps exchange (276 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Market data needs no key: Gamma (`gamma.*`: markets, events, tags,
+  series, sports, search), the Data API (`data.*`: positions, trades,
+  activity, holders, leaderboards, open interest), CLOB prices and books
+  (`clob.books.get`, `clob.prices.get`, `clob.pricesHistory.get` ...), Perps
+  market info (`perps.instruments`, `perps.book` ...) and the Bridge.
+
+  - **Trading on the CLOB** (`clob.orders.*`, balances, rewards,
+  notifications, `combos.*`) needs a CLOB API key set: connect with the API
+  key as the key and its `secret`, `passphrase` and wallet `address`. Make
+  one with `clob.apiKeys.create` or `clob.apiKeys.derive`, which take your
+  wallet's EIP-712 ClobAuth signature as `poly_address`, `poly_signature`,
+  `poly_timestamp` and `poly_nonce` (the plugin never holds a private
+  key). Each call is signed with the secret (HMAC-SHA256).
+  - **Orders are signed by your wallet.** `clob.orders.create` takes the
+  order your wallet signed (the TypeScript or Python SDK builds it);
+  Perps orders, withdrawals and transfers carry their own signature too.
+  - **Perps account reads** (`perps.account.*`) take the `perps` option
+  `{ proxy, secret }` from `perps.proxy.create`; **RFQ partner** routes the
+  `rfq` option `{ keyId, secret }`; the **Relayer** the `relayer` option (a
+  relayer API key, or builder credentials).
+  - **Risk.** Placing orders, withdrawals, transfers, leverage and margin
+  changes, quotes, submitting transactions and minting API keys are
+  `destructive`, as is every cancel and delete. Lookups sent as POST
+  (batch prices, books, midpoints) are `read`.
+  - Token ids are long decimal strings (keep them as strings);
+  condition ids and addresses are 0x hex.
+examples:
+  basic:
+    path: gamma.markets.list
+    title: List open markets
+    args: {"closed": "false", "limit": 5, "order": "volume24hr", "ascending": false}
+  book:
+    path: clob.books.get
+    title: Read a token's order book
+    args: {"token_id": "21742633143463906290569050155826241533067272736897614950488156847949938836455"}
+apiExamples:
+  bridge.deposit:
+    args: {"address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839"}
+  bridge.quote:
+    args: {"fromAmountBaseUnit": "example", "fromChainId": "example", "fromTokenAddress": "example", "recipientAddress": "example", "toChainId": "example", "toTokenAddress": "example"}
+  bridge.status:
+    args: {"address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839"}
+  bridge.supportedAssets:
+    args: {}
+  bridge.withdraw:
+    args: {"address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839", "toChainId": "example", "toTokenAddress": "example", "recipientAddr": "example"}
+  clob.apiKeys.create:
+    args: {"poly_address": "example", "poly_signature": "example", "poly_timestamp": "example", "poly_nonce": "example"}
+  clob.apiKeys.delete:
+    args: {}
+  clob.apiKeys.derive:
+    args: {"poly_address": "example", "poly_signature": "example", "poly_timestamp": "example", "poly_nonce": "example"}
+  clob.apiKeys.list:
+    args: {"poly_address": "example", "poly_signature": "example", "poly_timestamp": "example", "poly_nonce": "example"}
+  clob.balanceAllowance.get:
+    args: {"asset_type": "COLLATERAL"}
+  clob.balanceAllowance.refresh:
+    args: {"asset_type": "COLLATERAL"}
+  clob.balanceAllowance.update:
+    args: {"asset_type": "COLLATERAL"}
+  clob.books.get:
+    args: {"token_id": "21742633143463906290569050155826241533067272736897614950488156847949938836455"}
+  clob.books.list:
+    args: {"token_ids": "1,2"}
+  clob.books.listByBody:
+    args: {"body": [{"token_id": "21742633143463906290569050155826241533067272736897614950488156847949938836455"}]}
+  clob.builderApiKeys.create:
+    args: {}
+  clob.builderApiKeys.list:
+    args: {}
+  clob.builderApiKeys.revoke:
+    args: {}
+  clob.closedOnlyMode:
+    args: {}
+  clob.feeRate.get:
+    args: {}
+  clob.feeRate.getByToken:
+    args: {"token_id": "21742633143463906290569050155826241533067272736897614950488156847949938836455"}
+  clob.heartbeats.send:
+    args: {}
+  clob.heartbeats.sendV1:
+    args: {"heartbeat_id": "example"}
+  clob.lastTradePrices.get:
+    args: {"token_id": "21742633143463906290569050155826241533067272736897614950488156847949938836455"}
+  clob.lastTradePrices.list:
+    args: {"token_ids": "1,2"}
+  clob.lastTradePrices.listByBody:
+    args: {"body": [{"token_id": "21742633143463906290569050155826241533067272736897614950488156847949938836455"}]}
+  clob.markets.get:
+    args: {"condition_id": "0xdd22472e552920b8438158ea7238bfadfa4f736aa4cee91a6b86c39ead110917"}
+  clob.markets.getByToken:
+    args: {"token_id": "21742633143463906290569050155826241533067272736897614950488156847949938836455"}
+  clob.markets.listSampling:
+    args: {}
+  clob.markets.listSamplingSimplified:
+    args: {}
+  clob.markets.listSimplified:
+    args: {}
+  clob.markets.liveActivity:
+    args: {"body": ["example"]}
+  clob.markets.liveActivityByCondition:
+    args: {"condition_id": "0xdd22472e552920b8438158ea7238bfadfa4f736aa4cee91a6b86c39ead110917"}
+  clob.midpoints.get:
+    args: {"token_id": "21742633143463906290569050155826241533067272736897614950488156847949938836455"}
+  clob.midpoints.list:
+    args: {"token_ids": "1,2"}
+  clob.midpoints.listByBody:
+    args: {"body": [{"token_id": "21742633143463906290569050155826241533067272736897614950488156847949938836455"}]}
+  clob.negRisk.get:
+    args: {}
+  clob.negRisk.getByToken:
+    args: {"token_id": "21742633143463906290569050155826241533067272736897614950488156847949938836455"}
+  clob.notifications.list:
+    args: {"signature_type": 0}
+  clob.notifications.markRead:
+    args: {"ids": "1,2"}
+  clob.orderScoring.get:
+    args: {"order_id": "example"}
+  clob.orderScoring.list:
+    args: {"order_ids": ["example"]}
+  clob.orderScoring.listByBody:
+    args: {"body": ["example"]}
+  clob.orders.cancel:
+    args: {"orderID": "0xabababababababababababababababababababababababababababababababab"}
+  clob.orders.cancelAll:
+    args: {}
+  clob.orders.cancelMany:
+    args: {"body": ["example"]}
+  clob.orders.cancelMarket:
+    args: {"market": "0xdd22472e552920b8438158ea7238bfadfa4f736aa4cee91a6b86c39ead110917", "asset_id": "21742633143463906290569050155826241533067272736897614950488156847949938836455"}
+  clob.orders.cancelWallet:
+    args: {"body": {"order_ids": ["0xdd22472e552920b8438158ea7238bfadfa4f736aa4cee91a6b86c39ead110917"]}}
+  clob.orders.create:
+    args: {"order": {"maker": "example", "signer": "0x56687bf447db6ffa42ffe2204a05edaa20f55839", "tokenId": "example", "makerAmount": "example", "takerAmount": "example", "side": "BUY", "expiration": "example", "timestamp": "example", "builder": "example", "signature": "example", "salt": 1, "signatureType": 0}, "owner": "example"}
+  clob.orders.createMany:
+    args: {"body": [{"order": {"maker": "example", "signer": "0x56687bf447db6ffa42ffe2204a05edaa20f55839", "tokenId": "example", "makerAmount": "example", "takerAmount": "example", "side": "BUY", "expiration": "example", "timestamp": "example", "builder": "example", "signature": "example", "salt": 1, "signatureType": 0}, "owner": "example"}]}
+  clob.orders.get:
+    args: {"orderID": "0xabababababababababababababababababababababababababababababababab"}
+  clob.orders.list:
+    args: {}
+  clob.orders.listWalletOpen:
+    args: {}
+  clob.prices.get:
+    args: {"token_id": "21742633143463906290569050155826241533067272736897614950488156847949938836455", "side": "BUY"}
+  clob.prices.list:
+    args: {"token_ids": "1,2", "sides": "example"}
+  clob.prices.listByBody:
+    args: {"body": [{"token_id": "21742633143463906290569050155826241533067272736897614950488156847949938836455"}]}
+  clob.pricesHistory.batch:
+    args: {"markets": ["0xdd22472e552920b8438158ea7238bfadfa4f736aa4cee91a6b86c39ead110917"]}
+  clob.pricesHistory.get:
+    args: {"market": "0xdd22472e552920b8438158ea7238bfadfa4f736aa4cee91a6b86c39ead110917"}
+  clob.rateLimitTier:
+    args: {}
+  clob.rebates.current:
+    args: {"date": "2026-11-01", "maker_address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839"}
+  clob.rewards.current:
+    args: {}
+  clob.rewards.market:
+    args: {"condition_id": "0xdd22472e552920b8438158ea7238bfadfa4f736aa4cee91a6b86c39ead110917"}
+  clob.rewards.markets:
+    args: {}
+  clob.rewards.userEarnings:
+    args: {"date": "2026-11-01"}
+  clob.rewards.userMarkets:
+    args: {}
+  clob.rewards.userPercentages:
+    args: {}
+  clob.rewards.userTotalEarnings:
+    args: {"date": "2026-11-01"}
+  clob.spreads.get:
+    args: {"token_id": "21742633143463906290569050155826241533067272736897614950488156847949938836455"}
+  clob.spreads.list:
+    args: {"body": [{"token_id": "21742633143463906290569050155826241533067272736897614950488156847949938836455"}]}
+  clob.tickSize.get:
+    args: {}
+  clob.tickSize.getByToken:
+    args: {"token_id": "21742633143463906290569050155826241533067272736897614950488156847949938836455"}
+  clob.time:
+    args: {}
+  clob.trades.list:
+    args: {"maker_address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839"}
+  clob.trades.listBuilder:
+    args: {"builder_code": "0x0000000000000000000000000000000000000000000000000000000000000000"}
+  combos.confirmations.submit:
+    args: {"rfq_id": "example", "quote_id": "example", "signer_address": "example", "maker_address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839", "signature_type": 0, "decision": "CONFIRM"}
+  combos.markets.list:
+    args: {}
+  combos.quotes.cancel:
+    args: {"rfq_id": "example", "quote_id": "example", "signer_address": "example", "maker_address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839", "signature_type": 0}
+  combos.quotes.submit:
+    args: {"quote_id": "example", "rfq_id": "example", "signer_address": "example", "maker_address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839", "signature_type": 0, "price_e6": "example", "size_e6": "example", "signed_order": {"salt": "example", "maker": "example", "signer": "0x56687bf447db6ffa42ffe2204a05edaa20f55839", "tokenId": "example", "makerAmount": "example", "takerAmount": "example", "side": 0, "signatureType": 0, "timestamp": "example", "signature": "example"}}
+  data.activity.combos:
+    args: {}
+  data.activity.list:
+    args: {}
+  data.approvals:
+    args: {}
+  data.biggestWinners:
+    args: {}
+  data.builders.leaderboard:
+    args: {}
+  data.builders.volume:
+    args: {}
+  data.holders:
+    args: {}
+  data.leaderboard:
+    args: {}
+  data.liveVolume:
+    args: {}
+  data.openInterest:
+    args: {}
+  data.positions.combos:
+    args: {}
+  data.positions.list:
+    args: {}
+  data.positions.snapshot:
+    args: {"user": "0x56687bf447db6ffa42ffe2204a05edaa20f55839", "date": "2026-11-01"}
+  data.pricesHistory:
+    args: {}
+  data.resolutions:
+    args: {}
+  data.status:
+    args: {}
+  data.tokens:
+    args: {}
+  data.trades:
+    args: {}
+  data.users.pnl:
+    args: {}
+  data.users.stats:
+    args: {}
+  data.users.volume:
+    args: {}
+  data.value:
+    args: {}
+  gamma.comments.get:
+    args: {"id": 1}
+  gamma.comments.list:
+    args: {"parent_entity_id": 1, "parent_entity_type": "Event"}
+  gamma.comments.listByUser:
+    args: {"user_address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839"}
+  gamma.comments.listKeyset:
+    args: {"parent_entity_id": 1, "parent_entity_type": "Event"}
+  gamma.cryptoMarketConfigs.list:
+    args: {}
+  gamma.events.commentCount:
+    args: {"id": "12"}
+  gamma.events.count:
+    args: {}
+  gamma.events.creators.get:
+    args: {"id": 1}
+  gamma.events.creators.list:
+    args: {}
+  gamma.events.externalPartners.get:
+    args: {"id": 1, "partnerSlug": "espn"}
+  gamma.events.externalPartners.list:
+    args: {"id": 1}
+  gamma.events.get:
+    args: {"id": 1}
+  gamma.events.getByPartner:
+    args: {}
+  gamma.events.getBySlug:
+    args: {"slug": "will-bitcoin-hit-100k-in-2026"}
+  gamma.events.insights:
+    args: {"id": 1}
+  gamma.events.list:
+    args: {}
+  gamma.events.listKeyset:
+    args: {}
+  gamma.events.listPaginated:
+    args: {}
+  gamma.events.premadeCombos:
+    args: {"slug": "will-bitcoin-hit-100k-in-2026"}
+  gamma.events.reference:
+    args: {"slug": "will-bitcoin-hit-100k-in-2026"}
+  gamma.events.similar:
+    args: {}
+  gamma.events.sportResults:
+    args: {}
+  gamma.events.tags:
+    args: {"id": "12"}
+  gamma.events.tweetCount:
+    args: {"id": 1}
+  gamma.facets.get:
+    args: {"slug": "will-bitcoin-hit-100k-in-2026"}
+  gamma.facets.list:
+    args: {}
+  gamma.feeTypes.events:
+    args: {"feeType": "standard"}
+  gamma.feeTypes.list:
+    args: {}
+  gamma.games.get:
+    args: {}
+  gamma.makerTiers.get:
+    args: {"addresses": ["example"]}
+  gamma.makerTiers.ladder:
+    args: {}
+  gamma.marketClarifications.list:
+    args: {}
+  gamma.marketEstimateHistory.list:
+    args: {}
+  gamma.markets.description:
+    args: {"id": 1}
+  gamma.markets.get:
+    args: {"id": 1}
+  gamma.markets.getBySlug:
+    args: {"slug": "will-bitcoin-hit-100k-in-2026"}
+  gamma.markets.information:
+    args: {}
+  gamma.markets.list:
+    args: {"closed": "false", "limit": 5, "order": "volume24hr", "ascending": false}
+  gamma.markets.listAbridged:
+    args: {}
+  gamma.markets.listAbridgedKeyset:
+    args: {}
+  gamma.markets.listKeyset:
+    args: {}
+  gamma.markets.related:
+    args: {"id": 1}
+  gamma.markets.tags:
+    args: {"id": "12"}
+  gamma.moderators.list:
+    args: {}
+  gamma.partners.get:
+    args: {"id": 1}
+  gamma.partners.list:
+    args: {}
+  gamma.profiles.get:
+    args: {}
+  gamma.profiles.getByAddress:
+    args: {"user_address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839"}
+  gamma.profiles.list:
+    args: {}
+  gamma.readyz:
+    args: {}
+  gamma.referralLeaderboard:
+    args: {}
+  gamma.search:
+    args: {}
+  gamma.searchV2:
+    args: {}
+  gamma.series.commentCount:
+    args: {"id": "12"}
+  gamma.series.get:
+    args: {"id": "12"}
+  gamma.series.list:
+    args: {}
+  gamma.series.listKeyset:
+    args: {}
+  gamma.series.summary:
+    args: {"id": "12"}
+  gamma.series.summaryBySlug:
+    args: {"slug": "will-bitcoin-hit-100k-in-2026"}
+  gamma.sports.externalPartners.get:
+    args: {"id": 1, "partnerRef": "espn"}
+  gamma.sports.externalPartners.list:
+    args: {"id": 1}
+  gamma.sports.get:
+    args: {"id": 1}
+  gamma.sports.getByPartner:
+    args: {}
+  gamma.sports.list:
+    args: {}
+  gamma.sports.marketTypes:
+    args: {}
+  gamma.sports.premadeCombos:
+    args: {"slug": "will-bitcoin-hit-100k-in-2026"}
+  gamma.sports.summary:
+    args: {}
+  gamma.status:
+    args: {}
+  gamma.tags.get:
+    args: {"id": "12"}
+  gamma.tags.getBySlug:
+    args: {"slug": "will-bitcoin-hit-100k-in-2026"}
+  gamma.tags.list:
+    args: {}
+  gamma.tags.related:
+    args: {"id": "12"}
+  gamma.tags.relatedBySlug:
+    args: {"slug": "will-bitcoin-hit-100k-in-2026"}
+  gamma.tags.relations:
+    args: {"id": "12"}
+  gamma.tags.relationsBySlug:
+    args: {"slug": "will-bitcoin-hit-100k-in-2026"}
+  gamma.takerTiers.get:
+    args: {"addresses": ["example"]}
+  gamma.takerTiers.ladder:
+    args: {}
+  gamma.teams.externalPartners.get:
+    args: {"id": 1, "partnerRef": "espn"}
+  gamma.teams.externalPartners.list:
+    args: {"id": 1}
+  gamma.teams.get:
+    args: {"id": 1}
+  gamma.teams.getByPartner:
+    args: {}
+  gamma.teams.list:
+    args: {}
+  gamma.terms.current:
+    args: {}
+  gamma.tournaments.get:
+    args: {"id": 1}
+  gamma.tournaments.list:
+    args: {}
+  gamma.walletType:
+    args: {"address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839", "signer": "0x56687bf447db6ffa42ffe2204a05edaa20f55839"}
+  perps.account.applyReferral:
+    args: {"code": "example"}
+  perps.account.approveBuilder:
+    args: {"op": {"type": "approveBuilder", "args": {"builder": "example", "max_fee_rate": "example", "approval_version": 1}}, "sig": "example", "salt": 1, "ts": 1}
+  perps.account.autoCancel:
+    args: {}
+  perps.account.backstops:
+    args: {}
+  perps.account.balances:
+    args: {}
+  perps.account.builderApprovals:
+    args: {}
+  perps.account.builderEarnings:
+    args: {}
+  perps.account.builderEarningsSummary:
+    args: {}
+  perps.account.config:
+    args: {}
+  perps.account.createInvite:
+    args: {"body": {}}
+  perps.account.credentials:
+    args: {}
+  perps.account.deposits:
+    args: {}
+  perps.account.equity:
+    args: {"interval": "1d", "start_timestamp": 1}
+  perps.account.fills:
+    args: {}
+  perps.account.funding:
+    args: {}
+  perps.account.internalTransfer:
+    args: {"op": {"type": "internalTransfer", "args": {"account": "example", "token": "example", "amount": "example", "to": "example"}}, "sig": "example", "salt": 1, "ts": 1}
+  perps.account.internalTransfers:
+    args: {}
+  perps.account.limits:
+    args: {}
+  perps.account.markNotificationsRead:
+    args: {"body": {"ids": ["12"]}}
+  perps.account.notifications:
+    args: {}
+  perps.account.openOrders:
+    args: {}
+  perps.account.orders:
+    args: {}
+  perps.account.pnl:
+    args: {"interval": "1d", "start_timestamp": 1}
+  perps.account.portfolio:
+    args: {}
+  perps.account.referral:
+    args: {}
+  perps.account.rewards:
+    args: {}
+  perps.account.stats:
+    args: {}
+  perps.account.updateBuilder:
+    args: {"op": {"type": "updateBuilder", "args": {"name": "example"}}, "sig": "example", "salt": 1, "ts": 1}
+  perps.account.withdraw:
+    args: {"op": {"type": "withdraw", "args": {"account": "example", "token": "example", "amount": "example", "to": "example"}}, "sig": "example", "salt": 1, "ts": 1}
+  perps.account.withdrawals:
+    args: {}
+  perps.assets:
+    args: {}
+  perps.bbo:
+    args: {}
+  perps.blp.enroll:
+    args: {"instrument_id": 1, "active": true}
+  perps.blp.enrollment:
+    args: {}
+  perps.blp.liquidations:
+    args: {}
+  perps.book:
+    args: {"instrument_id": 1}
+  perps.builder:
+    args: {"address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839"}
+  perps.competitions.account:
+    args: {"competition_id": 1, "address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839"}
+  perps.competitions.get:
+    args: {"competition_id": 1}
+  perps.competitions.leaderboard:
+    args: {"competition_id": 1}
+  perps.competitions.list:
+    args: {}
+  perps.competitions.widget:
+    args: {}
+  perps.exchange:
+    args: {}
+  perps.exchangeStatistics:
+    args: {"start_timestamp": 1, "end_timestamp": 1}
+  perps.fees:
+    args: {}
+  perps.fundingHistory:
+    args: {"instrument_id": 1}
+  perps.index:
+    args: {"asset": "example"}
+  perps.instruments:
+    args: {}
+  perps.inviteCode:
+    args: {"code": "example"}
+  perps.klines:
+    args: {"instrument_id": 1, "interval": "1d", "start_timestamp": 1}
+  perps.leaderboard:
+    args: {}
+  perps.leverage.update:
+    args: {"op": {"type": "updateLeverage", "args": {"iid": 1, "lev": 1, "cross": true}}, "sig": "example", "salt": 1, "ts": 1}
+  perps.leverage.updateMany:
+    args: {"op": {"type": "updateLeverages", "args": [{"iid": 1, "lev": 1, "cross": true}]}, "sig": "example", "salt": 1, "ts": 1}
+  perps.limitTiers:
+    args: {}
+  perps.margin.update:
+    args: {"op": {"type": "updateMargin", "args": {"iid": 1, "amt": "example"}}, "sig": "example", "salt": 1, "ts": 1}
+  perps.markHistory:
+    args: {"instrument_id": 1, "interval": "1d", "start_timestamp": 1}
+  perps.orders.cancel:
+    args: {"op": {"type": "cancelOrders", "args": [1]}, "sig": "example", "salt": 1, "ts": 1}
+  perps.orders.cancelAll:
+    args: {"op": {"type": "cancelAll", "args": {}}, "sig": "example", "salt": 1, "ts": 1}
+  perps.orders.cancelByClientId:
+    args: {"op": {"type": "cancelOrdersCOID", "args": ["0123456789abcdef0123456789abcdef"]}, "sig": "example", "salt": 1, "ts": 1}
+  perps.orders.create:
+    args: {"op": {"type": "createOrders", "args": [{"iid": 1, "buy": true, "qty": "example"}]}, "sig": "example", "salt": 1, "ts": 1}
+  perps.orders.modify:
+    args: {"op": {"type": "modifyOrders", "args": [{"oid": 1, "p": "example", "qty": "example"}]}, "sig": "example", "salt": 1, "ts": 1}
+  perps.orders.modifyByClientId:
+    args: {"op": {"type": "modifyOrdersCOID", "args": [{"coid": "0123456789abcdef0123456789abcdef", "p": "example", "qty": "example"}]}, "sig": "example", "salt": 1, "ts": 1}
+  perps.orders.setAutoCancel:
+    args: {"op": {"type": "autoCancel", "args": {"time": 1}}, "sig": "example", "salt": 1, "ts": 1}
+  perps.ping:
+    args: {}
+  perps.proxy.create:
+    args: {"op": {"type": "createProxy", "args": {"owner": "example", "proxy": "example", "expiry": 1}}, "sig": "example", "salt": 1, "ts": 1}
+  perps.proxy.delete:
+    args: {"op": {"type": "deleteProxy", "args": {"proxy": "example"}}, "sig": "example", "salt": 1, "ts": 1}
+  perps.public.fills:
+    args: {"address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839"}
+  perps.public.portfolio:
+    args: {"address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839"}
+  perps.public.positionFills:
+    args: {"address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839", "instrument_id": 1}
+  perps.public.positionSnapshots:
+    args: {"address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839"}
+  perps.registered:
+    args: {"address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839"}
+  perps.statistics:
+    args: {}
+  perps.tickers:
+    args: {}
+  perps.time:
+    args: {}
+  perps.trades:
+    args: {"instrument_id": 1}
+  relayer.apiKeys.list:
+    args: {}
+  relayer.deployed:
+    args: {"address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839"}
+  relayer.nonce:
+    args: {"address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839", "type": "PROXY"}
+  relayer.relayPayload:
+    args: {"address": "0x56687bf447db6ffa42ffe2204a05edaa20f55839", "type": "PROXY"}
+  relayer.transactions.get:
+    args: {"id": "12"}
+  relayer.transactions.list:
+    args: {}
+  relayer.transactions.submit:
+    args: {"from": "0x56687bf447db6ffa42ffe2204a05edaa20f55839", "to": "0x56687bf447db6ffa42ffe2204a05edaa20f55839", "proxyWallet": "0x56687bf447db6ffa42ffe2204a05edaa20f55839", "data": "example", "nonce": "example", "signature": "example", "signatureParams": {}, "type": "SAFE"}
+  rfq.health:
+    args: {}
+  rfq.priceBand:
+    args: {"marketId": "0xdd22472e552920b8438158ea7238bfadfa4f736aa4cee91a6b86c39ead110917"}
+  rfq.ready:
+    args: {}
+  rfq.time:
+    args: {}
+  rfq.trades.get:
+    args: {"tradeId": "trd_01HZX"}
+  rfq.trades.prepare:
+    args: {"operation": "split", "price": "example", "shares": "1000000", "parties": {}}
+  rfq.trades.submit:
+    args: {"orders": [{"salt": "1000000", "maker": "0x56687bf447db6ffa42ffe2204a05edaa20f55839", "signer": "0x56687bf447db6ffa42ffe2204a05edaa20f55839", "tokenId": "1000000", "makerAmount": "1000000", "takerAmount": "1000000", "side": 0, "signatureType": 1, "timestamp": "example", "metadata": "example", "builder": "example", "signature": "example"}, {"salt": "1000000", "maker": "0x56687bf447db6ffa42ffe2204a05edaa20f55839", "signer": "0x56687bf447db6ffa42ffe2204a05edaa20f55839", "tokenId": "1000000", "makerAmount": "1000000", "takerAmount": "1000000", "side": 0, "signatureType": 1, "timestamp": "example", "metadata": "example", "builder": "example", "signature": "example"}], "idempotencyKey": "example"}
+  rfq.trades.validate:
+    args: {"operation": "split", "price": "example", "shares": "1000000", "parties": {}}
