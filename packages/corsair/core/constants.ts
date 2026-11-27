@@ -554,6 +554,7 @@ export const BaseProviders = [
 	'pointagram',
 	'polygon',
 	'polygonio',
+	'polymarket',
 	'postalytics',
 	'postgrid',
 	'postiz',
@@ -1352,6 +1353,7 @@ export const ProviderDisplayNames = {
 	pointagram: 'Pointagram',
 	polygon: 'Polygon OMS',
 	polygonio: 'Polygon.io',
+	polymarket: 'Polymarket',
 	postalytics: 'Postalytics',
 	postgrid: 'PostGrid',
 	postiz: 'Postiz',
@@ -2157,6 +2159,7 @@ export type AllProviders =
 	| 'pointagram'
 	| 'polygon'
 	| 'polygonio'
+	| 'polymarket'
 	| 'postalytics'
 	| 'postgrid'
 	| 'postiz'
