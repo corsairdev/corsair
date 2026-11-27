@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-27T11:30:39.213Z",
-  "corsairVersion": "0.2.38",
+  "generatedAt": "2026-11-27T12:07:47.983Z",
+  "corsairVersion": "0.2.39",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -10141,6 +10141,21 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 36,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "steel",
+      "displayName": "Steel",
+      "description": "Cloud browsers for AI agents with Steel: start and release browser sessions, watch them live, read their events, logs and cost, run commands and computer actions, scrape, screenshot or PDF a page, and manage profiles, credentials, vaults, extensions, files and projects (71 operations).",
+      "npmPackageName": "@corsair-dev/steel",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 71,
         "webhooks": 0,
         "db": 0
       }
@@ -206648,6 +206663,432 @@
       "kind": "api",
       "shortPath": "uptime.update",
       "haystack": "uptime.update statuscake.api.uptime.update change an uptime check's configuration; only the fields passed change. sending a field empty clears it write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "apiKeys.create",
+      "haystack": "apikeys.create steel.api.apikeys.create create an api key. create a project-scoped api key using a global (organization-scoped) api key. supply projectid for an active project in the authenticated organization; scopetype must be project or omitted. project-scoped api keys cannot create keys, and global keys cannot create other global keys. mints a new api key. destructive"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "auth.jwks",
+      "haystack": "auth.jwks steel.api.auth.jwks get public keys (jwks). provides the json web key set (jwks) for verifying jwts issued by this service. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "credentials.create",
+      "haystack": "credentials.create steel.api.credentials.create stores credentials. encrypts and stores credentials for an origin. write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "credentials.delete",
+      "haystack": "credentials.delete steel.api.credentials.delete deletes credentials. deletes encrypted credentials from the database. cannot be undone. destructive"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "credentials.list",
+      "haystack": "credentials.list steel.api.credentials.list list all credential metadata. fetches all credential metadata for the current organization. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "credentials.update",
+      "haystack": "credentials.update steel.api.credentials.update updates credentials. encrypts and updates credentials for an origin. write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "extensions.delete",
+      "haystack": "extensions.delete steel.api.extensions.delete delete extension. delete an extension by id. cannot be undone. destructive"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "extensions.deleteAll",
+      "haystack": "extensions.deleteall steel.api.extensions.deleteall delete all extensions. delete all extensions for the organization. cannot be undone. destructive"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "extensions.download",
+      "haystack": "extensions.download steel.api.extensions.download download extension. download an extension file by extension id. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "extensions.list",
+      "haystack": "extensions.list steel.api.extensions.list list extensions. list all extensions for the organization. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "extensions.update",
+      "haystack": "extensions.update steel.api.extensions.update update extension. update a chrome extension (.zip/.crx file or chrome web store url) for the organization. write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "extensions.upload",
+      "haystack": "extensions.upload steel.api.extensions.upload upload extension. upload a chrome extension (.zip/.crx file or chrome web store url) for the organization. write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "files.delete",
+      "haystack": "files.delete steel.api.files.delete delete a global file. delete a file from global storage. cannot be undone. destructive"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "files.download",
+      "haystack": "files.download steel.api.files.download download a global file. download a file from global storage. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "files.list",
+      "haystack": "files.list steel.api.files.list list global files. list all global files for the organization in descending order. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "files.upload",
+      "haystack": "files.upload steel.api.files.upload upload a global file. uploads a file to global storage via multipart/form-data with a file field that accepts either binary data or a url string to download from, and an optional path field for the file storage path. write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "profiles.create",
+      "haystack": "profiles.create steel.api.profiles.create create a profile. create a new profile. (post /v1/profiles) write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "profiles.delete",
+      "haystack": "profiles.delete steel.api.profiles.delete delete a profile. delete the profile and its stored browser data immediately, with a final asynchronous cleanup pass. cannot be undone. destructive"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "profiles.get",
+      "haystack": "profiles.get steel.api.profiles.get get a profile. retrieve a profile by id. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "profiles.list",
+      "haystack": "profiles.list steel.api.profiles.list list all profiles. retrieve a list of all profiles. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "profiles.update",
+      "haystack": "profiles.update steel.api.profiles.update update a profile. update an existing profile. write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "projects.get",
+      "haystack": "projects.get steel.api.projects.get get project. get a project by id. (get /v1/projects/{id}) read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "projects.list",
+      "haystack": "projects.list steel.api.projects.list list projects. list projects for the authenticated organization. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "secretConnections.create",
+      "haystack": "secretconnections.create steel.api.secretconnections.create create a secret connection. (post /v1/secret-connections) write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "secretConnections.delete",
+      "haystack": "secretconnections.delete steel.api.secretconnections.delete delete a secret connection. cannot be undone. destructive"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "secretConnections.get",
+      "haystack": "secretconnections.get steel.api.secretconnections.get get a secret connection. (get /v1/secret-connections/{id}) read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "secretConnections.list",
+      "haystack": "secretconnections.list steel.api.secretconnections.list list secret connections. (get /v1/secret-connections) read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "secretConnections.test",
+      "haystack": "secretconnections.test steel.api.secretconnections.test test a secret connection. (post /v1/secret-connections/{id}/test) write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "secretConnections.update",
+      "haystack": "secretconnections.update steel.api.secretconnections.update update a secret connection. (patch /v1/secret-connections/{id}) write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.agentLogs",
+      "haystack": "sessions.agentlogs steel.api.sessions.agentlogs get session agent logs. query raw cdp-derived agent events (input.dispatchmouseevent, input.dispatchkeyevent, page.navigate, …) for a session. for the semantic, replay-oriented interaction timeline use /sessions/:id/agent-traces instead. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.agentTraces",
+      "haystack": "sessions.agenttraces steel.api.sessions.agenttraces get session agent traces. query the semantic agent trace timeline for a session: a coalesced, replay-oriented record of user/agent interactions (clicks, typing, scrolls, drags, navigations) with target metadata (role, accessible name, selectors). returns an empty list for sessions that predate browser-interaction capture. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.captchas.solve",
+      "haystack": "sessions.captchas.solve steel.api.sessions.captchas.solve solve captcha(s). solves captcha(s) for the session. if pageid, url, or taskid is provided, solves that specific captcha. if no parameters are provided, solves all detected captchas. use this when autocaptchasolving is disabled in stealthconfig. uses paid captcha solving (needs a verified account). destructive"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.captchas.solveImage",
+      "haystack": "sessions.captchas.solveimage steel.api.sessions.captchas.solveimage solve image captcha. solves an image captcha using xpath selectors. uses paid captcha solving (needs a verified account). destructive"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.captchas.status",
+      "haystack": "sessions.captchas.status steel.api.sessions.captchas.status get captcha status. gets the current captcha status for a session. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.commands.cancelExecution",
+      "haystack": "sessions.commands.cancelexecution steel.api.sessions.commands.cancelexecution cancel a command execution. stops an execution. the running command stops before its next input, and commands that already ran are not undone. write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.commands.getExecution",
+      "haystack": "sessions.commands.getexecution steel.api.sessions.commands.getexecution get a command execution. waits up to 20 seconds for an execution to finish and returns it. use it when a run answered with state running. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.commands.run",
+      "haystack": "sessions.commands.run steel.api.sessions.commands.run run commands. drives the session's browser with high-level commands such as snapshot, click, and fill. commands run in order and stop at the first failure. send a random idempotency-key header to make retries safe. write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.computer",
+      "haystack": "sessions.computer steel.api.sessions.computer execute computer action. execute computer actions like mouse movements, clicks, keyboard input, and more. write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.context",
+      "haystack": "sessions.context steel.api.sessions.context get session context. fetches the context data of a specific session. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.cost",
+      "haystack": "sessions.cost steel.api.sessions.cost get session cost. returns the finalized cost of a released session as an exact amount in us dollars (e.g. 0.031905), suitable for precise billing passthrough. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.create",
+      "haystack": "sessions.create steel.api.sessions.create create a session. creates a new session with the provided configuration. starts a cloud browser that is billed by the minute until it is released or times out. destructive"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.credentials.attach",
+      "haystack": "sessions.credentials.attach steel.api.sessions.credentials.attach attach session credentials. attach credentialids and/or vault or item references in bindings. each array accepts at most 100 entries; at most 100 distinct direct items and whole vaults may be bound. only credentials can be autofilled. lookup becomes explicit and remains so. write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.credentials.detach",
+      "haystack": "sessions.credentials.detach steel.api.sessions.credentials.detach detach a session credential. unbind a credential from a running session. the lookup stays explicit: with nothing bound, the session fills nothing. errors: 404 credential_not_attached, 409 session_not_running, 503 credential_bindings_busy (retryable). cannot be undone. destructive"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.credentials.detachVault",
+      "haystack": "sessions.credentials.detachvault steel.api.sessions.credentials.detachvault detach a session vault binding. pass reference as a query parameter to detach one vault or item binding, including steel://connections/<connection>/vaults/<vault>[/<item>]. does not detach items covered by a whole vault binding. cannot be undone. destructive"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.credentials.list",
+      "haystack": "sessions.credentials.list steel.api.sessions.credentials.list list session credentials. the session's credential lookup and the live credentials bound to it (no values). subject to session organization and project access. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.credentials.replace",
+      "haystack": "sessions.credentials.replace steel.api.sessions.credentials.replace replace session credentials. replace all direct item and vault bindings, including provider references steel://connections/<connection>/vaults/<vault>[/<item>]. supply credentialids and/or bindings; empty arrays detach all. at most 100 distinct bindings may be stored. only credentials can be autofilled. write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.events",
+      "haystack": "sessions.events steel.api.sessions.events get recorded events. this endpoint allows you to get the recorded session events in the rrweb format. returns { events, nextcursor }: one page of the recording. limit (1 to 1000) counts the event batches steel stored, so a page can hold more events than limit. steel sends the next page token in a next-cursor response header; pass nextcursor as pointer to read the next page, until nextcursor is null. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.files.delete",
+      "haystack": "sessions.files.delete steel.api.sessions.files.delete delete a file. delete a file from a session. cannot be undone. destructive"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.files.deleteAll",
+      "haystack": "sessions.files.deleteall steel.api.sessions.files.deleteall delete all files. delete all files from a session. cannot be undone. destructive"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.files.download",
+      "haystack": "sessions.files.download steel.api.sessions.files.download download a file. download a file from a session. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.files.downloadArchive",
+      "haystack": "sessions.files.downloadarchive steel.api.sessions.files.downloadarchive download archive. download all files from the session as a zip archive. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.files.list",
+      "haystack": "sessions.files.list steel.api.sessions.files.list list files. list all files from the session in descending order. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.files.upload",
+      "haystack": "sessions.files.upload steel.api.sessions.files.upload upload a file. uploads a file to a session via multipart/form-data with a file field that accepts either binary data or a url string to download from, and an optional path field for the file storage path. write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.get",
+      "haystack": "sessions.get steel.api.sessions.get get session details. retrieves details of a specific session by id. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.hlsPlaylist",
+      "haystack": "sessions.hlsplaylist steel.api.sessions.hlsplaylist get hls playlist. get hls playlist for a session recording using app auth or an rtc token. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.list",
+      "haystack": "sessions.list steel.api.sessions.list list all sessions. fetches all active sessions for the current organization. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.liveDetails",
+      "haystack": "sessions.livedetails steel.api.sessions.livedetails get live session details. returns the live state of the session, including pages, tabs, and browser state. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.logs",
+      "haystack": "sessions.logs steel.api.sessions.logs get session logs. query browser event logs for a session. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.metadata.replace",
+      "haystack": "sessions.metadata.replace steel.api.sessions.metadata.replace replace session metadata. atomically replace customer metadata. send an empty object to clear it. last accepted write wins; use patch to change individual keys. subject to session organization and project access. write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.metadata.update",
+      "haystack": "sessions.metadata.update steel.api.sessions.metadata.update update session metadata. atomically merge keys into customer metadata. set a key to null to remove it; keys you leave out are kept, so concurrent updates to different keys are all kept. returns the merged metadata, which must stay within the metadata limits. subject to session organization and project access. write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.release",
+      "haystack": "sessions.release steel.api.sessions.release release a session. releases a specific session by id. ends the session; its browser cannot be resumed. destructive"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.releaseAll",
+      "haystack": "sessions.releaseall steel.api.sessions.releaseall release all sessions. releases all active sessions for the current organization. ends every live session in the project given by projectid; without it, every session the key reaches (all projects for an organization key). destructive"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "sessions.signalCatalog",
+      "haystack": "sessions.signalcatalog steel.api.sessions.signalcatalog list public session signal definitions. returns current signal labels and meanings for customer integrations. uses normal steel api-key authentication. includes no session data or administrative signals. definitions do not establish that detection ran for a particular session. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "tools.pdf",
+      "haystack": "tools.pdf steel.api.tools.pdf convert webpage to pdf. generates a pdf from a specified webpage. runs a short browser session and spends wallet credit like one. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "tools.scrape",
+      "haystack": "tools.scrape steel.api.tools.scrape scrape webpage content. extracts content from a specified url. runs a short browser session and spends wallet credit like one. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "tools.screenshot",
+      "haystack": "tools.screenshot steel.api.tools.screenshot capture webpage screenshot. captures a screenshot of a specified webpage. runs a short browser session and spends wallet credit like one. read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "vaults.create",
+      "haystack": "vaults.create steel.api.vaults.create create a vault. (post /v1/vaults) write"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "vaults.delete",
+      "haystack": "vaults.delete steel.api.vaults.delete delete an empty vault. soft-delete a vault. returns 409 while it contains any live secrets or credentials; move or delete them first. cannot be undone. destructive"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "vaults.get",
+      "haystack": "vaults.get steel.api.vaults.get get a vault. (get /v1/vaults/{id}) read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "vaults.list",
+      "haystack": "vaults.list steel.api.vaults.list list vaults. (get /v1/vaults) read"
+    },
+    {
+      "pluginId": "steel",
+      "kind": "api",
+      "shortPath": "vaults.update",
+      "haystack": "vaults.update steel.api.vaults.update update a vault. (patch /v1/vaults/{id}) write"
     },
     {
       "pluginId": "storeganise",
