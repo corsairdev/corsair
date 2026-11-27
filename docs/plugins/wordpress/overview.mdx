@@ -1,0 +1,171 @@
+---
+title: "WordPress plugin"
+sidebarTitle: "Overview"
+description: "Self-hosted WordPress sites (and WordPress.com sites with application passwords): posts, pages, media uploads, revisions and autosaves, categories, tags and custom taxonomies, comments, users and application passwords, site settings, plugins (install, activate, delete), themes, block templates and template parts, global styles, navigation and classic menus, widgets and sidebars, block types, patterns and fonts, search, Site Health checks, the Abilities API, batch requests and any custom post type or plugin route (209 operations)."
+---
+
+Use **WordPress** through Corsair: one client, typed API calls.
+
+Each account stores three things: the site's `site_url` (the WordPress
+address, `https://example.com` or `https://example.com/blog`, with or
+without `/wp-json`), the `username` of the user the password belongs to,
+and an application password as the key. Create one at Users → Profile →
+Application Passwords (WordPress 5.6+; the site must be served over HTTPS
+unless it runs with `WP_ENVIRONMENT_TYPE` set to `local`). Calls are sent as
+HTTP Basic auth, so what works depends on that user's role: an
+Administrator can manage plugins, users and settings, an Author only their
+own posts. The site needs pretty permalinks (any setting other than Plain)
+so `/wp-json/` routes resolve. SDK users can pass `siteUrl` and `username`
+in the plugin options; with a stored password the site must match the
+stored one (the password is never sent to another host), else pass `key`
+too.
+
+- **Lists** page with `page` and `per_page` (WordPress allows up to 100).
+Paged lists return `{ items, next_page }`: `next_page` is set while a page
+comes back full; step `page` until it is null.
+- **Content fields** such as `title`, `content` and `excerpt` take a plain
+string when writing and come back as `{ rendered }` (plus `raw` with
+`context: "edit"`).
+- **Media.** `media.create` uploads a file (a public URL, or base64 with a
+file name) as the request body, with the other fields in the query
+string, or sideloads an external image from `url`.
+- **Custom post types and plugin routes.** Routes this plugin doesn't name,
+such as a `book` post type (`wp/v2/book`) or another plugin's namespace
+(`yoast/v1`, `acf/v3`), go through `rest.get` (reads) and `rest.send`
+(writes, marked destructive). `site.index` lists every route the site
+serves.
+- **Risk.** Every delete is `destructive` (posts go to the trash unless
+`force: true`; users, terms and comments need `force`), as are installing,
+activating and deactivating plugins, creating application passwords,
+batch requests and running abilities.
+- WooCommerce stores use the separate `woocommerce` plugin.
+
+**What you get:**
+
+- 209 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/wordpress better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/wordpress better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/wordpress better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/wordpress better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { wordpress } from '@corsair-dev/wordpress';
+
+export const corsair = createCorsair({
+	plugins: [
+		wordpress(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the WordPress API key before the first call: `pnpm corsair setup --plugin=wordpress --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+wordpress()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'wordpress',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the latest posts**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.wordpress.api.posts.list({
+	per_page: 5,
+	status: ['publish'],
+	orderby: 'date',
+	order: 'desc',
+});
+```
+
+
+**Create a draft post**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.wordpress.api.posts.create({
+	title: 'Launch notes',
+	content: '<p>What shipped this week.</p>',
+	status: 'draft',
+	categories: [1],
+});
+```
+
+
+See the full list on the [API](/plugins/wordpress/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/wordpress/api">
+    Every `wordpress.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

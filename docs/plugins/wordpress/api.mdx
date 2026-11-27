@@ -1,0 +1,7552 @@
+---
+title: "WordPress API reference"
+sidebarTitle: "API"
+description: "API reference for the WordPress plugin in Corsair: every `wordpress.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Abilities
+
+### categories.get
+
+`abilities.categories.get`
+
+Get one ability category
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.abilities.categories.get({ slug: 'hello-world' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | Unique identifier for the ability category. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### categories.list
+
+`abilities.categories.list`
+
+List the ability categories
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.abilities.categories.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### get
+
+`abilities.get`
+
+Get one registered ability with its input and output schema
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.abilities.get({ name: 'core/latest-posts' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Unique identifier for the ability. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`abilities.list`
+
+List the abilities registered on the site (the Abilities API): name, label, input and output schema and annotations
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.abilities.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `category` | `string` | No | Limit results to abilities in specific ability category. |
+| `namespace` | `string` | No | Limit results to abilities in a specific namespace. |
+| `meta` | `object` | No | Limit results to abilities matching all of the given meta fields. |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  annotations?: {
+    readonly?: boolean | null,
+    destructive?: boolean | null,
+    idempotent?: boolean | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### run
+
+`abilities.run`
+
+Run an ability that changes something (sent as POST with its input); what it does depends on the ability
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.abilities.run({ name: 'core/latest-posts' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Unique identifier for the ability. |
+| `input` | `any` | No | Input parameters for the ability execution. |
+
+
+
+**Output:** `any`
+
+
+---
+
+### runDestructive
+
+`abilities.runDestructive`
+
+Run an ability marked destructive (sent as DELETE)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.abilities.runDestructive({ name: 'core/latest-posts' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Unique identifier for the ability. |
+| `input` | `any` | No | Input parameters for the ability execution. |
+
+
+
+**Output:** `any`
+
+
+---
+
+### runReadonly
+
+`abilities.runReadonly`
+
+Run an ability marked readonly (sent as GET with its input)
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.abilities.runReadonly({ name: 'core/latest-posts' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Unique identifier for the ability. |
+| `input` | `any` | No | Input parameters for the ability execution. |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Batch
+
+### run
+
+`batch.run`
+
+Run up to 25 write requests (POST, PUT, PATCH, DELETE on routes that allow batching) in one call; with validation require-all-validate nothing runs unless every request validates
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.batch.run({
+	requests: [{
+		method: 'POST',
+		path: '/wp/v2/posts',
+		body: { title: 'Batch post', status: 'draft' },
+	}],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `validation` | `require-all-validate \| normal` | No | — |
+| `requests` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  method?: POST | PUT | PATCH | DELETE,
+  path: string,
+  body?: {
+  },
+  headers?: Record<string, string | string[]>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Block Directory
+
+### search
+
+`blockDirectory.search`
+
+Search the WordPress.org block directory for installable block plugins
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.blockDirectory.search({ term: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `term` | `string` | Yes | Limit result set to blocks matching the search term. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+## Block Editor
+
+### export
+
+`blockEditor.export`
+
+Export the active block theme with the site's customizations as a zip (returned as a file)
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.blockEditor.export({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+
+
+
+---
+
+### navigationFallback
+
+`blockEditor.navigationFallback`
+
+Get (or create) the navigation menu the editor falls back to when a Navigation block has none
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.blockEditor.navigationFallback({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### urlDetails
+
+`blockEditor.urlDetails`
+
+Fetch a URL's title, description, icon and image, as the editor's link previews do
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.blockEditor.urlDetails({ url: 'https://example.com/hello-world/' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL to process. |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Block Patterns
+
+### categories
+
+`blockPatterns.categories`
+
+List the registered block pattern categories
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.blockPatterns.categories({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### list
+
+`blockPatterns.list`
+
+List the block patterns registered on the site (theme, core and plugin patterns)
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.blockPatterns.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown[]`
+
+
+---
+
+## Block Renderer
+
+### render
+
+`blockRenderer.render`
+
+Render a dynamic block (a server-side rendered block such as core/latest-posts) with attributes to HTML
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.blockRenderer.render({
+	name: 'core/latest-posts',
+	attributes: { postsToShow: 3 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Unique registered name for the block. |
+| `context` | `edit` | No | Scope under which the request is made; determines fields present in response. |
+| `attributes` | `object` | No | Attributes for the block. |
+| `post_id` | `number` | No | ID of the post context. |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Blocks
+
+### autosaves.create
+
+`blocks.autosaves.create`
+
+Create a autosave for a synced pattern (reusable block)
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.blocks.autosaves.create({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier of the record. |
+| `parent` | `number` | No | The ID for the parent of the autosave. |
+| `date` | `string \| null` | No | The date the post was published, in the site's timezone. |
+| `date_gmt` | `string \| null` | No | The date the post was published, as GMT. |
+| `slug` | `string` | No | An alphanumeric identifier for the post unique to its type. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | A named status for the post. |
+| `password` | `string` | No | A password to protect access to the content and excerpt. |
+| `title` | `string \| object` | No | The title for the post. A string, or `{ raw }`. |
+| `content` | `string \| object` | No | The content for the post. A string, or `{ raw }`. |
+| `excerpt` | `string \| object` | No | The excerpt for the post. A string, or `{ raw }`. |
+| `meta` | `object` | No | Meta fields. |
+| `template` | `string` | No | The theme file to use to display the post. |
+| `wp_pattern_category` | `number[]` | No | The terms assigned to the post in the wp_pattern_category taxonomy. |
+
+<AccordionGroup>
+<Accordion title="title full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="excerpt full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  wp_pattern_sync_status?: partial | unsynced,
+  footnotes?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### autosaves.get
+
+`blocks.autosaves.get`
+
+Get one autosave of a synced pattern (reusable block)
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.blocks.autosaves.get({ parent: 12, id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `number` | Yes | The ID for the parent of the autosave. |
+| `id` | `number` | Yes | The ID for the autosave. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### autosaves.list
+
+`blocks.autosaves.list`
+
+List the autosaves of a synced pattern (reusable block)
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.blocks.autosaves.list({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier of the record. |
+| `parent` | `number` | No | The ID for the parent of the autosave. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### create
+
+`blocks.create`
+
+Create a synced pattern (reusable block)
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.blocks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string \| null` | No | The date the post was published, in the site's timezone. |
+| `date_gmt` | `string \| null` | No | The date the post was published, as GMT. |
+| `slug` | `string` | No | An alphanumeric identifier for the post unique to its type. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | A named status for the post. |
+| `password` | `string` | No | A password to protect access to the content and excerpt. |
+| `title` | `string \| object` | No | The title for the post. A string, or `{ raw }`. |
+| `content` | `string \| object` | No | The content for the post. A string, or `{ raw }`. |
+| `excerpt` | `string \| object` | No | The excerpt for the post. A string, or `{ raw }`. |
+| `meta` | `object` | No | Meta fields. |
+| `template` | `string` | No | The theme file to use to display the post. |
+| `wp_pattern_category` | `number[]` | No | The terms assigned to the post in the wp_pattern_category taxonomy. |
+
+<AccordionGroup>
+<Accordion title="title full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="excerpt full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  wp_pattern_sync_status?: partial | unsynced,
+  footnotes?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`blocks.delete`
+
+Delete a synced pattern (reusable block); without force true it goes to the trash
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.blocks.delete({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `force` | `boolean` | No | Whether to bypass Trash and force deletion. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### get
+
+`blocks.get`
+
+Get one synced pattern (reusable block)
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.blocks.get({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `excerpt_length` | `number` | No | Override the default excerpt length. |
+| `password` | `string` | No | The password for the post if it is password protected. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`blocks.list`
+
+List synced patterns (reusable blocks), one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.blocks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `after` | `string` | No | Limit response to posts published after a given ISO8601 compliant date. |
+| `modified_after` | `string` | No | Limit response to posts modified after a given ISO8601 compliant date. |
+| `before` | `string` | No | Limit response to posts published before a given ISO8601 compliant date. |
+| `modified_before` | `string` | No | Limit response to posts modified before a given ISO8601 compliant date. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `search_semantics` | `exact` | No | How to interpret the search input. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `author \| date \| id \| include \| modified \| parent \| relevance \| slug \| include_slugs \| title` | No | Sort collection by post attribute. |
+| `search_columns` | `(post_title \| post_content \| post_excerpt)[]` | No | Array of column names to be searched. |
+| `slug` | `string[]` | No | Limit result set to posts with one or more specific slugs. |
+| `status` | `(publish \| future \| draft \| pending \| private \| trash \| auto-draft \| inherit \| request-pending \| request-confirmed \| request-failed \| request-completed \| any)[]` | No | Limit result set to posts assigned one or more statuses. |
+| `tax_relation` | `AND \| OR` | No | Limit result set based on relationship between multiple taxonomies. |
+| `wp_pattern_category` | `number[] \| object` | No | Limit result set to items with specific terms assigned in the wp_pattern_category taxonomy. |
+| `wp_pattern_category_exclude` | `number[] \| object` | No | Limit result set to items except those with specific terms assigned in the wp_pattern_category taxonomy. |
+
+<AccordionGroup>
+<Accordion title="wp_pattern_category full type">
+
+```ts
+number[] | {
+  terms?: number[],
+  operator?: AND | OR
+} | number[] | {
+  terms?: number[],
+  operator?: AND | OR
+}
+```
+</Accordion>
+
+<Accordion title="wp_pattern_category_exclude full type">
+
+```ts
+number[] | {
+  terms?: number[]
+} | number[] | {
+  terms?: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### revisions.delete
+
+`blocks.revisions.delete`
+
+Delete a revision; WordPress needs force true for this type, which deletes it permanently
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.blocks.revisions.delete({ parent: 12, id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `number` | Yes | The ID for the parent of the revision. |
+| `id` | `number` | Yes | Unique identifier for the revision. |
+| `force` | `boolean` | No | Required to be true, as revisions do not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### revisions.get
+
+`blocks.revisions.get`
+
+Get one revision of a synced pattern (reusable block)
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.blocks.revisions.get({ parent: 12, id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `number` | Yes | The ID for the parent of the revision. |
+| `id` | `number` | Yes | Unique identifier for the revision. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### revisions.list
+
+`blocks.revisions.list`
+
+List the revisions of a synced pattern (reusable block), one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.blocks.revisions.list({ parent: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `number` | Yes | The ID for the parent of the revision. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `date \| id \| include \| relevance \| slug \| include_slugs \| title` | No | Sort collection by object attribute. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### update
+
+`blocks.update`
+
+Update a synced pattern (reusable block): only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.blocks.update({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `date` | `string \| null` | No | The date the post was published, in the site's timezone. |
+| `date_gmt` | `string \| null` | No | The date the post was published, as GMT. |
+| `slug` | `string` | No | An alphanumeric identifier for the post unique to its type. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | A named status for the post. |
+| `password` | `string` | No | A password to protect access to the content and excerpt. |
+| `title` | `string \| object` | No | The title for the post. A string, or `{ raw }`. |
+| `content` | `string \| object` | No | The content for the post. A string, or `{ raw }`. |
+| `excerpt` | `string \| object` | No | The excerpt for the post. A string, or `{ raw }`. |
+| `meta` | `object` | No | Meta fields. |
+| `template` | `string` | No | The theme file to use to display the post. |
+| `wp_pattern_category` | `number[]` | No | The terms assigned to the post in the wp_pattern_category taxonomy. |
+
+<AccordionGroup>
+<Accordion title="title full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="excerpt full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  wp_pattern_sync_status?: partial | unsynced,
+  footnotes?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Block Types
+
+### get
+
+`blockTypes.get`
+
+Get one block type
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.blockTypes.get({ namespace: 'core', name: 'core/latest-posts' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | Block namespace. |
+| `name` | `string` | Yes | Block name. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`blockTypes.list`
+
+List block types
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.blockTypes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `namespace` | `string` | No | Block namespace. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### listByNamespace
+
+`blockTypes.listByNamespace`
+
+List the registered block types in one namespace (for example `core`)
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.blockTypes.listByNamespace({ namespace: 'core' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `namespace` | `string` | Yes | Block namespace. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+## Categories
+
+### create
+
+`categories.create`
+
+Create a category
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.categories.create({ name: 'Releases' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `description` | `string` | No | HTML description of the term. |
+| `name` | `string` | Yes | HTML title for the term. |
+| `slug` | `string` | No | An alphanumeric identifier for the term unique to its type. |
+| `parent` | `number` | No | The parent term ID. |
+| `meta` | `object` | No | Meta fields. |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`categories.delete`
+
+Delete a category; WordPress needs force true for this type, which deletes it permanently
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.categories.delete({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the term. |
+| `force` | `boolean` | No | Required to be true, as terms do not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### get
+
+`categories.get`
+
+Get one category
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.categories.get({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the term. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`categories.list`
+
+List categories, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.categories.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `id \| include \| name \| slug \| include_slugs \| term_group \| description \| count` | No | Sort collection by term attribute. |
+| `hide_empty` | `boolean` | No | Whether to hide terms not assigned to any posts. |
+| `parent` | `number` | No | Limit result set to terms assigned to a specific parent. |
+| `post` | `number` | No | Limit result set to terms assigned to a specific post. |
+| `slug` | `string[]` | No | Limit result set to terms with one or more specific slugs. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### update
+
+`categories.update`
+
+Update a category: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.categories.update({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the term. |
+| `description` | `string` | No | HTML description of the term. |
+| `name` | `string` | No | HTML title for the term. |
+| `slug` | `string` | No | An alphanumeric identifier for the term unique to its type. |
+| `parent` | `number` | No | The parent term ID. |
+| `meta` | `object` | No | Meta fields. |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Comments
+
+### create
+
+`comments.create`
+
+Create a comment
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.comments.create({ post: 12, content: 'Thanks for the write-up.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `author` | `number` | No | The ID of the user object, if author was a user. |
+| `author_email` | `string` | No | Email address for the comment author. |
+| `author_ip` | `string` | No | IP address for the comment author. |
+| `author_name` | `string` | No | Display name for the comment author. |
+| `author_url` | `string` | No | URL for the comment author. |
+| `author_user_agent` | `string` | No | User agent for the comment author. |
+| `content` | `string \| object` | No | The content for the comment. A string, or `{ raw }`. |
+| `date` | `string` | No | The date the comment was published, in the site's timezone. |
+| `date_gmt` | `string` | No | The date the comment was published, as GMT. |
+| `parent` | `number` | No | The ID for the parent of the comment. |
+| `post` | `number` | No | The ID of the associated post object. |
+| `status` | `string` | No | State of the comment. |
+| `meta` | `object` | No | Meta fields. |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  _wp_note_status?: resolved | reopen
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`comments.delete`
+
+Delete a comment; without force true it goes to the trash
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.comments.delete({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the comment. |
+| `force` | `boolean` | No | Whether to bypass Trash and force deletion. |
+| `password` | `string` | No | The password for the parent post of the comment (if the post is password protected). |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### get
+
+`comments.get`
+
+Get one comment
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.comments.get({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the comment. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `password` | `string` | No | The password for the parent post of the comment (if the post is password protected). |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`comments.list`
+
+List comments, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.comments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `after` | `string` | No | Limit response to comments published after a given ISO8601 compliant date. |
+| `author` | `number[]` | No | Limit result set to comments assigned to specific user IDs. Requires authorization. |
+| `author_exclude` | `number[]` | No | Ensure result set excludes comments assigned to specific user IDs. Requires authorization. |
+| `author_email` | `string` | No | Limit result set to that from a specific author email. Requires authorization. |
+| `before` | `string` | No | Limit response to comments published before a given ISO8601 compliant date. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `date \| date_gmt \| id \| include \| post \| parent \| type` | No | Sort collection by comment attribute. |
+| `parent` | `number[]` | No | Limit result set to comments of specific parent IDs. |
+| `parent_exclude` | `number[]` | No | Ensure result set excludes specific parent IDs. |
+| `post` | `number[]` | No | Limit result set to comments assigned to specific post IDs. |
+| `status` | `string` | No | Limit result set to comments assigned a specific status. Requires authorization. |
+| `type` | `string` | No | Limit result set to comments assigned a specific type. Requires authorization. |
+| `password` | `string` | No | The password for the post if it is password protected. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### update
+
+`comments.update`
+
+Update a comment: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.comments.update({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the comment. |
+| `author` | `number` | No | The ID of the user object, if author was a user. |
+| `author_email` | `string` | No | Email address for the comment author. |
+| `author_ip` | `string` | No | IP address for the comment author. |
+| `author_name` | `string` | No | Display name for the comment author. |
+| `author_url` | `string` | No | URL for the comment author. |
+| `author_user_agent` | `string` | No | User agent for the comment author. |
+| `content` | `string \| object` | No | The content for the comment. A string, or `{ raw }`. |
+| `date` | `string` | No | The date the comment was published, in the site's timezone. |
+| `date_gmt` | `string` | No | The date the comment was published, as GMT. |
+| `parent` | `number` | No | The ID for the parent of the comment. |
+| `post` | `number` | No | The ID of the associated post object. |
+| `status` | `string` | No | State of the comment. |
+| `meta` | `object` | No | Meta fields. |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  _wp_note_status?: resolved | reopen
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Font Collections
+
+### get
+
+`fontCollections.get`
+
+Get one font collection
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.fontCollections.get({ slug: 'hello-world' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | The slug. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`fontCollections.list`
+
+List font collections, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.fontCollections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+## Font Families
+
+### create
+
+`fontFamilies.create`
+
+Create a font family
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.fontFamilies.create({ font_family_settings: '{"name":"Inter","slug":"inter","fontFamily":"Inter, sans-serif"}' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `theme_json_version` | `number` | No | Version of the theme.json schema used for the typography settings. |
+| `font_family_settings` | `string` | Yes | font-family declaration in theme.json format, encoded as a string. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`fontFamilies.delete`
+
+Delete a font family; WordPress needs force true for this type, which deletes it permanently
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.fontFamilies.delete({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `force` | `boolean` | No | Whether to bypass Trash and force deletion. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### fontFaces.create
+
+`fontFamilies.fontFaces.create`
+
+Create a font face for a font family
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.fontFamilies.fontFaces.create({ font_family_id: 3, font_face_settings: '{"fontFamily":"Inter","fontStyle":"normal","fontWeight":"400","src":"https://example.com/fonts/inter.woff2"}' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `font_family_id` | `number` | Yes | The ID for the parent font family of the font face. |
+| `theme_json_version` | `number` | No | Version of the theme.json schema used for the typography settings. |
+| `font_face_settings` | `string` | Yes | font-face declaration in theme.json format, encoded as a string. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### fontFaces.delete
+
+`fontFamilies.fontFaces.delete`
+
+Delete a font face; WordPress needs force true for this type, which deletes it permanently
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.fontFamilies.fontFaces.delete({ font_family_id: 3, id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `font_family_id` | `number` | Yes | The ID for the parent font family of the font face. |
+| `id` | `number` | Yes | Unique identifier for the font face. |
+| `force` | `boolean` | No | Whether to bypass Trash and force deletion. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### fontFaces.get
+
+`fontFamilies.fontFaces.get`
+
+Get one font face of a font family
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.fontFamilies.fontFaces.get({ font_family_id: 3, id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `font_family_id` | `number` | Yes | The ID for the parent font family of the font face. |
+| `id` | `number` | Yes | Unique identifier for the font face. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### fontFaces.list
+
+`fontFamilies.fontFaces.list`
+
+List the font faces of a font family, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.fontFamilies.fontFaces.list({ font_family_id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `font_family_id` | `number` | Yes | The ID for the parent font family of the font face. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `search_semantics` | `exact` | No | How to interpret the search input. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `id \| include` | No | Sort collection by post attribute. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### get
+
+`fontFamilies.get`
+
+Get one font family
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.fontFamilies.get({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`fontFamilies.list`
+
+List font families, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.fontFamilies.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `search_semantics` | `exact` | No | How to interpret the search input. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `id \| include` | No | Sort collection by post attribute. |
+| `slug` | `string[]` | No | Limit result set to posts with one or more specific slugs. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### update
+
+`fontFamilies.update`
+
+Update a font family: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.fontFamilies.update({ id: 12, font_family_settings: '{"name":"Inter","slug":"inter","fontFamily":"Inter, sans-serif"}' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `theme_json_version` | `number` | No | Version of the theme.json schema used for the typography settings. |
+| `font_family_settings` | `string` | Yes | font-family declaration in theme.json format, encoded as a string. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Global Styles
+
+### get
+
+`globalStyles.get`
+
+Get one global styles record
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.globalStyles.get({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | ID of global styles config. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### revisions.get
+
+`globalStyles.revisions.get`
+
+Get one revision of a global styles record
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.globalStyles.revisions.get({ parent: 12, id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `number` | Yes | The ID for the parent of the global styles revision. |
+| `id` | `number` | Yes | Unique identifier for the global styles revision. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### revisions.list
+
+`globalStyles.revisions.list`
+
+List the revisions of a global styles record, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.globalStyles.revisions.list({ parent: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `number` | Yes | The ID for the parent of the revision. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### theme
+
+`globalStyles.theme`
+
+Get the active theme's base global styles (theme.json settings and styles)
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.globalStyles.theme({ stylesheet: 'twentytwentyfive' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stylesheet` | `string` | Yes | The theme identifier |
+
+
+
+**Output:** `any`
+
+
+---
+
+### themeVariations
+
+`globalStyles.themeVariations`
+
+List a theme's style variations
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.globalStyles.themeVariations({ stylesheet: 'twentytwentyfive' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stylesheet` | `string` | Yes | The theme identifier |
+
+
+
+**Output:** `any`
+
+
+---
+
+### update
+
+`globalStyles.update`
+
+Update a global styles record: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.globalStyles.update({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the record. |
+| `styles` | `object` | No | Global styles. |
+| `settings` | `object` | No | Global settings. |
+| `title` | `object \| string` | No | Title of the global styles variation. |
+
+<AccordionGroup>
+<Accordion title="styles full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="title full type">
+
+```ts
+{
+  raw?: string
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Icon Collections
+
+### get
+
+`iconCollections.get`
+
+Get one icon collection
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.iconCollections.get({ slug: 'hello-world' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | Icon collection slug. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`iconCollections.list`
+
+List icon collections, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.iconCollections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+## Icons
+
+### get
+
+`icons.get`
+
+Get one icon
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.icons.get({ name: 'core/latest-posts' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Icon name. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`icons.list`
+
+List icons, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.icons.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `collection` | `string` | No | Limit results to icons belonging to the given collection slug. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### listByCollection
+
+`icons.listByCollection`
+
+List the icons in one icon collection
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.icons.listByCollection({ collection: 'core' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `collection` | `string` | Yes | Limit results to icons belonging to the given collection slug. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+## Media
+
+### create
+
+`media.create`
+
+Upload a file to the media library (image, PDF, audio, video) with optional title, caption, alt text and the post it belongs to
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.media.create({
+	file: { url: 'https://example.com/photo.png' },
+	title: 'Team photo',
+	alt_text: 'The team at the offsite',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string \| null` | No | The date the post was published, in the site's timezone. |
+| `date_gmt` | `string \| null` | No | The date the post was published, as GMT. |
+| `slug` | `string` | No | An alphanumeric identifier for the post unique to its type. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | A named status for the post. |
+| `title` | `string \| object` | No | The title for the post. A string, or `{ raw }`. |
+| `author` | `number` | No | The ID for the author of the post. |
+| `featured_media` | `number` | No | The ID of the featured media for the post. |
+| `comment_status` | `open \| closed` | No | Whether or not comments are open on the post. |
+| `ping_status` | `open \| closed` | No | Whether or not the post can be pinged. |
+| `meta` | `object` | No | Meta fields. |
+| `template` | `string` | No | The theme file to use to display the post. |
+| `alt_text` | `string` | No | Alternative text to display when attachment is not displayed. |
+| `caption` | `string \| object` | No | The attachment caption. A string, or `{ raw }`. |
+| `description` | `string \| object` | No | The attachment description. A string, or `{ raw }`. |
+| `post` | `number` | No | The ID for the associated post of the attachment. |
+| `generate_sub_sizes` | `boolean` | No | Whether to generate image sub sizes. |
+| `convert_format` | `boolean` | No | Whether to convert image formats. |
+| `url` | `string` | No | URL of an external image to sideload into the media library, instead of uploading a file. |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, `{ url }`, or `{ base64, filename, contentType }`. It is sent as the request body with its file name in Content-Disposition. |
+
+<AccordionGroup>
+<Accordion title="title full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="caption full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="description full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`media.delete`
+
+Delete a media item; WordPress needs force true for this type, which deletes it permanently
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.media.delete({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `force` | `boolean` | No | Whether to bypass Trash and force deletion. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### edit
+
+`media.edit`
+
+Crop, rotate or flip an image attachment; WordPress saves the result as a new attachment
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.media.edit({ id: 12, src: 'https://example.com/wp-content/uploads/2026/11/photo.png' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier of the record. |
+| `src` | `string` | Yes | URL to the edited image file. |
+| `modifiers` | `object[]` | No | Array of image edits. |
+| `rotation` | `number` | No | The amount to rotate the image clockwise in degrees. DEPRECATED: Use `modifiers` instead. |
+| `x` | `number` | No | As a percentage of the image, the x position to start the crop from. DEPRECATED: Use `modifiers` instead. |
+| `y` | `number` | No | As a percentage of the image, the y position to start the crop from. DEPRECATED: Use `modifiers` instead. |
+| `width` | `number` | No | As a percentage of the image, the width to crop the image to. DEPRECATED: Use `modifiers` instead. |
+| `height` | `number` | No | As a percentage of the image, the height to crop the image to. DEPRECATED: Use `modifiers` instead. |
+| `caption` | `string \| object` | No | The attachment caption. A string, or `{ raw }`. |
+| `description` | `string \| object` | No | The attachment description. A string, or `{ raw }`. |
+| `title` | `string \| object` | No | The title for the post. A string, or `{ raw }`. |
+| `post` | `number` | No | The ID for the associated post of the attachment. |
+| `alt_text` | `string` | No | Alternative text to display when attachment is not displayed. |
+
+<AccordionGroup>
+<Accordion title="modifiers full type">
+
+```ts
+(
+  {
+    type?: flip,
+    args?: {
+      flip: {
+        horizontal: boolean,
+        vertical: boolean
+      }
+    }
+  } | {
+    type?: rotate,
+    args?: {
+      angle: number
+    }
+  } | {
+    type?: crop,
+    args?: {
+      left: number,
+      top: number,
+      width: number,
+      height: number
+    }
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="caption full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="description full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="title full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### finalize
+
+`media.finalize`
+
+Finish an attachment after its client-side image processing: WordPress writes the attachment's metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.media.finalize({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the attachment. |
+| `sub_sizes` | `object[]` | No | Array of sub-size metadata collected from sideload responses. |
+
+<AccordionGroup>
+<Accordion title="sub_sizes full type">
+
+```ts
+{
+  image_size: string | string[],
+  width?: number,
+  height?: number,
+  file?: string,
+  mime_type?: string,
+  filesize?: number,
+  original_image?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### get
+
+`media.get`
+
+Get one media item
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.media.get({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`media.list`
+
+List media items, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.media.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `after` | `string` | No | Limit response to posts published after a given ISO8601 compliant date. |
+| `modified_after` | `string` | No | Limit response to posts modified after a given ISO8601 compliant date. |
+| `author` | `number[]` | No | Limit result set to posts assigned to specific authors. |
+| `author_exclude` | `number[]` | No | Ensure result set excludes posts assigned to specific authors. |
+| `before` | `string` | No | Limit response to posts published before a given ISO8601 compliant date. |
+| `modified_before` | `string` | No | Limit response to posts modified before a given ISO8601 compliant date. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `search_semantics` | `exact` | No | How to interpret the search input. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `author \| date \| id \| include \| modified \| parent \| relevance \| slug \| include_slugs \| title` | No | Sort collection by post attribute. |
+| `parent` | `number[]` | No | Limit result set to items with particular parent IDs. |
+| `parent_exclude` | `number[]` | No | Limit result set to all items except those of a particular parent ID. |
+| `search_columns` | `(post_title \| post_content \| post_excerpt)[]` | No | Array of column names to be searched. |
+| `slug` | `string[]` | No | Limit result set to posts with one or more specific slugs. |
+| `status` | `(inherit \| private \| trash)[]` | No | Limit result set to posts assigned one or more statuses. |
+| `media_type` | `(image \| video \| text \| application \| audio)[]` | No | Limit result set to attachments of a particular media type or media types. |
+| `mime_type` | `string[]` | No | Limit result set to attachments of a particular MIME type or MIME types. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### postProcess
+
+`media.postProcess`
+
+Run server-side image processing (sub-size generation) for an uploaded attachment that is waiting for it
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.media.postProcess({ id: 12, action: 'create-image-subsizes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the attachment. |
+| `action` | `create-image-subsizes` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### sideload
+
+`media.sideload`
+
+Add a file as an extra image size of an existing attachment (the block editor's client-side image processing)
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.media.sideload({
+	id: 12,
+	image_size: 'thumbnail',
+	file: { base64: 'iVBORw0KGgo=', filename: 'photo-150x150.png', contentType: 'image/png' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the attachment. |
+| `image_size` | `string \| string[]` | Yes | Image size. Can be a single size name or an array of size names to register the same file under multiple sizes. |
+| `convert_format` | `boolean` | No | Whether to convert image formats. |
+| `file` | `string \| object \| custom` | Yes | The file to upload: a public URL, `{ url }`, or `{ base64, filename, contentType }`. It is sent as the request body with its file name in Content-Disposition. |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### update
+
+`media.update`
+
+Update a media item: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.media.update({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `date` | `string \| null` | No | The date the post was published, in the site's timezone. |
+| `date_gmt` | `string \| null` | No | The date the post was published, as GMT. |
+| `slug` | `string` | No | An alphanumeric identifier for the post unique to its type. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | A named status for the post. |
+| `title` | `string \| object` | No | The title for the post. A string, or `{ raw }`. |
+| `author` | `number` | No | The ID for the author of the post. |
+| `featured_media` | `number` | No | The ID of the featured media for the post. |
+| `comment_status` | `open \| closed` | No | Whether or not comments are open on the post. |
+| `ping_status` | `open \| closed` | No | Whether or not the post can be pinged. |
+| `meta` | `object` | No | Meta fields. |
+| `template` | `string` | No | The theme file to use to display the post. |
+| `alt_text` | `string` | No | Alternative text to display when attachment is not displayed. |
+| `caption` | `string \| object` | No | The attachment caption. A string, or `{ raw }`. |
+| `description` | `string \| object` | No | The attachment description. A string, or `{ raw }`. |
+| `post` | `number` | No | The ID for the associated post of the attachment. |
+
+<AccordionGroup>
+<Accordion title="title full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="caption full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="description full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Menu Items
+
+### autosaves.create
+
+`menuItems.autosaves.create`
+
+Create a autosave for a menu item
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.menuItems.autosaves.create({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier of the record. |
+| `parent` | `number` | No | The ID for the parent of the object. |
+| `title` | `string \| object` | No | The title for the object. |
+| `type` | `taxonomy \| post_type \| post_type_archive \| custom` | No | The family of objects originally represented, such as "post_type" or "taxonomy". |
+| `status` | `publish \| future \| draft \| pending \| private` | No | A named status for the object. |
+| `attr_title` | `string` | No | Text for the title attribute of the link element for this menu item. |
+| `classes` | `string[]` | No | Class names for the link element of this menu item. |
+| `description` | `string` | No | The description of this menu item. |
+| `menu_order` | `number` | No | The DB ID of the nav_menu_item that is this item's menu parent, if any, otherwise 0. |
+| `object` | `string` | No | The type of object originally represented, such as "category", "post", or "attachment". |
+| `object_id` | `number` | No | The database ID of the original object this menu item represents, for example the ID for posts or the term_id for categories. |
+| `target` | `_blank \| ""` | No | The target attribute of the link element for this menu item. |
+| `url` | `string` | No | The URL to which this menu item points. |
+| `xfn` | `string[]` | No | The XFN relationship expressed in the link of this menu item. |
+| `menus` | `number` | No | The terms assigned to the object in the nav_menu taxonomy. |
+| `meta` | `object` | No | Meta fields. |
+
+<AccordionGroup>
+<Accordion title="title full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### autosaves.get
+
+`menuItems.autosaves.get`
+
+Get one autosave of a menu item
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.menuItems.autosaves.get({ parent: 12, id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `number` | Yes | The ID for the parent of the autosave. |
+| `id` | `number` | Yes | The ID for the autosave. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### autosaves.list
+
+`menuItems.autosaves.list`
+
+List the autosaves of a menu item
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.menuItems.autosaves.list({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier of the record. |
+| `parent` | `number` | No | The ID for the parent of the autosave. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### create
+
+`menuItems.create`
+
+Create a menu item
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.menuItems.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string \| object` | No | The title for the object. |
+| `type` | `taxonomy \| post_type \| post_type_archive \| custom` | No | The family of objects originally represented, such as "post_type" or "taxonomy". |
+| `status` | `publish \| future \| draft \| pending \| private` | No | A named status for the object. |
+| `parent` | `number` | No | The ID for the parent of the object. |
+| `attr_title` | `string` | No | Text for the title attribute of the link element for this menu item. |
+| `classes` | `string[]` | No | Class names for the link element of this menu item. |
+| `description` | `string` | No | The description of this menu item. |
+| `menu_order` | `number` | No | The DB ID of the nav_menu_item that is this item's menu parent, if any, otherwise 0. |
+| `object` | `string` | No | The type of object originally represented, such as "category", "post", or "attachment". |
+| `object_id` | `number` | No | The database ID of the original object this menu item represents, for example the ID for posts or the term_id for categories. |
+| `target` | `_blank \| ""` | No | The target attribute of the link element for this menu item. |
+| `url` | `string` | No | The URL to which this menu item points. |
+| `xfn` | `string[]` | No | The XFN relationship expressed in the link of this menu item. |
+| `menus` | `number` | No | The terms assigned to the object in the nav_menu taxonomy. |
+| `meta` | `object` | No | Meta fields. |
+
+<AccordionGroup>
+<Accordion title="title full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`menuItems.delete`
+
+Delete a menu item; without force true it goes to the trash
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.menuItems.delete({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `force` | `boolean` | No | Whether to bypass Trash and force deletion. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### get
+
+`menuItems.get`
+
+Get one menu item
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.menuItems.get({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`menuItems.list`
+
+List menu items, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.menuItems.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `after` | `string` | No | Limit response to posts published after a given ISO8601 compliant date. |
+| `modified_after` | `string` | No | Limit response to posts modified after a given ISO8601 compliant date. |
+| `before` | `string` | No | Limit response to posts published before a given ISO8601 compliant date. |
+| `modified_before` | `string` | No | Limit response to posts modified before a given ISO8601 compliant date. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `search_semantics` | `exact` | No | How to interpret the search input. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `author \| date \| id \| include \| modified \| parent \| relevance \| slug \| include_slugs \| title \| menu_order` | No | Sort collection by object attribute. |
+| `search_columns` | `(post_title \| post_content \| post_excerpt)[]` | No | Array of column names to be searched. |
+| `slug` | `string[]` | No | Limit result set to posts with one or more specific slugs. |
+| `status` | `(publish \| future \| draft \| pending \| private \| trash \| auto-draft \| inherit \| request-pending \| request-confirmed \| request-failed \| request-completed \| any)[]` | No | Limit result set to posts assigned one or more statuses. |
+| `tax_relation` | `AND \| OR` | No | Limit result set based on relationship between multiple taxonomies. |
+| `menus` | `number[] \| object` | No | Limit result set to items with specific terms assigned in the menus taxonomy. |
+| `menus_exclude` | `number[] \| object` | No | Limit result set to items except those with specific terms assigned in the menus taxonomy. |
+| `menu_order` | `number` | No | Limit result set to posts with a specific menu_order value. |
+
+<AccordionGroup>
+<Accordion title="menus full type">
+
+```ts
+number[] | {
+  terms?: number[],
+  operator?: AND | OR
+} | number[] | {
+  terms?: number[],
+  operator?: AND | OR
+}
+```
+</Accordion>
+
+<Accordion title="menus_exclude full type">
+
+```ts
+number[] | {
+  terms?: number[]
+} | number[] | {
+  terms?: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### update
+
+`menuItems.update`
+
+Update a menu item: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.menuItems.update({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `title` | `string \| object` | No | The title for the object. |
+| `type` | `taxonomy \| post_type \| post_type_archive \| custom` | No | The family of objects originally represented, such as "post_type" or "taxonomy". |
+| `status` | `publish \| future \| draft \| pending \| private` | No | A named status for the object. |
+| `parent` | `number` | No | The ID for the parent of the object. |
+| `attr_title` | `string` | No | Text for the title attribute of the link element for this menu item. |
+| `classes` | `string[]` | No | Class names for the link element of this menu item. |
+| `description` | `string` | No | The description of this menu item. |
+| `menu_order` | `number` | No | The DB ID of the nav_menu_item that is this item's menu parent, if any, otherwise 0. |
+| `object` | `string` | No | The type of object originally represented, such as "category", "post", or "attachment". |
+| `object_id` | `number` | No | The database ID of the original object this menu item represents, for example the ID for posts or the term_id for categories. |
+| `target` | `_blank \| ""` | No | The target attribute of the link element for this menu item. |
+| `url` | `string` | No | The URL to which this menu item points. |
+| `xfn` | `string[]` | No | The XFN relationship expressed in the link of this menu item. |
+| `menus` | `number` | No | The terms assigned to the object in the nav_menu taxonomy. |
+| `meta` | `object` | No | Meta fields. |
+
+<AccordionGroup>
+<Accordion title="title full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Menu Locations
+
+### get
+
+`menuLocations.get`
+
+Get one menu location
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.menuLocations.get({ location: 'primary' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `string` | Yes | An alphanumeric identifier for the menu location. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`menuLocations.list`
+
+List menu locations
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.menuLocations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Menus
+
+### create
+
+`menus.create`
+
+Create a classic menu
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.menus.create({ name: 'core/latest-posts' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `description` | `string` | No | HTML description of the term. |
+| `name` | `string` | Yes | HTML title for the term. |
+| `slug` | `string` | No | An alphanumeric identifier for the term unique to its type. |
+| `meta` | `object` | No | Meta fields. |
+| `locations` | `string[]` | No | The locations assigned to the menu. |
+| `auto_add` | `boolean` | No | Whether to automatically add top level pages to this menu. |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`menus.delete`
+
+Delete a classic menu; WordPress needs force true for this type, which deletes it permanently
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.menus.delete({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the term. |
+| `force` | `boolean` | No | Required to be true, as terms do not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### get
+
+`menus.get`
+
+Get one classic menu
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.menus.get({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the term. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`menus.list`
+
+List classic menus, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.menus.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `id \| include \| name \| slug \| include_slugs \| term_group \| description \| count` | No | Sort collection by term attribute. |
+| `hide_empty` | `boolean` | No | Whether to hide terms not assigned to any posts. |
+| `post` | `number` | No | Limit result set to terms assigned to a specific post. |
+| `slug` | `string[]` | No | Limit result set to terms with one or more specific slugs. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### update
+
+`menus.update`
+
+Update a classic menu: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.menus.update({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the term. |
+| `description` | `string` | No | HTML description of the term. |
+| `name` | `string` | No | HTML title for the term. |
+| `slug` | `string` | No | An alphanumeric identifier for the term unique to its type. |
+| `meta` | `object` | No | Meta fields. |
+| `locations` | `string[]` | No | The locations assigned to the menu. |
+| `auto_add` | `boolean` | No | Whether to automatically add top level pages to this menu. |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Navigation
+
+### autosaves.create
+
+`navigation.autosaves.create`
+
+Create a autosave for a navigation menu
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.navigation.autosaves.create({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier of the record. |
+| `parent` | `number` | No | The ID for the parent of the autosave. |
+| `date` | `string \| null` | No | The date the post was published, in the site's timezone. |
+| `date_gmt` | `string \| null` | No | The date the post was published, as GMT. |
+| `slug` | `string` | No | An alphanumeric identifier for the post unique to its type. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | A named status for the post. |
+| `password` | `string` | No | A password to protect access to the content and excerpt. |
+| `title` | `string \| object` | No | The title for the post. A string, or `{ raw }`. |
+| `content` | `string \| object` | No | The content for the post. A string, or `{ raw }`. |
+| `template` | `string` | No | The theme file to use to display the post. |
+
+<AccordionGroup>
+<Accordion title="title full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### autosaves.get
+
+`navigation.autosaves.get`
+
+Get one autosave of a navigation menu
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.navigation.autosaves.get({ parent: 12, id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `number` | Yes | The ID for the parent of the autosave. |
+| `id` | `number` | Yes | The ID for the autosave. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### autosaves.list
+
+`navigation.autosaves.list`
+
+List the autosaves of a navigation menu
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.navigation.autosaves.list({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier of the record. |
+| `parent` | `number` | No | The ID for the parent of the autosave. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### create
+
+`navigation.create`
+
+Create a navigation menu
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.navigation.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string \| null` | No | The date the post was published, in the site's timezone. |
+| `date_gmt` | `string \| null` | No | The date the post was published, as GMT. |
+| `slug` | `string` | No | An alphanumeric identifier for the post unique to its type. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | A named status for the post. |
+| `password` | `string` | No | A password to protect access to the content and excerpt. |
+| `title` | `string \| object` | No | The title for the post. A string, or `{ raw }`. |
+| `content` | `string \| object` | No | The content for the post. A string, or `{ raw }`. |
+| `template` | `string` | No | The theme file to use to display the post. |
+
+<AccordionGroup>
+<Accordion title="title full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`navigation.delete`
+
+Delete a navigation menu; without force true it goes to the trash
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.navigation.delete({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `force` | `boolean` | No | Whether to bypass Trash and force deletion. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### get
+
+`navigation.get`
+
+Get one navigation menu
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.navigation.get({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `password` | `string` | No | The password for the post if it is password protected. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`navigation.list`
+
+List navigation menus, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.navigation.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `after` | `string` | No | Limit response to posts published after a given ISO8601 compliant date. |
+| `modified_after` | `string` | No | Limit response to posts modified after a given ISO8601 compliant date. |
+| `before` | `string` | No | Limit response to posts published before a given ISO8601 compliant date. |
+| `modified_before` | `string` | No | Limit response to posts modified before a given ISO8601 compliant date. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `search_semantics` | `exact` | No | How to interpret the search input. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `author \| date \| id \| include \| modified \| parent \| relevance \| slug \| include_slugs \| title` | No | Sort collection by post attribute. |
+| `search_columns` | `(post_title \| post_content \| post_excerpt)[]` | No | Array of column names to be searched. |
+| `slug` | `string[]` | No | Limit result set to posts with one or more specific slugs. |
+| `status` | `(publish \| future \| draft \| pending \| private \| trash \| auto-draft \| inherit \| request-pending \| request-confirmed \| request-failed \| request-completed \| any)[]` | No | Limit result set to posts assigned one or more statuses. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### revisions.delete
+
+`navigation.revisions.delete`
+
+Delete a revision; WordPress needs force true for this type, which deletes it permanently
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.navigation.revisions.delete({ parent: 12, id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `number` | Yes | The ID for the parent of the revision. |
+| `id` | `number` | Yes | Unique identifier for the revision. |
+| `force` | `boolean` | No | Required to be true, as revisions do not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### revisions.get
+
+`navigation.revisions.get`
+
+Get one revision of a navigation menu
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.navigation.revisions.get({ parent: 12, id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `number` | Yes | The ID for the parent of the revision. |
+| `id` | `number` | Yes | Unique identifier for the revision. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### revisions.list
+
+`navigation.revisions.list`
+
+List the revisions of a navigation menu, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.navigation.revisions.list({ parent: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `number` | Yes | The ID for the parent of the revision. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `date \| id \| include \| relevance \| slug \| include_slugs \| title` | No | Sort collection by object attribute. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### update
+
+`navigation.update`
+
+Update a navigation menu: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.navigation.update({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `date` | `string \| null` | No | The date the post was published, in the site's timezone. |
+| `date_gmt` | `string \| null` | No | The date the post was published, as GMT. |
+| `slug` | `string` | No | An alphanumeric identifier for the post unique to its type. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | A named status for the post. |
+| `password` | `string` | No | A password to protect access to the content and excerpt. |
+| `title` | `string \| object` | No | The title for the post. A string, or `{ raw }`. |
+| `content` | `string \| object` | No | The content for the post. A string, or `{ raw }`. |
+| `template` | `string` | No | The theme file to use to display the post. |
+
+<AccordionGroup>
+<Accordion title="title full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Oembed
+
+### embed
+
+`oembed.embed`
+
+Get the oEmbed data (title, author, HTML embed code) for a URL on this site
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.oembed.embed({ url: 'https://example.com/hello-world/' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL of the resource for which to fetch oEmbed data. |
+| `format` | `any` | No | — |
+| `maxwidth` | `any` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### proxy
+
+`oembed.proxy`
+
+Get oEmbed data for a URL on another site (YouTube, X, Vimeo ...) through the site, as the block editor does
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.oembed.proxy({ url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL of the resource for which to fetch oEmbed data. |
+| `format` | `json \| xml` | No | The oEmbed format to use. |
+| `maxwidth` | `number` | No | The maximum width of the embed frame in pixels. |
+| `maxheight` | `number` | No | The maximum height of the embed frame in pixels. |
+| `discover` | `boolean` | No | Whether to perform an oEmbed discovery request for unsanctioned providers. |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Pages
+
+### autosaves.create
+
+`pages.autosaves.create`
+
+Create a autosave for a page
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.pages.autosaves.create({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier of the record. |
+| `parent` | `number` | No | The ID for the parent of the post. |
+| `date` | `string \| null` | No | The date the post was published, in the site's timezone. |
+| `date_gmt` | `string \| null` | No | The date the post was published, as GMT. |
+| `slug` | `string` | No | An alphanumeric identifier for the post unique to its type. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | A named status for the post. |
+| `password` | `string` | No | A password to protect access to the content and excerpt. |
+| `title` | `string \| object` | No | The title for the post. A string, or `{ raw }`. |
+| `content` | `string \| object` | No | The content for the post. A string, or `{ raw }`. |
+| `author` | `number` | No | The ID for the author of the post. |
+| `excerpt` | `string \| object` | No | The excerpt for the post. A string, or `{ raw }`. |
+| `featured_media` | `number` | No | The ID of the featured media for the post. |
+| `comment_status` | `open \| closed` | No | Whether or not comments are open on the post. |
+| `ping_status` | `open \| closed` | No | Whether or not the post can be pinged. |
+| `menu_order` | `number` | No | The order of the post in relation to other posts. |
+| `meta` | `object` | No | Meta fields. |
+| `template` | `string` | No | The theme file to use to display the post. |
+
+<AccordionGroup>
+<Accordion title="title full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="excerpt full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  footnotes?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### autosaves.get
+
+`pages.autosaves.get`
+
+Get one autosave of a page
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.pages.autosaves.get({ parent: 12, id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `number` | Yes | The ID for the parent of the autosave. |
+| `id` | `number` | Yes | The ID for the autosave. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### autosaves.list
+
+`pages.autosaves.list`
+
+List the autosaves of a page
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.pages.autosaves.list({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier of the record. |
+| `parent` | `number` | No | The ID for the parent of the autosave. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### create
+
+`pages.create`
+
+Create a page
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.pages.create({ title: 'About', content: '<p>About us.</p>', status: 'draft' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string \| null` | No | The date the post was published, in the site's timezone. |
+| `date_gmt` | `string \| null` | No | The date the post was published, as GMT. |
+| `slug` | `string` | No | An alphanumeric identifier for the post unique to its type. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | A named status for the post. |
+| `password` | `string` | No | A password to protect access to the content and excerpt. |
+| `parent` | `number` | No | The ID for the parent of the post. |
+| `title` | `string \| object` | No | The title for the post. A string, or `{ raw }`. |
+| `content` | `string \| object` | No | The content for the post. A string, or `{ raw }`. |
+| `author` | `number` | No | The ID for the author of the post. |
+| `excerpt` | `string \| object` | No | The excerpt for the post. A string, or `{ raw }`. |
+| `featured_media` | `number` | No | The ID of the featured media for the post. |
+| `comment_status` | `open \| closed` | No | Whether or not comments are open on the post. |
+| `ping_status` | `open \| closed` | No | Whether or not the post can be pinged. |
+| `menu_order` | `number` | No | The order of the post in relation to other posts. |
+| `meta` | `object` | No | Meta fields. |
+| `template` | `string` | No | The theme file to use to display the post. |
+
+<AccordionGroup>
+<Accordion title="title full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="excerpt full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  footnotes?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`pages.delete`
+
+Delete a page; without force true it goes to the trash
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.pages.delete({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `force` | `boolean` | No | Whether to bypass Trash and force deletion. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### get
+
+`pages.get`
+
+Get one page
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.pages.get({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `excerpt_length` | `number` | No | Override the default excerpt length. |
+| `password` | `string` | No | The password for the post if it is password protected. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`pages.list`
+
+List pages, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.pages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `after` | `string` | No | Limit response to posts published after a given ISO8601 compliant date. |
+| `modified_after` | `string` | No | Limit response to posts modified after a given ISO8601 compliant date. |
+| `author` | `number[]` | No | Limit result set to posts assigned to specific authors. |
+| `author_exclude` | `number[]` | No | Ensure result set excludes posts assigned to specific authors. |
+| `before` | `string` | No | Limit response to posts published before a given ISO8601 compliant date. |
+| `modified_before` | `string` | No | Limit response to posts modified before a given ISO8601 compliant date. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `menu_order` | `number` | No | Limit result set to posts with a specific menu_order value. |
+| `search_semantics` | `exact` | No | How to interpret the search input. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `author \| date \| id \| include \| modified \| parent \| relevance \| slug \| include_slugs \| title \| menu_order` | No | Sort collection by post attribute. |
+| `parent` | `number[]` | No | Limit result set to items with particular parent IDs. |
+| `parent_exclude` | `number[]` | No | Limit result set to all items except those of a particular parent ID. |
+| `search_columns` | `(post_title \| post_content \| post_excerpt)[]` | No | Array of column names to be searched. |
+| `slug` | `string[]` | No | Limit result set to posts with one or more specific slugs. |
+| `status` | `(publish \| future \| draft \| pending \| private \| trash \| auto-draft \| inherit \| request-pending \| request-confirmed \| request-failed \| request-completed \| any)[]` | No | Limit result set to posts assigned one or more statuses. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### revisions.delete
+
+`pages.revisions.delete`
+
+Delete a revision; WordPress needs force true for this type, which deletes it permanently
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.pages.revisions.delete({ parent: 12, id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `number` | Yes | The ID for the parent of the revision. |
+| `id` | `number` | Yes | Unique identifier for the revision. |
+| `force` | `boolean` | No | Required to be true, as revisions do not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### revisions.get
+
+`pages.revisions.get`
+
+Get one revision of a page
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.pages.revisions.get({ parent: 12, id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `number` | Yes | The ID for the parent of the revision. |
+| `id` | `number` | Yes | Unique identifier for the revision. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### revisions.list
+
+`pages.revisions.list`
+
+List the revisions of a page, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.pages.revisions.list({ parent: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `number` | Yes | The ID for the parent of the revision. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `date \| id \| include \| relevance \| slug \| include_slugs \| title` | No | Sort collection by object attribute. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### update
+
+`pages.update`
+
+Update a page: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.pages.update({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `date` | `string \| null` | No | The date the post was published, in the site's timezone. |
+| `date_gmt` | `string \| null` | No | The date the post was published, as GMT. |
+| `slug` | `string` | No | An alphanumeric identifier for the post unique to its type. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | A named status for the post. |
+| `password` | `string` | No | A password to protect access to the content and excerpt. |
+| `parent` | `number` | No | The ID for the parent of the post. |
+| `title` | `string \| object` | No | The title for the post. A string, or `{ raw }`. |
+| `content` | `string \| object` | No | The content for the post. A string, or `{ raw }`. |
+| `author` | `number` | No | The ID for the author of the post. |
+| `excerpt` | `string \| object` | No | The excerpt for the post. A string, or `{ raw }`. |
+| `featured_media` | `number` | No | The ID of the featured media for the post. |
+| `comment_status` | `open \| closed` | No | Whether or not comments are open on the post. |
+| `ping_status` | `open \| closed` | No | Whether or not the post can be pinged. |
+| `menu_order` | `number` | No | The order of the post in relation to other posts. |
+| `meta` | `object` | No | Meta fields. |
+| `template` | `string` | No | The theme file to use to display the post. |
+
+<AccordionGroup>
+<Accordion title="title full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="excerpt full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  footnotes?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Pattern Categories
+
+### create
+
+`patternCategories.create`
+
+Create a pattern category
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.patternCategories.create({ name: 'core/latest-posts' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `description` | `string` | No | HTML description of the term. |
+| `name` | `string` | Yes | HTML title for the term. |
+| `slug` | `string` | No | An alphanumeric identifier for the term unique to its type. |
+| `meta` | `object` | No | Meta fields. |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`patternCategories.delete`
+
+Delete a pattern category; WordPress needs force true for this type, which deletes it permanently
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.patternCategories.delete({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the term. |
+| `force` | `boolean` | No | Required to be true, as terms do not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### get
+
+`patternCategories.get`
+
+Get one pattern category
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.patternCategories.get({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the term. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`patternCategories.list`
+
+List pattern categories, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.patternCategories.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `id \| include \| name \| slug \| include_slugs \| term_group \| description \| count` | No | Sort collection by term attribute. |
+| `hide_empty` | `boolean` | No | Whether to hide terms not assigned to any posts. |
+| `post` | `number` | No | Limit result set to terms assigned to a specific post. |
+| `slug` | `string[]` | No | Limit result set to terms with one or more specific slugs. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### update
+
+`patternCategories.update`
+
+Update a pattern category: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.patternCategories.update({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the term. |
+| `description` | `string` | No | HTML description of the term. |
+| `name` | `string` | No | HTML title for the term. |
+| `slug` | `string` | No | An alphanumeric identifier for the term unique to its type. |
+| `meta` | `object` | No | Meta fields. |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Pattern Directory
+
+### search
+
+`patternDirectory.search`
+
+Search the WordPress.org pattern directory
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.patternDirectory.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `category` | `number` | No | Limit results to those matching a category ID. |
+| `keyword` | `number` | No | Limit results to those matching a keyword ID. |
+| `slug` | `any[]` | No | Limit results to those matching a pattern (slug). |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `author \| date \| id \| include \| modified \| parent \| relevance \| slug \| include_slugs \| title \| favorite_count` | No | Sort collection by post attribute. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+## Plugins
+
+### delete
+
+`plugins.delete`
+
+Delete an inactive plugin's files from the site
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.plugins.delete({ plugin: 'akismet/akismet' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `plugin` | `string` | Yes | The plugin file without `.php`, for example `akismet/akismet`. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### get
+
+`plugins.get`
+
+Get one plugin
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.plugins.get({ plugin: 'akismet/akismet' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `plugin` | `string` | Yes | The plugin file without `.php`, for example `akismet/akismet`. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### install
+
+`plugins.install`
+
+Install a plugin from the WordPress.org directory by its slug, optionally activating it (runs third-party code on the site)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.plugins.install({ slug: 'akismet', status: 'inactive' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | WordPress.org plugin directory slug. |
+| `status` | `inactive \| active` | No | The plugin activation status. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`plugins.list`
+
+List plugins
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.plugins.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `status` | `(inactive \| active)[]` | No | Limits results to plugins with the given status. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### update
+
+`plugins.update`
+
+Activate or deactivate an installed plugin (status active, inactive or network-active)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.plugins.update({ plugin: 'akismet/akismet', status: 'active' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `plugin` | `string` | Yes | The plugin file without `.php`, for example `akismet/akismet`. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `status` | `inactive \| active` | No | The plugin activation status. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Posts
+
+### autosaves.create
+
+`posts.autosaves.create`
+
+Create a autosave for a post
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.posts.autosaves.create({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier of the record. |
+| `parent` | `number` | No | The ID for the parent of the autosave. |
+| `date` | `string \| null` | No | The date the post was published, in the site's timezone. |
+| `date_gmt` | `string \| null` | No | The date the post was published, as GMT. |
+| `slug` | `string` | No | An alphanumeric identifier for the post unique to its type. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | A named status for the post. |
+| `password` | `string` | No | A password to protect access to the content and excerpt. |
+| `title` | `string \| object` | No | The title for the post. A string, or `{ raw }`. |
+| `content` | `string \| object` | No | The content for the post. A string, or `{ raw }`. |
+| `author` | `number` | No | The ID for the author of the post. |
+| `excerpt` | `string \| object` | No | The excerpt for the post. A string, or `{ raw }`. |
+| `featured_media` | `number` | No | The ID of the featured media for the post. |
+| `comment_status` | `open \| closed` | No | Whether or not comments are open on the post. |
+| `ping_status` | `open \| closed` | No | Whether or not the post can be pinged. |
+| `format` | `standard \| aside \| chat \| gallery \| link \| image \| quote \| status \| video \| audio` | No | The format for the post. |
+| `meta` | `object` | No | Meta fields. |
+| `sticky` | `boolean` | No | Whether or not the post should be treated as sticky. |
+| `template` | `string` | No | The theme file to use to display the post. |
+| `categories` | `number[]` | No | The terms assigned to the post in the category taxonomy. |
+| `tags` | `number[]` | No | The terms assigned to the post in the post_tag taxonomy. |
+
+<AccordionGroup>
+<Accordion title="title full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="excerpt full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  footnotes?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### autosaves.get
+
+`posts.autosaves.get`
+
+Get one autosave of a post
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.posts.autosaves.get({ parent: 12, id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `number` | Yes | The ID for the parent of the autosave. |
+| `id` | `number` | Yes | The ID for the autosave. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### autosaves.list
+
+`posts.autosaves.list`
+
+List the autosaves of a post
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.posts.autosaves.list({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier of the record. |
+| `parent` | `number` | No | The ID for the parent of the autosave. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### create
+
+`posts.create`
+
+Create a post
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.posts.create({
+	title: 'Launch notes',
+	content: '<p>What shipped this week.</p>',
+	status: 'draft',
+	categories: [1],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string \| null` | No | The date the post was published, in the site's timezone. |
+| `date_gmt` | `string \| null` | No | The date the post was published, as GMT. |
+| `slug` | `string` | No | An alphanumeric identifier for the post unique to its type. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | A named status for the post. |
+| `password` | `string` | No | A password to protect access to the content and excerpt. |
+| `title` | `string \| object` | No | The title for the post. A string, or `{ raw }`. |
+| `content` | `string \| object` | No | The content for the post. A string, or `{ raw }`. |
+| `author` | `number` | No | The ID for the author of the post. |
+| `excerpt` | `string \| object` | No | The excerpt for the post. A string, or `{ raw }`. |
+| `featured_media` | `number` | No | The ID of the featured media for the post. |
+| `comment_status` | `open \| closed` | No | Whether or not comments are open on the post. |
+| `ping_status` | `open \| closed` | No | Whether or not the post can be pinged. |
+| `format` | `standard \| aside \| chat \| gallery \| link \| image \| quote \| status \| video \| audio` | No | The format for the post. |
+| `meta` | `object` | No | Meta fields. |
+| `sticky` | `boolean` | No | Whether or not the post should be treated as sticky. |
+| `template` | `string` | No | The theme file to use to display the post. |
+| `categories` | `number[]` | No | The terms assigned to the post in the category taxonomy. |
+| `tags` | `number[]` | No | The terms assigned to the post in the post_tag taxonomy. |
+
+<AccordionGroup>
+<Accordion title="title full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="excerpt full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  footnotes?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`posts.delete`
+
+Delete a post; without force true it goes to the trash
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.posts.delete({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `force` | `boolean` | No | Whether to bypass Trash and force deletion. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### get
+
+`posts.get`
+
+Get one post
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.posts.get({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `excerpt_length` | `number` | No | Override the default excerpt length. |
+| `password` | `string` | No | The password for the post if it is password protected. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`posts.list`
+
+List posts, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.posts.list({
+	per_page: 5,
+	status: ['publish'],
+	orderby: 'date',
+	order: 'desc',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `after` | `string` | No | Limit response to posts published after a given ISO8601 compliant date. |
+| `modified_after` | `string` | No | Limit response to posts modified after a given ISO8601 compliant date. |
+| `author` | `number[]` | No | Limit result set to posts assigned to specific authors. |
+| `author_exclude` | `number[]` | No | Ensure result set excludes posts assigned to specific authors. |
+| `before` | `string` | No | Limit response to posts published before a given ISO8601 compliant date. |
+| `modified_before` | `string` | No | Limit response to posts modified before a given ISO8601 compliant date. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `search_semantics` | `exact` | No | How to interpret the search input. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `author \| date \| id \| include \| modified \| parent \| relevance \| slug \| include_slugs \| title` | No | Sort collection by post attribute. |
+| `search_columns` | `(post_title \| post_content \| post_excerpt)[]` | No | Array of column names to be searched. |
+| `slug` | `string[]` | No | Limit result set to posts with one or more specific slugs. |
+| `status` | `(publish \| future \| draft \| pending \| private \| trash \| auto-draft \| inherit \| request-pending \| request-confirmed \| request-failed \| request-completed \| any)[]` | No | Limit result set to posts assigned one or more statuses. |
+| `tax_relation` | `AND \| OR` | No | Limit result set based on relationship between multiple taxonomies. |
+| `categories` | `number[] \| object` | No | Limit result set to items with specific terms assigned in the categories taxonomy. |
+| `categories_exclude` | `number[] \| object` | No | Limit result set to items except those with specific terms assigned in the categories taxonomy. |
+| `tags` | `number[] \| object` | No | Limit result set to items with specific terms assigned in the tags taxonomy. |
+| `tags_exclude` | `number[] \| object` | No | Limit result set to items except those with specific terms assigned in the tags taxonomy. |
+| `sticky` | `boolean` | No | Limit result set to items that are sticky. |
+| `ignore_sticky` | `boolean` | No | Whether to ignore sticky posts or not. |
+| `format` | `(standard \| aside \| chat \| gallery \| link \| image \| quote \| status \| video \| audio)[]` | No | Limit result set to items assigned one or more given formats. |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+number[] | {
+  terms?: number[],
+  include_children?: boolean,
+  operator?: AND | OR
+} | number[] | {
+  terms?: number[],
+  include_children?: boolean,
+  operator?: AND | OR
+}
+```
+</Accordion>
+
+<Accordion title="categories_exclude full type">
+
+```ts
+number[] | {
+  terms?: number[],
+  include_children?: boolean
+} | number[] | {
+  terms?: number[],
+  include_children?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="tags full type">
+
+```ts
+number[] | {
+  terms?: number[],
+  operator?: AND | OR
+} | number[] | {
+  terms?: number[],
+  operator?: AND | OR
+}
+```
+</Accordion>
+
+<Accordion title="tags_exclude full type">
+
+```ts
+number[] | {
+  terms?: number[]
+} | number[] | {
+  terms?: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### revisions.delete
+
+`posts.revisions.delete`
+
+Delete a revision; WordPress needs force true for this type, which deletes it permanently
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.posts.revisions.delete({ parent: 12, id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `number` | Yes | The ID for the parent of the revision. |
+| `id` | `number` | Yes | Unique identifier for the revision. |
+| `force` | `boolean` | No | Required to be true, as revisions do not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### revisions.get
+
+`posts.revisions.get`
+
+Get one revision of a post
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.posts.revisions.get({ parent: 12, id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `number` | Yes | The ID for the parent of the revision. |
+| `id` | `number` | Yes | Unique identifier for the revision. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### revisions.list
+
+`posts.revisions.list`
+
+List the revisions of a post, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.posts.revisions.list({ parent: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `number` | Yes | The ID for the parent of the revision. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `date \| id \| include \| relevance \| slug \| include_slugs \| title` | No | Sort collection by object attribute. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### update
+
+`posts.update`
+
+Update a post: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.posts.update({ id: 12, status: 'publish' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the post. |
+| `date` | `string \| null` | No | The date the post was published, in the site's timezone. |
+| `date_gmt` | `string \| null` | No | The date the post was published, as GMT. |
+| `slug` | `string` | No | An alphanumeric identifier for the post unique to its type. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | A named status for the post. |
+| `password` | `string` | No | A password to protect access to the content and excerpt. |
+| `title` | `string \| object` | No | The title for the post. A string, or `{ raw }`. |
+| `content` | `string \| object` | No | The content for the post. A string, or `{ raw }`. |
+| `author` | `number` | No | The ID for the author of the post. |
+| `excerpt` | `string \| object` | No | The excerpt for the post. A string, or `{ raw }`. |
+| `featured_media` | `number` | No | The ID of the featured media for the post. |
+| `comment_status` | `open \| closed` | No | Whether or not comments are open on the post. |
+| `ping_status` | `open \| closed` | No | Whether or not the post can be pinged. |
+| `format` | `standard \| aside \| chat \| gallery \| link \| image \| quote \| status \| video \| audio` | No | The format for the post. |
+| `meta` | `object` | No | Meta fields. |
+| `sticky` | `boolean` | No | Whether or not the post should be treated as sticky. |
+| `template` | `string` | No | The theme file to use to display the post. |
+| `categories` | `number[]` | No | The terms assigned to the post in the category taxonomy. |
+| `tags` | `number[]` | No | The terms assigned to the post in the post_tag taxonomy. |
+
+<AccordionGroup>
+<Accordion title="title full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="excerpt full type">
+
+```ts
+string | {
+  raw?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  footnotes?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Rest
+
+### get
+
+`rest.get`
+
+GET any route on the site's REST API, such as a custom post type (`wp/v2/book`) or another plugin's namespace (`yoast/v1/...`, `acf/v3/...`); returns the JSON as is
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.rest.get({
+	route: 'wp/v2/book',
+	query: { per_page: 5 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `route` | `string` | Yes | The route under /wp-json, without a leading slash: `wp/v2/product`, `wp/v2/book/12`, `yoast/v1/get_head`, `acf/v3/options`. |
+| `query` | `Record<string, any>` | No | Query string parameters, sent as given (lists as `key[]`, objects as `key[sub]`). |
+
+
+
+**Output:** `any`
+
+
+---
+
+### send
+
+`rest.send`
+
+POST, PUT, PATCH or DELETE any route on the site's REST API (a custom post type, another plugin's route); returns the JSON as is
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.rest.send({
+	route: 'wp/v2/book',
+	method: 'POST',
+	body: { title: 'Dune', status: 'draft' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `route` | `string` | Yes | The route under /wp-json, without a leading slash: `wp/v2/product`, `wp/v2/book/12`, `yoast/v1/get_head`, `acf/v3/options`. |
+| `method` | `POST \| PUT \| PATCH \| DELETE` | No | The HTTP method. Default POST. |
+| `query` | `Record<string, any>` | No | Query string parameters, sent as given (lists as `key[]`, objects as `key[sub]`). |
+| `body` | `Record<string, any>` | No | The JSON body. |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Search
+
+### query
+
+`search.query`
+
+Search posts, terms or post formats across types, one page at a time: title, URL, type and subtype of each match
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.search.query({ search: 'release notes', type: 'post', per_page: 5 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `type` | `post \| term \| post-format` | No | Limit results to items of an object type. |
+| `subtype` | `(post \| page \| category \| post_tag \| any)[]` | No | Limit results to items of one or more object subtypes. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+## Settings
+
+### get
+
+`settings.get`
+
+Get the site's settings: title, tagline, URL, admin email, timezone, date and time formats, language, posts per page, default category, comment settings and more
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.settings.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### update
+
+`settings.update`
+
+Update site settings: only the settings you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.settings.update({ title: 'Corsair Test Site', posts_per_page: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | Site title. |
+| `description` | `string` | No | Site tagline. |
+| `url` | `string` | No | Site URL. |
+| `email` | `string` | No | This address is used for admin purposes, like new user notification. |
+| `timezone` | `string` | No | A city in the same timezone as you. |
+| `date_format` | `string` | No | A date format for all date strings. |
+| `time_format` | `string` | No | A time format for all time strings. |
+| `start_of_week` | `number` | No | A day number of the week that the week should start on. |
+| `language` | `string` | No | WordPress locale code. |
+| `use_smilies` | `boolean` | No | Convert emoticons like :-) and :-P to graphics on display. |
+| `default_category` | `number` | No | Default post category. |
+| `default_post_format` | `string` | No | Default post format. |
+| `posts_per_page` | `number` | No | Blog pages show at most. |
+| `show_on_front` | `string` | No | What to show on the front page |
+| `page_on_front` | `number` | No | The ID of the page that should be displayed on the front page |
+| `page_for_posts` | `number` | No | The ID of the page that should display the latest posts |
+| `default_ping_status` | `open \| closed` | No | Allow link notifications from other blogs (pingbacks and trackbacks) on new articles. |
+| `default_comment_status` | `open \| closed` | No | Allow people to submit comments on new posts. |
+| `site_logo` | `number` | No | Site logo. |
+| `site_icon` | `number` | No | Site icon. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Sidebars
+
+### get
+
+`sidebars.get`
+
+Get one widget area (sidebar)
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.sidebars.get({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id of a registered sidebar |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`sidebars.list`
+
+List widget areas (sidebars)
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.sidebars.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### update
+
+`sidebars.update`
+
+Update a widget area (sidebar): only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.sidebars.update({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the record. |
+| `widgets` | `object[]` | No | Nested widgets. |
+
+<AccordionGroup>
+<Accordion title="widgets full type">
+
+```ts
+(
+  {
+  } | string
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Site
+
+### index
+
+`site.index`
+
+Get the site's REST discovery document: name, description, URL, timezone, the namespaces it serves (wp/v2, plugins' own) and every route with its methods and args
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.site.index({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `any` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+## Site Health
+
+### authorizationHeader
+
+`siteHealth.authorizationHeader`
+
+Run the Site Health test that checks the Authorization header reaches WordPress
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.siteHealth.authorizationHeader({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### backgroundUpdates
+
+`siteHealth.backgroundUpdates`
+
+Run the Site Health test that checks automatic background updates can work
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.siteHealth.backgroundUpdates({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### directorySizes
+
+`siteHealth.directorySizes`
+
+Get the size of the site's directories (WordPress, themes, plugins, uploads, database); can be slow on big sites
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.siteHealth.directorySizes({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any`
+
+
+---
+
+### dotorgCommunication
+
+`siteHealth.dotorgCommunication`
+
+Run the Site Health test that checks the site can reach WordPress.org
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.siteHealth.dotorgCommunication({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### httpsStatus
+
+`siteHealth.httpsStatus`
+
+Run the Site Health test that checks the site is served over HTTPS
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.siteHealth.httpsStatus({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### loopbackRequests
+
+`siteHealth.loopbackRequests`
+
+Run the Site Health test that checks the site can make loopback requests to itself
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.siteHealth.loopbackRequests({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `unknown`
+
+
+---
+
+### pageCache
+
+`siteHealth.pageCache`
+
+Run the Site Health test that checks for a page cache and its response times
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.siteHealth.pageCache({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `any`
+
+
+---
+
+## Statuses
+
+### get
+
+`statuses.get`
+
+Get one post status
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.statuses.get({ status: 'publish' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | An alphanumeric identifier for the status. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`statuses.list`
+
+List post statuses
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.statuses.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Tags
+
+### create
+
+`tags.create`
+
+Create a tag
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.tags.create({ name: 'changelog' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `description` | `string` | No | HTML description of the term. |
+| `name` | `string` | Yes | HTML title for the term. |
+| `slug` | `string` | No | An alphanumeric identifier for the term unique to its type. |
+| `meta` | `object` | No | Meta fields. |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`tags.delete`
+
+Delete a tag; WordPress needs force true for this type, which deletes it permanently
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.tags.delete({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the term. |
+| `force` | `boolean` | No | Required to be true, as terms do not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### get
+
+`tags.get`
+
+Get one tag
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.tags.get({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the term. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`tags.list`
+
+List tags, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `id \| include \| name \| slug \| include_slugs \| term_group \| description \| count` | No | Sort collection by term attribute. |
+| `hide_empty` | `boolean` | No | Whether to hide terms not assigned to any posts. |
+| `post` | `number` | No | Limit result set to terms assigned to a specific post. |
+| `slug` | `string[]` | No | Limit result set to terms with one or more specific slugs. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### update
+
+`tags.update`
+
+Update a tag: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.tags.update({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the term. |
+| `description` | `string` | No | HTML description of the term. |
+| `name` | `string` | No | HTML title for the term. |
+| `slug` | `string` | No | An alphanumeric identifier for the term unique to its type. |
+| `meta` | `object` | No | Meta fields. |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Taxonomies
+
+### get
+
+`taxonomies.get`
+
+Get one taxonomy
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.taxonomies.get({ taxonomy: 'category' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taxonomy` | `string` | Yes | An alphanumeric identifier for the taxonomy. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`taxonomies.list`
+
+List taxonomies
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.taxonomies.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `type` | `string` | No | Limit results to taxonomies associated with a specific post type. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Template Parts
+
+### autosaves.create
+
+`templateParts.autosaves.create`
+
+Create a autosave for a template part
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.templateParts.autosaves.create({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id of a template |
+| `slug` | `string` | No | Unique slug identifying the template. |
+| `theme` | `string` | No | Theme identifier for the template. |
+| `type` | `string` | No | Type of template. |
+| `content` | `object \| string` | No | Content of template. |
+| `title` | `object \| string` | No | Title of template. |
+| `description` | `string` | No | Description of template. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | Status of template. |
+| `author` | `number` | No | The ID for the author of the template. |
+| `area` | `string` | No | Where the template part is intended for use (header, footer, etc.) |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  raw?: string
+} | string
+```
+</Accordion>
+
+<Accordion title="title full type">
+
+```ts
+{
+  raw?: string
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### autosaves.get
+
+`templateParts.autosaves.get`
+
+Get one autosave of a template part
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.templateParts.autosaves.get({ parent: '12', id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | The id of a template |
+| `id` | `number` | Yes | The ID for the autosave. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### autosaves.list
+
+`templateParts.autosaves.list`
+
+List the autosaves of a template part
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.templateParts.autosaves.list({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id of a template |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### create
+
+`templateParts.create`
+
+Create a template part
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.templateParts.create({ slug: 'hello-world' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | Unique slug identifying the template. |
+| `theme` | `string` | No | Theme identifier for the template. |
+| `type` | `string` | No | Type of template. |
+| `content` | `object \| string` | No | Content of template. |
+| `title` | `object \| string` | No | Title of template. |
+| `description` | `string` | No | Description of template. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | Status of template. |
+| `author` | `number` | No | The ID for the author of the template. |
+| `area` | `string` | No | Where the template part is intended for use (header, footer, etc.) |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  raw?: string
+} | string
+```
+</Accordion>
+
+<Accordion title="title full type">
+
+```ts
+{
+  raw?: string
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`templateParts.delete`
+
+Delete a template part; without force true it goes to the trash
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.templateParts.delete({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id of a template |
+| `force` | `boolean` | No | Whether to bypass Trash and force deletion. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### get
+
+`templateParts.get`
+
+Get one template part
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.templateParts.get({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id of a template |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`templateParts.list`
+
+List template parts
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.templateParts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `wp_id` | `number` | No | Limit to the specified post id. |
+| `area` | `string` | No | Limit to the specified template part area. |
+| `post_type` | `string` | No | Post type to get the templates for. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### lookup
+
+`templateParts.lookup`
+
+Find the fallback template part WordPress would use for a slug
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.templateParts.lookup({ slug: 'hello-world' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | The slug of the template to get the fallback for |
+| `is_custom` | `boolean` | No | Indicates if a template is custom or part of the template hierarchy |
+| `template_prefix` | `string` | No | The template prefix for the created template. This is used to extract the main template type, e.g. in `taxonomy-books` extracts the `taxonomy` |
+
+
+
+**Output:** `any`
+
+
+---
+
+### revisions.delete
+
+`templateParts.revisions.delete`
+
+Delete a revision; WordPress needs force true for this type, which deletes it permanently
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.templateParts.revisions.delete({ parent: '12', id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | The id of a template |
+| `id` | `number` | Yes | Unique identifier for the revision. |
+| `force` | `boolean` | No | Required to be true, as revisions do not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### revisions.get
+
+`templateParts.revisions.get`
+
+Get one revision of a template part
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.templateParts.revisions.get({ parent: '12', id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | The id of a template |
+| `id` | `number` | Yes | Unique identifier for the revision. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### revisions.list
+
+`templateParts.revisions.list`
+
+List the revisions of a template part, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.templateParts.revisions.list({ parent: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | The id of a template |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `date \| id \| include \| relevance \| slug \| include_slugs \| title` | No | Sort collection by object attribute. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### update
+
+`templateParts.update`
+
+Update a template part: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.templateParts.update({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id of a template |
+| `slug` | `string` | No | Unique slug identifying the template. |
+| `theme` | `string` | No | Theme identifier for the template. |
+| `type` | `string` | No | Type of template. |
+| `content` | `object \| string` | No | Content of template. |
+| `title` | `object \| string` | No | Title of template. |
+| `description` | `string` | No | Description of template. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | Status of template. |
+| `author` | `number` | No | The ID for the author of the template. |
+| `area` | `string` | No | Where the template part is intended for use (header, footer, etc.) |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  raw?: string
+} | string
+```
+</Accordion>
+
+<Accordion title="title full type">
+
+```ts
+{
+  raw?: string
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Templates
+
+### autosaves.create
+
+`templates.autosaves.create`
+
+Create a autosave for a block template
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.templates.autosaves.create({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id of a template |
+| `slug` | `string` | No | Unique slug identifying the template. |
+| `theme` | `string` | No | Theme identifier for the template. |
+| `type` | `string` | No | Type of template. |
+| `content` | `object \| string` | No | Content of template. |
+| `title` | `object \| string` | No | Title of template. |
+| `description` | `string` | No | Description of template. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | Status of template. |
+| `author` | `number` | No | The ID for the author of the template. |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  raw?: string
+} | string
+```
+</Accordion>
+
+<Accordion title="title full type">
+
+```ts
+{
+  raw?: string
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### autosaves.get
+
+`templates.autosaves.get`
+
+Get one autosave of a block template
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.templates.autosaves.get({ parent: '12', id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | The id of a template |
+| `id` | `number` | Yes | The ID for the autosave. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### autosaves.list
+
+`templates.autosaves.list`
+
+List the autosaves of a block template
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.templates.autosaves.list({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id of a template |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### create
+
+`templates.create`
+
+Create a block template
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.templates.create({ slug: 'hello-world' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | Unique slug identifying the template. |
+| `theme` | `string` | No | Theme identifier for the template. |
+| `type` | `string` | No | Type of template. |
+| `content` | `object \| string` | No | Content of template. |
+| `title` | `object \| string` | No | Title of template. |
+| `description` | `string` | No | Description of template. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | Status of template. |
+| `author` | `number` | No | The ID for the author of the template. |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  raw?: string
+} | string
+```
+</Accordion>
+
+<Accordion title="title full type">
+
+```ts
+{
+  raw?: string
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Delete a block template; without force true it goes to the trash
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.templates.delete({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id of a template |
+| `force` | `boolean` | No | Whether to bypass Trash and force deletion. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### get
+
+`templates.get`
+
+Get one block template
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.templates.get({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id of a template |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`templates.list`
+
+List block templates
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.templates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `wp_id` | `number` | No | Limit to the specified post id. |
+| `area` | `string` | No | Limit to the specified template part area. |
+| `post_type` | `string` | No | Post type to get the templates for. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### lookup
+
+`templates.lookup`
+
+Find the fallback template WordPress would use for a slug (for example `single-post`), when the theme has none of its own
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.templates.lookup({ slug: 'hello-world' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | The slug of the template to get the fallback for |
+| `is_custom` | `boolean` | No | Indicates if a template is custom or part of the template hierarchy |
+| `template_prefix` | `string` | No | The template prefix for the created template. This is used to extract the main template type, e.g. in `taxonomy-books` extracts the `taxonomy` |
+
+
+
+**Output:** `any`
+
+
+---
+
+### revisions.delete
+
+`templates.revisions.delete`
+
+Delete a revision; WordPress needs force true for this type, which deletes it permanently
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.templates.revisions.delete({ parent: '12', id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | The id of a template |
+| `id` | `number` | Yes | Unique identifier for the revision. |
+| `force` | `boolean` | No | Required to be true, as revisions do not support trashing. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### revisions.get
+
+`templates.revisions.get`
+
+Get one revision of a block template
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.templates.revisions.get({ parent: '12', id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | The id of a template |
+| `id` | `number` | Yes | Unique identifier for the revision. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### revisions.list
+
+`templates.revisions.list`
+
+List the revisions of a block template, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.templates.revisions.list({ parent: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent` | `string` | Yes | The id of a template |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `date \| id \| include \| relevance \| slug \| include_slugs \| title` | No | Sort collection by object attribute. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### update
+
+`templates.update`
+
+Update a block template: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.templates.update({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id of a template |
+| `slug` | `string` | No | Unique slug identifying the template. |
+| `theme` | `string` | No | Theme identifier for the template. |
+| `type` | `string` | No | Type of template. |
+| `content` | `object \| string` | No | Content of template. |
+| `title` | `object \| string` | No | Title of template. |
+| `description` | `string` | No | Description of template. |
+| `status` | `publish \| future \| draft \| pending \| private` | No | Status of template. |
+| `author` | `number` | No | The ID for the author of the template. |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  raw?: string
+} | string
+```
+</Accordion>
+
+<Accordion title="title full type">
+
+```ts
+{
+  raw?: string
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Themes
+
+### get
+
+`themes.get`
+
+Get one theme
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.themes.get({ stylesheet: 'twentytwentyfive' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `stylesheet` | `string` | Yes | The theme's stylesheet. This uniquely identifies the theme. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`themes.list`
+
+List themes
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.themes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `(active \| inactive)[]` | No | Limit result set to themes assigned one or more statuses. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+## Types
+
+### get
+
+`types.get`
+
+Get one post type
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.types.get({ type: 'post' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | An alphanumeric identifier for the post type. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`types.list`
+
+List post types
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.types.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Users
+
+### applicationPasswords.create
+
+`users.applicationPasswords.create`
+
+Create an application password for a user; the response's `password` is shown once and can act as that user
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.users.applicationPasswords.create({ user_id: 'me', name: 'Corsair agent' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number \| string` | Yes | A user id, or `me` for the authenticated user. |
+| `app_id` | `string \| ""` | No | A UUID provided by the application to uniquely identify it. It is recommended to use an UUID v5 with the URL or DNS namespace. |
+| `name` | `string` | Yes | The name of the application password. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### applicationPasswords.delete
+
+`users.applicationPasswords.delete`
+
+Delete a application password
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.users.applicationPasswords.delete({ user_id: 1, uuid: '6d8a6a1c-1a7b-4b2b-9d4e-8a1f2c3b4d5e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number \| string` | Yes | A user id, or `me` for the authenticated user. |
+| `uuid` | `string` | Yes | The application password uuid. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### applicationPasswords.deleteAll
+
+`users.applicationPasswords.deleteAll`
+
+Revoke every application password of a user, the one this call uses included
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.users.applicationPasswords.deleteAll({ user_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number \| string` | Yes | A user id, or `me` for the authenticated user. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### applicationPasswords.get
+
+`users.applicationPasswords.get`
+
+Get one application password of a user
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.users.applicationPasswords.get({ user_id: 1, uuid: '6d8a6a1c-1a7b-4b2b-9d4e-8a1f2c3b4d5e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number \| string` | Yes | A user id, or `me` for the authenticated user. |
+| `uuid` | `string` | Yes | The application password uuid. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### applicationPasswords.introspect
+
+`users.applicationPasswords.introspect`
+
+Get the application password this call is made with (name, uuid, last used)
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.users.applicationPasswords.introspect({ user_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number \| string` | Yes | A user id, or `me` for the authenticated user. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### applicationPasswords.list
+
+`users.applicationPasswords.list`
+
+List the application passwords of a user
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.users.applicationPasswords.list({ user_id: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number \| string` | Yes | A user id, or `me` for the authenticated user. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### applicationPasswords.update
+
+`users.applicationPasswords.update`
+
+Update a application password: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.users.applicationPasswords.update({ user_id: 1, uuid: '6d8a6a1c-1a7b-4b2b-9d4e-8a1f2c3b4d5e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `number \| string` | Yes | A user id, or `me` for the authenticated user. |
+| `uuid` | `string` | Yes | The application password uuid. |
+| `app_id` | `string \| ""` | No | A UUID provided by the application to uniquely identify it. It is recommended to use an UUID v5 with the URL or DNS namespace. |
+| `name` | `string` | No | The name of the application password. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### create
+
+`users.create`
+
+Create a user
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.users.create({
+	username: 'grace',
+	email: 'grace@example.com',
+	password: 'correct-horse-battery-staple',
+	roles: ['author'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | Login name for the user. |
+| `name` | `string` | No | Display name for the user. |
+| `first_name` | `string` | No | First name for the user. |
+| `last_name` | `string` | No | Last name for the user. |
+| `email` | `string` | Yes | The email address for the user. |
+| `url` | `string` | No | URL of the user. |
+| `description` | `string` | No | Description of the user. |
+| `locale` | `"" \| en_US` | No | Locale for the user. |
+| `nickname` | `string` | No | The nickname for the user. |
+| `slug` | `string` | No | An alphanumeric identifier for the user. |
+| `roles` | `string[]` | No | Roles assigned to the user. |
+| `password` | `string` | Yes | Password for the user (never included). |
+| `meta` | `object` | No | Meta fields. |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  persisted_preferences?: {
+    _modified?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`users.delete`
+
+Delete a user; WordPress needs force true for this type, which deletes it permanently
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.users.delete({ id: 3, force: true, reassign: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the user. |
+| `force` | `boolean` | No | Required to be true, as users do not support trashing. |
+| `reassign` | `number` | Yes | Reassign the deleted user's posts and links to this user ID. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### deleteMe
+
+`users.deleteMe`
+
+Delete the authenticated user's own account, reassigning their posts to another user (`reassign`, required with `force: true`)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.users.deleteMe({ force: true, reassign: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `force` | `boolean` | No | Required to be true, as users do not support trashing. |
+| `reassign` | `number` | Yes | Reassign the deleted user's posts and links to this user ID. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### get
+
+`users.get`
+
+Get one user
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.users.get({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the user. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`users.list`
+
+List users, one page at a time, with search and filters
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `page` | `number` | No | Current page of the collection. |
+| `per_page` | `number` | No | Maximum number of items to be returned in result set. |
+| `search` | `string` | No | Limit results to those matching a string. |
+| `exclude` | `number[]` | No | Ensure result set excludes specific IDs. |
+| `include` | `number[]` | No | Limit result set to specific IDs. |
+| `offset` | `number` | No | Offset the result set by a specific number of items. |
+| `order` | `asc \| desc` | No | Order sort attribute ascending or descending. |
+| `orderby` | `id \| include \| name \| registered_date \| slug \| include_slugs \| email \| url` | No | Sort collection by user attribute. |
+| `slug` | `string[]` | No | Limit result set to users with one or more specific slugs. |
+| `roles` | `string[]` | No | Limit result set to users matching at least one specific role provided. Accepts csv list or single role. |
+| `capabilities` | `string[]` | No | Limit result set to users matching at least one specific capability provided. Accepts csv list or single capability. |
+| `who` | `authors` | No | Limit result set to users who are considered authors. |
+| `has_published_posts` | `boolean \| string[]` | No | Limit result set to users who have published posts. |
+| `search_columns` | `(email \| name \| id \| username \| slug)[]` | No | Array of column names to be searched. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `unknown[]` | Yes | One page of results. |
+| `next_page` | `number \| null` | Yes | The page to ask for next: set when this page came back full (per_page entries), null once a page comes back short. |
+
+
+
+---
+
+### me
+
+`users.me`
+
+Get the user the application password belongs to: name, roles and (with context edit) email and capabilities
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.users.me({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### update
+
+`users.update`
+
+Update a user: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.users.update({ id: 12 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Unique identifier for the user. |
+| `username` | `string` | No | Login name for the user. |
+| `name` | `string` | No | Display name for the user. |
+| `first_name` | `string` | No | First name for the user. |
+| `last_name` | `string` | No | Last name for the user. |
+| `email` | `string` | No | The email address for the user. |
+| `url` | `string` | No | URL of the user. |
+| `description` | `string` | No | Description of the user. |
+| `locale` | `"" \| en_US` | No | Locale for the user. |
+| `nickname` | `string` | No | The nickname for the user. |
+| `slug` | `string` | No | An alphanumeric identifier for the user. |
+| `roles` | `string[]` | No | Roles assigned to the user. |
+| `password` | `string` | No | Password for the user (never included). |
+| `meta` | `object` | No | Meta fields. |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  persisted_preferences?: {
+    _modified?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### updateMe
+
+`users.updateMe`
+
+Update the authenticated user's own profile
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.users.updateMe({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | No | Login name for the user. |
+| `name` | `string` | No | Display name for the user. |
+| `first_name` | `string` | No | First name for the user. |
+| `last_name` | `string` | No | Last name for the user. |
+| `email` | `string` | No | The email address for the user. |
+| `url` | `string` | No | URL of the user. |
+| `description` | `string` | No | Description of the user. |
+| `locale` | `"" \| en_US` | No | Locale for the user. |
+| `nickname` | `string` | No | The nickname for the user. |
+| `slug` | `string` | No | An alphanumeric identifier for the user. |
+| `roles` | `string[]` | No | Roles assigned to the user. |
+| `password` | `string` | No | Password for the user (never included). |
+| `meta` | `object` | No | Meta fields. |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  persisted_preferences?: {
+    _modified?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## View Config
+
+### get
+
+`viewConfig.get`
+
+Get the data views configuration the admin screens use for an entity
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.viewConfig.get({ kind: 'postType', name: 'core/latest-posts' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string` | Yes | Entity kind. |
+| `name` | `string` | Yes | Entity name. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Widgets
+
+### create
+
+`widgets.create`
+
+Create a widget
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.widgets.create({ sidebar: 'sidebar-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | Unique identifier for the widget. |
+| `id_base` | `string` | No | The type of the widget. Corresponds to ID in widget-types endpoint. |
+| `sidebar` | `string` | Yes | The sidebar the widget belongs to. |
+| `instance` | `string \| object` | No | Instance settings of the widget, if supported. A string, or `{ raw }`. |
+| `form_data` | `string` | No | URL-encoded form data from the widget admin form. Used to update a widget that does not support instance. Write only. |
+
+<AccordionGroup>
+<Accordion title="instance full type">
+
+```ts
+string | {
+  encoded?: string,
+  hash?: string,
+  raw?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`widgets.delete`
+
+Delete a widget; WordPress needs force true for this type, which deletes it permanently
+
+**Risk:** `destructive`
+
+```ts
+await corsair.wordpress.api.widgets.delete({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the record. |
+| `force` | `boolean` | No | Whether to force removal of the widget, or move it to the inactive sidebar. |
+
+
+
+**Output:** `unknown \| unknown`
+
+
+---
+
+### get
+
+`widgets.get`
+
+Get one widget
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.widgets.get({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier of the record. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`widgets.list`
+
+List widgets
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.widgets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+| `sidebar` | `string` | No | The sidebar to return widgets for. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### update
+
+`widgets.update`
+
+Update a widget: only the fields you pass change
+
+**Risk:** `write`
+
+```ts
+await corsair.wordpress.api.widgets.update({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Unique identifier for the widget. |
+| `id_base` | `string` | No | The type of the widget. Corresponds to ID in widget-types endpoint. |
+| `sidebar` | `string` | No | The sidebar the widget belongs to. |
+| `instance` | `string \| object` | No | Instance settings of the widget, if supported. A string, or `{ raw }`. |
+| `form_data` | `string` | No | URL-encoded form data from the widget admin form. Used to update a widget that does not support instance. Write only. |
+
+<AccordionGroup>
+<Accordion title="instance full type">
+
+```ts
+string | {
+  encoded?: string,
+  hash?: string,
+  raw?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `unknown`
+
+
+---
+
+## Widget Types
+
+### encode
+
+`widgetTypes.encode`
+
+Encode a legacy widget's form data into the instance a widget block stores
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.widgetTypes.encode({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The widget type id. |
+| `instance` | `object` | No | Current instance settings of the widget. |
+| `form_data` | `string` | No | Serialized widget form data to encode into instance settings. |
+
+<AccordionGroup>
+<Accordion title="instance full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`widgetTypes.get`
+
+Get one widget type
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.widgetTypes.get({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The widget type id. |
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### list
+
+`widgetTypes.list`
+
+List widget types
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.widgetTypes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `context` | `view \| embed \| edit` | No | Scope under which the request is made; determines fields present in response. |
+
+
+
+**Output:** `unknown[]`
+
+
+---
+
+### render
+
+`widgetTypes.render`
+
+Render a legacy widget instance to HTML
+
+**Risk:** `read`
+
+```ts
+await corsair.wordpress.api.widgetTypes.render({ id: '12' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The widget type id. |
+| `instance` | `object` | No | Current instance settings of the widget. |
+
+<AccordionGroup>
+<Accordion title="instance full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+

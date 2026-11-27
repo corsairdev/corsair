@@ -1,0 +1,472 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from the WordPress REST index;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: WordPress
+domain: wordpress.org
+description: "Self-hosted WordPress sites (and WordPress.com sites with application passwords): posts, pages, media uploads, revisions and autosaves, categories, tags and custom taxonomies, comments, users and application passwords, site settings, plugins (install, activate, delete), themes, block templates and template parts, global styles, navigation and classic menus, widgets and sidebars, block types, patterns and fonts, search, Site Health checks, the Abilities API, batch requests and any custom post type or plugin route (209 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Each account stores three things: the site's `site_url` (the WordPress
+  address, `https://example.com` or `https://example.com/blog`, with or
+  without `/wp-json`), the `username` of the user the password belongs to,
+  and an application password as the key. Create one at Users → Profile →
+  Application Passwords (WordPress 5.6+). The site must be served over HTTPS:
+  the plugin refuses plain `http://` except for loopback hosts
+  (`localhost`, `127.0.0.1`, `[::1]`; WordPress itself also needs
+  `WP_ENVIRONMENT_TYPE` set to `local` there). Calls are sent as
+  HTTP Basic auth, so what works depends on that user's role: an
+  Administrator can manage plugins, users and settings, an Author only their
+  own posts. The site needs pretty permalinks (any setting other than Plain)
+  so `/wp-json/` routes resolve. SDK users can pass `siteUrl` and `username`
+  in the plugin options; with a stored password the site must match the
+  stored one (the password is never sent to another host), else pass `key`
+  too.
+
+  - **Lists** page with `page` and `per_page` (WordPress allows up to 100).
+  Paged lists return `{ items, next_page }`: `next_page` is set while a page
+  comes back full; step `page` until it is null (a full last page is followed
+  by an empty one). With `offset`, `next_page` is null: page by `offset`.
+  - **Content fields** such as `title`, `content` and `excerpt` take a plain
+  string when writing and come back as `{ rendered }` (plus `raw` with
+  `context: "edit"`).
+  - **Media.** `media.create` uploads a file (a public URL, or base64 with a
+  file name) as the request body, with the other fields in the query
+  string, or sideloads an external image from `url`.
+  - **Custom post types and plugin routes.** Routes this plugin doesn't name,
+  such as a `book` post type (`wp/v2/book`) or another plugin's namespace
+  (`yoast/v1`, `acf/v3`), go through `rest.get` (reads) and `rest.send`
+  (writes, marked destructive). `site.index` lists every route the site
+  serves.
+  - **Risk.** Every delete is `destructive` (posts go to the trash unless
+  `force: true`; users, terms and comments need `force`), as are installing,
+  activating and deactivating plugins, creating application passwords,
+  batch requests and running abilities.
+  - WooCommerce stores use the separate `woocommerce` plugin.
+examples:
+  read:
+    path: posts.list
+    title: List the latest posts
+    args: {"per_page": 5, "status": ["publish"], "orderby": "date", "order": "desc"}
+  write:
+    path: posts.create
+    title: Create a draft post
+    args: {"title": "Launch notes", "content": "<p>What shipped this week.</p>", "status": "draft", "categories": [1]}
+apiExamples:
+  abilities.categories.get:
+    args: {"slug": "hello-world"}
+  abilities.categories.list:
+    args: {}
+  abilities.get:
+    args: {"name": "core/latest-posts"}
+  abilities.list:
+    args: {}
+  abilities.run:
+    args: {"name": "core/latest-posts"}
+  abilities.runDestructive:
+    args: {"name": "core/latest-posts"}
+  abilities.runReadonly:
+    args: {"name": "core/latest-posts"}
+  batch.run:
+    args: {"requests": [{"method": "POST", "path": "/wp/v2/posts", "body": {"title": "Batch post", "status": "draft"}}]}
+  blockDirectory.search:
+    args: {"term": "example"}
+  blockEditor.export:
+    args: {}
+  blockEditor.navigationFallback:
+    args: {}
+  blockEditor.urlDetails:
+    args: {"url": "https://example.com/hello-world/"}
+  blockPatterns.categories:
+    args: {}
+  blockPatterns.list:
+    args: {}
+  blockRenderer.render:
+    args: {"name": "core/latest-posts", "attributes": {"postsToShow": 3}}
+  blockTypes.get:
+    args: {"namespace": "core", "name": "core/latest-posts"}
+  blockTypes.list:
+    args: {}
+  blockTypes.listByNamespace:
+    args: {"namespace": "core"}
+  blocks.autosaves.create:
+    args: {"id": 12}
+  blocks.autosaves.get:
+    args: {"parent": 12, "id": 12}
+  blocks.autosaves.list:
+    args: {"id": 12}
+  blocks.create:
+    args: {}
+  blocks.delete:
+    args: {"id": 12}
+  blocks.get:
+    args: {"id": 12}
+  blocks.list:
+    args: {}
+  blocks.revisions.delete:
+    args: {"parent": 12, "id": 12}
+  blocks.revisions.get:
+    args: {"parent": 12, "id": 12}
+  blocks.revisions.list:
+    args: {"parent": 12}
+  blocks.update:
+    args: {"id": 12}
+  categories.create:
+    args: {"name": "Releases"}
+  categories.delete:
+    args: {"id": 12}
+  categories.get:
+    args: {"id": 12}
+  categories.list:
+    args: {}
+  categories.update:
+    args: {"id": 12}
+  comments.create:
+    args: {"post": 12, "content": "Thanks for the write-up."}
+  comments.delete:
+    args: {"id": 12}
+  comments.get:
+    args: {"id": 12}
+  comments.list:
+    args: {}
+  comments.update:
+    args: {"id": 12}
+  fontCollections.get:
+    args: {"slug": "hello-world"}
+  fontCollections.list:
+    args: {}
+  fontFamilies.create:
+    args: {"font_family_settings": "{\"name\":\"Inter\",\"slug\":\"inter\",\"fontFamily\":\"Inter, sans-serif\"}"}
+  fontFamilies.delete:
+    args: {"id": 12}
+  fontFamilies.fontFaces.create:
+    args: {"font_family_id": 3, "font_face_settings": "{\"fontFamily\":\"Inter\",\"fontStyle\":\"normal\",\"fontWeight\":\"400\",\"src\":\"https://example.com/fonts/inter.woff2\"}"}
+  fontFamilies.fontFaces.delete:
+    args: {"font_family_id": 3, "id": 12}
+  fontFamilies.fontFaces.get:
+    args: {"font_family_id": 3, "id": 12}
+  fontFamilies.fontFaces.list:
+    args: {"font_family_id": 3}
+  fontFamilies.get:
+    args: {"id": 12}
+  fontFamilies.list:
+    args: {}
+  fontFamilies.update:
+    args: {"id": 12, "font_family_settings": "{\"name\":\"Inter\",\"slug\":\"inter\",\"fontFamily\":\"Inter, sans-serif\"}"}
+  globalStyles.get:
+    args: {"id": "12"}
+  globalStyles.revisions.get:
+    args: {"parent": 12, "id": 12}
+  globalStyles.revisions.list:
+    args: {"parent": 12}
+  globalStyles.theme:
+    args: {"stylesheet": "twentytwentyfive"}
+  globalStyles.themeVariations:
+    args: {"stylesheet": "twentytwentyfive"}
+  globalStyles.update:
+    args: {"id": "12"}
+  iconCollections.get:
+    args: {"slug": "hello-world"}
+  iconCollections.list:
+    args: {}
+  icons.get:
+    args: {"name": "core/latest-posts"}
+  icons.list:
+    args: {}
+  icons.listByCollection:
+    args: {"collection": "core"}
+  media.create:
+    args: {"file": {"url": "https://example.com/photo.png"}, "title": "Team photo", "alt_text": "The team at the offsite"}
+  media.delete:
+    args: {"id": 12}
+  media.edit:
+    args: {"id": 12, "src": "https://example.com/wp-content/uploads/2026/11/photo.png"}
+  media.finalize:
+    args: {"id": 12}
+  media.get:
+    args: {"id": 12}
+  media.list:
+    args: {}
+  media.postProcess:
+    args: {"id": 12, "action": "create-image-subsizes"}
+  media.sideload:
+    args: {"id": 12, "image_size": "thumbnail", "file": {"base64": "iVBORw0KGgo=", "filename": "photo-150x150.png", "contentType": "image/png"}}
+  media.update:
+    args: {"id": 12}
+  menuItems.autosaves.create:
+    args: {"id": 12}
+  menuItems.autosaves.get:
+    args: {"parent": 12, "id": 12}
+  menuItems.autosaves.list:
+    args: {"id": 12}
+  menuItems.create:
+    args: {}
+  menuItems.delete:
+    args: {"id": 12}
+  menuItems.get:
+    args: {"id": 12}
+  menuItems.list:
+    args: {}
+  menuItems.update:
+    args: {"id": 12}
+  menuLocations.get:
+    args: {"location": "primary"}
+  menuLocations.list:
+    args: {}
+  menus.create:
+    args: {"name": "core/latest-posts"}
+  menus.delete:
+    args: {"id": 12}
+  menus.get:
+    args: {"id": 12}
+  menus.list:
+    args: {}
+  menus.update:
+    args: {"id": 12}
+  navigation.autosaves.create:
+    args: {"id": 12}
+  navigation.autosaves.get:
+    args: {"parent": 12, "id": 12}
+  navigation.autosaves.list:
+    args: {"id": 12}
+  navigation.create:
+    args: {}
+  navigation.delete:
+    args: {"id": 12}
+  navigation.get:
+    args: {"id": 12}
+  navigation.list:
+    args: {}
+  navigation.revisions.delete:
+    args: {"parent": 12, "id": 12}
+  navigation.revisions.get:
+    args: {"parent": 12, "id": 12}
+  navigation.revisions.list:
+    args: {"parent": 12}
+  navigation.update:
+    args: {"id": 12}
+  oembed.embed:
+    args: {"url": "https://example.com/hello-world/"}
+  oembed.proxy:
+    args: {"url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}
+  pages.autosaves.create:
+    args: {"id": 12}
+  pages.autosaves.get:
+    args: {"parent": 12, "id": 12}
+  pages.autosaves.list:
+    args: {"id": 12}
+  pages.create:
+    args: {"title": "About", "content": "<p>About us.</p>", "status": "draft"}
+  pages.delete:
+    args: {"id": 12}
+  pages.get:
+    args: {"id": 12}
+  pages.list:
+    args: {}
+  pages.revisions.delete:
+    args: {"parent": 12, "id": 12}
+  pages.revisions.get:
+    args: {"parent": 12, "id": 12}
+  pages.revisions.list:
+    args: {"parent": 12}
+  pages.update:
+    args: {"id": 12}
+  patternCategories.create:
+    args: {"name": "core/latest-posts"}
+  patternCategories.delete:
+    args: {"id": 12}
+  patternCategories.get:
+    args: {"id": 12}
+  patternCategories.list:
+    args: {}
+  patternCategories.update:
+    args: {"id": 12}
+  patternDirectory.search:
+    args: {}
+  plugins.delete:
+    args: {"plugin": "akismet/akismet"}
+  plugins.get:
+    args: {"plugin": "akismet/akismet"}
+  plugins.install:
+    args: {"slug": "akismet", "status": "inactive"}
+  plugins.list:
+    args: {}
+  plugins.update:
+    args: {"plugin": "akismet/akismet", "status": "active"}
+  posts.autosaves.create:
+    args: {"id": 12}
+  posts.autosaves.get:
+    args: {"parent": 12, "id": 12}
+  posts.autosaves.list:
+    args: {"id": 12}
+  posts.create:
+    args: {"title": "Launch notes", "content": "<p>What shipped this week.</p>", "status": "draft", "categories": [1]}
+  posts.delete:
+    args: {"id": 12}
+  posts.get:
+    args: {"id": 12}
+  posts.list:
+    args: {"per_page": 5, "status": ["publish"], "orderby": "date", "order": "desc"}
+  posts.revisions.delete:
+    args: {"parent": 12, "id": 12}
+  posts.revisions.get:
+    args: {"parent": 12, "id": 12}
+  posts.revisions.list:
+    args: {"parent": 12}
+  posts.update:
+    args: {"id": 12, "status": "publish"}
+  rest.get:
+    args: {"route": "wp/v2/book", "query": {"per_page": 5}}
+  rest.send:
+    args: {"route": "wp/v2/book", "method": "POST", "body": {"title": "Dune", "status": "draft"}}
+  search.query:
+    args: {"search": "release notes", "type": "post", "per_page": 5}
+  settings.get:
+    args: {}
+  settings.update:
+    args: {"title": "Corsair Test Site", "posts_per_page": 10}
+  sidebars.get:
+    args: {"id": "12"}
+  sidebars.list:
+    args: {}
+  sidebars.update:
+    args: {"id": "12"}
+  site.index:
+    args: {}
+  siteHealth.authorizationHeader:
+    args: {}
+  siteHealth.backgroundUpdates:
+    args: {}
+  siteHealth.directorySizes:
+    args: {}
+  siteHealth.dotorgCommunication:
+    args: {}
+  siteHealth.httpsStatus:
+    args: {}
+  siteHealth.loopbackRequests:
+    args: {}
+  siteHealth.pageCache:
+    args: {}
+  statuses.get:
+    args: {"status": "publish"}
+  statuses.list:
+    args: {}
+  tags.create:
+    args: {"name": "changelog"}
+  tags.delete:
+    args: {"id": 12}
+  tags.get:
+    args: {"id": 12}
+  tags.list:
+    args: {}
+  tags.update:
+    args: {"id": 12}
+  taxonomies.get:
+    args: {"taxonomy": "category"}
+  taxonomies.list:
+    args: {}
+  templateParts.autosaves.create:
+    args: {"id": "12"}
+  templateParts.autosaves.get:
+    args: {"parent": "12", "id": 12}
+  templateParts.autosaves.list:
+    args: {"id": "12"}
+  templateParts.create:
+    args: {"slug": "hello-world"}
+  templateParts.delete:
+    args: {"id": "12"}
+  templateParts.get:
+    args: {"id": "12"}
+  templateParts.list:
+    args: {}
+  templateParts.lookup:
+    args: {"slug": "hello-world"}
+  templateParts.revisions.delete:
+    args: {"parent": "12", "id": 12}
+  templateParts.revisions.get:
+    args: {"parent": "12", "id": 12}
+  templateParts.revisions.list:
+    args: {"parent": "12"}
+  templateParts.update:
+    args: {"id": "12"}
+  templates.autosaves.create:
+    args: {"id": "12"}
+  templates.autosaves.get:
+    args: {"parent": "12", "id": 12}
+  templates.autosaves.list:
+    args: {"id": "12"}
+  templates.create:
+    args: {"slug": "hello-world"}
+  templates.delete:
+    args: {"id": "12"}
+  templates.get:
+    args: {"id": "12"}
+  templates.list:
+    args: {}
+  templates.lookup:
+    args: {"slug": "hello-world"}
+  templates.revisions.delete:
+    args: {"parent": "12", "id": 12}
+  templates.revisions.get:
+    args: {"parent": "12", "id": 12}
+  templates.revisions.list:
+    args: {"parent": "12"}
+  templates.update:
+    args: {"id": "12"}
+  themes.get:
+    args: {"stylesheet": "twentytwentyfive"}
+  themes.list:
+    args: {}
+  types.get:
+    args: {"type": "post"}
+  types.list:
+    args: {}
+  users.applicationPasswords.create:
+    args: {"user_id": "me", "name": "Corsair agent"}
+  users.applicationPasswords.delete:
+    args: {"user_id": 1, "uuid": "6d8a6a1c-1a7b-4b2b-9d4e-8a1f2c3b4d5e"}
+  users.applicationPasswords.deleteAll:
+    args: {"user_id": 1}
+  users.applicationPasswords.get:
+    args: {"user_id": 1, "uuid": "6d8a6a1c-1a7b-4b2b-9d4e-8a1f2c3b4d5e"}
+  users.applicationPasswords.introspect:
+    args: {"user_id": 1}
+  users.applicationPasswords.list:
+    args: {"user_id": 1}
+  users.applicationPasswords.update:
+    args: {"user_id": 1, "uuid": "6d8a6a1c-1a7b-4b2b-9d4e-8a1f2c3b4d5e"}
+  users.create:
+    args: {"username": "grace", "email": "grace@example.com", "password": "correct-horse-battery-staple", "roles": ["author"]}
+  users.delete:
+    args: {"id": 3, "force": true, "reassign": 1}
+  users.deleteMe:
+    args: {"force": true, "reassign": 1}
+  users.get:
+    args: {"id": 12}
+  users.list:
+    args: {}
+  users.me:
+    args: {}
+  users.update:
+    args: {"id": 12}
+  users.updateMe:
+    args: {}
+  viewConfig.get:
+    args: {"kind": "postType", "name": "core/latest-posts"}
+  widgetTypes.encode:
+    args: {"id": "12"}
+  widgetTypes.get:
+    args: {"id": "12"}
+  widgetTypes.list:
+    args: {}
+  widgetTypes.render:
+    args: {"id": "12"}
+  widgets.create:
+    args: {"sidebar": "sidebar-1"}
+  widgets.delete:
+    args: {"id": "12"}
+  widgets.get:
+    args: {"id": "12"}
+  widgets.list:
+    args: {}
+  widgets.update:
+    args: {"id": "12"}
