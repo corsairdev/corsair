@@ -152,18 +152,20 @@ const CreateSandboxInput = z.object({
 		.boolean()
 		.optional()
 		.describe(
-			'Allow sandboxes.snapshotMemory on this sandbox (no GPUs or network file systems).',
+			'Allow sandboxes.snapshotMemory on this sandbox (no GPUs or Volumes; not with enableExitSnapshot).',
 		),
 	enableExitSnapshot: z
 		.boolean()
 		.optional()
 		.describe(
-			'Capture the filesystem when the sandbox exits (read it with sandboxes.getExitSnapshot).',
+			'Capture the filesystem when the sandbox exits (read it with sandboxes.getExitSnapshot). Not with enableMemorySnapshot.',
 		),
 	persistent: z
 		.boolean()
 		.optional()
-		.describe('Experimental: allow sandboxes.pause and sandboxes.resume.'),
+		.describe(
+			'Experimental: allow sandboxes.pause and sandboxes.resume. Not enabled on every workspace (Modal answers 403); takes no timeoutMs or idleTimeoutMs.',
+		),
 	backend: z
 		.enum(['default', 'v2'])
 		.optional()
@@ -697,7 +699,7 @@ export const snapshotSandboxMemory = defineOperation({
 	group: 'sandboxes',
 	name: 'snapshotMemory',
 	description:
-		'Snapshot filesystem and memory of a sandbox created with enableMemorySnapshot; restore it with sandboxes.restoreSnapshot.',
+		'Snapshot filesystem and memory of a sandbox created with enableMemorySnapshot (and no Volumes). The sandbox stops once the snapshot is taken; sandboxes.restoreSnapshot starts a copy.',
 	riskLevel: 'write',
 	input: SandboxIdInput,
 	output: z.object({ snapshotId: z.string() }),
@@ -802,7 +804,7 @@ export const updateSandboxNetworkPolicy = defineOperation({
 	group: 'sandboxes',
 	name: 'updateNetworkPolicy',
 	description:
-		'Replace the outbound allowlists of a running sandbox. Pass both lists; [] blocks that dimension, ["0.0.0.0/0"] or ["*"] allows all.',
+		'Replace the outbound allowlists of a running sandbox. Pass both lists; [] blocks that dimension, ["0.0.0.0/0"] or ["*"] allows all. Only works on a sandbox created with outboundCidrAllowlist/outboundDomainAllowlist (to start open, create it with ["0.0.0.0/0"] and ["*"]); Modal answers 409 otherwise.',
 	riskLevel: 'write',
 	input: SandboxIdInput.extend({
 		outboundCidrAllowlist: z.array(z.string()),
@@ -840,7 +842,7 @@ export const pauseSandbox = defineOperation({
 	group: 'sandboxes',
 	name: 'pause',
 	description:
-		'Stop the container of a persistent sandbox, keeping its state for sandboxes.resume.',
+		'Stop the container of a persistent sandbox, keeping its state for sandboxes.resume. Persistent sandboxes are not enabled on every workspace yet.',
 	riskLevel: 'write',
 	input: SandboxIdInput,
 	output: OkSchema,

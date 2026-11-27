@@ -1,8 +1,10 @@
 // Live suite against a real Modal workspace. Needs MODAL_TOKEN_ID and
-// MODAL_TOKEN_SECRET (optional MODAL_LIVE_ENVIRONMENT). It creates one small
-// sandbox (0.125 CPU, 128 MiB, 2 minute timeout), a Secret, a Volume, a Queue
-// and a Dict with a run-specific name, and deletes all of them at the end.
-// Optional MODAL_LIVE_APP + MODAL_LIVE_FUNCTION name a deployed function to call.
+// MODAL_TOKEN_SECRET (optional MODAL_LIVE_ENVIRONMENT). Everything it makes
+// has a run-specific name and is deleted at the end: a few short sandboxes
+// (0.125 CPU, 128 MiB, 2 minute timeout, alpine), two Volumes, a Secret, a
+// Queue, a Dict, an environment and a small built Image.
+// MODAL_LIVE_APP=corsair-live-fn (deploy tests/live_app.py first) also runs
+// the functions, classes and functionCalls steps.
 import { modalEndpointsNested } from './endpoints';
 
 jest.mock('corsair/core', () => ({
@@ -82,11 +84,43 @@ const appName = run;
 const names = {
 	secret: `${run}-secret`,
 	volume: `${run}-vol`,
+	volumeV1: `${run}-vol1`,
 	queue: `${run}-queue`,
 	dict: `${run}-dict`,
+	environment: `${run}-env`,
+	image: `${run}-img`,
 };
 let sandboxId: string | undefined;
 let snapshotImageId: string | undefined;
+let builtImageId: string | undefined;
+// Sandboxes and images later steps make; afterAll removes any left over.
+const extraSandboxes = new Set<string>();
+const extraImages = new Set<string>();
+
+// One shell command's stdout in a running sandbox.
+async function sh(id: string, script: string): Promise<string> {
+	const out = await call<{ stdout: string }>('sandboxes.exec', {
+		sandboxId: id,
+		command: ['sh', '-c', script],
+	});
+	return out.stdout;
+}
+
+async function createExtraSandbox(input: Record<string, unknown>) {
+	const created = await call<{ sandboxId: string; tunnels?: unknown[] }>(
+		'sandboxes.create',
+		{
+			appName,
+			image: { registry: 'alpine:3.21' },
+			cpu: 0.125,
+			memoryMiB: 128,
+			timeoutMs: 120_000,
+			...input,
+		},
+	);
+	extraSandboxes.add(created.sandboxId);
+	return created;
+}
 
 describeLive('modal live', () => {
 	jest.setTimeout(240_000);
@@ -94,12 +128,16 @@ describeLive('modal live', () => {
 	afterAll(async () => {
 		const cleanup: [string, Record<string, unknown>][] = [];
 		if (sandboxId) cleanup.push(['sandboxes.terminate', { sandboxId }]);
-		if (snapshotImageId) {
-			cleanup.push(['images.delete', { imageId: snapshotImageId }]);
+		for (const id of extraSandboxes) {
+			cleanup.push(['sandboxes.terminate', { sandboxId: id }]);
+		}
+		for (const imageId of [snapshotImageId, builtImageId, ...extraImages]) {
+			if (imageId) cleanup.push(['images.delete', { imageId }]);
 		}
 		cleanup.push(
 			['secrets.delete', { name: names.secret, allowMissing: true }],
 			['volumes.delete', { name: names.volume, allowMissing: true }],
+			['volumes.delete', { name: names.volumeV1, allowMissing: true }],
 			['queues.delete', { name: names.queue, allowMissing: true }],
 			['dicts.delete', { name: names.dict, allowMissing: true }],
 			['apps.stop', { name: appName }],
@@ -126,6 +164,13 @@ describeLive('modal live', () => {
 		);
 		expect(list.environments.map((e) => e.name)).toContain(env.name);
 		await call('environments.get', { name: env.name });
+
+		await call('environments.create', { name: names.environment });
+		await expect(
+			call('environments.get', { name: names.environment }),
+		).resolves.toMatchObject({ name: names.environment });
+		await call('environments.delete', { name: names.environment });
+		await expectStatus('environments.get', { name: names.environment }, 404);
 	});
 
 	it('apps', async () => {
@@ -268,6 +313,7 @@ describeLive('modal live', () => {
 			sandboxId,
 			command: ['sh', '-c', 'echo vol > /data/live.txt && sync'],
 		});
+		await call('sandboxes.reloadVolumes', { sandboxId });
 
 		await call('sandboxes.setTags', {
 			sandboxId,
@@ -339,6 +385,14 @@ describeLive('modal live', () => {
 		await expect(
 			call('queues.get', { name: names.queue, timeoutMs: 0 }),
 		).resolves.toEqual({ values: [] });
+
+		// Integers beyond 32 bits and bytes keep their value (the SDK's own
+		// pickler truncates the former).
+		const wide = [1_732_700_000_000, -(2 ** 40), { $bytes: 'AP8=' }];
+		await call('queues.put', { name: names.queue, values: wide });
+		await expect(
+			call('queues.get', { name: names.queue, count: 3 }),
+		).resolves.toEqual({ values: wide });
 	});
 
 	it('dicts', async () => {
@@ -383,16 +437,24 @@ describeLive('modal live', () => {
 			limit: 200,
 		});
 		expect(list.dicts.map((d) => d.name)).toContain(names.dict);
+		const wide = {
+			ts: 1_732_700_000_000,
+			n: -(2 ** 40),
+			b: { $bytes: 'AP8=' },
+		};
+		await call('dicts.put', { name: names.dict, key: 2 ** 40, value: wide });
+		await expect(
+			call('dicts.get', { name: names.dict, key: 2 ** 40 }),
+		).resolves.toEqual({ found: true, value: wide });
 		await call('dicts.clear', { name: names.dict });
 		await expect(call('dicts.len', { name: names.dict })).resolves.toEqual({
 			length: 0,
 		});
 	});
 
-	it('functions', async () => {
+	it('functions, classes and function calls', async () => {
 		const liveApp = process.env.MODAL_LIVE_APP;
-		const liveFunction = process.env.MODAL_LIVE_FUNCTION;
-		if (!liveApp || !liveFunction) {
+		if (!liveApp) {
 			await expectStatus(
 				'functions.get',
 				{ appName, name: 'does_not_exist' },
@@ -400,33 +462,335 @@ describeLive('modal live', () => {
 			);
 			return;
 		}
-		const target = { appName: liveApp, name: liveFunction };
-		await call('functions.get', target);
-		await call('functions.info', target);
-		const result = await call<{ status: string }>('functions.call', {
-			...target,
-			args: [3],
+		const target = { appName: liveApp, name: 'square' };
+		await expect(call('functions.get', target)).resolves.toMatchObject({
+			functionId: expect.stringMatching(/^fu-/),
 		});
-		expect(result.status).toBe('completed');
+		await expect(call('functions.info', target)).resolves.toMatchObject({
+			cpu: 0.125,
+			memoryMiB: 128,
+		});
+		await expect(
+			call('functions.call', { ...target, args: [3] }),
+		).resolves.toMatchObject({ status: 'completed', result: 9 });
+		await expect(
+			call('functions.call', { ...target, kwargs: { x: 5 } }),
+		).resolves.toMatchObject({ status: 'completed', result: 25 });
 		const spawned = await call<{ functionCallId: string }>('functions.spawn', {
 			...target,
 			args: [4],
 		});
-		await call('functionCalls.get', {
+		await expect(
+			call('functionCalls.get', {
+				functionCallId: spawned.functionCallId,
+				waitMs: 60_000,
+			}),
+		).resolves.toMatchObject({ status: 'completed', result: 16 });
+		await call('functionCalls.logs', {
 			functionCallId: spawned.functionCallId,
-			waitMs: 60_000,
+			entries: 10,
 		});
+
+		// A call still running after waitMs comes back pending; cancel it.
+		const slow = { appName: liveApp, name: 'slow' };
+		await expect(
+			call('functions.call', { ...slow, args: [20], waitMs: 1000 }),
+		).resolves.toMatchObject({ status: 'pending' });
+		const longCall = await call<{ functionCallId: string }>('functions.spawn', {
+			...slow,
+			args: [30],
+		});
+		await call('functionCalls.cancel', {
+			functionCallId: longCall.functionCallId,
+			terminateContainers: true,
+		});
+		// Cancelling is asynchronous: the call reads "pending" until Modal
+		// records it, then functionCalls.get fails with a RemoteError (502).
+		let cancelled: { status?: number; message?: string } | undefined;
+		for (let i = 0; i < 10 && !cancelled; i++) {
+			cancelled = await tree.functionCalls
+				?.get?.(ctx, {
+					functionCallId: longCall.functionCallId,
+					waitMs: 2000,
+				})
+				.then(
+					() => undefined,
+					(e: { status?: number; message?: string }) => e,
+				);
+		}
+		results.push({
+			op: 'functionCalls.get (cancelled)',
+			ok: cancelled?.status === 502,
+			note: `got ${cancelled?.status}: ${cancelled?.message?.slice(0, 100)}`,
+		});
+		expect(cancelled?.status).toBe(502);
+
 		await call('functions.currentStats', target);
 		await call('functions.stats', target);
 		await call('functions.logs', { ...target, entries: 10 });
+		const hourAgo = new Date(Date.now() - 3_600_000).toISOString();
+		await call('functions.fetchLogs', { ...target, since: hourAgo });
+		await call('functions.metricsSchema', target);
+		await call('functions.metrics', { ...target, since: hourAgo });
+		await expect(
+			call('functions.updateAutoscaler', {
+				...target,
+				maxContainers: 1,
+				scaledownWindowMs: 2000,
+			}),
+		).resolves.toMatchObject({ maxContainers: 1, scaledownWindowMs: 2000 });
+
+		const greeter = { appName: liveApp, className: 'Greeter', method: 'greet' };
+		await expect(
+			call('classes.call', { ...greeter, args: ['corsair'] }),
+		).resolves.toMatchObject({ status: 'completed', result: 'hello corsair' });
+		await expect(
+			call('classes.call', {
+				...greeter,
+				parameters: { greeting: 'hi' },
+				kwargs: { name: 'ops' },
+			}),
+		).resolves.toMatchObject({ result: 'hi ops' });
+		const classCall = await call<{ functionCallId: string }>('classes.spawn', {
+			...greeter,
+			args: ['spawned'],
+		});
+		await expect(
+			call('functionCalls.get', {
+				functionCallId: classCall.functionCallId,
+				waitMs: 60_000,
+			}),
+		).resolves.toMatchObject({ result: 'hello spawned' });
+	});
+
+	it('images: build, publish, look up by name', async () => {
+		await expectStatus('images.getByName', { name: names.image }, 404);
+		const built = await call<{ imageId: string }>('images.build', {
+			appName,
+			image: {
+				registry: 'alpine:3.21',
+				dockerfileCommands: [
+					'RUN apk add --no-cache busybox-extras && mkdir -p /www && echo hi > /www/index.html',
+				],
+			},
+		});
+		builtImageId = built.imageId;
+		expect(builtImageId).toMatch(/^im-/);
+		await call('images.publish', { imageId: builtImageId, name: names.image });
+		await expect(
+			call('images.getByName', { name: names.image }),
+		).resolves.toEqual({ imageId: builtImageId });
+	});
+
+	it('sandbox: ports, connect tokens, directory snapshots, network policy', async () => {
+		expect(builtImageId).toBeTruthy();
+		const name = `${run}-web`;
+		const web = await createExtraSandbox({
+			name,
+			image: { publishedName: names.image },
+			encryptedPorts: [8080],
+			// Starting open with explicit allow-all lists is what lets
+			// updateNetworkPolicy restrict it later.
+			outboundCidrAllowlist: ['0.0.0.0/0'],
+			outboundDomainAllowlist: ['*'],
+			command: ['busybox-extras', 'httpd', '-f', '-p', '8080', '-h', '/www'],
+		});
+		const id = web.sandboxId;
+		expect(web.tunnels).toHaveLength(1);
+		await call('sandboxes.waitUntilReady', {
+			sandboxId: id,
+			timeoutMs: 60_000,
+		});
+		await expect(
+			call('sandboxes.getByName', { appName, name }),
+		).resolves.toMatchObject({ sandboxId: id, running: true });
+
+		const { tunnels } = await call<{ tunnels: { url: string }[] }>(
+			'sandboxes.tunnels',
+			{ sandboxId: id },
+		);
+		const page = await fetch(tunnels[0]?.url ?? '');
+		expect([page.status, (await page.text()).trim()]).toEqual([200, 'hi']);
+		const connect = await call<{ url: string; token: string }>(
+			'sandboxes.createConnectToken',
+			{ sandboxId: id, port: 8080 },
+		);
+		const viaToken = await fetch(connect.url, {
+			headers: { Authorization: `Bearer ${connect.token}` },
+		});
+		expect(viaToken.status).toBe(200);
+
+		await sh(id, 'mkdir -p /snap && echo snapped > /snap/f.txt');
+		const dir = await call<{ imageId: string }>('sandboxes.snapshotDirectory', {
+			sandboxId: id,
+			path: '/snap',
+			ttlMs: 3_600_000,
+		});
+		extraImages.add(dir.imageId);
+		await call('sandboxes.mountImage', {
+			sandboxId: id,
+			path: '/mnt/snap',
+			imageId: dir.imageId,
+		});
+		expect(await sh(id, 'cat /mnt/snap/f.txt')).toBe('snapped\n');
+		await call('sandboxes.unmountImage', { sandboxId: id, path: '/mnt/snap' });
+		await call('sandboxes.mountImage', { sandboxId: id, path: '/mnt/empty' });
+
+		const probe =
+			'for h in example.com modal.com; do wget -q -T 5 -O /dev/null https://$h && echo $h-ok || echo $h-blocked; done';
+		expect(await sh(id, probe)).toBe('example.com-ok\nmodal.com-ok\n');
+		await call('sandboxes.updateNetworkPolicy', {
+			sandboxId: id,
+			outboundCidrAllowlist: [],
+			outboundDomainAllowlist: ['example.com'],
+		});
+		expect(await sh(id, probe)).toBe('example.com-ok\nmodal.com-blocked\n');
+		await call('sandboxes.fetchLogs', {
+			sandboxId: id,
+			since: new Date(Date.now() - 600_000).toISOString(),
+		});
+
+		await call('sandboxes.terminate', { sandboxId: id });
+		await call('images.delete', { imageId: dir.imageId });
+		extraImages.delete(dir.imageId);
+	});
+
+	it('sandbox: memory snapshot and restore', async () => {
+		const source = await createExtraSandbox({
+			enableMemorySnapshot: true,
+			command: ['sleep', '110'],
+		});
+		const id = source.sandboxId;
+		await call('sandboxes.waitUntilReady', {
+			sandboxId: id,
+			timeoutMs: 60_000,
+		});
+		await sh(id, 'echo in-memory-snapshot > /tmp/m.txt');
+		const { snapshotId } = await call<{ snapshotId: string }>(
+			'sandboxes.snapshotMemory',
+			{ sandboxId: id },
+		);
+		expect(snapshotId).toMatch(/^sn-/);
+		// Taking the snapshot stops the sandbox.
+		await expect(
+			call('sandboxes.get', { sandboxId: id }),
+		).resolves.toMatchObject({ running: false });
+		const restored = await call<{ sandboxId: string }>(
+			'sandboxes.restoreSnapshot',
+			{ snapshotId, name: null },
+		);
+		extraSandboxes.add(restored.sandboxId);
+		await expect(
+			call('sandboxes.get', { sandboxId: restored.sandboxId }),
+		).resolves.toMatchObject({ running: true });
+		expect(await sh(restored.sandboxId, 'cat /tmp/m.txt')).toBe(
+			'in-memory-snapshot\n',
+		);
+		await call('sandboxes.terminate', { sandboxId: restored.sandboxId });
+		await call('sandboxes.terminate', { sandboxId: id });
+	});
+
+	it('sandbox: exit snapshot, v1 volume files', async () => {
+		await call('volumes.create', { name: names.volumeV1, version: 1 });
+		const job = await createExtraSandbox({
+			enableExitSnapshot: true,
+			timeoutMs: 60_000,
+			volumes: { '/data': { name: names.volumeV1 } },
+			command: [
+				'sh',
+				'-c',
+				'echo v1 > /data/v1.txt && sync && echo done > /done.txt',
+			],
+		});
+		await expect(
+			call('sandboxes.wait', { sandboxId: job.sandboxId, timeoutMs: 60_000 }),
+		).resolves.toMatchObject({ running: false, exitCode: 0 });
+		const exit = await call<{ imageId: string }>('sandboxes.getExitSnapshot', {
+			sandboxId: job.sandboxId,
+		});
+		expect(exit.imageId).toMatch(/^im-/);
+		await call('images.delete', { imageId: exit.imageId });
+
+		const files = await call<{ entries: { path: string }[] }>(
+			'volumes.listFiles',
+			{ name: names.volumeV1 },
+		);
+		expect(files.entries.map((e) => e.path)).toEqual(['v1.txt']);
+		await call('volumes.removeFile', { name: names.volumeV1, path: 'v1.txt' });
+		await expect(
+			call('volumes.listFiles', { name: names.volumeV1 }),
+		).resolves.toMatchObject({ entries: [] });
+		await call('volumes.delete', { name: names.volumeV1 });
+	});
+
+	it('sandbox: V2 backend names, persistent sandboxes', async () => {
+		const v2 = await createExtraSandbox({
+			backend: 'v2',
+			command: ['sleep', '110'],
+		});
+		await call('sandboxes.waitUntilReady', {
+			sandboxId: v2.sandboxId,
+			timeoutMs: 60_000,
+		});
+		await call('sandboxes.setName', {
+			sandboxId: v2.sandboxId,
+			name: `${run}-v2`,
+		});
+		await expect(
+			call('sandboxes.getByName', {
+				appName,
+				name: `${run}-v2`,
+				backend: 'v2',
+			}),
+		).resolves.toMatchObject({ sandboxId: v2.sandboxId, running: true });
+		await call('sandboxes.terminate', { sandboxId: v2.sandboxId });
+
+		// Persistent sandboxes (pause/resume) are not on every workspace yet.
+		const persistent = await tree.sandboxes
+			?.create?.(ctx, {
+				appName,
+				backend: 'v2',
+				persistent: true,
+				image: { registry: 'alpine:3.21' },
+				cpu: 0.125,
+				memoryMiB: 128,
+				command: ['sleep', '110'],
+			})
+			.catch((e: { status?: number; message?: string }) => e);
+		const refused = (persistent as { status?: number }).status === 403;
+		results.push({
+			op: 'sandboxes.create (persistent)',
+			ok: true,
+			note: refused
+				? `403 on this workspace: ${(persistent as { message?: string }).message?.slice(0, 100)}`
+				: 'created',
+		});
+		if (refused) return;
+		const pid = (persistent as { sandboxId: string }).sandboxId;
+		extraSandboxes.add(pid);
+		await call('sandboxes.waitUntilReady', {
+			sandboxId: pid,
+			timeoutMs: 60_000,
+		});
+		await call('sandboxes.pause', { sandboxId: pid });
+		await call('sandboxes.resume', { sandboxId: pid });
+		expect(await sh(pid, 'echo resumed')).toBe('resumed\n');
+		await call('sandboxes.terminate', { sandboxId: pid });
 	});
 
 	it('errors', async () => {
+		// A malformed id is a 400; a well-formed one that does not exist a 404.
 		await expectStatus(
 			'sandboxes.get',
 			{ sandboxId: 'sb-doesnotexist000000000' },
+			400,
+		);
+		await expectStatus(
+			'sandboxes.get',
+			{ sandboxId: 'sb-0000000000000000000000' },
 			404,
 		);
+		await expectStatus('proxies.get', { name: `${run}-proxy` }, 404);
 		await expectStatus('volumes.get', { name: `${run}-missing` }, 404);
 		await expectStatus('dicts.len', { name: `${run}-missing` }, 404);
 		await expectStatus('queues.len', { name: `${run}-missing` }, 404);
