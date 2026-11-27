@@ -1,4 +1,4 @@
-import type { SegmentContext, SegmentEndpoints } from '..';
+import type { SegmentEndpoints } from '..';
 import { call } from './call';
 import {
 	SegmentEndpointInputSchemas as Inputs,

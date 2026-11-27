@@ -1,3 +1,4 @@
+import { SEGMENT_DEFAULT_PAGE_SIZE } from './client';
 import {
 	Catalog,
 	Destinations,
@@ -8,24 +9,20 @@ import {
 	Warehouses,
 	Workspaces,
 } from './endpoints';
-import { SEGMENT_DEFAULT_PAGE_SIZE } from './client';
 import {
 	DESTINATION,
 	DESTINATION_METADATA,
-	FUNCTION,
+	errorBody,
+	forbiddenBody,
 	PAGINATION,
 	REGULATION,
 	REGULATION_ENTRY,
 	RULE,
+	rateLimitedBody,
 	SOURCE,
 	SOURCE_METADATA,
-	TRACKING_PLAN,
-	WAREHOUSE,
-	WORKSPACE,
-	errorBody,
-	forbiddenBody,
-	rateLimitedBody,
 	sourceEnvelope,
+	WORKSPACE,
 } from './test-fixtures';
 
 // never parameters: every concrete endpoint is assignable to this because
@@ -86,7 +83,11 @@ describe('output parsing', () => {
 		await expect(invoke(Sources.list, {})).resolves.toEqual({
 			data: {
 				sources: [SOURCE],
-				pagination: { current: PAGINATION.current, totalEntries: 2, next: 'Mg==' },
+				pagination: {
+					current: PAGINATION.current,
+					totalEntries: 2,
+					next: 'Mg==',
+				},
 			},
 		});
 	});
@@ -163,14 +164,18 @@ describe('output parsing', () => {
 	});
 
 	it('catalog.listSources returns the catalog page', async () => {
-		respond({ data: { sourcesCatalog: [SOURCE_METADATA], pagination: PAGINATION } });
+		respond({
+			data: { sourcesCatalog: [SOURCE_METADATA], pagination: PAGINATION },
+		});
 		await expect(invoke(Catalog.listSources, {})).resolves.toEqual({
 			data: { sourcesCatalog: [SOURCE_METADATA], pagination: PAGINATION },
 		});
 	});
 
 	it('regulations.list returns entries whose status field is the enum', async () => {
-		respond({ data: { regulations: [REGULATION_ENTRY], pagination: PAGINATION } });
+		respond({
+			data: { regulations: [REGULATION_ENTRY], pagination: PAGINATION },
+		});
 		await expect(invoke(Regulations.list, {})).resolves.toEqual({
 			data: { regulations: [REGULATION_ENTRY], pagination: PAGINATION },
 		});
@@ -201,7 +206,11 @@ describe('rejections', () => {
 		['sources.list page over the cap', Sources.list, { count: 1001 }],
 		['sources.get', Sources.get, {}],
 		['sources.create', Sources.create, { slug: 'x', metadataId: 'm' }],
-		['sources.create bad slug', Sources.create, { metadataId: 'm', enabled: true }],
+		[
+			'sources.create bad slug',
+			Sources.create,
+			{ metadataId: 'm', enabled: true },
+		],
 		['sources.removeWriteKey', Sources.removeWriteKey, { sourceId: 'qQ1' }],
 		[
 			'destinations.create',
@@ -215,16 +224,28 @@ describe('rejections', () => {
 			TrackingPlans.create,
 			{ name: 'x', type: 'LEGACY' },
 		],
-		['trackingPlans.replaceRules', TrackingPlans.replaceRules, { trackingPlanId: 'tp_1' }],
-		['trackingPlans.replaceRules empty', TrackingPlans.replaceRules, { trackingPlanId: 'tp_1', rules: [] }],
-		['functions.list', Functions.list, {}],
 		[
-			'functions.create',
-			Functions.create,
-			{ code: 'x', displayName: 'n' },
+			'trackingPlans.replaceRules',
+			TrackingPlans.replaceRules,
+			{ trackingPlanId: 'tp_1' },
 		],
-		['regulations.create', Regulations.create, { regulationType: 'DELETE_ONLY', subjectIds: ['u'] }],
-		['regulations.create empty subjects', Regulations.create, { regulationType: 'DELETE_ONLY', subjectType: 'USER_ID', subjectIds: [] }],
+		[
+			'trackingPlans.replaceRules empty',
+			TrackingPlans.replaceRules,
+			{ trackingPlanId: 'tp_1', rules: [] },
+		],
+		['functions.list', Functions.list, {}],
+		['functions.create', Functions.create, { code: 'x', displayName: 'n' }],
+		[
+			'regulations.create',
+			Regulations.create,
+			{ regulationType: 'DELETE_ONLY', subjectIds: ['u'] },
+		],
+		[
+			'regulations.create empty subjects',
+			Regulations.create,
+			{ regulationType: 'DELETE_ONLY', subjectType: 'USER_ID', subjectIds: [] },
+		],
 		['catalog.getDestination', Catalog.getDestination, {}],
 	])(
 		'%s rejects %o before calling Segment',
@@ -265,7 +286,9 @@ describe('malformed responses', () => {
 	});
 
 	it('rejects a regulation status outside the documented set', async () => {
-		respond({ data: { regulation: { ...REGULATION, overallStatus: 'ARCHIVED' } } });
+		respond({
+			data: { regulation: { ...REGULATION, overallStatus: 'ARCHIVED' } },
+		});
 		await expect(
 			invoke(Regulations.get, { regulateId: '1qJ' }),
 		).rejects.toMatchObject({ name: 'ZodError' });
@@ -321,7 +344,10 @@ describe('error shapes surface to the caller', () => {
 				metadataId: 'x',
 				settings: { host: 'h' },
 			}),
-		).rejects.toMatchObject({ status: 422, message: expect.stringContaining('settings is required') });
+		).rejects.toMatchObject({
+			status: 422,
+			message: expect.stringContaining('settings is required'),
+		});
 	});
 
 	it('omits the page-size argument when the caller sends none', async () => {

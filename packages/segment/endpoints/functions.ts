@@ -1,4 +1,4 @@
-import type { SegmentContext, SegmentEndpoints } from '..';
+import type { SegmentEndpoints } from '..';
 import { paginationQuery, pathSegment } from '../client';
 import { call } from './call';
 import {
@@ -36,7 +36,12 @@ export const get: SegmentEndpoints['functionsGet'] = (ctx, input) =>
 			method: 'GET',
 			path: `/functions/${pathSegment(functionId)}`,
 		}),
-		{ log: ({ functionId }, result) => ({ functionId, found: Boolean(result.data.function) }) },
+		{
+			log: ({ functionId }, result) => ({
+				functionId,
+				found: Boolean(result.data.function),
+			}),
+		},
 	);
 
 export const listVersions: SegmentEndpoints['functionsListVersions'] = (
@@ -56,7 +61,12 @@ export const listVersions: SegmentEndpoints['functionsListVersions'] = (
 			path: `/functions/${pathSegment(functionId)}/versions`,
 			query: paginationQuery(count, cursor),
 		}),
-		{ log: ({ functionId }, result) => ({ functionId, count: result.data.versions.length }) },
+		{
+			log: ({ functionId }, result) => ({
+				functionId,
+				count: result.data.versions.length,
+			}),
+		},
 	);
 
 export const getVersion: SegmentEndpoints['functionsGetVersion'] = (

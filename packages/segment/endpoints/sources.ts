@@ -1,4 +1,4 @@
-import type { SegmentContext, SegmentEndpoints } from '..';
+import type { SegmentEndpoints } from '..';
 import { paginationQuery, pathSegment } from '../client';
 import { call } from './call';
 import {
@@ -110,7 +110,12 @@ export const listConnectedDestinations: SegmentEndpoints['sourcesListConnectedDe
 				path: `/sources/${pathSegment(sourceId)}/connected-destinations`,
 				query: paginationQuery(count, cursor),
 			}),
-			{ log: ({ sourceId }, result) => ({ sourceId, count: result.data.destinations.length }) },
+			{
+				log: ({ sourceId }, result) => ({
+					sourceId,
+					count: result.data.destinations.length,
+				}),
+			},
 		);
 
 export const listConnectedWarehouses: SegmentEndpoints['sourcesListConnectedWarehouses'] =
@@ -128,7 +133,12 @@ export const listConnectedWarehouses: SegmentEndpoints['sourcesListConnectedWare
 				path: `/sources/${pathSegment(sourceId)}/connected-warehouses`,
 				query: paginationQuery(count, cursor),
 			}),
-			{ log: ({ sourceId }, result) => ({ sourceId, count: result.data.warehouses.length }) },
+			{
+				log: ({ sourceId }, result) => ({
+					sourceId,
+					count: result.data.warehouses.length,
+				}),
+			},
 		);
 
 export const updateSchemaSettings: SegmentEndpoints['sourcesUpdateSchemaSettings'] =

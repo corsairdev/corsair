@@ -5,10 +5,7 @@ import { SegmentEndpointOutputSchemas } from './endpoints/types';
 // Live smoke against the Segment Public API: read-only, three calls. Route
 // every answer through its output schema so a field typed wrongly fails here
 // and not in a caller's hands.
-const KEY_CHECK = z
-	.string()
-	.min(1)
-	.safeParse(process.env.SEGMENT_API_KEY);
+const KEY_CHECK = z.string().min(1).safeParse(process.env.SEGMENT_API_KEY);
 const describeLive = KEY_CHECK.success ? describe : describe.skip;
 
 describeLive('Segment live API', (): void => {

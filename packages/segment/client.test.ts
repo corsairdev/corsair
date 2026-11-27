@@ -1,13 +1,17 @@
 import { inspect as util_inspect } from 'node:util';
 import {
 	makeSegmentRequest,
-	pathSegment,
 	paginationQuery,
-	SegmentAPIError,
+	pathSegment,
 	SEGMENT_API_BASE,
 	SEGMENT_DEFAULT_PAGE_SIZE,
+	SegmentAPIError,
 } from './client';
-import { forbiddenBody, sourceEnvelope, unauthorizedBody } from './test-fixtures';
+import {
+	forbiddenBody,
+	sourceEnvelope,
+	unauthorizedBody,
+} from './test-fixtures';
 
 const TOKEN = 'sst-secret-token';
 

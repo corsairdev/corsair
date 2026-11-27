@@ -1,4 +1,4 @@
-import type { SegmentContext, SegmentEndpoints } from '..';
+import type { SegmentEndpoints } from '..';
 import { paginationQuery, pathSegment } from '../client';
 import { call } from './call';
 import {
@@ -56,7 +56,12 @@ export const listRules: SegmentEndpoints['trackingPlansListRules'] = (
 			path: `/tracking-plans/${pathSegment(trackingPlanId)}/rules`,
 			query: paginationQuery(count, cursor),
 		}),
-		{ log: ({ trackingPlanId }, result) => ({ trackingPlanId, count: result.data.rules.length }) },
+		{
+			log: ({ trackingPlanId }, result) => ({
+				trackingPlanId,
+				count: result.data.rules.length,
+			}),
+		},
 	);
 
 export const listSources: SegmentEndpoints['trackingPlansListSources'] = (
@@ -76,7 +81,12 @@ export const listSources: SegmentEndpoints['trackingPlansListSources'] = (
 			path: `/tracking-plans/${pathSegment(trackingPlanId)}/sources`,
 			query: paginationQuery(count, cursor),
 		}),
-		{ log: ({ trackingPlanId }, result) => ({ trackingPlanId, count: result.data.sources.length }) },
+		{
+			log: ({ trackingPlanId }, result) => ({
+				trackingPlanId,
+				count: result.data.sources.length,
+			}),
+		},
 	);
 
 export const create: SegmentEndpoints['trackingPlansCreate'] = (ctx, input) =>
@@ -93,7 +103,11 @@ export const create: SegmentEndpoints['trackingPlansCreate'] = (ctx, input) =>
 			path: '/tracking-plans',
 			body: { name, description, type },
 		}),
-		{ log: (_, result) => ({ trackingPlanId: result.data.trackingPlan.id ?? '' }) },
+		{
+			log: (_, result) => ({
+				trackingPlanId: result.data.trackingPlan.id ?? '',
+			}),
+		},
 	);
 
 export const update: SegmentEndpoints['trackingPlansUpdate'] = (ctx, input) =>
@@ -131,7 +145,12 @@ export const replaceRules: SegmentEndpoints['trackingPlansReplaceRules'] = (
 			path: `/tracking-plans/${pathSegment(trackingPlanId)}/rules`,
 			body: { rules },
 		}),
-		{ log: ({ trackingPlanId, rules }) => ({ trackingPlanId, rules: rules.length }) },
+		{
+			log: ({ trackingPlanId, rules }) => ({
+				trackingPlanId,
+				rules: rules.length,
+			}),
+		},
 	);
 
 export const addSource: SegmentEndpoints['trackingPlansAddSource'] = (

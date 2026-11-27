@@ -1,7 +1,11 @@
 import { ZodError } from 'zod';
 import { SegmentAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
-import { forbiddenBody, rateLimitedBody, unauthorizedBody } from './test-fixtures';
+import {
+	forbiddenBody,
+	rateLimitedBody,
+	unauthorizedBody,
+} from './test-fixtures';
 
 type HandlerName = keyof typeof errorHandlers;
 
@@ -22,10 +26,10 @@ function apiError(
 	status: number,
 	options: { retryAfter?: number; method?: string; message?: string } = {},
 ) {
-	return new SegmentAPIError(
-		options.message ?? `Segment ${status}: failed`,
-		{ status, ...options },
-	);
+	return new SegmentAPIError(options.message ?? `Segment ${status}: failed`, {
+		status,
+		...options,
+	});
 }
 
 describe('Segment error handlers', () => {

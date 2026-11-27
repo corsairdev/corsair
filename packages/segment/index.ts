@@ -498,7 +498,8 @@ const segmentEndpointMeta = {
 	},
 	'warehouses.getConnectionState': {
 		riskLevel: 'read',
-		description: "Read a Warehouse's current connection state: CONNECTED or FAILED",
+		description:
+			"Read a Warehouse's current connection state: CONNECTED or FAILED",
 	},
 	'warehouses.listConnectedSources': {
 		riskLevel: 'read',
@@ -564,7 +565,8 @@ const segmentEndpointMeta = {
 	},
 	'trackingPlans.addSource': {
 		riskLevel: 'write',
-		description: 'Connect a Source to a Tracking Plan so its events are enforced',
+		description:
+			'Connect a Source to a Tracking Plan so its events are enforced',
 	},
 	'trackingPlans.delete': {
 		riskLevel: 'destructive',
@@ -594,7 +596,8 @@ const segmentEndpointMeta = {
 	},
 	'functions.create': {
 		riskLevel: 'write',
-		description: 'Create a Function from JavaScript code, a name and a resource type',
+		description:
+			'Create a Function from JavaScript code, a name and a resource type',
 	},
 	'functions.update': {
 		riskLevel: 'write',
@@ -701,27 +704,25 @@ export function segment<const T extends SegmentPluginOptions>(
 }
 
 export { SegmentAPIError } from './client';
-
+export type {
+	SegmentDestination,
+	SegmentDestinationMetadata,
+	SegmentEndpointInputs,
+	SegmentEndpointOutputs,
+	SegmentFunction,
+	SegmentPagination,
+	SegmentPaginationOutput,
+	SegmentRegulation,
+	SegmentRule,
+	SegmentSource,
+	SegmentSourceMetadata,
+	SegmentTrackingPlan,
+	SegmentWarehouse,
+	SegmentWorkspace,
+} from './endpoints/types';
 export {
 	SEGMENT_FUNCTION_RESOURCE_TYPES,
 	SEGMENT_REGULATION_STATUSES,
 	SEGMENT_REGULATION_TYPES,
 	SEGMENT_TRACKING_PLAN_TYPES,
-} from './endpoints/types';
-
-export type {
-	SegmentEndpointInputs,
-	SegmentEndpointOutputs,
-	SegmentWorkspace,
-	SegmentSource,
-	SegmentSourceMetadata,
-	SegmentDestination,
-	SegmentDestinationMetadata,
-	SegmentWarehouse,
-	SegmentTrackingPlan,
-	SegmentRule,
-	SegmentFunction,
-	SegmentRegulation,
-	SegmentPagination,
-	SegmentPaginationOutput,
 } from './endpoints/types';

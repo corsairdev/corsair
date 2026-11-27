@@ -1,4 +1,4 @@
-import type { SegmentContext, SegmentEndpoints } from '..';
+import type { SegmentEndpoints } from '..';
 import { paginationQuery, pathSegment } from '../client';
 import { call } from './call';
 import {

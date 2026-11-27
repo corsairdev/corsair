@@ -1,4 +1,4 @@
-import type { SegmentContext, SegmentEndpoints } from '..';
+import type { SegmentEndpoints } from '..';
 import { paginationQuery, pathSegment } from '../client';
 import { call } from './call';
 import {
@@ -53,7 +53,9 @@ export const create: SegmentEndpoints['destinationsCreate'] = (ctx, input) =>
 			path: '/destinations',
 			body: { sourceId, metadataId, enabled, name, settings },
 		}),
-		{ log: (_, result) => ({ destinationId: result.data.destination.id ?? '' }) },
+		{
+			log: (_, result) => ({ destinationId: result.data.destination.id ?? '' }),
+		},
 	);
 
 export const update: SegmentEndpoints['destinationsUpdate'] = (ctx, input) =>

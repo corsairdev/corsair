@@ -33,7 +33,9 @@ function firstErrorMessage(body: unknown): string | undefined {
 	// unknown: the errors element is untyped until each field is read.
 	const first = asRecord((record?.errors as unknown[] | undefined)?.[0]);
 	const message = first?.message;
-	return typeof message === 'string' && message.length > 0 ? message : undefined;
+	return typeof message === 'string' && message.length > 0
+		? message
+		: undefined;
 }
 
 // A per-endpoint 429 carries `data.msBeforeNext`; a token-level 429 relies on
@@ -101,10 +103,7 @@ export function pathSegment(value: string | number): string {
  * and docs say list endpoints fail validation when pagination is omitted, so
  * count always ships: the documented default when the caller passes none.
  */
-export function paginationQuery(
-	count?: number,
-	cursor?: string,
-): SegmentQuery {
+export function paginationQuery(count?: number, cursor?: string): SegmentQuery {
 	return {
 		'pagination.count': count ?? SEGMENT_DEFAULT_PAGE_SIZE,
 		'pagination.cursor': cursor,

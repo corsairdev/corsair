@@ -1,4 +1,4 @@
-import type { SegmentContext, SegmentEndpoints } from '..';
+import type { SegmentEndpoints } from '..';
 import { paginationQuery, pathSegment } from '../client';
 import { call } from './call';
 import {
@@ -53,7 +53,12 @@ export const getConnectionState: SegmentEndpoints['warehousesGetConnectionState'
 				method: 'GET',
 				path: `/warehouses/${pathSegment(warehouseId)}/connection-state`,
 			}),
-			{ log: ({ warehouseId }, result) => ({ warehouseId, state: result.data.connectionState }) },
+			{
+				log: ({ warehouseId }, result) => ({
+					warehouseId,
+					state: result.data.connectionState,
+				}),
+			},
 		);
 
 export const listConnectedSources: SegmentEndpoints['warehousesListConnectedSources'] =
@@ -71,7 +76,12 @@ export const listConnectedSources: SegmentEndpoints['warehousesListConnectedSour
 				path: `/warehouses/${pathSegment(warehouseId)}/connected-sources`,
 				query: paginationQuery(count, cursor),
 			}),
-			{ log: ({ warehouseId }, result) => ({ warehouseId, count: result.data.sources.length }) },
+			{
+				log: ({ warehouseId }, result) => ({
+					warehouseId,
+					count: result.data.sources.length,
+				}),
+			},
 		);
 
 // Synchronous: answers CONNECTED or FAILED in the same response.

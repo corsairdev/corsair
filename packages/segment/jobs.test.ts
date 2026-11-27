@@ -1,7 +1,9 @@
 import type { EndpointJob } from 'corsair/core';
 import { z } from 'zod';
-import { SegmentEndpointOutputSchemas } from './endpoints/types';
-import { SEGMENT_REGULATION_STATUSES } from './endpoints/types';
+import {
+	SEGMENT_REGULATION_STATUSES,
+	SegmentEndpointOutputSchemas,
+} from './endpoints/types';
 import { segment } from './index';
 
 const meta = segment().endpointMeta as Record<

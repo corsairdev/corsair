@@ -37,7 +37,10 @@ const PaginationOutputSchema = z
 	.object({
 		current: z.string(),
 		// Absent on the last page.
-		next: z.string().nullish().describe('Cursor for the next page, when there is one.'),
+		next: z
+			.string()
+			.nullish()
+			.describe('Cursor for the next page, when there is one.'),
 		previous: z.string().nullish(),
 		totalEntries: z.number().nullish(),
 	})
@@ -409,7 +412,9 @@ const SourcesCreateInputSchema = z.object({
 		.string()
 		.min(1)
 		.describe('Id of the Source metadata, from `catalog.listSources`.'),
-	enabled: z.boolean().describe('Whether the Source can send data. Defaults to true.'),
+	enabled: z
+		.boolean()
+		.describe('Whether the Source can send data. Defaults to true.'),
 	settings: SourceSettingsInputSchema.optional().describe(
 		'Instance-specific settings; required fields come from the metadata options.',
 	),
@@ -421,7 +426,9 @@ const SourcesCreateInputSchema = z.object({
 		),
 });
 
-const SourcesCreateResponseSchema = envelope(z.object({ source: SourceSchema }));
+const SourcesCreateResponseSchema = envelope(
+	z.object({ source: SourceSchema }),
+);
 
 const SourcesUpdateInputSchema = z.object({
 	sourceId: SourceIdSchema,
@@ -570,7 +577,9 @@ const DestinationsCreateInputSchema = z.object({
 	metadataId: z
 		.string()
 		.min(1)
-		.describe('Id of the Destination metadata, from `catalog.listDestinations`.'),
+		.describe(
+			'Id of the Destination metadata, from `catalog.listDestinations`.',
+		),
 	enabled: z.boolean().optional().describe('Defaults to true.'),
 	name: z.string().optional().describe('Display name.'),
 	settings: z
@@ -700,9 +709,8 @@ const WarehousesAddSourceConnectionInputSchema = z.object({
 });
 
 // 201 with `{ data: { status: 'SUCCESS' } }`.
-const WarehousesAddSourceConnectionResponseSchema = envelope(
-	DeleteStatusSchema,
-);
+const WarehousesAddSourceConnectionResponseSchema =
+	envelope(DeleteStatusSchema);
 
 const WarehousesDeleteInputSchema = z.object({
 	warehouseId: WarehouseIdSchema,
@@ -715,9 +723,8 @@ const WarehousesRemoveSourceConnectionInputSchema = z.object({
 	sourceId: IdSchema,
 });
 
-const WarehousesRemoveSourceConnectionResponseSchema = envelope(
-	DeleteStatusSchema,
-);
+const WarehousesRemoveSourceConnectionResponseSchema =
+	envelope(DeleteStatusSchema);
 
 // ── trackingPlans ─────────────────────────────────────────────────────────
 
@@ -807,9 +814,12 @@ const RuleInputSchema = z
 
 const TrackingPlansReplaceRulesInputSchema = z.object({
 	trackingPlanId: TrackingPlanIdSchema,
-	rules: z.array(RuleInputSchema).min(1).describe(
-		'The complete new rule set: rules absent from this array are removed from the plan.',
-	),
+	rules: z
+		.array(RuleInputSchema)
+		.min(1)
+		.describe(
+			'The complete new rule set: rules absent from this array are removed from the plan.',
+		),
 });
 
 const TrackingPlansReplaceRulesResponseSchema = envelope(DeleteStatusSchema);
@@ -889,9 +899,12 @@ const FunctionsCreateInputSchema = z.object({
 	code: z.string().min(1).describe('The JavaScript function source.'),
 	displayName: z.string().min(1),
 	resourceType: z.enum(SEGMENT_FUNCTION_RESOURCE_TYPES),
-	settings: z.array(FunctionSettingSchema).optional().describe(
-		'Settings the function reads, such as API keys for the service it calls.',
-	),
+	settings: z
+		.array(FunctionSettingSchema)
+		.optional()
+		.describe(
+			'Settings the function reads, such as API keys for the service it calls.',
+		),
 	logoUrl: z.string().optional(),
 	description: z.string().optional(),
 });
@@ -1091,7 +1104,9 @@ export type SegmentEndpointInputs = {
 	>;
 	trackingPlansAddSource: z.input<typeof TrackingPlansAddSourceInputSchema>;
 	trackingPlansDelete: z.input<typeof TrackingPlansDeleteInputSchema>;
-	trackingPlansRemoveSource: z.input<typeof TrackingPlansRemoveSourceInputSchema>;
+	trackingPlansRemoveSource: z.input<
+		typeof TrackingPlansRemoveSourceInputSchema
+	>;
 	functionsList: z.input<typeof FunctionsListInputSchema>;
 	functionsGet: z.input<typeof FunctionsGetInputSchema>;
 	functionsListVersions: z.input<typeof FunctionsListVersionsInputSchema>;
@@ -1174,9 +1189,13 @@ export type SegmentEndpointOutputs = {
 	functionsCreate: z.infer<typeof FunctionsCreateResponseSchema>;
 	functionsUpdate: z.infer<typeof FunctionsUpdateResponseSchema>;
 	functionsDeploy: z.infer<typeof FunctionsDeployResponseSchema>;
-	functionsRestoreVersion: z.infer<typeof FunctionsRestoreVersionResponseSchema>;
+	functionsRestoreVersion: z.infer<
+		typeof FunctionsRestoreVersionResponseSchema
+	>;
 	functionsDelete: z.infer<typeof FunctionsDeleteResponseSchema>;
-	catalogListDestinations: z.infer<typeof CatalogListDestinationsResponseSchema>;
+	catalogListDestinations: z.infer<
+		typeof CatalogListDestinationsResponseSchema
+	>;
 	catalogGetDestination: z.infer<typeof CatalogGetDestinationResponseSchema>;
 	catalogListSources: z.infer<typeof CatalogListSourcesResponseSchema>;
 	catalogGetSource: z.infer<typeof CatalogGetSourceResponseSchema>;
@@ -1247,7 +1266,8 @@ export const SegmentEndpointOutputSchemas = {
 	sourcesCreate: SourcesCreateResponseSchema,
 	sourcesUpdate: SourcesUpdateResponseSchema,
 	sourcesDelete: SourcesDeleteResponseSchema,
-	sourcesListConnectedDestinations: SourcesListConnectedDestinationsResponseSchema,
+	sourcesListConnectedDestinations:
+		SourcesListConnectedDestinationsResponseSchema,
 	sourcesListConnectedWarehouses: SourcesListConnectedWarehousesResponseSchema,
 	sourcesUpdateSchemaSettings: SourcesUpdateSchemaSettingsResponseSchema,
 	sourcesCreateWriteKey: SourcesCreateWriteKeyResponseSchema,
@@ -1266,7 +1286,8 @@ export const SegmentEndpointOutputSchemas = {
 	warehousesUpdate: WarehousesUpdateResponseSchema,
 	warehousesAddSourceConnection: WarehousesAddSourceConnectionResponseSchema,
 	warehousesDelete: WarehousesDeleteResponseSchema,
-	warehousesRemoveSourceConnection: WarehousesRemoveSourceConnectionResponseSchema,
+	warehousesRemoveSourceConnection:
+		WarehousesRemoveSourceConnectionResponseSchema,
 	trackingPlansList: TrackingPlansListResponseSchema,
 	trackingPlansGet: TrackingPlansGetResponseSchema,
 	trackingPlansListRules: TrackingPlansListRulesResponseSchema,

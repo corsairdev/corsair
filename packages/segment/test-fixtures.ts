@@ -71,7 +71,8 @@ export const WAREHOUSE = {
 		name: 'Postgres',
 		description: 'Open source data warehouse',
 		logos: {
-			default: 'https://d3hotuclm6if1r.cloudfront.net/logos/postgres-default.svg',
+			default:
+				'https://d3hotuclm6if1r.cloudfront.net/logos/postgres-default.svg',
 			mark: '',
 			alt: '',
 		},
@@ -184,11 +185,7 @@ export const DESTINATION_METADATA = {
 	slug: 'webhook',
 };
 
-export const errorBody = (
-	type: string,
-	message: string,
-	field?: string,
-) => ({
+export const errorBody = (type: string, message: string, field?: string) => ({
 	errors: field ? [{ type, message, field }] : [{ type, message }],
 });
 

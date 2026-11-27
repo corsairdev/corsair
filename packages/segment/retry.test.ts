@@ -1,7 +1,7 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { segment } from './index';
-import { PAGINATION, SOURCE, paginated } from './test-fixtures';
+import { PAGINATION, paginated, SOURCE } from './test-fixtures';
 
 /**
  * `requests.test.ts` calls the HTTP client, which is built with
@@ -79,7 +79,10 @@ describe('rate-limit retries through createCorsair', () => {
 		try {
 			// The handler allows 3 retries, so 4 attempts in total.
 			for (let i = 0; i < 4; i += 1) {
-				respond({ errors: [{ type: 'RateLimited', message: 'Rate limit exceeded' }] }, 429);
+				respond(
+					{ errors: [{ type: 'RateLimited', message: 'Rate limit exceeded' }] },
+					429,
+				);
 			}
 
 			await expect(
@@ -146,7 +149,10 @@ describe('rate-limit retries through createCorsair', () => {
 			respond(
 				{
 					errors: [
-						{ type: 'forbidden', message: 'Not authorized to perform this operation' },
+						{
+							type: 'forbidden',
+							message: 'Not authorized to perform this operation',
+						},
 					],
 				},
 				403,

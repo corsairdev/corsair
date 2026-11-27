@@ -13,13 +13,13 @@ import {
 	DESTINATION,
 	DESTINATION_METADATA,
 	FUNCTION,
+	paginated,
 	RULE,
 	SOURCE,
 	SOURCE_METADATA,
+	sourceEnvelope,
 	TRACKING_PLAN,
 	WAREHOUSE,
-	paginated,
-	sourceEnvelope,
 	workspaceEnvelope,
 } from './test-fixtures';
 
@@ -373,12 +373,16 @@ const CASES: {
 		respondWith: { data: { status: 'SUCCESS' } },
 		input: {
 			trackingPlanId: 'tp_1',
-			rules: [{ type: 'TRACK', key: 'Order Completed', jsonSchema: {}, version: 1 }],
+			rules: [
+				{ type: 'TRACK', key: 'Order Completed', jsonSchema: {}, version: 1 },
+			],
 		},
 		method: 'PUT',
 		path: '/tracking-plans/tp_1/rules',
 		body: {
-			rules: [{ type: 'TRACK', key: 'Order Completed', jsonSchema: {}, version: 1 }],
+			rules: [
+				{ type: 'TRACK', key: 'Order Completed', jsonSchema: {}, version: 1 },
+			],
 		},
 	},
 	{
@@ -563,7 +567,9 @@ const CASES: {
 	{
 		name: 'regulations.get',
 		endpoint: Regulations.get as AnyEndpoint,
-		respondWith: { data: { regulation: { id: '1qJ', overallStatus: 'FINISHED' } } },
+		respondWith: {
+			data: { regulation: { id: '1qJ', overallStatus: 'FINISHED' } },
+		},
 		input: { regulateId: '1qJ' },
 		method: 'GET',
 		path: '/regulations/1qJ',
@@ -575,11 +581,9 @@ let fetchMock: jest.SpyInstance;
 beforeEach(() => {
 	// Any call a test did not queue a response for throws, so a fixture
 	// mismatch cannot reach the real API.
-	fetchMock = jest
-		.spyOn(globalThis, 'fetch')
-		.mockImplementation(() => {
-			throw new Error('unmocked fetch in a unit test');
-		});
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('unmocked fetch in a unit test');
+	});
 });
 
 afterEach(() => {
@@ -651,7 +655,10 @@ describe('query serialization details', () => {
 			}),
 		);
 
-		await (Regulations.list as AnyEndpoint)({ key: TOKEN } as never, {} as never);
+		await (Regulations.list as AnyEndpoint)(
+			{ key: TOKEN } as never,
+			{} as never,
+		);
 
 		const [url] = fetchMock.mock.calls[0] as [string, RequestInit];
 		expect(url).not.toContain('status=');

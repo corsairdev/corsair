@@ -7,5 +7,14 @@ import * as TrackingPlans from './tracking-plans';
 import * as Warehouses from './warehouses';
 import * as Workspaces from './workspaces';
 
-export { Catalog, Destinations, Functions, Regulations, Sources, TrackingPlans, Warehouses, Workspaces };
+export {
+	Catalog,
+	Destinations,
+	Functions,
+	Regulations,
+	Sources,
+	TrackingPlans,
+	Warehouses,
+	Workspaces,
+};
 export * from './types';

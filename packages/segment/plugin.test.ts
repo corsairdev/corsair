@@ -229,9 +229,9 @@ describe('segment key builder', () => {
 	it('prefers an explicit key option', async () => {
 		const ctx = keyContext('stored-token');
 
-		await expect(
-			buildKey(segment({ key: 'option-token' }), ctx),
-		).resolves.toBe('option-token');
+		await expect(buildKey(segment({ key: 'option-token' }), ctx)).resolves.toBe(
+			'option-token',
+		);
 		expect(ctx.keys.get_api_key).not.toHaveBeenCalled();
 	});
 
