@@ -1,0 +1,407 @@
+---
+title: "Netlify webhooks"
+sidebarTitle: "Webhooks"
+description: "Netlify incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Netlify plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/netlify/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `deploy` (`deploy`)
+- `devServer` (`devServer`)
+- `splitTest` (`splitTest`)
+- `submission` (`submission`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Deploy
+
+### Deploy
+
+`deploy`
+
+A deploy was created, started building, failed, was locked, unlocked, restored or deleted, failed after succeeding or succeeded after failing, or a deploy request was pending, accepted or rejected (X-Netlify-Event deploy_created, deploy_building, deploy_failed, deploy_locked, deploy_unlocked, deploy_restored, deploy_deleted, deploy_failed_after_succeeding, deploy_succeeded_after_failing, deploy_request_pending, deploy_request_accepted, deploy_request_rejected)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `site_id` | `string \| null` | No | — |
+| `user_id` | `string \| null` | No | — |
+| `build_id` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `ssl_url` | `string \| null` | No | — |
+| `admin_url` | `string \| null` | No | — |
+| `deploy_url` | `string \| null` | No | — |
+| `deploy_ssl_url` | `string \| null` | No | — |
+| `screenshot_url` | `string \| null` | No | — |
+| `review_id` | `number \| null` | No | — |
+| `draft` | `boolean \| null` | No | — |
+| `required` | `string[] \| null` | No | — |
+| `required_functions` | `string[] \| null` | No | — |
+| `required_edge_functions` | `string[] \| null` | No | An array of code_shas for the edge-function bundles that need to be uploaded to complete the deploy. |
+| `required_server` | `string[] \| null` | No | The SHA256 digest of the deploy's Netlify Server bundle, when it still needs to be uploaded to complete the deploy. A deploy has at most one server, so this holds either nothing or a single digest. |
+| `error_message` | `string \| null` | No | — |
+| `branch` | `string \| null` | No | — |
+| `commit_ref` | `string \| null` | No | — |
+| `commit_url` | `string \| null` | No | — |
+| `skipped` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `published_at` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `context` | `string \| null` | No | — |
+| `locked` | `boolean \| null` | No | — |
+| `review_url` | `string \| null` | No | — |
+| `framework` | `string \| null` | No | — |
+| `skew_protection_token` | `string \| null` | No | — |
+| `function_schedules` | `object[] \| null` | No | — |
+| `functions_region` | `string \| null` | No | The functions region for this deploy as an airport code. |
+| `functions_region_overrides` | `object[] \| null` | No | Functions in the deploy that explicitly specify their own region (airport code). |
+
+<AccordionGroup>
+<Accordion title="function_schedules full type">
+
+```ts
+{
+  name?: string | null,
+  cron?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="functions_region_overrides full type">
+
+```ts
+{
+  name?: string | null,
+  region?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  site_id?: string | null,
+  user_id?: string | null,
+  build_id?: string | null,
+  state?: string | null,
+  name?: string | null,
+  url?: string | null,
+  ssl_url?: string | null,
+  admin_url?: string | null,
+  deploy_url?: string | null,
+  deploy_ssl_url?: string | null,
+  screenshot_url?: string | null,
+  review_id?: number | null,
+  draft?: boolean | null,
+  required?: string[] | null,
+  required_functions?: string[] | null,
+  required_edge_functions?: string[] | null,
+  required_server?: string[] | null,
+  error_message?: string | null,
+  branch?: string | null,
+  commit_ref?: string | null,
+  commit_url?: string | null,
+  skipped?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  published_at?: string | null,
+  title?: string | null,
+  context?: string | null,
+  locked?: boolean | null,
+  review_url?: string | null,
+  framework?: string | null,
+  skew_protection_token?: string | null,
+  function_schedules?: {
+    name?: string | null,
+    cron?: string | null
+  }[] | null,
+  functions_region?: string | null,
+  functions_region_overrides?: {
+    name?: string | null,
+    region?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+netlify({
+    webhookHooks: {
+        deploy: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Dev Server
+
+### Dev Server
+
+`devServer`
+
+A dev server was created, went live, stopped or failed (X-Netlify-Event dev_server_created, dev_server_live, dev_server_stopped, dev_server_failed)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `site_id` | `string \| null` | No | — |
+| `branch` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `starting_at` | `string \| null` | No | — |
+| `error_at` | `string \| null` | No | — |
+| `live_at` | `string \| null` | No | — |
+| `done_at` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  site_id?: string | null,
+  branch?: string | null,
+  url?: string | null,
+  state?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  starting_at?: string | null,
+  error_at?: string | null,
+  live_at?: string | null,
+  done_at?: string | null,
+  title?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+netlify({
+    webhookHooks: {
+        devServer: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Split Test
+
+### Split Test
+
+`splitTest`
+
+A split test was activated, deactivated or changed (X-Netlify-Event split_test_activated, split_test_deactivated, split_test_modified)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `site_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `path` | `string \| null` | No | — |
+| `branches` | `object[] \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `unpublished_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="branches full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  site_id?: string | null,
+  name?: string | null,
+  path?: string | null,
+  branches?: {
+  }[] | null,
+  active?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  unpublished_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+netlify({
+    webhookHooks: {
+        splitTest: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+
+## Submission
+
+### Submission
+
+`submission`
+
+A form on the site received a submission (X-Netlify-Event submission_created)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `number` | `number \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `first_name` | `string \| null` | No | — |
+| `last_name` | `string \| null` | No | — |
+| `company` | `string \| null` | No | — |
+| `summary` | `string \| null` | No | — |
+| `body` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `site_url` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id?: string | null,
+  number?: number | null,
+  email?: string | null,
+  name?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  company?: string | null,
+  summary?: string | null,
+  body?: string | null,
+  data?: {
+  } | null,
+  created_at?: string | null,
+  site_url?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+netlify({
+    webhookHooks: {
+        submission: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
+```
+
+---
+

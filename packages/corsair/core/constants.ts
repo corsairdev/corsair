@@ -486,6 +486,7 @@ export const BaseProviders = [
 	'needle',
 	'neon',
 	'nethunt',
+	'netlify',
 	'neuronwriter',
 	'netsuite',
 	'neutrino',
@@ -1288,6 +1289,7 @@ export const ProviderDisplayNames = {
 	needle: 'Needle',
 	neon: 'Neon',
 	nethunt: 'NetHunt CRM',
+	netlify: 'Netlify',
 	neuronwriter: 'NEURONwriter',
 	netsuite: 'NetSuite',
 	neutrino: 'Neutrino API',
@@ -2097,6 +2099,7 @@ export type AllProviders =
 	| 'needle'
 	| 'neon'
 	| 'nethunt'
+	| 'netlify'
 	| 'neuronwriter'
 	| 'netsuite'
 	| 'neutrino'

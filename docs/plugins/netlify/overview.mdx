@@ -1,0 +1,178 @@
+---
+title: "Netlify plugin"
+sidebarTitle: "Overview"
+description: "Sites, deploys (with file and function uploads), builds and build hooks, environment variables, forms and submissions, functions, DNS zones and records, TLS certificates, split tests, snippets, Netlify DB databases, agent runs, teams, members and audit logs, deploy keys, add-ons and AI Gateway tokens, plus JWS-signed webhooks for deploy and form events (185 operations)."
+---
+
+Use **Netlify** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Connect with a Netlify personal access token (User settings &gt;
+Applications &gt; Personal access tokens) or an OAuth access token; it is sent
+as `Authorization: Bearer <token>` and acts as that user across every team
+they belong to. Netlify calls a team an account: `account_id` and
+`account_slug` come from `accounts.list`, site ids from `sites.list`.
+
+- **Deploys.** `sites.deploys.create` takes a digest of the files
+(`files`: path -&gt; SHA1) and answers with the SHA1s it still needs in
+`required`; send each with `deploys.uploadFile` (the file's path and its
+bytes as `file`: a URL, `{ base64 }` or a Blob), and
+upload the functions it lists in `required_functions` the same way with
+`deploys.uploadFunction` (a zip per function). After the last upload
+Netlify processes the deploy: poll `deploys.get` until `state` is `ready`.
+A `draft` deploy is never published, and a locked site keeps its current
+deploy. A whole site can also go up as one zip (`zip` on
+`sites.deploys.create`). `sites.builds.create` starts a build from the
+linked repository instead.
+- **Lists** page with `page` (1-based) and `per_page`; the plugin sends 100
+when `per_page` is left out. Paged lists return `{ items, next_page }`,
+with `next_page` set while a page comes back full: step `page` until it
+is null.
+- **Risk.** Every delete is `destructive` except the three that only stop
+work (`agentRunners.delete`, `agentRunners.sessions.delete`,
+`sites.devServers.deleteAll`, which are `write`), as are team plan changes
+(`accounts.create`, `accounts.update`), add-ons, database compute settings,
+data resets and restores, migrations, member invitations (they send
+email), agent runs (they spend AI credits), commits and pull requests
+from agent runs, DNS zone transfers, unlinking a repository and disabling
+a site.
+- **Webhooks.** Create an outgoing hook with `hooks.create` (type `url`,
+`data.url` your Corsair webhook URL, `data.signature_secret` a long random
+secret) for each event you want, and give the plugin the same secret as
+`webhookSecret` (or store it as the account's webhook signature).
+Deliveries are checked against `X-Webhook-Signature` (a JWS, HS256, whose
+`sha256` claim must match the body) and routed by `X-Netlify-Event`:
+deploy events to `deploy`, `submission_created` to `submission`.
+- Rate limits: 500 requests a minute, 3 deploys a minute and 100 a day;
+core waits for `X-RateLimit-Reset` and retries a 429 three times.
+- Not wrapped: three routes the swagger tags `x-internal` (the build
+plugins runtime's own calls).
+
+**What you get:**
+
+- 185 typed API operations
+- 4 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/netlify better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/netlify better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/netlify better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/netlify better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { netlify } from '@corsair-dev/netlify';
+
+export const corsair = createCorsair({
+	plugins: [
+		netlify(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Netlify API key before the first call: `pnpm corsair setup --plugin=netlify --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+netlify()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'netlify',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List sites**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.netlify.api.sites.list({ filter: 'owner', per_page: 20 });
+```
+
+
+**Start a build**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.netlify.api.sites.builds.create({ site_id: '5b2f8a51-7c1e-4d8a-9f43-2b6e1c0a9d17', clear_cache: true });
+```
+
+
+See the full list on the [API](/plugins/netlify/api) page.
+
+## Webhooks
+
+This plugin registers **4** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/netlify/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/netlify/api">
+    Every `netlify.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/netlify/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
