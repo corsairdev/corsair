@@ -1014,7 +1014,7 @@ Replaces the content and reprocesses; poll documents.get until ready or failed.
 
 `responses.create`
 
-Generate a grounded answer with the deep-search model. Bills LLM usage; poll responses.get until status is completed, failed or cancelled
+Generate a grounded answer with the deep-search model. Bills LLM usage; poll responses.get until status is completed or failed
 
 **Risk:** `write`
 
@@ -1028,7 +1028,7 @@ await corsair.ragie.api.responses.create({ input: 'What is the refund window?' }
 |------|------|----------|-------------|
 | `input` | `string` | Yes | What to answer, grounded in retrieved documents. |
 
-Bills LLM usage with the deep-search model. Plan exhaustion answers 402 and is never retried. Poll responses.get until completed, failed or cancelled.
+Bills LLM usage with the deep-search model. Plan exhaustion answers 402 and is never retried. Poll responses.get until completed or failed.
 
 
 
@@ -1039,16 +1039,16 @@ Bills LLM usage with the deep-search model. Plan exhaustion answers 402 and is n
 | `id` | `string` | Yes | — |
 | `object` | `string \| null` | No | — |
 | `created_at` | `number` | Yes | — |
-| `status` | `in_progress \| completed \| failed \| cancelled` | Yes | — |
+| `status` | `in_progress \| completed \| failed` | Yes | — |
 | `error` | `string \| null` | No | — |
-| `incomplete_details` | `any \| null` | No | — |
+| `incomplete_details` | `unknown \| null` | No | — |
 | `instructions` | `string \| null` | No | — |
-| `max_output_tokens` | `any \| null` | No | — |
+| `max_output_tokens` | `unknown \| null` | No | — |
 | `model` | `string \| null` | No | — |
-| `output` | `any[]` | Yes | — |
-| `output_parsed` | `any \| null` | No | — |
-| `tools` | `any[] \| null` | No | — |
-| `reasoning` | `any \| null` | No | — |
+| `output` | `unknown[]` | Yes | — |
+| `output_parsed` | `unknown \| null` | No | — |
+| `tools` | `unknown[] \| null` | No | — |
+| `reasoning` | `unknown \| null` | No | — |
 | `parallel_tool_calls` | `boolean \| null` | No | — |
 | `store` | `boolean \| null` | No | — |
 | `temperature` | `number \| null` | No | — |
@@ -1057,7 +1057,7 @@ Bills LLM usage with the deep-search model. Plan exhaustion answers 402 and is n
 | `top_p` | `number \| null` | No | — |
 | `truncation` | `string \| null` | No | — |
 | `usage` | `object` | Yes | — |
-| `user` | `any \| null` | No | — |
+| `user` | `unknown \| null` | No | — |
 | `metadata` | `Record<string, unknown> \| null` | No | — |
 
 <AccordionGroup>
@@ -1095,7 +1095,7 @@ await corsair.ragie.api.responses.get({ response_id: 'e613d0b7-4c9a-45ed-b32c-30
 |------|------|----------|-------------|
 | `response_id` | `string` | Yes | The response's `id`. |
 
-The job status read: in_progress, completed, failed or cancelled.
+The job status read: in_progress, completed or failed.
 
 
 
@@ -1106,16 +1106,16 @@ The job status read: in_progress, completed, failed or cancelled.
 | `id` | `string` | Yes | — |
 | `object` | `string \| null` | No | — |
 | `created_at` | `number` | Yes | — |
-| `status` | `in_progress \| completed \| failed \| cancelled` | Yes | — |
+| `status` | `in_progress \| completed \| failed` | Yes | — |
 | `error` | `string \| null` | No | — |
-| `incomplete_details` | `any \| null` | No | — |
+| `incomplete_details` | `unknown \| null` | No | — |
 | `instructions` | `string \| null` | No | — |
-| `max_output_tokens` | `any \| null` | No | — |
+| `max_output_tokens` | `unknown \| null` | No | — |
 | `model` | `string \| null` | No | — |
-| `output` | `any[]` | Yes | — |
-| `output_parsed` | `any \| null` | No | — |
-| `tools` | `any[] \| null` | No | — |
-| `reasoning` | `any \| null` | No | — |
+| `output` | `unknown[]` | Yes | — |
+| `output_parsed` | `unknown \| null` | No | — |
+| `tools` | `unknown[] \| null` | No | — |
+| `reasoning` | `unknown \| null` | No | — |
 | `parallel_tool_calls` | `boolean \| null` | No | — |
 | `store` | `boolean \| null` | No | — |
 | `temperature` | `number \| null` | No | — |
@@ -1124,7 +1124,7 @@ The job status read: in_progress, completed, failed or cancelled.
 | `top_p` | `number \| null` | No | — |
 | `truncation` | `string \| null` | No | — |
 | `usage` | `object` | Yes | — |
-| `user` | `any \| null` | No | — |
+| `user` | `unknown \| null` | No | — |
 | `metadata` | `Record<string, unknown> \| null` | No | — |
 
 <AccordionGroup>

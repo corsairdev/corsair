@@ -112,13 +112,13 @@ describe('ragie jobs', () => {
 
 	it('sorts every response status into done, failed or running', () => {
 		const responseJob = meta['responses.create']?.job as EndpointJob;
-		// `cancelled` is terminal in the SDK's status enum, so it sorts into
-		// failed: polling must stop, even though research.md does not list it.
+		// The documented statuses are in_progress, completed and failed
+		// (research table); no spec enum exists beyond them.
 		expect([...RESPONSE_STATUSES].sort()).toEqual(
-			['in_progress', 'completed', 'failed', 'cancelled'].sort(),
+			['in_progress', 'completed', 'failed'].sort(),
 		);
 		expect(responseJob.status.done).toEqual(['completed']);
-		expect(responseJob.status.failed).toEqual(['failed', 'cancelled']);
+		expect(responseJob.status.failed).toEqual(['failed']);
 		// The one value left over is the still-running state.
 		expect(
 			RESPONSE_STATUSES.filter(

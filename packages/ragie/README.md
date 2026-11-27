@@ -35,7 +35,7 @@ pnpm add @corsair-dev/ragie
 | `documents.updateFile` | `ragie.api.documents.updateFile` | `write` | Replace a document with a new file. Reprocessing runs in the background: poll documents.get until status is ready or failed |
 | `documents.updateFromUrl` | `ragie.api.documents.updateFromUrl` | `write` | Replace a document with content fetched from a URL. Reprocessing runs in the background: poll documents.get until status is ready or failed |
 | `documents.updateRaw` | `ragie.api.documents.updateRaw` | `write` | Replace a document with new raw text. Reprocessing runs in the background: poll documents.get until status is ready or failed |
-| `responses.create` | `ragie.api.responses.create` | `write` | Generate a grounded answer with the deep-search model. Bills LLM usage; poll responses.get until status is completed, failed or cancelled |
+| `responses.create` | `ragie.api.responses.create` | `write` | Generate a grounded answer with the deep-search model. Bills LLM usage; poll responses.get until status is completed or failed |
 | `responses.get` | `ragie.api.responses.get` | `read` | Read a generated response, including its status and the final answer |
 | `retrievals.retrieve` | `ragie.api.retrievals.retrieve` | `read` | Search ingested documents and return scored chunks, optionally reranked and filtered by metadata operators |
 | `webhookEndpoints.create` | `ragie.api.webhookEndpoints.create` | `write` | Register a webhook endpoint. The answer carries its signing secret, which is shown only once per endpoint |

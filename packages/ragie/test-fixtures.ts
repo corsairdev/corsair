@@ -142,11 +142,6 @@ export const completedResponse = {
 	usage: { input_tokens: 1200, output_tokens: 340, total_tokens: 1540 },
 };
 
-export const cancelledResponse = {
-	...deepSearchResponse,
-	status: 'cancelled',
-};
-
 export const webhookEndpoint = {
 	id: '70a542b9-871a-42f4-a4a2-9f03a857e785',
 	created_at: '2026-11-25T09:00:00.000Z',

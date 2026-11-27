@@ -1,5 +1,6 @@
 import type { EndpointJob } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import type { RagieKeyBuilderContext } from './index';
 import { ragie, ragieEndpointSchemas } from './index';
 
 // The key builder only reads authType and keys.
@@ -17,7 +18,10 @@ function buildKey(
 	ctx: ReturnType<typeof keyContext>,
 ) {
 	// The fake context is not a full KeyBuilderContext.
-	return plugin.keyBuilder?.(ctx as never, 'endpoint');
+	return plugin.keyBuilder?.(
+		ctx as unknown as RagieKeyBuilderContext,
+		'endpoint',
+	);
 }
 
 const operations = [

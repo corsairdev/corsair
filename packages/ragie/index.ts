@@ -144,8 +144,8 @@ const DOCUMENT_JOB = {
 	},
 } as const;
 
-// deep-search generation; `cancelled` comes from the SDK's status enum, so
-// polling stops on it too.
+// deep-search generation; the documented statuses are in_progress,
+// completed and failed (research table; no spec enum exists to cite).
 const RESPONSE_JOB = {
 	idPath: 'id',
 	status: {
@@ -153,7 +153,7 @@ const RESPONSE_JOB = {
 		idArg: 'response_id',
 		statusPath: 'status',
 		done: ['completed'],
-		failed: ['failed', 'cancelled'],
+		failed: ['failed'],
 	},
 } as const;
 
@@ -413,7 +413,7 @@ const ragieEndpointMeta = {
 	'responses.create': {
 		riskLevel: 'write',
 		description:
-			'Generate a grounded answer with the deep-search model. Bills LLM usage; poll responses.get until status is completed, failed or cancelled',
+			'Generate a grounded answer with the deep-search model. Bills LLM usage; poll responses.get until status is completed or failed',
 		job: RESPONSE_JOB,
 	},
 	'responses.get': {

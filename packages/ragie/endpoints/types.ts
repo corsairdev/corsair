@@ -52,7 +52,6 @@ export const RESPONSE_STATUSES = [
 	'in_progress',
 	'completed',
 	'failed',
-	'cancelled',
 ] as const;
 
 const PageParamsSchema = {

@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { Documents, Responses, Retrievals } from './endpoints';
 import {
-	cancelledResponse,
+	completedResponse,
 	document,
 	documentChunks,
 	documentsList,
@@ -88,14 +88,14 @@ describe('output parsing', () => {
 		});
 	});
 
-	it('parses a deep-search response in every terminal status', async () => {
-		respond(cancelledResponse);
+	it('parses a deep-search response in the failed terminal status', async () => {
+		respond({ ...completedResponse, status: 'failed' });
 
 		const result = await invoke(Responses.get, {
 			response_id: 'e613d0b7-4c9a-45ed-b32c-302d7f1c5daf',
 		});
 
-		expect(result.status).toBe('cancelled');
+		expect(result.status).toBe('failed');
 	});
 });
 
@@ -133,7 +133,7 @@ describe('rejections', () => {
 	});
 
 	it('rejects a response whose status is outside the documented set', async () => {
-		respond({ ...cancelledResponse, status: 'paused' });
+		respond({ ...completedResponse, status: 'paused' });
 
 		await expect(invoke(Responses.get, { response_id: 'x' })).rejects.toThrow();
 	});

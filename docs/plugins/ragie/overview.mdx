@@ -9,7 +9,7 @@ Use **Ragie** through Corsair: one client, typed API calls.
 Create a key in the Ragie dashboard at secure.ragie.ai (a free developer tier exists). Wire notes before you call:
 
 - **Document processing is asynchronous.** Every create and update answers at once with status `pending`, then moves through partitioning, chunking and indexing. Poll `documents.get` until `status` is `ready` (usable, including summaries) or `failed`. The document is searchable once it reaches `indexed`.
-- **`responses.create` bills LLM usage** with the deep-search model. It runs as a job too: poll `responses.get` until `status` is `completed`, `failed` or `cancelled`. Plan exhaustion answers HTTP 402, which the plugin never retries.
+- **`responses.create` bills LLM usage** with the deep-search model. It runs as a job too: poll `responses.get` until `status` is `completed` or `failed`. Plan exhaustion answers HTTP 402, which the plugin never retries.
 - **`connections.delete` is a POST, not a DELETE.** With `keep_files: false` every document the connector ingested is deleted and cannot be recovered; with `keep_files: true` the documents survive unlinked. Deletion is asynchronous, so files can linger briefly either way.
 - **`webhookEndpoints.create` returns the signing `secret`.** Store it when you create the endpoint; treat the operation as a write, never a read. This plugin manages webhook registrations over the API but does not receive deliveries itself.
 - **`connections.createOAuthRedirectUrl`** starts an OAuth connector flow (Google Drive, Notion and similar) and returns a short-lived URL; non-OAuth connectors (S3, GCS, Freshdesk, Zendesk, Intercom, web crawler) are created directly with `connections.create`.

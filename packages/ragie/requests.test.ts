@@ -7,7 +7,6 @@ import {
 	WebhookEndpoints,
 } from './endpoints';
 import {
-	cancelledResponse,
 	completedResponse,
 	connection,
 	connectionsList,
@@ -555,16 +554,6 @@ describe('responses requests', () => {
 			path: `/responses/${deepSearchResponse.id}`,
 		});
 		expect(result.status).toBe('completed');
-	});
-
-	it('sorts cancelled as a terminal status', async () => {
-		respond(cancelledResponse);
-
-		const result = await invoke(Responses.get, {
-			response_id: deepSearchResponse.id,
-		});
-
-		expect(result.status).toBe('cancelled');
 	});
 });
 
