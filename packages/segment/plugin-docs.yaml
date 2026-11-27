@@ -156,25 +156,25 @@ apiExamples:
     call: "{ regulationType: 'DELETE_ONLY', subjectType: 'USER_ID', subjectIds: ['user_123'] }"
   regulations.get:
     call: "{ regulateId: '1qJkfE1tpwvQcklImGksLN629wn' }"
-apiNotes: >
-  'Auth: a Public API token from app.segment.com, Settings, Access
-  Management, Tokens, Create Token. Pick the Public API token type; the
-  legacy Config API token in the same menu is a different credential that
-  this plugin does not target. Tokens are workspace-scoped with
-  per-token permissions. EU workspaces answer on
-  eu1.api.segmentapis.com; this plugin pins the US host
-  api.segmentapis.com, so EU tokens need a separate setup. The Tracking
-  API on api.segment.io (write keys, event ingestion) is out of scope:
-  different credential, different host, and its 200 answers never prove
-  delivery. Sources.list, sources.get and sources.createWriteKey return
-  writeKeys, which are live credentials. regulations.create permanently
-  deletes the named users'' data and cannot be undone or cancelled;
-  poll regulations.get with the returned regulateId, where FINISHED and
-  PARTIAL_SUCCESS are terminal-done and FAILED, INVALID and
-  NOT_SUPPORTED are terminal-failed. List endpoints always send
-  pagination.count (1-1000, default 200); responses carry
-  data.pagination.next for the following page. Segment checks auth
-  before routing, so a 403 on any path means the token is bad or lacks
-  permission. Shapes follow the official spec v74.1.0; routing was not
-  verifiable live without a token, so response fields are parsed
-  leniently.'
+apiNotes:
+  workspaces.get: 'Answers `GET /`, the workspace the token belongs to. Tokens are workspace-scoped, so this is always exactly one workspace.'
+  sources.list: 'Every row embeds a `writeKeys` array. Those are live credentials that can send events to Segment; treat them like passwords.'
+  sources.get: 'Returns the source with its `writeKeys` (live credentials) and its `trackingPlanId` when a plan enforces it.'
+  sources.create: 'Needs a `metadataId` from `catalog.listSources`; the catalog item lists the settings the source type requires. With `disconnectAllWarehouses` it detaches warehouses mapped to the slug.'
+  sources.createWriteKey: 'Takes no body and returns the updated source: its `writeKeys` array now holds the new credential. This call mints a credential, so the plugin marks it a write.'
+  sources.removeWriteKey: 'Deletes by the key value itself in the path. Senders using that key fail immediately; the key cannot be recovered.'
+  destinations.create: 'Needs `sourceId`, a `metadataId` from `catalog.listDestinations`, and the settings the catalog item marks required.'
+  warehouses.update: 'The API requires `settings` on every update, even when only renaming or toggling `enabled`; send the full settings object.'
+  warehouses.validate: 'Synchronous credential check: answers `CONNECTED` or `FAILED` in the same response. No settings are stored.'
+  warehouses.addSourceConnection: 'A 201 whose `data.status` is `SUCCESS`. Runs a warehouse load for the source on the next schedule.'
+  trackingPlans.replaceRules: 'PUT semantics: the array is the complete new rule set, and rules absent from it are removed from the plan. Each rule needs `type`, `jsonSchema` and `version`.'
+  trackingPlans.removeSource: 'The source id travels as a `sourceId` query parameter on the DELETE, not as a path segment.'
+  functions.list: 'Requires `resourceType`; only functions of that one type are returned.'
+  functions.update: 'Changes the saved code or metadata. Nothing runs the new code until `functions.deploy` is called.'
+  functions.deploy: 'Deploys the latest saved version to every resource using the function.'
+  functions.restoreVersion: 'POSTs `versionId` in the body to the versions collection and returns the restored version.'
+  catalog.listDestinations: 'The catalog is large; page with `count` and `pagination.next`. Each item is one integration type with its settings schema.'
+  catalog.listSources: 'Resolves the `metadataId` every `sources.create` needs; the item''s `options` array names the required settings.'
+  regulations.create: 'Permanently deletes or suppresses the data of every id in `subjectIds`. It cannot be cancelled or undone. The run is asynchronous: poll `regulations.get` with the returned `regulateId`.'
+  regulations.get: 'Reads `data.regulation.overallStatus`: `FINISHED` and `PARTIAL_SUCCESS` are terminal-done, `FAILED`, `INVALID` and `NOT_SUPPORTED` are terminal-failed, `RUNNING` and `INITIALIZED` mean keep polling.'
+  regulations.list: 'List rows carry the status in a `status` field (the poll endpoint uses `overallStatus`). Filter with `status` and `regulationTypes`.'

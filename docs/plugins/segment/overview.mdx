@@ -1,0 +1,136 @@
+---
+title: "Segment plugin"
+sidebarTitle: "Overview"
+description: "Twilio Segment customer data platform. Manage the workspace configuration a Public API token can reach - sources, destinations, warehouses, tracking plans, functions, the integration catalog and GDPR deletion runs."
+---
+
+Use **Segment** through Corsair: one client, typed API calls.
+
+This plugin wraps the Segment Public API (api.segmentapis.com) with one credential: a Public API token. Create it in the Segment app under Settings, Access Management, Tokens: choose the Public API token type, not the legacy Config API token. Tokens are workspace-scoped; an EU workspace lives on eu1.api.segmentapis.com, which this plugin does not send to (US host only).
+Things to know before you call:
+- **Regulations permanently delete data.** `regulations.create` starts a deletion or suppression run over the `subjectIds` you pass. It cannot be cancelled and the data cannot be recovered. The run is asynchronous: poll `regulations.get` with the returned `regulateId` until `overallStatus` is a terminal value (`FINISHED` or `PARTIAL_SUCCESS` mean done; `FAILED`, `INVALID` or `NOT_SUPPORTED` mean it did not finish).
+- **The Tracking API is out of scope.** Sending track, identify and other events needs a different credential (a per-source write key on api.segment.io), and that API answers 200 for events it silently drops, so this plugin only manages workspace configuration.
+- **Write keys are secrets.** Source objects embed a `writeKeys` array; treat values from `sources.list`, `sources.get` and `sources.createWriteKey` like passwords. `sources.createWriteKey` mints a credential, and `sources.removeWriteKey` breaks every sender using that key immediately.
+- **Catalog first.** `sources.create`, `destinations.create` and `warehouses.create` all need a `metadataId` from the catalog group, and the catalog item describes the settings the instance requires.
+- **Paging.** Every list call sends `pagination.count` (1-1000, default 200) and returns `data.pagination`, whose `next` cursor pages forward.
+- **Errors.** Segment checks auth before routing: a 403 means the token is invalid or lacks the permission, whatever path you called. The plugin retries rate limits (429) with backoff and reads GET 5xxs twice more.
+
+**What you get:**
+
+- 52 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/segment better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/segment better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/segment better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/segment better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { segment } from '@corsair-dev/segment';
+
+export const corsair = createCorsair({
+	plugins: [
+		segment(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Segment Public API token before the first call: `pnpm corsair setup --plugin=segment --tenant=acme api_key=<your-token>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own token on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+segment()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'segment',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the workspace sources**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.segment.api.sources.list({ count: 25 });
+```
+
+
+**Create a tracking plan**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.segment.api.trackingPlans.create({ name: 'Mobile app plan', type: 'TEMPLATE' });
+```
+
+
+See the full list on the [API](/plugins/segment/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/segment/api">
+    Every `segment.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

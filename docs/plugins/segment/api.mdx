@@ -1,0 +1,3153 @@
+---
+title: "Segment API reference"
+sidebarTitle: "API"
+description: "API reference for the Segment plugin in Corsair: every `segment.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Catalog
+
+### getDestination
+
+`catalog.getDestination`
+
+Get one Destination catalog item; its id is the metadataId destinations.create needs
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.catalog.getDestination({ destinationMetadataId: '5gPpjD6ikn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `destinationMetadataId` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  destinationMetadata: {
+    id?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    description?: string | null,
+    logos?: {
+      default?: string | null,
+      alt?: string | null,
+      mark?: string | null
+    } | null,
+    options?: Record<string, unknown>[] | null,
+    status?: string | null,
+    categories?: string[] | null,
+    website?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSource
+
+`catalog.getSource`
+
+Get one Source catalog item; its id is the metadataId sources.create needs
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.catalog.getSource({ sourceMetadataId: 'IqDTy1TpoU' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceMetadataId` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sourceMetadata: {
+    id?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    description?: string | null,
+    logos?: {
+      default?: string | null,
+      alt?: string | null,
+      mark?: string | null
+    } | null,
+    options?: {
+      name?: string | null,
+      type?: string | null,
+      required?: boolean | null,
+      description?: string | null,
+      defaultValue?: unknown | null
+    }[] | null,
+    categories?: string[] | null,
+    isCloudEventSource?: boolean | null,
+    status?: string | null,
+    partnerOwned?: boolean | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDestinations
+
+`catalog.listDestinations`
+
+List the Destination catalog; each item holds the settings its instances need
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.catalog.listDestinations({ count: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | Page size between 1 and 1000. Defaults to 200 when omitted. |
+| `cursor` | `string` | No | Opaque cursor from a previous response (`pagination.next`); omit for the first page. |
+
+The catalog is large; page with `count` and `pagination.next`. Each item is one integration type with its settings schema.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  destinationsCatalog: {
+    id?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    description?: string | null,
+    logos?: {
+      default?: string | null,
+      alt?: string | null,
+      mark?: string | null
+    } | null,
+    options?: Record<string, unknown>[] | null,
+    status?: string | null,
+    categories?: string[] | null,
+    website?: string | null
+  }[],
+  pagination: {
+    current: string,
+    next?: string | null,
+    previous?: string | null,
+    totalEntries?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSources
+
+`catalog.listSources`
+
+List the Source catalog; each item holds the settings its instances need
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.catalog.listSources({ count: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | Page size between 1 and 1000. Defaults to 200 when omitted. |
+| `cursor` | `string` | No | Opaque cursor from a previous response (`pagination.next`); omit for the first page. |
+
+Resolves the `metadataId` every `sources.create` needs; the item's `options` array names the required settings.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sourcesCatalog: {
+    id?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    description?: string | null,
+    logos?: {
+      default?: string | null,
+      alt?: string | null,
+      mark?: string | null
+    } | null,
+    options?: {
+      name?: string | null,
+      type?: string | null,
+      required?: boolean | null,
+      description?: string | null,
+      defaultValue?: unknown | null
+    }[] | null,
+    categories?: string[] | null,
+    isCloudEventSource?: boolean | null,
+    status?: string | null,
+    partnerOwned?: boolean | null
+  }[],
+  pagination: {
+    current: string,
+    next?: string | null,
+    previous?: string | null,
+    totalEntries?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Destinations
+
+### create
+
+`destinations.create`
+
+Create a Destination from a catalog metadata id, a source id and its settings; it starts receiving data once enabled
+
+**Risk:** `write`
+
+```ts
+await corsair.segment.api.destinations.create({ sourceId: 'qQEHquLrjRDN9j1ByrChyn', metadataId: '5gPpjD6ikn', settings: {} });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceId` | `string` | Yes | The Source to connect this Destination to. |
+| `metadataId` | `string` | Yes | Id of the Destination metadata, from `catalog.listDestinations`. |
+| `enabled` | `boolean` | No | Defaults to true. |
+| `name` | `string` | No | Display name. |
+| `settings` | `Record<string, unknown>` | Yes | Required and advanced settings from the metadata options. |
+
+Needs `sourceId`, a `metadataId` from `catalog.listDestinations`, and the settings the catalog item marks required.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  destination: {
+    id?: string | null,
+    name?: string | null,
+    enabled?: boolean | null,
+    metadata?: {
+      id?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      description?: string | null,
+      logos?: {
+        default?: string | null,
+        alt?: string | null,
+        mark?: string | null
+      } | null,
+      options?: Record<string, unknown>[] | null,
+      status?: string | null,
+      categories?: string[] | null,
+      website?: string | null
+    } | null,
+    sourceId?: string | null,
+    settings?: Record<string, unknown> | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`destinations.delete`
+
+Delete a Destination permanently
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.segment.api.destinations.delete({ destinationId: 'rh5BDZp6QDHvXFCkibm1pR' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `destinationId` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status: SUCCESS
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`destinations.get`
+
+Get one Destination by id
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.destinations.get({ destinationId: 'rh5BDZp6QDHvXFCkibm1pR' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `destinationId` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  destination: {
+    id?: string | null,
+    name?: string | null,
+    enabled?: boolean | null,
+    metadata?: {
+      id?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      description?: string | null,
+      logos?: {
+        default?: string | null,
+        alt?: string | null,
+        mark?: string | null
+      } | null,
+      options?: Record<string, unknown>[] | null,
+      status?: string | null,
+      categories?: string[] | null,
+      website?: string | null
+    } | null,
+    sourceId?: string | null,
+    settings?: Record<string, unknown> | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`destinations.list`
+
+List the Destinations connected in the Workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.destinations.list({ count: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | Page size between 1 and 1000. Defaults to 200 when omitted. |
+| `cursor` | `string` | No | Opaque cursor from a previous response (`pagination.next`); omit for the first page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  destinations: {
+    id?: string | null,
+    name?: string | null,
+    enabled?: boolean | null,
+    metadata?: {
+      id?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      description?: string | null,
+      logos?: {
+        default?: string | null,
+        alt?: string | null,
+        mark?: string | null
+      } | null,
+      options?: Record<string, unknown>[] | null,
+      status?: string | null,
+      categories?: string[] | null,
+      website?: string | null
+    } | null,
+    sourceId?: string | null,
+    settings?: Record<string, unknown> | null
+  }[],
+  pagination: {
+    current: string,
+    next?: string | null,
+    previous?: string | null,
+    totalEntries?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`destinations.update`
+
+Update a Destination name, enabled flag or settings
+
+**Risk:** `write`
+
+```ts
+await corsair.segment.api.destinations.update({ destinationId: 'rh5BDZp6QDHvXFCkibm1pR', enabled: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `destinationId` | `string` | Yes | The resource id. |
+| `name` | `string \| null` | No | — |
+| `enabled` | `boolean` | No | — |
+| `settings` | `Record<string, unknown>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  destination: {
+    id?: string | null,
+    name?: string | null,
+    enabled?: boolean | null,
+    metadata?: {
+      id?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      description?: string | null,
+      logos?: {
+        default?: string | null,
+        alt?: string | null,
+        mark?: string | null
+      } | null,
+      options?: Record<string, unknown>[] | null,
+      status?: string | null,
+      categories?: string[] | null,
+      website?: string | null
+    } | null,
+    sourceId?: string | null,
+    settings?: Record<string, unknown> | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Functions
+
+### create
+
+`functions.create`
+
+Create a Function from JavaScript code, a name and a resource type
+
+**Risk:** `write`
+
+```ts
+await corsair.segment.api.functions.create({ code: 'async function onTrack(event, settings) { return event }', displayName: 'Enrich orders', resourceType: 'DESTINATION' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | The JavaScript function source. |
+| `displayName` | `string` | Yes | — |
+| `resourceType` | `DESTINATION \| INSERT_DESTINATION \| INSERT_SOURCE \| INSERT_TRANSFORMATION \| SOURCE` | Yes | — |
+| `settings` | `object[]` | No | Settings the function reads, such as API keys for the service it calls. |
+| `logoUrl` | `string` | No | — |
+| `description` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  name?: string | null,
+  label?: string | null,
+  description?: string | null,
+  type?: ARRAY | BOOLEAN | STRING | TEXT_MAP | null,
+  required?: boolean | null,
+  defaultValue?: unknown | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  function: {
+    id?: string | null,
+    resourceType?: DESTINATION | INSERT_DESTINATION | INSERT_SOURCE | INSERT_TRANSFORMATION | SOURCE | null,
+    createdAt?: string | null,
+    createdBy?: string | null,
+    code?: string | null,
+    deployedAt?: string | null,
+    settings?: {
+      name?: string | null,
+      label?: string | null,
+      description?: string | null,
+      type?: ARRAY | BOOLEAN | STRING | TEXT_MAP | null,
+      required?: boolean | null,
+      defaultValue?: unknown | null
+    }[] | null,
+    displayName?: string | null,
+    description?: string | null,
+    logoUrl?: string | null,
+    previewWebhookUrl?: string | null,
+    batchMaxCount?: number | null,
+    catalogId?: string | null,
+    isLatestVersion?: boolean | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`functions.delete`
+
+Delete a Function permanently
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.segment.api.functions.delete({ functionId: 'fn_2ljkchcmkcY9anKnhvQ1WqAGOGC' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `functionId` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status: SUCCESS
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deploy
+
+`functions.deploy`
+
+Deploy a Function: its latest saved code goes live for the resources using it
+
+**Risk:** `write`
+
+```ts
+await corsair.segment.api.functions.deploy({ functionId: 'fn_2ljkchcmkcY9anKnhvQ1WqAGOGC' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `functionId` | `string` | Yes | The resource id. |
+
+Deploys the latest saved version to every resource using the function.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  functionDeployment: {
+    status: SUCCESS
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`functions.get`
+
+Get one Function by id, including its code
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.functions.get({ functionId: 'fn_2ljkchcmkcY9anKnhvQ1WqAGOGC' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `functionId` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  function?: {
+    id?: string | null,
+    resourceType?: DESTINATION | INSERT_DESTINATION | INSERT_SOURCE | INSERT_TRANSFORMATION | SOURCE | null,
+    createdAt?: string | null,
+    createdBy?: string | null,
+    code?: string | null,
+    deployedAt?: string | null,
+    settings?: {
+      name?: string | null,
+      label?: string | null,
+      description?: string | null,
+      type?: ARRAY | BOOLEAN | STRING | TEXT_MAP | null,
+      required?: boolean | null,
+      defaultValue?: unknown | null
+    }[] | null,
+    displayName?: string | null,
+    description?: string | null,
+    logoUrl?: string | null,
+    previewWebhookUrl?: string | null,
+    batchMaxCount?: number | null,
+    catalogId?: string | null,
+    isLatestVersion?: boolean | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getVersion
+
+`functions.getVersion`
+
+Get one saved version of a Function
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.functions.getVersion({ functionId: 'fn_2ljkchcmkcY9anKnhvQ1WqAGOGC', versionId: 'v_2ljkchcmkcY9anKnhvQ1WqAGOGC' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `functionId` | `string` | Yes | The resource id. |
+| `versionId` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  version: {
+    id?: string | null,
+    author?: string | null,
+    code?: string | null,
+    isDeployed?: boolean | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+    deployedAt?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`functions.list`
+
+List Functions of one resource type in the Workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.functions.list({ resourceType: 'DESTINATION' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `resourceType` | `DESTINATION \| INSERT_DESTINATION \| INSERT_SOURCE \| INSERT_TRANSFORMATION \| SOURCE` | Yes | Only functions of this type are returned. |
+| `count` | `number` | No | Page size between 1 and 1000. Defaults to 200 when omitted. |
+| `cursor` | `string` | No | Opaque cursor from a previous response (`pagination.next`); omit for the first page. |
+
+Requires `resourceType`; only functions of that one type are returned.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  functions: {
+    id?: string | null,
+    resourceType?: DESTINATION | INSERT_DESTINATION | INSERT_SOURCE | INSERT_TRANSFORMATION | SOURCE | null,
+    createdAt?: string | null,
+    createdBy?: string | null,
+    displayName?: string | null,
+    description?: string | null,
+    logoUrl?: string | null,
+    catalogId?: string | null
+  }[],
+  pagination: {
+    current: string,
+    next?: string | null,
+    previous?: string | null,
+    totalEntries?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listVersions
+
+`functions.listVersions`
+
+List a Function's saved versions
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.functions.listVersions({ functionId: 'fn_2ljkchcmkcY9anKnhvQ1WqAGOGC' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `functionId` | `string` | Yes | The resource id. |
+| `count` | `number` | No | Page size between 1 and 1000. Defaults to 200 when omitted. |
+| `cursor` | `string` | No | Opaque cursor from a previous response (`pagination.next`); omit for the first page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  versions: {
+    id?: string | null,
+    author?: string | null,
+    code?: string | null,
+    isDeployed?: boolean | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+    deployedAt?: string | null
+  }[],
+  pagination: {
+    current: string,
+    next?: string | null,
+    previous?: string | null,
+    totalEntries?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### restoreVersion
+
+`functions.restoreVersion`
+
+Restore a Function's code to a saved version
+
+**Risk:** `write`
+
+```ts
+await corsair.segment.api.functions.restoreVersion({ functionId: 'fn_2ljkchcmkcY9anKnhvQ1WqAGOGC', versionId: 'v_2ljkchcmkcY9anKnhvQ1WqAGOGC' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `functionId` | `string` | Yes | The resource id. |
+| `versionId` | `string` | Yes | The resource id. |
+
+POSTs `versionId` in the body to the versions collection and returns the restored version.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  version: {
+    id?: string | null,
+    author?: string | null,
+    code?: string | null,
+    isDeployed?: boolean | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+    deployedAt?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`functions.update`
+
+Update a Function's code or metadata; the new code runs after the next deploy
+
+**Risk:** `write`
+
+```ts
+await corsair.segment.api.functions.update({ functionId: 'fn_2ljkchcmkcY9anKnhvQ1WqAGOGC', description: 'Enriches order events' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `functionId` | `string` | Yes | The resource id. |
+| `code` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `settings` | `object[]` | No | — |
+| `logoUrl` | `string` | No | — |
+| `description` | `string` | No | — |
+
+Changes the saved code or metadata. Nothing runs the new code until `functions.deploy` is called.
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  name?: string | null,
+  label?: string | null,
+  description?: string | null,
+  type?: ARRAY | BOOLEAN | STRING | TEXT_MAP | null,
+  required?: boolean | null,
+  defaultValue?: unknown | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  function: {
+    id?: string | null,
+    resourceType?: DESTINATION | INSERT_DESTINATION | INSERT_SOURCE | INSERT_TRANSFORMATION | SOURCE | null,
+    createdAt?: string | null,
+    createdBy?: string | null,
+    code?: string | null,
+    deployedAt?: string | null,
+    settings?: {
+      name?: string | null,
+      label?: string | null,
+      description?: string | null,
+      type?: ARRAY | BOOLEAN | STRING | TEXT_MAP | null,
+      required?: boolean | null,
+      defaultValue?: unknown | null
+    }[] | null,
+    displayName?: string | null,
+    description?: string | null,
+    logoUrl?: string | null,
+    previewWebhookUrl?: string | null,
+    batchMaxCount?: number | null,
+    catalogId?: string | null,
+    isLatestVersion?: boolean | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Regulations
+
+### create
+
+`regulations.create`
+
+Start a deletion or suppression run that permanently removes the named users data from Segment and downstream systems; cannot be cancelled or undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.segment.api.regulations.create({ regulationType: 'DELETE_ONLY', subjectType: 'USER_ID', subjectIds: ['user_123'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `regulationType` | `DELETE_INTERNAL \| DELETE_ONLY \| SUPPRESS_ONLY \| SUPPRESS_WITH_DELETE \| SUPPRESS_WITH_DELETE_INTERNAL \| UNSUPPRESS` | Yes | — |
+| `subjectType` | `OBJECT_ID \| USER_ID` | Yes | Use `objectId` for cloud source regulations. |
+| `subjectIds` | `string[]` | Yes | The `userId` or `objectId` values to regulate. |
+
+Permanently deletes or suppresses the data of every id in `subjectIds`. It cannot be cancelled or undone. The run is asynchronous: poll `regulations.get` with the returned `regulateId`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  regulateId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`regulations.get`
+
+Read one deletion or suppression run and its status
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.regulations.get({ regulateId: '1qJkfE1tpwvQcklImGksLN629wn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `regulateId` | `string` | Yes | The resource id. |
+
+Reads `data.regulation.overallStatus`: `FINISHED` and `PARTIAL_SUCCESS` are terminal-done, `FAILED`, `INVALID` and `NOT_SUPPORTED` are terminal-failed, `RUNNING` and `INITIALIZED` mean keep polling.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  regulation: {
+    id?: string | null,
+    workspaceId?: string | null,
+    overallStatus?: FAILED | FINISHED | INITIALIZED | INVALID | NOT_SUPPORTED | PARTIAL_SUCCESS | RUNNING | null,
+    createdAt?: string | null,
+    finishedAt?: string | null,
+    streamStatus?: Record<string, unknown>[] | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`regulations.list`
+
+List the Workspace deletion and suppression runs and their statuses
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.regulations.list({ count: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `FAILED \| FINISHED \| INITIALIZED \| INVALID \| NOT_SUPPORTED \| PARTIAL_SUCCESS \| RUNNING` | No | — |
+| `regulationTypes` | `(DELETE_INTERNAL \| DELETE_ONLY \| SUPPRESS_ONLY \| SUPPRESS_WITH_DELETE \| SUPPRESS_WITH_DELETE_INTERNAL \| UNSUPPRESS)[]` | No | Only regulations of these types. |
+| `count` | `number` | No | Page size between 1 and 1000. Defaults to 200 when omitted. |
+| `cursor` | `string` | No | Opaque cursor from a previous response (`pagination.next`); omit for the first page. |
+
+List rows carry the status in a `status` field (the poll endpoint uses `overallStatus`). Filter with `status` and `regulationTypes`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  regulations: {
+    id?: string | null,
+    subjectType?: string | null,
+    subjects?: string[] | null,
+    status?: FAILED | FINISHED | INITIALIZED | INVALID | NOT_SUPPORTED | PARTIAL_SUCCESS | RUNNING | null,
+    createdAt?: string | null,
+    finishedAt?: string | null,
+    regulationType?: DELETE_ARCHIVE_ONLY | DELETE_INTERNAL | DELETE_ONLY | SUPPRESS_ONLY | SUPPRESS_WITH_DELETE | SUPPRESS_WITH_DELETE_INTERNAL | UNSUPPRESS | null
+  }[],
+  pagination: {
+    current: string,
+    next?: string | null,
+    previous?: string | null,
+    totalEntries?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sources
+
+### create
+
+`sources.create`
+
+Create a Source from a catalog metadata id and its settings; with disconnectAllWarehouses it also detaches warehouses from the slug
+
+**Risk:** `write`
+
+```ts
+await corsair.segment.api.sources.create({ slug: 'web-production', metadataId: 'IqDTy1TpoU', enabled: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | Identifies the Source in the Segment app. |
+| `metadataId` | `string` | Yes | Id of the Source metadata, from `catalog.listSources`. |
+| `enabled` | `boolean` | Yes | Whether the Source can send data. Defaults to true. |
+| `settings` | `Record<string, unknown>` | No | Instance-specific settings; required fields come from the metadata options. |
+| `disconnectAllWarehouses` | `boolean` | No | Detach warehouses currently connected to this slug. Destructive to those mappings. |
+
+Needs a `metadataId` from `catalog.listSources`; the catalog item lists the settings the source type requires. With `disconnectAllWarehouses` it detaches warehouses mapped to the slug.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  source: {
+    id?: string | null,
+    slug?: string | null,
+    name?: string | null,
+    metadata?: {
+      id?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      description?: string | null,
+      logos?: {
+        default?: string | null,
+        alt?: string | null,
+        mark?: string | null
+      } | null,
+      options?: {
+        name?: string | null,
+        type?: string | null,
+        required?: boolean | null,
+        description?: string | null,
+        defaultValue?: unknown | null
+      }[] | null,
+      categories?: string[] | null,
+      isCloudEventSource?: boolean | null,
+      status?: string | null,
+      partnerOwned?: boolean | null
+    } | null,
+    workspaceId?: string | null,
+    enabled?: boolean | null,
+    writeKeys?: string[] | null,
+    settings?: Record<string, unknown> | null,
+    labels?: {
+      key?: string | null,
+      value?: string | null
+    }[] | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createWriteKey
+
+`sources.createWriteKey`
+
+Create a new write key for a Source and return the Source; the key is a credential that can send data to Segment
+
+**Risk:** `write`
+
+```ts
+await corsair.segment.api.sources.createWriteKey({ sourceId: 'qQEHquLrjRDN9j1ByrChyn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceId` | `string` | Yes | The resource id. |
+
+Takes no body and returns the updated source: its `writeKeys` array now holds the new credential. This call mints a credential, so the plugin marks it a write.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  source: {
+    id?: string | null,
+    slug?: string | null,
+    name?: string | null,
+    metadata?: {
+      id?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      description?: string | null,
+      logos?: {
+        default?: string | null,
+        alt?: string | null,
+        mark?: string | null
+      } | null,
+      options?: {
+        name?: string | null,
+        type?: string | null,
+        required?: boolean | null,
+        description?: string | null,
+        defaultValue?: unknown | null
+      }[] | null,
+      categories?: string[] | null,
+      isCloudEventSource?: boolean | null,
+      status?: string | null,
+      partnerOwned?: boolean | null
+    } | null,
+    workspaceId?: string | null,
+    enabled?: boolean | null,
+    writeKeys?: string[] | null,
+    settings?: Record<string, unknown> | null,
+    labels?: {
+      key?: string | null,
+      value?: string | null
+    }[] | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`sources.delete`
+
+Delete a Source permanently; its data in downstream warehouses remains but the configuration is gone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.segment.api.sources.delete({ sourceId: 'qQEHquLrjRDN9j1ByrChyn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceId` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status: SUCCESS
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`sources.get`
+
+Get one Source by id, with its write keys and settings
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.sources.get({ sourceId: 'qQEHquLrjRDN9j1ByrChyn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceId` | `string` | Yes | The resource id. |
+
+Returns the source with its `writeKeys` (live credentials) and its `trackingPlanId` when a plan enforces it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  source: {
+    id?: string | null,
+    slug?: string | null,
+    name?: string | null,
+    metadata?: {
+      id?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      description?: string | null,
+      logos?: {
+        default?: string | null,
+        alt?: string | null,
+        mark?: string | null
+      } | null,
+      options?: {
+        name?: string | null,
+        type?: string | null,
+        required?: boolean | null,
+        description?: string | null,
+        defaultValue?: unknown | null
+      }[] | null,
+      categories?: string[] | null,
+      isCloudEventSource?: boolean | null,
+      status?: string | null,
+      partnerOwned?: boolean | null
+    } | null,
+    workspaceId?: string | null,
+    enabled?: boolean | null,
+    writeKeys?: string[] | null,
+    settings?: Record<string, unknown> | null,
+    labels?: {
+      key?: string | null,
+      value?: string | null
+    }[] | null
+  },
+  trackingPlanId?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sources.list`
+
+List the Sources in the Workspace; each row embeds its write keys
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.sources.list({ count: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | Page size between 1 and 1000. Defaults to 200 when omitted. |
+| `cursor` | `string` | No | Opaque cursor from a previous response (`pagination.next`); omit for the first page. |
+
+Every row embeds a `writeKeys` array. Those are live credentials that can send events to Segment; treat them like passwords.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sources: {
+    id?: string | null,
+    slug?: string | null,
+    name?: string | null,
+    metadata?: {
+      id?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      description?: string | null,
+      logos?: {
+        default?: string | null,
+        alt?: string | null,
+        mark?: string | null
+      } | null,
+      options?: {
+        name?: string | null,
+        type?: string | null,
+        required?: boolean | null,
+        description?: string | null,
+        defaultValue?: unknown | null
+      }[] | null,
+      categories?: string[] | null,
+      isCloudEventSource?: boolean | null,
+      status?: string | null,
+      partnerOwned?: boolean | null
+    } | null,
+    workspaceId?: string | null,
+    enabled?: boolean | null,
+    writeKeys?: string[] | null,
+    settings?: Record<string, unknown> | null,
+    labels?: {
+      key?: string | null,
+      value?: string | null
+    }[] | null
+  }[],
+  pagination: {
+    current: string,
+    next?: string | null,
+    previous?: string | null,
+    totalEntries?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listConnectedDestinations
+
+`sources.listConnectedDestinations`
+
+List the Destinations connected to a Source
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.sources.listConnectedDestinations({ sourceId: 'qQEHquLrjRDN9j1ByrChyn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceId` | `string` | Yes | The resource id. |
+| `count` | `number` | No | Page size between 1 and 1000. Defaults to 200 when omitted. |
+| `cursor` | `string` | No | Opaque cursor from a previous response (`pagination.next`); omit for the first page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  destinations: {
+    id?: string | null,
+    name?: string | null,
+    enabled?: boolean | null,
+    metadata?: {
+      id?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      description?: string | null,
+      logos?: {
+        default?: string | null,
+        alt?: string | null,
+        mark?: string | null
+      } | null,
+      options?: Record<string, unknown>[] | null,
+      status?: string | null,
+      categories?: string[] | null,
+      website?: string | null
+    } | null,
+    sourceId?: string | null,
+    settings?: Record<string, unknown> | null
+  }[],
+  pagination: {
+    current: string,
+    next?: string | null,
+    previous?: string | null,
+    totalEntries?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listConnectedWarehouses
+
+`sources.listConnectedWarehouses`
+
+List the Warehouses connected to a Source
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.sources.listConnectedWarehouses({ sourceId: 'qQEHquLrjRDN9j1ByrChyn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceId` | `string` | Yes | The resource id. |
+| `count` | `number` | No | Page size between 1 and 1000. Defaults to 200 when omitted. |
+| `cursor` | `string` | No | Opaque cursor from a previous response (`pagination.next`); omit for the first page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  warehouses: {
+    id?: string | null,
+    metadata?: {
+      id?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      description?: string | null,
+      logos?: {
+        default?: string | null,
+        alt?: string | null,
+        mark?: string | null
+      } | null,
+      options?: Record<string, unknown>[] | null
+    } | null,
+    workspaceId?: string | null,
+    enabled?: boolean | null,
+    settings?: {
+      database?: string | null,
+      host?: string | null,
+      port?: number | null,
+      username?: string | null,
+      password?: string | null
+    } | null
+  }[],
+  pagination: {
+    current: string,
+    next?: string | null,
+    previous?: string | null,
+    totalEntries?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeWriteKey
+
+`sources.removeWriteKey`
+
+Delete a write key from a Source; senders using it immediately fail
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.segment.api.sources.removeWriteKey({ sourceId: 'qQEHquLrjRDN9j1ByrChyn', writeKey: 'bEj5MzDqCkHYRqreZgbPuH' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceId` | `string` | Yes | The resource id. |
+| `writeKey` | `string` | Yes | The write key value itself to delete, from the Source object or `sources.createWriteKey`. |
+
+Deletes by the key value itself in the path. Senders using that key fail immediately; the key cannot be recovered.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status: SUCCESS
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`sources.update`
+
+Update a Source name, slug, enabled flag or settings
+
+**Risk:** `write`
+
+```ts
+await corsair.segment.api.sources.update({ sourceId: 'qQEHquLrjRDN9j1ByrChyn', name: 'Web production' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceId` | `string` | Yes | The resource id. |
+| `name` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `slug` | `string` | No | — |
+| `settings` | `Record<string, unknown>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  source: {
+    id?: string | null,
+    slug?: string | null,
+    name?: string | null,
+    metadata?: {
+      id?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      description?: string | null,
+      logos?: {
+        default?: string | null,
+        alt?: string | null,
+        mark?: string | null
+      } | null,
+      options?: {
+        name?: string | null,
+        type?: string | null,
+        required?: boolean | null,
+        description?: string | null,
+        defaultValue?: unknown | null
+      }[] | null,
+      categories?: string[] | null,
+      isCloudEventSource?: boolean | null,
+      status?: string | null,
+      partnerOwned?: boolean | null
+    } | null,
+    workspaceId?: string | null,
+    enabled?: boolean | null,
+    writeKeys?: string[] | null,
+    settings?: Record<string, unknown> | null,
+    labels?: {
+      key?: string | null,
+      value?: string | null
+    }[] | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateSchemaSettings
+
+`sources.updateSchemaSettings`
+
+Change a Source's schema settings, such as allowing unplanned events or forwarding violations
+
+**Risk:** `write`
+
+```ts
+await corsair.segment.api.sources.updateSchemaSettings({ sourceId: 'qQEHquLrjRDN9j1ByrChyn', settings: { track: { allowUnplannedEvents: false } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceId` | `string` | Yes | The resource id. |
+| `settings` | `object` | Yes | The schema settings to change; unset keys stay as they are. |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  track?: {
+    allowUnplannedEvents?: boolean,
+    allowUnplannedEventProperties?: boolean,
+    allowEventOnViolations?: boolean,
+    allowPropertiesOnViolations?: boolean,
+    commonEventOnViolations?: ALLOW | BLOCK | OMIT_PROPERTIES
+  },
+  identify?: {
+    allowUnplannedTraits?: boolean,
+    allowTraitsOnViolations?: boolean,
+    commonEventOnViolations?: ALLOW | BLOCK | OMIT_PROPERTIES
+  },
+  group?: {
+    allowUnplannedTraits?: boolean,
+    allowTraitsOnViolations?: boolean,
+    commonEventOnViolations?: ALLOW | BLOCK | OMIT_PROPERTIES
+  },
+  forwardingViolationsTo?: string,
+  forwardingBlockedEventsTo?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sourceId?: string | null,
+  settings?: Record<string, unknown> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tracking Plans
+
+### addSource
+
+`trackingPlans.addSource`
+
+Connect a Source to a Tracking Plan so its events are enforced
+
+**Risk:** `write`
+
+```ts
+await corsair.segment.api.trackingPlans.addSource({ trackingPlanId: 'tp_2ljkchcmkcY9anKnhvQ1WqAGOGC', sourceId: 'qQEHquLrjRDN9j1ByrChyn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trackingPlanId` | `string` | Yes | The resource id. |
+| `sourceId` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status: SUCCESS
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`trackingPlans.create`
+
+Create a Tracking Plan with a name and a type
+
+**Risk:** `write`
+
+```ts
+await corsair.segment.api.trackingPlans.create({ name: 'Mobile app plan', type: 'TEMPLATE' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `type` | `ENGAGE \| LIVE \| PROPERTY_LIBRARY \| RULE_LIBRARY \| TEMPLATE` | Yes | The plan type. Most product tracking plans are TEMPLATE; the others serve Segments advanced products. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  trackingPlan: {
+    id?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    description?: string | null,
+    type?: ENGAGE | LIVE | PROPERTY_LIBRARY | RULE_LIBRARY | TEMPLATE | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`trackingPlans.delete`
+
+Delete a Tracking Plan permanently
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.segment.api.trackingPlans.delete({ trackingPlanId: 'tp_2ljkchcmkcY9anKnhvQ1WqAGOGC' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trackingPlanId` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status: SUCCESS
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`trackingPlans.get`
+
+Get one Tracking Plan by id
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.trackingPlans.get({ trackingPlanId: 'tp_2ljkchcmkcY9anKnhvQ1WqAGOGC' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trackingPlanId` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  trackingPlan: {
+    id?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    description?: string | null,
+    type?: ENGAGE | LIVE | PROPERTY_LIBRARY | RULE_LIBRARY | TEMPLATE | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`trackingPlans.list`
+
+List the Tracking Plans in the Workspace, optionally by type
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.trackingPlans.list({ count: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `ENGAGE \| LIVE \| PROPERTY_LIBRARY \| RULE_LIBRARY \| TEMPLATE` | No | — |
+| `count` | `number` | No | Page size between 1 and 1000. Defaults to 200 when omitted. |
+| `cursor` | `string` | No | Opaque cursor from a previous response (`pagination.next`); omit for the first page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  trackingPlans: {
+    id?: string | null,
+    name?: string | null,
+    slug?: string | null,
+    description?: string | null,
+    type?: ENGAGE | LIVE | PROPERTY_LIBRARY | RULE_LIBRARY | TEMPLATE | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  }[],
+  pagination: {
+    current: string,
+    next?: string | null,
+    previous?: string | null,
+    totalEntries?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRules
+
+`trackingPlans.listRules`
+
+List a Tracking Plan's event and trait rules
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.trackingPlans.listRules({ trackingPlanId: 'tp_2ljkchcmkcY9anKnhvQ1WqAGOGC' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trackingPlanId` | `string` | Yes | The resource id. |
+| `count` | `number` | No | Page size between 1 and 1000. Defaults to 200 when omitted. |
+| `cursor` | `string` | No | Opaque cursor from a previous response (`pagination.next`); omit for the first page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  rules: {
+    id?: string | null,
+    type?: COMMON | GROUP | IDENTIFY | PAGE | SCREEN | TRACK | null,
+    key?: string | null,
+    name?: string | null,
+    description?: string | null,
+    version?: number | null,
+    jsonSchema?: Record<string, unknown> | null
+  }[],
+  pagination: {
+    current: string,
+    next?: string | null,
+    previous?: string | null,
+    totalEntries?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSources
+
+`trackingPlans.listSources`
+
+List the Sources connected to a Tracking Plan
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.trackingPlans.listSources({ trackingPlanId: 'tp_2ljkchcmkcY9anKnhvQ1WqAGOGC' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trackingPlanId` | `string` | Yes | The resource id. |
+| `count` | `number` | No | Page size between 1 and 1000. Defaults to 200 when omitted. |
+| `cursor` | `string` | No | Opaque cursor from a previous response (`pagination.next`); omit for the first page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sources: {
+    id?: string | null,
+    slug?: string | null,
+    name?: string | null,
+    metadata?: {
+      id?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      description?: string | null,
+      logos?: {
+        default?: string | null,
+        alt?: string | null,
+        mark?: string | null
+      } | null,
+      options?: {
+        name?: string | null,
+        type?: string | null,
+        required?: boolean | null,
+        description?: string | null,
+        defaultValue?: unknown | null
+      }[] | null,
+      categories?: string[] | null,
+      isCloudEventSource?: boolean | null,
+      status?: string | null,
+      partnerOwned?: boolean | null
+    } | null,
+    workspaceId?: string | null,
+    enabled?: boolean | null,
+    writeKeys?: string[] | null,
+    settings?: Record<string, unknown> | null,
+    labels?: {
+      key?: string | null,
+      value?: string | null
+    }[] | null
+  }[],
+  pagination: {
+    current: string,
+    next?: string | null,
+    previous?: string | null,
+    totalEntries?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeSource
+
+`trackingPlans.removeSource`
+
+Disconnect a Source from a Tracking Plan
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.segment.api.trackingPlans.removeSource({ trackingPlanId: 'tp_2ljkchcmkcY9anKnhvQ1WqAGOGC', sourceId: 'qQEHquLrjRDN9j1ByrChyn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trackingPlanId` | `string` | Yes | The resource id. |
+| `sourceId` | `string` | Yes | The resource id. |
+
+The source id travels as a `sourceId` query parameter on the DELETE, not as a path segment.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status: SUCCESS
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replaceRules
+
+`trackingPlans.replaceRules`
+
+Replace a Tracking Plan's whole rule set; rules absent from the array are removed
+
+**Risk:** `write`
+
+```ts
+await corsair.segment.api.trackingPlans.replaceRules({ trackingPlanId: 'tp_2ljkchcmkcY9anKnhvQ1WqAGOGC', rules: [{ type: 'TRACK', key: 'Order Completed', jsonSchema: {}, version: 1 }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trackingPlanId` | `string` | Yes | The resource id. |
+| `rules` | `object[]` | Yes | The complete new rule set: rules absent from this array are removed from the plan. |
+
+PUT semantics: the array is the complete new rule set, and rules absent from it are removed from the plan. Each rule needs `type`, `jsonSchema` and `version`.
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+  type: COMMON | GROUP | IDENTIFY | PAGE | SCREEN | TRACK,
+  key?: string,
+  jsonSchema: Record<string, unknown>,
+  version: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status: SUCCESS
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`trackingPlans.update`
+
+Rename a Tracking Plan or change its description
+
+**Risk:** `write`
+
+```ts
+await corsair.segment.api.trackingPlans.update({ trackingPlanId: 'tp_2ljkchcmkcY9anKnhvQ1WqAGOGC', name: 'Mobile app plan v2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trackingPlanId` | `string` | Yes | The resource id. |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status: SUCCESS
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Warehouses
+
+### addSourceConnection
+
+`warehouses.addSourceConnection`
+
+Connect a Source to a Warehouse so its data loads there
+
+**Risk:** `write`
+
+```ts
+await corsair.segment.api.warehouses.addSourceConnection({ warehouseId: 'kpMQMcgaDw', sourceId: 'qQEHquLrjRDN9j1ByrChyn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `warehouseId` | `string` | Yes | The resource id. |
+| `sourceId` | `string` | Yes | The resource id. |
+
+A 201 whose `data.status` is `SUCCESS`. Runs a warehouse load for the source on the next schedule.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status: SUCCESS
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`warehouses.create`
+
+Create a Warehouse from a catalog metadata id and its connection settings
+
+**Risk:** `write`
+
+```ts
+await corsair.segment.api.warehouses.create({ metadataId: 'qfA7klpAkB', settings: { host: 'db.example.com', database: 'analytics', username: 'loader' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metadataId` | `string` | Yes | Id of the Warehouse metadata. |
+| `name` | `string` | No | — |
+| `enabled` | `boolean` | No | Defaults to true. |
+| `settings` | `object` | Yes | Credentials and connection settings from the metadata options. |
+| `disconnectAllSources` | `boolean` | No | Detach sources currently connected to this warehouse settings id. |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  database?: string | null,
+  host?: string | null,
+  port?: number | null,
+  username?: string | null,
+  password?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  warehouse: {
+    id?: string | null,
+    metadata?: {
+      id?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      description?: string | null,
+      logos?: {
+        default?: string | null,
+        alt?: string | null,
+        mark?: string | null
+      } | null,
+      options?: Record<string, unknown>[] | null
+    } | null,
+    workspaceId?: string | null,
+    enabled?: boolean | null,
+    settings?: {
+      database?: string | null,
+      host?: string | null,
+      port?: number | null,
+      username?: string | null,
+      password?: string | null
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`warehouses.delete`
+
+Delete a Warehouse permanently
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.segment.api.warehouses.delete({ warehouseId: 'kpMQMcgaDw' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `warehouseId` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status: SUCCESS
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`warehouses.get`
+
+Get one Warehouse by id
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.warehouses.get({ warehouseId: 'kpMQMcgaDw' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `warehouseId` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  warehouse: {
+    id?: string | null,
+    metadata?: {
+      id?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      description?: string | null,
+      logos?: {
+        default?: string | null,
+        alt?: string | null,
+        mark?: string | null
+      } | null,
+      options?: Record<string, unknown>[] | null
+    } | null,
+    workspaceId?: string | null,
+    enabled?: boolean | null,
+    settings?: {
+      database?: string | null,
+      host?: string | null,
+      port?: number | null,
+      username?: string | null,
+      password?: string | null
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getConnectionState
+
+`warehouses.getConnectionState`
+
+Read a Warehouse's current connection state: CONNECTED or FAILED
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.warehouses.getConnectionState({ warehouseId: 'kpMQMcgaDw' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `warehouseId` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  connectionState: CONNECTED | FAILED
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`warehouses.list`
+
+List the Warehouses in the Workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.warehouses.list({ count: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | No | Page size between 1 and 1000. Defaults to 200 when omitted. |
+| `cursor` | `string` | No | Opaque cursor from a previous response (`pagination.next`); omit for the first page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  warehouses: {
+    id?: string | null,
+    metadata?: {
+      id?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      description?: string | null,
+      logos?: {
+        default?: string | null,
+        alt?: string | null,
+        mark?: string | null
+      } | null,
+      options?: Record<string, unknown>[] | null
+    } | null,
+    workspaceId?: string | null,
+    enabled?: boolean | null,
+    settings?: {
+      database?: string | null,
+      host?: string | null,
+      port?: number | null,
+      username?: string | null,
+      password?: string | null
+    } | null
+  }[],
+  pagination: {
+    current: string,
+    next?: string | null,
+    previous?: string | null,
+    totalEntries?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listConnectedSources
+
+`warehouses.listConnectedSources`
+
+List the Sources connected to a Warehouse
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.warehouses.listConnectedSources({ warehouseId: 'kpMQMcgaDw' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `warehouseId` | `string` | Yes | The resource id. |
+| `count` | `number` | No | Page size between 1 and 1000. Defaults to 200 when omitted. |
+| `cursor` | `string` | No | Opaque cursor from a previous response (`pagination.next`); omit for the first page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  sources: {
+    id?: string | null,
+    slug?: string | null,
+    name?: string | null,
+    metadata?: {
+      id?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      description?: string | null,
+      logos?: {
+        default?: string | null,
+        alt?: string | null,
+        mark?: string | null
+      } | null,
+      options?: {
+        name?: string | null,
+        type?: string | null,
+        required?: boolean | null,
+        description?: string | null,
+        defaultValue?: unknown | null
+      }[] | null,
+      categories?: string[] | null,
+      isCloudEventSource?: boolean | null,
+      status?: string | null,
+      partnerOwned?: boolean | null
+    } | null,
+    workspaceId?: string | null,
+    enabled?: boolean | null,
+    writeKeys?: string[] | null,
+    settings?: Record<string, unknown> | null,
+    labels?: {
+      key?: string | null,
+      value?: string | null
+    }[] | null
+  }[],
+  pagination: {
+    current: string,
+    next?: string | null,
+    previous?: string | null,
+    totalEntries?: number | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeSourceConnection
+
+`warehouses.removeSourceConnection`
+
+Disconnect a Source from a Warehouse
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.segment.api.warehouses.removeSourceConnection({ warehouseId: 'kpMQMcgaDw', sourceId: 'qQEHquLrjRDN9j1ByrChyn' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `warehouseId` | `string` | Yes | The resource id. |
+| `sourceId` | `string` | Yes | The resource id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status: SUCCESS
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`warehouses.update`
+
+Update a Warehouse name, enabled flag or settings; the API requires settings on every call
+
+**Risk:** `write`
+
+```ts
+await corsair.segment.api.warehouses.update({ warehouseId: 'kpMQMcgaDw', enabled: false, settings: { host: 'db.example.com', database: 'analytics', username: 'loader' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `warehouseId` | `string` | Yes | The resource id. |
+| `name` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `settings` | `object` | Yes | Required by the API even when only renaming. |
+
+The API requires `settings` on every update, even when only renaming or toggling `enabled`; send the full settings object.
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  database?: string | null,
+  host?: string | null,
+  port?: number | null,
+  username?: string | null,
+  password?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  warehouse: {
+    id?: string | null,
+    metadata?: {
+      id?: string | null,
+      name?: string | null,
+      slug?: string | null,
+      description?: string | null,
+      logos?: {
+        default?: string | null,
+        alt?: string | null,
+        mark?: string | null
+      } | null,
+      options?: Record<string, unknown>[] | null
+    } | null,
+    workspaceId?: string | null,
+    enabled?: boolean | null,
+    settings?: {
+      database?: string | null,
+      host?: string | null,
+      port?: number | null,
+      username?: string | null,
+      password?: string | null
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validate
+
+`warehouses.validate`
+
+Check a set of Warehouse credentials by attempting to connect; synchronous, answers CONNECTED or FAILED
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.warehouses.validate({ metadataId: 'qfA7klpAkB', settings: { host: 'db.example.com', database: 'analytics', username: 'loader' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metadataId` | `string` | Yes | Id of the Warehouse metadata, from a `catalog` lookup. |
+| `settings` | `object` | Yes | The credentials to check. |
+
+Synchronous credential check: answers `CONNECTED` or `FAILED` in the same response. No settings are stored.
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  database?: string | null,
+  host?: string | null,
+  port?: number | null,
+  username?: string | null,
+  password?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  status: CONNECTED | FAILED
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workspaces
+
+### get
+
+`workspaces.get`
+
+Get the Workspace the token belongs to
+
+**Risk:** `read`
+
+```ts
+await corsair.segment.api.workspaces.get({});
+```
+
+**Input:** _empty object_
+
+Answers `GET /`, the workspace the token belongs to. Tokens are workspace-scoped, so this is always exactly one workspace.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  workspace: {
+    id?: string | null,
+    name?: string | null,
+    slug?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

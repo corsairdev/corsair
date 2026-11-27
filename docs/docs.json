@@ -5355,6 +5355,14 @@
                 ]
               },
               {
+                "group": "Segment",
+                "pages": [
+                  "plugins/segment/overview",
+                  "plugins/segment/api",
+                  "plugins/segment/database"
+                ]
+              },
+              {
                 "group": "Semantic Scholar",
                 "pages": [
                   "plugins/semanticscholar/overview",
