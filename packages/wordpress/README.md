@@ -22,7 +22,7 @@ pnpm add @corsair-dev/wordpress
 | `batch.run` | `wordpress.api.batch.run` | `destructive` | Run up to 25 write requests (POST, PUT, PATCH, DELETE on routes that allow batching) in one call; with validation require-all-validate nothing runs unless every request validates |
 | `blockDirectory.search` | `wordpress.api.blockDirectory.search` | `read` | Search the WordPress.org block directory for installable block plugins |
 | `blockEditor.export` | `wordpress.api.blockEditor.export` | `read` | Export the active block theme with the site's customizations as a zip (returned as a file) |
-| `blockEditor.navigationFallback` | `wordpress.api.blockEditor.navigationFallback` | `read` | Get (or create) the navigation menu the editor falls back to when a Navigation block has none |
+| `blockEditor.navigationFallback` | `wordpress.api.blockEditor.navigationFallback` | `write` | Get (or create) the navigation menu the editor falls back to when a Navigation block has none |
 | `blockEditor.urlDetails` | `wordpress.api.blockEditor.urlDetails` | `read` | Fetch a URL's title, description, icon and image, as the editor's link previews do |
 | `blockPatterns.categories` | `wordpress.api.blockPatterns.categories` | `read` | List the registered block pattern categories |
 | `blockPatterns.list` | `wordpress.api.blockPatterns.list` | `read` | List the block patterns registered on the site (theme, core and plugin patterns) |

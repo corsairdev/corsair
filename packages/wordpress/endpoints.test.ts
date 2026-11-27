@@ -111,6 +111,12 @@ describe('site URL', () => {
 		expect(normalizeSiteUrl('http://localhost:8093')).toBe(
 			'http://localhost:8093/wp-json',
 		);
+		expect(normalizeSiteUrl('http://shop.test')).toBe(
+			'http://shop.test/wp-json',
+		);
+		expect(normalizeSiteUrl('http://127.0.0.1:8080')).toBe(
+			'http://127.0.0.1:8080/wp-json',
+		);
 	});
 
 	it('refuses URLs that are not a plain http(s) site', () => {
@@ -121,6 +127,9 @@ describe('site URL', () => {
 			'https://user:pw@example.com',
 			'https://example.com/?rest_route=/',
 			'https://example.com/#x',
+			// The password would cross the network in the clear.
+			'http://example.com',
+			'http://10.0.0.5',
 		]) {
 			expect(() => normalizeSiteUrl(bad)).toThrow();
 		}
@@ -161,6 +170,39 @@ describe('requests', () => {
 		expect(nextPageOf({}, 10, 10)).toBe(2);
 		expect(nextPageOf({ page: 2, per_page: 5 }, 5, 10)).toBe(3);
 		expect(nextPageOf({ per_page: 5 }, 0, 10)).toBeNull();
+	});
+
+	it('pages by offset without a next page, and ends on an empty page past the end', async () => {
+		reply(200, [{ id: 1 }, { id: 2 }]);
+		await expect(
+			call('posts.list', { per_page: 2, offset: 4 }),
+		).resolves.toEqual({ items: [{ id: 1 }, { id: 2 }], next_page: null });
+		calls = [];
+		reply(400, {
+			code: 'rest_post_invalid_page_number',
+			message:
+				'The page number requested is larger than the number of pages available.',
+			data: { status: 400 },
+		});
+		await expect(call('posts.list', { page: 2 })).resolves.toEqual({
+			items: [],
+			next_page: null,
+		});
+		// Any other 400 still throws.
+		reply(400, {
+			code: 'rest_invalid_param',
+			message: 'Bad',
+			data: { status: 400 },
+		});
+		await expect(call('posts.list', { page: 2 })).rejects.toThrow(
+			'rest_invalid_param',
+		);
+	});
+
+	it('keeps an explicit null in the body (it resets the field)', async () => {
+		reply(200, { id: 12 });
+		await call('posts.update', { id: 12, date: null });
+		expect(sentJson()).toEqual({ date: null });
 	});
 
 	it('sends a post as JSON and the id in the path', async () => {
@@ -275,6 +317,17 @@ describe('requests', () => {
 		await expect(call('rest.get', { route: '../wp-admin' })).rejects.toThrow(
 			'Invalid WordPress path value',
 		);
+		// `_method` would turn the GET into a write on WordPress's side.
+		calls = [];
+		for (const key of ['_method', '_METHOD', '_method[0]']) {
+			await expect(
+				call('rest.get', {
+					route: 'wp/v2/posts/1',
+					query: { [key]: 'DELETE' },
+				}),
+			).rejects.toThrow(/_method is not allowed/);
+		}
+		expect(calls).toHaveLength(0);
 	});
 
 	it('refuses invalid input before any call, naming fields not values', async () => {
@@ -321,6 +374,21 @@ describe('errors', () => {
 		expect(text).not.toContain('abcd');
 		expect(error.request.body).toBe('[REDACTED]');
 		expect(error.request.headers).toBeUndefined();
+	});
+
+	it('drops a sensitive number the call sent when the error echoes it', async () => {
+		reply(400, {
+			code: 'invalid_phone',
+			message: 'Bad phone',
+			data: { status: 400, phone: 15551234567, retry: 3 },
+		});
+		const error = (await call('rest.send', {
+			route: 'acme/v1/contacts',
+			body: { phone: 15551234567 },
+		}).catch((e) => e)) as ApiError;
+		expect(error.body).toMatchObject({
+			data: { status: 400, phone: '[REDACTED]', retry: 3 },
+		});
 	});
 
 	it('keeps the route, not the values, in the error URL', () => {

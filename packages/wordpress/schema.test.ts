@@ -212,5 +212,7 @@ describe('risk levels', () => {
 		expect(risk('posts.create')).toBe('write');
 		expect(risk('blockRenderer.render')).toBe('read');
 		expect(risk('posts.list')).toBe('read');
+		// A GET that creates a Navigation menu when there is none.
+		expect(risk('blockEditor.navigationFallback')).toBe('write');
 	});
 });

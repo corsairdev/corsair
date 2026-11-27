@@ -1,7 +1,7 @@
 import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import type { BinaryResponse, FileInput } from 'corsair/http';
-import { resolveFileInput, toFileOutput } from 'corsair/http';
+import { ApiError, resolveFileInput, toFileOutput } from 'corsair/http';
 import type { WordpressHttpMethod, WordpressRequest } from '../client';
 import {
 	encodeWordpressPathValue,
@@ -110,6 +110,8 @@ export function nextPageOf(
 	count: number,
 	defaultSize: number,
 ): number | null {
+	// With `offset`, WordPress ignores `page`: the caller pages by offset.
+	if (typeof input.offset === 'number') return null;
 	const page =
 		typeof input.page === 'number' && input.page > 0 ? input.page : 1;
 	const size =
@@ -127,6 +129,18 @@ function isBinaryResponse(value: unknown): value is BinaryResponse {
 		'bytes' in value &&
 		value.bytes instanceof Uint8Array
 	);
+}
+
+/** WordPress's answer to a page past the end of a list. */
+// `unknown` because anything can be thrown.
+export function isPastLastPage(error: unknown): boolean {
+	if (!(error instanceof ApiError) || error.status !== 400) return false;
+	const body = error.body;
+	const code =
+		typeof body === 'object' && body !== null && 'code' in body
+			? (body as { code?: unknown }).code
+			: undefined;
+	return typeof code === 'string' && code.endsWith('_invalid_page_number');
 }
 
 /** `Content-Disposition` for an upload, with the name WordPress saves the file under. */
@@ -166,7 +180,10 @@ export function createWordpressOperation<Id extends WordpressOperationId>(
 		for (const field of wordpressInputFields(id)) {
 			named.add(field.name);
 			const value = valid[field.name];
-			if (value === undefined || value === null) continue;
+			if (value === undefined) continue;
+			// An explicit null is a value in a body (`date: null` resets a
+			// post's date); in a path or query string it means "not set".
+			if (value === null && field.in !== 'body') continue;
 			switch (field.in) {
 				case 'path':
 					pathParameters[field.wire] = encodeWordpressPathValue(
@@ -181,6 +198,13 @@ export function createWordpressOperation<Id extends WordpressOperationId>(
 					for (const [key, inner] of Object.entries(
 						value as Record<string, unknown>,
 					)) {
+						if (key.toLowerCase().startsWith('_method')) {
+							// WordPress runs a request as the `_method` it names, so a
+							// read could become a DELETE: the method is its own field.
+							throw new Error(
+								`Invalid input for wordpress ${id}: query: _method is not allowed${id === 'rest.get' ? '; use rest.send with method' : ''}`,
+							);
+						}
 						if (inner !== undefined) query[key] = phpQueryValue(inner);
 					}
 					break;
@@ -241,7 +265,15 @@ export function createWordpressOperation<Id extends WordpressOperationId>(
 				filename: `wordpress-${id.replace(/\./g, '-')}.zip`,
 			});
 		} else {
-			const raw = await makeWordpressRequest(ctx, request);
+			const raw = await makeWordpressRequest(ctx, request).catch(
+				(error: unknown) => {
+					// A full last page still gets a next_page (core doesn't return
+					// X-WP-TotalPages), and WordPress answers the page after it with
+					// 400 `rest_*_invalid_page_number`: that page is empty.
+					if (operation.paginated && isPastLastPage(error)) return [];
+					throw error;
+				},
+			);
 			if (operation.paginated && Array.isArray(raw)) {
 				response = {
 					items: raw,

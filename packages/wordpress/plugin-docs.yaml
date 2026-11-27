@@ -10,8 +10,10 @@ overviewNote: |
   address, `https://example.com` or `https://example.com/blog`, with or
   without `/wp-json`), the `username` of the user the password belongs to,
   and an application password as the key. Create one at Users → Profile →
-  Application Passwords (WordPress 5.6+; the site must be served over HTTPS
-  unless it runs with `WP_ENVIRONMENT_TYPE` set to `local`). Calls are sent as
+  Application Passwords (WordPress 5.6+). The site must be served over HTTPS:
+  the plugin refuses plain `http://` except for localhost and `.local`,
+  `.test` or `.localhost` hosts (WordPress itself also needs
+  `WP_ENVIRONMENT_TYPE` set to `local` there). Calls are sent as
   HTTP Basic auth, so what works depends on that user's role: an
   Administrator can manage plugins, users and settings, an Author only their
   own posts. The site needs pretty permalinks (any setting other than Plain)
@@ -22,7 +24,8 @@ overviewNote: |
 
   - **Lists** page with `page` and `per_page` (WordPress allows up to 100).
   Paged lists return `{ items, next_page }`: `next_page` is set while a page
-  comes back full; step `page` until it is null.
+  comes back full; step `page` until it is null (a full last page is followed
+  by an empty one). With `offset`, `next_page` is null: page by `offset`.
   - **Content fields** such as `title`, `content` and `excerpt` take a plain
   string when writing and come back as `{ rendered }` (plus `raw` with
   `context: "edit"`).

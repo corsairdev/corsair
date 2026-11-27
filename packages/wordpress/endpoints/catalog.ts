@@ -669,7 +669,7 @@ export const wordpressEndpointMeta = {
 			"Export the active block theme with the site's customizations as a zip (returned as a file)",
 	},
 	'blockEditor.navigationFallback': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description:
 			'Get (or create) the navigation menu the editor falls back to when a Navigation block has none',
 	},
