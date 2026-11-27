@@ -20,6 +20,11 @@ import {
 import type { ZepEndpointInputs, ZepEndpointOutputs } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ZepSchema } from './schema';
+import {
+	matchZepWebhook,
+	zepWebhookSchemas,
+	zepWebhooksNested,
+} from './webhooks';
 
 export type ZepPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -29,7 +34,14 @@ export type ZepPluginOptions = {
 	 * Another API base, such as a proxy in front of Zep. Leave it out for https://api.getzep.com/api/v4.
 	 */
 	baseUrl?: string;
+	/**
+	 * The signing secret (`whsec_...`) of the webhook endpoint set up in the
+	 * Zep dashboard. Left out, the plugin reads the account's stored
+	 * webhook_signature.
+	 */
+	webhookSecret?: string;
 	hooks?: InternalZepPlugin['hooks'];
+	webhookHooks?: InternalZepPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof zepEndpointsNested>;
 };
@@ -75,7 +87,7 @@ export type BaseZepPlugin<T extends ZepPluginOptions> = CorsairPlugin<
 	'zep',
 	typeof ZepSchema,
 	typeof zepEndpointsNested,
-	{},
+	typeof zepWebhooksNested,
 	T,
 	typeof defaultAuthType,
 	typeof zepAuthConfig
@@ -99,11 +111,13 @@ export function zep<const T extends ZepPluginOptions>(
 		options: options,
 		hooks: options.hooks,
 		endpoints: zepEndpointsNested,
-		webhooks: {},
+		webhooks: zepWebhooksNested,
+		webhookSchemas: zepWebhookSchemas,
+		webhookHooks: options.webhookHooks,
 		authConfig: zepAuthConfig,
 		endpointMeta: zepEndpointMeta,
 		endpointSchemas: zepEndpointSchemas,
-		pluginWebhookMatcher: () => false,
+		pluginWebhookMatcher: matchZepWebhook,
 		errorHandlers: (() => {
 			// Core uses the first handler whose matcher accepts the error, and
 			// DEFAULT matches everything, so DEFAULT always goes last; otherwise
@@ -118,7 +132,16 @@ export function zep<const T extends ZepPluginOptions>(
 			};
 		})(),
 		keyBuilder: async (ctx: ZepKeyBuilderContext, source) => {
-			if (source !== 'endpoint') return '';
+			if (source === 'webhook') {
+				if (options.webhookSecret) return options.webhookSecret;
+				const secret = await tryGetStoredKey(() =>
+					ctx.keys?.get_webhook_signature(),
+				);
+				if (!secret?.trim()) {
+					throw new AuthMissingError('zep', 'webhook_signature');
+				}
+				return secret;
+			}
 			if (options.key) return options.key;
 
 			// No key configured: AuthMissingError makes core ask the tenant to connect.
@@ -145,3 +168,9 @@ export {
 	ZepEndpointInputSchemas,
 	ZepEndpointOutputSchemas,
 } from './endpoints/types';
+export type {
+	BatchCompleted,
+	ByomRequestFailed,
+	EpisodeProcessed,
+} from './webhooks';
+export { verifyZepSignature } from './webhooks';
