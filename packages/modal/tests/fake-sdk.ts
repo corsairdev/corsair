@@ -242,7 +242,17 @@ export function createFakeSdk(actual: ModalSdkModule): FakeSdk {
 			})),
 		},
 	};
-	fn.withOptions = rec('function.withOptions', () => fn);
+	// Like the SDK: withOptions records overrides, instance() returns the bound
+	// variant (its own id), and only the variant's spawn runs with them.
+	const boundFn: Record<string, unknown> = {
+		...fn,
+		functionId: 'fu-bound',
+		spawn: recAsync('boundFunction.spawn', () => functionCall),
+	};
+	fn.withOptions = rec('function.withOptions', () => ({
+		...fn,
+		instance: recAsync('function.instance', () => boundFn),
+	}));
 
 	const cls: Record<string, unknown> = {
 		withOptions: rec('cls.withOptions', () => cls),

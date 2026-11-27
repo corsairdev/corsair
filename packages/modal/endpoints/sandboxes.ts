@@ -271,15 +271,26 @@ async function createSandbox(
 			input.h2Ports?.length ||
 			input.unencryptedPorts?.length,
 	);
-	const tunnels = hasPorts
-		? tunnelsToJson(await sandbox.tunnels(input.tunnelTimeoutMs))
-		: undefined;
-	return {
+	const result = {
 		sandboxId: sandbox.sandboxId,
 		appId: app.appId,
 		name: input.name,
-		tunnels,
 	};
+	if (!hasPorts) return result;
+	try {
+		return {
+			...result,
+			tunnels: tunnelsToJson(await sandbox.tunnels(input.tunnelTimeoutMs)),
+		};
+	} catch (error) {
+		// The sandbox is running (and billed) either way: hand back its id so the
+		// caller can fetch the tunnels later or terminate it, instead of losing it.
+		const name = error instanceof Error ? error.name : 'Error';
+		return {
+			...result,
+			tunnelsError: `Tunnels not ready (${name}); call sandboxes.tunnels later, or sandboxes.terminate.`,
+		};
+	}
 }
 
 export const createSandboxOp = defineOperation({
@@ -294,6 +305,12 @@ export const createSandboxOp = defineOperation({
 		appId: z.string(),
 		name: z.string().optional(),
 		tunnels: z.array(TunnelSchema).optional(),
+		tunnelsError: z
+			.string()
+			.optional()
+			.describe(
+				'Set when the sandbox started but its tunnels failed or were not ready within tunnelTimeoutMs. The sandbox keeps running.',
+			),
 	}),
 	run: createSandbox,
 });

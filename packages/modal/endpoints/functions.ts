@@ -195,7 +195,11 @@ export const callFunction = defineOperation({
 	run: async (runtime, input) => {
 		let fn = await lookupFunction(runtime, input);
 		if (input.options) {
-			fn = fn.withOptions(await toSdkFunctionOptions(runtime, input.options));
+			// withOptions only records the overrides; instance() binds them into
+			// the variant that spawn() runs.
+			fn = await fn
+				.withOptions(await toSdkFunctionOptions(runtime, input.options))
+				.instance();
 		}
 		const call = await fn.spawn(input.args, input.kwargs);
 		return awaitCall(runtime, call, input.waitMs);
@@ -217,7 +221,11 @@ export const spawnFunction = defineOperation({
 	run: async (runtime, input) => {
 		let fn = await lookupFunction(runtime, input);
 		if (input.options) {
-			fn = fn.withOptions(await toSdkFunctionOptions(runtime, input.options));
+			// withOptions only records the overrides; instance() binds them into
+			// the variant that spawn() runs.
+			fn = await fn
+				.withOptions(await toSdkFunctionOptions(runtime, input.options))
+				.instance();
 		}
 		const call = await fn.spawn(input.args, input.kwargs);
 		return { functionCallId: call.functionCallId };

@@ -565,7 +565,12 @@ const CASES: Record<string, Case> = {
 			];
 			expect(options.gpu).toBe('T4');
 			expect(options.secrets).toEqual([{ secretId: 'st-1', name: 'hf' }]);
-			expect(f.callsTo('function.spawn')[0]).toEqual([[4], { verbose: true }]);
+			expect(f.callsTo('function.instance')).toHaveLength(1);
+			expect(f.callsTo('boundFunction.spawn')[0]).toEqual([
+				[4],
+				{ verbose: true },
+			]);
+			expect(f.callsTo('function.spawn')).toHaveLength(0);
 			expect(f.callsTo('functionCall.get')[0]).toEqual([{ timeoutMs: 1000 }]);
 			expect(out).toEqual({
 				functionCallId: 'fc-1',
@@ -575,8 +580,17 @@ const CASES: Record<string, Case> = {
 		},
 	},
 	'functions.spawn': {
-		input: { functionId: 'fu-1', args: [1] },
-		check: (out) => expect(out).toEqual({ functionCallId: 'fc-1' }),
+		input: { functionId: 'fu-1', args: [1], options: { timeoutMs: 5000 } },
+		check: (out, f) => {
+			const [options] = f.callsTo('function.withOptions')[0] as [
+				Record<string, unknown>,
+			];
+			expect(options.timeoutMs).toBe(5000);
+			expect(f.callsTo('function.instance')).toHaveLength(1);
+			expect(f.callsTo('boundFunction.spawn')[0]).toEqual([[1], {}]);
+			expect(f.callsTo('function.spawn')).toHaveLength(0);
+			expect(out).toEqual({ functionCallId: 'fc-1' });
+		},
 	},
 	'functions.stats': {
 		input: { functionId: 'fu-1', allVariants: true },
@@ -1080,6 +1094,28 @@ describe('inputs and errors', () => {
 		expect(error).toBeInstanceOf(ApiError);
 		expect(error.status).toBe(429);
 		expect(error.message).toContain('sandboxes.get');
+	});
+
+	it('returns the sandbox id when its tunnels are not ready after create', async () => {
+		fake.setResult('sandbox.tunnels', () => {
+			throw new actualSdk.SandboxTimeoutError();
+		});
+		const out = await run('sandboxes.create', {
+			image: { registry: 'alpine:3.21' },
+			encryptedPorts: [8080],
+		});
+		expect(out).toMatchObject({ sandboxId: 'sb-1', appId: expect.any(String) });
+		expect((out as { tunnels?: unknown }).tunnels).toBeUndefined();
+		expect((out as { tunnelsError?: string }).tunnelsError).toContain(
+			'SandboxTimeoutError',
+		);
+		expect(fake.callsTo('sandbox.terminate')).toHaveLength(0);
+	});
+
+	it('spawns a function directly when no options are given', async () => {
+		await run('functions.spawn', { functionId: 'fu-1', args: [2] });
+		expect(fake.callsTo('function.spawn')[0]).toEqual([[2], {}]);
+		expect(fake.callsTo('function.withOptions')).toHaveLength(0);
 	});
 
 	it('returns an empty list when a queue stays empty', async () => {
