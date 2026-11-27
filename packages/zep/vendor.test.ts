@@ -111,6 +111,32 @@ describe('zep v4 routes', () => {
 		expect(calls[0]?.url.pathname).toBe('/api/v4/graphs/query');
 	});
 
+	it('fails a graph query whose stream ends in an error event', async () => {
+		reply(
+			'data: {"type":"started","sequence":0,"graph_uuids":["g1"],"handles":[]}\n\n' +
+				'data: {"type":"error","sequence":1,"status":500,"error":{"message":"decision model timed out"}}\n\n',
+			200,
+			'text/event-stream',
+		);
+		await expect(
+			api.graphs.query(ctx, {
+				graph_uuids: ['g1'],
+				query: 'Where does Ada live?',
+				stream: true,
+			}),
+		).rejects.toThrow(
+			'Zep graphs.query stream ended with an error event (status 500: decision model timed out)',
+		);
+	});
+
+	it('takes an explicit null where Zep documents "set to null to clear"', async () => {
+		reply({ uuid: 'p1', name: 'Project' });
+		await api.project.update(ctx, { default_time_zone: null });
+		expect(JSON.parse(String(calls[0]?.body))).toEqual({
+			default_time_zone: null,
+		});
+	});
+
 	it('reads Zep error bodies', async () => {
 		reply({ error: { code: 'not_found', message: 'thread not found' } }, 404);
 		await expect(api.threads.get(ctx, { thread_uuid: THREAD })).rejects.toThrow(

@@ -5855,19 +5855,19 @@ export type ZepOperationInputs = {
 		/** Agent UUID */
 		agent_uuid: string;
 		/** The customer deployment this Agent represents. Set to null to clear it. */
-		deployment_id?: string;
+		deployment_id?: string | null;
 		/** A human-readable description of the Agent. Set to null to clear it. */
-		description?: string;
+		description?: string | null;
 		/** The current Agent revision used for optimistic concurrency. */
 		expected_revision: number;
 		/** Replacement Agent Skills settings. Set to null to restore defaults. */
-		memory_settings?: ZepV4AgentMemorySettingsInput;
+		memory_settings?: ZepV4AgentMemorySettingsInput | null;
 		/** Replacement developer metadata. Set to null to clear it. */
 		metadata?: ZepV4PatchAgentRequestMetadataInput | null;
 		/** The Agent's display name. */
 		name?: string;
 		/** The customer deployment version this Agent represents. Set to null to clear it. */
-		version?: string;
+		version?: string | null;
 	};
 	'agents.verifiers.get': {
 		/** Agent UUID */
@@ -6670,7 +6670,7 @@ export type ZepOperationInputs = {
 	};
 	'project.update': {
 		/** The project's IANA fallback time zone. Set to null to clear the existing value. */
-		default_time_zone?: string;
+		default_time_zone?: string | null;
 		/** Set to true to enable hyperedge extraction. This setting cannot be disabled. A member needs project.edit. Project API keys receive 403 permission_denied. */
 		hyperedges_enabled?: boolean;
 		/** When true, episode reads on graphs with a content policy include the episodes that violated the policy. */

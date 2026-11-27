@@ -21,6 +21,55 @@ import type {
 	ZepOperationOutputs,
 } from './operation-types';
 
+/**
+ * A server-sent event stream can answer 200 and still end in an `error`
+ * event (Zep's graph query does: `{ type: 'error', status, error }`). Such a
+ * stream is a failure, not a completed call. Returns the error's text, or
+ * undefined when no event says error.
+ */
+export function streamError(text: string): string | undefined {
+	let event = '';
+	for (const line of text.split(/\r?\n/)) {
+		if (line.startsWith('event:')) {
+			event = line.slice(6).trim();
+			continue;
+		}
+		if (!line.startsWith('data:')) {
+			if (line.trim() === '') event = '';
+			continue;
+		}
+		const data = line.slice(5).trim();
+		// `unknown` because each event's data is the vendor's own JSON.
+		let parsed: unknown;
+		try {
+			parsed = JSON.parse(data);
+		} catch {
+			parsed = undefined;
+		}
+		const record =
+			parsed && typeof parsed === 'object'
+				? (parsed as Record<string, unknown>)
+				: undefined;
+		if (event === 'error' || record?.type === 'error') {
+			const inner = record?.error;
+			const message =
+				typeof inner === 'string'
+					? inner
+					: inner && typeof inner === 'object'
+						? String((inner as Record<string, unknown>).message ?? '')
+						: typeof record?.message === 'string'
+							? record.message
+							: '';
+			const status = record?.status ? ` ${String(record.status)}` : '';
+			return `${status ? `status${status}: ` : ''}${message || 'no message'}`.slice(
+				0,
+				300,
+			);
+		}
+	}
+	return undefined;
+}
+
 export type ZepOperationEndpoint<Id extends ZepOperationId> = CorsairEndpoint<
 	ZepContext,
 	ZepOperationInputs[Id],
@@ -103,9 +152,9 @@ export function fileFields(operation: ZepOperationDefinition): Set<string> {
 }
 
 // `unknown` because the value is a validated file input of any accepted form.
-async function bytesOf(value: unknown) {
+async function bytesOf(value: unknown, maxBytes = ZEP_UPLOAD_MAX_BYTES) {
 	return resolveFileInput(value as FileInput, {
-		maxBytes: ZEP_UPLOAD_MAX_BYTES,
+		maxBytes,
 		fallbackName: 'file',
 	});
 }
@@ -131,7 +180,7 @@ async function buildForm(
 			const list = Array.isArray(value) ? value : [value];
 			for (const item of list) {
 				if (isFileValue(item) || typeof item === 'string') {
-					const resolved = await bytesOf(item);
+					const resolved = await bytesOf(item, operation.maxUploadBytes);
 					form.append(key, resolved.file, resolved.filename);
 				}
 			}
@@ -210,10 +259,16 @@ export function isUsableFile(
 	bytes: Uint8Array,
 	contentType: string | null | undefined,
 ): boolean {
-	if (bytes.byteLength === 0) return false;
-	if ((operation.fileTypes ?? []).some((type) => type.includes('html')))
-		return true;
-	if ((contentType ?? '').toLowerCase().includes('html')) return false;
+	const type = (contentType ?? '').split(';')[0]?.trim().toLowerCase() ?? '';
+	if ((operation.fileTypes ?? []).some((t) => t.includes('html'))) return true;
+	if (type.includes('html')) return false;
+	// An empty file is a file when it comes back with a type the route
+	// documents; an empty body without one is a proxy or a dropped answer.
+	if (bytes.byteLength === 0) {
+		return (operation.fileTypes ?? []).some(
+			(t) => t.toLowerCase() === type && type !== '',
+		);
+	}
 	const head = new TextDecoder()
 		.decode(bytes.subarray(0, 1024))
 		.replace(/^[\s﻿]+/, '');
@@ -232,7 +287,7 @@ function isBinaryResponse(value: unknown): value is BinaryResponse {
 
 /**
  * Query values: lists repeat the key (or go out as one joined value where
- * the spec says `explode: false`), maps go out as JSON.
+ * the spec says `explode: false`), maps go out as `name[key]=value`.
  */
 // `unknown` because query values are validated scalars, lists or maps.
 export function queryValue(value: unknown, join?: string): unknown {
@@ -244,7 +299,7 @@ export function queryValue(value: unknown, join?: string): unknown {
 			typeof item === 'object' && item !== null ? JSON.stringify(item) : item,
 		);
 	}
-	if (typeof value === 'object' && value !== null) return JSON.stringify(value);
+	// A map goes through as is: core writes it as `name[key]=value` (deepObject).
 	return value;
 }
 
@@ -314,20 +369,20 @@ export function createZepOperation<Id extends ZepOperationId>(
 			}
 		}
 
-		// Slash-keeping values go into the route here; core encodes the rest.
-		let path = operation.path;
+		// Slash-keeping values are encoded here, segment by segment, and sent
+		// as they are; the route keeps its placeholder for error URLs.
+		const rawPathValues = new Set<string>();
 		for (const field of fields) {
-			if (!field.slashes || pathParameters[field.wire] === undefined) continue;
-			path = path.replace(
-				`{${field.wire}}`,
-				encodeSlashPath(pathParameters[field.wire] as string),
-			);
-			delete pathParameters[field.wire];
+			const value = pathParameters[field.wire];
+			if (!field.slashes || value === undefined) continue;
+			pathParameters[field.wire] = encodeSlashPath(value);
+			rawPathValues.add(pathParameters[field.wire] as string);
 		}
 
 		const request: ZepRequest = {
 			method: operation.method,
-			path,
+			path: operation.path,
+			...(rawPathValues.size > 0 ? { rawPathValues } : {}),
 			pathParameters,
 			query,
 			headers,
@@ -364,7 +419,7 @@ export function createZepOperation<Id extends ZepOperationId>(
 			request.body = form.toString();
 			request.mediaType = 'application/x-www-form-urlencoded';
 		} else if (operation.request === 'binary') {
-			const resolved = await bytesOf(rawBody);
+			const resolved = await bytesOf(rawBody, operation.maxUploadBytes);
 			request.body = resolved.file;
 			request.mediaType = operation.bodyMediaType;
 		}
@@ -400,6 +455,14 @@ export function createZepOperation<Id extends ZepOperationId>(
 				text: new TextDecoder().decode(binary.bytes),
 				contentType: binary.contentType ?? null,
 			};
+			if (type.startsWith('text/event-stream')) {
+				const failure = streamError((response as { text: string }).text);
+				if (failure) {
+					throw new Error(
+						`Zep ${id} stream ended with an error event (${failure})`,
+					);
+				}
+			}
 		} else if (operation.response === 'empty') {
 			// The spec documents no body, so the 2xx status is the answer. A body
 			// is still read: JSON is fine, but bytes that aren't JSON point at

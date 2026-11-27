@@ -2183,7 +2183,8 @@
           },
           "task_family": {
             "type": ["string", "null"],
-            "description": "Replacement task-family slug. Set to null to clear it."
+            "description": "Replacement task-family slug. Set to null to clear it.",
+            "nullable": true
           }
         },
         "required": [
@@ -2606,7 +2607,8 @@
           },
           "task_family": {
             "type": ["string", "null"],
-            "description": "Replacement task-family slug. Set to null to clear it."
+            "description": "Replacement task-family slug. Set to null to clear it.",
+            "nullable": true
           }
         },
         "required": [
@@ -2638,11 +2640,13 @@
           },
           "deployment_id": {
             "type": "string",
-            "description": "The customer deployment this Agent represents. Set to null to clear it."
+            "description": "The customer deployment this Agent represents. Set to null to clear it.",
+            "nullable": true
           },
           "description": {
             "type": "string",
-            "description": "A human-readable description of the Agent. Set to null to clear it."
+            "description": "A human-readable description of the Agent. Set to null to clear it.",
+            "nullable": true
           },
           "expected_revision": {
             "type": "integer",
@@ -2651,7 +2655,8 @@
           },
           "memory_settings": {
             "$ref": "v4.AgentMemorySettings",
-            "description": "Replacement Agent Skills settings. Set to null to restore defaults."
+            "description": "Replacement Agent Skills settings. Set to null to restore defaults.",
+            "nullable": true
           },
           "metadata": {
             "oneOf": [
@@ -2662,7 +2667,8 @@
                 "type": "null"
               }
             ],
-            "description": "Replacement developer metadata. Set to null to clear it."
+            "description": "Replacement developer metadata. Set to null to clear it.",
+            "nullable": true
           },
           "name": {
             "type": "string",
@@ -2670,7 +2676,8 @@
           },
           "version": {
             "type": "string",
-            "description": "The customer deployment version this Agent represents. Set to null to clear it."
+            "description": "The customer deployment version this Agent represents. Set to null to clear it.",
+            "nullable": true
           }
         },
         "required": ["agent_uuid", "expected_revision"]
@@ -2870,7 +2877,8 @@
                 "type": "null"
               }
             ],
-            "description": "Replacement capabilities. Set to null to clear them."
+            "description": "Replacement capabilities. Set to null to clear them.",
+            "nullable": true
           },
           "expected_revision": {
             "type": "integer",
@@ -2886,7 +2894,8 @@
                 "type": "null"
               }
             ],
-            "description": "Replacement metadata. Set to null to clear it."
+            "description": "Replacement metadata. Set to null to clear it.",
+            "nullable": true
           },
           "permitted_strengths": {
             "type": "array",
@@ -3573,7 +3582,8 @@
                 "type": "null"
               }
             ],
-            "description": "Additional attributes to merge onto the edge; a key set to null is removed."
+            "description": "Additional attributes to merge onto the edge; a key set to null is removed.",
+            "nullable": true
           },
           "fact": {
             "type": "string",
@@ -3846,7 +3856,8 @@
                 "type": "null"
               }
             ],
-            "description": "Metadata to merge onto the episode; a key set to null is removed. Max 10 keys after the merge. Values must be strings, numbers, booleans, or arrays of scalars."
+            "description": "Metadata to merge onto the episode; a key set to null is removed. Max 10 keys after the merge. Values must be strings, numbers, booleans, or arrays of scalars.",
+            "nullable": true
           }
         },
         "required": ["graph_uuid", "episode_uuid"]
@@ -4775,7 +4786,8 @@
                 "type": "null"
               }
             ],
-            "description": "Additional attributes to merge onto the node; a key set to null is removed."
+            "description": "Additional attributes to merge onto the node; a key set to null is removed.",
+            "nullable": true
           },
           "name": {
             "type": "string",
@@ -5987,7 +5999,8 @@
         "properties": {
           "default_time_zone": {
             "type": "string",
-            "description": "The project's IANA fallback time zone. Set to null to clear the existing value."
+            "description": "The project's IANA fallback time zone. Set to null to clear the existing value.",
+            "nullable": true
           },
           "hyperedges_enabled": {
             "type": "boolean",
@@ -6447,7 +6460,8 @@
                 "type": "null"
               }
             ],
-            "description": "Metadata to merge onto the message; a key set to null is removed. Max 10 keys after the merge. Values must be strings, numbers, booleans, or arrays of scalars."
+            "description": "Metadata to merge onto the message; a key set to null is removed. Max 10 keys after the merge. Values must be strings, numbers, booleans, or arrays of scalars.",
+            "nullable": true
           }
         },
         "required": ["thread_uuid", "message_uuid"]
@@ -7517,7 +7531,8 @@
                 "type": "null"
               }
             ],
-            "description": "Metadata to merge onto the user; a key set to null is removed."
+            "description": "Metadata to merge onto the user; a key set to null is removed.",
+            "nullable": true
           },
           "time_zone": {
             "type": "string",

@@ -281,11 +281,24 @@ function schemaFromOpenApi(
 		schema = strict ? enumSchema(members) : openScalarSchema(type, members);
 	} else if (type === 'string') {
 		let stringSchema = z.string();
-		if (strict && typeof value.minLength === 'number') {
-			stringSchema = stringSchema.min(value.minLength);
+		// JSON Schema counts characters (code points), not UTF-16 units: an emoji is one.
+		const minLength = value.minLength;
+		const maxLength = value.maxLength;
+		if (strict && typeof minLength === 'number') {
+			stringSchema = stringSchema.refine(
+				(text) => [...text].length >= minLength,
+				{
+					message: `Too short: expected at least ${minLength} characters`,
+				},
+			);
 		}
-		if (strict && typeof value.maxLength === 'number') {
-			stringSchema = stringSchema.max(value.maxLength);
+		if (strict && typeof maxLength === 'number') {
+			stringSchema = stringSchema.refine(
+				(text) => [...text].length <= maxLength,
+				{
+					message: `Too long: expected at most ${maxLength} characters`,
+				},
+			);
 		}
 		const pattern = strict ? patternOf(value.pattern) : undefined;
 		if (pattern) stringSchema = stringSchema.regex(pattern);

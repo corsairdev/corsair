@@ -1,6 +1,7 @@
 import { ApiError } from 'corsair/http';
 import {
 	baseUrlOf,
+	makeZepRequest,
 	withoutRequestData,
 	ZEP_API_BASE,
 	zepErrorMessage,
@@ -183,6 +184,13 @@ describe('every operation', () => {
 			// Every query field of the example reaches the URL.
 			for (const [name, value] of Object.entries(args)) {
 				if (properties[name]?.['x-corsair-in'] !== 'query') continue;
+				// Maps go out as name[key]=value; vendor tests check those.
+				if (
+					typeof value === 'object' &&
+					value !== null &&
+					!Array.isArray(value)
+				)
+					continue;
 				const wire =
 					(properties[name]?.['x-corsair-name'] as string | undefined) ?? name;
 				const join = properties[name]?.['x-corsair-join'] as string | undefined;
@@ -240,7 +248,14 @@ describe('requests', () => {
 		).toBe('https://proxy.example.com');
 		expect(() =>
 			baseUrlOf({ key: KEY, options: { baseUrl: 'file:///etc/passwd' } }),
-		).toThrow('http(s)');
+		).toThrow('https URL');
+		// The key goes in a header: never over plain http to another host.
+		expect(() =>
+			baseUrlOf({ key: KEY, options: { baseUrl: 'http://proxy.example.com' } }),
+		).toThrow('https URL');
+		expect(
+			baseUrlOf({ key: KEY, options: { baseUrl: 'http://localhost:8283/' } }),
+		).toBe('http://localhost:8283');
 	});
 
 	it('rejects bad input before sending anything', async () => {
@@ -380,7 +395,18 @@ describe('errors', () => {
 		).toEqual(['carol@example.test']);
 	});
 
-	it('sends a single-attempt route once, even on a 429', async () => {
+	it('sends a single-attempt request once, even on a 429', async () => {
+		reply(429, { message: 'daily limit reached' });
+		const error = await makeZepRequest(
+			{ key: 'k', options: {} },
+			{ method: 'GET', path: '/single-attempt', singleAttempt: true },
+		).catch((e: unknown) => e);
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).status).toBe(429);
+		expect(calls).toHaveLength(1);
+	});
+
+	it('marks every single-attempt route in the manifest', async () => {
 		const operation = zepOperations.find((o) => o.singleAttempt);
 		if (!operation) return;
 		reply(429, { message: 'daily limit reached' });

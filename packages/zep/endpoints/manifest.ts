@@ -44,6 +44,8 @@ const OperationSchema = z
 		serverSetFields: z.array(z.string()).optional(),
 		/** A route the vendor is slow to answer: its own request timeout. */
 		timeoutMs: z.number().int().positive().optional(),
+		/** A larger upload limit than the plugin's default, where the vendor documents one. */
+		maxUploadBytes: z.number().int().positive().optional(),
 		/** A route whose 429 means a daily quota is spent: sent once, never retried. */
 		singleAttempt: z.literal(true).optional(),
 		/** A route the vendor marks deprecated but still serves. */

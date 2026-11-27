@@ -7022,13 +7022,13 @@ await corsair.zep.api.agents.update({ agent_uuid: '3f0e6a2c-8b1d-4c7e-9a52-1d2e3
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `agent_uuid` | `string` | Yes | Agent UUID |
-| `deployment_id` | `string` | No | The customer deployment this Agent represents. Set to null to clear it. |
-| `description` | `string` | No | A human-readable description of the Agent. Set to null to clear it. |
+| `deployment_id` | `string \| null` | No | The customer deployment this Agent represents. Set to null to clear it. |
+| `description` | `string \| null` | No | A human-readable description of the Agent. Set to null to clear it. |
 | `expected_revision` | `number` | Yes | The current Agent revision used for optimistic concurrency. |
-| `memory_settings` | `object` | No | — |
+| `memory_settings` | `object \| null` | No | — |
 | `metadata` | `object \| null` | No | Replacement developer metadata. Set to null to clear it. |
 | `name` | `string` | No | The Agent's display name. |
-| `version` | `string` | No | The customer deployment version this Agent represents. Set to null to clear it. |
+| `version` | `string \| null` | No | The customer deployment version this Agent represents. Set to null to clear it. |
 
 <AccordionGroup>
 <Accordion title="memory_settings full type">
@@ -7053,7 +7053,7 @@ await corsair.zep.api.agents.update({ agent_uuid: '3f0e6a2c-8b1d-4c7e-9a52-1d2e3
   provisional_expiry_days?: number,
   provisional_skill_limit?: number,
   retention_days?: number
-}
+} | null
 ```
 </Accordion>
 
@@ -14421,7 +14421,7 @@ await corsair.zep.api.project.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `default_time_zone` | `string` | No | The project's IANA fallback time zone. Set to null to clear the existing value. |
+| `default_time_zone` | `string \| null` | No | The project's IANA fallback time zone. Set to null to clear the existing value. |
 | `hyperedges_enabled` | `boolean` | No | Set to true to enable hyperedge extraction. This setting cannot be disabled. A member needs project.edit. Project API keys receive 403 permission_denied. |
 | `include_policy_violating_episodes` | `boolean` | No | When true, episode reads on graphs with a content policy include the episodes that violated the policy. |
 
