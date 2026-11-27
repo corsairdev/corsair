@@ -29,14 +29,14 @@ describe('daytona-manifest.json', () => {
 		).toEqual([]);
 	});
 
-	it('has 215 operations, one per id and route', () => {
-		expect(ids).toHaveLength(215);
-		expect(new Set(ids).size).toBe(215);
+	it('has 212 operations, one per id and route', () => {
+		expect(ids).toHaveLength(212);
+		expect(new Set(ids).size).toBe(212);
 		expect([...DAYTONA_OPERATION_IDS].sort()).toEqual([...ids].sort());
 		const routes = new Set(
 			daytonaOperations.map((o) => `${o.method} ${o.path}`),
 		);
-		expect(routes.size).toBe(215);
+		expect(routes.size).toBe(212);
 	});
 
 	it('covers the groups of the public API', () => {

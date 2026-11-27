@@ -193,8 +193,6 @@ export const daytonaEndpointsNested = {
 			typeText: op('toolbox.computerUse.typeText'),
 		},
 		files: {
-			bulkDownload: op('toolbox.files.bulkDownload'),
-			bulkUpload: op('toolbox.files.bulkUpload'),
 			createFolder: op('toolbox.files.createFolder'),
 			delete: op('toolbox.files.delete'),
 			download: op('toolbox.files.download'),
@@ -241,7 +239,6 @@ export const daytonaEndpointsNested = {
 			deleteInterpreterContext: op(
 				'toolbox.interpreter.deleteInterpreterContext',
 			),
-			executeInterpreterCode: op('toolbox.interpreter.executeInterpreterCode'),
 			listInterpreterContexts: op(
 				'toolbox.interpreter.listInterpreterContexts',
 			),
@@ -569,10 +566,6 @@ export const daytonaEndpointSchemas = {
 	'toolbox.computerUse.typeText': daytonaSchemaEntry(
 		'toolbox.computerUse.typeText',
 	),
-	'toolbox.files.bulkDownload': daytonaSchemaEntry(
-		'toolbox.files.bulkDownload',
-	),
-	'toolbox.files.bulkUpload': daytonaSchemaEntry('toolbox.files.bulkUpload'),
 	'toolbox.files.createFolder': daytonaSchemaEntry(
 		'toolbox.files.createFolder',
 	),
@@ -626,9 +619,6 @@ export const daytonaEndpointSchemas = {
 	),
 	'toolbox.interpreter.deleteInterpreterContext': daytonaSchemaEntry(
 		'toolbox.interpreter.deleteInterpreterContext',
-	),
-	'toolbox.interpreter.executeInterpreterCode': daytonaSchemaEntry(
-		'toolbox.interpreter.executeInterpreterCode',
 	),
 	'toolbox.interpreter.listInterpreterContexts': daytonaSchemaEntry(
 		'toolbox.interpreter.listInterpreterContexts',
@@ -920,7 +910,7 @@ export const daytonaEndpointMeta = {
 			'Create a sandbox from a snapshot or image; billed per second for its vCPU, memory and disk while it runs',
 	},
 	'sandboxes.createSnapshot': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create a snapshot from a sandbox',
 	},
 	'sandboxes.createSshAccess': {
@@ -1285,14 +1275,6 @@ export const daytonaEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Type text',
 	},
-	'toolbox.files.bulkDownload': {
-		riskLevel: 'read',
-		description: 'Download multiple files',
-	},
-	'toolbox.files.bulkUpload': {
-		riskLevel: 'write',
-		description: 'Upload multiple files',
-	},
 	'toolbox.files.createFolder': {
 		riskLevel: 'write',
 		description: 'Create a folder',
@@ -1414,7 +1396,8 @@ export const daytonaEndpointMeta = {
 		description: 'Reset repository',
 	},
 	'toolbox.git.restoreFiles': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description: 'Restore files',
 	},
 	'toolbox.git.setConfig': {
@@ -1441,10 +1424,6 @@ export const daytonaEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description: 'Delete an interpreter context',
-	},
-	'toolbox.interpreter.executeInterpreterCode': {
-		riskLevel: 'destructive',
-		description: 'Execute code in an interpreter context',
 	},
 	'toolbox.interpreter.listInterpreterContexts': {
 		riskLevel: 'read',

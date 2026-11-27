@@ -5045,59 +5045,6 @@
       }
     },
     {
-      "id": "toolbox.files.bulkDownload",
-      "method": "POST",
-      "path": "/files/bulk-download",
-      "tag": "file-system",
-      "summary": "Download multiple files",
-      "request": "json",
-      "response": "file",
-      "plane": "toolbox",
-      "input": {
-        "type": "object",
-        "properties": {
-          "sandbox_id": {
-            "type": "string",
-            "minLength": 1,
-            "x-corsair-in": "sandbox",
-            "description": "The sandbox id or name. The plugin reads its toolbox proxy URL first."
-          },
-          "paths": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "required": ["sandbox_id", "paths"]
-      }
-    },
-    {
-      "id": "toolbox.files.bulkUpload",
-      "method": "POST",
-      "path": "/files/bulk-upload",
-      "tag": "file-system",
-      "summary": "Upload multiple files",
-      "request": "none",
-      "response": "json",
-      "plane": "toolbox",
-      "input": {
-        "type": "object",
-        "properties": {
-          "sandbox_id": {
-            "type": "string",
-            "minLength": 1,
-            "x-corsair-in": "sandbox",
-            "description": "The sandbox id or name. The plugin reads its toolbox proxy URL first."
-          }
-        },
-        "required": ["sandbox_id"]
-      },
-      "output": {
-        "$ref": "ToolboxUploadFilesResponse"
-      }
-    },
-    {
       "id": "toolbox.files.createFolder",
       "method": "POST",
       "path": "/files/folder",
@@ -6330,28 +6277,6 @@
         "additionalProperties": {
           "type": "string"
         }
-      }
-    },
-    {
-      "id": "toolbox.interpreter.executeInterpreterCode",
-      "method": "GET",
-      "path": "/process/interpreter/execute",
-      "tag": "interpreter",
-      "summary": "Execute code in an interpreter context",
-      "request": "none",
-      "response": "empty",
-      "plane": "toolbox",
-      "input": {
-        "type": "object",
-        "properties": {
-          "sandbox_id": {
-            "type": "string",
-            "minLength": 1,
-            "x-corsair-in": "sandbox",
-            "description": "The sandbox id or name. The plugin reads its toolbox proxy URL first."
-          }
-        },
-        "required": ["sandbox_id"]
       }
     },
     {
@@ -11962,23 +11887,6 @@
         }
       }
     },
-    "ToolboxUploadFilesResponse": {
-      "type": "object",
-      "properties": {
-        "errors": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "files": {
-          "type": "array",
-          "items": {
-            "$ref": "Toolboxfs.fileResult"
-          }
-        }
-      }
-    },
     "ToolboxUploadedFile": {
       "type": "object",
       "required": ["name", "path", "type"],
@@ -12084,17 +11992,6 @@
           "items": {
             "type": "string"
           }
-        }
-      }
-    },
-    "Toolboxfs.fileResult": {
-      "type": "object",
-      "properties": {
-        "bytes": {
-          "type": "integer"
-        },
-        "path": {
-          "type": "string"
         }
       }
     },

@@ -341,6 +341,22 @@ describe('requests', () => {
 		);
 	});
 
+	it('never sends a self-hosted key to Cloud Analytics', async () => {
+		reply(200, {});
+		const selfHosted = {
+			...ctx(),
+			options: { apiUrl: 'https://daytona-no-analytics.example.com/api' },
+		} as unknown as DaytonaContext;
+		await expect(
+			endpointFor('analytics.usage.aggregated')(selfHosted, {
+				organizationId: 'org-1',
+				from: '2026-11-01T00:00:00Z',
+				to: '2026-11-27T00:00:00Z',
+			}),
+		).rejects.toThrow(/names no Analytics API/);
+		expect(calls).toHaveLength(1);
+	});
+
 	it('uploads a file as multipart into the sandbox', async () => {
 		replies({ status: 200, body: { url: PROXY } }, { status: 200, body: {} });
 		await endpointFor('toolbox.files.upload')(ctx(), {

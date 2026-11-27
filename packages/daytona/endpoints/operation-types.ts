@@ -151,8 +151,6 @@ export const DAYTONA_OPERATION_IDS = [
 	'toolbox.computerUse.takeRegionScreenshot',
 	'toolbox.computerUse.takeScreenshot',
 	'toolbox.computerUse.typeText',
-	'toolbox.files.bulkDownload',
-	'toolbox.files.bulkUpload',
 	'toolbox.files.createFolder',
 	'toolbox.files.delete',
 	'toolbox.files.download',
@@ -189,7 +187,6 @@ export const DAYTONA_OPERATION_IDS = [
 	'toolbox.info.getWorkDir',
 	'toolbox.interpreter.createInterpreterContext',
 	'toolbox.interpreter.deleteInterpreterContext',
-	'toolbox.interpreter.executeInterpreterCode',
 	'toolbox.interpreter.listInterpreterContexts',
 	'toolbox.lsp.completions',
 	'toolbox.lsp.didClose',
@@ -1860,11 +1857,6 @@ export type DaytonaToolboxSystemMetrics = {
 	timestampUnix?: number | null;
 };
 
-export type DaytonaToolboxUploadFilesResponse = {
-	errors?: Array<string> | null;
-	files?: Array<DaytonaToolboxfsFileResult> | null;
-};
-
 export type DaytonaToolboxUploadedFile = {
 	name?: string | null;
 	path?: string | null;
@@ -1902,11 +1894,6 @@ export type DaytonaToolboxcomputeruseAccessibilityNode = {
 	name?: string | null;
 	role?: string | null;
 	states?: Array<string> | null;
-};
-
-export type DaytonaToolboxfsFileResult = {
-	bytes?: number | null;
-	path?: string | null;
 };
 
 export type DaytonaToolboxginH = Record<string, DaytonaJsonValue>;
@@ -3238,15 +3225,6 @@ export type DaytonaOperationInputs = {
 		delay?: number;
 		text?: string;
 	};
-	'toolbox.files.bulkDownload': {
-		/** The sandbox id or name. The plugin reads its toolbox proxy URL first. */
-		sandbox_id: string;
-		paths: Array<string>;
-	};
-	'toolbox.files.bulkUpload': {
-		/** The sandbox id or name. The plugin reads its toolbox proxy URL first. */
-		sandbox_id: string;
-	};
 	'toolbox.files.createFolder': {
 		/** The sandbox id or name. The plugin reads its toolbox proxy URL first. */
 		sandbox_id: string;
@@ -3536,10 +3514,6 @@ export type DaytonaOperationInputs = {
 		sandbox_id: string;
 		/** Context ID */
 		id: string;
-	};
-	'toolbox.interpreter.executeInterpreterCode': {
-		/** The sandbox id or name. The plugin reads its toolbox proxy URL first. */
-		sandbox_id: string;
 	};
 	'toolbox.interpreter.listInterpreterContexts': {
 		/** The sandbox id or name. The plugin reads its toolbox proxy URL first. */
@@ -3986,8 +3960,6 @@ export type DaytonaOperationOutputs = {
 	'toolbox.computerUse.takeRegionScreenshot': DaytonaToolboxScreenshotResponse;
 	'toolbox.computerUse.takeScreenshot': DaytonaToolboxScreenshotResponse;
 	'toolbox.computerUse.typeText': DaytonaToolboxEmpty;
-	'toolbox.files.bulkDownload': FileOutput;
-	'toolbox.files.bulkUpload': DaytonaToolboxUploadFilesResponse;
 	'toolbox.files.createFolder': {
 		/** Daytona accepted the call; it answered with no body. */
 		success: true;
@@ -4078,10 +4050,6 @@ export type DaytonaOperationOutputs = {
 	'toolbox.info.getWorkDir': DaytonaToolboxWorkDirResponse;
 	'toolbox.interpreter.createInterpreterContext': DaytonaToolboxInterpreterContext;
 	'toolbox.interpreter.deleteInterpreterContext': Record<string, string>;
-	'toolbox.interpreter.executeInterpreterCode': {
-		/** Daytona accepted the call; it answered with no body. */
-		success: true;
-	};
 	'toolbox.interpreter.listInterpreterContexts': DaytonaToolboxListContextsResponse;
 	'toolbox.lsp.completions': DaytonaToolboxCompletionList;
 	'toolbox.lsp.didClose': {

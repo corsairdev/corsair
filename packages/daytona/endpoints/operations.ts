@@ -4,8 +4,10 @@ import type { BinaryResponse, FileInput } from 'corsair/http';
 import { resolveFileInput, toFileOutput } from 'corsair/http';
 import type { DaytonaRequest } from '../client';
 import {
+	apiBaseOf,
 	checkedBase,
 	DAYTONA_ANALYTICS_BASE,
+	DAYTONA_API_BASE,
 	DAYTONA_UPLOAD_MAX_BYTES,
 	encodeDaytonaPathValue,
 	makeDaytonaRequest,
@@ -230,10 +232,7 @@ export function decodeMaybeEmpty(id: string, value: unknown): unknown {
  * ask for (a login page, a proxy error). A file read from a machine's disk can
  * be empty or HTML itself, so those routes take any bytes.
  */
-const DISK_READS = new Set([
-	'toolbox.files.download',
-	'toolbox.files.bulkDownload',
-]);
+const DISK_READS = new Set(['toolbox.files.download']);
 
 export function isUsableFile(
 	id: string,
@@ -295,7 +294,15 @@ async function analyticsBase(ctx: DaytonaContext): Promise<string> {
 					'analyticsApiUrl' in config
 						? config.analyticsApiUrl
 						: undefined;
-				return url ? checkedBase(url, 'analytics') : DAYTONA_ANALYTICS_BASE;
+				if (url) return checkedBase(url, 'analytics');
+				// Only Daytona Cloud falls back to Cloud Analytics: a self-hosted
+				// key must never go to Daytona's host.
+				if (apiBaseOf(ctx) === DAYTONA_API_BASE) {
+					return DAYTONA_ANALYTICS_BASE;
+				}
+				throw new Error(
+					'This Daytona names no Analytics API (analyticsApiUrl in GET /config)',
+				);
 			},
 		);
 		// A failed lookup is not kept: the next call asks again.

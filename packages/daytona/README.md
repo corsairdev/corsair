@@ -1,6 +1,6 @@
 # @corsair-dev/daytona
 
-Daytona sandboxes for AI code: sandboxes (create, start, stop, archive, fork, resize, SSH, previews), the in-sandbox toolbox (files, processes, sessions, git, LSP, code interpreter, computer use), snapshots, volumes, registries, secrets, organization usage and members, analytics and signed webhooks (215 operations).
+Daytona sandboxes for AI code: sandboxes (create, start, stop, archive, fork, resize, SSH, previews), the in-sandbox toolbox (files, processes, sessions, git, LSP, code interpreter, computer use), snapshots, volumes, registries, secrets, organization usage and members, analytics and signed webhooks (212 operations).
 
 ## Install
 
@@ -60,7 +60,7 @@ pnpm add @corsair-dev/daytona
 | `sandboxes.addNodes` | `daytona.api.sandboxes.addNodes` | `destructive` | Append nodes to a multi-node sandbox |
 | `sandboxes.archive` | `daytona.api.sandboxes.archive` | `destructive` | Archive sandbox |
 | `sandboxes.create` | `daytona.api.sandboxes.create` | `destructive` | Create a sandbox from a snapshot or image; billed per second for its vCPU, memory and disk while it runs |
-| `sandboxes.createSnapshot` | `daytona.api.sandboxes.createSnapshot` | `write` | Create a snapshot from a sandbox |
+| `sandboxes.createSnapshot` | `daytona.api.sandboxes.createSnapshot` | `destructive` | Create a snapshot from a sandbox |
 | `sandboxes.createSshAccess` | `daytona.api.sandboxes.createSshAccess` | `destructive` | Create SSH access for sandbox |
 | `sandboxes.delete` | `daytona.api.sandboxes.delete` | `destructive` | Delete a sandbox and its disk |
 | `sandboxes.expireSignedPortPreviewUrl` | `daytona.api.sandboxes.expireSignedPortPreviewUrl` | `destructive` | Expire signed preview URL for a sandbox port |
@@ -148,8 +148,6 @@ pnpm add @corsair-dev/daytona
 | `toolbox.computerUse.takeRegionScreenshot` | `daytona.api.toolbox.computerUse.takeRegionScreenshot` | `read` | Take a region screenshot |
 | `toolbox.computerUse.takeScreenshot` | `daytona.api.toolbox.computerUse.takeScreenshot` | `read` | Take a screenshot |
 | `toolbox.computerUse.typeText` | `daytona.api.toolbox.computerUse.typeText` | `write` | Type text |
-| `toolbox.files.bulkDownload` | `daytona.api.toolbox.files.bulkDownload` | `read` | Download multiple files |
-| `toolbox.files.bulkUpload` | `daytona.api.toolbox.files.bulkUpload` | `write` | Upload multiple files |
 | `toolbox.files.createFolder` | `daytona.api.toolbox.files.createFolder` | `write` | Create a folder |
 | `toolbox.files.delete` | `daytona.api.toolbox.files.delete` | `destructive` | Delete a file or directory |
 | `toolbox.files.download` | `daytona.api.toolbox.files.download` | `read` | Download a file from a sandbox (returned as a file) |
@@ -179,14 +177,13 @@ pnpm add @corsair-dev/daytona
 | `toolbox.git.pullChanges` | `daytona.api.toolbox.git.pullChanges` | `write` | Pull changes from remote |
 | `toolbox.git.pushChanges` | `daytona.api.toolbox.git.pushChanges` | `destructive` | Push changes to remote |
 | `toolbox.git.resetChanges` | `daytona.api.toolbox.git.resetChanges` | `destructive` | Reset repository |
-| `toolbox.git.restoreFiles` | `daytona.api.toolbox.git.restoreFiles` | `write` | Restore files |
+| `toolbox.git.restoreFiles` | `daytona.api.toolbox.git.restoreFiles` | `destructive` | Restore files |
 | `toolbox.git.setConfig` | `daytona.api.toolbox.git.setConfig` | `write` | Set a Git config value |
 | `toolbox.info.getUserHomeDir` | `daytona.api.toolbox.info.getUserHomeDir` | `read` | Get user home directory |
 | `toolbox.info.getVersion` | `daytona.api.toolbox.info.getVersion` | `read` | Get version |
 | `toolbox.info.getWorkDir` | `daytona.api.toolbox.info.getWorkDir` | `read` | Get working directory |
 | `toolbox.interpreter.createInterpreterContext` | `daytona.api.toolbox.interpreter.createInterpreterContext` | `write` | Create a new interpreter context |
 | `toolbox.interpreter.deleteInterpreterContext` | `daytona.api.toolbox.interpreter.deleteInterpreterContext` | `destructive` | Delete an interpreter context |
-| `toolbox.interpreter.executeInterpreterCode` | `daytona.api.toolbox.interpreter.executeInterpreterCode` | `destructive` | Execute code in an interpreter context |
 | `toolbox.interpreter.listInterpreterContexts` | `daytona.api.toolbox.interpreter.listInterpreterContexts` | `read` | List all user-created interpreter contexts |
 | `toolbox.lsp.completions` | `daytona.api.toolbox.lsp.completions` | `read` | Get code completions |
 | `toolbox.lsp.didClose` | `daytona.api.toolbox.lsp.didClose` | `write` | Notify document closed |

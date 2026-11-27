@@ -123,11 +123,21 @@ describeIfKey('daytona live', () => {
 	afterAll(async () => {
 		const left: string[] = [];
 		for (const item of cleanups.reverse()) {
-			try {
-				await item.run();
-			} catch (error) {
-				if (!/Daytona 404/.test((error as Error).message)) {
-					left.push(`${item.what}: ${(error as Error).message}`);
+			// A sandbox still stopping answers 409 to a delete: try again for a
+			// minute before reporting it left behind.
+			for (let attempt = 0; ; attempt++) {
+				try {
+					await item.run();
+					break;
+				} catch (error) {
+					const message = (error as Error).message;
+					if (/Daytona 404/.test(message)) break;
+					if (/Daytona 409/.test(message) && attempt < 20) {
+						await sleep(3000);
+						continue;
+					}
+					left.push(`${item.what}: ${message}`);
+					break;
 				}
 			}
 		}
@@ -144,6 +154,12 @@ describeIfKey('daytona live', () => {
 				.map((s) => `  ${s.id}: ${s.note}`)
 				.join('\n')}`,
 		);
+		// After cleanup and the report, so a failed step fails the run.
+		if (failed.length > 0 || left.length > 0) {
+			throw new Error(
+				`${failed.length} Daytona live steps failed, ${left.length} records left`,
+			);
+		}
 	});
 
 	// Daytona Cloud (v0.235.0) answers these no-argument reads with an error a

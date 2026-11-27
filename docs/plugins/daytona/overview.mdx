@@ -1,7 +1,7 @@
 ---
 title: "Daytona plugin"
 sidebarTitle: "Overview"
-description: "Daytona runs AI-generated code in sandboxes: sandboxes (create, start, stop, archive, fork, resize, SSH access, preview URLs, logs), the toolbox inside each one (files, processes and sessions, git, LSP, code interpreter, computer use), snapshots, volumes, Docker registries, secrets, organization usage, members and regions, audit logs, telemetry and usage analytics, and signed webhooks (215 operations)."
+description: "Daytona runs AI-generated code in sandboxes: sandboxes (create, start, stop, archive, fork, resize, SSH access, preview URLs, logs), the toolbox inside each one (files, processes and sessions, git, LSP, code interpreter, computer use), snapshots, volumes, Docker registries, secrets, organization usage, members and regions, audit logs, telemetry and usage analytics, and signed webhooks (212 operations)."
 ---
 
 Use **Daytona** through Corsair: one client, typed API calls, and incoming webhooks.
@@ -42,12 +42,15 @@ of every delivery.
 dashboard's user sign-in (listing, creating and deleting organizations,
 invitations, roles, identity providers and SSO, member access changes,
 the `users/me` routes), routes Daytona's own runners, proxy, SSH gateway,
-OTEL collector and dashboard call, the PTY WebSocket, the toolbox daemon's
-own setup routes, and deprecated routes.
+OTEL collector and dashboard call, the PTY WebSocket, the code
+interpreter's WebSocket execute (`toolbox.process.codeRun` runs code over
+HTTP), bulk file upload and download (multipart batches; upload and
+download one file at a time), the toolbox daemon's own setup routes, and
+deprecated routes.
 
 **What you get:**
 
-- 215 typed API operations
+- 212 typed API operations
 - 7 incoming webhook event types
 
 ## Setup

@@ -36,7 +36,7 @@ describe('daytona plugin', () => {
 		const ids = daytonaOperations.map((o) => o.id).sort();
 		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(ids);
 		expect(Object.keys(plugin.endpointSchemas ?? {}).sort()).toEqual(ids);
-		expect(ids).toHaveLength(215);
+		expect(ids).toHaveLength(212);
 		expect(plugin.endpoints?.toolbox.process.executeCommand).toEqual(
 			expect.any(Function),
 		);

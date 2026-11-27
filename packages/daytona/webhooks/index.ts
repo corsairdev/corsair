@@ -30,6 +30,7 @@ export type DaytonaWebhookVerification =
 	| { valid: false; error: string };
 
 function keyOf(secret: string): Buffer {
+	// Callers check for an empty result: `whsec_` alone is no key.
 	const encoded = secret.startsWith('whsec_')
 		? secret.slice('whsec_'.length)
 		: secret;
@@ -74,7 +75,11 @@ export function verifyDaytonaWebhook(
 	) {
 		return { valid: false, error: 'svix-timestamp is too old' };
 	}
-	const want = createHmac('sha256', keyOf(secret))
+	const key = keyOf(secret);
+	if (key.length === 0) {
+		return { valid: false, error: 'The Daytona webhook secret is empty' };
+	}
+	const want = createHmac('sha256', key)
 		.update(`${id}.${timestamp}.${raw}`)
 		.digest();
 	const ok = header.split(' ').some((part) => {
