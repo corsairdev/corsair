@@ -1,0 +1,2874 @@
+---
+title: "Omnisend API reference"
+sidebarTitle: "API"
+description: "API reference for the Omnisend plugin in Corsair: every `omnisend.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Batches
+
+### create
+
+`batches.create`
+
+Queue up to 100 contact, product, category or event writes that Omnisend applies one by one, and read the batch back with batches.get until it is finished or stopped
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.batches.create({ endpoint: 'contacts', method: 'POST', items: [{ identifiers: [{ id: 'jordan@acme.com', type: 'email' }] }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint` | `contacts \| products \| events \| categories` | Yes | The resource the batch writes. |
+| `method` | `POST \| PUT` | Yes | The HTTP method applied to each item. |
+| `items` | `Record<string, JsonValue>[]` | Yes | The payloads to apply, in order; up to 100 per batch. |
+| `origin` | `string` | No | Marks the batch, such as your integration name. |
+
+Up to 100 items per batch. Poll `batches.get` until `status` is `finished` or `stopped`; there is no cancel.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batchID` | `string` | Yes | — |
+| `totalCount` | `number \| null` | No | — |
+
+
+
+---
+
+### get
+
+`batches.get`
+
+Read a batch status and counts; pending and inProgress mean it still runs, finished and stopped mean it ended
+
+**Risk:** `read`
+
+```ts
+await corsair.omnisend.api.batches.get({ id: '5f92cbf10cf217478ba93561' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batchID` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `totalCount` | `number \| null` | No | — |
+| `finishedCount` | `number \| null` | No | — |
+| `errorsCount` | `number \| null` | No | — |
+| `errors` | `object[] \| null` | No | — |
+| `responses` | `object[] \| null` | No | — |
+| `endpoint` | `string \| null` | No | — |
+| `method` | `string \| null` | No | — |
+| `origin` | `string \| null` | No | — |
+| `startedAt` | `string \| null` | No | — |
+| `endedAt` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `eventID` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  itemID?: string | null,
+  request?: Record<string, JsonValue> | null,
+  response?: Record<string, JsonValue> | null,
+  responseCode?: number | null,
+  status?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="responses full type">
+
+```ts
+{
+  itemID?: string | null,
+  request?: Record<string, JsonValue> | null,
+  response?: Record<string, JsonValue> | null,
+  responseCode?: number | null,
+  status?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`batches.list`
+
+Page the batches for one endpoint; categories batches cannot be listed
+
+**Risk:** `read`
+
+```ts
+await corsair.omnisend.api.batches.list({ endpoint: 'contacts', status: 'finished' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint` | `products \| contacts \| events` | Yes | — |
+| `offset` | `number` | No | First row to return, 0-based. Defaults to 0. |
+| `limit` | `number` | No | Rows per page. Defaults to 100. |
+| `status` | `pending \| inProgress \| finished \| stopped` | No | — |
+| `dateFrom` | `string` | No | — |
+| `dateTo` | `string` | No | — |
+
+The `endpoint` filter is required, and categories batches cannot be listed at all.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batches` | `object[]` | Yes | — |
+| `paging` | `object \| null` | No | — |
+| `nextOffset` | `number \| null` | No | Pass as `offset` to read the next page; absent on the last one. |
+
+<AccordionGroup>
+<Accordion title="batches full type">
+
+```ts
+{
+  batchID?: string | null,
+  status?: string | null,
+  totalCount?: number | null,
+  finishedCount?: number | null,
+  errorsCount?: number | null,
+  errors?: {
+    itemID?: string | null,
+    request?: Record<string, JsonValue> | null,
+    response?: Record<string, JsonValue> | null,
+    responseCode?: number | null,
+    status?: string | null
+  }[] | null,
+  responses?: {
+    itemID?: string | null,
+    request?: Record<string, JsonValue> | null,
+    response?: Record<string, JsonValue> | null,
+    responseCode?: number | null,
+    status?: string | null
+  }[] | null,
+  endpoint?: string | null,
+  method?: string | null,
+  origin?: string | null,
+  startedAt?: string | null,
+  endedAt?: string | null,
+  createdAt?: string | null,
+  eventID?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number | null,
+  offset?: number | null,
+  next?: string | null,
+  previous?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listItems
+
+`batches.listItems`
+
+Read the per-item requests, responses and errors of a batch
+
+**Risk:** `read`
+
+```ts
+await corsair.omnisend.api.batches.listItems({ id: '5f92cbf10cf217478ba93561' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batchID` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `totalCount` | `number \| null` | No | — |
+| `finishedCount` | `number \| null` | No | — |
+| `errorsCount` | `number \| null` | No | — |
+| `errors` | `object[] \| null` | No | — |
+| `responses` | `object[] \| null` | No | — |
+| `endpoint` | `string \| null` | No | — |
+| `method` | `string \| null` | No | — |
+| `origin` | `string \| null` | No | — |
+| `startedAt` | `string \| null` | No | — |
+| `endedAt` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `eventID` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="errors full type">
+
+```ts
+{
+  itemID?: string | null,
+  request?: Record<string, JsonValue> | null,
+  response?: Record<string, JsonValue> | null,
+  responseCode?: number | null,
+  status?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="responses full type">
+
+```ts
+{
+  itemID?: string | null,
+  request?: Record<string, JsonValue> | null,
+  response?: Record<string, JsonValue> | null,
+  responseCode?: number | null,
+  status?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Campaigns
+
+### cancel
+
+`campaigns.cancel`
+
+Cancel a scheduled, paused or started-email campaign; sent campaigns cannot be canceled
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.campaigns.cancel({ id: '000000000000000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `boolean` | Yes | — |
+
+
+
+---
+
+### copy
+
+`campaigns.copy`
+
+Duplicate a campaign as a new draft
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.campaigns.copy({ id: '000000000000000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `type` | `regular \| abTest \| booster \| null` | No | — |
+| `channel` | `email \| push \| sms \| null` | No | — |
+| `status` | `error \| onHold \| sent \| paused \| started \| stopped \| expired \| draft \| scheduled \| canceled \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `content` | `object \| null` | No | — |
+| `audience` | `object \| null` | No | — |
+| `sendingSettings` | `Record<string, JsonValue> \| null` | No | — |
+| `abTest` | `Record<string, JsonValue> \| null` | No | — |
+| `boosterSettings` | `Record<string, JsonValue> \| null` | No | — |
+| `brandID` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `startedAt` | `string \| null` | No | — |
+| `endedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  email?: {
+    contentID?: string | null,
+    subject?: string | null,
+    preheader?: string | null,
+    senderName?: string | null,
+    senderEmail?: string | null,
+    replyToEmail?: string | null
+  } | null,
+  sms?: {
+    message?: string | null,
+    compliance?: Record<string, JsonValue> | null,
+    imageID?: string | null,
+    isLinkShorteningEnabled?: boolean | null,
+    senderName?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="audience full type">
+
+```ts
+{
+  includedSegmentIDs?: string[],
+  excludedSegmentIDs?: string[],
+  excludedCountries?: string[]
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`campaigns.create`
+
+Create a campaign; a regular email campaign needs a template id, and creating with no verified sender answers 422
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.campaigns.create({ type: 'regular', channel: 'email', name: 'Welcome', content: { email: { templateID: '68beca12d2e99b0c8d19fd5e', subject: 'Hello' } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `regular \| booster \| abTest` | Yes | — |
+| `channel` | `email \| push \| sms` | Yes | — |
+| `name` | `string` | No | Required for regular and abTest campaigns. |
+| `language` | `string` | No | Locale in xx_XX format; defaults to en_US. |
+| `content` | `object` | No | Required for regular campaigns. |
+| `audience` | `object` | No | — |
+| `sendingSettings` | `object` | No | — |
+| `abTest` | `Record<string, JsonValue>` | No | — |
+| `boosterSettings` | `Record<string, JsonValue>` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  email?: {
+    templateID: string,
+    subject?: string,
+    preheader?: string,
+    senderName?: string,
+    senderEmail?: string,
+    replyToEmail?: string
+  },
+  sms?: {
+    message: string,
+    compliance: {
+      stopKeywordText: string,
+      unsubscribeLinkText: string
+    },
+    imageID?: string,
+    isLinkShorteningEnabled?: boolean,
+    senderName?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="audience full type">
+
+```ts
+{
+  includedSegmentIDs?: string[],
+  excludedSegmentIDs?: string[],
+  excludedCountries?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="sendingSettings full type">
+
+```ts
+{
+  strategy?: immediate | scheduled | personalized,
+  scheduledAt?: string,
+  optimizeFor?: opens | clicks | orders,
+  respectQuietHours?: boolean,
+  isTZOptimizationEnabled?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `type` | `regular \| abTest \| booster \| null` | No | — |
+| `channel` | `email \| push \| sms \| null` | No | — |
+| `status` | `error \| onHold \| sent \| paused \| started \| stopped \| expired \| draft \| scheduled \| canceled \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `content` | `object \| null` | No | — |
+| `audience` | `object \| null` | No | — |
+| `sendingSettings` | `Record<string, JsonValue> \| null` | No | — |
+| `abTest` | `Record<string, JsonValue> \| null` | No | — |
+| `boosterSettings` | `Record<string, JsonValue> \| null` | No | — |
+| `brandID` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `startedAt` | `string \| null` | No | — |
+| `endedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  email?: {
+    contentID?: string | null,
+    subject?: string | null,
+    preheader?: string | null,
+    senderName?: string | null,
+    senderEmail?: string | null,
+    replyToEmail?: string | null
+  } | null,
+  sms?: {
+    message?: string | null,
+    compliance?: Record<string, JsonValue> | null,
+    imageID?: string | null,
+    isLinkShorteningEnabled?: boolean | null,
+    senderName?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="audience full type">
+
+```ts
+{
+  includedSegmentIDs?: string[],
+  excludedSegmentIDs?: string[],
+  excludedCountries?: string[]
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`campaigns.delete`
+
+Delete a campaign; it cannot be restored
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.omnisend.api.campaigns.delete({ id: '000000000000000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`campaigns.get`
+
+Read one campaign by id, with its content and sending settings
+
+**Risk:** `read`
+
+```ts
+await corsair.omnisend.api.campaigns.get({ id: '000000000000000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `type` | `regular \| abTest \| booster \| null` | No | — |
+| `channel` | `email \| push \| sms \| null` | No | — |
+| `status` | `error \| onHold \| sent \| paused \| started \| stopped \| expired \| draft \| scheduled \| canceled \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `content` | `object \| null` | No | — |
+| `audience` | `object \| null` | No | — |
+| `sendingSettings` | `Record<string, JsonValue> \| null` | No | — |
+| `abTest` | `Record<string, JsonValue> \| null` | No | — |
+| `boosterSettings` | `Record<string, JsonValue> \| null` | No | — |
+| `brandID` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `startedAt` | `string \| null` | No | — |
+| `endedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  email?: {
+    contentID?: string | null,
+    subject?: string | null,
+    preheader?: string | null,
+    senderName?: string | null,
+    senderEmail?: string | null,
+    replyToEmail?: string | null
+  } | null,
+  sms?: {
+    message?: string | null,
+    compliance?: Record<string, JsonValue> | null,
+    imageID?: string | null,
+    isLinkShorteningEnabled?: boolean | null,
+    senderName?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="audience full type">
+
+```ts
+{
+  includedSegmentIDs?: string[],
+  excludedSegmentIDs?: string[],
+  excludedCountries?: string[]
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUtm
+
+`campaigns.getUtm`
+
+Read the UTM tags stamped on a campaign links
+
+**Risk:** `read`
+
+```ts
+await corsair.omnisend.api.campaigns.getUtm({ id: '000000000000000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object \| null` | No | — |
+| `variants` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  source?: string,
+  medium?: string,
+  campaign?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="variants full type">
+
+```ts
+{
+  a?: {
+    id?: string | null,
+    tags?: {
+      source?: string,
+      medium?: string,
+      campaign?: string
+    } | null
+  } | null,
+  b?: {
+    id?: string | null,
+    tags?: {
+      source?: string,
+      medium?: string,
+      campaign?: string
+    } | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+Page the campaigns, filtered by status, channel, type, name or dates
+
+**Risk:** `read`
+
+```ts
+await corsair.omnisend.api.campaigns.list({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Rows per page, 1 to 250. Defaults to 100. |
+| `after` | `string` | No | Opaque cursor for the next page, taken from the previous response `paging.cursors.after`. Omit for the first page. |
+| `before` | `string` | No | Opaque cursor for the previous page, taken from `paging.cursors.before`. |
+| `sort` | `createdAt \| updatedAt \| name` | No | Sort field. Defaults to createdAt. |
+| `direction` | `asc \| desc` | No | Sort direction. Defaults to desc. |
+| `status` | `(error \| onHold \| sent \| paused \| started \| stopped \| expired \| draft \| scheduled \| canceled)[]` | No | Filter by one or more statuses. |
+| `nameContains` | `string` | No | — |
+| `channel` | `(email \| sms \| push)[]` | No | — |
+| `type` | `regular \| booster \| abTest` | No | — |
+| `parentCampaignID` | `string` | No | — |
+| `createdAtFrom` | `string` | No | — |
+| `createdAtTo` | `string` | No | — |
+| `updatedAtFrom` | `string` | No | — |
+| `updatedAtTo` | `string` | No | — |
+| `view` | `summary` | No | — |
+| `include` | `(content \| abTest)[]` | No | Related resources to embed in each campaign. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaigns` | `object[]` | Yes | — |
+| `paging` | `object \| null` | No | — |
+| `nextCursor` | `string \| null` | No | Pass as `after` to read the next page; absent on the last one. |
+
+<AccordionGroup>
+<Accordion title="campaigns full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: regular | abTest | booster | null,
+  channel?: email | push | sms | null,
+  status?: error | onHold | sent | paused | started | stopped | expired | draft | scheduled | canceled | null,
+  language?: string | null,
+  content?: {
+    email?: {
+      contentID?: string | null,
+      subject?: string | null,
+      preheader?: string | null,
+      senderName?: string | null,
+      senderEmail?: string | null,
+      replyToEmail?: string | null
+    } | null,
+    sms?: {
+      message?: string | null,
+      compliance?: Record<string, JsonValue> | null,
+      imageID?: string | null,
+      isLinkShorteningEnabled?: boolean | null,
+      senderName?: string | null
+    } | null
+  } | null,
+  audience?: {
+    includedSegmentIDs?: string[],
+    excludedSegmentIDs?: string[],
+    excludedCountries?: string[]
+  } | null,
+  sendingSettings?: Record<string, JsonValue> | null,
+  abTest?: Record<string, JsonValue> | null,
+  boosterSettings?: Record<string, JsonValue> | null,
+  brandID?: string | null,
+  url?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  startedAt?: string | null,
+  endedAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number | null,
+  hasMore?: boolean | null,
+  cursors?: {
+    after?: string | null,
+    before?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### restoreToDraft
+
+`campaigns.restoreToDraft`
+
+Move a scheduled campaign back to draft
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.campaigns.restoreToDraft({ id: '000000000000000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `boolean` | Yes | — |
+
+
+
+---
+
+### send
+
+`campaigns.send`
+
+Send a draft campaign to its audience. This cannot be undone, and it answers 402 when the audience exceeds the billing tier
+
+**Risk:** `write` · **Irreversible**
+
+```ts
+await corsair.omnisend.api.campaigns.send({ id: '000000000000000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+Sending cannot be undone, and Omnisend answers 402 when the audience exceeds the billing tier (email credits or subscriber count). Only a draft campaign can be sent.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `boolean` | Yes | — |
+
+
+
+---
+
+### sendTestEmail
+
+`campaigns.sendTestEmail`
+
+Render a campaign and email it to 1-5 addresses, so no customer receives it
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.campaigns.sendTestEmail({ id: '000000000000000000000001', recipients: ['merchant@example.com'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `recipients` | `string[]` | Yes | Between 1 and 5 addresses that receive the test send. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `boolean` | Yes | — |
+
+
+
+---
+
+### setUtm
+
+`campaigns.setUtm`
+
+Set the UTM tags stamped on a campaign links
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.campaigns.setUtm({ id: '000000000000000000000001', tags: { source: 'omnisend', medium: 'email', campaign: 'Welcome' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `tags` | `object` | No | UTM tags for a regular campaign. |
+| `variants` | `object` | No | UTM variants for an A/B test campaign. |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  source?: string,
+  medium?: string,
+  campaign?: string
+}
+```
+</Accordion>
+
+<Accordion title="variants full type">
+
+```ts
+{
+  a?: {
+    source?: string,
+    medium?: string,
+    campaign?: string
+  },
+  b?: {
+    source?: string,
+    medium?: string,
+    campaign?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object \| null` | No | — |
+| `variants` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  source?: string,
+  medium?: string,
+  campaign?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="variants full type">
+
+```ts
+{
+  a?: {
+    id?: string | null,
+    tags?: {
+      source?: string,
+      medium?: string,
+      campaign?: string
+    } | null
+  } | null,
+  b?: {
+    id?: string | null,
+    tags?: {
+      source?: string,
+      medium?: string,
+      campaign?: string
+    } | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`campaigns.update`
+
+Change a draft campaign; started or scheduled campaigns answer 409
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.campaigns.update({ id: '000000000000000000000001', name: 'Renamed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `language` | `string` | No | — |
+| `content` | `object` | No | — |
+| `audience` | `object` | No | — |
+| `sendingSettings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  email?: {
+    subject?: string,
+    preheader?: string,
+    senderName?: string,
+    senderEmail?: string,
+    replyToEmail?: string
+  },
+  sms?: {
+    message?: string,
+    compliance?: {
+      stopKeywordText?: string,
+      unsubscribeLinkText?: string
+    },
+    imageID?: string,
+    isLinkShorteningEnabled?: boolean,
+    senderName?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="audience full type">
+
+```ts
+{
+  includedSegmentIDs?: string[],
+  excludedSegmentIDs?: string[],
+  excludedCountries?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="sendingSettings full type">
+
+```ts
+{
+  strategy?: immediate | scheduled | personalized,
+  scheduledAt?: string,
+  optimizeFor?: opens | clicks | orders,
+  respectQuietHours?: boolean,
+  isTZOptimizationEnabled?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `type` | `regular \| abTest \| booster \| null` | No | — |
+| `channel` | `email \| push \| sms \| null` | No | — |
+| `status` | `error \| onHold \| sent \| paused \| started \| stopped \| expired \| draft \| scheduled \| canceled \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `content` | `object \| null` | No | — |
+| `audience` | `object \| null` | No | — |
+| `sendingSettings` | `Record<string, JsonValue> \| null` | No | — |
+| `abTest` | `Record<string, JsonValue> \| null` | No | — |
+| `boosterSettings` | `Record<string, JsonValue> \| null` | No | — |
+| `brandID` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `startedAt` | `string \| null` | No | — |
+| `endedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  email?: {
+    contentID?: string | null,
+    subject?: string | null,
+    preheader?: string | null,
+    senderName?: string | null,
+    senderEmail?: string | null,
+    replyToEmail?: string | null
+  } | null,
+  sms?: {
+    message?: string | null,
+    compliance?: Record<string, JsonValue> | null,
+    imageID?: string | null,
+    isLinkShorteningEnabled?: boolean | null,
+    senderName?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="audience full type">
+
+```ts
+{
+  includedSegmentIDs?: string[],
+  excludedSegmentIDs?: string[],
+  excludedCountries?: string[]
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Categories
+
+### create
+
+`categories.create`
+
+Create a product category under your own category ID
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.categories.create({ categoryID: 'C1234', title: 'Shoes' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categoryID` | `string` | Yes | Your own category ID, 1-100 characters. |
+| `title` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categoryID` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`categories.delete`
+
+Delete a product category
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.omnisend.api.categories.delete({ id: 'C1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`categories.get`
+
+Read one product category by your own category ID
+
+**Risk:** `read`
+
+```ts
+await corsair.omnisend.api.categories.get({ id: 'C1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categoryID` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`categories.list`
+
+Page the product categories
+
+**Risk:** `read`
+
+```ts
+await corsair.omnisend.api.categories.list({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | First row to return, 0-based. Defaults to 0. |
+| `limit` | `number` | No | Rows per page. Defaults to 100. |
+| `sort` | `title \| updatedAt \| createdAt` | No | Sort field. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `object[]` | Yes | — |
+| `paging` | `object \| null` | No | — |
+| `nextOffset` | `number \| null` | No | Pass as `offset` to read the next page; absent on the last one. |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+{
+  categoryID?: string | null,
+  title?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number | null,
+  offset?: number | null,
+  next?: string | null,
+  previous?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`categories.update`
+
+Rename a product category
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.categories.update({ id: 'C1234', title: 'Sneakers' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categoryID` | `string` | Yes | — |
+
+
+
+---
+
+## Contacts
+
+### addTags
+
+`contacts.addTags`
+
+Queue tags onto up to 250 contacts by id, email or phone, or every contact in a segment; the route answers 202 and the tags appear shortly after
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.contacts.addTags({ emails: ['jordan@acme.com'], tags: ['vip'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactIDs` | `string[]` | No | Contact IDs to tag or untag. |
+| `emails` | `string[]` | No | Emails of the contacts to tag or untag. |
+| `phones` | `string[]` | No | Phone numbers of the contacts to tag or untag, in E.164 format. |
+| `segmentID` | `string` | No | Segment whose contacts get or lose the tags. |
+| `tags` | `string[]` | Yes | — |
+
+Queued, not immediate: Omnisend answers 202 with no body, and the tags appear on the contact shortly after.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Read one contact by id, with its identifiers and consents
+
+**Risk:** `read`
+
+```ts
+await corsair.omnisend.api.contacts.get({ id: '60a6170920d91c215e949b5c' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string[] \| null` | No | — |
+| `status` | `subscribed \| unsubscribed \| nonSubscribed \| null` | No | Email channel subscription status. |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `gender` | `m \| f \| null` | No | — |
+| `birthdate` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `countryCode` | `string \| null` | No | — |
+| `postalCode` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `segments` | `string[] \| null` | No | — |
+| `customProperties` | `Record<string, JsonValue> \| null` | No | — |
+| `identifiers` | `object[] \| null` | No | — |
+| `consents` | `Record<string, JsonValue>[] \| null` | No | — |
+| `statuses` | `Record<string, JsonValue>[] \| null` | No | — |
+| `optIns` | `Record<string, JsonValue>[] \| null` | No | — |
+| `trackingConsents` | `Record<string, JsonValue> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="identifiers full type">
+
+```ts
+{
+  id?: string | null,
+  type?: email | phone | null,
+  channels?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+Page the brand contacts, filtered by email, phone, status, segment or tag
+
+**Risk:** `read`
+
+```ts
+await corsair.omnisend.api.contacts.list({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Rows per page, 1 to 250. Defaults to 100. |
+| `after` | `string` | No | Opaque cursor for the next page, taken from the previous response `paging.cursors.after`. Omit for the first page. |
+| `before` | `string` | No | Opaque cursor for the previous page, taken from `paging.cursors.before`. |
+| `sort` | `createdAt \| updatedAt` | No | Sort field. Defaults to createdAt. |
+| `direction` | `asc \| desc` | No | Sort direction. Defaults to desc. |
+| `email` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `status` | `subscribed \| unsubscribed \| nonSubscribed` | No | — |
+| `segmentID` | `string` | No | — |
+| `tag` | `string` | No | — |
+| `updatedAtFrom` | `string` | No | Only contacts updated at or after this time. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+| `paging` | `object \| null` | No | — |
+| `nextCursor` | `string \| null` | No | Pass as `after` to read the next page; absent on the last one. |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id: string,
+  email?: string | null,
+  phone?: string[] | null,
+  status?: subscribed | unsubscribed | nonSubscribed | null,
+  firstName?: string | null,
+  lastName?: string | null,
+  gender?: m | f | null,
+  birthdate?: string | null,
+  address?: string | null,
+  city?: string | null,
+  state?: string | null,
+  country?: string | null,
+  countryCode?: string | null,
+  postalCode?: string | null,
+  tags?: string[] | null,
+  segments?: string[] | null,
+  customProperties?: Record<string, JsonValue> | null,
+  identifiers?: {
+    id?: string | null,
+    type?: email | phone | null,
+    channels?: Record<string, JsonValue> | null
+  }[] | null,
+  consents?: Record<string, JsonValue>[] | null,
+  statuses?: Record<string, JsonValue>[] | null,
+  optIns?: Record<string, JsonValue>[] | null,
+  trackingConsents?: Record<string, JsonValue> | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number | null,
+  hasMore?: boolean | null,
+  cursors?: {
+    after?: string | null,
+    before?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeTags
+
+`contacts.removeTags`
+
+Queue tag removal for up to 250 contacts by id, email or phone, or every contact in a segment; the route answers 202 and the tags disappear shortly after
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.contacts.removeTags({ emails: ['jordan@acme.com'], tags: ['vip'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactIDs` | `string[]` | No | Contact IDs to tag or untag. |
+| `emails` | `string[]` | No | Emails of the contacts to tag or untag. |
+| `phones` | `string[]` | No | Phone numbers of the contacts to tag or untag, in E.164 format. |
+| `segmentID` | `string` | No | Segment whose contacts get or lose the tags. |
+| `tags` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `boolean` | Yes | — |
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Change a contact by id; sent tags replace the existing ones, so removing one tag means sending the rest
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.contacts.update({ id: '60a6170920d91c215e949b5c', firstName: 'Jordan' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `gender` | `m \| f` | No | Contact gender: `m` male, `f` female. |
+| `birthdate` | `string` | No | Contact birthdate in YYYY-MM-DD format. |
+| `address` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | Country name; used to derive the ISO code when countryCode is absent. |
+| `countryCode` | `string` | No | ISO 3166-1 alpha-2 code; takes priority over country. |
+| `postalCode` | `string` | No | — |
+| `createdAt` | `string` | No | Stored as the `externalCreated` custom property when provided. |
+| `identifiers` | `object[]` | No | Contact identifiers (email and/or phone). |
+| `tags` | `string[]` | No | Labels for the contact. REPLACES the existing tags: every tag not sent is removed, and an empty array removes all of them. To add or remove individual tags use contacts.addTags or contacts.removeTags. A source tag such as `source: api` is recommended. |
+| `customProperties` | `Record<string, JsonValue>` | No | — |
+| `trackingConsents` | `object` | No | — |
+
+The `tags` array replaces the existing tags. To remove one tag, send the rest; use `contacts.removeTags` to remove tags individually.
+
+<AccordionGroup>
+<Accordion title="identifiers full type">
+
+```ts
+{
+  id: string,
+  type: email | phone,
+  channels?: Record<string, {
+    status: subscribed | nonSubscribed | unsubscribed,
+    statusChangedAt?: string
+  }>,
+  consent?: {
+    createdAt?: string,
+    ip?: string,
+    source?: string,
+    userAgent?: string
+  },
+  sendWelcomeMessage?: boolean,
+  source?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="trackingConsents full type">
+
+```ts
+{
+  emailOpen?: {
+    status: given | declined,
+    statusDate?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string[] \| null` | No | — |
+| `status` | `subscribed \| unsubscribed \| nonSubscribed \| null` | No | Email channel subscription status. |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `gender` | `m \| f \| null` | No | — |
+| `birthdate` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `countryCode` | `string \| null` | No | — |
+| `postalCode` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `segments` | `string[] \| null` | No | — |
+| `customProperties` | `Record<string, JsonValue> \| null` | No | — |
+| `identifiers` | `object[] \| null` | No | — |
+| `consents` | `Record<string, JsonValue>[] \| null` | No | — |
+| `statuses` | `Record<string, JsonValue>[] \| null` | No | — |
+| `optIns` | `Record<string, JsonValue>[] \| null` | No | — |
+| `trackingConsents` | `Record<string, JsonValue> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="identifiers full type">
+
+```ts
+{
+  id?: string | null,
+  type?: email | phone | null,
+  channels?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateByEmail
+
+`contacts.updateByEmail`
+
+Change the contact an email address matches; sent tags replace the existing ones
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.contacts.updateByEmail({ email: 'jordan@acme.com', firstName: 'Jordan' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | The email address identifying the contact to update. |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `gender` | `m \| f` | No | Contact gender: `m` male, `f` female. |
+| `birthdate` | `string` | No | Contact birthdate in YYYY-MM-DD format. |
+| `address` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | Country name; used to derive the ISO code when countryCode is absent. |
+| `countryCode` | `string` | No | ISO 3166-1 alpha-2 code; takes priority over country. |
+| `postalCode` | `string` | No | — |
+| `createdAt` | `string` | No | Stored as the `externalCreated` custom property when provided. |
+| `identifiers` | `object[]` | No | Contact identifiers (email and/or phone). |
+| `tags` | `string[]` | No | Labels for the contact. REPLACES the existing tags: every tag not sent is removed, and an empty array removes all of them. To add or remove individual tags use contacts.addTags or contacts.removeTags. A source tag such as `source: api` is recommended. |
+| `customProperties` | `Record<string, JsonValue>` | No | — |
+| `trackingConsents` | `object` | No | — |
+
+The `tags` array replaces the existing tags, exactly as on `contacts.update`.
+
+<AccordionGroup>
+<Accordion title="identifiers full type">
+
+```ts
+{
+  id: string,
+  type: email | phone,
+  channels?: Record<string, {
+    status: subscribed | nonSubscribed | unsubscribed,
+    statusChangedAt?: string
+  }>,
+  consent?: {
+    createdAt?: string,
+    ip?: string,
+    source?: string,
+    userAgent?: string
+  },
+  sendWelcomeMessage?: boolean,
+  source?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="trackingConsents full type">
+
+```ts
+{
+  emailOpen?: {
+    status: given | declined,
+    statusDate?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string[] \| null` | No | — |
+| `status` | `subscribed \| unsubscribed \| nonSubscribed \| null` | No | Email channel subscription status. |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `gender` | `m \| f \| null` | No | — |
+| `birthdate` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `countryCode` | `string \| null` | No | — |
+| `postalCode` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `segments` | `string[] \| null` | No | — |
+| `customProperties` | `Record<string, JsonValue> \| null` | No | — |
+| `identifiers` | `object[] \| null` | No | — |
+| `consents` | `Record<string, JsonValue>[] \| null` | No | — |
+| `statuses` | `Record<string, JsonValue>[] \| null` | No | — |
+| `optIns` | `Record<string, JsonValue>[] \| null` | No | — |
+| `trackingConsents` | `Record<string, JsonValue> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="identifiers full type">
+
+```ts
+{
+  id?: string | null,
+  type?: email | phone | null,
+  channels?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`contacts.upsert`
+
+Create a contact, or update the one an identifier already matches; sent tags replace the existing ones
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.contacts.upsert({ identifiers: [{ id: 'jordan@acme.com', type: 'email' }], firstName: 'Jordan', tags: ['source: api'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `gender` | `m \| f` | No | Contact gender: `m` male, `f` female. |
+| `birthdate` | `string` | No | Contact birthdate in YYYY-MM-DD format. |
+| `address` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `country` | `string` | No | Country name; used to derive the ISO code when countryCode is absent. |
+| `countryCode` | `string` | No | ISO 3166-1 alpha-2 code; takes priority over country. |
+| `postalCode` | `string` | No | — |
+| `createdAt` | `string` | No | Stored as the `externalCreated` custom property when provided. |
+| `identifiers` | `object[]` | No | Contact identifiers (email and/or phone). |
+| `tags` | `string[]` | No | Labels for the contact. REPLACES the existing tags: every tag not sent is removed, and an empty array removes all of them. To add or remove individual tags use contacts.addTags or contacts.removeTags. A source tag such as `source: api` is recommended. |
+| `customProperties` | `Record<string, JsonValue>` | No | — |
+| `trackingConsents` | `object` | No | — |
+
+`identifiers` decides create-or-update: an identifier the store already knows updates that contact (200), a new one creates it (201).
+
+<AccordionGroup>
+<Accordion title="identifiers full type">
+
+```ts
+{
+  id: string,
+  type: email | phone,
+  channels?: Record<string, {
+    status: subscribed | nonSubscribed | unsubscribed,
+    statusChangedAt?: string
+  }>,
+  consent?: {
+    createdAt?: string,
+    ip?: string,
+    source?: string,
+    userAgent?: string
+  },
+  sendWelcomeMessage?: boolean,
+  source?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="trackingConsents full type">
+
+```ts
+{
+  emailOpen?: {
+    status: given | declined,
+    statusDate?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string \| null` | No | — |
+| `phone` | `string[] \| null` | No | — |
+| `status` | `subscribed \| unsubscribed \| nonSubscribed \| null` | No | Email channel subscription status. |
+| `firstName` | `string \| null` | No | — |
+| `lastName` | `string \| null` | No | — |
+| `gender` | `m \| f \| null` | No | — |
+| `birthdate` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `countryCode` | `string \| null` | No | — |
+| `postalCode` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `segments` | `string[] \| null` | No | — |
+| `customProperties` | `Record<string, JsonValue> \| null` | No | — |
+| `identifiers` | `object[] \| null` | No | — |
+| `consents` | `Record<string, JsonValue>[] \| null` | No | — |
+| `statuses` | `Record<string, JsonValue>[] \| null` | No | — |
+| `optIns` | `Record<string, JsonValue>[] \| null` | No | — |
+| `trackingConsents` | `Record<string, JsonValue> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="identifiers full type">
+
+```ts
+{
+  id?: string | null,
+  type?: email | phone | null,
+  channels?: Record<string, JsonValue> | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Email Content
+
+### get
+
+`emailContent.get`
+
+Read the content of a campaign email by id
+
+**Risk:** `read`
+
+```ts
+await corsair.omnisend.api.emailContent.get({ id: '68beca12d2e99b0c8d19fd5e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `sections` | `Record<string, JsonValue>[] \| null` | No | — |
+| `generalSettings` | `Record<string, JsonValue> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### render
+
+`emailContent.render`
+
+Render a campaign email to its HTML for preview; nothing is sent and no state changes
+
+**Risk:** `read`
+
+```ts
+await corsair.omnisend.api.emailContent.render({ id: '68beca12d2e99b0c8d19fd5e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `Record<string, string>`
+
+
+---
+
+### replace
+
+`emailContent.replace`
+
+Replace a campaign email content in full; omitted fields drop to their defaults
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.emailContent.replace({ id: '68beca12d2e99b0c8d19fd5e', sections: [] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `sections` | `Record<string, JsonValue>[]` | No | — |
+| `generalSettings` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `sections` | `Record<string, JsonValue>[] \| null` | No | — |
+| `generalSettings` | `Record<string, JsonValue> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+## Events
+
+### defineSchema
+
+`events.defineSchema`
+
+Declare a custom event schema and its property types; a type, once declared, cannot change
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.events.defineSchema({ name: 'loyalty points earned', origin: 'api', properties: { points: { type: 'integer' } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Machine-readable event name. |
+| `origin` | `string` | Yes | The origin the schema belongs to. |
+| `displayName` | `string` | No | — |
+| `properties` | `object` | Yes | Property tree keyed by property name. Property types are immutable once declared. |
+
+A property type, once declared, cannot change. Omnisend answers 409 on a type conflict.
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+Record<string, {
+  type: string | stringList | integer | integerList | float | floatList | boolean | booleanList | date | dateList | struct | structList,
+  displayName?: string,
+  description?: string,
+  group?: string,
+  properties?: Record<string, (recursive)>
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="event full type">
+
+```ts
+{
+  name: string,
+  displayName?: string | null,
+  origins?: string[] | null,
+  explicitlyDefined?: boolean | null,
+  properties?: Record<string, {
+    type: string | stringList | integer | integerList | float | floatList | boolean | booleanList | date | dateList | struct | structList,
+    displayName?: string | null,
+    description?: string | null,
+    group?: string | null,
+    explicitlyDefined?: boolean | null,
+    properties?: Record<string, (recursive)> | null
+  }> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### queryMetadata
+
+`events.queryMetadata`
+
+List the event schemas the brand knows, per category, with their declared property types
+
+**Risk:** `read`
+
+```ts
+await corsair.omnisend.api.events.queryMetadata({ category: 'events', includeProperties: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category` | `events \| automations \| segments` | Yes | Event category, resolved against the requested Omnisend-Version. |
+| `events` | `string[]` | No | Optional event names to filter by. |
+| `origins` | `string[]` | No | Optional origins to filter by. |
+| `includeProperties` | `boolean` | No | When true, each item carries the nested property tree. |
+| `excludeCustomEvents` | `boolean` | No | When true, brand-custom events are omitted from the answer. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  name: string,
+  displayName?: string | null,
+  origins?: string[] | null,
+  explicitlyDefined?: boolean | null,
+  properties?: Record<string, {
+    type: string | stringList | integer | integerList | float | floatList | boolean | booleanList | date | dateList | struct | structList,
+    displayName?: string | null,
+    description?: string | null,
+    group?: string | null,
+    explicitlyDefined?: boolean | null,
+    properties?: Record<string, (recursive)> | null
+  }> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`events.send`
+
+Record an event for a contact, which creates or updates that contact and can trigger automations that email real customers. The event is queued (202) and append-only: it cannot be edited, read back or deleted
+
+**Risk:** `write` · **Irreversible**
+
+```ts
+await corsair.omnisend.api.events.send({ eventName: 'placed order', eventVersion: 'v2', origin: 'api', contact: { email: 'jordan@acme.com' }, properties: { orderId: '12345' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventName` | `string` | Yes | The event name, such as `placed order` for a recommended event. |
+| `eventVersion` | `string` | No | Required only for recommended events; leave empty for custom ones. |
+| `eventTime` | `string` | No | RFC 3339 timestamp, or "YYYY-MM-DD HH:MM:SS±HH:MM". Defaults to now. More than 10 years in the past is rejected. |
+| `eventID` | `string` | No | UUID that, with eventTime, deduplicates historical events. Generated when omitted. |
+| `origin` | `string` | No | Source of the event. Use `api` unless you are building a platform integration with a dedicated origin. |
+| `contact` | `object` | Yes | Identifies the contact and creates or updates it from the fields given. |
+| `properties` | `Record<string, JsonValue>` | No | — |
+
+The event is queued (202) and append-only: nothing can read it back, edit it or delete it. It can trigger automations that email real customers, so importing history deserves a test store. `origin` should be `api` unless you build a platform integration.
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id?: string,
+  email?: string,
+  phone?: string,
+  firstName?: string,
+  lastName?: string,
+  gender?: m | f,
+  birthdate?: string,
+  address?: string,
+  city?: string,
+  state?: string,
+  country?: string,
+  countryCode?: string,
+  postalCode?: string,
+  tags?: string[],
+  customProperties?: Record<string, JsonValue>,
+  consents?: Record<string, JsonValue>[],
+  optIns?: Record<string, JsonValue>[],
+  optOuts?: Record<string, JsonValue>[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `boolean` | Yes | — |
+
+
+
+---
+
+### updateSchema
+
+`events.updateSchema`
+
+Merge changes into an event schema; the properties present change and none are deleted, and a declared type cannot change
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.events.updateSchema({ name: 'loyalty points earned', origin: 'api', properties: { points: { type: 'float' } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Machine-readable event name. |
+| `origin` | `string` | Yes | The origin the schema belongs to. |
+| `displayName` | `string` | No | Omit to keep the stored value. |
+| `properties` | `object` | No | Merged with the stored properties; only the keys present change, and none are deleted. |
+
+This merges: only the properties present change, and none are deleted.
+
+<AccordionGroup>
+<Accordion title="properties full type">
+
+```ts
+Record<string, {
+  type: string | stringList | integer | integerList | float | floatList | boolean | booleanList | date | dateList | struct | structList,
+  displayName?: string,
+  description?: string,
+  group?: string,
+  properties?: Record<string, (recursive)>
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="event full type">
+
+```ts
+{
+  name: string,
+  displayName?: string | null,
+  origins?: string[] | null,
+  explicitlyDefined?: boolean | null,
+  properties?: Record<string, {
+    type: string | stringList | integer | integerList | float | floatList | boolean | booleanList | date | dateList | struct | structList,
+    displayName?: string | null,
+    description?: string | null,
+    group?: string | null,
+    explicitlyDefined?: boolean | null,
+    properties?: Record<string, (recursive)> | null
+  }> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### create
+
+`products.create`
+
+Create a catalog product with at least one variant; prices are floats in the store currency
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.products.create({ id: 'shoes-blue-123', title: 'Blue Shoes', currency: 'USD', url: 'https://example.com/product', status: 'inStock', variants: [{ id: 'shoes-blue-123-42', title: 'Size 42', price: 9.99, url: 'https://example.com/variant' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Your own product ID, up to 100 characters. |
+| `title` | `string` | Yes | — |
+| `currency` | `string` | Yes | ISO currency code, such as USD. |
+| `url` | `string` | Yes | Link to the product page. |
+| `status` | `inStock \| outOfStock \| notAvailable` | Yes | Keep in sync with the store so out-of-stock products are never sent. |
+| `variants` | `object[]` | Yes | At least one variant. Prices are floats in the store currency. |
+| `categoryIDs` | `string[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `images` | `string[]` | No | — |
+| `type` | `string` | No | — |
+| `vendor` | `string` | No | — |
+| `defaultImageUrl` | `string` | No | — |
+| `description` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+Variant prices are floats in the store currency (9.99 means 9.99), not the integer cents the legacy v3 API used.
+
+<AccordionGroup>
+<Accordion title="variants full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  price: number,
+  url: string,
+  sku?: string,
+  status?: inStock | outOfStock | notAvailable,
+  images?: string[],
+  defaultImageUrl?: string,
+  description?: string,
+  strikeThroughPrice?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`products.delete`
+
+Delete a product from the catalog
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.omnisend.api.products.delete({ id: 'shoes-blue-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`products.get`
+
+Read one product by your own product ID, with its variants and prices
+
+**Risk:** `read`
+
+```ts
+await corsair.omnisend.api.products.get({ id: 'shoes-blue-123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `url` | `string \| null` | No | — |
+| `status` | `inStock \| outOfStock \| notAvailable \| null` | No | — |
+| `variants` | `object[] \| null` | No | — |
+| `categoryIDs` | `string[] \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `images` | `string[] \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `vendor` | `string \| null` | No | — |
+| `defaultImageUrl` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="variants full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  price: number,
+  url: string,
+  sku?: string,
+  status?: inStock | outOfStock | notAvailable,
+  images?: string[],
+  defaultImageUrl?: string,
+  description?: string,
+  strikeThroughPrice?: number
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`products.list`
+
+Page the catalog products, filtered by title or dates
+
+**Risk:** `read`
+
+```ts
+await corsair.omnisend.api.products.list({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | First row to return, 0-based. Defaults to 0. |
+| `limit` | `number` | No | Rows per page. Defaults to 100. |
+| `sort` | `date \| updatedAt \| createdAt` | No | Sort field. |
+| `titleContains` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `products` | `object[]` | Yes | — |
+| `paging` | `object \| null` | No | — |
+| `nextOffset` | `number \| null` | No | Pass as `offset` to read the next page; absent on the last one. |
+
+<AccordionGroup>
+<Accordion title="products full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  currency?: string | null,
+  url?: string | null,
+  status?: inStock | outOfStock | notAvailable | null,
+  variants?: {
+    id: string,
+    title: string,
+    price: number,
+    url: string,
+    sku?: string,
+    status?: inStock | outOfStock | notAvailable,
+    images?: string[],
+    defaultImageUrl?: string,
+    description?: string,
+    strikeThroughPrice?: number
+  }[] | null,
+  categoryIDs?: string[] | null,
+  tags?: string[] | null,
+  images?: string[] | null,
+  type?: string | null,
+  vendor?: string | null,
+  defaultImageUrl?: string | null,
+  description?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number | null,
+  offset?: number | null,
+  next?: string | null,
+  previous?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`products.replace`
+
+Replace a product in full; omitted fields drop to their defaults
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.products.replace({ id: 'shoes-blue-123', title: 'Blue Shoes', currency: 'USD', url: 'https://example.com/product', status: 'inStock', variants: [{ id: 'shoes-blue-123-42', title: 'Size 42', price: 9.99, url: 'https://example.com/variant' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Your own product ID, up to 100 characters. |
+| `title` | `string` | Yes | — |
+| `currency` | `string` | Yes | ISO currency code, such as USD. |
+| `url` | `string` | Yes | Link to the product page. |
+| `status` | `inStock \| outOfStock \| notAvailable` | Yes | Keep in sync with the store so out-of-stock products are never sent. |
+| `variants` | `object[]` | Yes | At least one variant. Prices are floats in the store currency. |
+| `categoryIDs` | `string[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `images` | `string[]` | No | — |
+| `type` | `string` | No | — |
+| `vendor` | `string` | No | — |
+| `defaultImageUrl` | `string` | No | — |
+| `description` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="variants full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  price: number,
+  url: string,
+  sku?: string,
+  status?: inStock | outOfStock | notAvailable,
+  images?: string[],
+  defaultImageUrl?: string,
+  description?: string,
+  strikeThroughPrice?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Templates
+
+### create
+
+`templates.create`
+
+Create an email template with a name and editor sections
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.templates.create({ name: 'Welcome Email' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `sections` | `Record<string, JsonValue>[]` | No | Template sections, as the template editor defines them. |
+| `generalSettings` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `sections` | `Record<string, JsonValue>[] \| null` | No | — |
+| `generalSettings` | `Record<string, JsonValue> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Delete an email template
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.omnisend.api.templates.delete({ id: '68beca12d2e99b0c8d19fd5e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accepted` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Read one email template by id, with its sections and styles
+
+**Risk:** `read`
+
+```ts
+await corsair.omnisend.api.templates.get({ id: '68beca12d2e99b0c8d19fd5e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `sections` | `Record<string, JsonValue>[] \| null` | No | — |
+| `generalSettings` | `Record<string, JsonValue> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### importFromHtml
+
+`templates.importFromHtml`
+
+Import raw HTML, up to 1 MB, as a new email template Omnisend converts to editor sections
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.templates.importFromHtml({ name: 'Imported', html: '<html><body>Hello</body></html>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `html` | `string` | Yes | Raw HTML to import; up to 1 MB. |
+
+The HTML body can be up to 1 MB. Omnisend converts it into editor sections.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `sections` | `Record<string, JsonValue>[] \| null` | No | — |
+| `generalSettings` | `Record<string, JsonValue> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`templates.list`
+
+Page the email templates, filtered by name
+
+**Risk:** `read`
+
+```ts
+await corsair.omnisend.api.templates.list({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Rows per page, 1 to 100. Defaults to 100. |
+| `after` | `string` | No | Opaque cursor for the next page, taken from the previous response `paging.cursors.after`. Omit for the first page. |
+| `before` | `string` | No | Opaque cursor for the previous page, taken from `paging.cursors.before`. |
+| `sort` | `createdAt \| name` | No | Sort field. Defaults to createdAt. |
+| `direction` | `asc \| desc` | No | Sort direction. Defaults to desc. |
+| `nameContains` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templates` | `object[]` | Yes | — |
+| `paging` | `object \| null` | No | — |
+| `nextCursor` | `string \| null` | No | Pass as `after` to read the next page; absent on the last one. |
+
+<AccordionGroup>
+<Accordion title="templates full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  limit?: number | null,
+  hasMore?: boolean | null,
+  cursors?: {
+    after?: string | null,
+    before?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### render
+
+`templates.render`
+
+Render a template to its HTML for preview; nothing is sent and no state changes
+
+**Risk:** `read`
+
+```ts
+await corsair.omnisend.api.templates.render({ id: '68beca12d2e99b0c8d19fd5e' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `Record<string, string>`
+
+
+---
+
+### replace
+
+`templates.replace`
+
+Replace an email template in full; omitted fields drop to their defaults
+
+**Risk:** `write`
+
+```ts
+await corsair.omnisend.api.templates.replace({ id: '68beca12d2e99b0c8d19fd5e', name: 'Renamed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `sections` | `Record<string, JsonValue>[]` | No | — |
+| `generalSettings` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `sections` | `Record<string, JsonValue>[] \| null` | No | — |
+| `generalSettings` | `Record<string, JsonValue> \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+

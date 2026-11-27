@@ -1,0 +1,144 @@
+---
+title: "Omnisend plugin"
+sidebarTitle: "Overview"
+description: "Email and SMS marketing automation for ecommerce from Omnisend - sync contacts and catalog products, trigger automations through events, and manage campaigns and templates."
+---
+
+Use **Omnisend** through Corsair: one client, typed API calls.
+
+Create an API key in Omnisend at app.omnisend.com under Store settings, API keys, and copy it immediately: the key is shown only once. It goes in the `Authorization` header as `Omnisend-API-Key <key>`, which is not a bearer token. This plugin talks to the current API, version 2026-03-15, and every request carries the mandatory `Omnisend-Version` header for it. The older v3 API (`api.omnisend.com/v3` with `X-API-KEY`) is legacy and not supported here.
+
+Things that shape the calls:
+
+- **Paging differs per group.** Contacts, campaigns and templates page by cursor: pass `after` from one response as `after` on the next, up to 250 rows (100 for templates). Products, categories and batches page by `offset` and `limit`, and this plugin parses the next offset out of `paging.next` for you.
+- **Contact tags replace.** Sending `tags` on any contact write removes every tag not sent; an empty array removes all of them. To add or remove individual tags, use `contacts.addTags` and `contacts.removeTags`, which run asynchronously and answer 202.
+- **Events are one-way.** `events.send` queues the event (202) and can trigger automations that email real customers; there is no read-back, edit or delete. Orders and carts are not resources: they arrive as `placed order`-style events with `eventVersion: v2`, so importing history can email customers.
+- **Event schemas are typed once.** A property type declared with `events.defineSchema` cannot change, and `events.updateSchema` merges without deleting.
+- **Batches are the bulk path.** `batches.create` queues up to 100 writes and `batches.get` polls until the status is `finished` or `stopped`; there is no cancel. Categories batches can be created but not listed.
+- **Prices are floats** in the store currency, not the integer cents the legacy v3 API used.
+- **There is no sandbox.** The closest thing to a dry run is `campaigns.sendTestEmail` and the two `render` endpoints, which produce HTML without sending anything.
+- **Omnisend sends no inbound webhooks** to receive, and the REST API exposes none to manage.
+- **Rate limits** run per brand on a sliding window shared across every key: 400 requests per minute overall, with tighter windows on segment writes, renders and the analytics routes. A 429 carries `retryAfter` (seconds) in the body.
+
+**What you get:**
+
+- 47 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/omnisend better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/omnisend better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/omnisend better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/omnisend better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { omnisend } from '@corsair-dev/omnisend';
+
+export const corsair = createCorsair({
+	plugins: [
+		omnisend(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Omnisend API key before the first call: `pnpm corsair setup --plugin=omnisend --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+omnisend()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'omnisend',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Find contacts by email domain filter**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.omnisend.api.contacts.list({ limit: 20, status: 'subscribed' });
+```
+
+
+**Create or update a contact**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.omnisend.api.contacts.upsert({
+	identifiers: [{ id: 'jordan@acme.com', type: 'email' }],
+	firstName: 'Jordan',
+});
+```
+
+
+See the full list on the [API](/plugins/omnisend/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/omnisend/api">
+    Every `omnisend.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

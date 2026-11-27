@@ -1,4 +1,141 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "Omnisend"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: Omnisend
+description: Email and SMS marketing automation for ecommerce from Omnisend - sync contacts and catalog products, trigger automations through events, and manage campaigns and templates.
+domain: omnisend.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key in Omnisend at app.omnisend.com under Store settings, API keys, and copy it immediately: the key is shown only once. It goes in the `Authorization` header as `Omnisend-API-Key <key>`, which is not a bearer token. This plugin talks to the current API, version 2026-03-15, and every request carries the mandatory `Omnisend-Version` header for it. The older v3 API (`api.omnisend.com/v3` with `X-API-KEY`) is legacy and not supported here.
+
+  Things that shape the calls:
+
+  - **Paging differs per group.** Contacts, campaigns and templates page by cursor: pass `after` from one response as `after` on the next, up to 250 rows (100 for templates). Products, categories and batches page by `offset` and `limit`, and this plugin parses the next offset out of `paging.next` for you.
+  - **Contact tags replace.** Sending `tags` on any contact write removes every tag not sent; an empty array removes all of them. To add or remove individual tags, use `contacts.addTags` and `contacts.removeTags`, which run asynchronously and answer 202.
+  - **Events are one-way.** `events.send` queues the event (202) and can trigger automations that email real customers; there is no read-back, edit or delete. Orders and carts are not resources: they arrive as `placed order`-style events with `eventVersion: v2`, so importing history can email customers.
+  - **Event schemas are typed once.** A property type declared with `events.defineSchema` cannot change, and `events.updateSchema` merges without deleting.
+  - **Batches are the bulk path.** `batches.create` queues up to 100 writes and `batches.get` polls until the status is `finished` or `stopped`; there is no cancel. Categories batches can be created but not listed.
+  - **Prices are floats** in the store currency, not the integer cents the legacy v3 API used.
+  - **There is no sandbox.** The closest thing to a dry run is `campaigns.sendTestEmail` and the two `render` endpoints, which produce HTML without sending anything.
+  - **Omnisend sends no inbound webhooks** to receive, and the REST API exposes none to manage.
+  - **Rate limits** run per brand on a sliding window shared across every key: 400 requests per minute overall, with tighter windows on segment writes, renders and the analytics routes. A 429 carries `retryAfter` (seconds) in the body.
+examples:
+  read:
+    path: contacts.list
+    title: Find contacts by email domain filter
+    args:
+      limit: 20
+      status: subscribed
+  write:
+    path: contacts.upsert
+    title: Create or update a contact
+    args:
+      identifiers:
+        - id: jordan@acme.com
+          type: email
+      firstName: Jordan
+apiExamples:
+  batches.create:
+    call: "{ endpoint: 'contacts', method: 'POST', items: [{ identifiers: [{ id: 'jordan@acme.com', type: 'email' }] }] }"
+  batches.get:
+    call: "{ id: '5f92cbf10cf217478ba93561' }"
+  batches.list:
+    call: "{ endpoint: 'contacts', status: 'finished' }"
+  batches.listItems:
+    call: "{ id: '5f92cbf10cf217478ba93561' }"
+  campaigns.cancel:
+    call: "{ id: '000000000000000000000001' }"
+  campaigns.copy:
+    call: "{ id: '000000000000000000000001' }"
+  campaigns.create:
+    call: "{ type: 'regular', channel: 'email', name: 'Welcome', content: { email: { templateID: '68beca12d2e99b0c8d19fd5e', subject: 'Hello' } } }"
+  campaigns.delete:
+    call: "{ id: '000000000000000000000001' }"
+  campaigns.get:
+    call: "{ id: '000000000000000000000001' }"
+  campaigns.getUtm:
+    call: "{ id: '000000000000000000000001' }"
+  campaigns.list:
+    call: "{ limit: 20 }"
+  campaigns.restoreToDraft:
+    call: "{ id: '000000000000000000000001' }"
+  campaigns.send:
+    call: "{ id: '000000000000000000000001' }"
+  campaigns.sendTestEmail:
+    call: "{ id: '000000000000000000000001', recipients: ['merchant@example.com'] }"
+  campaigns.setUtm:
+    call: "{ id: '000000000000000000000001', tags: { source: 'omnisend', medium: 'email', campaign: 'Welcome' } }"
+  campaigns.update:
+    call: "{ id: '000000000000000000000001', name: 'Renamed' }"
+  categories.create:
+    call: "{ categoryID: 'C1234', title: 'Shoes' }"
+  categories.delete:
+    call: "{ id: 'C1234' }"
+  categories.get:
+    call: "{ id: 'C1234' }"
+  categories.list:
+    call: "{ limit: 20 }"
+  categories.update:
+    call: "{ id: 'C1234', title: 'Sneakers' }"
+  contacts.addTags:
+    call: "{ emails: ['jordan@acme.com'], tags: ['vip'] }"
+  contacts.get:
+    call: "{ id: '60a6170920d91c215e949b5c' }"
+  contacts.list:
+    call: "{ limit: 20 }"
+  contacts.removeTags:
+    call: "{ emails: ['jordan@acme.com'], tags: ['vip'] }"
+  contacts.update:
+    call: "{ id: '60a6170920d91c215e949b5c', firstName: 'Jordan' }"
+  contacts.updateByEmail:
+    call: "{ email: 'jordan@acme.com', firstName: 'Jordan' }"
+  contacts.upsert:
+    call: "{ identifiers: [{ id: 'jordan@acme.com', type: 'email' }], firstName: 'Jordan', tags: ['source: api'] }"
+  emailContent.get:
+    call: "{ id: '68beca12d2e99b0c8d19fd5e' }"
+  emailContent.render:
+    call: "{ id: '68beca12d2e99b0c8d19fd5e' }"
+  emailContent.replace:
+    call: "{ id: '68beca12d2e99b0c8d19fd5e', sections: [] }"
+  events.defineSchema:
+    call: "{ name: 'loyalty points earned', origin: 'api', properties: { points: { type: 'integer' } } }"
+  events.queryMetadata:
+    call: "{ category: 'events', includeProperties: true }"
+  events.send:
+    call: "{ eventName: 'placed order', eventVersion: 'v2', origin: 'api', contact: { email: 'jordan@acme.com' }, properties: { orderId: '12345' } }"
+  events.updateSchema:
+    call: "{ name: 'loyalty points earned', origin: 'api', properties: { points: { type: 'float' } } }"
+  products.create:
+    call: "{ id: 'shoes-blue-123', title: 'Blue Shoes', currency: 'USD', url: 'https://example.com/product', status: 'inStock', variants: [{ id: 'shoes-blue-123-42', title: 'Size 42', price: 9.99, url: 'https://example.com/variant' }] }"
+  products.delete:
+    call: "{ id: 'shoes-blue-123' }"
+  products.get:
+    call: "{ id: 'shoes-blue-123' }"
+  products.list:
+    call: "{ limit: 20 }"
+  products.replace:
+    call: "{ id: 'shoes-blue-123', title: 'Blue Shoes', currency: 'USD', url: 'https://example.com/product', status: 'inStock', variants: [{ id: 'shoes-blue-123-42', title: 'Size 42', price: 9.99, url: 'https://example.com/variant' }] }"
+  templates.create:
+    call: "{ name: 'Welcome Email' }"
+  templates.delete:
+    call: "{ id: '68beca12d2e99b0c8d19fd5e' }"
+  templates.get:
+    call: "{ id: '68beca12d2e99b0c8d19fd5e' }"
+  templates.importFromHtml:
+    call: "{ name: 'Imported', html: '<html><body>Hello</body></html>' }"
+  templates.list:
+    call: "{ limit: 20 }"
+  templates.render:
+    call: "{ id: '68beca12d2e99b0c8d19fd5e' }"
+  templates.replace:
+    call: "{ id: '68beca12d2e99b0c8d19fd5e', name: 'Renamed' }"
+apiNotes:
+  campaigns.send: 'Sending cannot be undone, and Omnisend answers 402 when the audience exceeds the billing tier (email credits or subscriber count). Only a draft campaign can be sent.'
+  contacts.upsert: '`identifiers` decides create-or-update: an identifier the store already knows updates that contact (200), a new one creates it (201).'
+  contacts.update: 'The `tags` array replaces the existing tags. To remove one tag, send the rest; use `contacts.removeTags` to remove tags individually.'
+  contacts.updateByEmail: 'The `tags` array replaces the existing tags, exactly as on `contacts.update`.'
+  contacts.addTags: 'Queued, not immediate: Omnisend answers 202 with no body, and the tags appear on the contact shortly after.'
+  events.send: 'The event is queued (202) and append-only: nothing can read it back, edit it or delete it. It can trigger automations that email real customers, so importing history deserves a test store. `origin` should be `api` unless you build a platform integration.'
+  events.defineSchema: 'A property type, once declared, cannot change. Omnisend answers 409 on a type conflict.'
+  events.updateSchema: 'This merges: only the properties present change, and none are deleted.'
+  batches.create: 'Up to 100 items per batch. Poll `batches.get` until `status` is `finished` or `stopped`; there is no cancel.'
+  batches.list: 'The `endpoint` filter is required, and categories batches cannot be listed at all.'
+  products.create: 'Variant prices are floats in the store currency (9.99 means 9.99), not the integer cents the legacy v3 API used.'
+  templates.importFromHtml: 'The HTML body can be up to 1 MB. Omnisend converts it into editor sections.'
