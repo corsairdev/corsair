@@ -1765,6 +1765,15 @@
                 ]
               },
               {
+                "group": "Daytona",
+                "pages": [
+                  "plugins/daytona/overview",
+                  "plugins/daytona/api",
+                  "plugins/daytona/database",
+                  "plugins/daytona/webhooks"
+                ]
+              },
+              {
                 "group": "Deepline",
                 "pages": [
                   "plugins/deepline/overview",

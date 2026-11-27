@@ -1,0 +1,551 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from Daytona's OpenAPI specs;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Daytona
+domain: daytona.io
+description: "Daytona runs AI-generated code in sandboxes: sandboxes (create, start, stop, archive, fork, resize, SSH access, preview URLs, logs), the toolbox inside each one (files, processes and sessions, git, LSP, code interpreter, computer use), snapshots, volumes, Docker registries, secrets, warm pools, organizations, roles and members, audit logs, telemetry and usage analytics, and signed webhooks (254 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  The account stores one Daytona API key (app.daytona.io/dashboard/keys),
+  sent as `Authorization: Bearer`. Its permissions decide which operations
+  work. Set `apiUrl` for a self-hosted Daytona, and `organizationId` when a
+  key reaches more than one organization.
+
+  - **Three APIs, one key.** The main API manages sandboxes, snapshots,
+  volumes, registries, secrets and organizations. `toolbox.*` operations run
+  inside one sandbox (files, processes and sessions, git, LSP, the code
+  interpreter, computer use): the plugin asks the API for the sandbox's
+  toolbox proxy URL and calls `<proxy>/<sandbox id>`. `analytics.*` reads
+  telemetry and usage from the Analytics API that `GET /config` names.
+  - **Money.** Sandboxes are billed per second for the vCPU, memory and disk
+  they reserve (a stopped one for its disk). Creating, starting, forking,
+  resizing or recovering one, running commands or code in it, snapshots,
+  volumes and warm pools are `destructive`, as are git pushes, key and
+  credential rotation and every delete.
+  - **Webhooks** go out through Svix. Open the endpoint portal with
+  `webhooks.getAppPortalAccess`, add an endpoint, and store its `whsec_`
+  signing secret as the webhook secret; the plugin checks the Svix signature
+  of every delivery.
+  - **Rate limits** depend on the organization's tier. A 429 carries
+  `Retry-After` and core retries it three times; a 5xx is retried for reads only.
+  - Not wrapped: routes Daytona's own runners, proxy, SSH gateway, OTEL
+  collector and dashboard call, the PTY WebSocket, the toolbox daemon's own
+  setup routes, and deprecated routes.
+examples:
+  read:
+    path: sandboxes.list
+    title: List sandboxes
+    args: {"labels": "{\"team\":\"ml\"}"}
+  write:
+    path: toolbox.process.executeCommand
+    title: Run a command in a sandbox
+    args: {"sandbox_id": "my-sandbox", "command": "uname -a", "timeout": 30}
+apiExamples:
+  analytics.telemetry.getTrace:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "sandboxId": "0f9a3c2e-5d6b-4a1f-9c8e-2b7d4e6a1c3f", "traceId": "4bf92f3577b34da6a3ce929d0e0e4736"}
+  analytics.telemetry.logs:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "sandboxId": "0f9a3c2e-5d6b-4a1f-9c8e-2b7d4e6a1c3f", "from": "2026-11-01T00:00:00Z", "to": "2026-11-27T00:00:00Z"}
+  analytics.telemetry.metrics:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "sandboxId": "0f9a3c2e-5d6b-4a1f-9c8e-2b7d4e6a1c3f", "from": "2026-11-01T00:00:00Z", "to": "2026-11-27T00:00:00Z"}
+  analytics.telemetry.traces:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "sandboxId": "0f9a3c2e-5d6b-4a1f-9c8e-2b7d4e6a1c3f", "from": "2026-11-01T00:00:00Z", "to": "2026-11-27T00:00:00Z"}
+  analytics.usage.aggregated:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "from": "2026-11-01T00:00:00Z", "to": "2026-11-27T00:00:00Z"}
+  analytics.usage.bySandbox:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "from": "2026-11-01T00:00:00Z", "to": "2026-11-27T00:00:00Z"}
+  analytics.usage.chart:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "from": "2026-11-01T00:00:00Z", "to": "2026-11-27T00:00:00Z"}
+  analytics.usage.sandbox:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "sandboxId": "0f9a3c2e-5d6b-4a1f-9c8e-2b7d4e6a1c3f", "from": "2026-11-01T00:00:00Z", "to": "2026-11-27T00:00:00Z"}
+  apiKeys.create:
+    args: {"name": "my-sandbox", "permissions": ["write:registries"]}
+  apiKeys.delete:
+    args: {"name": "my-sandbox"}
+  apiKeys.deleteForUser:
+    args: {"userId": "example", "name": "my-sandbox"}
+  apiKeys.get:
+    args: {"name": "my-sandbox"}
+  apiKeys.getCurrent:
+    args: {}
+  apiKeys.list:
+    args: {}
+  audit.getOrganizationLogs:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c"}
+  audit.getScenarios:
+    args: {}
+  config.get:
+    args: {}
+  dockerRegistries.create:
+    args: {"name": "my-sandbox", "password": "example", "url": "https://github.com/daytonaio/daytona.git", "username": "example"}
+  dockerRegistries.delete:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  dockerRegistries.get:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  dockerRegistries.getTransientPushAccess:
+    args: {}
+  dockerRegistries.list:
+    args: {}
+  dockerRegistries.update:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b", "name": "my-sandbox", "url": "https://github.com/daytonaio/daytona.git", "username": "example"}
+  health.live:
+    args: {}
+  health.ready:
+    args: {}
+  objectStorage.getPushAccess:
+    args: {}
+  organizations.acceptInvitation:
+    args: {"invitationId": "example"}
+  organizations.cancelInvitation:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "invitationId": "example"}
+  organizations.create:
+    args: {"defaultRegionId": "example", "name": "my-sandbox"}
+  organizations.createIdentityProvider:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "emailDomains": ["ops@example.com"], "name": "my-sandbox", "oidcConfig": {"clientId": "example", "clientSecret": "example", "issuerUrl": "https://example.com/daytona"}}
+  organizations.createInvitation:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "assignedRoleIds": ["example"], "email": "ops@example.com", "role": "owner"}
+  organizations.createRegion:
+    args: {"name": "my-sandbox"}
+  organizations.createRole:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "description": "example", "name": "my-sandbox", "permissions": ["write:registries"]}
+  organizations.declineInvitation:
+    args: {"invitationId": "example"}
+  organizations.delete:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c"}
+  organizations.deleteIdentityProvider:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  organizations.deleteMember:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "userId": "example"}
+  organizations.deleteOtelConfig:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c"}
+  organizations.deleteRegion:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  organizations.deleteRole:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "roleId": "example"}
+  organizations.generateWorkosAdminPortalLink:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "intent": "sso"}
+  organizations.get:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c"}
+  organizations.getGpuCapacity:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c"}
+  organizations.getIdentityProvider:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  organizations.getInvitationsCountForAuthenticatedUser:
+    args: {}
+  organizations.getOtelConfig:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c"}
+  organizations.getRegionById:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  organizations.getUsageOverview:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c"}
+  organizations.leave:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c"}
+  organizations.list:
+    args: {}
+  organizations.listAvailableRegions:
+    args: {}
+  organizations.listAvailableSandboxClasses:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c"}
+  organizations.listIdentityProviders:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c"}
+  organizations.listInvitations:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c"}
+  organizations.listInvitationsForAuthenticatedUser:
+    args: {}
+  organizations.listMembers:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c"}
+  organizations.listRoles:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c"}
+  organizations.listWorkosSsoConnections:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c"}
+  organizations.regenerateProxyApiKey:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  organizations.regenerateSnapshotManagerCredentials:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  organizations.regenerateSshGatewayApiKey:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  organizations.setDefaultRegion:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "defaultRegionId": "example"}
+  organizations.testIdentityProviderConnection:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "issuerUrl": "https://example.com/daytona"}
+  organizations.updateAccessForMember:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "userId": "example", "assignedRoleIds": ["example"], "role": "owner"}
+  organizations.updateDefaultQueueTimeout:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "defaultQueueTimeout": 1}
+  organizations.updateExperimentalConfig:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c"}
+  organizations.updateIdentityProvider:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  organizations.updateInvitation:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "invitationId": "example", "assignedRoleIds": ["example"], "role": "owner"}
+  organizations.updateOtelConfig:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "endpoint": "example"}
+  organizations.updateRegion:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  organizations.updateRole:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c", "roleId": "example", "description": "example", "name": "my-sandbox", "permissions": ["write:registries"]}
+  regions.listShared:
+    args: {}
+  runners.create:
+    args: {"name": "my-sandbox", "regionId": "example"}
+  runners.delete:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  runners.getById:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  runners.getFullById:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  runners.list:
+    args: {}
+  runners.updateDraining:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  runners.updateScheduling:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  sandboxes.addNodes:
+    args: {"sandboxIdOrName": "my-sandbox", "expectedGeneration": 1, "nodes": [{"cpu": 1, "disk": 1, "memory": 1}]}
+  sandboxes.archive:
+    args: {"sandboxIdOrName": "my-sandbox"}
+  sandboxes.create:
+    args: {"snapshot": "daytona-small", "autoStopInterval": 15, "labels": {"team": "ml"}}
+  sandboxes.createSnapshot:
+    args: {"sandboxIdOrName": "my-sandbox", "name": "my-sandbox"}
+  sandboxes.createSshAccess:
+    args: {"sandboxIdOrName": "my-sandbox"}
+  sandboxes.delete:
+    args: {"sandboxIdOrName": "my-sandbox"}
+  sandboxes.expireSignedPortPreviewUrl:
+    args: {"sandboxIdOrName": "my-sandbox", "port": 3000, "token": "example"}
+  sandboxes.fork:
+    args: {"sandboxIdOrName": "my-sandbox"}
+  sandboxes.get:
+    args: {"sandboxIdOrName": "my-sandbox"}
+  sandboxes.getAncestors:
+    args: {"sandboxIdOrName": "my-sandbox"}
+  sandboxes.getBuildLogsUrl:
+    args: {"sandboxIdOrName": "my-sandbox"}
+  sandboxes.getForks:
+    args: {"sandboxIdOrName": "my-sandbox"}
+  sandboxes.getGangMembershipOperation:
+    args: {"sandboxIdOrName": "my-sandbox", "operationId": "example"}
+  sandboxes.getLogs:
+    args: {"sandboxId": "0f9a3c2e-5d6b-4a1f-9c8e-2b7d4e6a1c3f", "from": "2026-11-01T00:00:00Z", "to": "2026-11-27T00:00:00Z"}
+  sandboxes.getMetrics:
+    args: {"sandboxId": "0f9a3c2e-5d6b-4a1f-9c8e-2b7d4e6a1c3f", "from": "2026-11-01T00:00:00Z", "to": "2026-11-27T00:00:00Z"}
+  sandboxes.getParent:
+    args: {"sandboxIdOrName": "my-sandbox"}
+  sandboxes.getPortPreviewUrl:
+    args: {"sandboxIdOrName": "my-sandbox", "port": 3000}
+  sandboxes.getSignedPortPreviewUrl:
+    args: {"sandboxIdOrName": "my-sandbox", "port": 3000}
+  sandboxes.getSigningKey:
+    args: {"sandboxId": "0f9a3c2e-5d6b-4a1f-9c8e-2b7d4e6a1c3f"}
+  sandboxes.getToolboxProxyUrl:
+    args: {"sandboxId": "0f9a3c2e-5d6b-4a1f-9c8e-2b7d4e6a1c3f"}
+  sandboxes.getTraceSpans:
+    args: {"sandboxId": "0f9a3c2e-5d6b-4a1f-9c8e-2b7d4e6a1c3f", "traceId": "4bf92f3577b34da6a3ce929d0e0e4736"}
+  sandboxes.getTraces:
+    args: {"sandboxId": "0f9a3c2e-5d6b-4a1f-9c8e-2b7d4e6a1c3f", "from": "2026-11-01T00:00:00Z", "to": "2026-11-27T00:00:00Z"}
+  sandboxes.list:
+    args: {"labels": "{\"team\":\"ml\"}"}
+  sandboxes.pause:
+    args: {"sandboxIdOrName": "my-sandbox"}
+  sandboxes.recover:
+    args: {"sandboxIdOrName": "my-sandbox"}
+  sandboxes.removeNodes:
+    args: {"sandboxIdOrName": "my-sandbox", "count": 1, "expectedGeneration": 1}
+  sandboxes.replaceLabels:
+    args: {"sandboxIdOrName": "my-sandbox", "labels": {}}
+  sandboxes.replaceNode:
+    args: {"sandboxIdOrName": "my-sandbox", "rank": "example", "expectedGeneration": 1}
+  sandboxes.resize:
+    args: {"sandboxIdOrName": "my-sandbox"}
+  sandboxes.revokeSshAccess:
+    args: {"sandboxIdOrName": "my-sandbox"}
+  sandboxes.rotateSigningKey:
+    args: {"sandboxId": "0f9a3c2e-5d6b-4a1f-9c8e-2b7d4e6a1c3f"}
+  sandboxes.setAutoArchiveInterval:
+    args: {"sandboxIdOrName": "my-sandbox", "interval": 1}
+  sandboxes.setAutoDeleteInterval:
+    args: {"sandboxIdOrName": "my-sandbox", "interval": 1}
+  sandboxes.setAutoPauseInterval:
+    args: {"sandboxIdOrName": "my-sandbox", "interval": 1}
+  sandboxes.setAutostopInterval:
+    args: {"sandboxIdOrName": "my-sandbox", "interval": 1}
+  sandboxes.setTtl:
+    args: {"sandboxIdOrName": "my-sandbox", "ttlMinutes": 1}
+  sandboxes.start:
+    args: {"sandboxIdOrName": "my-sandbox"}
+  sandboxes.stop:
+    args: {"sandboxIdOrName": "my-sandbox"}
+  sandboxes.updateLastActivity:
+    args: {"sandboxId": "0f9a3c2e-5d6b-4a1f-9c8e-2b7d4e6a1c3f"}
+  sandboxes.updateNetworkSettings:
+    args: {"sandboxIdOrName": "my-sandbox"}
+  sandboxes.updatePublicStatus:
+    args: {"sandboxIdOrName": "my-sandbox", "isPublic": true}
+  sandboxes.updateSecrets:
+    args: {"sandboxIdOrName": "my-sandbox", "secrets": [{}]}
+  secrets.create:
+    args: {"name": "my-sandbox", "value": "example"}
+  secrets.delete:
+    args: {"secretId": "example"}
+  secrets.get:
+    args: {"secretId": "example"}
+  secrets.listPaginated:
+    args: {}
+  secrets.update:
+    args: {"secretId": "example"}
+  snapshots.activate:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  snapshots.create:
+    args: {"name": "my-sandbox"}
+  snapshots.deactivate:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  snapshots.get:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  snapshots.getAll:
+    args: {}
+  snapshots.getBuildLogsUrl:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  snapshots.remove:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  toolbox.computerUse.click:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.deleteRecording:
+    args: {"sandbox_id": "my-sandbox", "id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  toolbox.computerUse.downloadRecording:
+    args: {"sandbox_id": "my-sandbox", "id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  toolbox.computerUse.drag:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.findAccessibilityNodes:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.focusAccessibilityNode:
+    args: {"sandbox_id": "my-sandbox", "id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  toolbox.computerUse.getAccessibilityTree:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.getComputerUseStatus:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.getComputerUseSystemStatus:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.getDisplayInfo:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.getMousePosition:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.getProcessErrors:
+    args: {"sandbox_id": "my-sandbox", "processName": "example"}
+  toolbox.computerUse.getProcessLogs:
+    args: {"sandbox_id": "my-sandbox", "processName": "example"}
+  toolbox.computerUse.getProcessStatus:
+    args: {"sandbox_id": "my-sandbox", "processName": "example"}
+  toolbox.computerUse.getRecording:
+    args: {"sandbox_id": "my-sandbox", "id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  toolbox.computerUse.getWindows:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.invokeAccessibilityNode:
+    args: {"sandbox_id": "my-sandbox", "id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  toolbox.computerUse.keyDown:
+    args: {"sandbox_id": "my-sandbox", "key": "example"}
+  toolbox.computerUse.keyUp:
+    args: {"sandbox_id": "my-sandbox", "key": "example"}
+  toolbox.computerUse.listRecordings:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.mouseDown:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.mouseUp:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.moveMouse:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.pressHotkey:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.pressKey:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.restartProcess:
+    args: {"sandbox_id": "my-sandbox", "processName": "example"}
+  toolbox.computerUse.scroll:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.setAccessibilityNodeValue:
+    args: {"sandbox_id": "my-sandbox", "id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  toolbox.computerUse.startComputerUse:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.startRecording:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.stopComputerUse:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.stopRecording:
+    args: {"sandbox_id": "my-sandbox", "id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  toolbox.computerUse.takeCompressedRegionScreenshot:
+    args: {"sandbox_id": "my-sandbox", "x": 1, "y": 1, "width": 1, "height": 1}
+  toolbox.computerUse.takeCompressedScreenshot:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.takeRegionScreenshot:
+    args: {"sandbox_id": "my-sandbox", "x": 1, "y": 1, "width": 1, "height": 1}
+  toolbox.computerUse.takeScreenshot:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.computerUse.typeText:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.files.bulkDownload:
+    args: {"sandbox_id": "my-sandbox", "paths": ["/home/daytona/notes.md"]}
+  toolbox.files.bulkUpload:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.files.createFolder:
+    args: {"sandbox_id": "my-sandbox", "path": "/home/daytona/notes.md", "mode": "example"}
+  toolbox.files.delete:
+    args: {"sandbox_id": "my-sandbox", "path": "/home/daytona/notes.md"}
+  toolbox.files.download:
+    args: {"sandbox_id": "my-sandbox", "path": "/home/daytona/notes.md"}
+  toolbox.files.findIn:
+    args: {"sandbox_id": "my-sandbox", "path": "/home/daytona/notes.md", "pattern": "example"}
+  toolbox.files.getInfo:
+    args: {"sandbox_id": "my-sandbox", "path": "/home/daytona/notes.md"}
+  toolbox.files.list:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.files.move:
+    args: {"sandbox_id": "my-sandbox", "source": "example", "destination": "example"}
+  toolbox.files.replaceIn:
+    args: {"sandbox_id": "my-sandbox", "files": ["example"], "newValue": "example", "pattern": "example"}
+  toolbox.files.search:
+    args: {"sandbox_id": "my-sandbox", "path": "/home/daytona/notes.md", "pattern": "example"}
+  toolbox.files.setPermissions:
+    args: {"sandbox_id": "my-sandbox", "path": "/home/daytona/notes.md"}
+  toolbox.files.upload:
+    args: {"sandbox_id": "my-sandbox", "path": "/home/daytona/notes.md", "file": {"base64": "aGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.md", "contentType": "text/markdown"}}
+  toolbox.git.addFiles:
+    args: {"sandbox_id": "my-sandbox", "files": ["example"], "path": "/home/daytona/notes.md"}
+  toolbox.git.addRemote:
+    args: {"sandbox_id": "my-sandbox", "name": "my-sandbox", "path": "/home/daytona/notes.md", "url": "https://github.com/daytonaio/daytona.git"}
+  toolbox.git.authenticate:
+    args: {"sandbox_id": "my-sandbox", "password": "example", "username": "example"}
+  toolbox.git.checkoutBranch:
+    args: {"sandbox_id": "my-sandbox", "branch": "example", "path": "/home/daytona/notes.md"}
+  toolbox.git.cloneRepository:
+    args: {"sandbox_id": "my-sandbox", "path": "/home/daytona/notes.md", "url": "https://github.com/daytonaio/daytona.git"}
+  toolbox.git.commitChanges:
+    args: {"sandbox_id": "my-sandbox", "author": "example", "email": "ops@example.com", "message": "example", "path": "/home/daytona/notes.md"}
+  toolbox.git.configureUser:
+    args: {"sandbox_id": "my-sandbox", "email": "ops@example.com", "name": "my-sandbox"}
+  toolbox.git.createBranch:
+    args: {"sandbox_id": "my-sandbox", "name": "my-sandbox", "path": "/home/daytona/notes.md"}
+  toolbox.git.deleteBranch:
+    args: {"sandbox_id": "my-sandbox", "name": "my-sandbox", "path": "/home/daytona/notes.md"}
+  toolbox.git.getCommitHistory:
+    args: {"sandbox_id": "my-sandbox", "path": "/home/daytona/notes.md"}
+  toolbox.git.getConfig:
+    args: {"sandbox_id": "my-sandbox", "key": "example"}
+  toolbox.git.getStatus:
+    args: {"sandbox_id": "my-sandbox", "path": "/home/daytona/notes.md"}
+  toolbox.git.initRepository:
+    args: {"sandbox_id": "my-sandbox", "path": "/home/daytona/notes.md"}
+  toolbox.git.listBranches:
+    args: {"sandbox_id": "my-sandbox", "path": "/home/daytona/notes.md"}
+  toolbox.git.listRemotes:
+    args: {"sandbox_id": "my-sandbox", "path": "/home/daytona/notes.md"}
+  toolbox.git.pullChanges:
+    args: {"sandbox_id": "my-sandbox", "path": "/home/daytona/notes.md"}
+  toolbox.git.pushChanges:
+    args: {"sandbox_id": "my-sandbox", "path": "/home/daytona/notes.md"}
+  toolbox.git.resetChanges:
+    args: {"sandbox_id": "my-sandbox", "path": "/home/daytona/notes.md"}
+  toolbox.git.restoreFiles:
+    args: {"sandbox_id": "my-sandbox", "files": ["example"], "path": "/home/daytona/notes.md"}
+  toolbox.git.setConfig:
+    args: {"sandbox_id": "my-sandbox", "key": "example", "value": "example"}
+  toolbox.info.getUserHomeDir:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.info.getVersion:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.info.getWorkDir:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.interpreter.createInterpreterContext:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.interpreter.deleteInterpreterContext:
+    args: {"sandbox_id": "my-sandbox", "id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  toolbox.interpreter.executeInterpreterCode:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.interpreter.listInterpreterContexts:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.lsp.completions:
+    args: {"sandbox_id": "my-sandbox", "languageId": "example", "pathToProject": "example", "position": {"character": 1, "line": 1}, "uri": "example", "context": {"triggerKind": 1}}
+  toolbox.lsp.didClose:
+    args: {"sandbox_id": "my-sandbox", "languageId": "example", "pathToProject": "example", "uri": "example"}
+  toolbox.lsp.didOpen:
+    args: {"sandbox_id": "my-sandbox", "languageId": "example", "pathToProject": "example", "uri": "example"}
+  toolbox.lsp.documentSymbols:
+    args: {"sandbox_id": "my-sandbox", "languageId": "example", "pathToProject": "example", "uri": "example"}
+  toolbox.lsp.start:
+    args: {"sandbox_id": "my-sandbox", "languageId": "example", "pathToProject": "example"}
+  toolbox.lsp.stop:
+    args: {"sandbox_id": "my-sandbox", "languageId": "example", "pathToProject": "example"}
+  toolbox.lsp.workspaceSymbols:
+    args: {"sandbox_id": "my-sandbox", "query": "example", "languageId": "example", "pathToProject": "example"}
+  toolbox.ports.get:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.ports.isInUse:
+    args: {"sandbox_id": "my-sandbox", "port": 3000}
+  toolbox.process.codeRun:
+    args: {"sandbox_id": "my-sandbox", "code": "print(1 + 1)", "language": "example"}
+  toolbox.process.createPtySession:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.process.createSession:
+    args: {"sandbox_id": "my-sandbox", "sessionId": "build-session"}
+  toolbox.process.deletePtySession:
+    args: {"sandbox_id": "my-sandbox", "sessionId": "build-session"}
+  toolbox.process.deleteSession:
+    args: {"sandbox_id": "my-sandbox", "sessionId": "build-session"}
+  toolbox.process.executeCommand:
+    args: {"sandbox_id": "my-sandbox", "command": "uname -a", "timeout": 30}
+  toolbox.process.getEntrypointLogs:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.process.getEntrypointSession:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.process.getPtySession:
+    args: {"sandbox_id": "my-sandbox", "sessionId": "build-session"}
+  toolbox.process.getSession:
+    args: {"sandbox_id": "my-sandbox", "sessionId": "build-session"}
+  toolbox.process.getSessionCommand:
+    args: {"sandbox_id": "my-sandbox", "sessionId": "build-session", "commandId": "cmd-1"}
+  toolbox.process.getSessionCommandLogs:
+    args: {"sandbox_id": "my-sandbox", "sessionId": "build-session", "commandId": "cmd-1"}
+  toolbox.process.listPtySessions:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.process.listSessions:
+    args: {"sandbox_id": "my-sandbox"}
+  toolbox.process.resizePtySession:
+    args: {"sandbox_id": "my-sandbox", "sessionId": "build-session", "cols": 1, "rows": 1}
+  toolbox.process.sendInput:
+    args: {"sandbox_id": "my-sandbox", "sessionId": "build-session", "commandId": "cmd-1", "data": "example"}
+  toolbox.process.sessionExecuteCommand:
+    args: {"sandbox_id": "my-sandbox", "sessionId": "build-session", "command": "uname -a"}
+  toolbox.system.getSystemMetrics:
+    args: {"sandbox_id": "my-sandbox"}
+  users.confirmPendingSsoLink:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  users.dismissPendingSsoLink:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  users.getAccountProviders:
+    args: {}
+  users.getAuthenticated:
+    args: {}
+  users.listPendingSsoLinks:
+    args: {}
+  volumes.create:
+    args: {"name": "my-sandbox"}
+  volumes.delete:
+    args: {"volumeId": "example"}
+  volumes.get:
+    args: {"volumeId": "example"}
+  volumes.getByName:
+    args: {"name": "my-sandbox"}
+  volumes.list:
+    args: {}
+  warmPools.create:
+    args: {"pool": 1, "snapshot": "example"}
+  warmPools.delete:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b"}
+  warmPools.list:
+    args: {}
+  warmPools.update:
+    args: {"id": "7a1c3e5f-2b4d-4e6a-8c0b-9d1f3a5c7e9b", "pool": 1}
+  webhooks.getAppPortalAccess:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c"}
+  webhooks.getInitializationStatus:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c"}
+  webhooks.initialize:
+    args: {"organizationId": "b3c1f0a2-7e4d-4c9b-8a6f-1d2e3f4a5b6c"}
