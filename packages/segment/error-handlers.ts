@@ -6,8 +6,8 @@ function statusOf(error: Error): number | undefined {
 }
 
 // Segment checks auth before routing: with an invalid token every path
-// (including unknown ones) answers 403 forbidden, and only a missing
-// Authorization header gets 401. A 403 is therefore a bad or wrong-scoped
+// (including paths that do not exist) answers 403 forbidden, and only a
+// missing Authorization header gets 401. A 403 is therefore a bad or wrong-scoped
 // token, not a missing resource.
 export const errorHandlers = {
 	// Token-level and per-endpoint limits both answer 429. Token-level 429s
@@ -31,7 +31,7 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 400 invalid input and 404 unknown id: a retry sends the same request.
+	// 400 invalid input and 404 missing id: a retry sends the same request.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			const status = statusOf(error);

@@ -16,6 +16,7 @@ const PaginationInputSchema = z
 			.int()
 			.min(1)
 			.max(1000)
+			.optional()
 			.describe(
 				`Page size between 1 and 1000. Defaults to ${SEGMENT_DEFAULT_PAGE_SIZE} when omitted.`,
 			),
@@ -136,6 +137,7 @@ const DestinationMetadataSchema = z
 		logos: LogosSchema.nullish(),
 		// unknown: the remaining catalog fields (options, actions, presets, ...)
 		// are large and integration-specific; passed through.
+		// unknown: entries vary per integration.
 		options: z.array(z.record(z.string(), z.unknown())).nullish(),
 		status: z.string().nullish(),
 		categories: z.array(z.string()).nullish(),
@@ -398,6 +400,7 @@ const SourcesGetResponseSchema = envelope(
 
 // unknown: instance settings vary per source type; the spec names websiteUrl
 // and apiHost as examples but leaves the shape open.
+// unknown: a stricter shape would reject settings the API accepts.
 const SourceSettingsInputSchema = z.record(z.string(), z.unknown());
 
 const SourcesCreateInputSchema = z.object({

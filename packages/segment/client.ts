@@ -38,6 +38,7 @@ function firstErrorMessage(body: unknown): string | undefined {
 
 // A per-endpoint 429 carries `data.msBeforeNext`; a token-level 429 relies on
 // the Retry-After header instead.
+// unknown: the record is Segment's untyped error envelope.
 function msBeforeNext(body: unknown): number | undefined {
 	const value = asRecord(asRecord(body)?.data)?.msBeforeNext;
 	return typeof value === 'number' && value >= 0 ? value : undefined;
@@ -58,9 +59,16 @@ export class SegmentAPIError extends Error {
 
 	constructor(
 		message: string,
-		options: { status?: number; retryAfter?: number; method?: string } = {},
+		options: {
+			status?: number;
+			retryAfter?: number;
+			method?: string;
+			// Retained only for transport failures, whose cause never held a
+			// response body; HTTP errors pass none.
+			cause?: Error;
+		} = {},
 	) {
-		super(message);
+		super(message, options.cause ? { cause: options.cause } : undefined);
 		this.name = 'SegmentAPIError';
 		this.status = options.status;
 		this.retryAfter = options.retryAfter;
@@ -103,6 +111,7 @@ export function paginationQuery(
 	};
 }
 
+// unknown: callers parse the body with the endpoint's zod output schema.
 // undefined for none of this plugin's routes: every documented 200 has a
 // `{ data: ... }` JSON body.
 export async function makeSegmentRequest(
@@ -147,7 +156,10 @@ export async function makeSegmentRequest(
 		// Transport failures never reached the provider, so keeping their cause
 		// is safe: it carries no response body.
 		if (error instanceof Error || error instanceof DOMException) {
-			throw new SegmentAPIError(error.message, { method });
+			throw new SegmentAPIError(error.message, {
+				method,
+				cause: error instanceof Error ? error : undefined,
+			});
 		}
 		throw new SegmentAPIError('Unknown Segment error', { method });
 	}
