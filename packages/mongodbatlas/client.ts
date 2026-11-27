@@ -11,7 +11,7 @@ import { ApiError, request } from 'corsair/http';
  * MongoDB Atlas Administration API v2 (https://cloud.mongodb.com/api/atlas/v2).
  * Two kinds of credentials work:
  * - a service account (`clientId:clientSecret`, or the JSON
- *   `{ "clientId", "clientSecret" }`): the plugin trades it at
+ *   `{ "clientId": "...", "clientSecret": "..." }`): the plugin trades it at
  *   /api/oauth/token for a bearer token (cached until a minute before it
  *   expires);
  * - a programmatic API key (`publicKey:privateKey`), sent with HTTP Digest
@@ -104,9 +104,24 @@ const OAUTH_ERRORS = new Set([
 /** Clears cached tokens and digest challenges (tests, or after rotating a key). */
 export function clearMongoDBAtlasAuthCache(): void {
 	tokenCache.clear();
+	inflightTokens.clear();
 	tokenCacheGeneration += 1;
 	digestCache.clear();
 }
+
+/** The cache key for a service account: its id and a hash of the secret. */
+function serviceAccountCacheKey(
+	clientId: string,
+	clientSecret: string,
+): string {
+	return `${clientId}:${createHash('sha256')
+		.update(clientSecret, 'utf8')
+		.digest('hex')
+		.slice(0, 16)}`;
+}
+
+/** Exchanges in flight, so calls that miss the cache together share one. */
+const inflightTokens = new Map<string, Promise<string>>();
 
 /** A bearer token for a service account (client credentials), cached. */
 export async function serviceAccountToken(
@@ -114,12 +129,26 @@ export async function serviceAccountToken(
 	clientSecret: string,
 ): Promise<string> {
 	// A changed secret for the same client id gets its own token.
-	const cacheKey = `${clientId}:${createHash('sha256')
-		.update(clientSecret, 'utf8')
-		.digest('hex')
-		.slice(0, 16)}`;
+	const cacheKey = serviceAccountCacheKey(clientId, clientSecret);
 	const cached = tokenCache.get(cacheKey);
 	if (cached && cached.expiresAt > Date.now() + 60_000) return cached.token;
+	let pending = inflightTokens.get(cacheKey);
+	if (!pending) {
+		pending = exchangeServiceAccountToken(clientId, clientSecret, cacheKey);
+		inflightTokens.set(cacheKey, pending);
+		pending.then(
+			() => inflightTokens.delete(cacheKey),
+			() => inflightTokens.delete(cacheKey),
+		);
+	}
+	return pending;
+}
+
+async function exchangeServiceAccountToken(
+	clientId: string,
+	clientSecret: string,
+	cacheKey: string,
+): Promise<string> {
 	const generation = tokenCacheGeneration;
 	let status = 0;
 	// `unknown` because the token response is untrusted JSON until checked.
@@ -451,7 +480,9 @@ export async function makeMongoDBAtlasRequest(
 				return makeMongoDBAtlasRequest(ctx, options, true);
 			}
 			if (error.status === 401 && credential.kind === 'serviceAccount') {
-				tokenCache.delete(credential.clientId);
+				tokenCache.delete(
+					serviceAccountCacheKey(credential.clientId, credential.clientSecret),
+				);
 			}
 			throw withoutRequestData(error, ctx.key, {
 				route: `${MONGODBATLAS_API_BASE}${options.path}`,
@@ -735,7 +766,11 @@ function scrubSent(value: unknown, sent: SentString[], depth = 0): unknown {
 		for (const [rawKey, inner] of Object.entries(value)) {
 			// A key can echo a value (an email keying an `errors` map): only
 			// field-name keys are kept as they are.
-			const key = FIELD_NAME.test(rawKey) ? rawKey : `${REDACTED}${index++}`;
+			// A field-shaped key that echoes a sent value (a cluster name) is masked too.
+			const key =
+				FIELD_NAME.test(rawKey) && scrubSent(rawKey, sent, depth + 1) === rawKey
+					? rawKey
+					: `${REDACTED}${index++}`;
 			// Atlas's error code is one of its own constants
 			// (`EMAIL_OR_SMS_REQUIRED_FOR_GROUP_NOTIFICATION`), never a sent value.
 			result[key] =

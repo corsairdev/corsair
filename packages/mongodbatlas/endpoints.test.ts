@@ -197,6 +197,46 @@ describe('credentials', () => {
 		).toThrow(/without qop=auth/);
 	});
 
+	it('shares one exchange between calls and drops a token Atlas rejects', async () => {
+		replies(
+			{ status: 200, body: { access_token: 'atlas-token', expires_in: 3600 } },
+			{ status: 200, body: { results: [], totalCount: 0 } },
+			{ status: 200, body: { results: [], totalCount: 0 } },
+			{ status: 401, body: { error: 401, errorCode: 'NOT_AUTHORIZED' } },
+			{
+				status: 200,
+				body: { access_token: 'atlas-token-2', expires_in: 3600 },
+			},
+			{ status: 200, body: { results: [], totalCount: 0 } },
+		);
+		await Promise.all([
+			endpointFor('clusters.listClusters')(ctx(SA), { groupId: GROUP }),
+			endpointFor('clusters.listClusters')(ctx(SA), { groupId: GROUP }),
+		]);
+		await endpointFor('clusters.listClusters')(ctx(SA), {
+			groupId: GROUP,
+		}).catch(() => undefined);
+		await endpointFor('clusters.listClusters')(ctx(SA), { groupId: GROUP });
+		const exchanges = calls.filter((c) => c.url.endsWith('/api/oauth/token'));
+		expect(exchanges).toHaveLength(2);
+		expect(calls.at(-1)?.headers.authorization).toBe('Bearer atlas-token-2');
+	});
+
+	it('masks an error-map key that echoes a sent value', async () => {
+		reply(400, {
+			error: 400,
+			errorCode: 'INVALID_ATTRIBUTE',
+			detail: 'Invalid cluster.',
+			errors: { PrivateCluster: 'is not allowed' },
+		});
+		const error = (await endpointFor('clusters.getCluster')(ctx(), {
+			groupId: GROUP,
+			clusterName: 'PrivateCluster',
+		}).catch((e: unknown) => e)) as ApiError;
+		expect(error.message).not.toContain('PrivateCluster');
+		expect(JSON.stringify(error)).not.toContain('PrivateCluster');
+	});
+
 	it('asks to connect when Atlas refuses the service account', async () => {
 		reply(401, { error: 'invalid_client' });
 		await expect(

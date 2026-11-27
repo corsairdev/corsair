@@ -14264,9 +14264,9 @@ export type MongoDBAtlasOperationInputs = {
 		userId?: string;
 		/** An IP address to request rate limits for. When this parameter is provided, only IP scoped endpoint sets are returned and the limits returned are applicable to the specified IP address. The requesting user must have the same IP address as the one provided in the request. */
 		ipAddress?: string;
-		/** Filters the returned endpoint sets by the provided endpoint set name. Multiple names may be provided, for example `/rateLimits?name=Name1&name=Name2`. For names that use spaces, replace the space with its URL-encoded value (`%20`). */
+		/** Filters by the endpoint set name, such as `Rate Limits Inspection`. Pass one or a list (sent as repeated `name=` keys), as plain text: the plugin URL-encodes it. */
 		name?: (string | Array<string>);
-		/** Filters the returned endpoint sets by the provided endpoint path. Multiple paths may be provided, for example `/rateLimits?endpointPath=%2Fapi%2Fatlas%2Fv2%2Fclusters&endpointPath=%2Fapi%2Fatlas%2Fv2%2Fgroups%2F%7BgroupId%7D%2F`. Replace `/`, `{` and `}` with their URL-encoded values (`%2F`,… */
+		/** Filters by the endpoint path, such as `/api/atlas/v2/clusters`. Pass one or a list (sent as repeated `endpointPath=` keys), as plain text: the plugin URL-encodes it. */
 		endpointPath?: (string | Array<string>);
 	};
 	'remoteMcpConfigurations.createGroupMcpConfig': {
