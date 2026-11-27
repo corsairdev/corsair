@@ -5180,6 +5180,14 @@
                 ]
               },
               {
+                "group": "ScrapeCreators",
+                "pages": [
+                  "plugins/scrapecreators/overview",
+                  "plugins/scrapecreators/api",
+                  "plugins/scrapecreators/database"
+                ]
+              },
+              {
                 "group": "ScrapeGraphAI",
                 "pages": [
                   "plugins/scrapegraphai/overview",

@@ -1,0 +1,411 @@
+displayName: ScrapeCreators
+description: "Public social media data from ScrapeCreators: profiles, posts, videos, comments, transcripts, search and ad libraries across TikTok, Instagram, YouTube, X, Reddit, LinkedIn, Facebook, Threads, Bluesky, Pinterest, Snapchat, Twitch, Kick, Truth Social, Telegram, Spotify, Apple Music, SoundCloud, GitHub, Google and link-in-bio pages."
+domain: scrapecreators.com
+recommendedAuth: api_key
+overviewNote: "All 198 operations are reads. Most cost 1 ScrapeCreators credit; a few cost more (`tiktok.userAudience` 26, `creators.findSocialProfiles` and `creators.findEmails` up to 10, `download_media` 10, `google.companyAds` with `get_ad_details` 25, long AI transcripts 10 per started minute). Errors and `cache_max_age` cache hits cost 0, and some routes do not charge for an empty page. Every data response says what it cost in `credits_charged`. The `account.*` operations are free and read the account whose key you pass, so they are not available with managed pricing."
+examples:
+  read:
+    path: tiktok.profile
+    title: Look up a TikTok profile
+    args: {"handle": "nasa"}
+  write:
+    path: youtube.videoTranscript
+    title: Get a YouTube video transcript
+    args: {"url": "https://www.youtube.com/watch?v=_eeZQw9PBc0"}
+apiExamples:
+  account.apiUsage:
+    args: {"page": "1"}
+  account.creditBalance:
+    args: {}
+  account.dailyUsageCount:
+    args: {}
+  account.mostUsedRoutes:
+    args: {}
+  amazon.shop:
+    args: {"url": "https://www.amazon.com/shop/sydneydelrey"}
+  appleMusic.album:
+    args: {"url": "https://music.apple.com/us/album/lover/1468058165"}
+  appleMusic.artist:
+    args: {"url": "https://music.apple.com/us/artist/coldplay/471744"}
+  appleMusic.search:
+    args: {"query": "coldplay"}
+  appleMusic.track:
+    args: {"url": "https://music.apple.com/us/album/lover/1468058165?i=1468058169"}
+  bluesky.post:
+    args: {"url": "https://bsky.app/profile/bsky.app/post/3l6oveex3ii2l"}
+  bluesky.profile:
+    args: {"handle": "bsky.app"}
+  bluesky.userPosts:
+    args: {"handle": "bsky.app"}
+  cosmos.cluster:
+    args: {"url": "https://www.cosmos.so/design/the-best-band-posters"}
+  cosmos.clusterPosts:
+    args: {"url": "https://www.cosmos.so/design/the-best-band-posters"}
+  cosmos.post:
+    args: {"url": "https://www.cosmos.so/e/2107587668"}
+  cosmos.profile:
+    args: {"handle": "design"}
+  cosmos.search:
+    args: {"query": "architecture"}
+  cosmos.userClusters:
+    args: {"handle": "design"}
+  cosmos.userPosts:
+    args: {"handle": "design"}
+  creators.detectAgeGender:
+    args: {"url": "https://www.instagram.com/nasa"}
+  creators.findEmails:
+    args: {"platform": "instagram", "handle": "nasa"}
+  creators.findSocialProfiles:
+    args: {"platform": "instagram", "handle": "nasa"}
+  facebook.adLibraryAd:
+    args: {"id": "1550534860016399"}
+  facebook.adLibraryAdTranscript:
+    args: {"url": "https://www.facebook.com/ads/library?id=1020359190509080"}
+  facebook.adLibraryCompanyAds:
+    args: {"companyName": "nike", "country": "US"}
+  facebook.adLibrarySearchAds:
+    args: {"query": "nike", "country": "US"}
+  facebook.adLibrarySearchCompanies:
+    args: {"query": "nike"}
+  facebook.eventDetails:
+    args: {"url": "https://www.facebook.com/events/2255360061870188/"}
+  facebook.events:
+    args: {"url": "https://www.facebook.com/events/explore/saint-petersburg-florida/111326725552547"}
+  facebook.eventsSearch:
+    args: {"query": "NASA"}
+  facebook.group:
+    args: {"url": "https://www.facebook.com/groups/366190054572553/about"}
+  facebook.groupPosts:
+    args: {"url": "https://www.facebook.com/groups/1270525996445602/"}
+  facebook.marketplaceItem:
+    args: {"url": "https://www.facebook.com/marketplace/item/1656586118821988/"}
+  facebook.marketplaceLocationSearch:
+    args: {"query": "Austin"}
+  facebook.marketplaceSearch:
+    args: {"lat": 30.2677, "lng": -97.7475, "query": "bike"}
+  facebook.post:
+    args: {"url": "https://www.facebook.com/NASA/posts/pfbid0p1m9WeaS3AhspVA64kvq2YKiPijxMyVKfYZrxnwqCpUh4Q7rGtYCBPoYDPuDWX9Tl"}
+  facebook.postCommentReplies:
+    args: {"feedback_id": "FEEDBACK_ID_FROM_facebook.postComments", "expansion_token": "EXPANSION_TOKEN_FROM_facebook.postComments"}
+  facebook.postComments:
+    args: {"url": "https://www.facebook.com/NASA/posts/pfbid0p1m9WeaS3AhspVA64kvq2YKiPijxMyVKfYZrxnwqCpUh4Q7rGtYCBPoYDPuDWX9Tl"}
+  facebook.postTranscript:
+    args: {"url": "https://www.facebook.com/reel/28748687341476952/"}
+  facebook.profile:
+    args: {"url": "https://www.facebook.com/NASA"}
+  facebook.profileEvents:
+    args: {"url": "https://www.facebook.com/NASA"}
+  facebook.profilePhotos:
+    args: {"url": "https://www.facebook.com/NASA"}
+  facebook.profilePosts:
+    args: {"url": "https://www.facebook.com/NASA"}
+  facebook.profileReels:
+    args: {"url": "https://www.facebook.com/pacemorby"}
+  facebook.searchVideos:
+    args: {"query": "nasa artemis"}
+  github.repository:
+    args: {"url": "https://github.com/openai/openai-python"}
+  github.trendingDevelopers:
+    args: {"language": "typescript"}
+  github.trendingRepositories:
+    args: {"language": "typescript"}
+  github.user:
+    args: {"handle": "openai"}
+  github.userActivity:
+    args: {"handle": "torvalds"}
+  github.userContributions:
+    args: {"handle": "torvalds"}
+  github.userFollowers:
+    args: {"handle": "torvalds"}
+  github.userFollowing:
+    args: {"handle": "torvalds"}
+  github.userPullRequests:
+    args: {"handle": "torvalds"}
+  github.userRepositories:
+    args: {"handle": "openai"}
+  google.ad:
+    args: {"url": "https://adstransparency.google.com/advertiser/AR18378488041124659201/creative/CR05988284867144581121"}
+  google.adLibrarySearchAdvertisers:
+    args: {"query": "nike"}
+  google.companyAds:
+    args: {"domain": "nike.com"}
+  google.search:
+    args: {"query": "nasa artemis ii"}
+  instagram.audioReels:
+    args: {"audio_id": "1392969992841787"}
+  instagram.basicProfile:
+    args: {"userId": "528817151"}
+  instagram.mediaTranscript:
+    args: {"url": "https://www.instagram.com/reel/DgNWTVJhPJX/"}
+  instagram.post:
+    args: {"url": "https://www.instagram.com/p/Df-NlR0PjmN/", "trim": true}
+  instagram.postCommentReplies:
+    args: {"url": "https://www.instagram.com/reel/C8rKmYvsrck", "comment_id": "18038110327814211"}
+  instagram.postComments:
+    args: {"url": "https://www.instagram.com/p/Df-NlR0PjmN/"}
+  instagram.profile:
+    args: {"handle": "nasa", "trim": true}
+  instagram.profilePostCount:
+    args: {"handle": "nasa"}
+  instagram.reelsSearch:
+    args: {"query": "rocket launch"}
+  instagram.reelsTrending:
+    args: {}
+  instagram.search:
+    args: {"query": "nasa"}
+  instagram.searchHashtag:
+    args: {"hashtag": "space"}
+  instagram.searchPopular:
+    args: {"query": "rocket launch"}
+  instagram.searchProfiles:
+    args: {"query": "space agency"}
+  instagram.userEmbed:
+    args: {"handle": "nasa"}
+  instagram.userHighlightDetail:
+    args: {"id": "18145966027591735"}
+  instagram.userHighlights:
+    args: {"handle": "nasa"}
+  instagram.userPosts:
+    args: {"handle": "nasa", "trim": true}
+  instagram.userReels:
+    args: {"user_id": "528817151", "trim": true}
+  instagram.userTaggedPosts:
+    args: {"user_id": "528817151"}
+  kick.clip:
+    args: {"url": "https://kick.com/xqc/clips/clip_01JGJHB6CEVFCQRYTVPM8DW892"}
+  kick.clipTranscript:
+    args: {"url": "https://kick.com/fuzzyzvr/clips/clip_01M35J4DGERS1WE12H82WW0JBB"}
+  kwai.post:
+    args: {"url": "https://www.kwai.com/@KwaiBrasilOficial/photo/5193363430624671876"}
+  kwai.profile:
+    args: {"url": "https://www.kwai.com/@KwaiBrasilOficial"}
+  kwai.userPosts:
+    args: {"handle": "kwai"}
+  linkInBio.komi:
+    args: {"url": "https://kimkardashian.komi.io/"}
+  linkInBio.linkbio:
+    args: {"url": "https://lnk.bio/msjennafischer"}
+  linkInBio.linkme:
+    args: {"url": "https://link.me/danucd"}
+  linkInBio.linktree:
+    args: {"url": "https://linktr.ee/linktree"}
+  linkInBio.pillar:
+    args: {"url": "https://pillar.io/angelstrife"}
+  linkedin.ad:
+    args: {"url": "https://www.linkedin.com/ad-library/detail/1702882626"}
+  linkedin.adsSearch:
+    args: {"company": "openai"}
+  linkedin.company:
+    args: {"url": "https://www.linkedin.com/company/openai"}
+  linkedin.companyPosts:
+    args: {"url": "https://www.linkedin.com/company/openai"}
+  linkedin.job:
+    args: {"url": "https://www.linkedin.com/jobs/view/4493514166/"}
+  linkedin.post:
+    args: {"url": "https://www.linkedin.com/posts/openai_make-a-day-do-anything-with-chatgpt-activity-7531394486988636160-7Nzk"}
+  linkedin.postTranscript:
+    args: {"url": "https://www.linkedin.com/posts/openai_make-a-day-do-anything-with-chatgpt-activity-7531394486988636160-7Nzk"}
+  linkedin.profile:
+    args: {"url": "https://www.linkedin.com/in/parrsam/"}
+  linkedin.searchJobs:
+    args: {"query": "openai research engineer"}
+  linkedin.searchPosts:
+    args: {"query": "openai"}
+  pinterest.board:
+    args: {"url": "https://www.pinterest.com/pinterest/kitchen-gamechangers-under-50/", "trim": true}
+  pinterest.pin:
+    args: {"url": "https://www.pinterest.com/pin/1042020432563128019", "trim": true}
+  pinterest.search:
+    args: {"query": "rocket launch", "trim": true}
+  pinterest.topic:
+    args: {"url": "https://www.pinterest.com/ideas/how-to-stop-leash-pulling/894604313079/"}
+  pinterest.userBoards:
+    args: {"handle": "pinterest", "trim": true}
+  reddit.post:
+    args: {"url": "https://www.reddit.com/r/nasa/comments/1y63y08/"}
+  reddit.postComments:
+    args: {"url": "https://www.reddit.com/r/nasa/comments/1y63y08/", "trim": true}
+  reddit.postTranscript:
+    args: {"url": "https://www.reddit.com/r/nasa/comments/1y63y08/"}
+  reddit.search:
+    args: {"query": "artemis ii", "trim": true}
+  reddit.subreddit:
+    args: {"subreddit": "nasa", "trim": true}
+  reddit.subredditDetails:
+    args: {"subreddit": "nasa"}
+  reddit.subredditSearch:
+    args: {"subreddit": "nasa", "query": "artemis"}
+  rumble.channelVideos:
+    args: {"handle": "NASA"}
+  rumble.search:
+    args: {"query": "nasa"}
+  rumble.video:
+    args: {"url": "https://rumble.com/v7iusr0-nasa-faking-space-since-the-beginning-flatearth.html"}
+  rumble.videoComments:
+    args: {"url": "https://rumble.com/v7iusr0-nasa-faking-space-since-the-beginning-flatearth.html"}
+  rumble.videoTranscript:
+    args: {"url": "https://rumble.com/valm19-funny-cat-funny-cat.html"}
+  snapchat.profile:
+    args: {"handle": "nasa"}
+  snapchat.spotlight:
+    args: {"url": "https://www.snapchat.com/@jack.scalise/spotlight/W7_EDlXWTBiXAEEniNoMPwAAYb3djZ3FqY2VhAZXDhShdAZXDhPWfAAAAAQ"}
+  snapchat.spotlightComments:
+    args: {"url": "https://www.snapchat.com/@lilah4823/spotlight/W7_EDlXWTBiXAEEniNoMPwAAYY2pvZnd0ZXVmAZ8fgG8pAZ8ff-_IAAAAAQ"}
+  soundcloud.artist:
+    args: {"handle": "nasa"}
+  soundcloud.artistTracks:
+    args: {"handle": "nasa"}
+  soundcloud.track:
+    args: {"url": "https://soundcloud.com/nasa/houston-we-have-a-podcast-capturing-artemis-return"}
+  spotify.album:
+    args: {"url": "https://open.spotify.com/album/2noRn2Aes5aoNVsU6iWThc"}
+  spotify.artist:
+    args: {"url": "https://open.spotify.com/artist/4gzpq5DPGxSnKTe4SA8HAU"}
+  spotify.playlist:
+    args: {"url": "https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M"}
+  spotify.podcast:
+    args: {"url": "https://open.spotify.com/show/2nUZBo8kQgVfAQ6r7AYd7Y"}
+  spotify.podcastEpisodes:
+    args: {"url": "https://open.spotify.com/show/2nUZBo8kQgVfAQ6r7AYd7Y"}
+  spotify.search:
+    args: {"query": "houston we have a podcast"}
+  spotify.track:
+    args: {"url": "https://open.spotify.com/track/0VjIjW4GlUZAMYd2vXMi3b"}
+  telegram.channel:
+    args: {"handle": "telegram"}
+  telegram.channelPosts:
+    args: {"handle": "telegram"}
+  telegram.post:
+    args: {"url": "https://t.me/telegram/441"}
+  threads.post:
+    args: {"url": "https://www.threads.com/@nasa/post/DgF1NZ2lYfh"}
+  threads.profile:
+    args: {"handle": "nasa"}
+  threads.search:
+    args: {"query": "artemis", "trim": true}
+  threads.searchUsers:
+    args: {"query": "nasa"}
+  threads.userPosts:
+    args: {"handle": "nasa", "trim": true}
+  tiktok.adLibraryAd:
+    args: {"ad_id": "1881490645213233"}
+  tiktok.adLibrarySearch:
+    args: {"query": "nike"}
+  tiktok.collectionVideos:
+    args: {"url": "https://www.tiktok.com/@kibblemaster808/collection/Want-to-go-7665668414573546258"}
+  tiktok.live:
+    args: {"room_id": "7523685855395842871", "user_id": "6742945285876515845"}
+  tiktok.product:
+    args: {"url": "https://www.tiktok.com/shop/pdp/goli-ashwagandha-gummies-with-vitamin-d-ksm-66-vegan-non-gmo/1729587769570529799"}
+  tiktok.profile:
+    args: {"handle": "nasa"}
+  tiktok.profileRegion:
+    args: {"handle": "nasa"}
+  tiktok.profileVideos:
+    args: {"handle": "nasa", "trim": true}
+  tiktok.searchHashtag:
+    args: {"hashtag": "space", "trim": true}
+  tiktok.searchKeyword:
+    args: {"query": "artemis launch", "trim": true}
+  tiktok.searchSuggestions:
+    args: {"query": "nasa"}
+  tiktok.searchTop:
+    args: {"query": "nasa", "trim": true}
+  tiktok.searchUsers:
+    args: {"query": "nasa"}
+  tiktok.shopProductReviews:
+    args: {"url": "https://www.tiktok.com/shop/pdp/cat-nail-clipper-by-potaroma-adjustable-sizes-built-in-file-safe-for-kittens-cats/1731578642912612516"}
+  tiktok.shopProducts:
+    args: {"url": "https://www.tiktok.com/shop/store/goli-nutrition/7495794203056835079"}
+  tiktok.shopSearch:
+    args: {"query": "running shoes"}
+  tiktok.song:
+    args: {"clipId": "7665075815390645006"}
+  tiktok.songVideos:
+    args: {"clipId": "7665075815390645006"}
+  tiktok.trendingFeed:
+    args: {"region": "US", "trim": true}
+  tiktok.userAudience:
+    args: {"handle": "nasa"}
+  tiktok.userFollowers:
+    args: {"handle": "nasa"}
+  tiktok.userFollowing:
+    args: {"handle": "nasa"}
+  tiktok.userLive:
+    args: {"handle": "nasa"}
+  tiktok.userShowcase:
+    args: {"handle": "nasa"}
+  tiktok.video:
+    args: {"url": "https://www.tiktok.com/@nasa/video/7665075736742530317", "trim": true}
+  tiktok.videoCommentReplies:
+    args: {"url": "https://www.tiktok.com/@nasa/video/7665075736742530317", "comment_id": "7665712337038607126"}
+  tiktok.videoComments:
+    args: {"url": "https://www.tiktok.com/@nasa/video/7665075736742530317", "trim": true}
+  tiktok.videoTranscript:
+    args: {"url": "https://www.tiktok.com/@nasa/video/7665075736742530317"}
+  truthSocial.post:
+    args: {"url": "https://truthsocial.com/@realDonaldTrump/117684273895653312"}
+  truthSocial.profile:
+    args: {"handle": "realDonaldTrump"}
+  truthSocial.userPosts:
+    args: {"handle": "realDonaldTrump", "trim": true}
+  twitch.clip:
+    args: {"url": "https://www.twitch.tv/staryuuki/clip/CloudySavageMarjoramRuleFive--ErzsYbE7UWvgCMQ?filter=clips&range=all&sort=time"}
+  twitch.clipTranscript:
+    args: {"url": "https://clips.twitch.tv/WrongMagnificentTomatoCorgiDerp-C720OEMqocSPbrqA"}
+  twitch.profile:
+    args: {"handle": "twitch"}
+  twitch.userSchedule:
+    args: {"handle": "twitch"}
+  twitch.userVideos:
+    args: {"handle": "twitch"}
+  twitter.community:
+    args: {"url": "https://x.com/i/communities/1926186499399139650"}
+  twitter.communityTweets:
+    args: {"url": "https://x.com/i/communities/1926186499399139650"}
+  twitter.profile:
+    args: {"handle": "NASA"}
+  twitter.searchPosts:
+    args: {"query": "artemis nasa"}
+  twitter.tweet:
+    args: {"url": "https://x.com/NASA/status/2126050028032872522", "trim": true}
+  twitter.tweetTranscript:
+    args: {"url": "https://x.com/NASA/status/2126050028032872522"}
+  twitter.userTweets:
+    args: {"handle": "NASA", "trim": true}
+  youtube.channel:
+    args: {"handle": "NASA"}
+  youtube.channelCommunityPosts:
+    args: {"handle": "NASA"}
+  youtube.channelLives:
+    args: {"handle": "NASA"}
+  youtube.channelPlaylists:
+    args: {"handle": "NASA"}
+  youtube.channelSearch:
+    args: {"handle": "NASA", "query": "artemis"}
+  youtube.channelShorts:
+    args: {"handle": "NASA"}
+  youtube.channelVideos:
+    args: {"handle": "NASA"}
+  youtube.communityPost:
+    args: {"url": "https://www.youtube.com/post/Ugkx0X33g-nAj6FyciU8R9pJUCrPERrtPBJE"}
+  youtube.playlist:
+    args: {"playlist_id": "PLF98rxtslw6s"}
+  youtube.search:
+    args: {"query": "artemis ii"}
+  youtube.searchHashtag:
+    args: {"hashtag": "space"}
+  youtube.searchTypeahead:
+    args: {"query": "nasa"}
+  youtube.shortsTrending:
+    args: {}
+  youtube.video:
+    args: {"url": "https://www.youtube.com/watch?v=_eeZQw9PBc0"}
+  youtube.videoCommentReplies:
+    args: {"continuationToken": "REPLIES_CONTINUATION_TOKEN_FROM_youtube.videoComments"}
+  youtube.videoComments:
+    args: {"url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}
+  youtube.videoSponsors:
+    args: {"url": "https://www.youtube.com/watch?v=_eeZQw9PBc0"}
+  youtube.videoTranscript:
+    args: {"url": "https://www.youtube.com/watch?v=_eeZQw9PBc0"}
