@@ -1,0 +1,176 @@
+---
+title: "Crawl4AI plugin"
+sidebarTitle: "Overview"
+description: "Crawl4AI web crawling, both ways: a self-hosted Crawl4AI server (crawl to Markdown, HTML, screenshots and PDFs, JavaScript runs, crawl and LLM jobs, browser pool monitoring) and Crawl4AI Cloud (scrape, search, answer, Google SERP, extract, site scans and crawls, pricing pages, email verification, leads, page watches, 98 site tools, batch jobs, billing), plus job webhooks (66 operations)."
+---
+
+Use **Crawl4AI** through Corsair: one client, typed API calls, and incoming webhooks.
+
+One key, two ways to run Crawl4AI:
+
+- **Crawl4AI Cloud** (`cloud.*`, https://api.crawl4ai.com): the key is a
+Cloud API key (`sk_live_...`, crawl4ai.com → Get a free API key; 1,000
+free credits a month). Runs cost credits (scrape 0.1 to a few, serp 1 a
+Google page, price 5 a site); `cloud.tools.estimate` prices a run first.
+Finding and reading tools is free. Every run answers
+`{ tool, request_id, took_ms, usage: { credits }, rows?, data? }`.
+- **Self-hosted server** (`server.*`): run `docker run -p 11235:11235
+--shm-size=1g -e CRAWL4AI_API_TOKEN=<token> unclecode/crawl4ai` and
+connect with that token as the key and the server's address as
+`server_url` (https, or http on localhost). Without a token the server
+only listens on its own loopback. An account with a `server_url` holds the
+server's token, which never goes to the Cloud: use a second account for
+`cloud.*`.
+
+- **Site tools.** `cloud.tools.list` (search with `q`, or `source` for one
+site) finds tested tools for 47 sites (Amazon, LinkedIn, YouTube, Google
+Maps, Zillow ...); `cloud.tools.get` shows a tool's inputs and columns;
+`cloud.tools.run` runs it.
+- **Jobs.** `cloud.site`, `cloud.batch` and job-type site tools return
+`data.job_id`; follow it with `cloud.jobs.get` and read rows with
+`cloud.jobs.results` (500 a page, `after` = the last `seq` + 1). On the
+server, `server.crawlJobs.create` and `server.llmJobs.create` queue work
+read back with `.get`, or call a `webhook_config.webhook_url`.
+- **Files.** `server.screenshot` and `server.pdf` return the PNG or PDF as
+a file; `server.crawlStream` and `cloud.jobs.results` return their NDJSON
+lines as `{ items }`.
+- **Risk.** Runs are metered reads (`read`). `cloud.watch` and
+`cloud.monitors.update` are `write` (each check costs credits), deleting a
+watch and cancelling a job are `destructive`, as are `cloud.billing.topup`
+(charges the saved card) and `cloud.billing.subscribe`. `server.executeJs`
+is `write` (scripts can click and submit), killing a pool browser and
+resetting stats are `destructive`.
+- **Webhooks.** The server doesn't sign job webhooks. Create jobs with
+`webhook_config.webhook_headers: { "X-Webhook-Secret": "<secret>" }` and
+give the plugin the same secret as `webhookSecret`; deliveries without it
+are refused.
+
+**What you get:**
+
+- 66 typed API operations
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/crawl4ai better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/crawl4ai better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/crawl4ai better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/crawl4ai better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { crawl4ai } from '@corsair-dev/crawl4ai';
+
+export const corsair = createCorsair({
+	plugins: [
+		crawl4ai(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Crawl4AI API key before the first call: `pnpm corsair setup --plugin=crawl4ai --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+crawl4ai()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'crawl4ai',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Scrape a page as Markdown**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.crawl4ai.api.cloud.scrape({ url: 'https://example.com', format: 'md' });
+```
+
+
+**Watch a pricing page**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.crawl4ai.api.cloud.watch({ url: 'https://example.com/pricing', watch: 'a plan gets more expensive', email: 'ada@example.com' });
+```
+
+
+See the full list on the [API](/plugins/crawl4ai/api) page.
+
+## Webhooks
+
+This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/crawl4ai/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/crawl4ai/api">
+    Every `crawl4ai.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/crawl4ai/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

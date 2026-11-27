@@ -1,0 +1,188 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from Crawl4AI's API references;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Crawl4AI
+domain: crawl4ai.com
+description: "Crawl4AI web crawling, both ways: a self-hosted Crawl4AI server (crawl to Markdown, HTML, screenshots and PDFs, JavaScript runs, crawl and LLM jobs, browser pool monitoring) and Crawl4AI Cloud (scrape, search, answer, Google SERP, extract, site scans and crawls, pricing pages, email verification, leads, page watches, 98 site tools, batch jobs, billing), plus job webhooks (66 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  One key, two ways to run Crawl4AI:
+
+  - **Crawl4AI Cloud** (`cloud.*`, https://api.crawl4ai.com): the key is a
+  Cloud API key (`sk_live_...`, crawl4ai.com → Get a free API key; 1,000
+  free credits a month). Runs cost credits (scrape 0.1 to a few, serp 1 a
+  Google page, price 5 a site); `cloud.tools.estimate` prices a run first.
+  Finding and reading tools is free. Every run answers
+  `{ tool, request_id, took_ms, usage: { credits }, rows?, data? }`.
+  - **Self-hosted server** (`server.*`): run `docker run -p 11235:11235
+  --shm-size=1g -e CRAWL4AI_API_TOKEN=<token> unclecode/crawl4ai` and
+  connect with that token as the key and the server's address as
+  `server_url` (https, or http on localhost). Without a token the server
+  only listens on its own loopback. An account with a `server_url` holds the
+  server's token, which never goes to the Cloud: use a second account for
+  `cloud.*`.
+
+  - **Site tools.** `cloud.tools.list` (search with `q`, or `source` for one
+  site) finds tested tools for 47 sites (Amazon, LinkedIn, YouTube, Google
+  Maps, Zillow ...); `cloud.tools.get` shows a tool's inputs and columns;
+  `cloud.tools.run` runs it.
+  - **Jobs.** `cloud.site`, `cloud.batch` and job-type site tools return
+  `data.job_id`; follow it with `cloud.jobs.get` and read rows with
+  `cloud.jobs.results` (500 a page, `after` = the last `seq` + 1). On the
+  server, `server.crawlJobs.create` and `server.llmJobs.create` queue work
+  read back with `.get`, or call a `webhook_config.webhook_url`.
+  - **Files.** `server.screenshot` and `server.pdf` return the PNG or PDF as
+  a file; `server.crawlStream` and `cloud.jobs.results` return their NDJSON
+  lines as `{ items }`.
+  - **Risk.** Runs are metered reads (`read`). `cloud.watch` and
+  `cloud.monitors.update` are `write` (each check costs credits), deleting a
+  watch and cancelling a job are `destructive`, as are `cloud.billing.topup`
+  (charges the saved card) and `cloud.billing.subscribe`. `server.executeJs`
+  is `write` (scripts can click and submit), killing a pool browser and
+  resetting stats are `destructive`.
+  - **Webhooks.** The server doesn't sign job webhooks. Create jobs with
+  `webhook_config.webhook_headers: { "X-Webhook-Secret": "<secret>" }` and
+  give the plugin the same secret as `webhookSecret`; deliveries without it
+  are refused.
+examples:
+  read:
+    path: cloud.scrape
+    title: Scrape a page as Markdown
+    args: {"url": "https://example.com", "format": "md"}
+  write:
+    path: cloud.watch
+    title: Watch a pricing page
+    args: {"url": "https://example.com/pricing", "watch": "a plan gets more expensive", "email": "ada@example.com"}
+apiExamples:
+  cloud.answer:
+    args: {"q": "rust web crawler"}
+  cloud.batch:
+    args: {"tool": "scrape", "inputs": [{"url": "https://example.com"}, {"url": "https://example.org"}]}
+  cloud.billing.balance:
+    args: {}
+  cloud.billing.subscribe:
+    args: {"plan": "starter"}
+  cloud.billing.topup:
+    args: {"amount": 10}
+  cloud.billing.topups:
+    args: {}
+  cloud.extract:
+    args: {"url": "https://news.ycombinator.com", "instruction": "the top stories on the front page"}
+  cloud.jobs.cancel:
+    args: {"job_id": "j_7f3c2a"}
+  cloud.jobs.get:
+    args: {"job_id": "j_7f3c2a"}
+  cloud.jobs.results:
+    args: {"job_id": "j_7f3c2a"}
+  cloud.jobs.retry:
+    args: {"job_id": "j_7f3c2a"}
+  cloud.lead:
+    args: {}
+  cloud.monitors.changes:
+    args: {}
+  cloud.monitors.delete:
+    args: {"id": "youtube-captions"}
+  cloud.monitors.events:
+    args: {"id": "youtube-captions"}
+  cloud.monitors.get:
+    args: {"id": "youtube-captions"}
+  cloud.monitors.list:
+    args: {}
+  cloud.monitors.update:
+    args: {"id": "m_123", "fields": {"every": "1d"}}
+  cloud.price:
+    args: {"sites": ["example"]}
+  cloud.priceHistory:
+    args: {"domain": "docs.crawl4ai.com"}
+  cloud.prices:
+    args: {}
+  cloud.report:
+    args: {"category": "slow", "title": "scrape took 40 s on a blog page"}
+  cloud.scan:
+    args: {"domain": "docs.crawl4ai.com"}
+  cloud.scrape:
+    args: {"url": "https://example.com", "format": "md"}
+  cloud.search:
+    args: {"q": "rust web crawler"}
+  cloud.serp:
+    args: {"q": "rust web crawler"}
+  cloud.site:
+    args: {"url": "https://docs.crawl4ai.com/", "depth": 2, "max_pages": 50, "include": "/core"}
+  cloud.tools.estimate:
+    args: {"id": "youtube-captions"}
+  cloud.tools.get:
+    args: {"id": "youtube-captions"}
+  cloud.tools.list:
+    args: {"q": "amazon reviews"}
+  cloud.tools.run:
+    args: {"id": "youtube-captions", "input": {"video": "aircAruvnKk"}}
+  cloud.tools.status:
+    args: {"id": "youtube-captions"}
+  cloud.verify:
+    args: {}
+  cloud.watch:
+    args: {"url": "https://example.com/pricing", "watch": "a plan gets more expensive", "email": "ada@example.com"}
+  server.artifacts.get:
+    args: {"artifact_id": "a_123"}
+  server.ask:
+    args: {}
+  server.configDump:
+    args: {"type": "CrawlerRunConfig", "params": {"word_count_threshold": 10}}
+  server.crawl:
+    args: {"urls": ["https://example.com"], "crawler_config": {"type": "CrawlerRunConfig", "params": {"cache_mode": "bypass"}}}
+  server.crawlJobs.create:
+    args: {"urls": ["https://example.com"], "webhook_config": {"webhook_url": "https://example.com/hooks/corsair", "webhook_headers": {"X-Webhook-Secret": "a-long-random-secret"}}}
+  server.crawlJobs.get:
+    args: {"task_id": "crawl_a1b2c3d4"}
+  server.crawlStream:
+    args: {"urls": ["https://example.com"]}
+  server.executeJs:
+    args: {"url": "https://example.com", "scripts": ["document.title"]}
+  server.health:
+    args: {}
+  server.hooks:
+    args: {}
+  server.html:
+    args: {"url": "https://example.com"}
+  server.llm:
+    args: {"url": "https://example.com", "q": "rust web crawler"}
+  server.llmJobs.create:
+    args: {"url": "https://example.com", "q": "rust web crawler"}
+  server.llmJobs.get:
+    args: {"task_id": "crawl_a1b2c3d4"}
+  server.markdown:
+    args: {"url": "https://example.com", "f": "fit"}
+  server.mcpSchema:
+    args: {}
+  server.metrics:
+    args: {}
+  server.monitor.browsers:
+    args: {}
+  server.monitor.cleanup:
+    args: {}
+  server.monitor.endpointStats:
+    args: {}
+  server.monitor.errorLog:
+    args: {}
+  server.monitor.health:
+    args: {}
+  server.monitor.janitorLog:
+    args: {}
+  server.monitor.killBrowser:
+    args: {"sig": "browser-1a2b"}
+  server.monitor.requests:
+    args: {}
+  server.monitor.resetStats:
+    args: {}
+  server.monitor.restartBrowser:
+    args: {"sig": "browser-1a2b"}
+  server.monitor.timeline:
+    args: {}
+  server.pdf:
+    args: {"url": "https://example.com"}
+  server.schema:
+    args: {}
+  server.screenshot:
+    args: {"url": "https://example.com"}
+  server.token:
+    args: {"email": "ada@example.com"}
