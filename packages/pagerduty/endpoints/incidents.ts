@@ -72,12 +72,12 @@ export const list: PagerdutyEndpoints['incidentsList'] = async (ctx, input) => {
 			since: input.since,
 			until: input.until,
 			sort_by: input.sort_by,
-			...(input.statuses && { 'statuses[]': input.statuses.join(',') }),
-			...(input.urgencies && { 'urgencies[]': input.urgencies.join(',') }),
+			...(input.statuses && { 'statuses[]': input.statuses }),
+			...(input.urgencies && { 'urgencies[]': input.urgencies }),
 			...(input.service_ids && {
-				'service_ids[]': input.service_ids.join(','),
+				'service_ids[]': input.service_ids,
 			}),
-			...(input.team_ids && { 'team_ids[]': input.team_ids.join(',') }),
+			...(input.team_ids && { 'team_ids[]': input.team_ids }),
 		},
 	});
 

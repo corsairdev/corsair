@@ -8,7 +8,7 @@ export const get: PagerdutyEndpoints['logEntriesGet'] = async (ctx, input) => {
 		PagerdutyEndpointOutputs['logEntriesGet']
 	>(`log_entries/${input.id}`, ctx.key, {
 		query: {
-			...(input.include && { 'include[]': input.include.join(',') }),
+			...(input.include && { 'include[]': input.include }),
 		},
 	});
 
@@ -34,8 +34,8 @@ export const list: PagerdutyEndpoints['logEntriesList'] = async (
 			since: input.since,
 			until: input.until,
 			is_overview: input.is_overview,
-			...(input.include && { 'include[]': input.include.join(',') }),
-			...(input.team_ids && { 'team_ids[]': input.team_ids.join(',') }),
+			...(input.include && { 'include[]': input.include }),
+			...(input.team_ids && { 'team_ids[]': input.team_ids }),
 		},
 	});
 
