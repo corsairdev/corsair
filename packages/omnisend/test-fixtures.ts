@@ -19,7 +19,10 @@ export const contact = {
 			id: 'example@example.com',
 			type: 'email',
 			channels: {
-				email: { status: 'subscribed', statusChangedAt: '2021-05-20T12:00:00Z' },
+				email: {
+					status: 'subscribed',
+					statusChangedAt: '2021-05-20T12:00:00Z',
+				},
 			},
 		},
 	],
@@ -231,7 +234,11 @@ export const validationFailed = {
 	title: 'Validation failed',
 	status: 400,
 	errors: [
-		{ field: 'identifiers', code: 'required', message: 'Identifier is required.' },
+		{
+			field: 'identifiers',
+			code: 'required',
+			message: 'Identifier is required.',
+		},
 	],
 };
 

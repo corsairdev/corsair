@@ -69,7 +69,7 @@ describe('output parsing', () => {
 		respond(contactsListResponse);
 		const result = (await invoke(contactsList, {})) as {
 			contacts: { id: string; email?: string | null }[];
-			paging?: unknown;
+			paging?: unknown; // unknown: only its pass-through is asserted.
 			nextCursor?: string;
 		};
 		expect(result.contacts).toHaveLength(2);
@@ -133,39 +133,33 @@ describe('rejections', () => {
 		// A body without the contacts array must fail loudly: mapping it to an
 		// empty page would tell the caller there are no contacts.
 		respond({ paging: { limit: 50, hasMore: false, cursors: {} } });
-		const error = await failure(invoke(contactsList, {}) as Promise<unknown>);
+		const error = await failure(invoke(contactsList, {}));
 		expect(error.name).toBe('ZodError');
 	});
 
 	it('rejects a malformed known field', async () => {
 		respond({ ...product, variants: 'not-an-array' });
-		const error = await failure(
-			invoke(productsGet, { id: 'p1' }) as Promise<unknown>,
-		);
+		const error = await failure(invoke(productsGet, { id: 'p1' }));
 		expect(error.name).toBe('ZodError');
 	});
 
 	it('rejects a status value outside the documented enum', async () => {
 		respond({ events: [{ name: 'x', properties: { a: { type: 'map' } } }] });
 		const error = await failure(
-			invoke(eventsQueryMetadata, { category: 'events' }) as Promise<unknown>,
+			invoke(eventsQueryMetadata, { category: 'events' }),
 		);
 		expect(error.name).toBe('ZodError');
 	});
 
 	it('rejects a batch whose counts are strings', async () => {
 		respond({ ...batch, totalCount: '100' });
-		const error = await failure(
-			invoke(batchesGet, { id: 'b1' }) as Promise<unknown>,
-		);
+		const error = await failure(invoke(batchesGet, { id: 'b1' }));
 		expect(error.name).toBe('ZodError');
 	});
 
 	it('rejects a template response missing its id', async () => {
 		respond({ name: 'Welcome Email 1' });
-		const error = await failure(
-			invoke(templatesGet, { id: 't1' }) as Promise<unknown>,
-		);
+		const error = await failure(invoke(templatesGet, { id: 't1' }));
 		expect(error.name).toBe('ZodError');
 	});
 });
@@ -174,9 +168,10 @@ describe('input rejections', () => {
 	it('rejects tag and status in one contacts.list before any request', async () => {
 		// Both restrictions are documented on the route; Omnisend answers 400.
 		const error = await failure(
-			invoke(contactsList, { tag: 'vip', status: 'subscribed' }) as Promise<
-				unknown
-			>,
+			invoke(contactsList, {
+				tag: 'vip',
+				status: 'subscribed',
+			}),
 		);
 		expect(error.name).toBe('ZodError');
 		expect(fetchMock).not.toHaveBeenCalled();
@@ -187,7 +182,7 @@ describe('input rejections', () => {
 			invoke(contactsList, {
 				updatedAtFrom: '2026-01-01T00:00:00Z',
 				email: 'a@b.co',
-			}) as Promise<unknown>,
+			}),
 		);
 		expect(error.name).toBe('ZodError');
 		expect(fetchMock).not.toHaveBeenCalled();
@@ -198,7 +193,7 @@ describe('input rejections', () => {
 			invoke(campaignsCreate, {
 				type: 'regular',
 				channel: 'email',
-			}) as Promise<unknown>,
+			}),
 		);
 		expect(error.name).toBe('ZodError');
 		expect(fetchMock).not.toHaveBeenCalled();
@@ -209,7 +204,7 @@ describe('input rejections', () => {
 			invoke(eventsSend, {
 				eventName: 'custom',
 				contact: { firstName: 'John' },
-			}) as Promise<unknown>,
+			}),
 		);
 		expect(error.name).toBe('ZodError');
 		expect(fetchMock).not.toHaveBeenCalled();
@@ -221,21 +216,19 @@ describe('input rejections', () => {
 				endpoint: 'contacts',
 				method: 'POST',
 				items: Array.from({ length: 101 }, () => ({})),
-			}) as Promise<unknown>,
+			}),
 		);
 		expect(error.name).toBe('ZodError');
 	});
 
 	it('rejects a limit above the documented 250 cap', async () => {
-		const error = await failure(
-			invoke(contactsList, { limit: 251 }) as Promise<unknown>,
-		);
+		const error = await failure(invoke(contactsList, { limit: 251 }));
 		expect(error.name).toBe('ZodError');
 	});
 
 	it('rejects a list envelope that arrives bare', async () => {
 		respond([{ id: '60a617' }]);
-		const error = await failure(invoke(contactsList, {}) as Promise<unknown>);
+		const error = await failure(invoke(contactsList, {}));
 		expect(error.name).toBe('ZodError');
 	});
 });

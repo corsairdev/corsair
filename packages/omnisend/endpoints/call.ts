@@ -1,4 +1,4 @@
-import { logEventFromContext, asRecord } from 'corsair/core';
+import { asRecord, logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { OmnisendContext } from '..';
 import type { OmnisendQuery, OmnisendRequest } from '../client';
@@ -71,7 +71,8 @@ export function withCursor(raw: unknown): unknown {
 	const after = cursors?.after;
 	return {
 		...(asRecord(raw) ?? {}),
-		nextCursor: typeof after === 'string' && after.length > 0 ? after : undefined,
+		nextCursor:
+			typeof after === 'string' && after.length > 0 ? after : undefined,
 	};
 }
 

@@ -3,8 +3,8 @@ import { OmnisendAPIError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import {
 	billingRequired,
-	retiredVersion,
 	rateLimited,
+	retiredVersion,
 	unauthorized,
 	validationFailed,
 } from './test-fixtures';

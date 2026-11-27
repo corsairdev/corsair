@@ -60,7 +60,7 @@ type EndpointMeta = {
 	riskLevel: string;
 	description: string;
 	irreversible?: boolean;
-	job?: unknown;
+	job?: unknown; // unknown: only presence and the id/status paths are asserted.
 };
 type MetaView = Record<string, EndpointMeta>;
 type EndpointsView = Record<string, Record<string, unknown>>; // unknown: leaves are functions of differing types.
@@ -155,7 +155,7 @@ describe('omnisend plugin', () => {
 				done: string[];
 				failed: string[];
 			};
-			cancel?: unknown;
+			cancel?: unknown; // unknown: only its absence is asserted.
 		};
 		expect(job.idPath).toBe('batchID');
 		expect(job.status.op).toBe('batches.get');

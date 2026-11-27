@@ -1,4 +1,4 @@
-import { contactsList, campaignsList, templatesList } from './endpoints';
+import { campaignsList, contactsList, templatesList } from './endpoints';
 import type { OmnisendContext } from './index';
 
 /**

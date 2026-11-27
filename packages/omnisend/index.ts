@@ -84,17 +84,19 @@ export type OmnisendContext = CorsairPluginContext<
 	OmnisendPluginOptions
 >;
 
-export type OmnisendKeyBuilderContext = KeyBuilderContext<OmnisendPluginOptions>;
+export type OmnisendKeyBuilderContext =
+	KeyBuilderContext<OmnisendPluginOptions>;
 
 export type OmnisendBoundEndpoints = BindEndpoints<
 	typeof omnisendEndpointsNested
 >;
 
-type OmnisendEndpoint<K extends keyof OmnisendEndpointOutputs> = CorsairEndpoint<
-	OmnisendContext,
-	OmnisendEndpointInputs[K],
-	OmnisendEndpointOutputs[K]
->;
+type OmnisendEndpoint<K extends keyof OmnisendEndpointOutputs> =
+	CorsairEndpoint<
+		OmnisendContext,
+		OmnisendEndpointInputs[K],
+		OmnisendEndpointOutputs[K]
+	>;
 
 export type OmnisendEndpoints = {
 	contactsList: OmnisendEndpoint<'contactsList'>;
@@ -571,8 +573,7 @@ const omnisendEndpointMeta = {
 	},
 	'templates.get': {
 		riskLevel: 'read',
-		description:
-			'Read one email template by id, with its sections and styles',
+		description: 'Read one email template by id, with its sections and styles',
 	},
 	'templates.create': {
 		riskLevel: 'write',
@@ -639,8 +640,7 @@ const omnisendEndpointMeta = {
 	},
 	'batches.listItems': {
 		riskLevel: 'read',
-		description:
-			'Read the per-item requests, responses and errors of a batch',
+		description: 'Read the per-item requests, responses and errors of a batch',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof omnisendEndpointsNested>;
 

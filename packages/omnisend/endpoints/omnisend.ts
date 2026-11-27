@@ -1,6 +1,6 @@
 import type { OmnisendEndpoints } from '..';
-import { call } from './call';
 import {
+	call,
 	cursorPageQuery,
 	offsetPageQuery,
 	segment,
@@ -24,7 +24,7 @@ import {
 /**
  * The contact body keys, dropped when unset.
  *
- * Tags REPLACE on every contact write: any tag not sent is removed. The
+ * Tags REPLACE on every contact write: every tag not sent is removed. The
  * per-tag routes are `contacts.addTags` and `contacts.removeTags`.
  */
 // unknown: assembled request body; each key was validated by the input schema.
@@ -48,7 +48,7 @@ function contactBody(
 		'customProperties',
 		'trackingConsents',
 	];
-	const body: Record<string, unknown> = {};
+	const body: Record<string, unknown> = {}; // unknown: see the fields note above.
 	for (const key of keys) {
 		if (fields[key] !== undefined) body[key] = fields[key];
 	}
@@ -196,7 +196,10 @@ export const contactsAddTags: OmnisendEndpoints['contactsAddTags'] = (
 				tags: parsed.tags,
 			},
 		}),
-		{ shape: () => ({ accepted: true }), log: (parsed) => ({ tags: parsed.tags.length }) },
+		{
+			shape: () => ({ accepted: true }),
+			log: (parsed) => ({ tags: parsed.tags.length }),
+		},
 	);
 
 export const contactsRemoveTags: OmnisendEndpoints['contactsRemoveTags'] = (
@@ -222,15 +225,15 @@ export const contactsRemoveTags: OmnisendEndpoints['contactsRemoveTags'] = (
 				tags: parsed.tags,
 			},
 		}),
-		{ shape: () => ({ accepted: true }), log: (parsed) => ({ tags: parsed.tags.length }) },
+		{
+			shape: () => ({ accepted: true }),
+			log: (parsed) => ({ tags: parsed.tags.length }),
+		},
 	);
 
 // ── campaigns ───────────────────────────────────────────────────────────────
 
-export const campaignsList: OmnisendEndpoints['campaignsList'] = (
-	ctx,
-	input,
-) =>
+export const campaignsList: OmnisendEndpoints['campaignsList'] = (ctx, input) =>
 	call(
 		ctx,
 		{
@@ -347,15 +350,15 @@ export const campaignsRemove: OmnisendEndpoints['campaignsRemove'] = (
 			method: 'DELETE',
 			path: `/api/campaigns/${segment(parsed.id)}`,
 		}),
-		{ shape: () => ({ accepted: true }), log: (parsed) => ({ campaignId: parsed.id }) },
+		{
+			shape: () => ({ accepted: true }),
+			log: (parsed) => ({ campaignId: parsed.id }),
+		},
 	);
 
 // A send cannot be undone and answers 402 when the audience exceeds the
 // brand's billing tier, which no retry can fix.
-export const campaignsSend: OmnisendEndpoints['campaignsSend'] = (
-	ctx,
-	input,
-) =>
+export const campaignsSend: OmnisendEndpoints['campaignsSend'] = (ctx, input) =>
 	call(
 		ctx,
 		{
@@ -368,7 +371,10 @@ export const campaignsSend: OmnisendEndpoints['campaignsSend'] = (
 			method: 'POST',
 			path: `/api/campaigns/${segment(parsed.id)}/send`,
 		}),
-		{ shape: () => ({ accepted: true }), log: (parsed) => ({ campaignId: parsed.id }) },
+		{
+			shape: () => ({ accepted: true }),
+			log: (parsed) => ({ campaignId: parsed.id }),
+		},
 	);
 
 export const campaignsCancel: OmnisendEndpoints['campaignsCancel'] = (
@@ -387,13 +393,13 @@ export const campaignsCancel: OmnisendEndpoints['campaignsCancel'] = (
 			method: 'POST',
 			path: `/api/campaigns/${segment(parsed.id)}/cancel`,
 		}),
-		{ shape: () => ({ accepted: true }), log: (parsed) => ({ campaignId: parsed.id }) },
+		{
+			shape: () => ({ accepted: true }),
+			log: (parsed) => ({ campaignId: parsed.id }),
+		},
 	);
 
-export const campaignsCopy: OmnisendEndpoints['campaignsCopy'] = (
-	ctx,
-	input,
-) =>
+export const campaignsCopy: OmnisendEndpoints['campaignsCopy'] = (ctx, input) =>
 	call(
 		ctx,
 		{
@@ -423,7 +429,10 @@ export const campaignsRestoreToDraft: OmnisendEndpoints['campaignsRestoreToDraft
 				method: 'POST',
 				path: `/api/campaigns/${segment(parsed.id)}/restoreToDraft`,
 			}),
-			{ shape: () => ({ accepted: true }), log: (parsed) => ({ campaignId: parsed.id }) },
+			{
+				shape: () => ({ accepted: true }),
+				log: (parsed) => ({ campaignId: parsed.id }),
+			},
 		);
 
 export const campaignsSendTestEmail: OmnisendEndpoints['campaignsSendTestEmail'] =
@@ -441,7 +450,10 @@ export const campaignsSendTestEmail: OmnisendEndpoints['campaignsSendTestEmail']
 				path: `/api/campaigns/${segment(parsed.id)}/test-email`,
 				body: { recipients: parsed.recipients },
 			}),
-			{ shape: () => ({ accepted: true }), log: (parsed) => ({ campaignId: parsed.id }) },
+			{
+				shape: () => ({ accepted: true }),
+				log: (parsed) => ({ campaignId: parsed.id }),
+			},
 		);
 
 export const campaignsGetUtm: OmnisendEndpoints['campaignsGetUtm'] = (
@@ -698,7 +710,10 @@ export const productsRemove: OmnisendEndpoints['productsRemove'] = (
 			method: 'DELETE',
 			path: `/api/products/${segment(parsed.id)}`,
 		}),
-		{ shape: () => ({ accepted: true }), log: (parsed) => ({ productId: parsed.id }) },
+		{
+			shape: () => ({ accepted: true }),
+			log: (parsed) => ({ productId: parsed.id }),
+		},
 	);
 
 // ── categories ──────────────────────────────────────────────────────────────
@@ -726,10 +741,7 @@ export const categoriesList: OmnisendEndpoints['categoriesList'] = (
 		},
 	);
 
-export const categoriesGet: OmnisendEndpoints['categoriesGet'] = (
-	ctx,
-	input,
-) =>
+export const categoriesGet: OmnisendEndpoints['categoriesGet'] = (ctx, input) =>
 	call(
 		ctx,
 		{
@@ -801,15 +813,15 @@ export const categoriesRemove: OmnisendEndpoints['categoriesRemove'] = (
 			method: 'DELETE',
 			path: `/api/product-categories/${segment(parsed.id)}`,
 		}),
-		{ shape: () => ({ accepted: true }), log: (parsed) => ({ categoryId: parsed.id }) },
+		{
+			shape: () => ({ accepted: true }),
+			log: (parsed) => ({ categoryId: parsed.id }),
+		},
 	);
 
 // ── templates ───────────────────────────────────────────────────────────────
 
-export const templatesList: OmnisendEndpoints['templatesList'] = (
-	ctx,
-	input,
-) =>
+export const templatesList: OmnisendEndpoints['templatesList'] = (ctx, input) =>
 	call(
 		ctx,
 		{
@@ -918,7 +930,10 @@ export const templatesRemove: OmnisendEndpoints['templatesRemove'] = (
 			method: 'DELETE',
 			path: `/api/email-templates/${segment(parsed.id)}`,
 		}),
-		{ shape: () => ({ accepted: true }), log: (parsed) => ({ templateId: parsed.id }) },
+		{
+			shape: () => ({ accepted: true }),
+			log: (parsed) => ({ templateId: parsed.id }),
+		},
 	);
 
 export const templatesImportFromHtml: OmnisendEndpoints['templatesImportFromHtml'] =
@@ -1027,10 +1042,7 @@ export const emailContentRender: OmnisendEndpoints['emailContentRender'] = (
 
 // The batch runs asynchronously; poll batches.get until status is finished or
 // stopped. There is no cancel.
-export const batchesCreate: OmnisendEndpoints['batchesCreate'] = (
-	ctx,
-	input,
-) =>
+export const batchesCreate: OmnisendEndpoints['batchesCreate'] = (ctx, input) =>
 	call(
 		ctx,
 		{
@@ -1049,7 +1061,12 @@ export const batchesCreate: OmnisendEndpoints['batchesCreate'] = (
 				origin: parsed.origin,
 			},
 		}),
-		{ log: (_, result) => ({ batchId: result.batchID, items: result.totalCount ?? undefined }) },
+		{
+			log: (_, result) => ({
+				batchId: result.batchID,
+				items: result.totalCount ?? undefined,
+			}),
+		},
 	);
 
 export const batchesList: OmnisendEndpoints['batchesList'] = (ctx, input) =>

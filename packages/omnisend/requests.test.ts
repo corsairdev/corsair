@@ -49,17 +49,17 @@ import {
 	templatesReplace,
 } from './endpoints';
 import {
-	batchesCreateResponse,
 	batch,
+	batchesCreateResponse,
 	batchesListResponse,
 	campaign,
 	campaignsListResponse,
-	category,
 	categoriesListResponse,
+	category,
 	contact,
 	contactsListResponse,
-	eventWriteResponse,
 	eventsMetadataResponse,
+	eventWriteResponse,
 	product,
 	productsListResponse,
 	renderedTemplate,
@@ -78,7 +78,7 @@ const API_KEY = 'omnisend_test_key';
 
 // never parameters: every concrete endpoint is assignable to this because
 // parameters are contravariant. Each endpoint returns its own output type, so
-// the shared return is unknown.
+// the shared return type is dropped.
 type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>; // unknown: each endpoint returns its own type.
 
 // Safe: the fake context carries only ctx.key, which is all any endpoint reads.
@@ -137,9 +137,7 @@ function expectAuthenticated(path: string, method: string) {
 	expect(sent.origin).toBe('https://api.omnisend.com');
 	expect(sent.path).toBe(path);
 	expect(sent.method).toBe(method);
-	expect(sent.headers.get('authorization')).toBe(
-		`Omnisend-API-Key ${API_KEY}`,
-	);
+	expect(sent.headers.get('authorization')).toBe(`Omnisend-API-Key ${API_KEY}`);
 	expect(sent.headers.get('omnisend-version')).toBe('2026-03-15');
 }
 
@@ -748,9 +746,6 @@ describe('batches', () => {
 	it('batches.listItems reads the per-item results', async () => {
 		respond(batch);
 		await invoke(batchesListItems, { id: '5f92cbf10cf217478ba93561' });
-		expectAuthenticated(
-			'/api/batches/5f92cbf10cf217478ba93561/items',
-			'GET',
-		);
+		expectAuthenticated('/api/batches/5f92cbf10cf217478ba93561/items', 'GET');
 	});
 });

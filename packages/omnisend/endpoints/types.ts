@@ -80,7 +80,9 @@ function cursorPage(maxLimit: number, defaultLimit: number) {
 			.min(1)
 			.max(maxLimit)
 			.optional()
-			.describe(`Rows per page, 1 to ${maxLimit}. Defaults to ${defaultLimit}.`),
+			.describe(
+				`Rows per page, 1 to ${maxLimit}. Defaults to ${defaultLimit}.`,
+			),
 		after: z
 			.string()
 			.min(1)
@@ -131,9 +133,7 @@ function nextCursorField() {
 	return z
 		.string()
 		.nullish()
-		.describe(
-			'Pass as `after` to read the next page; absent on the last one.',
-		);
+		.describe('Pass as `after` to read the next page; absent on the last one.');
 }
 
 /** `nextOffset` on an offset-paged response, derived from `paging.next`. */
@@ -244,9 +244,7 @@ const ContactRequestBody = {
 	createdAt: z
 		.string()
 		.optional()
-		.describe(
-			'Stored as the `externalCreated` custom property when provided.',
-		),
+		.describe('Stored as the `externalCreated` custom property when provided.'),
 	identifiers: z
 		.array(ContactIdentifierSchema)
 		.optional()
@@ -314,9 +312,7 @@ const ContactsListInputSchema = z
 		direction: DirectionSchema,
 		email: z.string().optional(),
 		phone: z.string().optional(),
-		status: z
-			.enum(['subscribed', 'unsubscribed', 'nonSubscribed'])
-			.optional(),
+		status: z.enum(['subscribed', 'unsubscribed', 'nonSubscribed']).optional(),
 		segmentID: z.string().optional(),
 		tag: z.string().optional(),
 		updatedAtFrom: z
@@ -406,8 +402,7 @@ const ContactsAddTagsInputSchema = z
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
 				path: ['contactIDs'],
-				message:
-					'One of contactIDs, emails, phones or segmentID is required.',
+				message: 'One of contactIDs, emails, phones or segmentID is required.',
 			});
 		}
 	});
@@ -424,8 +419,7 @@ const ContactsRemoveTagsInputSchema = z
 			ctx.addIssue({
 				code: z.ZodIssueCode.custom,
 				path: ['contactIDs'],
-				message:
-					'One of contactIDs, emails, phones or segmentID is required.',
+				message: 'One of contactIDs, emails, phones or segmentID is required.',
 			});
 		}
 	});
@@ -519,8 +513,7 @@ const SendingSettingsSchema = z
 				ctx.addIssue({
 					code: z.ZodIssueCode.custom,
 					path: ['optimizeFor'],
-					message:
-						'optimizeFor is required when strategy is personalized.',
+					message: 'optimizeFor is required when strategy is personalized.',
 				});
 			}
 		} else if (value.optimizeFor !== undefined) {
@@ -551,9 +544,7 @@ const AudienceSchema = z
 		excludedCountries: z
 			.array(z.string())
 			.optional()
-			.describe(
-				'ISO 3166-1 alpha-2 codes excluded from the SMS audience.',
-			),
+			.describe('ISO 3166-1 alpha-2 codes excluded from the SMS audience.'),
 	})
 	.loose();
 
@@ -953,15 +944,11 @@ const EventsQueryMetadataInputSchema = z.object({
 	includeProperties: z
 		.boolean()
 		.optional()
-		.describe(
-			'When true, each item carries the nested property tree.',
-		),
+		.describe('When true, each item carries the nested property tree.'),
 	excludeCustomEvents: z
 		.boolean()
 		.optional()
-		.describe(
-			'When true, brand-custom events are omitted from the answer.',
-		),
+		.describe('When true, brand-custom events are omitted from the answer.'),
 });
 
 const EventsQueryMetadataResponseSchema = z.object({
@@ -1017,10 +1004,7 @@ const EventsDefineSchemaInputSchema = z.object({
 const EventsUpdateSchemaInputSchema = z.object({
 	name: z.string().min(1).describe('Machine-readable event name.'),
 	origin: z.string().min(1).describe('The origin the schema belongs to.'),
-	displayName: z
-		.string()
-		.optional()
-		.describe('Omit to keep the stored value.'),
+	displayName: z.string().optional().describe('Omit to keep the stored value.'),
 	properties: z
 		.record(z.string(), WritePropertyNodeSchema)
 		.optional()
@@ -1071,9 +1055,7 @@ const ProductWriteSchema = {
 		.array(ProductVariantSchema)
 		.min(1)
 		.max(500)
-		.describe(
-			'At least one variant. Prices are floats in the store currency.',
-		),
+		.describe('At least one variant. Prices are floats in the store currency.'),
 	categoryIDs: z.array(z.string()).max(100).optional(),
 	tags: z.array(z.string()).max(100).optional(),
 	images: z.array(z.string()).max(300).optional(),
@@ -1231,10 +1213,7 @@ const TemplatesReplaceInputSchema = z.object({
 
 const TemplatesImportInputSchema = z.object({
 	name: z.string().min(1).max(255),
-	html: z
-		.string()
-		.min(1)
-		.describe('Raw HTML to import; up to 1 MB.'),
+	html: z.string().min(1).describe('Raw HTML to import; up to 1 MB.'),
 });
 
 /** A render answers `{ html: "..." }`-shaped string values. */

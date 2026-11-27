@@ -33,7 +33,7 @@ export const errorHandlers = {
 		match: (error: Error) => statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 404: an unknown id.
+	// 404: an id no resource carries.
 	NOT_FOUND_ERROR: {
 		match: (error: Error) => statusOf(error) === 404,
 		handler: async () => ({ maxRetries: 0 }),
@@ -43,14 +43,12 @@ export const errorHandlers = {
 		match: (error: Error) => statusOf(error) === 410,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 400 or 422: a malformed body or an unknown event name. A retry sends the
-	// same thing. 422 also covers campaign creation without a verified sender.
+	// 400 or 422: a malformed body or an event name Omnisend does not know. A
+	// retry sends the same thing. 422 also covers campaign creation without a verified sender.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			const status = statusOf(error);
-			return (
-				error.name === 'ZodError' || status === 400 || status === 422
-			);
+			return error.name === 'ZodError' || status === 400 || status === 422;
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
