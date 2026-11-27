@@ -1066,7 +1066,7 @@ export const zepEndpointMeta = {
 	'graphs.getInclusionRules': {
 		riskLevel: 'read',
 		description:
-			'Get graph inclusion rules. Returns the graph rules, for example {"inclusion_rules":[],"inherited":true}.',
+			'Get graph inclusion rules. Returns the graph rules, for example {"inclusion_rules":[],"inherited":true}. A free project answered 404 not_found to both the read and the write (11-27): the feature may need enabling on the account.',
 	},
 	'graphs.getInstructions': {
 		riskLevel: 'read',
@@ -1217,7 +1217,7 @@ export const zepEndpointMeta = {
 	'graphs.setInclusionRules': {
 		riskLevel: 'write',
 		description:
-			'Set graph inclusion rules. Replaces the graph rules. Request: {"inclusion_rules":[]}. Response: {"inclusion_rules":[],"inherited":true}.',
+			'Set graph inclusion rules. Replaces the graph rules. Request: {"inclusion_rules":[]}. Response: {"inclusion_rules":[],"inherited":true}. A free project answered 404 not_found to both the read and the write (11-27): the feature may need enabling on the account.',
 	},
 	'graphs.setInstructions': {
 		riskLevel: 'write',
@@ -1272,7 +1272,7 @@ export const zepEndpointMeta = {
 	'project.getInclusionRules': {
 		riskLevel: 'read',
 		description:
-			'Get project inclusion rules. Returns the project rules, for example {"inclusion_rules":[],"inherited":false}.',
+			'Get project inclusion rules. Returns the project rules, for example {"inclusion_rules":[],"inherited":false}. A free project answered 404 not_found to both the read and the write (11-27): the feature may need enabling on the account.',
 	},
 	'project.getInstructions': {
 		riskLevel: 'read',
@@ -1310,7 +1310,7 @@ export const zepEndpointMeta = {
 	'project.setInclusionRules': {
 		riskLevel: 'write',
 		description:
-			'Set project inclusion rules. Replaces the project rules. Request: {"inclusion_rules":[]}. Response: {"inclusion_rules":[],"inherited":false}.',
+			'Set project inclusion rules. Replaces the project rules. Request: {"inclusion_rules":[]}. Response: {"inclusion_rules":[],"inherited":false}. A free project answered 404 not_found to both the read and the write (11-27): the feature may need enabling on the account.',
 	},
 	'project.setInstructions': {
 		riskLevel: 'write',

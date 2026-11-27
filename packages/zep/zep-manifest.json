@@ -2982,6 +2982,7 @@
       "summary": "Delete batch",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "input": {
         "type": "object",
         "properties": {
@@ -3150,6 +3151,7 @@
       "summary": "Delete context template",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "input": {
         "type": "object",
         "properties": {
@@ -6503,6 +6505,7 @@
       "summary": "Delete a trace connection",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "input": {
         "type": "object",
         "properties": {
@@ -6844,6 +6847,7 @@
       "summary": "Delete user group",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "input": {
         "type": "object",
         "properties": {
@@ -6868,6 +6872,7 @@
       "summary": "Detach policy set from a user group",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "input": {
         "type": "object",
         "properties": {
@@ -7070,6 +7075,7 @@
       "summary": "Remove one user group member",
       "request": "none",
       "response": "json",
+      "emptyOk": true,
       "input": {
         "type": "object",
         "properties": {

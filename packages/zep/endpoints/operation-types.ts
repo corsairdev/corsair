@@ -7107,13 +7107,17 @@ export type ZepOperationOutputs = {
 	'agents.verifiers.update': ZepV4AgentVerifier;
 	'batches.addItems': ZepV4BatchItemsResponse;
 	'batches.create': ZepV4Batch;
-	'batches.delete': Record<string, ZepJsonValue>;
+	'batches.delete':
+		| Record<string, ZepJsonValue>
+		| { /** Zep accepted the call; it answered with no body. */ success: true };
 	'batches.get': ZepV4Batch;
 	'batches.list': ZepV4BatchPage;
 	'batches.listItems': ZepV4BatchItemPage;
 	'batches.process': ZepV4ProcessBatchResult;
 	'contextTemplates.create': ZepV4ContextTemplate;
-	'contextTemplates.delete': Record<string, ZepJsonValue>;
+	'contextTemplates.delete':
+		| Record<string, ZepJsonValue>
+		| { /** Zep accepted the call; it answered with no body. */ success: true };
 	'contextTemplates.get': ZepV4ContextTemplate;
 	'contextTemplates.list': ZepV4ContextTemplatePage;
 	'contextTemplates.update': ZepV4ContextTemplate;
@@ -7215,7 +7219,9 @@ export type ZepOperationOutputs = {
 	'threads.messages.list': ZepV4MessagePage;
 	'threads.messages.update': ZepV4Message;
 	'traceConnections.create': ZepV4TraceConnection;
-	'traceConnections.delete': Record<string, ZepJsonValue>;
+	'traceConnections.delete':
+		| Record<string, ZepJsonValue>
+		| { /** Zep accepted the call; it answered with no body. */ success: true };
 	'traceConnections.get': ZepV4TraceConnection;
 	'traceConnections.getTrace': ZepV4SourceTraceResponse;
 	'traceConnections.list': ZepV4TraceConnectionPage;
@@ -7226,14 +7232,20 @@ export type ZepOperationOutputs = {
 	'userGroups.addMembers': ZepV4MembershipMutationResult;
 	'userGroups.attachPolicySet': ZepV4PolicySetSummaryList;
 	'userGroups.create': ZepV4UserGroup;
-	'userGroups.delete': Record<string, ZepJsonValue>;
-	'userGroups.detachPolicySet': Record<string, ZepJsonValue>;
+	'userGroups.delete':
+		| Record<string, ZepJsonValue>
+		| { /** Zep accepted the call; it answered with no body. */ success: true };
+	'userGroups.detachPolicySet':
+		| Record<string, ZepJsonValue>
+		| { /** Zep accepted the call; it answered with no body. */ success: true };
 	'userGroups.get': ZepV4UserGroup;
 	'userGroups.list': ZepV4UserGroupPage;
 	'userGroups.listMemberCandidates': ZepV4UserPage;
 	'userGroups.listMembers': ZepV4UserPage;
 	'userGroups.listPolicySets': ZepV4PolicySetSummaryPage;
-	'userGroups.removeMember': Record<string, ZepJsonValue>;
+	'userGroups.removeMember':
+		| Record<string, ZepJsonValue>
+		| { /** Zep accepted the call; it answered with no body. */ success: true };
 	'userGroups.removeMembers': ZepV4MembershipMutationResult;
 	'userGroups.update': ZepV4UserGroup;
 	'users.create': ZepV4User;

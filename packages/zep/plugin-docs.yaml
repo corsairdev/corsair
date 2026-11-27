@@ -13,7 +13,8 @@ overviewNote: |
   - **Ingestion is asynchronous.** `graphs.episodes.add`, `threads.messages.add` and the batch routes queue work; `tasks.get` and `graphs.episodes.get` show progress. Batches (`batches.create`, `batches.addItems`, `batches.process`) load history in bulk.
   - **Search.** `graphs.searchEdges`, `graphs.searchNodes`, `graphs.searchEpisodes`, `graphs.searchObservations` and `graphs.searchThreadSummaries` search one graph; `graphs.getContext` assembles context from a template; `graphs.query` (experimental) streams a multi-hop answer as server-sent events and comes back as text.
   - **Deletes are permanent.** Deleting a user deletes its graph and threads; deleting a graph, episode, node or edge removes it from search. Every delete is `destructive`.
-  - **Agent Skills and traces** (`agents.*`, `traceConnections.*`) are in closed release: accounts without access get 403 `permission_denied`.
+  - **Agent Skills** (`agents.*`) are in closed release: accounts without access get 403 `permission_denied`. **Trace connections** (`traceConnections.*`, Braintrust or LangSmith) check the provider credential when created and answer 422 when the provider refuses it.
+  - **Admin-only routes.** Policy sets on user groups (`userGroups.listPolicySets`, `attachPolicySet`, `detachPolicySet`) need a dashboard bearer token: a project API key gets 403. Domain knowledge (`*.getKnowledge`, `*.setKnowledge`) needs the `knowledge_api` account flag (404 without it).
   - **Webhooks.** Zep posts `episode.processed`, `ingest.batch.completed` and `byom.request_failed` to an endpoint set up in the dashboard (paid plans), signed with Svix. The plugin verifies them with the endpoint's signing secret.
 examples:
   read:
