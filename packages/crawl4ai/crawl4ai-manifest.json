@@ -1,0 +1,2771 @@
+{
+  "source": "https://crawl4ai.com/llms.txt",
+  "version": "server 0.9.6",
+  "fetched": "2026-11-27",
+  "operations": [
+    {
+      "id": "cloud.answer",
+      "host": "cloud",
+      "method": "POST",
+      "path": "/tools/answer",
+      "tag": "cloud",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "The question or a whole prompt (max 4,000 characters).",
+            "maxLength": 4000
+          },
+          "schema": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "A JSON Schema the answer must match."
+          },
+          "deep": {
+            "type": "boolean",
+            "description": "Read a couple of pages when needed (default true); false = only a readily available answer."
+          }
+        },
+        "required": ["q"]
+      },
+      "output": {
+        "type": "object",
+        "description": "A tool run: rows and/or data, with what it cost.",
+        "properties": {
+          "tool": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "took_ms": {
+            "type": "number"
+          },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "credits": {
+                "type": "number",
+                "description": "Credits the run cost."
+              }
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        }
+      }
+    },
+    {
+      "id": "cloud.batch",
+      "host": "cloud",
+      "method": "POST",
+      "path": "/tools/batch",
+      "tag": "cloud",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "tool": {
+            "type": "string",
+            "description": "The tool id, e.g. scrape."
+          },
+          "inputs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "description": "One input per page; the first one's options apply to all.",
+            "minItems": 1
+          },
+          "stream": {
+            "type": "boolean",
+            "description": "Answer in the call, one result per line (up to 50)."
+          },
+          "idempotency_key": {
+            "type": "string",
+            "x-corsair-in": "header",
+            "x-corsair-wire": "Idempotency-Key",
+            "minLength": 1,
+            "maxLength": 128,
+            "description": "Send the same key again on a retry to get the first job back, billed once."
+          }
+        },
+        "required": ["tool", "inputs"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.billing.balance",
+      "host": "cloud",
+      "method": "GET",
+      "path": "/v1/billing/balance",
+      "tag": "cloud",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {}
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.billing.subscribe",
+      "host": "cloud",
+      "method": "POST",
+      "path": "/v1/billing/subscribe",
+      "tag": "cloud",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "plan": {
+            "type": "string",
+            "description": "The plan id: starter, builder or scale.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["plan"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.billing.topup",
+      "host": "cloud",
+      "method": "POST",
+      "path": "/v1/billing/topup",
+      "tag": "cloud",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "description": "Dollars, 10 to 1000.",
+            "minimum": 10,
+            "maximum": 1000,
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["amount"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.billing.topups",
+      "host": "cloud",
+      "method": "GET",
+      "path": "/v1/billing/topups",
+      "tag": "cloud",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Payments a page.",
+            "minimum": 1,
+            "x-corsair-in": "query"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "next_cursor from the last page.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.extract",
+      "host": "cloud",
+      "method": "POST",
+      "path": "/tools/extract",
+      "tag": "cloud",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The page to read."
+          },
+          "content": {
+            "type": "string",
+            "description": "Your own text, Markdown or HTML instead of a URL."
+          },
+          "instruction": {
+            "type": "string",
+            "description": "What to pull out, in plain English."
+          },
+          "schema": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "JSON Schema each record must match."
+          },
+          "example": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "A sample of the shape you want."
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "description": "A tool run: rows and/or data, with what it cost.",
+        "properties": {
+          "tool": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "took_ms": {
+            "type": "number"
+          },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "credits": {
+                "type": "number",
+                "description": "Credits the run cost."
+              }
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        }
+      }
+    },
+    {
+      "id": "cloud.jobs.cancel",
+      "host": "cloud",
+      "method": "DELETE",
+      "path": "/tools/jobs/{job_id}",
+      "tag": "cloud",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The job id.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["job_id"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.jobs.get",
+      "host": "cloud",
+      "method": "GET",
+      "path": "/tools/jobs/{job_id}",
+      "tag": "cloud",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The job id.",
+            "x-corsair-in": "path"
+          },
+          "full": {
+            "type": "integer",
+            "description": "1 for per-URL detail.",
+            "enum": [1],
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["job_id"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.jobs.results",
+      "host": "cloud",
+      "method": "GET",
+      "path": "/tools/jobs/{job_id}/results",
+      "tag": "cloud",
+      "request": "none",
+      "response": "ndjson",
+      "input": {
+        "type": "object",
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The job id.",
+            "x-corsair-in": "path"
+          },
+          "after": {
+            "type": "integer",
+            "description": "Rows already read (the last seq + 1).",
+            "minimum": 0,
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Rows a page (1 to 500).",
+            "minimum": 1,
+            "maximum": 500,
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["job_id"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.jobs.retry",
+      "host": "cloud",
+      "method": "POST",
+      "path": "/tools/jobs/{job_id}/retry",
+      "tag": "cloud",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The job id.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["job_id"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.lead",
+      "host": "cloud",
+      "method": "POST",
+      "path": "/tools/lead",
+      "tag": "cloud",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "find": {
+            "type": "string",
+            "description": "What to find: people, companies, industries, enrich, email, phone, company."
+          },
+          "where": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "Filters, e.g. { company: { industry, country } }."
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "description": "A tool run: rows and/or data, with what it cost.",
+        "properties": {
+          "tool": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "took_ms": {
+            "type": "number"
+          },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "credits": {
+                "type": "number",
+                "description": "Credits the run cost."
+              }
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        }
+      }
+    },
+    {
+      "id": "cloud.monitors.changes",
+      "host": "cloud",
+      "method": "GET",
+      "path": "/monitors/changes",
+      "tag": "cloud",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {}
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.monitors.delete",
+      "host": "cloud",
+      "method": "DELETE",
+      "path": "/monitors/{id}",
+      "tag": "cloud",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The watch id.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.monitors.events",
+      "host": "cloud",
+      "method": "GET",
+      "path": "/monitors/{id}/events",
+      "tag": "cloud",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The watch id.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.monitors.get",
+      "host": "cloud",
+      "method": "GET",
+      "path": "/monitors/{id}",
+      "tag": "cloud",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The watch id.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.monitors.list",
+      "host": "cloud",
+      "method": "GET",
+      "path": "/monitors",
+      "tag": "cloud",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {}
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.monitors.update",
+      "host": "cloud",
+      "method": "PATCH",
+      "path": "/monitors/{id}",
+      "tag": "cloud",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The watch id.",
+            "x-corsair-in": "path"
+          },
+          "fields": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "The fields to change, as cloud.watch takes them, e.g. { every, paused, notify }.",
+            "x-corsair-in": "body-object"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.price",
+      "host": "cloud",
+      "method": "POST",
+      "path": "/tools/price",
+      "tag": "cloud",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "sites": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Domains (hubspot.com) or pricing page URLs; at most 20.",
+            "maxItems": 20,
+            "minItems": 1
+          },
+          "country": {
+            "description": "Two-letter country, or a list of up to 5 (sites x countries at most 20)."
+          }
+        },
+        "required": ["sites"]
+      },
+      "output": {
+        "type": "object",
+        "description": "A tool run: rows and/or data, with what it cost.",
+        "properties": {
+          "tool": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "took_ms": {
+            "type": "number"
+          },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "credits": {
+                "type": "number",
+                "description": "Credits the run cost."
+              }
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        }
+      }
+    },
+    {
+      "id": "cloud.priceHistory",
+      "host": "cloud",
+      "method": "GET",
+      "path": "/price/history",
+      "tag": "cloud",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "The site: hubspot.com.",
+            "x-corsair-in": "query"
+          },
+          "country": {
+            "type": "string",
+            "description": "Two-letter country.",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["domain"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.prices",
+      "host": "cloud",
+      "method": "GET",
+      "path": "/v1/prices",
+      "tag": "cloud",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {}
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.report",
+      "host": "cloud",
+      "method": "POST",
+      "path": "/v1/report",
+      "tag": "cloud",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "description": "agent",
+            "enum": ["agent"]
+          },
+          "category": {
+            "type": "string",
+            "description": "failed, slow, wrong, could-be-better or ux.",
+            "enum": ["failed", "slow", "wrong", "could-be-better", "ux"]
+          },
+          "title": {
+            "type": "string",
+            "description": "One line."
+          },
+          "note": {
+            "type": "string",
+            "description": "What you tried, what came back, what you expected."
+          },
+          "context": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "{ receipt: <request_id> }"
+          }
+        },
+        "required": ["category", "title"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.scan",
+      "host": "cloud",
+      "method": "POST",
+      "path": "/tools/scan",
+      "tag": "cloud",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "domain": {
+            "type": "string",
+            "description": "The site's host: docs.crawl4ai.com."
+          },
+          "extended": {
+            "type": "boolean",
+            "description": "Also ask Common Crawl and the Wayback Machine (20 s or more longer)."
+          },
+          "max_urls": {
+            "type": "integer",
+            "description": "Most URLs returned (default 5000, max 50000).",
+            "minimum": 1,
+            "maximum": 50000
+          },
+          "include": {
+            "type": "string",
+            "description": "Keep only matching URLs: a path prefix (/docs) or a glob (*/blog/*)."
+          },
+          "include_subdomains": {
+            "type": "boolean",
+            "description": "Also list subdomains."
+          },
+          "bypass_cache": {
+            "type": "boolean",
+            "description": "Scan again even when cached (7 days)."
+          }
+        },
+        "required": ["domain"]
+      },
+      "output": {
+        "type": "object",
+        "description": "A tool run: rows and/or data, with what it cost.",
+        "properties": {
+          "tool": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "took_ms": {
+            "type": "number"
+          },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "credits": {
+                "type": "number",
+                "description": "Credits the run cost."
+              }
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        }
+      }
+    },
+    {
+      "id": "cloud.scrape",
+      "host": "cloud",
+      "method": "POST",
+      "path": "/tools/scrape",
+      "tag": "cloud",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "A public http(s) URL.",
+            "format": "uri"
+          },
+          "format": {
+            "type": "string",
+            "description": "both (default), md or html.",
+            "enum": ["both", "md", "html"]
+          },
+          "proxy": {
+            "type": "string",
+            "description": "standard (default) or extra: rented residential addresses when ours are refused; a page served that way costs 4x.",
+            "enum": ["standard", "extra"]
+          },
+          "country": {
+            "type": "string",
+            "description": "Two-letter country to fetch from, e.g. us, gb."
+          },
+          "parse": {
+            "description": "Also return page structure: true, a list (links, media, metadata, tables) or an object."
+          },
+          "engine": {
+            "type": "string",
+            "description": "auto (default), browser-light or browser.",
+            "enum": ["auto", "browser-light", "browser"]
+          },
+          "bypass_cache": {
+            "type": "boolean",
+            "description": "Fetch fresh, never from the cache."
+          },
+          "timeout": {
+            "type": "number",
+            "description": "Answer within this many seconds (5 to 120); set it a little below your client timeout.",
+            "minimum": 5,
+            "maximum": 120
+          },
+          "fresh": {
+            "type": "boolean",
+            "x-corsair-in": "header",
+            "x-corsair-wire": "Crawl4AI-Fresh",
+            "description": "Skip the cache and fetch fresh (the Crawl4AI-Fresh header)."
+          }
+        },
+        "required": ["url"]
+      },
+      "output": {
+        "type": "object",
+        "description": "A tool run: rows and/or data, with what it cost.",
+        "properties": {
+          "tool": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "took_ms": {
+            "type": "number"
+          },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "credits": {
+                "type": "number",
+                "description": "Credits the run cost."
+              }
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        }
+      }
+    },
+    {
+      "id": "cloud.search",
+      "host": "cloud",
+      "method": "POST",
+      "path": "/tools/search",
+      "tag": "cloud",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "The query (max 512 characters).",
+            "maxLength": 512
+          },
+          "rich": {
+            "type": "boolean",
+            "description": "Also return follow-up questions, related queries, an entity card, videos and news."
+          },
+          "deep": {
+            "type": "boolean",
+            "description": "Also read the top 10 result pages into each result's markdown (0.1 credit a page)."
+          }
+        },
+        "required": ["q"]
+      },
+      "output": {
+        "type": "object",
+        "description": "A tool run: rows and/or data, with what it cost.",
+        "properties": {
+          "tool": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "took_ms": {
+            "type": "number"
+          },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "credits": {
+                "type": "number",
+                "description": "Credits the run cost."
+              }
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        }
+      }
+    },
+    {
+      "id": "cloud.serp",
+      "host": "cloud",
+      "method": "POST",
+      "path": "/tools/serp",
+      "tag": "cloud",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "The query (max 512 characters).",
+            "maxLength": 512
+          },
+          "country": {
+            "type": "string",
+            "description": "Two letters, default us."
+          },
+          "language": {
+            "type": "string",
+            "description": "Google language code, default en."
+          },
+          "location": {
+            "type": "string",
+            "description": "A city or region: \"Austin, TX\"."
+          },
+          "num": {
+            "type": "integer",
+            "description": "Results asked: a multiple of 10 up to 100 (10 per Google page, 1 credit each).",
+            "minimum": 10,
+            "maximum": 100
+          },
+          "page": {
+            "type": "integer",
+            "description": "Page over num (1 to 30).",
+            "minimum": 1,
+            "maximum": 30
+          },
+          "time": {
+            "type": "string",
+            "description": "Google's time filter.",
+            "enum": ["hour", "day", "week", "month", "year"]
+          },
+          "fresh": {
+            "type": "boolean",
+            "description": "Skip the cache."
+          }
+        },
+        "required": ["q"]
+      },
+      "output": {
+        "type": "object",
+        "description": "A tool run: rows and/or data, with what it cost.",
+        "properties": {
+          "tool": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "took_ms": {
+            "type": "number"
+          },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "credits": {
+                "type": "number",
+                "description": "Credits the run cost."
+              }
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        }
+      }
+    },
+    {
+      "id": "cloud.site",
+      "host": "cloud",
+      "method": "POST",
+      "path": "/tools/site",
+      "tag": "cloud",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The start page."
+          },
+          "depth": {
+            "type": "integer",
+            "description": "Levels of links below the start page (default 2, max 5).",
+            "minimum": 0,
+            "maximum": 5
+          },
+          "max_pages": {
+            "type": "integer",
+            "description": "Most pages fetched (default 100, max 500).",
+            "minimum": 1,
+            "maximum": 500
+          },
+          "include": {
+            "type": "string",
+            "description": "Follow only matching URLs."
+          },
+          "exclude": {
+            "type": "string",
+            "description": "Never follow matching URLs."
+          },
+          "include_subdomains": {
+            "type": "boolean",
+            "description": "Also follow subdomains."
+          },
+          "content": {
+            "type": "string",
+            "description": "md (default), html or none.",
+            "enum": ["md", "html", "none"]
+          }
+        },
+        "required": ["url"]
+      },
+      "output": {
+        "type": "object",
+        "description": "A tool run: rows and/or data, with what it cost.",
+        "properties": {
+          "tool": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "took_ms": {
+            "type": "number"
+          },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "credits": {
+                "type": "number",
+                "description": "Credits the run cost."
+              }
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        }
+      }
+    },
+    {
+      "id": "cloud.tools.estimate",
+      "host": "cloud",
+      "method": "POST",
+      "path": "/tools/{id}/estimate",
+      "tag": "cloud",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The tool id.",
+            "x-corsair-in": "path"
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "The tool's inputs.",
+            "x-corsair-in": "body-object"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "description": "A tool run: rows and/or data, with what it cost.",
+        "properties": {
+          "tool": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "took_ms": {
+            "type": "number"
+          },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "credits": {
+                "type": "number",
+                "description": "Credits the run cost."
+              }
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        }
+      }
+    },
+    {
+      "id": "cloud.tools.get",
+      "host": "cloud",
+      "method": "GET",
+      "path": "/tools/{id}",
+      "tag": "cloud",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The tool id, e.g. scrape, youtube-captions.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.tools.list",
+      "host": "cloud",
+      "method": "GET",
+      "path": "/tools",
+      "tag": "cloud",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Words or a sentence: \"video transcript\", \"amazon reviews\".",
+            "x-corsair-in": "query"
+          },
+          "category": {
+            "type": "string",
+            "description": "A category id: video, jobs, shopping, social, people-companies ...",
+            "x-corsair-in": "query"
+          },
+          "source": {
+            "type": "string",
+            "description": "A site id: youtube, amazon, linkedin, google-maps, x ...",
+            "x-corsair-in": "query"
+          },
+          "kind": {
+            "type": "string",
+            "description": "pages, search, people or sites.",
+            "enum": ["pages", "search", "people", "sites"],
+            "x-corsair-in": "query"
+          },
+          "status": {
+            "type": "string",
+            "description": "verified, beta or failing.",
+            "enum": ["verified", "beta", "failing"],
+            "x-corsair-in": "query"
+          },
+          "essential": {
+            "type": "boolean",
+            "description": "Only the 11 essentials.",
+            "x-corsair-in": "query"
+          },
+          "format": {
+            "type": "string",
+            "description": "text: one line per tool instead of JSON.",
+            "enum": ["text"],
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Tools a page (default 50, at most 200).",
+            "minimum": 1,
+            "maximum": 200,
+            "x-corsair-in": "query"
+          },
+          "cursor": {
+            "type": "string",
+            "description": "next_cursor from the last page.",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.tools.run",
+      "host": "cloud",
+      "method": "POST",
+      "path": "/tools/{id}",
+      "tag": "cloud",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The tool id.",
+            "x-corsair-in": "path"
+          },
+          "input": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "The tool's inputs, as cloud.tools.get lists them.",
+            "x-corsair-in": "body-object"
+          },
+          "fresh": {
+            "type": "boolean",
+            "x-corsair-in": "header",
+            "x-corsair-wire": "Crawl4AI-Fresh",
+            "description": "Skip the cache and fetch fresh (the Crawl4AI-Fresh header)."
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "description": "A tool run: rows and/or data, with what it cost.",
+        "properties": {
+          "tool": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "took_ms": {
+            "type": "number"
+          },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "credits": {
+                "type": "number",
+                "description": "Credits the run cost."
+              }
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        }
+      }
+    },
+    {
+      "id": "cloud.tools.status",
+      "host": "cloud",
+      "method": "GET",
+      "path": "/tools/{id}/status",
+      "tag": "cloud",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The tool id.",
+            "x-corsair-in": "path"
+          }
+        },
+        "required": ["id"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "cloud.verify",
+      "host": "cloud",
+      "method": "POST",
+      "path": "/tools/verify",
+      "tag": "cloud",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "check": {
+            "type": "string",
+            "description": "email (default), list or domain.",
+            "enum": ["email", "list", "domain"]
+          },
+          "email": {
+            "type": "string",
+            "description": "One address (check email)."
+          },
+          "emails": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Up to 1,000 addresses (check list).",
+            "maxItems": 1000
+          },
+          "domain": {
+            "type": "string",
+            "description": "A domain (check domain)."
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "description": "A tool run: rows and/or data, with what it cost.",
+        "properties": {
+          "tool": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "took_ms": {
+            "type": "number"
+          },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "credits": {
+                "type": "number",
+                "description": "Credits the run cost."
+              }
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        }
+      }
+    },
+    {
+      "id": "cloud.watch",
+      "host": "cloud",
+      "method": "POST",
+      "path": "/tools/watch",
+      "tag": "cloud",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "The page to watch."
+          },
+          "watch": {
+            "type": "string",
+            "description": "The change you care about, in plain words."
+          },
+          "every": {
+            "type": "string",
+            "description": "How often to check (default auto)."
+          },
+          "email": {
+            "type": "string",
+            "description": "Email to tell."
+          },
+          "webhook": {
+            "type": "string",
+            "description": "URL to POST changes to."
+          },
+          "secret": {
+            "type": "string",
+            "description": "Signs the webhook."
+          },
+          "trigger": {
+            "description": "When to tell."
+          },
+          "region": {
+            "type": "string",
+            "description": "Where to check from."
+          },
+          "name": {
+            "type": "string",
+            "description": "A name for the watch."
+          }
+        },
+        "required": ["url"]
+      },
+      "output": {
+        "type": "object",
+        "description": "A tool run: rows and/or data, with what it cost.",
+        "properties": {
+          "tool": {
+            "type": "string"
+          },
+          "request_id": {
+            "type": "string"
+          },
+          "took_ms": {
+            "type": "number"
+          },
+          "usage": {
+            "type": "object",
+            "properties": {
+              "credits": {
+                "type": "number",
+                "description": "Credits the run cost."
+              }
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": {}
+            },
+            "description": "The records: search results, extracted items, URLs, prices, site tool rows."
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "The rest of the answer: scrape markdown, an answer, a job id and poll path, a watch."
+          }
+        }
+      }
+    },
+    {
+      "id": "server.artifacts.get",
+      "host": "server",
+      "method": "GET",
+      "path": "/artifacts/{artifact_id}",
+      "tag": "server",
+      "request": "none",
+      "response": "file",
+      "input": {
+        "type": "object",
+        "properties": {
+          "artifact_id": {
+            "type": "string",
+            "x-corsair-in": "path",
+            "minLength": 1
+          }
+        },
+        "required": ["artifact_id"]
+      }
+    },
+    {
+      "id": "server.ask",
+      "host": "server",
+      "method": "GET",
+      "path": "/ask",
+      "tag": "server",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "context_type": {
+            "type": "string",
+            "pattern": "^(code|doc|all)$",
+            "x-corsair-in": "query"
+          },
+          "query": {
+            "type": "string",
+            "nullable": true,
+            "description": "search query to filter chunks",
+            "x-corsair-in": "query"
+          },
+          "score_ratio": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "description": "min score as fraction of max_score",
+            "x-corsair-in": "query"
+          },
+          "max_results": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "absolute cap on returned chunks",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "server.configDump",
+      "host": "server",
+      "method": "POST",
+      "path": "/config/dump",
+      "tag": "server",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["CrawlerRunConfig", "BrowserConfig"],
+            "description": "Which config."
+          },
+          "params": {
+            "type": "object",
+            "additionalProperties": {},
+            "description": "The config fields, e.g. { word_count_threshold: 10 }."
+          }
+        },
+        "required": ["type"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "server.crawl",
+      "host": "server",
+      "method": "POST",
+      "path": "/crawl",
+      "tag": "server",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "urls": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "minItems": 1
+          },
+          "browser_config": {
+            "additionalProperties": true,
+            "type": "object",
+            "nullable": true
+          },
+          "crawler_config": {
+            "additionalProperties": true,
+            "type": "object",
+            "nullable": true
+          },
+          "crawler_configs": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "nullable": true,
+            "description": "List of per-URL CrawlerRunConfig dicts for arun_many(). When provided, each config can include a 'url_matcher' pattern to match against specific URLs. Takes precedence over crawler_config."
+          },
+          "hooks": {
+            "properties": {
+              "hooks": {
+                "items": {
+                  "properties": {
+                    "action": {
+                      "type": "string",
+                      "description": "One of the registered hook actions"
+                    },
+                    "params": {
+                      "additionalProperties": true,
+                      "type": "object",
+                      "description": "Action parameters"
+                    }
+                  },
+                  "type": "object",
+                  "required": ["action"],
+                  "description": "A single declarative hook: a fixed action plus schema-validated params. Arbitrary Python (the old `code` map) is no longer accepted - it was an exec()-based RCE surface. Available actions are enumerated by GET /hooks/info and validated server-side by hook_registry.py."
+                },
+                "type": "array",
+                "maxItems": 10,
+                "description": "Declarative hook specs (action + params), max 10"
+              },
+              "timeout": {
+                "type": "integer",
+                "maximum": 120.0,
+                "minimum": 1.0,
+                "description": "Timeout in seconds for each hook execution"
+              },
+              "code": {
+                "nullable": true,
+                "description": "REMOVED in 0.9.0: inline hook code is accepted for compatibility but never executed"
+              }
+            },
+            "type": "object",
+            "description": "Optional user-provided hook functions",
+            "nullable": true
+          }
+        },
+        "required": ["urls"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "description": "One crawled page.",
+              "properties": {
+                "url": {
+                  "type": "string"
+                },
+                "success": {
+                  "type": "boolean"
+                },
+                "status_code": {
+                  "type": "integer",
+                  "nullable": true
+                },
+                "error_message": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "html": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "cleaned_html": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "fit_html": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "markdown": {
+                  "description": "Markdown: raw_markdown, markdown_with_citations, references_markdown, fit_markdown."
+                },
+                "links": {
+                  "type": "object",
+                  "additionalProperties": {}
+                },
+                "media": {
+                  "type": "object",
+                  "additionalProperties": {}
+                },
+                "metadata": {
+                  "type": "object",
+                  "additionalProperties": {},
+                  "nullable": true
+                },
+                "tables": {
+                  "type": "array",
+                  "items": {}
+                },
+                "extracted_content": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "screenshot": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "Base64 PNG when screenshot was on."
+                },
+                "pdf": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "redirected_url": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "response_headers": {
+                  "type": "object",
+                  "additionalProperties": {},
+                  "nullable": true
+                },
+                "js_execution_result": {
+                  "type": "object",
+                  "additionalProperties": {},
+                  "nullable": true
+                },
+                "session_id": {
+                  "type": "string",
+                  "nullable": true
+                }
+              }
+            }
+          },
+          "server_processing_time_s": {
+            "type": "number"
+          },
+          "server_memory_delta_mb": {
+            "type": "number"
+          },
+          "server_peak_memory_mb": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    {
+      "id": "server.crawlJobs.create",
+      "host": "server",
+      "method": "POST",
+      "path": "/crawl/job",
+      "tag": "server",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "urls": {
+            "items": {
+              "type": "string",
+              "maxLength": 2083,
+              "minLength": 1,
+              "format": "uri"
+            },
+            "type": "array"
+          },
+          "browser_config": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "crawler_config": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "webhook_config": {
+            "properties": {
+              "webhook_url": {
+                "type": "string",
+                "maxLength": 2083,
+                "minLength": 1,
+                "format": "uri"
+              },
+              "webhook_data_in_payload": {
+                "type": "boolean"
+              },
+              "webhook_headers": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object",
+                "nullable": true
+              }
+            },
+            "type": "object",
+            "required": ["webhook_url"],
+            "description": "Configuration for webhook notifications.",
+            "nullable": true
+          }
+        },
+        "required": ["urls"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "server.crawlJobs.get",
+      "host": "server",
+      "method": "GET",
+      "path": "/crawl/job/{task_id}",
+      "tag": "server",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "x-corsair-in": "path",
+            "minLength": 1
+          }
+        },
+        "required": ["task_id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "description": "processing, completed or failed."
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "result": {
+            "description": "The crawl result once completed."
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      }
+    },
+    {
+      "id": "server.crawlStream",
+      "host": "server",
+      "method": "POST",
+      "path": "/crawl/stream",
+      "tag": "server",
+      "request": "json",
+      "response": "ndjson",
+      "input": {
+        "type": "object",
+        "properties": {
+          "urls": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 100,
+            "minItems": 1
+          },
+          "browser_config": {
+            "additionalProperties": true,
+            "type": "object",
+            "nullable": true
+          },
+          "crawler_config": {
+            "additionalProperties": true,
+            "type": "object",
+            "nullable": true
+          },
+          "crawler_configs": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "nullable": true,
+            "description": "List of per-URL CrawlerRunConfig dicts for arun_many(). When provided, each config can include a 'url_matcher' pattern to match against specific URLs. Takes precedence over crawler_config."
+          },
+          "hooks": {
+            "properties": {
+              "hooks": {
+                "items": {
+                  "properties": {
+                    "action": {
+                      "type": "string",
+                      "description": "One of the registered hook actions"
+                    },
+                    "params": {
+                      "additionalProperties": true,
+                      "type": "object",
+                      "description": "Action parameters"
+                    }
+                  },
+                  "type": "object",
+                  "required": ["action"],
+                  "description": "A single declarative hook: a fixed action plus schema-validated params. Arbitrary Python (the old `code` map) is no longer accepted - it was an exec()-based RCE surface. Available actions are enumerated by GET /hooks/info and validated server-side by hook_registry.py."
+                },
+                "type": "array",
+                "maxItems": 10,
+                "description": "Declarative hook specs (action + params), max 10"
+              },
+              "timeout": {
+                "type": "integer",
+                "maximum": 120.0,
+                "minimum": 1.0,
+                "description": "Timeout in seconds for each hook execution"
+              },
+              "code": {
+                "nullable": true,
+                "description": "REMOVED in 0.9.0: inline hook code is accepted for compatibility but never executed"
+              }
+            },
+            "type": "object",
+            "description": "Optional user-provided hook functions",
+            "nullable": true
+          }
+        },
+        "required": ["urls"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "server.executeJs",
+      "host": "server",
+      "method": "POST",
+      "path": "/execute_js",
+      "tag": "server",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "scripts": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "description": "List of separated JavaScript snippets to execute"
+          }
+        },
+        "required": ["url", "scripts"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "server.health",
+      "host": "server",
+      "method": "GET",
+      "path": "/health",
+      "tag": "server",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {}
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "number"
+          },
+          "version": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "server.hooks",
+      "host": "server",
+      "method": "GET",
+      "path": "/hooks/info",
+      "tag": "server",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {}
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "server.html",
+      "host": "server",
+      "method": "POST",
+      "path": "/html",
+      "tag": "server",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": ["url"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "html": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    {
+      "id": "server.llm",
+      "host": "server",
+      "method": "GET",
+      "path": "/llm/{url}",
+      "tag": "server",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "x-corsair-in": "path",
+            "minLength": 1,
+            "description": "The page URL (https://...)."
+          },
+          "q": {
+            "type": "string",
+            "x-corsair-in": "query"
+          },
+          "provider": {
+            "type": "string",
+            "nullable": true,
+            "description": "LLM provider override, e.g. 'openai/gpt-6-luna'",
+            "x-corsair-in": "query"
+          },
+          "temperature": {
+            "type": "number",
+            "nullable": true,
+            "description": "LLM temperature override",
+            "x-corsair-in": "query"
+          }
+        },
+        "required": ["url", "q"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "server.llmJobs.create",
+      "host": "server",
+      "method": "POST",
+      "path": "/llm/job",
+      "tag": "server",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "maxLength": 2083,
+            "minLength": 1,
+            "format": "uri"
+          },
+          "q": {
+            "type": "string"
+          },
+          "schema": {
+            "type": "string",
+            "nullable": true
+          },
+          "cache": {
+            "type": "boolean"
+          },
+          "provider": {
+            "type": "string",
+            "nullable": true
+          },
+          "webhook_config": {
+            "properties": {
+              "webhook_url": {
+                "type": "string",
+                "maxLength": 2083,
+                "minLength": 1,
+                "format": "uri"
+              },
+              "webhook_data_in_payload": {
+                "type": "boolean"
+              },
+              "webhook_headers": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object",
+                "nullable": true
+              }
+            },
+            "type": "object",
+            "required": ["webhook_url"],
+            "description": "Configuration for webhook notifications.",
+            "nullable": true
+          },
+          "temperature": {
+            "type": "number",
+            "nullable": true
+          }
+        },
+        "required": ["url", "q"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "id": "server.llmJobs.get",
+      "host": "server",
+      "method": "GET",
+      "path": "/llm/job/{task_id}",
+      "tag": "server",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "x-corsair-in": "path",
+            "minLength": 1
+          }
+        },
+        "required": ["task_id"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "description": "processing, completed or failed."
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "result": {
+            "description": "The extraction once completed."
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      }
+    },
+    {
+      "id": "server.markdown",
+      "host": "server",
+      "method": "POST",
+      "path": "/md",
+      "tag": "server",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "Absolute http/https URL to fetch"
+          },
+          "f": {
+            "type": "string",
+            "enum": ["raw", "fit", "bm25", "llm"]
+          },
+          "q": {
+            "type": "string",
+            "nullable": true,
+            "description": "Query string used by BM25/LLM filters"
+          },
+          "c": {
+            "type": "string",
+            "nullable": true,
+            "description": "Cache‑bust / revision counter"
+          },
+          "provider": {
+            "type": "string",
+            "nullable": true,
+            "description": "LLM provider override (e.g., 'anthropic/claude-3-opus')"
+          },
+          "temperature": {
+            "type": "number",
+            "nullable": true,
+            "description": "LLM temperature override (0.0-2.0)"
+          }
+        },
+        "required": ["url"]
+      },
+      "output": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "filter": {
+            "type": "string"
+          },
+          "query": {
+            "type": "string",
+            "nullable": true
+          },
+          "cache": {
+            "type": "string"
+          },
+          "markdown": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    {
+      "id": "server.mcpSchema",
+      "host": "server",
+      "method": "GET",
+      "path": "/mcp/schema",
+      "tag": "server",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {}
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "server.metrics",
+      "host": "server",
+      "method": "GET",
+      "path": "/metrics",
+      "tag": "server",
+      "request": "none",
+      "response": "text",
+      "input": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "id": "server.monitor.browsers",
+      "host": "server",
+      "method": "GET",
+      "path": "/monitor/browsers",
+      "tag": "server",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {}
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "server.monitor.cleanup",
+      "host": "server",
+      "method": "POST",
+      "path": "/monitor/actions/cleanup",
+      "tag": "server",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {}
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "server.monitor.endpointStats",
+      "host": "server",
+      "method": "GET",
+      "path": "/monitor/endpoints/stats",
+      "tag": "server",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {}
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "server.monitor.errorLog",
+      "host": "server",
+      "method": "GET",
+      "path": "/monitor/logs/errors",
+      "tag": "server",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "server.monitor.health",
+      "host": "server",
+      "method": "GET",
+      "path": "/monitor/health",
+      "tag": "server",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {}
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "server.monitor.janitorLog",
+      "host": "server",
+      "method": "GET",
+      "path": "/monitor/logs/janitor",
+      "tag": "server",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "server.monitor.killBrowser",
+      "host": "server",
+      "method": "POST",
+      "path": "/monitor/actions/kill_browser",
+      "tag": "server",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "sig": {
+            "type": "string"
+          }
+        },
+        "required": ["sig"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "server.monitor.requests",
+      "host": "server",
+      "method": "GET",
+      "path": "/monitor/requests",
+      "tag": "server",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "x-corsair-in": "query"
+          },
+          "limit": {
+            "type": "integer",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "server.monitor.resetStats",
+      "host": "server",
+      "method": "POST",
+      "path": "/monitor/stats/reset",
+      "tag": "server",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {}
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "server.monitor.restartBrowser",
+      "host": "server",
+      "method": "POST",
+      "path": "/monitor/actions/restart_browser",
+      "tag": "server",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "sig": {
+            "type": "string"
+          }
+        },
+        "required": ["sig"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "server.monitor.timeline",
+      "host": "server",
+      "method": "GET",
+      "path": "/monitor/timeline",
+      "tag": "server",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "metric": {
+            "type": "string",
+            "x-corsair-in": "query"
+          },
+          "window": {
+            "type": "string",
+            "x-corsair-in": "query"
+          }
+        }
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "server.pdf",
+      "host": "server",
+      "method": "POST",
+      "path": "/pdf",
+      "tag": "server",
+      "request": "json",
+      "response": "base64:pdf:application/pdf",
+      "input": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "nullable": true,
+            "description": "REMOVED in 0.9.0 and ignored - no file is written. Results are stored server-side; fetch via GET /artifacts/{artifact_id}."
+          }
+        },
+        "required": ["url"]
+      }
+    },
+    {
+      "id": "server.schema",
+      "host": "server",
+      "method": "GET",
+      "path": "/schema",
+      "tag": "server",
+      "request": "none",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {}
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    },
+    {
+      "id": "server.screenshot",
+      "host": "server",
+      "method": "POST",
+      "path": "/screenshot",
+      "tag": "server",
+      "request": "json",
+      "response": "base64:screenshot:image/png",
+      "input": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "screenshot_wait_for": {
+            "type": "number",
+            "nullable": true
+          },
+          "wait_for_images": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "output_path": {
+            "type": "string",
+            "nullable": true,
+            "description": "REMOVED in 0.9.0 and ignored - no file is written. Results are stored server-side; fetch via GET /artifacts/{artifact_id}."
+          }
+        },
+        "required": ["url"]
+      }
+    },
+    {
+      "id": "server.token",
+      "host": "server",
+      "method": "POST",
+      "path": "/token",
+      "tag": "server",
+      "request": "json",
+      "response": "json",
+      "input": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "api_token": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": ["email"]
+      },
+      "output": {
+        "type": "object",
+        "additionalProperties": {}
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "id": "jobFinished",
+      "summary": "A crawl or LLM job on the self-hosted server completed or failed",
+      "eventTypes": ["crawl", "llm"],
+      "payload": {
+        "type": "object",
+        "description": "A job the self-hosted server finished (webhook_config on a crawl or LLM job).",
+        "properties": {
+          "task_id": {
+            "type": "string"
+          },
+          "task_type": {
+            "type": "string",
+            "description": "crawl or llm."
+          },
+          "status": {
+            "type": "string",
+            "description": "completed or failed."
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "error": {
+            "type": "string",
+            "description": "Why it failed."
+          },
+          "data": {
+            "description": "The results, when webhook_data_in_payload was true."
+          }
+        }
+      }
+    }
+  ],
+  "definitions": {}
+}

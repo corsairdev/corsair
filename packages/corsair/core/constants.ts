@@ -193,6 +193,7 @@ export const BaseProviders = [
 	'cosmic',
 	'countdownapi',
 	'craftmypdf',
+	'crawl4ai',
 	'crowterminal',
 	'currencyscoop',
 	'currentsapi',
@@ -991,6 +992,7 @@ export const ProviderDisplayNames = {
 	cosmic: 'Cosmic',
 	countdownapi: 'Countdown API',
 	craftmypdf: 'CraftMyPDF',
+	crawl4ai: 'Crawl4AI',
 	crowterminal: 'CrowTerminal',
 	currencyscoop: 'CurrencyScoop',
 	currentsapi: 'CurrentsApi',
@@ -1796,6 +1798,7 @@ export type AllProviders =
 	| 'cosmic'
 	| 'countdownapi'
 	| 'craftmypdf'
+	| 'crawl4ai'
 	| 'crowterminal'
 	| 'currencyscoop'
 	| 'currentsapi'
