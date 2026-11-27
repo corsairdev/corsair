@@ -7,6 +7,7 @@ import { makeSteelRequest, STEEL_UPLOAD_MAX_BYTES } from '../client';
 import type { SteelContext } from '../index';
 import type { SteelOperationDefinition } from './manifest';
 import {
+	customerMapKeys,
 	getSteelInputSchema,
 	getSteelOutputSchema,
 	MASKED_KEY,
@@ -338,6 +339,8 @@ export function createSteelOperation<Id extends SteelOperationId>(
 				? { responseType: 'binary' as const }
 				: {}),
 			...(operation.timeoutMs ? { timeoutMs: operation.timeoutMs } : {}),
+			...(operation.singleAttempt ? { singleAttempt: true } : {}),
+			sensitive: customerMapKeys(operation.input, parsedInput.data),
 		};
 		// Fields the vendor sets itself never go back, even when the caller passes an object it read.
 		for (const name of operation.serverSetFields ?? []) delete valid[name];
@@ -387,6 +390,13 @@ export function createSteelOperation<Id extends SteelOperationId>(
 			};
 			const binary = await makeSteelRequest(ctx, request);
 			if (!isBinaryResponse(binary)) throw new Error('Steel returned no body');
+			// A text route answers text; an HTML page is a proxy or login page.
+			const type = (binary.contentType ?? '').toLowerCase();
+			if (!type.startsWith('text/') || type.startsWith('text/html')) {
+				throw new Error(
+					`Steel ${id} answered with ${type || 'no content type'}, not text`,
+				);
+			}
 			response = {
 				text: new TextDecoder().decode(binary.bytes),
 				contentType: binary.contentType ?? null,
