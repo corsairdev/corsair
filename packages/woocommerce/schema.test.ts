@@ -188,6 +188,8 @@ describe('risk levels', () => {
 			'settings.batch',
 			'systemStatus.tools.run',
 			'paymentGateways.update',
+			'orders.notes.create',
+			'products.variations.generate',
 		]) {
 			expect(risk(id)).toBe('destructive');
 		}

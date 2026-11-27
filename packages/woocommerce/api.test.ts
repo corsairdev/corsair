@@ -89,10 +89,11 @@ describeIfLive('woocommerce live', () => {
 				return out;
 			} catch (error) {
 				const message = error instanceof Error ? error.message : String(error);
-				if (expected?.test(message)) {
-					results[id] = { ok: true, expected: message.slice(0, 160) };
-				} else if (!results[id]?.ok) {
+				if (!expected?.test(message)) {
+					// Any unexpected failure is kept, whatever ran before or after.
 					results[id] = { ok: false, error: message.slice(0, 300) };
+				} else if (results[id]?.ok !== false) {
+					results[id] = { ok: true, expected: message.slice(0, 160) };
 				}
 				return undefined;
 			}
@@ -591,6 +592,19 @@ describeIfLive('woocommerce live', () => {
 			}
 			console.log(
 				`WooCommerce webhook deliveries: ${deliveries.length} ${JSON.stringify(seen)}`,
+			);
+			// With a listener configured, every webhook must have seen a delivery.
+			const routed = Object.keys(results).filter((k) =>
+				k.startsWith('webhook:'),
+			);
+			expect(routed).toEqual(
+				expect.arrayContaining([
+					'webhook:action',
+					'webhook:coupon',
+					'webhook:customer',
+					'webhook:order',
+					'webhook:product',
+				]),
 			);
 		}
 		await testDb.cleanup?.();

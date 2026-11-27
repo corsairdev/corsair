@@ -578,8 +578,9 @@ export const woocommerceEndpointMeta = {
 		description: 'List orders, one page at a time, with search and filters',
 	},
 	'orders.notes.create': {
-		riskLevel: 'write',
-		description: 'Create a order note for a order',
+		riskLevel: 'destructive',
+		description:
+			'Add a note to an order; with customer_note true WooCommerce emails it to the customer',
 	},
 	'orders.notes.delete': {
 		riskLevel: 'destructive',
@@ -894,9 +895,9 @@ export const woocommerceEndpointMeta = {
 		description: 'Delete a variation; without force true it goes to the trash',
 	},
 	'products.variations.generate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			"Create every missing variation from a variable product's attributes",
+			"Create every missing variation from a variable product's attributes; with delete true it also permanently deletes variations that no longer match",
 	},
 	'products.variations.get': {
 		riskLevel: 'read',

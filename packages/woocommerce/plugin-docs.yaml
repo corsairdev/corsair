@@ -26,7 +26,9 @@ overviewNote: |
   - **Batch** routes take `{ create, update, delete }` with up to 100 records
   in all.
   - **Risk.** Every delete is `destructive`, as are refunds (the gateway
-  returns the money unless `api_refund: false`), sending order emails, batch
+  returns the money unless `api_refund: false`), sending order emails and
+  order notes (a `customer_note` is emailed), generating variations (with
+  `delete: true` it removes the ones that no longer match), batch
   calls, running system status tools, replacing a zone's locations and
   changing a payment gateway. Creating an order takes no payment.
   - **Webhooks.** Create one with `webhooks.create` (topic `order.created`,

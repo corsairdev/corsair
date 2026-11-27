@@ -39,7 +39,7 @@ pnpm add @corsair-dev/woocommerce
 | `orders.emailTemplates` | `woocommerce.api.orders.emailTemplates` | `read` | List the emails that can be sent for an order |
 | `orders.get` | `woocommerce.api.orders.get` | `read` | Get one order |
 | `orders.list` | `woocommerce.api.orders.list` | `read` | List orders, one page at a time, with search and filters |
-| `orders.notes.create` | `woocommerce.api.orders.notes.create` | `write` | Create a order note for a order |
+| `orders.notes.create` | `woocommerce.api.orders.notes.create` | `destructive` | Add a note to an order; with customer_note true WooCommerce emails it to the customer |
 | `orders.notes.delete` | `woocommerce.api.orders.notes.delete` | `destructive` | Delete a order note (WooCommerce needs force true) |
 | `orders.notes.get` | `woocommerce.api.orders.notes.get` | `read` | Get one order note |
 | `orders.notes.list` | `woocommerce.api.orders.notes.list` | `read` | List the order notes of a order |
@@ -113,7 +113,7 @@ pnpm add @corsair-dev/woocommerce
 | `products.variations.batch` | `woocommerce.api.products.variations.batch` | `destructive` | Create, update and delete up to 100 variations in one call |
 | `products.variations.create` | `woocommerce.api.products.variations.create` | `write` | Create a variation for a product |
 | `products.variations.delete` | `woocommerce.api.products.variations.delete` | `destructive` | Delete a variation; without force true it goes to the trash |
-| `products.variations.generate` | `woocommerce.api.products.variations.generate` | `write` | Create every missing variation from a variable product's attributes |
+| `products.variations.generate` | `woocommerce.api.products.variations.generate` | `destructive` | Create every missing variation from a variable product's attributes; with delete true it also permanently deletes variations that no longer match |
 | `products.variations.get` | `woocommerce.api.products.variations.get` | `read` | Get one variation |
 | `products.variations.list` | `woocommerce.api.products.variations.list` | `read` | List the variations of a product, one page at a time, with search and filters |
 | `products.variations.update` | `woocommerce.api.products.variations.update` | `write` | Update a variation: only the fields you pass change |
