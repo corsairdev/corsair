@@ -36,6 +36,9 @@ import { SegmentSchema } from './schema';
 export type SegmentPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	// EU workspaces answer every call with 403 from the US host, so the base
+	// URL must be overridable: pass https://eu1.api.segmentapis.com.
+	baseUrl?: string;
 	hooks?: InternalSegmentPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof segmentEndpointsNested>;

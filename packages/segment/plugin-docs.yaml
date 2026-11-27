@@ -7,8 +7,8 @@ overviewNote: >
   credential: a Public API token. Create it in the Segment app under
   Settings, Access Management, Tokens: choose the Public API token type,
   not the legacy Config API token. Tokens are workspace-scoped; an EU
-  workspace lives on eu1.api.segmentapis.com, which this plugin does not
-  send to (US host only).
+  workspace lives on eu1.api.segmentapis.com, so pass the baseUrl option
+  set to https://eu1.api.segmentapis.com (the default base is the US host).
 
   Things to know before you call:
 

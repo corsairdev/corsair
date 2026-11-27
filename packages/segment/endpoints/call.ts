@@ -23,7 +23,11 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const raw = await makeSegmentRequest(ctx.key, toRequest(parsed));
+	const raw = await makeSegmentRequest(
+		ctx.key,
+		toRequest(parsed),
+		ctx.options?.baseUrl,
+	);
 	const result = operation.output.parse(raw);
 
 	await logEventFromContext(

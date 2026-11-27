@@ -18,7 +18,6 @@ const TOKEN = 'sst-secret-token';
 let fetchMock: jest.SpyInstance;
 
 // unknown: response bodies are arbitrary JSON or text.
-// unknown: response bodies are arbitrary JSON or text.
 function respond(
 	body: unknown,
 	status: number,
@@ -64,6 +63,19 @@ describe('makeSegmentRequest', () => {
 		expect(init.method).toBe('GET');
 		const headers = new Headers(init.headers);
 		expect(headers.get('authorization')).toBe(`Bearer ${TOKEN}`);
+	});
+
+	it('sends the request to a caller-supplied base URL', async () => {
+		respond(sourceEnvelope, 200);
+
+		await makeSegmentRequest(
+			TOKEN,
+			{ method: 'GET', path: '/sources/abc' },
+			'https://eu1.api.segmentapis.com',
+		);
+
+		const [url] = fetchMock.mock.calls[0] as [string, RequestInit];
+		expect(url).toBe('https://eu1.api.segmentapis.com/sources/abc');
 	});
 
 	it('serializes pagination as dot-style query params', async () => {

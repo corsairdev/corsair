@@ -25,7 +25,6 @@ async function createClient() {
 let fetchMock: jest.SpyInstance;
 
 // unknown: response bodies are arbitrary JSON.
-// unknown: response bodies are arbitrary JSON.
 function respond(
 	body: unknown,
 	status = 200,
@@ -120,6 +119,21 @@ describe('rate-limit retries through createCorsair', () => {
 			).rejects.toMatchObject({ status: 500 });
 			// Exactly one attempt: a replayed credential mint is not safe.
 			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('retries a read whose connection dropped, then succeeds', async () => {
+		const { corsair, testDb } = await createClient();
+		try {
+			fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+			respond(paginated([SOURCE], 'sources'));
+
+			const result = await corsair.segment.api.sources.list({ count: 5 });
+
+			expect(result.data.sources).toHaveLength(1);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();
 		}

@@ -1,5 +1,6 @@
 import type { EndpointJob } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import type { SegmentKeyBuilderContext } from './index';
 import { segment, segmentEndpointSchemas } from './index';
 
 // The key builder only reads authType and keys; a full AccountKeyManager
@@ -18,7 +19,10 @@ function buildKey(
 	ctx: ReturnType<typeof keyContext>,
 ) {
 	// The fake context is not a full KeyBuilderContext.
-	return plugin.keyBuilder?.(ctx as never, 'endpoint');
+	return plugin.keyBuilder?.(
+		ctx as unknown as SegmentKeyBuilderContext,
+		'endpoint',
+	);
 }
 
 const operations = [
@@ -249,7 +253,10 @@ describe('segment key builder', () => {
 
 	it('refuses webhook key requests', async () => {
 		await expect(
-			segment().keyBuilder?.(keyContext('stored-token') as never, 'webhook'),
+			segment().keyBuilder?.(
+				keyContext('stored-token') as unknown as SegmentKeyBuilderContext,
+				'webhook',
+			),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 });

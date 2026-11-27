@@ -39,6 +39,19 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
+	// A dropped connection (reset, DNS, abort) never reached Segment, so
+	// replaying a read is safe. Writes with a transport failure stay on
+	// DEFAULT: a retried delete or regulation create may have gone through.
+	TRANSPORT_ERROR: {
+		match: (error: Error) =>
+			error instanceof SegmentAPIError &&
+			error.method === 'GET' &&
+			error.status === undefined,
+		handler: async () => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
+	},
 	// Segment grants about 3600 requests per short window and does not
 	// document 5xx as transient, and writes here (deletes, regulation creates)
 	// are not safe to replay blind. Only reads get a bounded retry.

@@ -116,9 +116,10 @@ export function paginationQuery(count?: number, cursor?: string): SegmentQuery {
 export async function makeSegmentRequest(
 	apiKey: string,
 	{ method, path, query, body }: SegmentRequest,
+	baseUrl?: string,
 ): Promise<unknown> {
 	const config: OpenAPIConfig = {
-		BASE: SEGMENT_API_BASE,
+		BASE: baseUrl ?? SEGMENT_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
