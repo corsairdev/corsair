@@ -101,6 +101,41 @@ export function parseNdjson(id: string, text: string): unknown[] {
 	return items;
 }
 
+/**
+ * Whether a server.crawl input asks for a streamed answer: `stream: true` in
+ * crawler_config, bare or in its serialized form (`{ type: "CrawlerRunConfig",
+ * params: { stream: true } }`, which the server loads the same way).
+ */
+// `unknown` because this reads the caller's input before it is narrowed.
+export function streamsCrawl(input: unknown): boolean {
+	const config = (input as { crawler_config?: unknown } | undefined)
+		?.crawler_config;
+	if (typeof config !== 'object' || config === null) return false;
+	const fields = config as {
+		stream?: unknown;
+		type?: unknown;
+		params?: unknown;
+	};
+	if (fields.stream === true) return true;
+	return (
+		typeof fields.type === 'string' &&
+		typeof fields.params === 'object' &&
+		fields.params !== null &&
+		(fields.params as { stream?: unknown }).stream === true
+	);
+}
+
+// `unknown` because this reads the caller's input before it is narrowed.
+function isHttpUrl(value: unknown): boolean {
+	if (typeof value !== 'string') return false;
+	try {
+		const { protocol } = new URL(value);
+		return protocol === 'http:' || protocol === 'https:';
+	} catch {
+		return false;
+	}
+}
+
 const EXTENSIONS: Record<string, string> = {
 	'image/png': 'png',
 	'application/pdf': 'pdf',
@@ -123,23 +158,31 @@ export function createCrawl4aiOperation<Id extends Crawl4aiOperationId>(
 				`Invalid input for crawl4ai ${id}: ${describeIssues(id, parsedInput.error.issues, 'input', 5)}`,
 			);
 		}
-		// `server.crawl` with crawler_config.stream answers NDJSON, which is
-		// what server.crawlStream reads; a watch made through the generic tool
-		// runner would be a write filed as a read.
-		const config = (
-			input as { crawler_config?: { stream?: unknown } } | undefined
-		)?.crawler_config;
-		if (id === 'server.crawl' && config?.stream === true) {
+		// `server.crawl` with a streaming crawler_config answers NDJSON, which
+		// is what server.crawlStream reads; a watch made through the generic
+		// tool runner would be a write filed as a read, and a batch through it
+		// can answer NDJSON that only cloud.batch reads.
+		if (id === 'server.crawl' && streamsCrawl(input)) {
 			throw new Error(
 				'Invalid input for crawl4ai server.crawl: crawler_config.stream: use server.crawlStream for a streamed crawl',
 			);
 		}
-		if (
-			id === 'cloud.tools.run' &&
-			(input as { id?: unknown } | undefined)?.id === 'watch'
-		) {
+		const toolId = (input as { id?: unknown } | undefined)?.id;
+		if (id === 'cloud.tools.run' && toolId === 'watch') {
 			throw new Error(
 				'Invalid input for crawl4ai cloud.tools.run: id: use cloud.watch to create a watch',
+			);
+		}
+		if (id === 'cloud.tools.run' && toolId === 'batch') {
+			throw new Error(
+				'Invalid input for crawl4ai cloud.tools.run: id: use cloud.batch to run a batch',
+			);
+		}
+		// The Cloud scrapes public web pages only.
+		const pageUrl = (input as { url?: unknown } | undefined)?.url;
+		if (id === 'cloud.scrape' && !isHttpUrl(pageUrl)) {
+			throw new Error(
+				'Invalid input for crawl4ai cloud.scrape: url: must be an http or https URL',
 			);
 		}
 		// Send what was validated, not the caller's object.
@@ -235,7 +278,10 @@ export function createCrawl4aiOperation<Id extends Crawl4aiOperationId>(
 					typeof parsed === 'object' && parsed !== null
 						? (parsed as Record<string, unknown>)[field]
 						: undefined;
-				if (typeof encoded !== 'string' || encoded.length === 0) {
+				const bytes =
+					typeof encoded === 'string' ? Buffer.from(encoded, 'base64') : null;
+				// Base64 decoding skips whitespace, so `" "` decodes to no bytes.
+				if (!bytes || bytes.byteLength === 0) {
 					// The server answers success false and an error when the page
 					// failed; its text can quote the page URL, so it stays out.
 					throw new Error(`Crawl4AI ${id} answered without a ${field}`);
@@ -245,7 +291,7 @@ export function createCrawl4aiOperation<Id extends Crawl4aiOperationId>(
 						? (parsed as Record<string, unknown>).artifact_id
 						: undefined;
 				response = {
-					...toFileOutput(Buffer.from(encoded, 'base64'), contentType, {
+					...toFileOutput(bytes, contentType, {
 						filename: `crawl4ai-${field}.${EXTENSIONS[contentType] ?? 'bin'}`,
 					}),
 					// server.artifacts.get reads the same file back later.

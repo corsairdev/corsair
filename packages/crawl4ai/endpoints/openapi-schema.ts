@@ -315,9 +315,13 @@ function schemaFromOpenApi(
 		}
 		// A response string may arrive as a number (an id, a count): Crawl4AI's
 		// specs type some numeric fields as strings. The generated output types
-		// say `string | number` for the same fields.
+		// say `string | number` for the same fields. A string the caller sends
+		// back (a job's task_id, a page cursor) is marked x-corsair-exact and
+		// stays a string, so it fits the request that takes it.
 		schema =
-			mode === 'response' ? z.union([stringSchema, z.number()]) : stringSchema;
+			mode === 'response' && value['x-corsair-exact'] !== true
+				? z.union([stringSchema, z.number()])
+				: stringSchema;
 	} else if (type === 'integer' || type === 'number') {
 		let numberSchema = z.number();
 		// A cursor or count that comes back fractional would be refused when sent back.

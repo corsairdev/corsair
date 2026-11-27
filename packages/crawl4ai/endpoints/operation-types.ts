@@ -572,7 +572,7 @@ export type Crawl4aiOperationOutputs = {
 			[key: string]: unknown;
 		}> | null;
 		/** The cursor for the next page; null on the last page. */
-		next_cursor?: string | number | null;
+		next_cursor?: string | null;
 		[key: string]: unknown;
 	};
 	'cloud.extract': {
@@ -809,11 +809,11 @@ export type Crawl4aiOperationOutputs = {
 		[key: string]: unknown;
 	};
 	'server.crawlJobs.create': {
-		task_id?: string | number | null;
+		task_id?: string | null;
 		[key: string]: unknown;
 	};
 	'server.crawlJobs.get': {
-		task_id?: string | number | null;
+		task_id?: string | null;
 		/** processing, completed or failed. */
 		status?: string | number | null;
 		created_at?: string | number | null;
@@ -843,11 +843,11 @@ export type Crawl4aiOperationOutputs = {
 	};
 	'server.llm': Record<string, Crawl4aiJsonValue>;
 	'server.llmJobs.create': {
-		task_id?: string | number | null;
+		task_id?: string | null;
 		[key: string]: unknown;
 	};
 	'server.llmJobs.get': {
-		task_id?: string | number | null;
+		task_id?: string | null;
 		/** processing, completed or failed. */
 		status?: string | number | null;
 		created_at?: string | number | null;

@@ -185,7 +185,7 @@ await corsair.crawl4ai.api.cloud.billing.topups({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `topups` | `object[] \| null` | No | — |
-| `next_cursor` | `string \| number \| null \| null` | No | The cursor for the next page; null on the last page. |
+| `next_cursor` | `string \| null \| null` | No | The cursor for the next page; null on the last page. |
 
 <AccordionGroup>
 <Accordion title="topups full type">
@@ -1497,7 +1497,7 @@ await corsair.crawl4ai.api.server.crawlJobs.create({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `task_id` | `string \| number \| null` | No | — |
+| `task_id` | `string \| null` | No | — |
 
 
 
@@ -1527,7 +1527,7 @@ await corsair.crawl4ai.api.server.crawlJobs.get({ task_id: 'crawl_a1b2c3d4' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `task_id` | `string \| number \| null` | No | — |
+| `task_id` | `string \| null` | No | — |
 | `status` | `string \| number \| null` | No | processing, completed or failed. |
 | `created_at` | `string \| number \| null` | No | — |
 | `url` | `string \| number \| null` | No | — |
@@ -1794,7 +1794,7 @@ await corsair.crawl4ai.api.server.llmJobs.create({ url: 'https://example.com', q
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `task_id` | `string \| number \| null` | No | — |
+| `task_id` | `string \| null` | No | — |
 
 
 
@@ -1824,7 +1824,7 @@ await corsair.crawl4ai.api.server.llmJobs.get({ task_id: 'crawl_a1b2c3d4' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `task_id` | `string \| number \| null` | No | — |
+| `task_id` | `string \| null` | No | — |
 | `status` | `string \| number \| null` | No | processing, completed or failed. |
 | `created_at` | `string \| number \| null` | No | — |
 | `url` | `string \| number \| null` | No | — |

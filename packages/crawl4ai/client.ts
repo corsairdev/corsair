@@ -98,8 +98,9 @@ export function normalizeServerUrl(raw: string | undefined): string {
 export type Crawl4aiCallContext = {
 	/** The server's API token or the Cloud API key. */
 	key: string;
-	options: { serverUrl?: string };
+	options: { serverUrl?: string; key?: string };
 	keys?: {
+		get_api_key?: () => Promise<string | null | undefined>;
 		get_server_url?: () => Promise<string | null | undefined>;
 	};
 };
@@ -126,6 +127,11 @@ export async function resolveServerUrl(
  * The Cloud URL, when the call's key is a Cloud key. An account with a
  * server_url (or a serverUrl option) holds its server's token, which must
  * never go to the Cloud: such an account needs its own Cloud connection.
+ *
+ * The key was read before this call started, and core reads each stored
+ * field on its own. So after server_url is seen to be absent, a stored key is
+ * read again: a different key means the account was reconnected in between,
+ * and the call's key may be a server token from before, so nothing is sent.
  */
 async function cloudUrlFor(ctx: Crawl4aiCallContext): Promise<string> {
 	const getter = ctx.keys?.get_server_url;
@@ -138,6 +144,17 @@ async function cloudUrlFor(ctx: Crawl4aiCallContext): Promise<string> {
 			'api_key',
 			'[crawl4ai] this account holds a self-hosted server token, which is not sent to Crawl4AI Cloud: connect a Cloud API key (an account without server_url) for cloud.* operations',
 		);
+	}
+	const keyGetter = ctx.keys?.get_api_key;
+	if (!ctx.options?.key && keyGetter) {
+		const current = await tryGetStoredKey(keyGetter);
+		if (current !== ctx.key) {
+			throw new AuthMissingError(
+				'crawl4ai',
+				'api_key',
+				'[crawl4ai] the account was reconnected during this call; nothing was sent: try again',
+			);
+		}
 	}
 	return CRAWL4AI_CLOUD_URL;
 }
@@ -447,7 +464,12 @@ function scrubSent(value: unknown, sent: SentString[], depth = 0): unknown {
 		// `unknown` because error detail items have no fixed shape.
 		const result: Record<string, unknown> = {};
 		for (const [key, inner] of Object.entries(value)) {
-			result[key] = scrubSent(inner, sent, depth + 1);
+			// A key can quote a sent value too (`{ "<email>": "invalid" }`).
+			result[scrubSent(key, sent, depth + 1) as string] = scrubSent(
+				inner,
+				sent,
+				depth + 1,
+			);
 		}
 		return result;
 	}

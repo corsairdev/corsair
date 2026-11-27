@@ -240,7 +240,8 @@
           },
           "next_cursor": {
             "type": ["string", "null"],
-            "description": "The cursor for the next page; null on the last page."
+            "description": "The cursor for the next page; null on the last page.",
+            "x-corsair-exact": true
           }
         }
       }
@@ -1940,7 +1941,8 @@
         "type": "object",
         "properties": {
           "task_id": {
-            "type": "string"
+            "type": "string",
+            "x-corsair-exact": true
           }
         }
       }
@@ -1968,7 +1970,8 @@
         "type": "object",
         "properties": {
           "task_id": {
-            "type": "string"
+            "type": "string",
+            "x-corsair-exact": true
           },
           "status": {
             "type": "string",
@@ -2286,7 +2289,8 @@
         "type": "object",
         "properties": {
           "task_id": {
-            "type": "string"
+            "type": "string",
+            "x-corsair-exact": true
           }
         }
       }
@@ -2314,7 +2318,8 @@
         "type": "object",
         "properties": {
           "task_id": {
-            "type": "string"
+            "type": "string",
+            "x-corsair-exact": true
           },
           "status": {
             "type": "string",

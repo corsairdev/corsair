@@ -272,3 +272,101 @@ describe('errors', () => {
 		).toBe('Crawl4AI 422: body.urls: Field required');
 	});
 });
+
+describe('review round 2', () => {
+	// A Cloud account read from storage: no serverUrl option, stored getters.
+	function cloudCtx(storedKey: string | null): Crawl4aiContext {
+		return {
+			endpoints: {},
+			$getAccountId: () => Promise.resolve('test-account'),
+			key: 'sk_live_first',
+			options: {},
+			keys: {
+				get_server_url: () => Promise.resolve(null),
+				get_api_key: () => Promise.resolve(storedKey),
+			},
+			db: {},
+			// `unknown` because a test context fills only the fields the endpoints read.
+		} as unknown as Crawl4aiContext;
+	}
+
+	it('sends nothing to the Cloud when the stored key changed during the call', async () => {
+		reply(() => ({ status: 200, body: { pending: 0 } }));
+		await expect(
+			call('cloud.billing.balance', {}, cloudCtx('sk_live_second')),
+		).rejects.toMatchObject({
+			name: 'AuthMissingError',
+			message: expect.stringContaining('reconnected'),
+		});
+		expect(calls).toHaveLength(0);
+		await call('cloud.billing.balance', {}, cloudCtx('sk_live_first'));
+		expect(calls).toHaveLength(1);
+		expect(calls[0]?.headers.authorization).toBe('Bearer sk_live_first');
+	});
+
+	it('refuses a serialized streaming config, a batch through tools.run and a non-http scrape', async () => {
+		reply(() => ({ status: 200, body: { success: true, results: [] } }));
+		await expect(
+			call('server.crawl', {
+				urls: ['https://example.com'],
+				crawler_config: { type: 'CrawlerRunConfig', params: { stream: true } },
+			}),
+		).rejects.toThrow(/use server\.crawlStream/);
+		await expect(
+			call('cloud.tools.run', { id: 'batch', input: {} }, ctx('')),
+		).rejects.toThrow(/use cloud\.batch/);
+		await expect(
+			call('cloud.scrape', { url: 'ftp://example.com/page' }, ctx('')),
+		).rejects.toThrow(/http or https/);
+		expect(calls).toHaveLength(0);
+		// A serialized config without streaming still runs.
+		await call('server.crawl', {
+			urls: ['https://example.com'],
+			crawler_config: { type: 'CrawlerRunConfig', params: { stream: false } },
+		});
+		expect(calls).toHaveLength(1);
+	});
+
+	it('refuses a base64 file that decodes to no bytes', async () => {
+		reply(() => ({ status: 200, body: { success: true, pdf: ' ' } }));
+		await expect(
+			call('server.pdf', { url: 'https://example.com' }),
+		).rejects.toThrow(/^Crawl4AI server\.pdf answered without a pdf$/);
+	});
+
+	it('keeps task_id and next_cursor strings, so they can be sent back', async () => {
+		reply(() => ({ status: 200, body: { task_id: 'crawl_1' } }));
+		await expect(
+			call('server.crawlJobs.create', { urls: ['https://example.com'] }),
+		).resolves.toMatchObject({ task_id: 'crawl_1' });
+		reply(() => ({ status: 200, body: { task_id: 7 } }));
+		await expect(
+			call('server.crawlJobs.create', { urls: ['https://example.com'] }),
+		).rejects.toThrow(/did not match/);
+		reply(() => ({ status: 200, body: { topups: [], next_cursor: 5 } }));
+		await expect(call('cloud.billing.topups', {}, ctx(''))).rejects.toThrow(
+			/did not match/,
+		);
+		// Other response strings still take a number.
+		reply(() => ({ status: 200, body: { task_id: 'crawl_1', status: 3 } }));
+		await expect(
+			call('server.crawlJobs.get', { task_id: 'crawl_1' }),
+		).resolves.toMatchObject({ status: 3 });
+	});
+
+	it('redacts a sent value used as a key in an error body', async () => {
+		const page = 'https://private.example.com/report';
+		reply(() => ({
+			status: 400,
+			body: { error: 'bad_url', [page]: 'blocked' },
+		}));
+		const error = await call('cloud.scrape', { url: page }, ctx('')).catch(
+			(caught: unknown) => caught,
+		);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(JSON.stringify((error as ApiError).body)).not.toContain(
+			'private.example.com',
+		);
+		expect((error as ApiError).body).toMatchObject({ error: 'bad_url' });
+	});
+});
