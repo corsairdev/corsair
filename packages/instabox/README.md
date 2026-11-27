@@ -26,7 +26,7 @@ pnpm add @corsair-dev/instabox
 | `machines.createSnapshot` | `instabox.api.machines.createSnapshot` | `write` | Save a sandbox's system files and storage as a snapshot |
 | `machines.delete` | `instabox.api.machines.delete` | `destructive` | Delete a sandbox, its system files and its storage |
 | `machines.desktop.createLink` | `instabox.api.machines.desktop.createLink` | `destructive` | A short-lived link to watch (or use) the machine's desktop in a browser |
-| `machines.desktop.get` | `instabox.api.machines.desktop.get` | `read` | The state of a running machine's desktop; install or start it |
+| `machines.desktop.get` | `instabox.api.machines.desktop.get` | `write` | The state of a running machine's desktop; install or start it |
 | `machines.desktop.revokeLinks` | `instabox.api.machines.desktop.revokeLinks` | `destructive` | Revoke every desktop link of the machine and end their open sessions |
 | `machines.disk` | `instabox.api.machines.disk` | `read` | How full the running sandbox's disks are (/data and /), with a near-full warning |
 | `machines.exec` | `instabox.api.machines.exec` | `destructive` | Run a command in a running machine (cmd through bash -lc, or argv with no shell) and get exitCode, stdout and stderr |

@@ -1069,7 +1069,7 @@ await corsair.instabox.api.machines.desktop.createLink({ id: 'm_k3m7q2abx5wr4hj6
 
 The state of a running machine's desktop; install or start it
 
-**Risk:** `read`
+**Risk:** `write`
 
 ```ts
 await corsair.instabox.api.machines.desktop.get({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd' });
@@ -5501,7 +5501,7 @@ Export a sandbox's or a snapshot's /data
 **Risk:** `write`
 
 ```ts
-await corsair.instabox.api.orgs.exports.create({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd' });
+await corsair.instabox.api.orgs.exports.create({ id: 'org_4t7m1z' });
 ```
 
 **Input**
@@ -5547,7 +5547,7 @@ List what you can export from a workspace
 **Risk:** `read`
 
 ```ts
-await corsair.instabox.api.orgs.exports.list({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd' });
+await corsair.instabox.api.orgs.exports.list({ id: 'org_4t7m1z' });
 ```
 
 **Input**
@@ -5611,7 +5611,7 @@ An org you belong to, with its limits and this month's usage
 **Risk:** `read`
 
 ```ts
-await corsair.instabox.api.orgs.get({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd' });
+await corsair.instabox.api.orgs.get({ id: 'org_4t7m1z' });
 ```
 
 **Input**
@@ -5796,7 +5796,7 @@ One of the org's GitHub Actions jobs, with where its wait went and its branch, c
 **Risk:** `read`
 
 ```ts
-await corsair.instabox.api.orgs.github.jobs.get({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd', job: 1 });
+await corsair.instabox.api.orgs.github.jobs.get({ id: 'org_4t7m1z', job: 1 });
 ```
 
 **Input**
@@ -5864,7 +5864,7 @@ The org's GitHub Actions jobs run in CI boxes, with why a job waits or did not s
 **Risk:** `read`
 
 ```ts
-await corsair.instabox.api.orgs.github.jobs.list({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd' });
+await corsair.instabox.api.orgs.github.jobs.list({ id: 'org_4t7m1z' });
 ```
 
 **Input**
@@ -5972,7 +5972,7 @@ The org's GitHub Actions jobs of the last 7 days, today included, or of a time r
 **Risk:** `read`
 
 ```ts
-await corsair.instabox.api.orgs.github.stats({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd' });
+await corsair.instabox.api.orgs.github.stats({ id: 'org_4t7m1z' });
 ```
 
 **Input**
@@ -6084,7 +6084,7 @@ A paid org's invite code for people outside it. The owner and admins
 **Risk:** `read`
 
 ```ts
-await corsair.instabox.api.orgs.inviteCode.get({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd' });
+await corsair.instabox.api.orgs.inviteCode.get({ id: 'org_4t7m1z' });
 ```
 
 **Input**
@@ -6132,7 +6132,7 @@ Replace a paid workspace's invite code. The owner and admins
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.instabox.api.orgs.inviteCode.regenerate({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd' });
+await corsair.instabox.api.orgs.inviteCode.regenerate({ id: 'org_4t7m1z' });
 ```
 
 **Input**
@@ -6180,7 +6180,7 @@ Email an invite to join the org. The owner and admins
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.instabox.api.orgs.invites.create({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd', email: 'ops@example.com' });
+await corsair.instabox.api.orgs.invites.create({ id: 'org_4t7m1z', email: 'ops@example.com' });
 ```
 
 **Input**
@@ -6221,7 +6221,7 @@ An org's invites, newest first. The owner and admins
 **Risk:** `read`
 
 ```ts
-await corsair.instabox.api.orgs.invites.list({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd' });
+await corsair.instabox.api.orgs.invites.list({ id: 'org_4t7m1z' });
 ```
 
 **Input**
@@ -6271,7 +6271,7 @@ Email an open invite again. The owner and admins
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.instabox.api.orgs.invites.resend({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd', inviteId: 'oi_4t7m1z' });
+await corsair.instabox.api.orgs.invites.resend({ id: 'org_4t7m1z', inviteId: 'oi_4t7m1z' });
 ```
 
 **Input**
@@ -6311,7 +6311,7 @@ Revoke an unredeemed invite. The owner and admins
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.instabox.api.orgs.invites.revoke({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd', inviteId: 'oi_4t7m1z' });
+await corsair.instabox.api.orgs.invites.revoke({ id: 'org_4t7m1z', inviteId: 'oi_4t7m1z' });
 ```
 
 **Input**
@@ -6512,7 +6512,7 @@ Change a member's role. The owner and admins
 **Risk:** `write`
 
 ```ts
-await corsair.instabox.api.orgs.members.changeRole({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd', userId: 1, role: 'member' });
+await corsair.instabox.api.orgs.members.changeRole({ id: 'org_4t7m1z', userId: 1, role: 'member' });
 ```
 
 **Input**
@@ -6544,7 +6544,7 @@ The members of an org you belong to, the owner first
 **Risk:** `read`
 
 ```ts
-await corsair.instabox.api.orgs.members.list({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd' });
+await corsair.instabox.api.orgs.members.list({ id: 'org_4t7m1z' });
 ```
 
 **Input**
@@ -6589,7 +6589,7 @@ Remove a member, or leave (your own user ID)
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.instabox.api.orgs.members.remove({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd', userId: 1 });
+await corsair.instabox.api.orgs.members.remove({ id: 'org_4t7m1z', userId: 1 });
 ```
 
 **Input**
@@ -6620,7 +6620,7 @@ Delete an org Secret and its explicit sandbox grants
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.instabox.api.orgs.secrets.delete({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd', name: 'OPENAI_API_KEY' });
+await corsair.instabox.api.orgs.secrets.delete({ id: 'org_4t7m1z', name: 'OPENAI_API_KEY' });
 ```
 
 **Input**
@@ -6652,7 +6652,7 @@ Atomically create or replace a batch of org Secrets
 
 ```ts
 await corsair.instabox.api.orgs.secrets.import({
-	id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd',
+	id: 'org_4t7m1z',
 	values: {},
 	delivery: 'proxy',
 });
@@ -6707,7 +6707,7 @@ List an org's Secret metadata, never values
 **Risk:** `read`
 
 ```ts
-await corsair.instabox.api.orgs.secrets.list({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd' });
+await corsair.instabox.api.orgs.secrets.list({ id: 'org_4t7m1z' });
 ```
 
 **Input**
@@ -6757,7 +6757,7 @@ Create or replace an org Secret
 
 ```ts
 await corsair.instabox.api.orgs.secrets.set({
-	id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd',
+	id: 'org_4t7m1z',
 	name: 'OPENAI_API_KEY',
 	value: 'example',
 	delivery: 'proxy',
@@ -6803,7 +6803,7 @@ Rename an org. The owner and admins
 **Risk:** `write`
 
 ```ts
-await corsair.instabox.api.orgs.update({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd', name: 'OPENAI_API_KEY' });
+await corsair.instabox.api.orgs.update({ id: 'org_4t7m1z', name: 'acme-agents' });
 ```
 
 **Input**
@@ -6991,7 +6991,7 @@ Register a webhook endpoint
 ```ts
 await corsair.instabox.api.orgs.webhooks.create({
 	id: 'org_4t7m1z',
-	url: 'https://example.com/instabox/webhook',
+	url: 'https://example.com/api/webhook?tenantId=acme',
 	events: ['sandbox.started', 'sandbox.error'],
 });
 ```
@@ -7037,7 +7037,7 @@ Delete a webhook endpoint with its pending deliveries and delivery log
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.instabox.api.orgs.webhooks.delete({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd', webhookId: 'wh_2r8m5x' });
+await corsair.instabox.api.orgs.webhooks.delete({ id: 'org_4t7m1z', webhookId: 'wh_2r8m5x' });
 ```
 
 **Input**
@@ -7068,7 +7068,7 @@ List an endpoint's deliveries, newest first, with their attempts
 **Risk:** `read`
 
 ```ts
-await corsair.instabox.api.orgs.webhooks.deliveries.list({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd', webhookId: 'wh_2r8m5x' });
+await corsair.instabox.api.orgs.webhooks.deliveries.list({ id: 'org_4t7m1z', webhookId: 'wh_2r8m5x' });
 ```
 
 **Input**
@@ -7139,7 +7139,7 @@ Send a finished (succeeded or failed) delivery once more
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.instabox.api.orgs.webhooks.deliveries.retry({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd', webhookId: 'wh_2r8m5x', deliveryId: 'dlv_6m3q8z' });
+await corsair.instabox.api.orgs.webhooks.deliveries.retry({ id: 'org_4t7m1z', webhookId: 'wh_2r8m5x', deliveryId: 'dlv_6m3q8z' });
 ```
 
 **Input**
@@ -7213,7 +7213,7 @@ Get a webhook endpoint
 **Risk:** `read`
 
 ```ts
-await corsair.instabox.api.orgs.webhooks.get({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd', webhookId: 'wh_2r8m5x' });
+await corsair.instabox.api.orgs.webhooks.get({ id: 'org_4t7m1z', webhookId: 'wh_2r8m5x' });
 ```
 
 **Input**
@@ -7254,7 +7254,7 @@ List an org's webhook endpoints
 **Risk:** `read`
 
 ```ts
-await corsair.instabox.api.orgs.webhooks.list({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd' });
+await corsair.instabox.api.orgs.webhooks.list({ id: 'org_4t7m1z' });
 ```
 
 **Input**
@@ -7307,7 +7307,7 @@ Give an endpoint a new signing secret
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.instabox.api.orgs.webhooks.rotate({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd', webhookId: 'wh_2r8m5x' });
+await corsair.instabox.api.orgs.webhooks.rotate({ id: 'org_4t7m1z', webhookId: 'wh_2r8m5x' });
 ```
 
 **Input**
@@ -7348,7 +7348,7 @@ Queue a `webhook.test` event to an enabled endpoint
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.instabox.api.orgs.webhooks.test({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd', webhookId: 'wh_2r8m5x' });
+await corsair.instabox.api.orgs.webhooks.test({ id: 'org_4t7m1z', webhookId: 'wh_2r8m5x' });
 ```
 
 **Input**
@@ -7421,7 +7421,7 @@ Change a webhook endpoint
 **Risk:** `write`
 
 ```ts
-await corsair.instabox.api.orgs.webhooks.update({ id: 'm_k3m7q2abx5wr4hj6zpcnfa2etd', webhookId: 'wh_2r8m5x' });
+await corsair.instabox.api.orgs.webhooks.update({ id: 'org_4t7m1z', webhookId: 'wh_2r8m5x' });
 ```
 
 **Input**

@@ -350,7 +350,7 @@ export const instaboxEndpointMeta = {
 			"A short-lived link to watch (or use) the machine's desktop in a browser",
 	},
 	'machines.desktop.get': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description:
 			"The state of a running machine's desktop; install or start it",
 	},

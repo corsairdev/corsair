@@ -108,16 +108,26 @@ describeIfKey('instabox live', () => {
 		}
 	}
 
-	/** Waits until the operation is done (or failed). */
+	/**
+	 * Waits until the operation succeeds. A failed operation, or one still
+	 * queued or running after three minutes, is recorded as a failed step.
+	 */
 	async function settle(operation: unknown) {
 		if (!operation) return;
 		const id = field(operation, 'id');
+		const label = `operation ${field(operation, 'type')}`;
 		for (let i = 0; i < 60; i++) {
 			const current = await op('operations.get')({ id });
 			const state = field(current, 'state');
-			if (state !== 'queued' && state !== 'running') return;
+			if (state === 'succeeded') return;
+			if (state === 'failed') {
+				const error = (current as { error?: { message?: string } }).error;
+				steps.push({ id: label, ok: false, note: error?.message ?? 'failed' });
+				return;
+			}
 			await sleep(3000);
 		}
+		steps.push({ id: label, ok: false, note: 'not finished after 3 minutes' });
 	}
 
 	beforeAll(async () => {
@@ -148,6 +158,10 @@ describeIfKey('instabox live', () => {
 				.map((s) => `  ${s.id}: ${s.note}`)
 				.join('\n')}`,
 		);
+		// After cleanup and the report, so a failed step fails the run.
+		if (failed.length > 0) {
+			throw new Error(`${failed.length} InstaBox live steps failed`);
+		}
 	});
 
 	it('reads every GET that takes no arguments, and the workspace', async () => {
@@ -301,11 +315,16 @@ describeIfKey('instabox live', () => {
 		});
 		if (link) await step('machines.desktop.revokeLinks', { id });
 
+		// update replaces the whole metadata object: put the machine's own
+		// labels back afterwards.
+		const metadata =
+			(machine as { metadata?: Record<string, string> } | undefined)
+				?.metadata ?? {};
 		await step('machines.update', {
 			id,
-			metadata: { corsair_test: NAME },
+			metadata: { ...metadata, corsair_test: NAME },
 		});
-		await step('machines.update', { id, metadata: {} });
+		await step('machines.update', { id, metadata });
 
 		await step('machines.activityLeases.renew', {
 			id,

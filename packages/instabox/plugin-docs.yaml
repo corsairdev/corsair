@@ -161,65 +161,65 @@ apiExamples:
   operations.get:
     args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
   orgs.exports.create:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+    args: {"id": "org_4t7m1z"}
   orgs.exports.list:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+    args: {"id": "org_4t7m1z"}
   orgs.get:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+    args: {"id": "org_4t7m1z"}
   orgs.github.jobs.get:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "job": 1}
+    args: {"id": "org_4t7m1z", "job": 1}
   orgs.github.jobs.list:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+    args: {"id": "org_4t7m1z"}
   orgs.github.stats:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+    args: {"id": "org_4t7m1z"}
   orgs.inviteCode.get:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+    args: {"id": "org_4t7m1z"}
   orgs.inviteCode.regenerate:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+    args: {"id": "org_4t7m1z"}
   orgs.invites.create:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "email": "ops@example.com"}
+    args: {"id": "org_4t7m1z", "email": "ops@example.com"}
   orgs.invites.list:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+    args: {"id": "org_4t7m1z"}
   orgs.invites.resend:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "inviteId": "oi_4t7m1z"}
+    args: {"id": "org_4t7m1z", "inviteId": "oi_4t7m1z"}
   orgs.invites.revoke:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "inviteId": "oi_4t7m1z"}
+    args: {"id": "org_4t7m1z", "inviteId": "oi_4t7m1z"}
   orgs.list:
     args: {}
   orgs.members.changeRole:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "userId": 1, "role": "member"}
+    args: {"id": "org_4t7m1z", "userId": 1, "role": "member"}
   orgs.members.list:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+    args: {"id": "org_4t7m1z"}
   orgs.members.remove:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "userId": 1}
+    args: {"id": "org_4t7m1z", "userId": 1}
   orgs.secrets.delete:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "name": "OPENAI_API_KEY"}
+    args: {"id": "org_4t7m1z", "name": "OPENAI_API_KEY"}
   orgs.secrets.import:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "values": {}, "delivery": "proxy"}
+    args: {"id": "org_4t7m1z", "values": {}, "delivery": "proxy"}
   orgs.secrets.list:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+    args: {"id": "org_4t7m1z"}
   orgs.secrets.set:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "name": "OPENAI_API_KEY", "value": "example", "delivery": "proxy"}
+    args: {"id": "org_4t7m1z", "name": "OPENAI_API_KEY", "value": "example", "delivery": "proxy"}
   orgs.update:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "name": "OPENAI_API_KEY"}
+    args: {"id": "org_4t7m1z", "name": "acme-agents"}
   orgs.webhooks.create:
-    args: {"id": "org_4t7m1z", "url": "https://example.com/instabox/webhook", "events": ["sandbox.started", "sandbox.error"]}
+    args: {"id": "org_4t7m1z", "url": "https://example.com/api/webhook?tenantId=acme", "events": ["sandbox.started", "sandbox.error"]}
   orgs.webhooks.delete:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "webhookId": "wh_2r8m5x"}
+    args: {"id": "org_4t7m1z", "webhookId": "wh_2r8m5x"}
   orgs.webhooks.deliveries.list:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "webhookId": "wh_2r8m5x"}
+    args: {"id": "org_4t7m1z", "webhookId": "wh_2r8m5x"}
   orgs.webhooks.deliveries.retry:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "webhookId": "wh_2r8m5x", "deliveryId": "dlv_6m3q8z"}
+    args: {"id": "org_4t7m1z", "webhookId": "wh_2r8m5x", "deliveryId": "dlv_6m3q8z"}
   orgs.webhooks.get:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "webhookId": "wh_2r8m5x"}
+    args: {"id": "org_4t7m1z", "webhookId": "wh_2r8m5x"}
   orgs.webhooks.list:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+    args: {"id": "org_4t7m1z"}
   orgs.webhooks.rotate:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "webhookId": "wh_2r8m5x"}
+    args: {"id": "org_4t7m1z", "webhookId": "wh_2r8m5x"}
   orgs.webhooks.test:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "webhookId": "wh_2r8m5x"}
+    args: {"id": "org_4t7m1z", "webhookId": "wh_2r8m5x"}
   orgs.webhooks.update:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "webhookId": "wh_2r8m5x"}
+    args: {"id": "org_4t7m1z", "webhookId": "wh_2r8m5x"}
   ports.list:
     args: {}
   snapshots.delete:
