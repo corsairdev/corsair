@@ -3195,6 +3195,15 @@
                 ]
               },
               {
+                "group": "InstaBox",
+                "pages": [
+                  "plugins/instabox/overview",
+                  "plugins/instabox/api",
+                  "plugins/instabox/database",
+                  "plugins/instabox/webhooks"
+                ]
+              },
+              {
                 "group": "Instagram",
                 "pages": [
                   "plugins/instagram/overview",

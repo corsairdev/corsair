@@ -1,0 +1,310 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from InstaBox's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: InstaBox
+domain: instabox.sh
+description: "InstaBox gives each agent a Linux machine in the cloud: machines (create, start, stop, suspend, resume, fork, resize, exec, files, ports, SSH tokens, desktop links, metrics, logs), snapshots and exports, secrets and Vault, workspaces, members and invites, API keys, billing and usage, GitHub Actions CI jobs, and signed webhooks (129 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  The account stores one credential: an InstaBox API key (`ibk_...`, from
+  the dashboard's API keys page or `instabox keys create`), sent as
+  `Authorization: Bearer`. Its scopes decide which operations work. A key
+  belongs to one workspace and sees only that workspace's machines and
+  snapshots. A signed-in user's access token works in its place and is the
+  only credential the sign-in-only routes accept (keys, Vault, billing
+  changes, creating and deleting workspaces, sessions, support tickets);
+  their descriptions say so.
+
+  - **Lifecycle calls** (create, start, stop, suspend, resume, fork,
+  snapshot, delete) take an `Idempotency-Key`; the plugin sends a fresh one
+  unless you pass `idempotency_key`. They answer with an operation; read its
+  progress with `operations.get`.
+  - **Deletes** of a machine or snapshot need `X-Confirm-Delete` with its ID
+  or exact name. The plugin sends the id from the call unless you pass
+  `confirm_delete`.
+  - **Exec** (`machines.exec`) runs `cmd` through `bash -lc`, or `argv` with
+  no shell, and waits for the exit (default 60 s, at most 600). Output is
+  cut at 1 MiB per stream; download files with `machines.files.download`
+  rather than `cat`.
+  - **Money.** Machines are billed per second while they run (vCPU, memory,
+  storage, egress, GPUs). Creating, starting, resuming, waking, forking or
+  restoring one, running a command in it, and every plan, checkout and
+  top-up call are `destructive`, as are invites, key and token issuing and
+  every delete.
+  - **Webhooks.** Register an endpoint with `orgs.webhooks.create` and store
+  the `whsec_` secret it returns as the webhook secret. Deliveries follow
+  Standard Webhooks (`webhook-id`, `webhook-timestamp`, `webhook-signature`),
+  and the plugin checks each one.
+  - **Rate limits.** A 429 `rate_limited` carries `Retry-After` and core
+  retries it; a 429 `quota_exceeded` is a plan limit and is not retried.
+  - Not wrapped: sign-in and OAuth flows, the WebSocket terminal, VNC and
+  Orca tunnels, the desktop watch stream, the GitHub and Stripe webhook
+  receivers, and deprecated `/v1/images` routes (use `snapshots.*`).
+examples:
+  read:
+    path: machines.list
+    title: List machines
+    args: {"limit": 20}
+  write:
+    path: machines.exec
+    title: Run a command in a machine
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "cmd": "uname -a && nproc", "timeoutSeconds": 60}
+apiExamples:
+  exports.download:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  exports.get:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  feedback.send:
+    args: {"type": "bug", "component": "cli", "title": "example", "detail": "example"}
+  gpuQueue.cancel:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  gpuQueue.list:
+    args: {}
+  keys.create:
+    args: {"name": "OPENAI_API_KEY", "scopes": ["machines:read"]}
+  keys.list:
+    args: {}
+  keys.revoke:
+    args: {"id": "key_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.activityLeases.release:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "leaseID": "build-42"}
+  machines.activityLeases.renew:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "leaseID": "build-42"}
+  machines.claimOomKill:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "cgroup": "example", "bootId": "example"}
+  machines.connectionInfo:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.create:
+    args: {"name": "build-42", "templateId": "agent-browser"}
+  machines.createAccess:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "kind": "terminal"}
+  machines.createSnapshot:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "name": "OPENAI_API_KEY"}
+  machines.delete:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.desktop.createLink:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.desktop.get:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.desktop.revokeLinks:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.disk:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.exec:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "cmd": "uname -a && nproc", "timeoutSeconds": 60}
+  machines.files.createUploadUrl:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "path": "/data/home/notes.md"}
+  machines.files.download:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "path": "/data/home/notes.md"}
+  machines.files.read:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.files.write:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "path": "/data/home/notes.md", "content": "hello from Corsair"}
+  machines.fork:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "networkPolicy": {"outbound": "restricted"}}
+  machines.get:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.history.get:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "execId": "ex_3n8w1c"}
+  machines.history.list:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.list:
+    args: {"limit": 20}
+  machines.logs:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.metrics:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.ports.create:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "port": 3000}
+  machines.ports.delete:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "port": 3000}
+  machines.ports.installAgent:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.ports.list:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.processes:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.restore:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.resume:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.secrets.get:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.secrets.refresh:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.secrets.update:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.ssh.createToken:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.ssh.issueCertificate:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "publicKey": "example"}
+  machines.ssh.listTokens:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.ssh.revokeAllTokens:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.ssh.revokeToken:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "tokenID": "sst_5k1v8x"}
+  machines.start:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "queue": {"autoLease": true}}
+  machines.stop:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.suspend:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.update:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "networkPolicy": {"outbound": "restricted"}}
+  machines.usage:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.vault.get:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.vault.write:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  machines.wake:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  me.discord.get:
+    args: {}
+  me.discord.unlink:
+    args: {}
+  me.get:
+    args: {}
+  operations.get:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.billing.cancelSubscription:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.billing.changePlan:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "tier": "pro"}
+  orgs.billing.checkout:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.billing.getTopup:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.billing.movePersonal:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.billing.portal:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.billing.resumeSubscription:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.billing.subscribeWithCredits:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "tier": "pro"}
+  orgs.billing.topup:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "amountUSD": 25}
+  orgs.billing.update:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.create:
+    args: {"name": "OPENAI_API_KEY", "tier": "pro"}
+  orgs.delete:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "name": "OPENAI_API_KEY"}
+  orgs.exports.create:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.exports.list:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.get:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.github.installations.delete:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "installationId": 1}
+  orgs.github.installations.list:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.github.jobs.get:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "job": 1}
+  orgs.github.jobs.list:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.github.stats:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.inviteCode.get:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.inviteCode.regenerate:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.invites.create:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "email": "ops@example.com"}
+  orgs.invites.list:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.invites.resend:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "inviteId": "oi_4t7m1z"}
+  orgs.invites.revoke:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "inviteId": "oi_4t7m1z"}
+  orgs.keys.create:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "name": "OPENAI_API_KEY"}
+  orgs.keys.list:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.keys.revoke:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "keyId": "key_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.list:
+    args: {}
+  orgs.members.changeRole:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "userId": 1, "role": "member"}
+  orgs.members.list:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.members.remove:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "userId": 1}
+  orgs.movePersonal:
+    args: {"name": "OPENAI_API_KEY"}
+  orgs.redeemInvite:
+    args: {"code": "ABC123"}
+  orgs.secrets.delete:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "name": "OPENAI_API_KEY"}
+  orgs.secrets.import:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "values": {}, "delivery": "proxy"}
+  orgs.secrets.list:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.secrets.set:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "name": "OPENAI_API_KEY", "value": "example", "delivery": "proxy"}
+  orgs.update:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "name": "OPENAI_API_KEY"}
+  orgs.webhooks.create:
+    args: {"id": "org_4t7m1z", "url": "https://example.com/instabox/webhook", "events": ["sandbox.started", "sandbox.error"]}
+  orgs.webhooks.delete:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "webhookId": "wh_2r8m5x"}
+  orgs.webhooks.deliveries.list:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "webhookId": "wh_2r8m5x"}
+  orgs.webhooks.deliveries.retry:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "webhookId": "wh_2r8m5x", "deliveryId": "dlv_6m3q8z"}
+  orgs.webhooks.get:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "webhookId": "wh_2r8m5x"}
+  orgs.webhooks.list:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  orgs.webhooks.rotate:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "webhookId": "wh_2r8m5x"}
+  orgs.webhooks.test:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "webhookId": "wh_2r8m5x"}
+  orgs.webhooks.update:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "webhookId": "wh_2r8m5x"}
+  ports.list:
+    args: {}
+  sessions.list:
+    args: {}
+  sessions.signOut:
+    args: {"id": "ss_0123456789abcdef01234567"}
+  snapshots.delete:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  snapshots.files.list:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  snapshots.get:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  snapshots.list:
+    args: {}
+  stats.get:
+    args: {}
+  support.tickets.close:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  support.tickets.get:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
+  support.tickets.list:
+    args: {}
+  support.tickets.reply:
+    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "body": "example"}
+  templates.list:
+    args: {}
+  usage.get:
+    args: {}
+  usage.machines:
+    args: {}
+  vault.delete:
+    args: {"name": "OPENAI_API_KEY"}
+  vault.export:
+    args: {"name": "OPENAI_API_KEY"}
+  vault.import:
+    args: {"values": {}}
+  vault.list:
+    args: {}
+  vault.set:
+    args: {"name": "OPENAI_API_KEY", "kind": "env", "value": "example"}
+  vault.update:
+    args: {"name": "OPENAI_API_KEY", "selector": {}}
