@@ -1,0 +1,251 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub. The plugin wraps
+# Modal's JavaScript SDK (npm `modal`), which talks gRPC to api.modal.com.
+displayName: Modal
+domain: modal.com
+description: "Modal's serverless cloud through its JavaScript SDK: sandboxes (create from any image, exec, files, tunnels, snapshots, logs), image builds, calls to deployed functions and classes, function calls, volumes, secrets, queues, dicts, apps and environments (95 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Connect a Modal account with a token pair from modal.com, Settings, API
+  Tokens: the token secret (`as-...`) is the API key and the token id
+  (`ak-...`) is stored as `token_id`. Calls run in the account's default
+  environment unless an operation gets `environment`, or the plugin is set up
+  with `modal({ environment: 'dev' })`.
+
+  - **Modal has no REST API.** Everything goes over gRPC through Modal's
+    official JavaScript SDK, so the plugin runs on Node (HTTP/2), not in edge
+    or browser runtimes. The SDK loads the first time an operation runs; each
+    call makes its own client from the account's tokens and closes it after.
+    The host's `MODAL_TOKEN_ID`, `MODAL_TOKEN_SECRET`, `MODAL_ENVIRONMENT` and
+    `~/.modal.toml` are never used for an account.
+  - **Money.** Sandboxes, image builds and function calls are billed per
+    second of CPU, memory and GPU. `sandboxes.create`, `sandboxes.exec`,
+    `sandboxes.resume`, `sandboxes.restoreSnapshot`, `images.build`,
+    `functions.call`, `functions.spawn`, `classes.*` and
+    `functions.updateAutoscaler` are `destructive`, as is every delete, stop,
+    clear and cancel. A sandbox ends at its `timeoutMs` (Modal's default is 5
+    minutes) or with `sandboxes.terminate`.
+  - **Sandboxes** belong to an App; `sandboxes.create` uses
+    `corsair-sandboxes` (created if missing) unless `appName` is given, and
+    the registry image `python:3.13-slim` unless `image` is given. Ports in
+    `encryptedPorts`, `h2Ports` or `unencryptedPorts` come back as tunnel URLs.
+    `sandboxes.exec` waits for the command and returns its exit code, stdout
+    and stderr (each capped at `maxOutputBytes`, 1 MB by default).
+  - **Functions and classes** have to be deployed with Modal's Python CLI
+    first (`modal deploy`); the plugin looks them up by App and name.
+    Arguments go CBOR-encoded, which Modal 1.2+ deployments accept.
+    `functions.call` waits up to `waitMs` and returns status `pending` with a
+    `functionCallId` if the call is still running; `functionCalls.get` picks
+    the result up later.
+  - **Queues and dicts** store Python pickles, so Python code on Modal reads
+    what the plugin writes. Dict keys are strings, numbers, booleans or null,
+    encoded byte for byte as Python does, so the same key matches from both
+    sides. Integers keep their full value, Python tuples and sets come back as
+    arrays, bytes as `{ "$bytes": "<base64>" }` (send the same shape to store
+    bytes), and objects JSON has no form for (datetimes, class instances) as
+    `{ "$pickle": "<base64>" }`.
+  - **Lists** of volumes, secrets, queues and dicts page newest first: pass the
+    returned `nextCreatedBefore` as `createdBefore`.
+  - Not wrapped: deploying Apps (Python CLI only), web endpoint URLs you call
+    yourself, the SDK's experimental sidecar containers and outbound header
+    policies, and reading or uploading Volume files (mount the Volume in a
+    sandbox and use `files.*`).
+examples:
+  read:
+    path: sandboxes.list
+    title: List running sandboxes
+    args: {"appName": "corsair-sandboxes"}
+  write:
+    path: sandboxes.exec
+    title: Run a command in a sandbox
+    args: {"sandboxId": "sb-a1b2c3", "command": ["python", "-c", "print(2 + 2)"]}
+apiExamples:
+  apps.get:
+    args: {"name":"my-app"}
+  apps.create:
+    args: {"name":"my-app"}
+  apps.list:
+    args: {}
+  apps.info:
+    args: {"name":"my-app"}
+  apps.stats:
+    args: {"name":"my-app","since":"2026-11-27T09:00:00Z"}
+  apps.sandboxStats:
+    args: {"name":"my-app","since":"2026-11-26T00:00:00Z","groupByTags":["team"]}
+  apps.stop:
+    args: {"name":"my-app"}
+  environments.get:
+    args: {"name":"dev"}
+  environments.getDefault:
+    args: {}
+  environments.list:
+    args: {}
+  environments.create:
+    args: {"name":"dev","restricted":true}
+  environments.delete:
+    args: {"name":"dev"}
+  sandboxes.create:
+    args: {"image":{"registry":"alpine:3.21","dockerfileCommands":["RUN apk add curl"]},"command":["sleep","60"],"cpu":0.25,"memoryMiB":256,"timeoutMs":60000,"secrets":["openai"],"volumes":{"/data":{"name":"data","readOnly":true}},"encryptedPorts":[8080],"readinessProbe":{"tcpPort":8080},"tags":{"run":"test"}}
+  sandboxes.get:
+    args: {"sandboxId":"sb-1"}
+  sandboxes.getByName:
+    args: {"appName":"my-app","name":"worker","backend":"v2"}
+  sandboxes.list:
+    args: {"appName":"my-app","tags":{"run":"test"}}
+  sandboxes.exec:
+    args: {"sandboxId":"sb-1","command":["cat"],"stdin":"hi","timeoutMs":5000}
+  sandboxes.terminate:
+    args: {"sandboxId":"sb-1","wait":true}
+  sandboxes.wait:
+    args: {"sandboxId":"sb-1","timeoutMs":1000}
+  sandboxes.waitUntilReady:
+    args: {"sandboxId":"sb-1","timeoutMs":2000}
+  sandboxes.tunnels:
+    args: {"sandboxId":"sb-1"}
+  sandboxes.getTags:
+    args: {"sandboxId":"sb-1"}
+  sandboxes.setTags:
+    args: {"sandboxId":"sb-1","tags":{"a":"b"}}
+  sandboxes.setName:
+    args: {"sandboxId":"sb-1","name":"worker"}
+  sandboxes.createConnectToken:
+    args: {"sandboxId":"sb-1","port":3000}
+  sandboxes.snapshotFilesystem:
+    args: {"sandboxId":"sb-1","ttlMs":null}
+  sandboxes.snapshotDirectory:
+    args: {"sandboxId":"sb-1","path":"/work"}
+  sandboxes.snapshotMemory:
+    args: {"sandboxId":"sb-1"}
+  sandboxes.restoreSnapshot:
+    args: {"snapshotId":"sn-1","name":null}
+  sandboxes.getExitSnapshot:
+    args: {"sandboxId":"sb-1","timeoutMs":0}
+  sandboxes.mountImage:
+    args: {"sandboxId":"sb-1","path":"/mnt","imageId":"im-1"}
+  sandboxes.unmountImage:
+    args: {"sandboxId":"sb-1","path":"/mnt"}
+  sandboxes.updateNetworkPolicy:
+    args: {"sandboxId":"sb-1","outboundCidrAllowlist":[],"outboundDomainAllowlist":["pypi.org"]}
+  sandboxes.reloadVolumes:
+    args: {"sandboxId":"sb-1"}
+  sandboxes.pause:
+    args: {"sandboxId":"sb-1"}
+  sandboxes.resume:
+    args: {"sandboxId":"sb-1"}
+  sandboxes.logs:
+    args: {"sandboxId":"sb-1","entries":10}
+  sandboxes.fetchLogs:
+    args: {"sandboxId":"sb-1","since":"2026-11-27T09:00:00Z","searchText":"x"}
+  files.read:
+    args: {"sandboxId":"sb-1","path":"/tmp/a.txt","encoding":"base64"}
+  files.write:
+    args: {"sandboxId":"sb-1","path":"/tmp/a.txt","content":"hé"}
+  files.list:
+    args: {"sandboxId":"sb-1","path":"/tmp"}
+  files.stat:
+    args: {"sandboxId":"sb-1","path":"/tmp/a.txt"}
+  files.makeDirectory:
+    args: {"sandboxId":"sb-1","path":"/tmp/x/y","createParents":true}
+  files.remove:
+    args: {"sandboxId":"sb-1","path":"/tmp/x","recursive":true}
+  images.build:
+    args: {"image":{"registry":"my.ecr/app:1","registryType":"aws_ecr","registrySecret":"aws"}}
+  images.get:
+    args: {"imageId":"im-1"}
+  images.getByName:
+    args: {"name":"base"}
+  images.publish:
+    args: {"imageId":"im-1","name":"base"}
+  images.delete:
+    args: {"imageId":"im-1"}
+  functions.get:
+    args: {"appName":"my-app","name":"square"}
+  functions.info:
+    args: {"functionId":"fu-1"}
+  functions.call:
+    args: {"appName":"my-app","name":"square","args":[4],"kwargs":{"verbose":true},"options":{"gpu":"T4","secrets":["hf"]},"waitMs":1000}
+  functions.spawn:
+    args: {"functionId":"fu-1","args":[1]}
+  functions.stats:
+    args: {"functionId":"fu-1","allVariants":true}
+  functions.currentStats:
+    args: {"functionId":"fu-1"}
+  functions.updateAutoscaler:
+    args: {"functionId":"fu-1","minContainers":0,"maxContainers":2}
+  functions.logs:
+    args: {"functionId":"fu-1","entries":5,"source":"stderr"}
+  functions.fetchLogs:
+    args: {"functionId":"fu-1","since":"2026-11-27T00:00:00Z"}
+  functions.metrics:
+    args: {"functionId":"fu-1","groups":["container"]}
+  functions.metricsSchema:
+    args: {"functionId":"fu-1"}
+  classes.call:
+    args: {"appName":"my-app","className":"Model","method":"predict","parameters":{"size":"small"},"args":["hi"],"waitMs":0}
+  classes.spawn:
+    args: {"appName":"my-app","className":"Model","method":"predict"}
+  functionCalls.get:
+    args: {"functionCallId":"fc-1"}
+  functionCalls.cancel:
+    args: {"functionCallId":"fc-1","terminateContainers":true}
+  functionCalls.logs:
+    args: {"functionCallId":"fc-1"}
+  volumes.get:
+    args: {"name":"data"}
+  volumes.create:
+    args: {"name":"data","version":2}
+  volumes.list:
+    args: {"environment":"dev"}
+  volumes.delete:
+    args: {"name":"data","allowMissing":true}
+  volumes.listFiles:
+    args: {"name":"data","path":"/","recursive":true}
+  volumes.removeFile:
+    args: {"name":"data","path":"a.txt"}
+  secrets.get:
+    args: {"name":"openai","requiredKeys":["OPENAI_API_KEY"]}
+  secrets.list:
+    args: {}
+  secrets.create:
+    args: {"name":"svc","values":{"TOKEN":"v"},"overwrite":true}
+  secrets.delete:
+    args: {"name":"svc"}
+  queues.create:
+    args: {"name":"jobs"}
+  queues.list:
+    args: {}
+  queues.delete:
+    args: {"name":"jobs"}
+  queues.put:
+    args: {"name":"jobs","values":[{"a":1},"b"],"partition":"p1"}
+  queues.get:
+    args: {"name":"jobs","count":2}
+  queues.peek:
+    args: {"name":"jobs","limit":1}
+  queues.len:
+    args: {"name":"jobs","total":true}
+  queues.clear:
+    args: {"name":"jobs","all":true}
+  dicts.create:
+    args: {"name":"cache"}
+  dicts.list:
+    args: {}
+  dicts.delete:
+    args: {"name":"cache"}
+  dicts.get:
+    args: {"name":"cache","key":"user:1"}
+  dicts.put:
+    args: {"name":"cache","key":7,"value":[1,"a"],"skipIfExists":true}
+  dicts.update:
+    args: {"name":"cache","entries":[{"key":"a","value":1},{"key":"b","value":null}]}
+  dicts.pop:
+    args: {"name":"cache","key":"gone"}
+  dicts.contains:
+    args: {"name":"cache","key":true}
+  dicts.len:
+    args: {"name":"cache"}
+  dicts.items:
+    args: {"name":"cache"}
+  dicts.clear:
+    args: {"name":"cache"}
+  proxies.get:
+    args: {"name":"static-ip"}

@@ -1,0 +1,3771 @@
+---
+title: "Modal API reference"
+sidebarTitle: "API"
+description: "API reference for the Modal plugin in Corsair: every `modal.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Apps
+
+### create
+
+`apps.create`
+
+Get a Modal App by name, creating an empty one if it does not exist. Sandboxes and image builds run inside an App.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.apps.create({ name: 'my-app' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Modal App (as deployed or as created by apps.create). |
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `environmentName` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`apps.get`
+
+Look up a Modal App by name and return its id. Fails with 404 if the App does not exist.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.apps.get({ name: 'my-app' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Modal App (as deployed or as created by apps.create). |
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `environmentName` | `string` | No | — |
+
+
+
+---
+
+### info
+
+`apps.info`
+
+An App's description, lifecycle (state, deploys, who and when) and the ids of its functions and servers.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.apps.info({ name: 'my-app' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Modal App (as deployed or as created by apps.create). |
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `appId` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `lifecycle` | `object` | Yes | — |
+| `functions` | `Record<string, string>` | Yes | Function names mapped to function ids. |
+| `servers` | `Record<string, string>` | Yes | Server names mapped to function ids. |
+
+<AccordionGroup>
+<Accordion title="lifecycle full type">
+
+```ts
+{
+  state: string,
+  version?: number,
+  createdAt?: string,
+  createdBy?: string,
+  deployedAt?: string,
+  deployedBy?: string,
+  stoppedAt?: string,
+  stoppedBy?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`apps.list`
+
+List the live Apps in an environment (stopped and disabled Apps are left out).
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.apps.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `limit` | `number` | No | Most items to return (1-1000, default 200). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `apps` | `object[]` | Yes | — |
+| `truncated` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="apps full type">
+
+```ts
+{
+  appId: string,
+  name?: string,
+  environmentName?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sandboxStats
+
+`apps.sandboxStats`
+
+Cost in USD of an App's sandboxes over a time range (at most 7 days, on UTC hour boundaries), optionally grouped by tag values.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.apps.sandboxStats({
+	name: 'my-app',
+	since: '2026-11-26T00:00:00Z',
+	groupByTags: ['team'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Modal App (as deployed or as created by apps.create). |
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `since` | `string` | Yes | Range start (ISO 8601, on a UTC hour boundary). |
+| `until` | `string` | No | Range end (ISO 8601, on a UTC hour boundary). Defaults to now. |
+| `groupByTags` | `string[]` | No | Tag names to group by. |
+| `tags` | `Record<string, string>` | No | Only sandboxes with all of these tags. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groups` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+{
+  tags: Record<string, string | null>,
+  cost: string,
+  costByResource: Record<string, string>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stats
+
+`apps.stats`
+
+Call, request, container and sandbox counts for an App over a time window (default the last hour; at most 7 days, starting within the last 30 days).
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.apps.stats({ name: 'my-app', since: '2026-11-27T09:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Modal App (as deployed or as created by apps.create). |
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `since` | `string` | No | Window start (ISO 8601). |
+| `until` | `string` | No | Window end (ISO 8601). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `since` | `string` | Yes | — |
+| `until` | `string` | Yes | — |
+| `functions` | `Record<string, any>` | Yes | — |
+| `servers` | `Record<string, any>` | Yes | — |
+| `sandboxes` | `object` | Yes | — |
+| `lifecycle` | `object` | Yes | — |
+| `deploymentCount` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="sandboxes full type">
+
+```ts
+{
+  total: number,
+  finished: number,
+  live: number
+}
+```
+</Accordion>
+
+<Accordion title="lifecycle full type">
+
+```ts
+{
+  state: string,
+  version?: number,
+  createdAt?: string,
+  createdBy?: string,
+  deployedAt?: string,
+  deployedBy?: string,
+  stoppedAt?: string,
+  stoppedBy?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stop
+
+`apps.stop`
+
+Stop an App: terminates all its running containers and sandboxes and stops it taking new inputs. A deployed App has to be deployed again to come back.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.modal.api.apps.stop({ name: 'my-app' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of a Modal App (as deployed or as created by apps.create). |
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+## Classes
+
+### call
+
+`classes.call`
+
+Run a method of a deployed class and wait for its result (billed for the compute it uses).
+
+**Risk:** `destructive`
+
+```ts
+await corsair.modal.api.classes.call({
+	appName: 'my-app',
+	className: 'Model',
+	method: 'predict',
+	parameters: { size: 'small' },
+	args: ['hi'],
+	waitMs: 0,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `appName` | `string` | Yes | Name of a Modal App (as deployed or as created by apps.create). |
+| `className` | `string` | Yes | Name of the deployed class (modal.Cls). |
+| `method` | `string` | Yes | Method to run. |
+| `parameters` | `Record<string, any>` | No | Values for the class's modal.parameter() fields. |
+| `version` | `number` | No | — |
+| `args` | `any[]` | No | Positional arguments (JSON values, sent CBOR-encoded). Defaults to []. |
+| `kwargs` | `Record<string, any>` | No | Keyword arguments. Defaults to &#123;&#125;. |
+| `options` | `object` | No | Override the deployed resources and settings for these calls (creates a variant of the function). |
+| `waitMs` | `number` | No | How long to wait for the result. If the call is still running then, the result has status "pending" and functionCalls.get fetches it later. Defaults to 120000. |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  cpu?: number,
+  cpuLimit?: number,
+  memoryMiB?: number,
+  memoryLimitMiB?: number,
+  gpu?: string,
+  env?: Record<string, string>,
+  secrets?: string[],
+  retries?: number,
+  maxContainers?: number,
+  bufferContainers?: number,
+  scaledownWindowMs?: number,
+  timeoutMs?: number,
+  routingRegion?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `functionCallId` | `string` | Yes | — |
+| `status` | `completed \| pending` | Yes | — |
+| `result` | `any` | No | Return value (bytes as &#123; $bytes: base64 &#125;). |
+
+
+
+---
+
+### spawn
+
+`classes.spawn`
+
+Start a method of a deployed class without waiting; returns a function call id.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.modal.api.classes.spawn({ appName: 'my-app', className: 'Model', method: 'predict' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `appName` | `string` | Yes | Name of a Modal App (as deployed or as created by apps.create). |
+| `className` | `string` | Yes | Name of the deployed class (modal.Cls). |
+| `method` | `string` | Yes | Method to run. |
+| `parameters` | `Record<string, any>` | No | Values for the class's modal.parameter() fields. |
+| `version` | `number` | No | — |
+| `args` | `any[]` | No | Positional arguments (JSON values, sent CBOR-encoded). Defaults to []. |
+| `kwargs` | `Record<string, any>` | No | Keyword arguments. Defaults to &#123;&#125;. |
+| `options` | `object` | No | Override the deployed resources and settings for these calls (creates a variant of the function). |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  cpu?: number,
+  cpuLimit?: number,
+  memoryMiB?: number,
+  memoryLimitMiB?: number,
+  gpu?: string,
+  env?: Record<string, string>,
+  secrets?: string[],
+  retries?: number,
+  maxContainers?: number,
+  bufferContainers?: number,
+  scaledownWindowMs?: number,
+  timeoutMs?: number,
+  routingRegion?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `functionCallId` | `string` | Yes | — |
+
+
+
+---
+
+## Dicts
+
+### clear
+
+`dicts.clear`
+
+Remove every entry from the Dict. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.modal.api.dicts.clear({ name: 'cache' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Dict name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### contains
+
+`dicts.contains`
+
+Whether a key is in the Dict.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.dicts.contains({ name: 'cache', key: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Dict name. |
+| `key` | `string \| number \| boolean \| null` | Yes | Key: a string, number, boolean or null (the same key in Python matches). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `found` | `boolean` | Yes | — |
+
+
+
+---
+
+### create
+
+`dicts.create`
+
+Get a named Dict (a key/value store shared by sandboxes and functions), creating it if it does not exist.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.dicts.create({ name: 'cache' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Dict name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dictId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`dicts.delete`
+
+Delete a Dict and all its entries. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.modal.api.dicts.delete({ name: 'cache' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Dict name. |
+| `allowMissing` | `boolean` | No | Succeed even if the Dict does not exist. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`dicts.get`
+
+Read the value stored under a key. Python tuples and sets come back as arrays, bytes as &#123; $bytes: base64 &#125;, other objects (datetimes, class instances) as &#123; $pickle: base64 &#125;.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.dicts.get({ name: 'cache', key: 'user:1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Dict name. |
+| `key` | `string \| number \| boolean \| null` | Yes | Key: a string, number, boolean or null (the same key in Python matches). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `found` | `boolean` | Yes | — |
+| `value` | `any` | No | — |
+
+
+
+---
+
+### items
+
+`dicts.items`
+
+Keys and values in the Dict, decoded as in dicts.get (a tuple key comes back as an array).
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.dicts.items({ name: 'cache' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Dict name. |
+| `keysOnly` | `boolean` | No | Return keys without values. |
+| `limit` | `number` | No | Most items to return (1-10000, default 1000). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | — |
+| `truncated` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  key: any,
+  value?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### len
+
+`dicts.len`
+
+Number of entries in the Dict.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.dicts.len({ name: 'cache' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Dict name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `length` | `number` | Yes | — |
+
+
+
+---
+
+### list
+
+`dicts.list`
+
+List the named Dicts in an environment, newest first.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.dicts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `limit` | `number` | No | Most items to return (1-1000, default 100). |
+| `createdBefore` | `number` | No | Cursor: only objects created before this Unix time (pass nextCreatedBefore from the previous page). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dicts` | `object[]` | Yes | — |
+| `nextCreatedBefore` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="dicts full type">
+
+```ts
+{
+  dictId: string,
+  name: string,
+  createdAt?: string,
+  createdBy?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pop
+
+`dicts.pop`
+
+Remove a key and return its value.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.dicts.pop({ name: 'cache', key: 'gone' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Dict name. |
+| `key` | `string \| number \| boolean \| null` | Yes | Key: a string, number, boolean or null (the same key in Python matches). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `found` | `boolean` | Yes | — |
+| `value` | `any` | No | — |
+
+
+
+---
+
+### put
+
+`dicts.put`
+
+Store a JSON value under a key. With skipIfExists an existing key is left alone.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.dicts.put({
+	name: 'cache',
+	key: 7,
+	value: [1, 'a'],
+	skipIfExists: true,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Dict name. |
+| `key` | `string \| number \| boolean \| null` | Yes | Key: a string, number, boolean or null (the same key in Python matches). |
+| `value` | `any` | Yes | — |
+| `skipIfExists` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created` | `boolean` | Yes | — |
+
+
+
+---
+
+### update
+
+`dicts.update`
+
+Store several key/value pairs at once.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.dicts.update({
+	name: 'cache',
+	entries: [{ key: 'a', value: 1 }, { key: 'b', value: null }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Dict name. |
+| `entries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  key: string | number | boolean | null,
+  value: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+
+
+
+---
+
+## Environments
+
+### create
+
+`environments.create`
+
+Create an environment in the workspace.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.environments.create({ name: 'dev', restricted: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Environment name, e.g. "main" or "dev". |
+| `restricted` | `boolean` | No | Only users with an explicit role in the environment can access it. |
+| `defaultRole` | `string` | No | Default environment role for workspace members. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### delete
+
+`environments.delete`
+
+Delete an environment and every App, Volume, Secret, Queue and Dict in it. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.modal.api.environments.delete({ name: 'dev' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Environment name, e.g. "main" or "dev". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`environments.get`
+
+Look up a Modal environment by name and return its id.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.environments.get({ name: 'dev' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Environment name, e.g. "main" or "dev". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environmentId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### getDefault
+
+`environments.getDefault`
+
+The environment calls run in: the account's configured environment, else the workspace default.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.environments.getDefault({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environmentId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`environments.list`
+
+List the environments in the workspace.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.environments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Most items to return (1-1000, default 200). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environments` | `object[]` | Yes | — |
+| `truncated` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="environments full type">
+
+```ts
+{
+  environmentId: string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### list
+
+`files.list`
+
+List the entries of a directory in a running sandbox.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.files.list({ sandboxId: 'sb-1', path: '/tmp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `path` | `string` | Yes | Absolute path inside the sandbox. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  name: string,
+  path: string,
+  type: string,
+  size: number,
+  mode: number,
+  permissions: string,
+  owner: string,
+  group: string,
+  modifiedTime: number,
+  symlinkTarget?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### makeDirectory
+
+`files.makeDirectory`
+
+Create a directory in a running sandbox.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.files.makeDirectory({ sandboxId: 'sb-1', path: '/tmp/x/y', createParents: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `path` | `string` | Yes | Absolute path inside the sandbox. |
+| `createParents` | `boolean` | No | Also create missing parent directories (like mkdir -p). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### read
+
+`files.read`
+
+Read a file from a running sandbox, as UTF-8 text or base64 for binary files.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.files.read({ sandboxId: 'sb-1', path: '/tmp/a.txt', encoding: 'base64' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `path` | `string` | Yes | Absolute path inside the sandbox. |
+| `encoding` | `utf8 \| base64` | No | "utf8" for text, "base64" for binary content. Defaults to "utf8". |
+| `maxBytes` | `number` | No | Fail instead of returning a file larger than this. Defaults to 5000000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `string` | Yes | — |
+| `encoding` | `utf8 \| base64` | Yes | — |
+| `content` | `string` | Yes | — |
+| `size` | `number` | Yes | — |
+
+
+
+---
+
+### remove
+
+`files.remove`
+
+Delete a file or directory in a running sandbox (recursive for non-empty directories).
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.modal.api.files.remove({ sandboxId: 'sb-1', path: '/tmp/x', recursive: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `path` | `string` | Yes | Absolute path inside the sandbox. |
+| `recursive` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### stat
+
+`files.stat`
+
+Type, size, owner, permissions and modified time of a path in a running sandbox.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.files.stat({ sandboxId: 'sb-1', path: '/tmp/a.txt' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `path` | `string` | Yes | Absolute path inside the sandbox. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `path` | `string` | Yes | — |
+| `type` | `string` | Yes | "file", "directory" or "symlink". |
+| `size` | `number` | Yes | — |
+| `mode` | `number` | Yes | — |
+| `permissions` | `string` | Yes | — |
+| `owner` | `string` | Yes | — |
+| `group` | `string` | Yes | — |
+| `modifiedTime` | `number` | Yes | Unix epoch seconds. |
+| `symlinkTarget` | `string \| null` | No | — |
+
+
+
+---
+
+### write
+
+`files.write`
+
+Write a file in a running sandbox, replacing it if it exists. Parent directories must exist (see files.makeDirectory).
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.files.write({ sandboxId: 'sb-1', path: '/tmp/a.txt', content: 'hé' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `path` | `string` | Yes | Absolute path inside the sandbox. |
+| `content` | `string` | Yes | File content, in the given encoding. |
+| `encoding` | `utf8 \| base64` | No | "utf8" for text, "base64" for binary content. Defaults to "utf8". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `string` | Yes | — |
+| `bytesWritten` | `number` | Yes | — |
+
+
+
+---
+
+## Function Calls
+
+### cancel
+
+`functionCalls.cancel`
+
+Cancel a spawned call. With terminateContainers the containers running it are stopped too.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.modal.api.functionCalls.cancel({ functionCallId: 'fc-1', terminateContainers: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `functionCallId` | `string` | Yes | Function call id (fc-...), from functions.spawn or a pending call. |
+| `terminateContainers` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`functionCalls.get`
+
+The result of a spawned call, waiting up to waitMs; status "pending" if it is still running.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.functionCalls.get({ functionCallId: 'fc-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `functionCallId` | `string` | Yes | Function call id (fc-...), from functions.spawn or a pending call. |
+| `waitMs` | `number` | No | How long to wait for it to finish (0 = check once). Defaults to 0. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `functionCallId` | `string` | Yes | — |
+| `status` | `completed \| pending` | Yes | — |
+| `result` | `any` | No | Return value (bytes as &#123; $bytes: base64 &#125;). |
+
+
+
+---
+
+### logs
+
+`functionCalls.logs`
+
+The most recent log lines of one function call.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.functionCalls.logs({ functionCallId: 'fc-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `functionCallId` | `string` | Yes | Function call id (fc-...), from functions.spawn or a pending call. |
+| `entries` | `number` | No | Defaults to 100. |
+| `source` | `system \| stdout \| stderr` | No | Only entries from this stream. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  message: string,
+  source: string,
+  timestamp: string,
+  objectId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Functions
+
+### call
+
+`functions.call`
+
+Run a deployed function with arguments and wait for its result (billed for the compute it uses). The function must accept CBOR input (Modal 1.2+ deployments).
+
+**Risk:** `destructive`
+
+```ts
+await corsair.modal.api.functions.call({
+	appName: 'my-app',
+	name: 'square',
+	args: [4],
+	kwargs: { verbose: true },
+	options: {
+		gpu: 'T4',
+		secrets: ['hf'],
+	},
+	waitMs: 1000,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `functionId` | `string` | No | Function id (fu-...). Give this, or appName and name. |
+| `appName` | `string` | No | Name of a Modal App (as deployed or as created by apps.create). |
+| `name` | `string` | No | Function name inside the App. |
+| `version` | `number` | No | A specific deployed version of the App. |
+| `args` | `any[]` | No | Positional arguments (JSON values, sent CBOR-encoded). Defaults to []. |
+| `kwargs` | `Record<string, any>` | No | Keyword arguments. Defaults to &#123;&#125;. |
+| `options` | `object` | No | Override the deployed resources and settings for these calls (creates a variant of the function). |
+| `waitMs` | `number` | No | How long to wait for the result. If the call is still running then, the result has status "pending" and functionCalls.get fetches it later. Defaults to 120000. |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  cpu?: number,
+  cpuLimit?: number,
+  memoryMiB?: number,
+  memoryLimitMiB?: number,
+  gpu?: string,
+  env?: Record<string, string>,
+  secrets?: string[],
+  retries?: number,
+  maxContainers?: number,
+  bufferContainers?: number,
+  scaledownWindowMs?: number,
+  timeoutMs?: number,
+  routingRegion?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `functionCallId` | `string` | Yes | — |
+| `status` | `completed \| pending` | Yes | — |
+| `result` | `any` | No | Return value (bytes as &#123; $bytes: base64 &#125;). |
+
+
+
+---
+
+### currentStats
+
+`functions.currentStats`
+
+Current backlog (queued inputs) and number of running containers.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.functions.currentStats({ functionId: 'fu-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `functionId` | `string` | No | Function id (fu-...). Give this, or appName and name. |
+| `appName` | `string` | No | Name of a Modal App (as deployed or as created by apps.create). |
+| `name` | `string` | No | Function name inside the App. |
+| `version` | `number` | No | A specific deployed version of the App. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `backlog` | `number` | Yes | — |
+| `numTotalRunners` | `number` | Yes | — |
+
+
+
+---
+
+### fetchLogs
+
+`functions.fetchLogs`
+
+A function's logs over a time range, with optional text search.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.functions.fetchLogs({ functionId: 'fu-1', since: '2026-11-27T00:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `functionId` | `string` | No | Function id (fu-...). Give this, or appName and name. |
+| `appName` | `string` | No | Name of a Modal App (as deployed or as created by apps.create). |
+| `name` | `string` | No | Function name inside the App. |
+| `version` | `number` | No | A specific deployed version of the App. |
+| `since` | `string` | Yes | — |
+| `until` | `string` | No | — |
+| `source` | `system \| stdout \| stderr` | No | Only entries from this stream. |
+| `searchText` | `string` | No | — |
+| `limit` | `number` | No | Most items to return (1-5000, default 500). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  message: string,
+  source: string,
+  timestamp: string,
+  objectId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`functions.get`
+
+Look up a deployed function by App and name (or by id) and return its id and web URL, if it has one.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.functions.get({ appName: 'my-app', name: 'square' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `functionId` | `string` | No | Function id (fu-...). Give this, or appName and name. |
+| `appName` | `string` | No | Name of a Modal App (as deployed or as created by apps.create). |
+| `name` | `string` | No | Function name inside the App. |
+| `version` | `number` | No | A specific deployed version of the App. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `functionId` | `string` | Yes | — |
+| `webUrl` | `string` | No | — |
+
+
+
+---
+
+### info
+
+`functions.info`
+
+A deployed function's configuration: CPU, memory, GPUs, image, timeouts, retries, regions, schedule, volumes, secrets, web endpoint and class methods.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.functions.info({ functionId: 'fu-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `functionId` | `string` | No | Function id (fu-...). Give this, or appName and name. |
+| `appName` | `string` | No | Name of a Modal App (as deployed or as created by apps.create). |
+| `name` | `string` | No | Function name inside the App. |
+| `version` | `number` | No | A specific deployed version of the App. |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### logs
+
+`functions.logs`
+
+The most recent log lines of a function.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.functions.logs({ functionId: 'fu-1', entries: 5, source: 'stderr' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `functionId` | `string` | No | Function id (fu-...). Give this, or appName and name. |
+| `appName` | `string` | No | Name of a Modal App (as deployed or as created by apps.create). |
+| `name` | `string` | No | Function name inside the App. |
+| `version` | `number` | No | A specific deployed version of the App. |
+| `entries` | `number` | No | Defaults to 100. |
+| `source` | `system \| stdout \| stderr` | No | Only entries from this stream. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  message: string,
+  source: string,
+  timestamp: string,
+  objectId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### metrics
+
+`functions.metrics`
+
+Time series metrics for a function (see functions.metricsSchema for the available groups and names).
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.functions.metrics({
+	functionId: 'fu-1',
+	groups: ['container'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `functionId` | `string` | No | Function id (fu-...). Give this, or appName and name. |
+| `appName` | `string` | No | Name of a Modal App (as deployed or as created by apps.create). |
+| `name` | `string` | No | Function name inside the App. |
+| `version` | `number` | No | A specific deployed version of the App. |
+| `groups` | `string[]` | No | — |
+| `since` | `string` | No | — |
+| `until` | `string` | No | — |
+| `bucketSizeSecs` | `number` | No | — |
+| `allVariants` | `boolean` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### metricsSchema
+
+`functions.metricsSchema`
+
+The metric groups and definitions functions.metrics can export.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.functions.metricsSchema({ functionId: 'fu-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `functionId` | `string` | No | Function id (fu-...). Give this, or appName and name. |
+| `appName` | `string` | No | Name of a Modal App (as deployed or as created by apps.create). |
+| `name` | `string` | No | Function name inside the App. |
+| `version` | `number` | No | A specific deployed version of the App. |
+| `groups` | `string[]` | No | — |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### spawn
+
+`functions.spawn`
+
+Start a deployed function without waiting; returns a function call id for functionCalls.get or functionCalls.cancel.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.modal.api.functions.spawn({
+	functionId: 'fu-1',
+	args: [1],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `functionId` | `string` | No | Function id (fu-...). Give this, or appName and name. |
+| `appName` | `string` | No | Name of a Modal App (as deployed or as created by apps.create). |
+| `name` | `string` | No | Function name inside the App. |
+| `version` | `number` | No | A specific deployed version of the App. |
+| `args` | `any[]` | No | Positional arguments (JSON values, sent CBOR-encoded). Defaults to []. |
+| `kwargs` | `Record<string, any>` | No | Keyword arguments. Defaults to &#123;&#125;. |
+| `options` | `object` | No | Override the deployed resources and settings for these calls (creates a variant of the function). |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  cpu?: number,
+  cpuLimit?: number,
+  memoryMiB?: number,
+  memoryLimitMiB?: number,
+  gpu?: string,
+  env?: Record<string, string>,
+  secrets?: string[],
+  retries?: number,
+  maxContainers?: number,
+  bufferContainers?: number,
+  scaledownWindowMs?: number,
+  timeoutMs?: number,
+  routingRegion?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `functionCallId` | `string` | Yes | — |
+
+
+
+---
+
+### stats
+
+`functions.stats`
+
+Input and container counts and latency percentiles for a function over a time window.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.functions.stats({ functionId: 'fu-1', allVariants: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `functionId` | `string` | No | Function id (fu-...). Give this, or appName and name. |
+| `appName` | `string` | No | Name of a Modal App (as deployed or as created by apps.create). |
+| `name` | `string` | No | Function name inside the App. |
+| `version` | `number` | No | A specific deployed version of the App. |
+| `since` | `string` | No | — |
+| `until` | `string` | No | — |
+| `allVariants` | `boolean` | No | Include variants made with options overrides. |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### updateAutoscaler
+
+`functions.updateAutoscaler`
+
+Change min/max/buffer containers and the scale-down window of a deployed function. Warm containers (minContainers, bufferContainers) are billed while idle.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.modal.api.functions.updateAutoscaler({ functionId: 'fu-1', minContainers: 0, maxContainers: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `functionId` | `string` | No | Function id (fu-...). Give this, or appName and name. |
+| `appName` | `string` | No | Name of a Modal App (as deployed or as created by apps.create). |
+| `name` | `string` | No | Function name inside the App. |
+| `version` | `number` | No | A specific deployed version of the App. |
+| `minContainers` | `number` | No | — |
+| `maxContainers` | `number` | No | — |
+| `bufferContainers` | `number` | No | — |
+| `scaledownWindowMs` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `minContainers` | `number` | No | — |
+| `maxContainers` | `number` | No | — |
+| `bufferContainers` | `number` | No | — |
+| `scaledownWindowMs` | `number` | No | — |
+
+
+
+---
+
+## Images
+
+### build
+
+`images.build`
+
+Build an image (registry base plus optional Dockerfile commands) on Modal and return its id. The build runs on Modal compute; later sandboxes reuse the cached image.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.modal.api.images.build({
+	image: { registry: 'my.ecr/app:1', registryType: 'aws_ecr', registrySecret: 'aws' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `appName` | `string` | No | App to build in; created if missing (default "corsair-sandboxes"). |
+| `image` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="image full type">
+
+```ts
+{
+  imageId?: string,
+  registry?: string,
+  registryType?: public | aws_ecr | gcp_artifact_registry,
+  registrySecret?: string,
+  publishedName?: string,
+  dockerfileCommands?: string[],
+  dockerfileEnv?: Record<string, string>,
+  dockerfileSecrets?: string[],
+  forceBuild?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageId` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`images.delete`
+
+Delete an image. Sandboxes and functions using it keep running, but it cannot be used again.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.modal.api.images.delete({ imageId: 'im-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageId` | `string` | Yes | Image id (im-...). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`images.get`
+
+Check that an image id exists and return it.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.images.get({ imageId: 'im-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageId` | `string` | Yes | Image id (im-...). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageId` | `string` | Yes | — |
+
+
+
+---
+
+### getByName
+
+`images.getByName`
+
+Look up an image published with images.publish by its name.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.images.getByName({ name: 'base' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageId` | `string` | Yes | — |
+
+
+
+---
+
+### publish
+
+`images.publish`
+
+Give a built image a name in the environment, so images.getByName and sandboxes.create (publishedName) can use it.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.images.publish({ imageId: 'im-1', name: 'base' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `imageId` | `string` | Yes | Image id (im-...). |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+## Proxies
+
+### get
+
+`proxies.get`
+
+Look up a Modal Proxy (static outbound IP, set up in the dashboard) by name; pass its name as proxyName to sandboxes.create.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.proxies.get({ name: 'static-ip' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `proxyId` | `string` | Yes | — |
+
+
+
+---
+
+## Queues
+
+### clear
+
+`queues.clear`
+
+Remove every value from a Queue partition, or from all partitions with all. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.modal.api.queues.clear({ name: 'jobs', all: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Queue name. |
+| `partition` | `string` | No | Partition key (1-64 bytes); omit for the default partition. |
+| `all` | `boolean` | No | Clear every partition. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### create
+
+`queues.create`
+
+Get a named Queue, creating it if it does not exist. Values are pickled, so Python code reads them as ordinary objects.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.queues.create({ name: 'jobs' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Queue name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `queueId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`queues.delete`
+
+Delete a Queue and everything in it. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.modal.api.queues.delete({ name: 'jobs' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Queue name. |
+| `allowMissing` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`queues.get`
+
+Remove and return up to `count` values from the front of a Queue, waiting up to timeoutMs for one to arrive. Returns [] when it stays empty. Python tuples and sets come back as arrays, bytes as &#123; $bytes &#125;, other objects as &#123; $pickle: base64 &#125;.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.queues.get({ name: 'jobs', count: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Queue name. |
+| `count` | `number` | No | Defaults to 1. |
+| `partition` | `string` | No | Partition key (1-64 bytes); omit for the default partition. |
+| `timeoutMs` | `number` | No | How long to wait for a value (0 = do not wait). Defaults to 0. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `values` | `any[]` | Yes | — |
+
+
+
+---
+
+### len
+
+`queues.len`
+
+Number of values in a Queue partition, or in all partitions with total.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.queues.len({ name: 'jobs', total: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Queue name. |
+| `partition` | `string` | No | Partition key (1-64 bytes); omit for the default partition. |
+| `total` | `boolean` | No | Count all partitions. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `length` | `number` | Yes | — |
+
+
+
+---
+
+### list
+
+`queues.list`
+
+List the named Queues in an environment with their partition count and size.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.queues.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `limit` | `number` | No | Most items to return (1-1000, default 100). |
+| `createdBefore` | `number` | No | Cursor: only objects created before this Unix time (pass nextCreatedBefore from the previous page). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `queues` | `object[]` | Yes | — |
+| `nextCreatedBefore` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="queues full type">
+
+```ts
+{
+  queueId: string,
+  name: string,
+  numPartitions: number,
+  totalSize: number,
+  createdAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### peek
+
+`queues.peek`
+
+Read values from a Queue in order without removing them (decoded as in queues.get).
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.queues.peek({ name: 'jobs', limit: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Queue name. |
+| `partition` | `string` | No | Partition key (1-64 bytes); omit for the default partition. |
+| `limit` | `number` | No | Most items to return (1-1000, default 100). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `values` | `any[]` | Yes | — |
+| `truncated` | `boolean` | Yes | — |
+
+
+
+---
+
+### put
+
+`queues.put`
+
+Add values (JSON) to the end of a Queue. &#123; $bytes: base64 &#125; is stored as Python bytes.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.queues.put({
+	name: 'jobs',
+	values: [{ a: 1 }, 'b'],
+	partition: 'p1',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Queue name. |
+| `values` | `any[]` | Yes | — |
+| `partition` | `string` | No | Partition key (1-64 bytes); omit for the default partition. |
+| `partitionTtlMs` | `number` | No | How long the partition lives without writes (default 24 hours). |
+| `timeoutMs` | `number` | No | How long to retry while the Queue is full. Defaults to 10000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+
+
+
+---
+
+## Sandboxes
+
+### create
+
+`sandboxes.create`
+
+Start a Modal Sandbox (a container billed per second for CPU, memory and any GPU) from a registry image, a built image or a published one. Returns its id, plus tunnel URLs when ports are exposed.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.modal.api.sandboxes.create({
+	image: {
+		registry: 'alpine:3.21',
+		dockerfileCommands: ['RUN apk add curl'],
+	},
+	command: ['sleep', '60'],
+	cpu: 0.25,
+	memoryMiB: 256,
+	timeoutMs: 60000,
+	secrets: ['openai'],
+	volumes: {
+		/data: { name: 'data', readOnly: true },
+	},
+	encryptedPorts: [8080],
+	readinessProbe: { tcpPort: 8080 },
+	tags: { run: 'test' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `appName` | `string` | No | App the sandbox belongs to; created if missing (default "corsair-sandboxes"). |
+| `image` | `object` | No | Image to run. Defaults to the registry image "python:3.13-slim". |
+| `name` | `string` | No | Name, unique within the App; lets sandboxes.getByName find it. |
+| `command` | `string[]` | No | Entrypoint program and arguments. By default the sandbox sleeps until its timeout. |
+| `workdir` | `string` | No | — |
+| `env` | `Record<string, string>` | No | Environment variables to set. |
+| `secrets` | `string[]` | No | Names of Modal Secrets to inject as environment variables. |
+| `volumes` | `object` | No | Volumes to mount, keyed by mount path (e.g. "/data"). |
+| `cloudBucketMounts` | `object` | No | S3/R2/GCS buckets to mount, keyed by mount path. |
+| `cpu` | `number` | No | Reserved CPU cores (can be fractional). |
+| `cpuLimit` | `number` | No | — |
+| `memoryMiB` | `number` | No | — |
+| `memoryLimitMiB` | `number` | No | — |
+| `gpu` | `string` | No | GPU type and count, e.g. "T4", "A100-80GB:2". GPUs cost more. |
+| `timeoutMs` | `number` | No | Maximum lifetime in ms (Modal default 5 minutes). |
+| `idleTimeoutMs` | `number` | No | Terminate after this long without activity. |
+| `encryptedPorts` | `number[]` | No | Ports to expose through TLS tunnels. |
+| `h2Ports` | `number[]` | No | Ports to expose through HTTP/2 TLS tunnels. |
+| `unencryptedPorts` | `number[]` | No | Ports to expose through plain TCP tunnels. |
+| `blockNetwork` | `boolean` | No | Block all network access. |
+| `outboundCidrAllowlist` | `string[]` | No | — |
+| `outboundDomainAllowlist` | `string[]` | No | Domains the sandbox may reach; wildcards like *.example.com. |
+| `inboundCidrAllowlist` | `string[]` | No | — |
+| `cloud` | `string` | No | Cloud provider, e.g. "aws", "gcp". |
+| `regions` | `string[]` | No | — |
+| `runtime` | `gvisor \| vm` | No | — |
+| `pty` | `boolean` | No | — |
+| `tags` | `Record<string, string>` | No | Tags, filterable with sandboxes.list. |
+| `proxyName` | `string` | No | Name of a Modal Proxy (static outbound IP) to route through. |
+| `readinessProbe` | `object` | No | — |
+| `includeOidcIdentityToken` | `boolean` | No | — |
+| `enableMemorySnapshot` | `boolean` | No | Allow sandboxes.snapshotMemory on this sandbox (no GPUs or Volumes; not with enableExitSnapshot). |
+| `enableExitSnapshot` | `boolean` | No | Capture the filesystem when the sandbox exits (read it with sandboxes.getExitSnapshot). Not with enableMemorySnapshot. |
+| `persistent` | `boolean` | No | Experimental: allow sandboxes.pause and sandboxes.resume. Not enabled on every workspace (Modal answers 403); takes no timeoutMs or idleTimeoutMs. |
+| `backend` | `default \| v2` | No | "v2" uses the experimental V2 backend (no GPUs; not returned by sandboxes.list). |
+| `tunnelTimeoutMs` | `number` | No | When ports are exposed, how long to wait for their tunnels. Defaults to 30000. |
+
+<AccordionGroup>
+<Accordion title="image full type">
+
+```ts
+{
+  imageId?: string,
+  registry?: string,
+  registryType?: public | aws_ecr | gcp_artifact_registry,
+  registrySecret?: string,
+  publishedName?: string,
+  dockerfileCommands?: string[],
+  dockerfileEnv?: Record<string, string>,
+  dockerfileSecrets?: string[],
+  forceBuild?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="volumes full type">
+
+```ts
+Record<string, {
+  name: string,
+  readOnly?: boolean,
+  subPath?: string
+}>
+```
+</Accordion>
+
+<Accordion title="cloudBucketMounts full type">
+
+```ts
+Record<string, {
+  bucketName: string,
+  secretName?: string,
+  readOnly?: boolean,
+  requesterPays?: boolean,
+  bucketEndpointUrl?: string,
+  keyPrefix?: string,
+  oidcAuthRoleArn?: string
+}>
+```
+</Accordion>
+
+<Accordion title="readinessProbe full type">
+
+```ts
+{
+  tcpPort?: number,
+  execCommand?: string[],
+  intervalMs?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | — |
+| `appId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `tunnels` | `object[]` | No | — |
+| `tunnelsError` | `string` | No | Set when the sandbox started but its tunnels failed or were not ready within tunnelTimeoutMs. The sandbox keeps running. |
+
+<AccordionGroup>
+<Accordion title="tunnels full type">
+
+```ts
+{
+  port: number,
+  host: string,
+  url: string,
+  tlsPort: number,
+  unencryptedHost?: string,
+  unencryptedPort?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createConnectToken
+
+`sandboxes.createConnectToken`
+
+Create a URL and bearer token for HTTP requests into a sandbox port (default 8080). Treat the token as a secret.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.sandboxes.createConnectToken({ sandboxId: 'sb-1', port: 3000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `port` | `number` | No | — |
+| `userMetadata` | `string` | No | Added to forwarded requests as a header by the proxy. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `token` | `string` | Yes | — |
+
+
+
+---
+
+### exec
+
+`sandboxes.exec`
+
+Run a command in a running sandbox and wait for it: returns exit code, stdout and stderr. For a shell line pass ["sh", "-c", "..."].
+
+**Risk:** `destructive`
+
+```ts
+await corsair.modal.api.sandboxes.exec({
+	sandboxId: 'sb-1',
+	command: ['cat'],
+	stdin: 'hi',
+	timeoutMs: 5000,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `command` | `string[]` | Yes | Program and arguments, e.g. ["python", "-c", "print(1)"]. |
+| `stdin` | `string` | No | Text written to the command's stdin, which is then closed. |
+| `workdir` | `string` | No | — |
+| `env` | `Record<string, string>` | No | Environment variables to set. |
+| `secrets` | `string[]` | No | Names of Modal Secrets to inject as environment variables. |
+| `timeoutMs` | `number` | No | Kill the command after this long (default: no limit). |
+| `pty` | `boolean` | No | — |
+| `maxOutputBytes` | `number` | No | Keep at most this many bytes of stdout and of stderr. Defaults to 1000000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exitCode` | `number` | Yes | — |
+| `stdout` | `string` | Yes | — |
+| `stderr` | `string` | Yes | — |
+| `stdoutTruncated` | `boolean` | Yes | — |
+| `stderrTruncated` | `boolean` | Yes | — |
+
+
+
+---
+
+### fetchLogs
+
+`sandboxes.fetchLogs`
+
+A sandbox's entrypoint logs over a time range, with optional text search.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.sandboxes.fetchLogs({ sandboxId: 'sb-1', since: '2026-11-27T09:00:00Z', searchText: 'x' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `since` | `string` | Yes | Range start (ISO 8601). |
+| `until` | `string` | No | — |
+| `source` | `system \| stdout \| stderr` | No | Only entries from this stream. |
+| `searchText` | `string` | No | — |
+| `limit` | `number` | No | Most items to return (1-5000, default 500). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  message: string,
+  source: string,
+  timestamp: string,
+  objectId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`sandboxes.get`
+
+Whether a sandbox is still running, and its exit code once it has finished.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.sandboxes.get({ sandboxId: 'sb-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | — |
+| `running` | `boolean` | Yes | — |
+| `exitCode` | `number \| null` | Yes | Exit code once the sandbox has finished, else null. |
+
+
+
+---
+
+### getByName
+
+`sandboxes.getByName`
+
+Find a running sandbox by the name it was created with, inside a deployed App.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.sandboxes.getByName({ appName: 'my-app', name: 'worker', backend: 'v2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `appName` | `string` | Yes | Name of a Modal App (as deployed or as created by apps.create). |
+| `name` | `string` | Yes | — |
+| `includeTerminated` | `boolean` | No | If none is running, return the most recent terminated one instead. |
+| `backend` | `default \| v2` | No | "v2" for sandboxes created with backend "v2". |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | — |
+| `running` | `boolean` | Yes | — |
+| `exitCode` | `number \| null` | Yes | Exit code once the sandbox has finished, else null. |
+
+
+
+---
+
+### getExitSnapshot
+
+`sandboxes.getExitSnapshot`
+
+The filesystem Image captured when a sandbox created with enableExitSnapshot exited.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.sandboxes.getExitSnapshot({ sandboxId: 'sb-1', timeoutMs: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `timeoutMs` | `number` | No | How long to wait for the snapshot (0 = check once). Defaults to 60000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageId` | `string` | Yes | — |
+
+
+
+---
+
+### getTags
+
+`sandboxes.getTags`
+
+The tags on a sandbox.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.sandboxes.getTags({ sandboxId: 'sb-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `Record<string, string>` | Yes | — |
+
+
+
+---
+
+### list
+
+`sandboxes.list`
+
+List running sandboxes in the environment, or in one App, optionally filtered by tags.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.sandboxes.list({
+	appName: 'my-app',
+	tags: { run: 'test' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `appName` | `string` | No | Only sandboxes of this App. |
+| `tags` | `Record<string, string>` | No | Only sandboxes that have all of these tags. |
+| `includeV2` | `boolean` | No | Also list sandboxes created with backend "v2". |
+| `limit` | `number` | No | Most items to return (1-1000, default 100). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxes` | `object[]` | Yes | — |
+| `truncated` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sandboxes full type">
+
+```ts
+{
+  sandboxId: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### logs
+
+`sandboxes.logs`
+
+The most recent entrypoint log lines of a sandbox (not the output of sandboxes.exec commands).
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.sandboxes.logs({ sandboxId: 'sb-1', entries: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `entries` | `number` | No | Defaults to 100. |
+| `source` | `system \| stdout \| stderr` | No | Only entries from this stream. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  message: string,
+  source: string,
+  timestamp: string,
+  objectId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### mountImage
+
+`sandboxes.mountImage`
+
+Mount an Image (e.g. from sandboxes.snapshotDirectory) at a path in a running sandbox; without imageId an empty directory is mounted.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.sandboxes.mountImage({ sandboxId: 'sb-1', path: '/mnt', imageId: 'im-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `path` | `string` | Yes | — |
+| `imageId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### pause
+
+`sandboxes.pause`
+
+Stop the container of a persistent sandbox, keeping its state for sandboxes.resume. Persistent sandboxes are not enabled on every workspace yet.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.sandboxes.pause({ sandboxId: 'sb-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### reloadVolumes
+
+`sandboxes.reloadVolumes`
+
+Reload the Volumes mounted in a sandbox to see changes committed elsewhere.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.sandboxes.reloadVolumes({ sandboxId: 'sb-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `timeoutMs` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### restoreSnapshot
+
+`sandboxes.restoreSnapshot`
+
+Start a new sandbox from a memory snapshot (billed like any sandbox).
+
+**Risk:** `destructive`
+
+```ts
+await corsair.modal.api.sandboxes.restoreSnapshot({ snapshotId: 'sn-1', name: null });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `snapshotId` | `string` | Yes | — |
+| `name` | `string \| null` | No | Name for the new sandbox; omit to reuse the original's, null for none. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | — |
+
+
+
+---
+
+### resume
+
+`sandboxes.resume`
+
+Start a paused persistent sandbox again from its saved state (billed while running).
+
+**Risk:** `destructive`
+
+```ts
+await corsair.modal.api.sandboxes.resume({ sandboxId: 'sb-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### setName
+
+`sandboxes.setName`
+
+Name a running V2 sandbox that has none (once only), so sandboxes.getByName can find it.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.sandboxes.setName({ sandboxId: 'sb-1', name: 'worker' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### setTags
+
+`sandboxes.setTags`
+
+Replace all tags on a sandbox (an empty object clears them).
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.sandboxes.setTags({
+	sandboxId: 'sb-1',
+	tags: { a: 'b' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `tags` | `Record<string, string>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### snapshotDirectory
+
+`sandboxes.snapshotDirectory`
+
+Save one directory of a running sandbox as an Image (mount it elsewhere with sandboxes.mountImage).
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.sandboxes.snapshotDirectory({ sandboxId: 'sb-1', path: '/work' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `path` | `string` | Yes | — |
+| `timeoutMs` | `number` | No | — |
+| `ttlMs` | `number \| null` | No | Keep the image this long in ms (default 30 days); null keeps it until deleted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageId` | `string` | Yes | — |
+
+
+
+---
+
+### snapshotFilesystem
+
+`sandboxes.snapshotFilesystem`
+
+Save a sandbox's filesystem as an Image; pass its id to sandboxes.create to start a copy.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.sandboxes.snapshotFilesystem({ sandboxId: 'sb-1', ttlMs: null });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `timeoutMs` | `number` | No | — |
+| `ttlMs` | `number \| null` | No | Keep the image this long in ms (default 30 days); null keeps it until deleted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `imageId` | `string` | Yes | — |
+
+
+
+---
+
+### snapshotMemory
+
+`sandboxes.snapshotMemory`
+
+Snapshot filesystem and memory of a sandbox created with enableMemorySnapshot (and no Volumes). The sandbox stops once the snapshot is taken; sandboxes.restoreSnapshot starts a copy.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.sandboxes.snapshotMemory({ sandboxId: 'sb-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `snapshotId` | `string` | Yes | — |
+
+
+
+---
+
+### terminate
+
+`sandboxes.terminate`
+
+Stop a sandbox and end its billing. Its filesystem is lost unless it was snapshotted.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.modal.api.sandboxes.terminate({ sandboxId: 'sb-1', wait: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `wait` | `boolean` | No | Wait for it to finish and return the exit code. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `terminated` | `true` | Yes | — |
+| `exitCode` | `number` | No | — |
+
+
+
+---
+
+### tunnels
+
+`sandboxes.tunnels`
+
+Public URLs and TCP endpoints for the ports a sandbox exposes (encryptedPorts, h2Ports, unencryptedPorts).
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.sandboxes.tunnels({ sandboxId: 'sb-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `timeoutMs` | `number` | No | Defaults to 30000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tunnels` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tunnels full type">
+
+```ts
+{
+  port: number,
+  host: string,
+  url: string,
+  tlsPort: number,
+  unencryptedHost?: string,
+  unencryptedPort?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unmountImage
+
+`sandboxes.unmountImage`
+
+Unmount an Image mounted with sandboxes.mountImage.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.sandboxes.unmountImage({ sandboxId: 'sb-1', path: '/mnt' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `path` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### updateNetworkPolicy
+
+`sandboxes.updateNetworkPolicy`
+
+Replace the outbound allowlists of a running sandbox. Pass both lists; [] blocks that dimension, ["0.0.0.0/0"] or ["*"] allows all. Only works on a sandbox created with outboundCidrAllowlist/outboundDomainAllowlist (to start open, create it with ["0.0.0.0/0"] and ["*"]); Modal answers 409 otherwise.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.sandboxes.updateNetworkPolicy({
+	sandboxId: 'sb-1',
+	outboundCidrAllowlist: [],
+	outboundDomainAllowlist: ['pypi.org'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `outboundCidrAllowlist` | `string[]` | Yes | — |
+| `outboundDomainAllowlist` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### wait
+
+`sandboxes.wait`
+
+Wait for a sandbox to finish (up to timeoutMs) and return its exit code.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.sandboxes.wait({ sandboxId: 'sb-1', timeoutMs: 1000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `timeoutMs` | `number` | No | Stop waiting after this long (max 10 minutes). Defaults to 60000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | — |
+| `running` | `boolean` | Yes | — |
+| `exitCode` | `number \| null` | Yes | Exit code once the sandbox has finished, else null. |
+
+
+
+---
+
+### waitUntilReady
+
+`sandboxes.waitUntilReady`
+
+Wait until a sandbox is ready: its readiness probe passes, or it has started when it has none.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.sandboxes.waitUntilReady({ sandboxId: 'sb-1', timeoutMs: 2000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandboxId` | `string` | Yes | Sandbox id (sb-...), as returned by sandboxes.create. |
+| `timeoutMs` | `number` | No | Defaults to 60000. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ready` | `true` | Yes | — |
+
+
+
+---
+
+## Secrets
+
+### create
+
+`secrets.create`
+
+Create a named Secret from key/value pairs (injected into sandboxes and functions as environment variables). Fails if it exists unless overwrite is set.
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.secrets.create({
+	name: 'svc',
+	values: { TOKEN: 'v' },
+	overwrite: true,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Secret name. |
+| `values` | `Record<string, string>` | Yes | Environment variable names mapped to their values. |
+| `overwrite` | `boolean` | No | Replace an existing Secret of the same name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secretId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`secrets.delete`
+
+Delete a Secret. Apps that use it fail on their next start. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.modal.api.secrets.delete({ name: 'svc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Secret name. |
+| `allowMissing` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`secrets.get`
+
+Look up a Secret by name and return its id (values are never returned). With requiredKeys, fails if any key is missing.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.secrets.get({
+	name: 'openai',
+	requiredKeys: ['OPENAI_API_KEY'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Secret name. |
+| `requiredKeys` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secretId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`secrets.list`
+
+List the Secrets in an environment with their key names and last use (values are never returned).
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.secrets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `limit` | `number` | No | Most items to return (1-1000, default 100). |
+| `createdBefore` | `number` | No | Cursor: only objects created before this Unix time (pass nextCreatedBefore from the previous page). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secrets` | `object[]` | Yes | — |
+| `nextCreatedBefore` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="secrets full type">
+
+```ts
+{
+  secretId: string,
+  name: string,
+  keys?: string[],
+  createdAt?: string,
+  createdBy?: string,
+  lastUsedAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Volumes
+
+### create
+
+`volumes.create`
+
+Get a Volume by name, creating it if it does not exist. Volumes are persistent network file systems for sandboxes and functions (storage is billed).
+
+**Risk:** `write`
+
+```ts
+await corsair.modal.api.volumes.create({ name: 'data', version: 2 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Volume name. |
+| `version` | `1 \| 2` | No | File system version for a new Volume (2 is the newer, faster one). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `volumeId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`volumes.delete`
+
+Delete a Volume and all its files. Running Apps that mount it lose access. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.modal.api.volumes.delete({ name: 'data', allowMissing: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Volume name. |
+| `allowMissing` | `boolean` | No | Succeed even if the Volume does not exist. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
+### get
+
+`volumes.get`
+
+Look up a Volume by name and return its id. 404 if it does not exist.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.volumes.get({ name: 'data' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Volume name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `volumeId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`volumes.list`
+
+List the Volumes in an environment, newest first.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.volumes.list({ environment: 'dev' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `limit` | `number` | No | Most items to return (1-1000, default 100). |
+| `createdBefore` | `number` | No | Cursor: only objects created before this Unix time (pass nextCreatedBefore from the previous page). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `volumes` | `object[]` | Yes | — |
+| `nextCreatedBefore` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="volumes full type">
+
+```ts
+{
+  volumeId: string,
+  name: string,
+  createdAt?: string,
+  createdBy?: string,
+  version?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFiles
+
+`volumes.listFiles`
+
+List files and directories in a Volume under a path.
+
+**Risk:** `read`
+
+```ts
+await corsair.modal.api.volumes.listFiles({ name: 'data', path: '/', recursive: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Volume name. |
+| `path` | `string` | No | Directory inside the Volume. Defaults to "/". |
+| `recursive` | `boolean` | No | — |
+| `limit` | `number` | No | Most items to return (1-10000, default 1000). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | — |
+| `truncated` | `boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  path: string,
+  type: string,
+  size: number,
+  mtime?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeFile
+
+`volumes.removeFile`
+
+Delete a file, or with recursive a directory, from a Volume. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.modal.api.volumes.removeFile({ name: 'data', path: 'a.txt' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `environment` | `string` | No | Modal environment to run in. Defaults to the account environment, else the workspace default. |
+| `name` | `string` | Yes | Volume name. |
+| `path` | `string` | Yes | — |
+| `recursive` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | Yes | — |
+
+
+
+---
+
