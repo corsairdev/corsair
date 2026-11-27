@@ -472,3 +472,156 @@ function withoutEchoedValues(body: unknown, depth = 0): unknown {
 	}
 	return result;
 }
+
+/** A page from a route that sends its next-page token in a response header. */
+export type SteelHeaderPage = {
+	// `unknown` because the page body is validated by the operation's output schema.
+	body: unknown;
+	/** The header's value as sent, or null when the response had none. */
+	header: string | null;
+};
+
+/** The longest wait a Retry-After header can ask for. */
+const MAX_RETRY_DELAY_MS = 60_000;
+
+/**
+ * The URL core's `request()` builds for the same options: path values through
+ * the same encoder, lists as repeated keys, maps as `name[key]=value`.
+ */
+export function steelRequestUrl(base: string, options: SteelRequest): string {
+	const path = options.path.replace(/\{([^}]+)\}/g, (match, name: string) => {
+		const value = options.pathParameters?.[name];
+		if (value === undefined) return match;
+		return options.rawPathValues?.has(value)
+			? value
+			: encodeSteelPathValue(value);
+	});
+	const parts: string[] = [];
+	// `unknown` because query values are validated scalars, lists or maps.
+	const add = (key: string, value: unknown) => {
+		if (value === undefined || value === null) return;
+		if (Array.isArray(value)) {
+			for (const item of value) add(key, item);
+		} else if (typeof value === 'object') {
+			for (const [inner, innerValue] of Object.entries(value)) {
+				add(`${key}[${inner}]`, innerValue);
+			}
+		} else {
+			parts.push(
+				`${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`,
+			);
+		}
+	};
+	for (const [key, value] of Object.entries(options.query ?? {})) {
+		add(key, value);
+	}
+	return `${base}/${path.replace(/^\/+/, '')}${parts.length > 0 ? `?${parts.join('&')}` : ''}`;
+}
+
+function retryAfterMs(value: string | null): number | undefined {
+	if (!value) return undefined;
+	const seconds = Number.parseInt(value, 10);
+	return Number.isNaN(seconds)
+		? undefined
+		: Math.min(Math.max(seconds, 0) * 1000, MAX_RETRY_DELAY_MS);
+}
+
+/**
+ * A GET whose next-page token comes back in a response header (Steel's
+ * `Next-Cursor` on session events). Core's `request()` returns the body or
+ * one header, never both, so this sends the call with `fetch` and keeps the
+ * header. Everything else matches `makeSteelRequest`: the same URL, API key
+ * header and timeout, a 429 retried three times (Retry-After in seconds, else
+ * 1, 2 and 4 s), and failures raised as the same scrubbed `ApiError`.
+ */
+export async function makeSteelHeaderPagedRequest(
+	ctx: SteelCallContext,
+	options: SteelRequest,
+	header: string,
+): Promise<SteelHeaderPage> {
+	if (!ctx.key) {
+		throw new AuthMissingError('steel', 'api_key');
+	}
+	if (options.method !== 'GET' || options.body !== undefined) {
+		throw new Error('Steel header paging is for GET routes only');
+	}
+	const base = baseUrlOf(ctx);
+	const config = configFor(
+		base,
+		ctx.key,
+		options.timeoutMs,
+		options.rawPathValues,
+	);
+	const url = steelRequestUrl(base, options);
+	const requestOptions: ApiRequestOptions = {
+		method: 'GET',
+		url: options.path,
+		path: options.pathParameters,
+		query: options.query,
+		headers: options.headers,
+	};
+	const maxRetries = options.singleAttempt
+		? 0
+		: STEEL_RATE_LIMIT_CONFIG.maxRetries;
+	for (let attempt = 1; ; attempt++) {
+		const response = await fetch(url, {
+			method: 'GET',
+			headers: { ...config.HEADERS, ...options.headers },
+			signal: AbortSignal.timeout(config.TIMEOUT),
+		});
+		const retryAfter = retryAfterMs(response.headers.get('retry-after'));
+		if (response.status === 429 && attempt <= maxRetries) {
+			await response.body?.cancel().catch(() => undefined);
+			await new Promise((done) =>
+				setTimeout(
+					done,
+					retryAfter ??
+						Math.min(
+							STEEL_RATE_LIMIT_CONFIG.initialRetryDelay *
+								STEEL_RATE_LIMIT_CONFIG.backoffMultiplier ** (attempt - 1),
+							MAX_RETRY_DELAY_MS,
+						),
+				),
+			);
+			continue;
+		}
+		const text = await response.text();
+		if (!response.ok) {
+			// `unknown` because an error body is untrusted provider JSON or text.
+			let errorBody: unknown = text.length === 0 ? undefined : text;
+			try {
+				errorBody = JSON.parse(text);
+			} catch {
+				// Not JSON: keep the text.
+			}
+			throw withoutRequestData(
+				new ApiError(
+					requestOptions,
+					{
+						url,
+						ok: false,
+						status: response.status,
+						statusText: response.statusText,
+						body: errorBody,
+					},
+					response.statusText || `HTTP ${response.status}`,
+					retryAfter === undefined ? undefined : { retryAfter },
+				),
+				ctx.key,
+				base,
+				options.sensitive,
+			);
+		}
+		// `unknown` because the page body is validated by the operation's output schema.
+		let body: unknown;
+		if (text.trim().length > 0) {
+			try {
+				body = JSON.parse(text);
+			} catch {
+				// The body itself stays out of the message: it can hold page content.
+				throw new Error('Steel answered with a body that is not JSON');
+			}
+		}
+		return { body, header: response.headers.get(header) };
+	}
+}

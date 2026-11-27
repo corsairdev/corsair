@@ -346,7 +346,18 @@ describeIfKey('steel live', () => {
 		);
 		await step('sessions.captchas.status', { sessionId: id });
 		await step('sessions.context', { id }, (o) => Object.keys(o).join(','));
-		await step('sessions.events', { id });
+		// One event per page, so a fresh session's recording spans pages; the
+		// Next-Cursor token comes back as nextCursor and goes back as pointer.
+		const pageNote = (o: Json) =>
+			`${Array.isArray(o.events) ? o.events.length : 0} events, nextCursor ${o.nextCursor === null ? 'null' : 'set'}`;
+		const firstPage = await step('sessions.events', { id, limit: 1 }, pageNote);
+		if (typeof firstPage.nextCursor === 'string') {
+			await step(
+				'sessions.events',
+				{ id, limit: 1, pointer: firstPage.nextCursor },
+				pageNote,
+			);
+		}
 		await step('sessions.logs', { id });
 		await step('sessions.agentLogs', { id });
 		await step('sessions.agentTraces', { id });

@@ -3866,7 +3866,12 @@ export type SteelOperationOutputs = {
 	'sessions.credentials.detachVault': SteelSessionCredentialsResponse;
 	'sessions.credentials.list': SteelSessionCredentialsResponse;
 	'sessions.credentials.replace': SteelSessionCredentialsResponse;
-	'sessions.events': SteelGetSessionEventsResponse;
+	'sessions.events': {
+		/** This page of results. */
+		events: SteelGetSessionEventsResponse;
+		/** Pass as pointer to read the next page; null on the last page. */
+		nextCursor: string | null;
+	};
 	'sessions.files.delete': {
 		/** Steel accepted the call; it answered with no body. */
 		success: true;

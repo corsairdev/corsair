@@ -478,6 +478,18 @@ function buildOutputSchema(operation: SteelOperationDefinition): z.ZodType {
 		'response',
 		definitionCache,
 	);
+	const paging = operation.headerCursor;
+	if (paging) {
+		return z.object({
+			[paging.items]: schema.describe('This page of results.'),
+			nextCursor: z
+				.string()
+				.nullable()
+				.describe(
+					`Pass as ${paging.input} to read the next page; null on the last page.`,
+				),
+		});
+	}
 	return operation.emptyOk
 		? z.union([schema, SteelEmptyResponseSchema])
 		: schema;
@@ -653,7 +665,15 @@ export function maskedIssuePath(
 	// `unknown` is necessary because the walk covers raw JSON Schema documents.
 	let current: unknown = mode === 'input' ? operation.input : operation.output;
 	const parts: string[] = [];
-	for (const segment of path) {
+	let rest = path;
+	// A header-paged output wraps the documented list in `{ <items>, nextCursor }`.
+	const paging = mode === 'output' ? operation.headerCursor : undefined;
+	if (paging && (path[0] === paging.items || path[0] === 'nextCursor')) {
+		parts.push(String(path[0]));
+		if (path[0] === 'nextCursor') return parts.join('.');
+		rest = path.slice(1);
+	}
+	for (const segment of rest) {
 		const options = alternatives(current);
 		if (typeof segment === 'number') {
 			parts.push(String(segment));

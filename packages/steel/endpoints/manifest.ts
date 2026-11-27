@@ -46,6 +46,15 @@ const OperationSchema = z
 		timeoutMs: z.number().int().positive().optional(),
 		/** A route whose 429 means a daily quota is spent: sent once, never retried. */
 		singleAttempt: z.literal(true).optional(),
+		/**
+		 * A JSON list route that sends its next-page token only in a response
+		 * header: the output is `{ <items>: [...], nextCursor }`, and the
+		 * token goes back in the `input` field.
+		 */
+		headerCursor: z
+			.object({ header: z.string(), items: z.string(), input: z.string() })
+			.strict()
+			.optional(),
 		/** A route the vendor marks deprecated but still serves. */
 		deprecated: z.literal(true).optional(),
 		input: OpenApiSchemaDocument,

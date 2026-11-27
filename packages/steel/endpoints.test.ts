@@ -433,37 +433,158 @@ describe('errors', () => {
 });
 
 describe('sessions.events paging', () => {
-	it('returns one page and says the Next-Cursor token is not returned', async () => {
-		const page = Array.from({ length: 1000 }, (_, i) => ({
+	const ID = '3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c';
+	const page = (from: number, count: number) =>
+		Array.from({ length: count }, (_, i) => ({
 			type: 3,
-			timestamp: 1764547200000 + i,
+			timestamp: 1764547200000 + from + i,
 		}));
-		jest.spyOn(globalThis, 'fetch').mockImplementation(async (input) => {
+
+	// One answer per call, in order; each with its own status and headers.
+	function replies(
+		...answers: {
+			status?: number;
+			// `unknown` because each answer is its own JSON body.
+			body: unknown;
+			headers?: Record<string, string>;
+		}[]
+	) {
+		let next = 0;
+		jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
+			const headers: Record<string, string> = {};
+			new Headers(init?.headers).forEach((value, key) => {
+				headers[key] = value;
+			});
 			calls.push({
 				url: String(input),
-				method: 'GET',
-				headers: {},
-				body: null,
+				method: init?.method ?? 'GET',
+				headers,
+				body: init?.body,
 			});
-			return new Response(JSON.stringify(page), {
-				status: 200,
-				headers: {
-					'content-type': 'application/json',
-					'next-cursor': 'cursor-page-2',
-				},
+			const answer = answers[Math.min(next++, answers.length - 1)];
+			return new Response(JSON.stringify(answer?.body), {
+				status: answer?.status ?? 200,
+				headers: { 'content-type': 'application/json', ...answer?.headers },
 			});
 		});
+	}
+
+	it('returns the page with the Next-Cursor header as nextCursor', async () => {
+		const first = page(0, 1000);
+		replies({ body: first, headers: { 'next-cursor': 'cursor-page-2' } });
 		const result = await endpointFor('sessions.events')(ctx(), {
-			id: '3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c',
+			id: ID,
 			limit: 1000,
-			pointer: 'cursor-page-1',
 		});
-		expect(result).toEqual(page);
+		expect(result).toEqual({ events: first, nextCursor: 'cursor-page-2' });
 		const url = new URL(String(calls[0]?.url));
-		expect(url.searchParams.get('pointer')).toBe('cursor-page-1');
+		expect(url.origin + url.pathname).toBe(
+			`${STEEL_API_BASE}/v1/sessions/${ID}/events`,
+		);
 		expect(url.searchParams.get('limit')).toBe('1000');
+		expect(url.searchParams.has('pointer')).toBe(false);
+		expect(calls[0]?.headers['steel-api-key']).toBe(KEY);
+		expect(calls[0]?.headers.accept).toBe('application/json');
+	});
+
+	it('sends nextCursor back as pointer and ends with null when the header is absent', async () => {
+		replies(
+			{ body: page(0, 2), headers: { 'next-cursor': 'cursor-page-2' } },
+			{ body: page(2, 1) },
+		);
+		const events = endpointFor('sessions.events');
+		const first = (await events(ctx(), { id: ID, limit: 2 })) as {
+			nextCursor: string | null;
+		};
+		const second = await events(ctx(), {
+			id: ID,
+			limit: 2,
+			pointer: first.nextCursor,
+		});
+		expect(second).toEqual({ events: page(2, 1), nextCursor: null });
+		expect(new URL(String(calls[1]?.url)).searchParams.get('pointer')).toBe(
+			'cursor-page-2',
+		);
+	});
+
+	it('reads a blank Next-Cursor header as the last page', async () => {
+		replies({ body: [], headers: { 'next-cursor': '   ' } });
+		await expect(
+			endpointFor('sessions.events')(ctx(), { id: ID }),
+		).resolves.toEqual({ events: [], nextCursor: null });
+	});
+
+	it.each([
+		['spaces inside', 'cursor page 2'],
+		['non-ASCII', 'cursor-\u00e9t\u00e9'],
+		['too long', 'c'.repeat(8193)],
+	])('refuses a malformed Next-Cursor header (%s)', async (_, value) => {
+		replies({ body: page(0, 1), headers: { 'next-cursor': value } });
+		await expect(
+			endpointFor('sessions.events')(ctx(), { id: ID }),
+		).rejects.toThrow(
+			'Steel sessions.events sent a next-cursor header that is not a token',
+		);
+	});
+
+	it('refuses a page that is not a list', async () => {
+		replies({ body: { events: [] }, headers: { 'next-cursor': 'next' } });
+		await expect(
+			endpointFor('sessions.events')(ctx(), { id: ID }),
+		).rejects.toThrow(/did not match its documented schema: events:/);
+	});
+
+	it('retries a 429, honouring Retry-After', async () => {
+		jest.useFakeTimers({ doNotFake: ['nextTick', 'setImmediate'] });
+		try {
+			replies(
+				{
+					status: 429,
+					body: { message: 'slow down' },
+					headers: { 'retry-after': '2' },
+				},
+				{ body: page(0, 1), headers: { 'next-cursor': 'next' } },
+			);
+			const pending = endpointFor('sessions.events')(ctx(), { id: ID });
+			await jest.advanceTimersByTimeAsync(1999);
+			expect(calls).toHaveLength(1);
+			await jest.advanceTimersByTimeAsync(1);
+			await expect(pending).resolves.toEqual({
+				events: page(0, 1),
+				nextCursor: 'next',
+			});
+			expect(calls).toHaveLength(2);
+		} finally {
+			jest.useRealTimers();
+		}
+	});
+
+	it('raises the scrubbed ApiError on a failure', async () => {
+		replies({
+			status: 404,
+			body: { message: `No events for ${ID} at cursor-secret-7 (${KEY})` },
+		});
+		const error = await endpointFor('sessions.events')(ctx(), {
+			id: ID,
+			pointer: 'cursor-secret-7',
+		}).catch((caught: unknown) => caught);
+		expect(error).toBeInstanceOf(ApiError);
+		const apiError = error as ApiError;
+		expect(apiError.status).toBe(404);
+		expect(apiError.message).toBe(
+			'Steel 404: No events for [REDACTED] at [REDACTED] ([REDACTED])',
+		);
+		expect(apiError.url).toBe(
+			`${STEEL_API_BASE}/v1/sessions/{id}/events?[REDACTED]`,
+		);
+		expect(JSON.stringify(apiError)).not.toContain('cursor-secret-7');
+		expect(JSON.stringify(apiError)).not.toContain(KEY);
+	});
+
+	it('describes the paging in the operation description', () => {
 		const description = steelEndpointMeta['sessions.events'].description;
-		expect(description).toMatch(/one page of at most limit events/);
-		expect(description).not.toMatch(/by time/);
+		expect(description).toMatch(/Returns \{ events, nextCursor \}/);
+		expect(description).toMatch(/pass nextCursor as pointer/);
+		expect(description).not.toMatch(/does not return/);
 	});
 });

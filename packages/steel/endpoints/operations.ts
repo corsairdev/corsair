@@ -3,7 +3,11 @@ import { logEventFromContext } from 'corsair/core';
 import type { BinaryResponse, FileInput } from 'corsair/http';
 import { resolveFileInput, toFileOutput } from 'corsair/http';
 import type { SteelRequest } from '../client';
-import { makeSteelRequest, STEEL_UPLOAD_MAX_BYTES } from '../client';
+import {
+	makeSteelHeaderPagedRequest,
+	makeSteelRequest,
+	STEEL_UPLOAD_MAX_BYTES,
+} from '../client';
 import type { SteelContext } from '../index';
 import type { SteelOperationDefinition } from './manifest';
 import {
@@ -268,6 +272,29 @@ export function encodeSlashPath(value: string): string {
 	return segments.map(encodeURIComponent).join('/');
 }
 
+/** The longest next-page token passed back; anything longer is not one. */
+const MAX_CURSOR_LENGTH = 8192;
+
+/**
+ * The next-page token from a paging header: null when the header is missing
+ * or blank (the last page). A value with spaces or non-ASCII characters, or
+ * one too long to be a token, is an error rather than a last page, so a
+ * broken header never reads as "no more events".
+ */
+export function nextCursorFrom(
+	id: string,
+	header: string,
+	raw: string | null,
+): string | null {
+	if (raw === null) return null;
+	const value = raw.trim();
+	if (value.length === 0) return null;
+	if (value.length > MAX_CURSOR_LENGTH || !/^[\x21-\x7E]+$/.test(value)) {
+		throw new Error(`Steel ${id} sent a ${header} header that is not a token`);
+	}
+	return value;
+}
+
 /**
  * One endpoint per manifest operation. The caller passes one flat object;
  * each named field goes to the path, query string or a header as the spec
@@ -414,6 +441,17 @@ export function createSteelOperation<Id extends SteelOperationId>(
 			// counting as a success.
 			decodeMaybeEmpty(id, await makeSteelRequest(ctx, request));
 			response = { success: true };
+		} else if (operation.headerCursor) {
+			const paging = operation.headerCursor;
+			const page = await makeSteelHeaderPagedRequest(
+				ctx,
+				request,
+				paging.header,
+			);
+			response = {
+				[paging.items]: page.body,
+				nextCursor: nextCursorFrom(id, paging.header, page.header),
+			};
 		} else {
 			let result = await makeSteelRequest(ctx, request);
 			if (operation.emptyOk) {
