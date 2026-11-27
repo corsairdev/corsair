@@ -1,6 +1,6 @@
 # @corsair-dev/daytona
 
-Daytona sandboxes for AI code: sandboxes (create, start, stop, archive, fork, resize, SSH, previews), the in-sandbox toolbox (files, processes, sessions, git, LSP, code interpreter, computer use), snapshots, volumes, registries, secrets, organizations, analytics and signed webhooks (254 operations).
+Daytona sandboxes for AI code: sandboxes (create, start, stop, archive, fork, resize, SSH, previews), the in-sandbox toolbox (files, processes, sessions, git, LSP, code interpreter, computer use), snapshots, volumes, registries, secrets, organization usage and members, analytics and signed webhooks (215 operations).
 
 ## Install
 
@@ -22,8 +22,6 @@ pnpm add @corsair-dev/daytona
 | `analytics.usage.sandbox` | `daytona.api.analytics.usage.sandbox` | `read` | Get sandbox usage periods |
 | `apiKeys.create` | `daytona.api.apiKeys.create` | `destructive` | Create API key |
 | `apiKeys.delete` | `daytona.api.apiKeys.delete` | `destructive` | Delete API key |
-| `apiKeys.deleteForUser` | `daytona.api.apiKeys.deleteForUser` | `destructive` | Delete API key for user |
-| `apiKeys.get` | `daytona.api.apiKeys.get` | `read` | Get API key |
 | `apiKeys.getCurrent` | `daytona.api.apiKeys.getCurrent` | `read` | Get current API key's details |
 | `apiKeys.list` | `daytona.api.apiKeys.list` | `read` | List API keys |
 | `audit.getOrganizationLogs` | `daytona.api.audit.getOrganizationLogs` | `read` | Get audit logs for organization |
@@ -38,51 +36,19 @@ pnpm add @corsair-dev/daytona
 | `health.live` | `daytona.api.health.live` | `read` | health.live |
 | `health.ready` | `daytona.api.health.ready` | `read` | health.ready |
 | `objectStorage.getPushAccess` | `daytona.api.objectStorage.getPushAccess` | `destructive` | Get temporary storage access for pushing objects |
-| `organizations.acceptInvitation` | `daytona.api.organizations.acceptInvitation` | `write` | Accept organization invitation |
-| `organizations.cancelInvitation` | `daytona.api.organizations.cancelInvitation` | `write` | Cancel organization invitation |
-| `organizations.create` | `daytona.api.organizations.create` | `write` | Create organization |
-| `organizations.createIdentityProvider` | `daytona.api.organizations.createIdentityProvider` | `write` | Create organization identity provider |
-| `organizations.createInvitation` | `daytona.api.organizations.createInvitation` | `destructive` | Create organization invitation |
 | `organizations.createRegion` | `daytona.api.organizations.createRegion` | `write` | Create a new region |
-| `organizations.createRole` | `daytona.api.organizations.createRole` | `write` | Create organization role |
-| `organizations.declineInvitation` | `daytona.api.organizations.declineInvitation` | `write` | Decline organization invitation |
-| `organizations.delete` | `daytona.api.organizations.delete` | `destructive` | Delete organization |
-| `organizations.deleteIdentityProvider` | `daytona.api.organizations.deleteIdentityProvider` | `destructive` | Delete organization identity provider |
-| `organizations.deleteMember` | `daytona.api.organizations.deleteMember` | `destructive` | Delete organization member |
-| `organizations.deleteOtelConfig` | `daytona.api.organizations.deleteOtelConfig` | `destructive` | Delete organization OpenTelemetry configuration |
 | `organizations.deleteRegion` | `daytona.api.organizations.deleteRegion` | `destructive` | Delete a region |
-| `organizations.deleteRole` | `daytona.api.organizations.deleteRole` | `destructive` | Delete organization role |
-| `organizations.generateWorkosAdminPortalLink` | `daytona.api.organizations.generateWorkosAdminPortalLink` | `write` | Generate a WorkOS Admin Portal link for configuring SSO or SCIM directory sync |
-| `organizations.get` | `daytona.api.organizations.get` | `read` | Get organization by ID |
 | `organizations.getGpuCapacity` | `daytona.api.organizations.getGpuCapacity` | `read` | Get shared GPU capacity |
-| `organizations.getIdentityProvider` | `daytona.api.organizations.getIdentityProvider` | `read` | Get organization identity provider |
-| `organizations.getInvitationsCountForAuthenticatedUser` | `daytona.api.organizations.getInvitationsCountForAuthenticatedUser` | `read` | Get count of organization invitations for authenticated user |
 | `organizations.getOtelConfig` | `daytona.api.organizations.getOtelConfig` | `read` | Get organization OTEL config by organization ID |
 | `organizations.getRegionById` | `daytona.api.organizations.getRegionById` | `read` | Get region by ID |
 | `organizations.getUsageOverview` | `daytona.api.organizations.getUsageOverview` | `read` | Get organization current usage overview |
-| `organizations.leave` | `daytona.api.organizations.leave` | `destructive` | Leave organization |
-| `organizations.list` | `daytona.api.organizations.list` | `read` | List organizations |
 | `organizations.listAvailableRegions` | `daytona.api.organizations.listAvailableRegions` | `read` | List all available regions for the organization |
 | `organizations.listAvailableSandboxClasses` | `daytona.api.organizations.listAvailableSandboxClasses` | `read` | List available sandbox classes for organization |
-| `organizations.listIdentityProviders` | `daytona.api.organizations.listIdentityProviders` | `read` | List organization identity providers |
-| `organizations.listInvitations` | `daytona.api.organizations.listInvitations` | `read` | List pending organization invitations |
-| `organizations.listInvitationsForAuthenticatedUser` | `daytona.api.organizations.listInvitationsForAuthenticatedUser` | `read` | List organization invitations for authenticated user |
 | `organizations.listMembers` | `daytona.api.organizations.listMembers` | `read` | List organization members |
-| `organizations.listRoles` | `daytona.api.organizations.listRoles` | `read` | List organization roles |
-| `organizations.listWorkosSsoConnections` | `daytona.api.organizations.listWorkosSsoConnections` | `read` | List the SSO connections configured for the organization in WorkOS |
 | `organizations.regenerateProxyApiKey` | `daytona.api.organizations.regenerateProxyApiKey` | `destructive` | Regenerate proxy API key for a region |
 | `organizations.regenerateSnapshotManagerCredentials` | `daytona.api.organizations.regenerateSnapshotManagerCredentials` | `destructive` | Regenerate snapshot manager credentials for a region |
 | `organizations.regenerateSshGatewayApiKey` | `daytona.api.organizations.regenerateSshGatewayApiKey` | `destructive` | Regenerate SSH gateway API key for a region |
-| `organizations.setDefaultRegion` | `daytona.api.organizations.setDefaultRegion` | `write` | Set default region for organization |
-| `organizations.testIdentityProviderConnection` | `daytona.api.organizations.testIdentityProviderConnection` | `read` | Test OIDC identity provider connection |
-| `organizations.updateAccessForMember` | `daytona.api.organizations.updateAccessForMember` | `write` | Update access for organization member |
-| `organizations.updateDefaultQueueTimeout` | `daytona.api.organizations.updateDefaultQueueTimeout` | `write` | Set organization default queue timeout |
-| `organizations.updateExperimentalConfig` | `daytona.api.organizations.updateExperimentalConfig` | `write` | Update experimental configuration |
-| `organizations.updateIdentityProvider` | `daytona.api.organizations.updateIdentityProvider` | `write` | Update organization identity provider |
-| `organizations.updateInvitation` | `daytona.api.organizations.updateInvitation` | `write` | Update organization invitation |
-| `organizations.updateOtelConfig` | `daytona.api.organizations.updateOtelConfig` | `write` | Update organization OpenTelemetry configuration |
 | `organizations.updateRegion` | `daytona.api.organizations.updateRegion` | `write` | Update region configuration |
-| `organizations.updateRole` | `daytona.api.organizations.updateRole` | `write` | Update organization role |
 | `regions.listShared` | `daytona.api.regions.listShared` | `read` | List all shared regions |
 | `runners.create` | `daytona.api.runners.create` | `destructive` | Create runner |
 | `runners.delete` | `daytona.api.runners.delete` | `destructive` | Delete runner |
@@ -249,11 +215,6 @@ pnpm add @corsair-dev/daytona
 | `toolbox.process.sendInput` | `daytona.api.toolbox.process.sendInput` | `destructive` | Send input to command |
 | `toolbox.process.sessionExecuteCommand` | `daytona.api.toolbox.process.sessionExecuteCommand` | `destructive` | Execute command in session |
 | `toolbox.system.getSystemMetrics` | `daytona.api.toolbox.system.getSystemMetrics` | `read` | Get sandbox resource metrics |
-| `users.confirmPendingSsoLink` | `daytona.api.users.confirmPendingSsoLink` | `write` | Confirm (link) a pending SSO account link |
-| `users.dismissPendingSsoLink` | `daytona.api.users.dismissPendingSsoLink` | `destructive` | Dismiss a pending SSO account link |
-| `users.getAccountProviders` | `daytona.api.users.getAccountProviders` | `read` | Get account providers |
-| `users.getAuthenticated` | `daytona.api.users.getAuthenticated` | `read` | Get authenticated user |
-| `users.listPendingSsoLinks` | `daytona.api.users.listPendingSsoLinks` | `read` | List pending SSO account links for the authenticated user |
 | `volumes.create` | `daytona.api.volumes.create` | `destructive` | Create a new volume |
 | `volumes.delete` | `daytona.api.volumes.delete` | `destructive` | Delete volume |
 | `volumes.get` | `daytona.api.volumes.get` | `read` | Get volume details |

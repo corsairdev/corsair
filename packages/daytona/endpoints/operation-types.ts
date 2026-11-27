@@ -25,8 +25,6 @@ export const DAYTONA_OPERATION_IDS = [
 	'analytics.usage.sandbox',
 	'apiKeys.create',
 	'apiKeys.delete',
-	'apiKeys.deleteForUser',
-	'apiKeys.get',
 	'apiKeys.getCurrent',
 	'apiKeys.list',
 	'audit.getOrganizationLogs',
@@ -41,51 +39,19 @@ export const DAYTONA_OPERATION_IDS = [
 	'health.live',
 	'health.ready',
 	'objectStorage.getPushAccess',
-	'organizations.acceptInvitation',
-	'organizations.cancelInvitation',
-	'organizations.create',
-	'organizations.createIdentityProvider',
-	'organizations.createInvitation',
 	'organizations.createRegion',
-	'organizations.createRole',
-	'organizations.declineInvitation',
-	'organizations.delete',
-	'organizations.deleteIdentityProvider',
-	'organizations.deleteMember',
-	'organizations.deleteOtelConfig',
 	'organizations.deleteRegion',
-	'organizations.deleteRole',
-	'organizations.generateWorkosAdminPortalLink',
-	'organizations.get',
 	'organizations.getGpuCapacity',
-	'organizations.getIdentityProvider',
-	'organizations.getInvitationsCountForAuthenticatedUser',
 	'organizations.getOtelConfig',
 	'organizations.getRegionById',
 	'organizations.getUsageOverview',
-	'organizations.leave',
-	'organizations.list',
 	'organizations.listAvailableRegions',
 	'organizations.listAvailableSandboxClasses',
-	'organizations.listIdentityProviders',
-	'organizations.listInvitations',
-	'organizations.listInvitationsForAuthenticatedUser',
 	'organizations.listMembers',
-	'organizations.listRoles',
-	'organizations.listWorkosSsoConnections',
 	'organizations.regenerateProxyApiKey',
 	'organizations.regenerateSnapshotManagerCredentials',
 	'organizations.regenerateSshGatewayApiKey',
-	'organizations.setDefaultRegion',
-	'organizations.testIdentityProviderConnection',
-	'organizations.updateAccessForMember',
-	'organizations.updateDefaultQueueTimeout',
-	'organizations.updateExperimentalConfig',
-	'organizations.updateIdentityProvider',
-	'organizations.updateInvitation',
-	'organizations.updateOtelConfig',
 	'organizations.updateRegion',
-	'organizations.updateRole',
 	'regions.listShared',
 	'runners.create',
 	'runners.delete',
@@ -252,11 +218,6 @@ export const DAYTONA_OPERATION_IDS = [
 	'toolbox.process.sendInput',
 	'toolbox.process.sessionExecuteCommand',
 	'toolbox.system.getSystemMetrics',
-	'users.confirmPendingSsoLink',
-	'users.dismissPendingSsoLink',
-	'users.getAccountProviders',
-	'users.getAuthenticated',
-	'users.listPendingSsoLinks',
 	'volumes.create',
 	'volumes.delete',
 	'volumes.get',
@@ -337,17 +298,6 @@ export type DaytonaIntFilterInput = {
 	lt?: number;
 };
 
-export type DaytonaOidcIdPConfigInput = {
-	/** OIDC Issuer URL */
-	issuerUrl: string;
-	/** OAuth Client ID */
-	clientId: string;
-	/** OAuth Client Secret */
-	clientSecret: string;
-	/** OAuth scopes */
-	scope?: string;
-};
-
 export type DaytonaSandboxClassInput = 'linux-vm' | 'container' | 'windows';
 
 export type DaytonaSandboxListSortDirectionInput = 'asc' | 'desc';
@@ -412,29 +362,6 @@ export type DaytonaToolboxCompletionContextInput = {
 export type DaytonaToolboxLspPositionInput = {
 	character: number;
 	line: number;
-};
-
-export type DaytonaUpdateOidcIdPConfigInput = {
-	/** OIDC Issuer URL */
-	issuerUrl?: string;
-	/** OAuth Client ID */
-	clientId?: string;
-	/** OAuth Client Secret */
-	clientSecret?: string;
-	/** OAuth scopes */
-	scope?: string;
-};
-
-/** Which setup flow to open: sso for a single sign-on connection, dsync for SCIM directory sync */
-export type DaytonaWorkosAdminPortalIntentInput = 'sso' | 'dsync';
-
-export type DaytonaAccountProvider = {
-	/** WorkOS identity provider, e.g. GoogleOAuth or GitHubOAuth */
-	provider?: string | null;
-	/** Human-readable provider name */
-	displayName?: string | null;
-	/** Whether the authenticated user has an identity from this provider */
-	linked?: boolean | null;
 };
 
 export type DaytonaAnalyticsmodelsAggregatedUsage = {
@@ -695,9 +622,6 @@ export type DaytonaDaytonaConfiguration = {
 	rateLimit?: DaytonaRateLimitConfig | null;
 };
 
-/** Connection state of the WorkOS SCIM directory, as last reported by WorkOS (absent when no directory has ever reported in) */
-export type DaytonaDirectorySyncStatus = string;
-
 export type DaytonaDockerRegistry = {
 	/** Registry ID */
 	id?: string | null;
@@ -794,31 +718,6 @@ export type DaytonaHealthControllerCheck200ResponseInfoValue = {
 	status?: string | null;
 };
 
-export type DaytonaIdentityProvider = {
-	/** Unique identifier */
-	id?: string | null;
-	/** Organization ID */
-	organizationId?: string | null;
-	/** Display name for the identity provider */
-	name?: string | null;
-	/** OIDC configuration (secret redacted) */
-	oidcConfig?: DaytonaOidcIdPConfigResponse | null;
-	/** Email domains used for IdP discovery on the login form. May be empty when `allowAnyDomain` is true. */
-	emailDomains?: Array<string> | null;
-	/** Whether the IdP accepts any email domain returned by the external provider */
-	allowAnyDomain?: boolean | null;
-	/** Whether the `email_verified` claim check is skipped on SSO logins through this identity provider */
-	trustEmailVerified?: boolean | null;
-	/** Organization role IDs assigned to users who join via SSO through this identity provider */
-	defaultAssignedRoleIds?: Array<string> | null;
-	/** Whether the identity provider is enabled */
-	enabled?: boolean | null;
-	/** Creation timestamp */
-	createdAt?: string | null;
-	/** Last update timestamp */
-	updatedAt?: string | null;
-};
-
 export type DaytonaListSandboxesResponse = {
 	/** List of results for the current page */
 	items?: Array<DaytonaSandboxListItem> | null;
@@ -888,115 +787,6 @@ export type DaytonaOidcConfig = {
 	authApiHostname?: string | null;
 	/** WorkOS application the Daytona CLI logs in through, configured apart from the dashboard's so CLI sessions can have their own lifetime. Present only when the provider is workos and a CLI application is configured; absent means the CLI uses the issuer and client ID above. */
 	cli?: DaytonaCliOidcConfig | null;
-};
-
-export type DaytonaOidcIdPConfigResponse = {
-	/** OIDC Issuer URL */
-	issuerUrl?: string | null;
-	/** OAuth Client ID */
-	clientId?: string | null;
-	/** OAuth scopes */
-	scope?: string | null;
-};
-
-export type DaytonaOrganization = {
-	/** Organization ID */
-	id?: string | null;
-	/** Organization name */
-	name?: string | null;
-	/** User ID of the organization creator */
-	createdBy?: string | null;
-	/** Personal organization flag */
-	personal?: boolean | null;
-	/** Creation timestamp */
-	createdAt?: string | null;
-	/** Last update timestamp */
-	updatedAt?: string | null;
-	/** Suspended flag */
-	suspended?: boolean | null;
-	/** Suspended at */
-	suspendedAt?: string | null;
-	/** Suspended reason */
-	suspensionReason?: string | null;
-	/** Suspended until */
-	suspendedUntil?: string | null;
-	/** Suspension cleanup grace period hours */
-	suspensionCleanupGracePeriodHours?: number | null;
-	/** Max CPU per sandbox */
-	maxCpuPerSandbox?: number | null;
-	/** Max memory per sandbox */
-	maxMemoryPerSandbox?: number | null;
-	/** Max disk per sandbox */
-	maxDiskPerSandbox?: number | null;
-	/** Maximum number of secrets */
-	secretQuota?: number | null;
-	/** Maximum number of secrets that can be mounted to a single sandbox */
-	maxSecretsPerSandbox?: number | null;
-	/** Time in minutes before an unused snapshot is deactivated */
-	snapshotDeactivationTimeoutMinutes?: number | null;
-	/** Default minutes to wait for runner assignment before cancelling sandbox creation. Applied when sandbox create omits queueTimeout. Null means no default. */
-	defaultQueueTimeout?: number | null;
-	/** Sandbox default network block all */
-	sandboxLimitedNetworkEgress?: boolean | null;
-	/** Whether the proxy shows the preview URL warning page for this organization */
-	previewWarningEnabled?: boolean | null;
-	/** Whether zero data retention is enabled for this organization. Set by Daytona; read-only through the API. */
-	zeroDataRetention?: boolean | null;
-	/** Whether this organization may configure SSO identity providers */
-	ssoEnabled?: boolean | null;
-	/** Whether this organization may use SCIM directory sync */
-	scimEnabled?: boolean | null;
-	/** Default region ID */
-	defaultRegionId?: string | null;
-	/** ID of the WorkOS organization mirrored from this organization (absent for personal organizations, which are never mirrored) */
-	workosOrgId?: string | null;
-	/** Connection state of the WorkOS SCIM directory, as last reported by WorkOS (absent when no directory has ever reported in) */
-	directorySyncStatus?: DaytonaDirectorySyncStatus | null;
-	/** When the directory sync status last changed */
-	directorySyncStatusChangedAt?: string | null;
-	/** When the directory bearer token was revoked; absent while a valid token exists. A revoked token stops provisioning even if the directory is still active. */
-	directorySyncTokenRevokedAt?: string | null;
-	/** Authenticated rate limit per minute */
-	authenticatedRateLimit?: number | null;
-	/** Sandbox create rate limit per minute */
-	sandboxCreateRateLimit?: number | null;
-	/** Sandbox lifecycle rate limit per minute */
-	sandboxLifecycleRateLimit?: number | null;
-	/** Experimental configuration */
-	experimentalConfig?: Record<string, DaytonaJsonValue> | null;
-	/** OpenTelemetry collection configuration */
-	otelConfig?: DaytonaOtelConfig | null;
-	/** Authenticated rate limit TTL in seconds */
-	authenticatedRateLimitTtlSeconds?: number | null;
-	/** Sandbox create rate limit TTL in seconds */
-	sandboxCreateRateLimitTtlSeconds?: number | null;
-	/** Sandbox lifecycle rate limit TTL in seconds */
-	sandboxLifecycleRateLimitTtlSeconds?: number | null;
-};
-
-export type DaytonaOrganizationInvitation = {
-	/** Invitation ID */
-	id?: string | null;
-	/** Email address of the invitee */
-	email?: string | null;
-	/** Email address of the inviter */
-	invitedBy?: string | null;
-	/** Organization ID */
-	organizationId?: string | null;
-	/** Organization name */
-	organizationName?: string | null;
-	/** Expiration date of the invitation */
-	expiresAt?: string | null;
-	/** Invitation status */
-	status?: string | null;
-	/** Member role */
-	role?: string | null;
-	/** Assigned roles */
-	assignedRoles?: Array<DaytonaOrganizationRole> | null;
-	/** Creation timestamp */
-	createdAt?: string | null;
-	/** Last update timestamp */
-	updatedAt?: string | null;
 };
 
 export type DaytonaOrganizationRole = {
@@ -1088,18 +878,6 @@ export type DaytonaPaginatedTraces = {
 	page?: number | null;
 	/** Total number of pages */
 	totalPages?: number | null;
-};
-
-export type DaytonaPendingSsoLink = {
-	id?: string | null;
-	/** Display name of the identity provider requesting to be linked */
-	idpName?: string | null;
-	/** Organization that configured the identity provider */
-	organizationId?: string | null;
-	/** Email asserted by the identity provider */
-	providerEmail?: string | null;
-	createdAt?: string | null;
-	expiresAt?: string | null;
 };
 
 export type DaytonaPortPreviewUrl = {
@@ -1711,15 +1489,6 @@ export type DaytonaStorageAccessDto = {
 	region?: string | null;
 };
 
-export type DaytonaTestIdentityProviderConnectionResponse = {
-	/** Whether the connection test was successful */
-	success?: boolean | null;
-	/** The discovered issuer from the OIDC configuration */
-	issuer?: string | null;
-	/** Error message if the connection test failed */
-	error?: string | null;
-};
-
 export type DaytonaToolboxAccessibilityBounds = {
 	height?: number | null;
 	width?: number | null;
@@ -2185,32 +1954,6 @@ export type DaytonaUrl = {
 	url?: string | null;
 };
 
-export type DaytonaUser = {
-	/** User ID */
-	id?: string | null;
-	/** User name */
-	name?: string | null;
-	/** User email */
-	email?: string | null;
-	/** Whether the user email address has been verified */
-	emailVerified?: boolean | null;
-	/** HMAC of the user email for Pylon support-widget identity verification */
-	pylonEmailHash?: string | null;
-	/** Whether the user has accepted the current privacy policies. Populated on the /users/me endpoint. */
-	privacyPoliciesAccepted?: boolean | null;
-	/** User public keys */
-	publicKeys?: Array<DaytonaUserPublicKey> | null;
-	/** Creation timestamp */
-	createdAt?: string | null;
-};
-
-export type DaytonaUserPublicKey = {
-	/** Public key */
-	key?: string | null;
-	/** Key name */
-	name?: string | null;
-};
-
 export type DaytonaVolumeDto = {
 	/** Volume ID */
 	id?: string | null;
@@ -2271,28 +2014,6 @@ export type DaytonaWebhookInitializationStatus = {
 	/** When the webhook initialization was created */
 	createdAt?: string | null;
 	/** When the webhook initialization was last updated */
-	updatedAt?: string | null;
-};
-
-export type DaytonaWorkosAdminPortalLink = {
-	/** Single-purpose WorkOS Admin Portal URL. Expires five minutes after issuance; open it immediately. */
-	link?: string | null;
-};
-
-export type DaytonaWorkosSsoConnection = {
-	/** WorkOS connection ID */
-	id?: string | null;
-	/** Connection name as set in the WorkOS Admin Portal */
-	name?: string | null;
-	/** WorkOS connection type, e.g. OktaSAML, AzureSAML, GenericOIDC */
-	connectionType?: string | null;
-	/** WorkOS connection state: active means logins work; draft and requires_type mean setup is incomplete */
-	state?: string | null;
-	/** Email domains routed to this connection */
-	domains?: Array<string> | null;
-	/** When the connection was created in WorkOS */
-	createdAt?: string | null;
-	/** When the connection was last changed in WorkOS */
 	updatedAt?: string | null;
 };
 
@@ -2422,17 +2143,6 @@ export type DaytonaOperationInputs = {
 		organization_id?: string;
 		name: string;
 	};
-	'apiKeys.deleteForUser': {
-		/** X-Daytona-Organization-ID header: the organization to act in. Left out, the plugin sends its organizationId option, if set; a key belongs to one organization anyway. */
-		organization_id?: string;
-		userId: string;
-		name: string;
-	};
-	'apiKeys.get': {
-		/** X-Daytona-Organization-ID header: the organization to act in. Left out, the plugin sends its organizationId option, if set; a key belongs to one organization anyway. */
-		organization_id?: string;
-		name: string;
-	};
 	'apiKeys.getCurrent': {
 		/** X-Daytona-Organization-ID header: the organization to act in. Left out, the plugin sends its organizationId option, if set; a key belongs to one organization anyway. */
 		organization_id?: string;
@@ -2547,52 +2257,6 @@ export type DaytonaOperationInputs = {
 		/** Region the build context will be used in. When that region has its own build-context bucket, the returned credentials target it; otherwise they target the Daytona-hosted bucket. */
 		regionId?: string;
 	};
-	'organizations.acceptInvitation': {
-		/** Invitation ID */
-		invitationId: string;
-	};
-	'organizations.cancelInvitation': {
-		/** Organization ID */
-		organizationId: string;
-		/** Invitation ID */
-		invitationId: string;
-	};
-	'organizations.create': {
-		/** The name of organization */
-		name: string;
-		/** The ID of the default region for the organization */
-		defaultRegionId: string;
-	};
-	'organizations.createIdentityProvider': {
-		/** Organization ID */
-		organizationId: string;
-		/** Display name for the identity provider */
-		name: string;
-		/** OIDC configuration */
-		oidcConfig: DaytonaOidcIdPConfigInput;
-		/** Email domains used for IdP discovery on the login form and to validate the user identity returned by the IdP. Required and must be non-empty unless `allowAnyDomain` is true. */
-		emailDomains: Array<string>;
-		/** When true, the IdP accepts any email domain returned by the external provider. Disables the post-callback domain check and allows `emailDomains` to be empty. Only enable for trusted IdPs that strictly control which users can authenticate. */
-		allowAnyDomain?: boolean;
-		/** When true, skip the `email_verified` claim check on SSO logins through this identity provider. Only intended for providers that never emit the claim (e.g. Microsoft Entra ID). Risky: only enable if the IdP strictly controls its users' email addresses. */
-		trustEmailVerified?: boolean;
-		/** Organization role IDs assigned to users who join the organization via SSO through this identity provider. Roles must be global or belong to this organization. Empty (default) grants the lowest access: membership with no resource permissions. */
-		defaultAssignedRoleIds?: Array<string>;
-		/** Whether the identity provider is enabled */
-		enabled?: boolean;
-	};
-	'organizations.createInvitation': {
-		/** Organization ID */
-		organizationId: string;
-		/** Email address of the invitee */
-		email: string;
-		/** Organization member role for the invitee */
-		role: 'owner' | 'member';
-		/** Array of assigned role IDs for the invitee */
-		assignedRoleIds: Array<string>;
-		/** Expiration date of the invitation */
-		expiresAt?: string;
-	};
 	'organizations.createRegion': {
 		/** X-Daytona-Organization-ID header: the organization to act in. Left out, the plugin sends its organizationId option, if set; a key belongs to one organization anyway. */
 		organization_id?: string;
@@ -2613,98 +2277,16 @@ export type DaytonaOperationInputs = {
 		/** IAM role Daytona assumes (with your organization ID as ExternalId) to issue upload credentials for buildContextBucket */
 		buildContextRoleArn?: string | null;
 	};
-	'organizations.createRole': {
-		/** Organization ID */
-		organizationId: string;
-		/** The name of the role */
-		name: string;
-		/** The description of the role */
-		description: string;
-		/** The list of permissions assigned to the role */
-		permissions: Array<
-			| 'write:registries'
-			| 'delete:registries'
-			| 'write:snapshots'
-			| 'delete:snapshots'
-			| 'write:sandboxes'
-			| 'delete:sandboxes'
-			| 'read:volumes'
-			| 'write:volumes'
-			| 'delete:volumes'
-			| 'write:regions'
-			| 'delete:regions'
-			| 'read:runners'
-			| 'write:runners'
-			| 'delete:runners'
-			| 'read:audit_logs'
-			| 'manage:api_keys'
-			| 'manage:secrets'
-			| 'read:limits'
-			| 'manage:sso'
-			| 'read:billing'
-			| 'manage:billing'
-		>;
-	};
-	'organizations.declineInvitation': {
-		/** Invitation ID */
-		invitationId: string;
-	};
-	'organizations.delete': {
-		/** Organization ID */
-		organizationId: string;
-	};
-	'organizations.deleteIdentityProvider': {
-		/** Organization ID */
-		organizationId: string;
-		/** Identity provider ID */
-		id: string;
-	};
-	'organizations.deleteMember': {
-		/** Organization ID */
-		organizationId: string;
-		/** User ID */
-		userId: string;
-	};
-	'organizations.deleteOtelConfig': {
-		/** Organization ID */
-		organizationId: string;
-	};
 	'organizations.deleteRegion': {
 		/** X-Daytona-Organization-ID header: the organization to act in. Left out, the plugin sends its organizationId option, if set; a key belongs to one organization anyway. */
 		organization_id?: string;
 		/** Region ID */
 		id: string;
 	};
-	'organizations.deleteRole': {
-		/** Organization ID */
-		organizationId: string;
-		/** Role ID */
-		roleId: string;
-	};
-	'organizations.generateWorkosAdminPortalLink': {
-		/** Organization ID */
-		organizationId: string;
-		/** Which setup flow to open: sso for a single sign-on connection, dsync for SCIM directory sync */
-		intent: DaytonaWorkosAdminPortalIntentInput;
-	};
-	'organizations.get': {
-		/** Organization ID */
-		organizationId: string;
-	};
 	'organizations.getGpuCapacity': {
 		/** Organization ID */
 		organizationId: string;
 	};
-	'organizations.getIdentityProvider': {
-		/** Organization ID */
-		organizationId: string;
-		/** Identity provider ID */
-		id: string;
-	};
-	'organizations.getInvitationsCountForAuthenticatedUser': Record<
-		string,
-		never
-	>;
 	'organizations.getOtelConfig': {
 		/** Organization ID */
 		organizationId: string;
@@ -2719,11 +2301,6 @@ export type DaytonaOperationInputs = {
 		/** Organization ID */
 		organizationId: string;
 	};
-	'organizations.leave': {
-		/** Organization ID */
-		organizationId: string;
-	};
-	'organizations.list': Record<string, never>;
 	'organizations.listAvailableRegions': {
 		/** X-Daytona-Organization-ID header: the organization to act in. Left out, the plugin sends its organizationId option, if set; a key belongs to one organization anyway. */
 		organization_id?: string;
@@ -2732,24 +2309,7 @@ export type DaytonaOperationInputs = {
 		/** Organization ID */
 		organizationId: string;
 	};
-	'organizations.listIdentityProviders': {
-		/** Organization ID */
-		organizationId: string;
-	};
-	'organizations.listInvitations': {
-		/** Organization ID */
-		organizationId: string;
-	};
-	'organizations.listInvitationsForAuthenticatedUser': Record<string, never>;
 	'organizations.listMembers': {
-		/** Organization ID */
-		organizationId: string;
-	};
-	'organizations.listRoles': {
-		/** Organization ID */
-		organizationId: string;
-	};
-	'organizations.listWorkosSsoConnections': {
 		/** Organization ID */
 		organizationId: string;
 	};
@@ -2771,78 +2331,6 @@ export type DaytonaOperationInputs = {
 		/** Region ID */
 		id: string;
 	};
-	'organizations.setDefaultRegion': {
-		/** Organization ID */
-		organizationId: string;
-		/** The ID of the default region for the organization */
-		defaultRegionId: string;
-	};
-	'organizations.testIdentityProviderConnection': {
-		/** Organization ID */
-		organizationId: string;
-		/** OIDC Issuer URL to test */
-		issuerUrl: string;
-	};
-	'organizations.updateAccessForMember': {
-		/** Organization ID */
-		organizationId: string;
-		/** User ID */
-		userId: string;
-		/** Organization member role */
-		role: 'owner' | 'member';
-		/** Array of assigned role IDs */
-		assignedRoleIds: Array<string>;
-	};
-	'organizations.updateDefaultQueueTimeout': {
-		/** Organization ID */
-		organizationId: string;
-		/** Default minutes to wait for runner assignment before cancelling sandbox creation. Null disables the default. A number must be a positive integer. */
-		defaultQueueTimeout: number | null;
-	};
-	'organizations.updateExperimentalConfig': {
-		/** Organization ID */
-		organizationId: string;
-	} & { [key: string]: DaytonaJsonValue | undefined };
-	'organizations.updateIdentityProvider': {
-		/** Organization ID */
-		organizationId: string;
-		/** Identity provider ID */
-		id: string;
-		/** Display name for the identity provider */
-		name?: string;
-		/** OIDC configuration */
-		oidcConfig?: DaytonaUpdateOidcIdPConfigInput;
-		/** Email domains used for IdP discovery on the login form and to validate the user identity returned by the IdP. If provided and `allowAnyDomain` is not being set to true, must contain at least one domain. To clear domains in the same request, set `allowAnyDomain: true` and `emailDomains: []`. */
-		emailDomains?: Array<string>;
-		/** When true, the IdP accepts any email domain returned by the external provider. Disables the post-callback domain check and allows `emailDomains` to be empty. Only enable for trusted IdPs that strictly control which users can authenticate. */
-		allowAnyDomain?: boolean;
-		/** When true, skip the `email_verified` claim check on SSO logins through this identity provider. Only intended for providers that never emit the claim (e.g. Microsoft Entra ID). Risky: only enable if the IdP strictly controls its users' email addresses. */
-		trustEmailVerified?: boolean;
-		/** Organization role IDs assigned to users who join the organization via SSO through this identity provider. Roles must be global or belong to this organization. Empty grants the lowest access: membership with no resource permissions. */
-		defaultAssignedRoleIds?: Array<string>;
-		/** Whether the identity provider is enabled */
-		enabled?: boolean;
-	};
-	'organizations.updateInvitation': {
-		/** Organization ID */
-		organizationId: string;
-		/** Invitation ID */
-		invitationId: string;
-		/** Organization member role */
-		role: 'owner' | 'member';
-		/** Array of role IDs */
-		assignedRoleIds: Array<string>;
-		/** Expiration date of the invitation */
-		expiresAt?: string;
-	};
-	'organizations.updateOtelConfig': {
-		/** Organization ID */
-		organizationId: string;
-		/** Endpoint */
-		endpoint: string;
-		/** Headers */
-		headers?: Record<string, string> | null;
-	};
 	'organizations.updateRegion': {
 		/** X-Daytona-Organization-ID header: the organization to act in. Left out, the plugin sends its organizationId option, if set; a key belongs to one organization anyway. */
 		organization_id?: string;
@@ -2862,40 +2350,6 @@ export type DaytonaOperationInputs = {
 		buildContextBucketRegion?: string | null;
 		/** IAM role Daytona assumes (with your organization ID as ExternalId) to issue upload credentials for buildContextBucket */
 		buildContextRoleArn?: string | null;
-	};
-	'organizations.updateRole': {
-		/** Organization ID */
-		organizationId: string;
-		/** Role ID */
-		roleId: string;
-		/** The name of the role */
-		name: string;
-		/** The description of the role */
-		description: string;
-		/** The list of permissions assigned to the role */
-		permissions: Array<
-			| 'write:registries'
-			| 'delete:registries'
-			| 'write:snapshots'
-			| 'delete:snapshots'
-			| 'write:sandboxes'
-			| 'delete:sandboxes'
-			| 'read:volumes'
-			| 'write:volumes'
-			| 'delete:volumes'
-			| 'write:regions'
-			| 'delete:regions'
-			| 'read:runners'
-			| 'write:runners'
-			| 'delete:runners'
-			| 'read:audit_logs'
-			| 'manage:api_keys'
-			| 'manage:secrets'
-			| 'read:limits'
-			| 'manage:sso'
-			| 'read:billing'
-			| 'manage:billing'
-		>;
 	};
 	'regions.listShared': Record<string, never>;
 	'runners.create': {
@@ -4284,15 +3738,6 @@ export type DaytonaOperationInputs = {
 		/** The sandbox id or name. The plugin reads its toolbox proxy URL first. */
 		sandbox_id: string;
 	};
-	'users.confirmPendingSsoLink': {
-		id: string;
-	};
-	'users.dismissPendingSsoLink': {
-		id: string;
-	};
-	'users.getAccountProviders': Record<string, never>;
-	'users.getAuthenticated': Record<string, never>;
-	'users.listPendingSsoLinks': Record<string, never>;
 	'volumes.create': {
 		/** X-Daytona-Organization-ID header: the organization to act in. Left out, the plugin sends its organizationId option, if set; a key belongs to one organization anyway. */
 		organization_id?: string;
@@ -4382,11 +3827,6 @@ export type DaytonaOperationOutputs = {
 		/** Daytona accepted the call; it answered with no body. */
 		success: true;
 	};
-	'apiKeys.deleteForUser': {
-		/** Daytona accepted the call; it answered with no body. */
-		success: true;
-	};
-	'apiKeys.get': DaytonaApiKeyList;
 	'apiKeys.getCurrent': DaytonaApiKeyList;
 	'apiKeys.list': Array<DaytonaApiKeyList>;
 	'audit.getOrganizationLogs': DaytonaPaginatedAuditLogs;
@@ -4407,93 +3847,25 @@ export type DaytonaOperationOutputs = {
 	};
 	'health.ready': DaytonaHealthControllerCheck200Response;
 	'objectStorage.getPushAccess': DaytonaStorageAccessDto;
-	'organizations.acceptInvitation': DaytonaOrganizationInvitation;
-	'organizations.cancelInvitation': {
-		/** Daytona accepted the call; it answered with no body. */
-		success: true;
-	};
-	'organizations.create': DaytonaOrganization;
-	'organizations.createIdentityProvider': DaytonaIdentityProvider;
-	'organizations.createInvitation': DaytonaOrganizationInvitation;
 	'organizations.createRegion': DaytonaCreateRegionResponse;
-	'organizations.createRole': DaytonaOrganizationRole;
-	'organizations.declineInvitation': {
-		/** Daytona accepted the call; it answered with no body. */
-		success: true;
-	};
-	'organizations.delete': {
-		/** Daytona accepted the call; it answered with no body. */
-		success: true;
-	};
-	'organizations.deleteIdentityProvider': {
-		/** Daytona accepted the call; it answered with no body. */
-		success: true;
-	};
-	'organizations.deleteMember': {
-		/** Daytona accepted the call; it answered with no body. */
-		success: true;
-	};
-	'organizations.deleteOtelConfig': {
-		/** Daytona accepted the call; it answered with no body. */
-		success: true;
-	};
 	'organizations.deleteRegion': {
 		/** Daytona accepted the call; it answered with no body. */
 		success: true;
 	};
-	'organizations.deleteRole': {
-		/** Daytona accepted the call; it answered with no body. */
-		success: true;
-	};
-	'organizations.generateWorkosAdminPortalLink': DaytonaWorkosAdminPortalLink;
-	'organizations.get': DaytonaOrganization;
 	'organizations.getGpuCapacity': DaytonaGpuCapacityResponse;
-	'organizations.getIdentityProvider': DaytonaIdentityProvider;
-	'organizations.getInvitationsCountForAuthenticatedUser': number;
 	'organizations.getOtelConfig': DaytonaOtelConfig;
 	'organizations.getRegionById': DaytonaRegion;
 	'organizations.getUsageOverview': DaytonaOrganizationUsageOverview;
-	'organizations.leave': {
-		/** Daytona accepted the call; it answered with no body. */
-		success: true;
-	};
-	'organizations.list': Array<DaytonaOrganization>;
 	'organizations.listAvailableRegions': Array<DaytonaRegion>;
 	'organizations.listAvailableSandboxClasses': Array<DaytonaAvailableSandboxClass>;
-	'organizations.listIdentityProviders': Array<DaytonaIdentityProvider>;
-	'organizations.listInvitations': Array<DaytonaOrganizationInvitation>;
-	'organizations.listInvitationsForAuthenticatedUser': Array<DaytonaOrganizationInvitation>;
 	'organizations.listMembers': Array<DaytonaOrganizationUser>;
-	'organizations.listRoles': Array<DaytonaOrganizationRole>;
-	'organizations.listWorkosSsoConnections': Array<DaytonaWorkosSsoConnection>;
 	'organizations.regenerateProxyApiKey': DaytonaRegenerateApiKeyResponse;
 	'organizations.regenerateSnapshotManagerCredentials': DaytonaSnapshotManagerCredentials;
 	'organizations.regenerateSshGatewayApiKey': DaytonaRegenerateApiKeyResponse;
-	'organizations.setDefaultRegion': {
-		/** Daytona accepted the call; it answered with no body. */
-		success: true;
-	};
-	'organizations.testIdentityProviderConnection': DaytonaTestIdentityProviderConnectionResponse;
-	'organizations.updateAccessForMember': DaytonaOrganizationUser;
-	'organizations.updateDefaultQueueTimeout': {
-		/** Daytona accepted the call; it answered with no body. */
-		success: true;
-	};
-	'organizations.updateExperimentalConfig': {
-		/** Daytona accepted the call; it answered with no body. */
-		success: true;
-	};
-	'organizations.updateIdentityProvider': DaytonaIdentityProvider;
-	'organizations.updateInvitation': DaytonaOrganizationInvitation;
-	'organizations.updateOtelConfig': {
-		/** Daytona accepted the call; it answered with no body. */
-		success: true;
-	};
 	'organizations.updateRegion': {
 		/** Daytona accepted the call; it answered with no body. */
 		success: true;
 	};
-	'organizations.updateRole': DaytonaOrganizationRole;
 	'regions.listShared': Array<DaytonaRegion>;
 	'runners.create': DaytonaCreateRunnerResponse;
 	'runners.delete': {
@@ -4744,12 +4116,16 @@ export type DaytonaOperationOutputs = {
 		success: true;
 	};
 	'toolbox.process.executeCommand': DaytonaToolboxExecuteResponse;
-	'toolbox.process.getEntrypointLogs': DaytonaToolboxSessionCommandLogsResponse;
+	'toolbox.process.getEntrypointLogs':
+		| DaytonaToolboxSessionCommandLogsResponse
+		| string;
 	'toolbox.process.getEntrypointSession': DaytonaToolboxSession;
 	'toolbox.process.getPtySession': DaytonaToolboxPtySessionInfo;
 	'toolbox.process.getSession': DaytonaToolboxSession;
 	'toolbox.process.getSessionCommand': DaytonaToolboxCommand;
-	'toolbox.process.getSessionCommandLogs': DaytonaToolboxSessionCommandLogsResponse;
+	'toolbox.process.getSessionCommandLogs':
+		| DaytonaToolboxSessionCommandLogsResponse
+		| string;
 	'toolbox.process.listPtySessions': DaytonaToolboxPtyListResponse;
 	'toolbox.process.listSessions': Array<DaytonaToolboxSession>;
 	'toolbox.process.resizePtySession': DaytonaToolboxPtySessionInfo;
@@ -4759,17 +4135,6 @@ export type DaytonaOperationOutputs = {
 	};
 	'toolbox.process.sessionExecuteCommand': DaytonaToolboxSessionExecuteResponse;
 	'toolbox.system.getSystemMetrics': DaytonaToolboxSystemMetrics;
-	'users.confirmPendingSsoLink': {
-		/** Daytona accepted the call; it answered with no body. */
-		success: true;
-	};
-	'users.dismissPendingSsoLink': {
-		/** Daytona accepted the call; it answered with no body. */
-		success: true;
-	};
-	'users.getAccountProviders': Array<DaytonaAccountProvider>;
-	'users.getAuthenticated': DaytonaUser;
-	'users.listPendingSsoLinks': Array<DaytonaPendingSsoLink>;
 	'volumes.create': DaytonaVolumeDto;
 	'volumes.delete': {
 		/** Daytona accepted the call; it answered with no body. */

@@ -10,9 +10,11 @@ import { daytona } from './index';
  *
  *   DAYTONA_API_KEY=... npx jest api.test.ts
  *
- * Reads every main-API GET that takes no arguments, then runs one small
- * sandbox end to end: toolbox info, a command, files (upload, list, search,
- * download, delete), a git clone, a process session, then stop and delete.
+ * Reads every main-API GET that takes no arguments, the key's organization
+ * (usage, members, audit log, analytics) and a secret round trip, then runs
+ * one small sandbox end to end: toolbox info, a command, code, files (upload,
+ * list, search, download, delete), a git clone, a process session, logs and
+ * metrics, then stop and delete.
  * Everything created is deleted at the end, even when a step fails. A run
  * uses a few cents of the free credit at most.
  *
@@ -46,7 +48,7 @@ async function createClient() {
 	return { corsair, testDb };
 }
 
-type Step = { id: string; ok: boolean; note?: string };
+type Step = { id: string; ok: boolean; expected?: boolean; note?: string };
 
 // `unknown` because the value is any parsed response.
 function field(value: unknown, name: string): string {
@@ -81,18 +83,36 @@ describeIfKey('daytona live', () => {
 	const cleanups: Array<{ what: string; run: () => Promise<unknown> }> = [];
 
 	// `unknown` because each operation takes and returns its own shapes.
-	async function step(id: string, input: unknown = {}): Promise<unknown> {
+	// `expected` is the error a step must answer with (a route Daytona Cloud
+	// does not serve, say); that error counts as a pass.
+	async function step(
+		id: string,
+		input: unknown = {},
+		expected?: RegExp,
+	): Promise<unknown> {
 		try {
 			const value = await op(id)(input);
-			steps.push({ id, ok: true });
+			steps.push({ id, ok: !expected, note: expected && 'no error' });
 			return value;
 		} catch (error) {
-			steps.push({
-				id,
-				ok: false,
-				note: (error as Error).message.slice(0, 200),
-			});
+			const note = (error as Error).message.slice(0, 200);
+			const ok = expected?.test(note) ?? false;
+			steps.push({ id, ok, expected: ok, note });
 			return undefined;
+		}
+	}
+
+	/** Polls the sandbox until `done` says its state is reached. */
+	async function waitFor(id: string, done: (state: string) => boolean) {
+		for (let i = 0; i < 60; i++) {
+			try {
+				const current = await op('sandboxes.get')({ sandboxIdOrName: id });
+				if (done(field(current, 'state'))) return;
+			} catch (error) {
+				if (/Daytona 404/.test((error as Error).message)) return;
+				throw error;
+			}
+			await sleep(3000);
 		}
 	}
 
@@ -118,16 +138,72 @@ describeIfKey('daytona live', () => {
 		const report = process.env.DAYTONA_LIVE_REPORT;
 		if (report) writeFileSync(report, JSON.stringify(steps, null, 2));
 		const failed = steps.filter((s) => !s.ok);
+		const expectedErrors = steps.filter((s) => s.expected).length;
 		console.log(
-			`Daytona live: ${steps.length - failed.length}/${steps.length} ok\n${failed
+			`Daytona live: ${steps.length - failed.length}/${steps.length} ok (${expectedErrors} expected errors)\n${failed
 				.map((s) => `  ${s.id}: ${s.note}`)
 				.join('\n')}`,
 		);
 	});
 
-	it('reads every GET that takes no arguments', async () => {
-		for (const id of NO_ARGUMENT_READS) await step(id);
-		expect(steps.some((s) => s.ok)).toBe(true);
+	// Daytona Cloud (v0.235.0) answers these no-argument reads with an error a
+	// plain API key always gets: runner and warm-pool lists exist only on a
+	// self-hosted Daytona, key management needs an organization setting, and
+	// readiness is for Daytona's own probes.
+	const CLOUD_ERRORS: Record<string, RegExp> = {
+		'runners.list': /Daytona 404: Cannot GET/,
+		'warmPools.list': /Daytona 404: Cannot GET/,
+		'apiKeys.list': /Daytona 403: Managing API keys with an API key/,
+		'health.ready': /Daytona 403: Invalid authentication context/,
+	};
+
+	let organizationId = '';
+	const DAY = 24 * 60 * 60 * 1000;
+	const window = () => ({
+		from: new Date(Date.now() - 7 * DAY).toISOString(),
+		to: new Date().toISOString(),
+	});
+
+	it('reads every GET that takes no arguments, and the organization', async () => {
+		for (const id of NO_ARGUMENT_READS) await step(id, {}, CLOUD_ERRORS[id]);
+		const current = await step('apiKeys.getCurrent');
+		organizationId = field(current, 'organizationId');
+		for (const id of [
+			'organizations.getUsageOverview',
+			'organizations.listMembers',
+			'organizations.getGpuCapacity',
+			'organizations.listAvailableSandboxClasses',
+			'audit.getOrganizationLogs',
+		]) {
+			await step(id, { organizationId });
+		}
+		await step(
+			'webhooks.getInitializationStatus',
+			{ organizationId },
+			/Daytona 404: Webhook initialization status not found/,
+		);
+		for (const id of [
+			'analytics.usage.aggregated',
+			'analytics.usage.bySandbox',
+			'analytics.usage.chart',
+		]) {
+			await step(id, { organizationId, ...window() });
+		}
+		const secret = await step('secrets.create', {
+			name: `CORSAIR_TEST_${Date.now()}`,
+			value: 'x',
+			description: 'Corsair plugin live test, deleted at the end',
+		});
+		if (secret) {
+			const secretId = field(secret, 'id');
+			cleanups.push({
+				what: 'secret',
+				run: () => op('secrets.delete')({ secretId }),
+			});
+			await step('secrets.get', { secretId });
+			await step('secrets.update', { secretId, value: 'y' });
+			await step('secrets.delete', { secretId });
+		}
 	});
 
 	it('runs a sandbox end to end', async () => {
@@ -141,22 +217,33 @@ describeIfKey('daytona live', () => {
 			what: 'sandbox',
 			run: () => op('sandboxes.delete')({ sandboxIdOrName: id }),
 		});
-		for (let i = 0; i < 40; i++) {
-			const current = await op('sandboxes.get')({ sandboxIdOrName: id });
-			if (field(current, 'state') === 'started') break;
-			await sleep(3000);
-		}
+		await waitFor(id, (state) => state === 'started');
 		await step('sandboxes.get', { sandboxIdOrName: id });
 		await step('sandboxes.replaceLabels', {
 			sandboxIdOrName: id,
 			labels: { corsair: 'updated' },
 		});
+		await step('sandboxes.setAutostopInterval', {
+			sandboxIdOrName: id,
+			interval: 10,
+		});
+		await step('sandboxes.getToolboxProxyUrl', { sandboxId: id });
+		await step('sandboxes.getPortPreviewUrl', {
+			sandboxIdOrName: id,
+			port: 3000,
+		});
 		await step('toolbox.info.getVersion', { sandbox_id: id });
 		await step('toolbox.info.getUserHomeDir', { sandbox_id: id });
+		await step('toolbox.info.getWorkDir', { sandbox_id: id });
 		await step('toolbox.process.executeCommand', {
 			sandbox_id: id,
 			command: 'uname -sr',
 			timeout: 30,
+		});
+		await step('toolbox.process.codeRun', {
+			sandbox_id: id,
+			language: 'python',
+			code: 'print(6 * 7)',
 		});
 		await step('toolbox.files.upload', {
 			sandbox_id: id,
@@ -177,7 +264,43 @@ describeIfKey('daytona live', () => {
 			sandbox_id: id,
 			path: '/home/daytona/corsair.txt',
 		});
+		const repo = '/home/daytona/hello';
+		await step('toolbox.git.cloneRepository', {
+			sandbox_id: id,
+			url: 'https://github.com/octocat/Hello-World.git',
+			path: repo,
+		});
+		await step('toolbox.git.getStatus', { sandbox_id: id, path: repo });
+		await step('toolbox.git.listBranches', { sandbox_id: id, path: repo });
+		await step('toolbox.git.getCommitHistory', { sandbox_id: id, path: repo });
+		await step('toolbox.git.createBranch', {
+			sandbox_id: id,
+			path: repo,
+			name: 'corsair-test',
+		});
 		await step('toolbox.process.createSession', {
+			sandbox_id: id,
+			sessionId: 'corsair',
+		});
+		const ran = await step('toolbox.process.sessionExecuteCommand', {
+			sandbox_id: id,
+			sessionId: 'corsair',
+			command: 'echo session-ok',
+		});
+		const commandId = (ran as { cmdId?: string } | undefined)?.cmdId;
+		if (commandId) {
+			await step('toolbox.process.getSessionCommand', {
+				sandbox_id: id,
+				sessionId: 'corsair',
+				commandId,
+			});
+			await step('toolbox.process.getSessionCommandLogs', {
+				sandbox_id: id,
+				sessionId: 'corsair',
+				commandId,
+			});
+		}
+		await step('toolbox.process.getSession', {
 			sandbox_id: id,
 			sessionId: 'corsair',
 		});
@@ -186,9 +309,38 @@ describeIfKey('daytona live', () => {
 			sandbox_id: id,
 			sessionId: 'corsair',
 		});
+		await step('toolbox.ports.get', { sandbox_id: id });
 		await step('toolbox.system.getSystemMetrics', { sandbox_id: id });
-		await step('sandboxes.getLogs', { sandboxIdOrName: id });
+		// Cloud serves sandbox telemetry from the Analytics API only.
+		const analyticsOnly =
+			/Daytona 403: Telemetry endpoints are disabled when Analytics API is configured/;
+		await step(
+			'sandboxes.getLogs',
+			{ sandboxId: id, ...window() },
+			analyticsOnly,
+		);
+		await step(
+			'sandboxes.getMetrics',
+			{ sandboxId: id, ...window() },
+			analyticsOnly,
+		);
+		for (const telemetry of [
+			'analytics.telemetry.logs',
+			'analytics.telemetry.metrics',
+			'analytics.telemetry.traces',
+		]) {
+			await step(telemetry, { organizationId, sandboxId: id, ...window() });
+		}
+		await step('analytics.usage.sandbox', {
+			organizationId,
+			sandboxId: id,
+			...window(),
+		});
 		await step('sandboxes.stop', { sandboxIdOrName: id });
+		// Delete answers 409 "Sandbox state change in progress" until the stop
+		// is done.
+		await waitFor(id, (state) => state === 'stopped');
 		await step('sandboxes.delete', { sandboxIdOrName: id });
+		await waitFor(id, (state) => state === 'destroyed');
 	});
 });

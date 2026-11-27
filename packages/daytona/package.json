@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/daytona",
   "version": "0.1.0",
-  "description": "Daytona sandboxes for AI code: sandboxes (create, start, stop, archive, fork, resize, SSH, previews), the in-sandbox toolbox (files, processes, sessions, git, LSP, code interpreter, computer use), snapshots, volumes, registries, secrets, organizations, analytics and signed webhooks (254 operations).",
+  "description": "Daytona sandboxes for AI code: sandboxes (create, start, stop, archive, fork, resize, SSH, previews), the in-sandbox toolbox (files, processes, sessions, git, LSP, code interpreter, computer use), snapshots, volumes, registries, secrets, organization usage and members, analytics and signed webhooks (215 operations).",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

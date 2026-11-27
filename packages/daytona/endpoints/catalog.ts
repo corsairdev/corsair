@@ -26,8 +26,6 @@ export const daytonaEndpointsNested = {
 	apiKeys: {
 		create: op('apiKeys.create'),
 		delete: op('apiKeys.delete'),
-		deleteForUser: op('apiKeys.deleteForUser'),
-		get: op('apiKeys.get'),
 		getCurrent: op('apiKeys.getCurrent'),
 		list: op('apiKeys.list'),
 	},
@@ -54,63 +52,23 @@ export const daytonaEndpointsNested = {
 		getPushAccess: op('objectStorage.getPushAccess'),
 	},
 	organizations: {
-		acceptInvitation: op('organizations.acceptInvitation'),
-		cancelInvitation: op('organizations.cancelInvitation'),
-		create: op('organizations.create'),
-		createIdentityProvider: op('organizations.createIdentityProvider'),
-		createInvitation: op('organizations.createInvitation'),
 		createRegion: op('organizations.createRegion'),
-		createRole: op('organizations.createRole'),
-		declineInvitation: op('organizations.declineInvitation'),
-		delete: op('organizations.delete'),
-		deleteIdentityProvider: op('organizations.deleteIdentityProvider'),
-		deleteMember: op('organizations.deleteMember'),
-		deleteOtelConfig: op('organizations.deleteOtelConfig'),
 		deleteRegion: op('organizations.deleteRegion'),
-		deleteRole: op('organizations.deleteRole'),
-		generateWorkosAdminPortalLink: op(
-			'organizations.generateWorkosAdminPortalLink',
-		),
-		get: op('organizations.get'),
 		getGpuCapacity: op('organizations.getGpuCapacity'),
-		getIdentityProvider: op('organizations.getIdentityProvider'),
-		getInvitationsCountForAuthenticatedUser: op(
-			'organizations.getInvitationsCountForAuthenticatedUser',
-		),
 		getOtelConfig: op('organizations.getOtelConfig'),
 		getRegionById: op('organizations.getRegionById'),
 		getUsageOverview: op('organizations.getUsageOverview'),
-		leave: op('organizations.leave'),
-		list: op('organizations.list'),
 		listAvailableRegions: op('organizations.listAvailableRegions'),
 		listAvailableSandboxClasses: op(
 			'organizations.listAvailableSandboxClasses',
 		),
-		listIdentityProviders: op('organizations.listIdentityProviders'),
-		listInvitations: op('organizations.listInvitations'),
-		listInvitationsForAuthenticatedUser: op(
-			'organizations.listInvitationsForAuthenticatedUser',
-		),
 		listMembers: op('organizations.listMembers'),
-		listRoles: op('organizations.listRoles'),
-		listWorkosSsoConnections: op('organizations.listWorkosSsoConnections'),
 		regenerateProxyApiKey: op('organizations.regenerateProxyApiKey'),
 		regenerateSnapshotManagerCredentials: op(
 			'organizations.regenerateSnapshotManagerCredentials',
 		),
 		regenerateSshGatewayApiKey: op('organizations.regenerateSshGatewayApiKey'),
-		setDefaultRegion: op('organizations.setDefaultRegion'),
-		testIdentityProviderConnection: op(
-			'organizations.testIdentityProviderConnection',
-		),
-		updateAccessForMember: op('organizations.updateAccessForMember'),
-		updateDefaultQueueTimeout: op('organizations.updateDefaultQueueTimeout'),
-		updateExperimentalConfig: op('organizations.updateExperimentalConfig'),
-		updateIdentityProvider: op('organizations.updateIdentityProvider'),
-		updateInvitation: op('organizations.updateInvitation'),
-		updateOtelConfig: op('organizations.updateOtelConfig'),
 		updateRegion: op('organizations.updateRegion'),
-		updateRole: op('organizations.updateRole'),
 	},
 	regions: {
 		listShared: op('regions.listShared'),
@@ -324,13 +282,6 @@ export const daytonaEndpointsNested = {
 			getSystemMetrics: op('toolbox.system.getSystemMetrics'),
 		},
 	},
-	users: {
-		confirmPendingSsoLink: op('users.confirmPendingSsoLink'),
-		dismissPendingSsoLink: op('users.dismissPendingSsoLink'),
-		getAccountProviders: op('users.getAccountProviders'),
-		getAuthenticated: op('users.getAuthenticated'),
-		listPendingSsoLinks: op('users.listPendingSsoLinks'),
-	},
 	volumes: {
 		create: op('volumes.create'),
 		delete: op('volumes.delete'),
@@ -370,8 +321,6 @@ export const daytonaEndpointSchemas = {
 	'analytics.usage.sandbox': daytonaSchemaEntry('analytics.usage.sandbox'),
 	'apiKeys.create': daytonaSchemaEntry('apiKeys.create'),
 	'apiKeys.delete': daytonaSchemaEntry('apiKeys.delete'),
-	'apiKeys.deleteForUser': daytonaSchemaEntry('apiKeys.deleteForUser'),
-	'apiKeys.get': daytonaSchemaEntry('apiKeys.get'),
 	'apiKeys.getCurrent': daytonaSchemaEntry('apiKeys.getCurrent'),
 	'apiKeys.list': daytonaSchemaEntry('apiKeys.list'),
 	'audit.getOrganizationLogs': daytonaSchemaEntry('audit.getOrganizationLogs'),
@@ -390,52 +339,14 @@ export const daytonaEndpointSchemas = {
 	'objectStorage.getPushAccess': daytonaSchemaEntry(
 		'objectStorage.getPushAccess',
 	),
-	'organizations.acceptInvitation': daytonaSchemaEntry(
-		'organizations.acceptInvitation',
-	),
-	'organizations.cancelInvitation': daytonaSchemaEntry(
-		'organizations.cancelInvitation',
-	),
-	'organizations.create': daytonaSchemaEntry('organizations.create'),
-	'organizations.createIdentityProvider': daytonaSchemaEntry(
-		'organizations.createIdentityProvider',
-	),
-	'organizations.createInvitation': daytonaSchemaEntry(
-		'organizations.createInvitation',
-	),
 	'organizations.createRegion': daytonaSchemaEntry(
 		'organizations.createRegion',
-	),
-	'organizations.createRole': daytonaSchemaEntry('organizations.createRole'),
-	'organizations.declineInvitation': daytonaSchemaEntry(
-		'organizations.declineInvitation',
-	),
-	'organizations.delete': daytonaSchemaEntry('organizations.delete'),
-	'organizations.deleteIdentityProvider': daytonaSchemaEntry(
-		'organizations.deleteIdentityProvider',
-	),
-	'organizations.deleteMember': daytonaSchemaEntry(
-		'organizations.deleteMember',
-	),
-	'organizations.deleteOtelConfig': daytonaSchemaEntry(
-		'organizations.deleteOtelConfig',
 	),
 	'organizations.deleteRegion': daytonaSchemaEntry(
 		'organizations.deleteRegion',
 	),
-	'organizations.deleteRole': daytonaSchemaEntry('organizations.deleteRole'),
-	'organizations.generateWorkosAdminPortalLink': daytonaSchemaEntry(
-		'organizations.generateWorkosAdminPortalLink',
-	),
-	'organizations.get': daytonaSchemaEntry('organizations.get'),
 	'organizations.getGpuCapacity': daytonaSchemaEntry(
 		'organizations.getGpuCapacity',
-	),
-	'organizations.getIdentityProvider': daytonaSchemaEntry(
-		'organizations.getIdentityProvider',
-	),
-	'organizations.getInvitationsCountForAuthenticatedUser': daytonaSchemaEntry(
-		'organizations.getInvitationsCountForAuthenticatedUser',
 	),
 	'organizations.getOtelConfig': daytonaSchemaEntry(
 		'organizations.getOtelConfig',
@@ -446,28 +357,13 @@ export const daytonaEndpointSchemas = {
 	'organizations.getUsageOverview': daytonaSchemaEntry(
 		'organizations.getUsageOverview',
 	),
-	'organizations.leave': daytonaSchemaEntry('organizations.leave'),
-	'organizations.list': daytonaSchemaEntry('organizations.list'),
 	'organizations.listAvailableRegions': daytonaSchemaEntry(
 		'organizations.listAvailableRegions',
 	),
 	'organizations.listAvailableSandboxClasses': daytonaSchemaEntry(
 		'organizations.listAvailableSandboxClasses',
 	),
-	'organizations.listIdentityProviders': daytonaSchemaEntry(
-		'organizations.listIdentityProviders',
-	),
-	'organizations.listInvitations': daytonaSchemaEntry(
-		'organizations.listInvitations',
-	),
-	'organizations.listInvitationsForAuthenticatedUser': daytonaSchemaEntry(
-		'organizations.listInvitationsForAuthenticatedUser',
-	),
 	'organizations.listMembers': daytonaSchemaEntry('organizations.listMembers'),
-	'organizations.listRoles': daytonaSchemaEntry('organizations.listRoles'),
-	'organizations.listWorkosSsoConnections': daytonaSchemaEntry(
-		'organizations.listWorkosSsoConnections',
-	),
 	'organizations.regenerateProxyApiKey': daytonaSchemaEntry(
 		'organizations.regenerateProxyApiKey',
 	),
@@ -477,34 +373,9 @@ export const daytonaEndpointSchemas = {
 	'organizations.regenerateSshGatewayApiKey': daytonaSchemaEntry(
 		'organizations.regenerateSshGatewayApiKey',
 	),
-	'organizations.setDefaultRegion': daytonaSchemaEntry(
-		'organizations.setDefaultRegion',
-	),
-	'organizations.testIdentityProviderConnection': daytonaSchemaEntry(
-		'organizations.testIdentityProviderConnection',
-	),
-	'organizations.updateAccessForMember': daytonaSchemaEntry(
-		'organizations.updateAccessForMember',
-	),
-	'organizations.updateDefaultQueueTimeout': daytonaSchemaEntry(
-		'organizations.updateDefaultQueueTimeout',
-	),
-	'organizations.updateExperimentalConfig': daytonaSchemaEntry(
-		'organizations.updateExperimentalConfig',
-	),
-	'organizations.updateIdentityProvider': daytonaSchemaEntry(
-		'organizations.updateIdentityProvider',
-	),
-	'organizations.updateInvitation': daytonaSchemaEntry(
-		'organizations.updateInvitation',
-	),
-	'organizations.updateOtelConfig': daytonaSchemaEntry(
-		'organizations.updateOtelConfig',
-	),
 	'organizations.updateRegion': daytonaSchemaEntry(
 		'organizations.updateRegion',
 	),
-	'organizations.updateRole': daytonaSchemaEntry('organizations.updateRole'),
 	'regions.listShared': daytonaSchemaEntry('regions.listShared'),
 	'runners.create': daytonaSchemaEntry('runners.create'),
 	'runners.delete': daytonaSchemaEntry('runners.delete'),
@@ -825,15 +696,6 @@ export const daytonaEndpointSchemas = {
 	'toolbox.system.getSystemMetrics': daytonaSchemaEntry(
 		'toolbox.system.getSystemMetrics',
 	),
-	'users.confirmPendingSsoLink': daytonaSchemaEntry(
-		'users.confirmPendingSsoLink',
-	),
-	'users.dismissPendingSsoLink': daytonaSchemaEntry(
-		'users.dismissPendingSsoLink',
-	),
-	'users.getAccountProviders': daytonaSchemaEntry('users.getAccountProviders'),
-	'users.getAuthenticated': daytonaSchemaEntry('users.getAuthenticated'),
-	'users.listPendingSsoLinks': daytonaSchemaEntry('users.listPendingSsoLinks'),
 	'volumes.create': daytonaSchemaEntry('volumes.create'),
 	'volumes.delete': daytonaSchemaEntry('volumes.delete'),
 	'volumes.get': daytonaSchemaEntry('volumes.get'),
@@ -895,15 +757,6 @@ export const daytonaEndpointMeta = {
 		irreversible: true,
 		description: 'Delete API key',
 	},
-	'apiKeys.deleteForUser': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description: 'Delete API key for user',
-	},
-	'apiKeys.get': {
-		riskLevel: 'read',
-		description: 'Get API key',
-	},
 	'apiKeys.getCurrent': {
 		riskLevel: 'read',
 		description: "Get current API key's details",
@@ -963,89 +816,18 @@ export const daytonaEndpointMeta = {
 		irreversible: true,
 		description: 'Get temporary storage access for pushing objects',
 	},
-	'organizations.acceptInvitation': {
-		riskLevel: 'write',
-		description: 'Accept organization invitation',
-	},
-	'organizations.cancelInvitation': {
-		riskLevel: 'write',
-		description: 'Cancel organization invitation',
-	},
-	'organizations.create': {
-		riskLevel: 'write',
-		description: 'Create organization',
-	},
-	'organizations.createIdentityProvider': {
-		riskLevel: 'write',
-		description: 'Create organization identity provider',
-	},
-	'organizations.createInvitation': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description: 'Create organization invitation',
-	},
 	'organizations.createRegion': {
 		riskLevel: 'write',
 		description: 'Create a new region',
-	},
-	'organizations.createRole': {
-		riskLevel: 'write',
-		description: 'Create organization role',
-	},
-	'organizations.declineInvitation': {
-		riskLevel: 'write',
-		description: 'Decline organization invitation',
-	},
-	'organizations.delete': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description: 'Delete organization',
-	},
-	'organizations.deleteIdentityProvider': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description: 'Delete organization identity provider',
-	},
-	'organizations.deleteMember': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description: 'Delete organization member',
-	},
-	'organizations.deleteOtelConfig': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description: 'Delete organization OpenTelemetry configuration',
 	},
 	'organizations.deleteRegion': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description: 'Delete a region',
 	},
-	'organizations.deleteRole': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description: 'Delete organization role',
-	},
-	'organizations.generateWorkosAdminPortalLink': {
-		riskLevel: 'write',
-		description:
-			'Generate a WorkOS Admin Portal link for configuring SSO or SCIM directory sync',
-	},
-	'organizations.get': {
-		riskLevel: 'read',
-		description: 'Get organization by ID',
-	},
 	'organizations.getGpuCapacity': {
 		riskLevel: 'read',
 		description: 'Get shared GPU capacity',
-	},
-	'organizations.getIdentityProvider': {
-		riskLevel: 'read',
-		description: 'Get organization identity provider',
-	},
-	'organizations.getInvitationsCountForAuthenticatedUser': {
-		riskLevel: 'read',
-		description: 'Get count of organization invitations for authenticated user',
 	},
 	'organizations.getOtelConfig': {
 		riskLevel: 'read',
@@ -1059,15 +841,6 @@ export const daytonaEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get organization current usage overview',
 	},
-	'organizations.leave': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description: 'Leave organization',
-	},
-	'organizations.list': {
-		riskLevel: 'read',
-		description: 'List organizations',
-	},
 	'organizations.listAvailableRegions': {
 		riskLevel: 'read',
 		description: 'List all available regions for the organization',
@@ -1076,30 +849,9 @@ export const daytonaEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List available sandbox classes for organization',
 	},
-	'organizations.listIdentityProviders': {
-		riskLevel: 'read',
-		description: 'List organization identity providers',
-	},
-	'organizations.listInvitations': {
-		riskLevel: 'read',
-		description: 'List pending organization invitations',
-	},
-	'organizations.listInvitationsForAuthenticatedUser': {
-		riskLevel: 'read',
-		description: 'List organization invitations for authenticated user',
-	},
 	'organizations.listMembers': {
 		riskLevel: 'read',
 		description: 'List organization members',
-	},
-	'organizations.listRoles': {
-		riskLevel: 'read',
-		description: 'List organization roles',
-	},
-	'organizations.listWorkosSsoConnections': {
-		riskLevel: 'read',
-		description:
-			'List the SSO connections configured for the organization in WorkOS',
 	},
 	'organizations.regenerateProxyApiKey': {
 		riskLevel: 'destructive',
@@ -1116,45 +868,9 @@ export const daytonaEndpointMeta = {
 		irreversible: true,
 		description: 'Regenerate SSH gateway API key for a region',
 	},
-	'organizations.setDefaultRegion': {
-		riskLevel: 'write',
-		description: 'Set default region for organization',
-	},
-	'organizations.testIdentityProviderConnection': {
-		riskLevel: 'read',
-		description: 'Test OIDC identity provider connection',
-	},
-	'organizations.updateAccessForMember': {
-		riskLevel: 'write',
-		description: 'Update access for organization member',
-	},
-	'organizations.updateDefaultQueueTimeout': {
-		riskLevel: 'write',
-		description: 'Set organization default queue timeout',
-	},
-	'organizations.updateExperimentalConfig': {
-		riskLevel: 'write',
-		description: 'Update experimental configuration',
-	},
-	'organizations.updateIdentityProvider': {
-		riskLevel: 'write',
-		description: 'Update organization identity provider',
-	},
-	'organizations.updateInvitation': {
-		riskLevel: 'write',
-		description: 'Update organization invitation',
-	},
-	'organizations.updateOtelConfig': {
-		riskLevel: 'write',
-		description: 'Update organization OpenTelemetry configuration',
-	},
 	'organizations.updateRegion': {
 		riskLevel: 'write',
 		description: 'Update region configuration',
-	},
-	'organizations.updateRole': {
-		riskLevel: 'write',
-		description: 'Update organization role',
 	},
 	'regions.listShared': {
 		riskLevel: 'read',
@@ -1846,27 +1562,6 @@ export const daytonaEndpointMeta = {
 	'toolbox.system.getSystemMetrics': {
 		riskLevel: 'read',
 		description: 'Get sandbox resource metrics',
-	},
-	'users.confirmPendingSsoLink': {
-		riskLevel: 'write',
-		description: 'Confirm (link) a pending SSO account link',
-	},
-	'users.dismissPendingSsoLink': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description: 'Dismiss a pending SSO account link',
-	},
-	'users.getAccountProviders': {
-		riskLevel: 'read',
-		description: 'Get account providers',
-	},
-	'users.getAuthenticated': {
-		riskLevel: 'read',
-		description: 'Get authenticated user',
-	},
-	'users.listPendingSsoLinks': {
-		riskLevel: 'read',
-		description: 'List pending SSO account links for the authenticated user',
 	},
 	'volumes.create': {
 		riskLevel: 'destructive',

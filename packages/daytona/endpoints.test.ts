@@ -287,6 +287,22 @@ describe('requests', () => {
 		});
 	});
 
+	it('returns session command logs sent as plain text', async () => {
+		// The daemon sends JSON only to SDKs with a recent X-Daytona-SDK-Version.
+		replies(
+			{ status: 200, body: { url: `${PROXY}/` } },
+			{ status: 200, body: 'session-ok\n', contentType: 'text/plain' },
+		);
+		const out = await endpointFor('toolbox.process.getSessionCommandLogs')(
+			ctx(),
+			{ sandbox_id: SBX, sessionId: 'corsair', commandId: 'cmd-1' },
+		);
+		expect(out).toBe('session-ok\n');
+		expect(calls[1]?.url).toBe(
+			`${PROXY}/${SBX}/process/session/corsair/command/cmd-1/logs`,
+		);
+	});
+
 	it('refuses a toolbox proxy URL that is not https', async () => {
 		reply(200, { url: 'http://proxy.example.com/toolbox' });
 		await expect(

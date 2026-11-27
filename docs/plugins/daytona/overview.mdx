@@ -1,7 +1,7 @@
 ---
 title: "Daytona plugin"
 sidebarTitle: "Overview"
-description: "Daytona runs AI-generated code in sandboxes: sandboxes (create, start, stop, archive, fork, resize, SSH access, preview URLs, logs), the toolbox inside each one (files, processes and sessions, git, LSP, code interpreter, computer use), snapshots, volumes, Docker registries, secrets, warm pools, organizations, roles and members, audit logs, telemetry and usage analytics, and signed webhooks (254 operations)."
+description: "Daytona runs AI-generated code in sandboxes: sandboxes (create, start, stop, archive, fork, resize, SSH access, preview URLs, logs), the toolbox inside each one (files, processes and sessions, git, LSP, code interpreter, computer use), snapshots, volumes, Docker registries, secrets, organization usage, members and regions, audit logs, telemetry and usage analytics, and signed webhooks (215 operations)."
 ---
 
 Use **Daytona** through Corsair: one client, typed API calls, and incoming webhooks.
@@ -22,19 +22,32 @@ they reserve (a stopped one for its disk). Creating, starting, forking,
 resizing or recovering one, running commands or code in it, snapshots,
 volumes and warm pools are `destructive`, as are git pushes, key and
 credential rotation and every delete.
+- **Organization routes** take the key's own organization id
+(`apiKeys.getCurrent` returns it as `organizationId`); another id answers
+`403 Invalid authentication context`.
+- **Daytona Cloud gaps** (checked live on v0.235.0): `runners.list`,
+`runners.create`, `organizations.createRegion` and the `warmPools.*` routes
+answer 404 there and work only on a self-hosted Daytona that has them;
+`apiKeys.list` and `apiKeys.delete` answer 403 until the organization
+allows managing keys with an API key; the main API's sandbox telemetry
+(`sandboxes.getLogs`, `getMetrics`, `getTraces`, `getTraceSpans`) answers
+403 because Cloud serves it from `analytics.telemetry.*`.
 - **Webhooks** go out through Svix. Open the endpoint portal with
 `webhooks.getAppPortalAccess`, add an endpoint, and store its `whsec_`
 signing secret as the webhook secret; the plugin checks the Svix signature
 of every delivery.
 - **Rate limits** depend on the organization's tier. A 429 carries
 `Retry-After` and core retries it three times; a 5xx is retried for reads only.
-- Not wrapped: routes Daytona's own runners, proxy, SSH gateway, OTEL
-collector and dashboard call, the PTY WebSocket, the toolbox daemon's own
-setup routes, and deprecated routes.
+- Not wrapped: routes that answer 401 to every API key and take only the
+dashboard's user sign-in (listing, creating and deleting organizations,
+invitations, roles, identity providers and SSO, member access changes,
+the `users/me` routes), routes Daytona's own runners, proxy, SSH gateway,
+OTEL collector and dashboard call, the PTY WebSocket, the toolbox daemon's
+own setup routes, and deprecated routes.
 
 **What you get:**
 
-- 254 typed API operations
+- 215 typed API operations
 - 7 incoming webhook event types
 
 ## Setup
