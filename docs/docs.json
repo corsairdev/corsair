@@ -3799,14 +3799,6 @@
                 ]
               },
               {
-                "group": "Supermemory",
-                "pages": [
-                  "plugins/supermemory/overview",
-                  "plugins/supermemory/api",
-                  "plugins/supermemory/database"
-                ]
-              },
-              {
                 "group": "Microsoft Teams",
                 "pages": [
                   "plugins/teams/overview",
@@ -5664,6 +5656,14 @@
                   "plugins/supadata/overview",
                   "plugins/supadata/api",
                   "plugins/supadata/database"
+                ]
+              },
+              {
+                "group": "Supermemory",
+                "pages": [
+                  "plugins/supermemory/overview",
+                  "plugins/supermemory/api",
+                  "plugins/supermemory/database"
                 ]
               },
               {
