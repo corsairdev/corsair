@@ -102,12 +102,16 @@ function configFor(options: InstaboxRequest, key: string) {
 
 /**
  * InstaBox answers a 429 for two things. `rate_limited` is a short burst
- * limit and carries `Retry-After` in seconds, which core reads and retries
- * three times, except when its `reason` is a daily or hourly create/start
- * quota (`creates_per_day`, `starts_per_day`, `starts_per_hour`), which
- * resets far later. `quota_exceeded` is a plan limit (sandboxes, snapshots,
- * stored data): waiting doesn't help, so it is retried only when InstaBox
- * marks it `retryable` (a concurrency limit).
+ * limit and carries `Retry-After` in seconds, except when its `reason` is a
+ * daily or hourly create/start quota (`creates_per_day`, `starts_per_day`,
+ * `starts_per_hour`), which resets far later. `quota_exceeded` is a plan
+ * limit (sandboxes, snapshots, stored data): waiting doesn't help unless
+ * InstaBox marks it `retryable` (a concurrency limit).
+ *
+ * Core retries every 429 before it asks `isRateLimitError`, so core gets
+ * `maxRetries: 0` and makeInstaboxRequest retries itself: only a 429 that
+ * isRetryable429 allows, three times, and never when `Retry-After` is longer
+ * than INSTABOX_MAX_RETRY_WAIT_MS.
  */
 export const INSTABOX_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -121,6 +125,32 @@ export const INSTABOX_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	isRateLimitError: (status: number, body: unknown) =>
 		status === 429 && isRetryable429(body),
 };
+
+/** Core's transport makes one attempt; makeInstaboxRequest retries. */
+const CORE_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	...INSTABOX_RATE_LIMIT_CONFIG,
+	maxRetries: 0,
+};
+
+/** The longest `Retry-After` the plugin waits out; a longer one is returned. */
+export const INSTABOX_MAX_RETRY_WAIT_MS = 60_000;
+
+const sleep = (ms: number) => new Promise<void>((done) => setTimeout(done, ms));
+
+/** How long to wait before retrying this error, or undefined for no retry. */
+export function retryDelayFor(
+	error: unknown,
+	attempt: number,
+): number | undefined {
+	if (!(error instanceof ApiError) || error.status !== 429) return undefined;
+	if (attempt >= INSTABOX_RATE_LIMIT_CONFIG.maxRetries) return undefined;
+	if (!isRetryable429(error.body)) return undefined;
+	const wait =
+		error.retryAfter ??
+		INSTABOX_RATE_LIMIT_CONFIG.initialRetryDelay *
+			INSTABOX_RATE_LIMIT_CONFIG.backoffMultiplier ** attempt;
+	return wait > INSTABOX_MAX_RETRY_WAIT_MS ? undefined : wait;
+}
 
 /** Quotas that reset hours away: retrying after `Retry-After` can't help. */
 const LONG_QUOTA_REASONS = new Set([
@@ -164,8 +194,9 @@ function mediaTypeFor(request: InstaboxRequest): string | undefined {
 }
 
 /**
- * Sends one InstaBox call through core's transport, which retries a 429 three
- * times (honouring Retry-After) and raises `ApiError` with the status.
+ * Sends one InstaBox call through core's transport, which raises `ApiError`
+ * with the status, and retries a short 429 up to three times (see
+ * INSTABOX_RATE_LIMIT_CONFIG).
  */
 // `unknown` because the response is untrusted JSON (or bytes) until the operation's output schema parses it.
 export async function makeInstaboxRequest(
@@ -192,16 +223,23 @@ export async function makeInstaboxRequest(
 		mediaType: mediaTypeFor(options),
 		...(options.responseType ? { responseType: options.responseType } : {}),
 	};
-	try {
-		// `unknown` because the provider response is validated by the owning endpoint after transport.
-		return await request<unknown>(config, requestOptions, {
-			rateLimitConfig: INSTABOX_RATE_LIMIT_CONFIG,
-		});
-	} catch (error) {
-		if (error instanceof ApiError) {
-			throw withoutRequestData(error, secrets);
+	for (let attempt = 0; ; attempt++) {
+		try {
+			// `unknown` because the provider response is validated by the owning endpoint after transport.
+			return await request<unknown>(config, requestOptions, {
+				rateLimitConfig: CORE_RATE_LIMIT_CONFIG,
+			});
+		} catch (error) {
+			const wait = retryDelayFor(error, attempt);
+			if (wait !== undefined) {
+				await sleep(wait);
+				continue;
+			}
+			if (error instanceof ApiError) {
+				throw withoutRequestData(error, secrets);
+			}
+			throw error;
 		}
-		throw error;
 	}
 }
 

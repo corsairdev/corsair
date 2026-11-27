@@ -330,6 +330,44 @@ describe('errors', () => {
 		);
 	});
 
+	it('retries a short burst 429 through the transport', async () => {
+		replies(
+			{
+				status: 429,
+				body: { error: { code: 'rate_limited' } },
+				headers: { 'retry-after': '0' },
+			},
+			{ status: 200, body: { machines: [] } },
+		);
+		await expect(endpointFor('machines.list')(ctx(), {})).resolves.toEqual({
+			machines: [],
+		});
+		expect(calls).toHaveLength(2);
+	});
+
+	it('never waits out a daily quota or a long Retry-After', async () => {
+		replies({
+			status: 429,
+			body: { error: { code: 'rate_limited', reason: 'creates_per_day' } },
+			headers: { 'retry-after': '0' },
+		});
+		await expect(endpointFor('machines.list')(ctx(), {})).rejects.toThrow(
+			/InstaBox 429/,
+		);
+		expect(calls).toHaveLength(1);
+		calls = [];
+		jest.restoreAllMocks();
+		replies({
+			status: 429,
+			body: { error: { code: 'rate_limited' } },
+			headers: { 'retry-after': '3600' },
+		});
+		await expect(endpointFor('machines.list')(ctx(), {})).rejects.toThrow(
+			/InstaBox 429/,
+		);
+		expect(calls).toHaveLength(1);
+	});
+
 	it('retries a burst 429 but never a plan quota', () => {
 		const isRateLimit = INSTABOX_RATE_LIMIT_CONFIG.isRateLimitError;
 		expect(isRateLimit?.(429, { error: { code: 'rate_limited' } })).toBe(true);
