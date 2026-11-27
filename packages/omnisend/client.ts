@@ -147,7 +147,8 @@ export function describeOmnisendError(
 	fallback: string,
 ): { message: string; problemType?: string; errors?: OmnisendErrorEntry[] } {
 	const problem = readProblem(body);
-	const text = problem.detail ?? problem.title ?? fallback;
+	const text =
+		problem.detail ?? problem.errors?.[0]?.message ?? problem.title ?? fallback;
 	const label =
 		status === undefined
 			? 'Omnisend'

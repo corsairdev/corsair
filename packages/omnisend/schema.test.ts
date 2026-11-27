@@ -6,15 +6,11 @@ describe('Omnisend schema', () => {
 		expect(OmnisendSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof OmnisendSchema.entities).toBe('object');
-		expect(OmnisendSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(OmnisendSchema.entities))).toBe(true);
-		for (const entity of Object.values(OmnisendSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+	it('stores no entities, because Omnisend is the system of record', () => {
+		// Contacts, campaigns and products are read on demand; copying contact
+		// data, including emails and phone numbers, into the local database is
+		// a decision the caller should make.
+		expect(Array.isArray(OmnisendSchema.entities)).toBe(false);
+		expect(OmnisendSchema.entities).toEqual({});
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
