@@ -646,6 +646,7 @@ export const BaseProviders = [
 	'search1api',
 	'searchapi',
 	'securitytrails',
+	'segment',
 	'semanticscholar',
 	'sendbird',
 	'sendgrid',
@@ -1466,6 +1467,7 @@ export const ProviderDisplayNames = {
 	search1api: 'Search1API',
 	searchapi: 'SearchAPI',
 	securitytrails: 'SecurityTrails',
+	segment: 'Segment',
 	semanticscholar: 'Semantic Scholar',
 	sendbird: 'Sendbird',
 	sendgrid: 'SendGrid',
@@ -2293,6 +2295,7 @@ export type AllProviders =
 	| 'search1api'
 	| 'searchapi'
 	| 'securitytrails'
+	| 'segment'
 	| 'semanticscholar'
 	| 'sendbird'
 	| 'sendgrid'
