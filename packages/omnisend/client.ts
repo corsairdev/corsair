@@ -56,8 +56,7 @@ export function readProblem(body: unknown): OmnisendProblem {
 				if (!item) return [];
 				return [
 					{
-						field:
-							typeof item.field === 'string' ? item.field : undefined,
+						field: typeof item.field === 'string' ? item.field : undefined,
 						code: typeof item.code === 'string' ? item.code : undefined,
 						message:
 							typeof item.message === 'string' ? item.message : undefined,
@@ -143,7 +142,7 @@ export class OmnisendAPIError extends Error {
  */
 export function describeOmnisendError(
 	status: number | undefined,
-	body: unknown,
+	body: unknown, // unknown: the untyped problem body, read field by field.
 	fallback: string,
 ): { message: string; problemType?: string; errors?: OmnisendErrorEntry[] } {
 	const problem = readProblem(body);
@@ -241,10 +240,7 @@ export async function makeOmnisendRequest(
 				status: error.status,
 				problemType: described.problemType,
 				errors: described.errors,
-				retryAfter: retryAfterMs(
-					readProblem(error.body),
-					error.retryAfter,
-				),
+				retryAfter: retryAfterMs(readProblem(error.body), error.retryAfter),
 				method: error.request.method ?? method,
 			});
 		}

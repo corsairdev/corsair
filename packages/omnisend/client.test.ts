@@ -10,8 +10,8 @@ import {
 } from './client';
 import {
 	contact,
-	unauthorized,
 	rateLimited,
+	unauthorized,
 	validationFailed,
 } from './test-fixtures';
 
@@ -54,7 +54,10 @@ describe('makeOmnisendRequest', () => {
 	it('sends the key in the Omnisend-API-Key scheme', async () => {
 		respond({ contacts: [] }, 200);
 
-		await makeOmnisendRequest(API_KEY, { method: 'GET', path: '/api/contacts' });
+		await makeOmnisendRequest(API_KEY, {
+			method: 'GET',
+			path: '/api/contacts',
+		});
 
 		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
 		expect(url).toBe(`${OMNISEND_API_BASE}/api/contacts`);
@@ -68,7 +71,10 @@ describe('makeOmnisendRequest', () => {
 	it('sends the version header on every request', async () => {
 		respond({ contacts: [] }, 200);
 
-		await makeOmnisendRequest(API_KEY, { method: 'GET', path: '/api/contacts' });
+		await makeOmnisendRequest(API_KEY, {
+			method: 'GET',
+			path: '/api/contacts',
+		});
 
 		const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
 		expect(new Headers(init.headers).get('omnisend-version')).toBe(
@@ -93,7 +99,10 @@ describe('makeOmnisendRequest', () => {
 	it('never puts the key in the query string', async () => {
 		respond({ contacts: [] }, 200);
 
-		await makeOmnisendRequest(API_KEY, { method: 'GET', path: '/api/contacts' });
+		await makeOmnisendRequest(API_KEY, {
+			method: 'GET',
+			path: '/api/contacts',
+		});
 
 		const [url] = fetchMock.mock.calls[0] as [string, RequestInit];
 		expect(url).not.toContain(API_KEY);
@@ -153,7 +162,10 @@ describe('makeOmnisendRequest', () => {
 
 	it('falls back to a Retry-After header when the body has none', async () => {
 		respond(
-			{ type: 'https://problems.omnisend.com/rate-limit-exceeded', status: 429 },
+			{
+				type: 'https://problems.omnisend.com/rate-limit-exceeded',
+				status: 429,
+			},
 			429,
 			{ 'Retry-After': '3' },
 		);
@@ -187,7 +199,10 @@ describe('makeOmnisendRequest', () => {
 		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
 
 		const error = await failure(
-			makeOmnisendRequest(API_KEY, { method: 'PATCH', path: '/api/contacts/x' }),
+			makeOmnisendRequest(API_KEY, {
+				method: 'PATCH',
+				path: '/api/contacts/x',
+			}),
 		);
 		expect(error.status).toBeUndefined();
 		expect(error.method).toBe('PATCH');
