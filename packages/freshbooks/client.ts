@@ -17,6 +17,7 @@ function readString(
 	return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
+// unknown: the body is an untyped error body until asRecord narrows it.
 function readNumber(
 	record: Record<string, unknown> | null | undefined,
 	key: string,
@@ -39,6 +40,7 @@ export type FreshBooksErrorEntry = {
  */
 export function describeFreshBooksError(
 	status: number | undefined,
+	// unknown: the body is an untyped error body until asRecord narrows it.
 	body: unknown,
 	fallback: string,
 ): string {
@@ -63,6 +65,7 @@ export function describeFreshBooksError(
  * Reads the accounting family's error entries out of a body, whatever the
  * HTTP status said.
  */
+// unknown: the body is an untyped error body until asRecord narrows it.
 export function readFreshBooksErrors(body: unknown): FreshBooksErrorEntry[] {
 	const record = asRecord(body);
 	const response = asRecord(record?.response);

@@ -1,9 +1,18 @@
-import { Clients, Estimates, Expenses, Invoices, Projects, Tasks, TimeEntries, Users } from './endpoints';
 import { FreshBooksAPIError } from './client';
 import {
+	Clients,
+	Estimates,
+	Expenses,
+	Invoices,
+	Projects,
+	Tasks,
+	TimeEntries,
+	Users,
+} from './endpoints';
+import {
 	ACCOUNT_ID,
-	BUSINESS_ID,
 	accountNotFound,
+	BUSINESS_ID,
 	clientRecord,
 	estimateRecord,
 	expenseRecord,
@@ -55,26 +64,28 @@ describe('output parsing per operation', () => {
 	});
 
 	it('clients.list parses the wrapped page', async () => {
-		respondJson(
-			fetchMock,
-			{
-				response: {
-					result: {
-						clients: [clientRecord],
-						page: 1,
-						pages: 3,
-						per_page: 15,
-						total: 40,
-					},
+		respondJson(fetchMock, {
+			response: {
+				result: {
+					clients: [clientRecord],
+					page: 1,
+					pages: 3,
+					per_page: 15,
+					total: 40,
 				},
 			},
-		);
+		});
 
 		const result = await invoke(Clients.list, { accountId: ACCOUNT_ID });
 
 		expect(result.clients).toHaveLength(1);
 		expect(result.clients[0]).toMatchObject({ id: 238951, fname: 'first1' });
-		expect(result).toMatchObject({ page: 1, pages: 3, per_page: 15, total: 40 });
+		expect(result).toMatchObject({
+			page: 1,
+			pages: 3,
+			per_page: 15,
+			total: 40,
+		});
 	});
 
 	it('clients.get parses the client', async () => {
@@ -113,10 +124,9 @@ describe('output parsing per operation', () => {
 	});
 
 	it('clients.delete returns the client marked deleted', async () => {
-		respondJson(
-			fetchMock,
-			{ response: { result: { client: { ...clientRecord, vis_state: 1 } } } },
-		);
+		respondJson(fetchMock, {
+			response: { result: { client: { ...clientRecord, vis_state: 1 } } },
+		});
 
 		const result = await invoke(Clients.remove, {
 			accountId: ACCOUNT_ID,
@@ -127,20 +137,17 @@ describe('output parsing per operation', () => {
 	});
 
 	it('invoices.list parses the wrapped page', async () => {
-		respondJson(
-			fetchMock,
-			{
-				response: {
-					result: {
-						invoices: [invoiceRecord],
-						page: 1,
-						pages: 1,
-						per_page: 15,
-						total: 1,
-					},
+		respondJson(fetchMock, {
+			response: {
+				result: {
+					invoices: [invoiceRecord],
+					page: 1,
+					pages: 1,
+					per_page: 15,
+					total: 1,
 				},
 			},
-		);
+		});
 
 		const result = await invoke(Invoices.list, { accountId: ACCOUNT_ID });
 
@@ -156,7 +163,9 @@ describe('output parsing per operation', () => {
 	});
 
 	it('invoices.get parses the invoice with money objects', async () => {
-		respondJson(fetchMock, { response: { result: { invoice: invoiceRecord } } });
+		respondJson(fetchMock, {
+			response: { result: { invoice: invoiceRecord } },
+		});
 
 		const result = await invoke(Invoices.get, {
 			accountId: ACCOUNT_ID,
@@ -170,7 +179,9 @@ describe('output parsing per operation', () => {
 	});
 
 	it('invoices.create returns the draft invoice', async () => {
-		respondJson(fetchMock, { response: { result: { invoice: invoiceRecord } } });
+		respondJson(fetchMock, {
+			response: { result: { invoice: invoiceRecord } },
+		});
 
 		const result = await invoke(Invoices.create, {
 			accountId: ACCOUNT_ID,
@@ -181,7 +192,9 @@ describe('output parsing per operation', () => {
 	});
 
 	it('invoices.update returns the changed invoice', async () => {
-		respondJson(fetchMock, { response: { result: { invoice: invoiceRecord } } });
+		respondJson(fetchMock, {
+			response: { result: { invoice: invoiceRecord } },
+		});
 
 		const result = await invoke(Invoices.update, {
 			accountId: ACCOUNT_ID,
@@ -193,10 +206,9 @@ describe('output parsing per operation', () => {
 	});
 
 	it('invoices.markSent returns the invoice with status sent', async () => {
-		respondJson(
-			fetchMock,
-			{ response: { result: { invoice: { ...invoiceRecord, status: 2 } } } },
-		);
+		respondJson(fetchMock, {
+			response: { result: { invoice: { ...invoiceRecord, status: 2 } } },
+		});
 
 		const result = await invoke(Invoices.markSent, {
 			accountId: ACCOUNT_ID,
@@ -207,7 +219,9 @@ describe('output parsing per operation', () => {
 	});
 
 	it('invoices.sendEmail returns the invoice', async () => {
-		respondJson(fetchMock, { response: { result: { invoice: invoiceRecord } } });
+		respondJson(fetchMock, {
+			response: { result: { invoice: invoiceRecord } },
+		});
 
 		const result = await invoke(Invoices.sendEmail, {
 			accountId: ACCOUNT_ID,
@@ -219,10 +233,9 @@ describe('output parsing per operation', () => {
 	});
 
 	it('invoices.delete returns the invoice marked deleted', async () => {
-		respondJson(
-			fetchMock,
-			{ response: { result: { invoice: { ...invoiceRecord, vis_state: 1 } } } },
-		);
+		respondJson(fetchMock, {
+			response: { result: { invoice: { ...invoiceRecord, vis_state: 1 } } },
+		});
 
 		const result = await invoke(Invoices.remove, {
 			accountId: ACCOUNT_ID,
@@ -233,20 +246,17 @@ describe('output parsing per operation', () => {
 	});
 
 	it('estimates.list parses the wrapped page', async () => {
-		respondJson(
-			fetchMock,
-			{
-				response: {
-					result: {
-						estimates: [estimateRecord],
-						page: 1,
-						pages: 1,
-						per_page: 15,
-						total: 1,
-					},
+		respondJson(fetchMock, {
+			response: {
+				result: {
+					estimates: [estimateRecord],
+					page: 1,
+					pages: 1,
+					per_page: 15,
+					total: 1,
 				},
 			},
-		);
+		});
 
 		const result = await invoke(Estimates.list, { accountId: ACCOUNT_ID });
 
@@ -254,7 +264,9 @@ describe('output parsing per operation', () => {
 	});
 
 	it('estimates.get parses the estimate', async () => {
-		respondJson(fetchMock, { response: { result: { estimate: estimateRecord } } });
+		respondJson(fetchMock, {
+			response: { result: { estimate: estimateRecord } },
+		});
 
 		const result = await invoke(Estimates.get, {
 			accountId: ACCOUNT_ID,
@@ -265,7 +277,9 @@ describe('output parsing per operation', () => {
 	});
 
 	it('estimates.create returns the draft estimate', async () => {
-		respondJson(fetchMock, { response: { result: { estimate: estimateRecord } } });
+		respondJson(fetchMock, {
+			response: { result: { estimate: estimateRecord } },
+		});
 
 		const result = await invoke(Estimates.create, {
 			accountId: ACCOUNT_ID,
@@ -276,7 +290,9 @@ describe('output parsing per operation', () => {
 	});
 
 	it('estimates.update returns the changed estimate', async () => {
-		respondJson(fetchMock, { response: { result: { estimate: estimateRecord } } });
+		respondJson(fetchMock, {
+			response: { result: { estimate: estimateRecord } },
+		});
 
 		const result = await invoke(Estimates.update, {
 			accountId: ACCOUNT_ID,
@@ -288,10 +304,9 @@ describe('output parsing per operation', () => {
 	});
 
 	it('estimates.delete returns the estimate marked deleted', async () => {
-		respondJson(
-			fetchMock,
-			{ response: { result: { estimate: { ...estimateRecord, vis_state: 1 } } } },
-		);
+		respondJson(fetchMock, {
+			response: { result: { estimate: { ...estimateRecord, vis_state: 1 } } },
+		});
 
 		const result = await invoke(Estimates.remove, {
 			accountId: ACCOUNT_ID,
@@ -302,20 +317,17 @@ describe('output parsing per operation', () => {
 	});
 
 	it('expenses.list parses the wrapped page', async () => {
-		respondJson(
-			fetchMock,
-			{
-				response: {
-					result: {
-						expenses: [expenseRecord],
-						page: 1,
-						pages: 1,
-						per_page: 15,
-						total: 1,
-					},
+		respondJson(fetchMock, {
+			response: {
+				result: {
+					expenses: [expenseRecord],
+					page: 1,
+					pages: 1,
+					per_page: 15,
+					total: 1,
 				},
 			},
-		);
+		});
 
 		const result = await invoke(Expenses.list, { accountId: ACCOUNT_ID });
 
@@ -326,7 +338,9 @@ describe('output parsing per operation', () => {
 	});
 
 	it('expenses.get parses the expense', async () => {
-		respondJson(fetchMock, { response: { result: { expense: expenseRecord } } });
+		respondJson(fetchMock, {
+			response: { result: { expense: expenseRecord } },
+		});
 
 		const result = await invoke(Expenses.get, {
 			accountId: ACCOUNT_ID,
@@ -337,7 +351,9 @@ describe('output parsing per operation', () => {
 	});
 
 	it('expenses.create returns the recorded expense', async () => {
-		respondJson(fetchMock, { response: { result: { expense: expenseRecord } } });
+		respondJson(fetchMock, {
+			response: { result: { expense: expenseRecord } },
+		});
 
 		const result = await invoke(Expenses.create, {
 			accountId: ACCOUNT_ID,
@@ -348,7 +364,9 @@ describe('output parsing per operation', () => {
 	});
 
 	it('expenses.update returns the changed expense', async () => {
-		respondJson(fetchMock, { response: { result: { expense: expenseRecord } } });
+		respondJson(fetchMock, {
+			response: { result: { expense: expenseRecord } },
+		});
 
 		const result = await invoke(Expenses.update, {
 			accountId: ACCOUNT_ID,
@@ -360,10 +378,9 @@ describe('output parsing per operation', () => {
 	});
 
 	it('expenses.delete returns the expense marked deleted', async () => {
-		respondJson(
-			fetchMock,
-			{ response: { result: { expense: { ...expenseRecord, vis_state: 1 } } } },
-		);
+		respondJson(fetchMock, {
+			response: { result: { expense: { ...expenseRecord, vis_state: 1 } } },
+		});
 
 		const result = await invoke(Expenses.remove, {
 			accountId: ACCOUNT_ID,
@@ -374,20 +391,17 @@ describe('output parsing per operation', () => {
 	});
 
 	it('tasks.list parses the wrapped page', async () => {
-		respondJson(
-			fetchMock,
-			{
-				response: {
-					result: {
-						tasks: [taskRecord],
-						page: 1,
-						pages: 1,
-						per_page: 15,
-						total: 1,
-					},
+		respondJson(fetchMock, {
+			response: {
+				result: {
+					tasks: [taskRecord],
+					page: 1,
+					pages: 1,
+					per_page: 15,
+					total: 1,
 				},
 			},
-		);
+		});
 
 		const result = await invoke(Tasks.list, { accountId: ACCOUNT_ID });
 
@@ -566,10 +580,9 @@ describe('rejections', () => {
 	});
 
 	it('fails a client whose id came back as text', async () => {
-		respondJson(
-			fetchMock,
-			{ response: { result: { client: { ...clientRecord, id: '238951' } } } },
-		);
+		respondJson(fetchMock, {
+			response: { result: { client: { ...clientRecord, id: '238951' } } },
+		});
 
 		await expect(
 			invoke(Clients.get, { accountId: ACCOUNT_ID, customerId: 238951 }),

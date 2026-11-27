@@ -1,7 +1,10 @@
 import type { FreshBooksEndpoints } from '..';
 import { segment } from '../client';
-import { FreshBooksEndpointInputSchemas as Inputs, FreshBooksEndpointOutputSchemas as Outputs } from './types';
 import { call } from './call';
+import {
+	FreshBooksEndpointInputSchemas as Inputs,
+	FreshBooksEndpointOutputSchemas as Outputs,
+} from './types';
 
 const base = (accountId: string) =>
 	`/accounting/account/${segment(accountId)}/estimates/estimates`;
@@ -56,7 +59,12 @@ export const create: FreshBooksEndpoints['estimatesCreate'] = (ctx, input) =>
 			path: base(accountId),
 			body: { estimate },
 		}),
-		{ log: ({ accountId, estimate }) => ({ accountId, customerId: estimate.customerid }) },
+		{
+			log: ({ accountId, estimate }) => ({
+				accountId,
+				customerId: estimate.customerid,
+			}),
+		},
 	);
 
 export const update: FreshBooksEndpoints['estimatesUpdate'] = (ctx, input) =>

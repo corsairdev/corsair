@@ -36,10 +36,10 @@ function apiError(
 	const parts = [];
 	if (status !== undefined) parts.push(String(status));
 	if (options.errno !== undefined) parts.push(`errno ${options.errno}`);
-	return new FreshBooksAPIError(
-		`FreshBooks ${parts.join(' ')}: failed`,
-		{ status, ...options },
-	);
+	return new FreshBooksAPIError(`FreshBooks ${parts.join(' ')}: failed`, {
+		status,
+		...options,
+	});
 }
 
 describe('FreshBooks error handlers', () => {
@@ -117,9 +117,9 @@ describe('FreshBooks error handlers', () => {
 
 	it('handles an error from another plugin without crashing', async () => {
 		const error = new Error('not ours');
-		const name = (
-			Object.keys(errorHandlers) as HandlerName[]
-		).find((key) => errorHandlers[key].match(error));
+		const name = (Object.keys(errorHandlers) as HandlerName[]).find((key) =>
+			errorHandlers[key].match(error),
+		);
 		expect(name).toBe('DEFAULT');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});

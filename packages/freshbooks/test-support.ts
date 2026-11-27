@@ -12,9 +12,7 @@ export async function invoke<
 	endpoint: Endpoint,
 	input: Parameters<Endpoint>[1],
 ): Promise<Awaited<ReturnType<Endpoint>>> {
-	return endpoint(testContext, input as never) as Awaited<
-		ReturnType<Endpoint>
-	>;
+	return endpoint(testContext, input as never) as Awaited<ReturnType<Endpoint>>;
 }
 
 // unknown: a promise can reject with any value, so the rejection reason has
@@ -42,6 +40,7 @@ export function installFetchMock() {
 
 export function respondJson(
 	fetchMock: jest.SpyInstance,
+	// unknown: response bodies are arbitrary JSON.
 	body: unknown,
 	status = 200,
 	headers: Record<string, string> = {},
@@ -66,7 +65,7 @@ export type RecordedRequest = {
 	method: string | undefined;
 	/** Header names are lowercased by the Headers class. */
 	headers: Record<string, string>;
-	/** The parsed JSON body, when one was sent. */
+	// unknown: the parsed JSON body, when one was sent, has no static type.
 	body: unknown;
 };
 

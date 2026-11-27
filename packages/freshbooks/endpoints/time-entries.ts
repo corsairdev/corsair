@@ -1,7 +1,10 @@
 import type { FreshBooksEndpoints } from '..';
 import { FreshBooksAPIError, segment } from '../client';
-import { FreshBooksEndpointInputSchemas as Inputs, FreshBooksEndpointOutputSchemas as Outputs } from './types';
 import { call } from './call';
+import {
+	FreshBooksEndpointInputSchemas as Inputs,
+	FreshBooksEndpointOutputSchemas as Outputs,
+} from './types';
 
 const base = (businessId: number) =>
 	`/timetracking/business/${segment(businessId)}/time_entries`;
@@ -77,7 +80,10 @@ export const create: FreshBooksEndpoints['timeEntriesCreate'] = (ctx, input) =>
 			log: ({ businessId, time_entry }) => ({
 				businessId,
 				duration: time_entry.duration,
-				projectId: typeof time_entry.project_id === 'number' ? time_entry.project_id : undefined,
+				projectId:
+					typeof time_entry.project_id === 'number'
+						? time_entry.project_id
+						: undefined,
 			}),
 		},
 	);

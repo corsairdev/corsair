@@ -1,7 +1,10 @@
 import type { FreshBooksEndpoints } from '..';
 import { segment } from '../client';
-import { FreshBooksEndpointInputSchemas as Inputs, FreshBooksEndpointOutputSchemas as Outputs } from './types';
 import { call } from './call';
+import {
+	FreshBooksEndpointInputSchemas as Inputs,
+	FreshBooksEndpointOutputSchemas as Outputs,
+} from './types';
 
 const base = (accountId: string) =>
 	`/accounting/account/${segment(accountId)}/users/clients`;

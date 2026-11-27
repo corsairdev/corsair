@@ -1,7 +1,7 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
-import { freshbooks } from './index';
 import { FreshBooksEndpointOutputSchemas as Outputs } from './endpoints/types';
+import { freshbooks } from './index';
 
 /**
  * Live smoke against the real API, gated on an access token. CI skips this

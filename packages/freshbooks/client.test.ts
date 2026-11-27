@@ -127,9 +127,7 @@ describe('makeFreshBooksRequest', () => {
 		expect(error.status).toBe(404);
 		expect(error.errno).toBe(404);
 		expect(error.method).toBe('GET');
-		expect(error.message).toBe(
-			'FreshBooks 404 errno 404: Account not found',
-		);
+		expect(error.message).toBe('FreshBooks 404 errno 404: Account not found');
 	});
 
 	it('describes a bare auth error from the projects family', async () => {
@@ -254,7 +252,9 @@ describe('readFreshBooksErrors', () => {
 
 	it('skips entries without a message', () => {
 		const body = { response: { errors: [{ errno: 7 }, { message: 'bad' }] } };
-		expect(readFreshBooksErrors(body)).toEqual([{ message: 'bad', errno: undefined }]);
+		expect(readFreshBooksErrors(body)).toEqual([
+			{ message: 'bad', errno: undefined },
+		]);
 	});
 });
 

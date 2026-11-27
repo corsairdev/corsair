@@ -10,7 +10,16 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Clients, Estimates, Expenses, Invoices, Projects, Tasks, TimeEntries, Users } from './endpoints';
+import {
+	Clients,
+	Estimates,
+	Expenses,
+	Invoices,
+	Projects,
+	Tasks,
+	TimeEntries,
+	Users,
+} from './endpoints';
 import type {
 	FreshBooksEndpointInputs,
 	FreshBooksEndpointOutputs,
@@ -294,10 +303,10 @@ export const freshBooksEndpointSchemas = {
 		input: FreshBooksEndpointInputSchemas.timeEntriesDelete,
 		output: FreshBooksEndpointOutputSchemas.timeEntriesDelete,
 	},
-// No `satisfies RequiredPluginEndpointSchemas` here: with 37 operations and
-// these schema sizes, instantiating it exceeds TypeScript's depth limit, as
-// hubspot's larger registry already does. Exhaustiveness is still checked by
-// `satisfies InternalFreshBooksPlugin` on the plugin object below.
+	// No `satisfies RequiredPluginEndpointSchemas` here: with 37 operations and
+	// these schema sizes, instantiating it exceeds TypeScript's depth limit, as
+	// hubspot's larger registry already does. Exhaustiveness is still checked by
+	// `satisfies InternalFreshBooksPlugin` on the plugin object below.
 } as const;
 
 const defaultAuthType = 'api_key' as const;
@@ -484,7 +493,8 @@ export type BaseFreshBooksPlugin<T extends FreshBooksPluginOptions> =
 		typeof defaultAuthType
 	>;
 
-export type InternalFreshBooksPlugin = BaseFreshBooksPlugin<FreshBooksPluginOptions>;
+export type InternalFreshBooksPlugin =
+	BaseFreshBooksPlugin<FreshBooksPluginOptions>;
 
 export type ExternalFreshBooksPlugin<T extends FreshBooksPluginOptions> =
 	BaseFreshBooksPlugin<T>;
@@ -497,8 +507,8 @@ export type ExternalFreshBooksPlugin<T extends FreshBooksPluginOptions> =
  * deliveries, so there is no webhook secret or matcher.
  */
 export function freshbooks<const T extends FreshBooksPluginOptions>(
-	incomingOptions: FreshBooksPluginOptions &
-		T = {} as FreshBooksPluginOptions & T,
+	incomingOptions: FreshBooksPluginOptions & T = {} as FreshBooksPluginOptions &
+		T,
 ): ExternalFreshBooksPlugin<T> {
 	const options = {
 		...incomingOptions,

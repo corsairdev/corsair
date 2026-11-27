@@ -1,5 +1,5 @@
 import { AuthMissingError } from 'corsair/core';
-import { freshbooks, freshBooksEndpointSchemas } from './index';
+import { freshBooksEndpointSchemas, freshbooks } from './index';
 
 // The key builder only reads authType and keys.
 function keyContext(apiKey: string | null) {
@@ -118,10 +118,7 @@ describe('freshbooks plugin definition', () => {
 				'timeEntries.delete',
 			].sort(),
 		);
-		expect(meta['invoices.markSent']).not.toHaveProperty(
-			'irreversible',
-			true,
-		);
+		expect(meta['invoices.markSent']).not.toHaveProperty('irreversible', true);
 	});
 
 	it('has input and output schemas for every endpoint', () => {

@@ -1,7 +1,10 @@
 import type { FreshBooksEndpoints } from '..';
 import { FreshBooksAPIError, segment } from '../client';
-import { FreshBooksEndpointInputSchemas as Inputs, FreshBooksEndpointOutputSchemas as Outputs } from './types';
 import { call } from './call';
+import {
+	FreshBooksEndpointInputSchemas as Inputs,
+	FreshBooksEndpointOutputSchemas as Outputs,
+} from './types';
 
 const listBase = (businessId: number) =>
 	`/projects/business/${segment(businessId)}/projects`;

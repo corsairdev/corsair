@@ -1,14 +1,19 @@
 import { asRecord } from 'corsair/core';
 import type { FreshBooksEndpoints } from '..';
 import { FreshBooksAPIError } from '../client';
-import { FreshBooksEndpointInputSchemas as Inputs, FreshBooksEndpointOutputSchemas as Outputs } from './types';
 import { call } from './call';
+import {
+	FreshBooksEndpointInputSchemas as Inputs,
+	FreshBooksEndpointOutputSchemas as Outputs,
+} from './types';
 
 /**
  * The auth family answers `{ response: { ...identity } }` with no result key.
  * accountId and businessId are read out of business_memberships, because every
  * other group needs one of the two, and exported for tests.
  */
+// unknown: the raw response body has no static type until the output
+// schema parses what this returns.
 export function shapeUsersMe(raw: unknown): unknown {
 	const identity = asRecord(asRecord(raw)?.response);
 	if (!identity) {
@@ -25,7 +30,11 @@ export function shapeUsersMe(raw: unknown): unknown {
 		const business = asRecord(asRecord(membership)?.business);
 		if (!business) continue;
 		const account = business.account_id;
-		if (accountId === undefined && typeof account === 'string' && account.length > 0) {
+		if (
+			accountId === undefined &&
+			typeof account === 'string' &&
+			account.length > 0
+		) {
 			accountId = account;
 		}
 		const id = business.id;

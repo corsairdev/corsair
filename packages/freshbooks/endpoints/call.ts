@@ -2,7 +2,11 @@ import { asRecord, logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { FreshBooksContext } from '..';
 import type { FreshBooksRequest } from '../client';
-import { FreshBooksAPIError, makeFreshBooksRequest, readFreshBooksErrors } from '../client';
+import {
+	FreshBooksAPIError,
+	makeFreshBooksRequest,
+	readFreshBooksErrors,
+} from '../client';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 
@@ -14,6 +18,8 @@ export type FreshBooksEnvelope = 'accounting' | 'bare';
  * the HTTP status said. Returns `response.result`, which is undefined only
  * where a caller's shape allows it (projects.delete answers `{ response: {} }`).
  */
+// unknown: the raw response body has no static type until the output
+// schema parses what this returns.
 export function unwrapAccountingEnvelope(raw: unknown): unknown {
 	const errors = readFreshBooksErrors(raw);
 	const first = errors[0];
@@ -61,9 +67,7 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	const parsed = operation.input.parse(rawInput ?? {});
 	const raw = await makeFreshBooksRequest(ctx.key, toRequest(parsed));
 	const payload =
-		operation.envelope === 'accounting'
-			? unwrapAccountingEnvelope(raw)
-			: raw;
+		operation.envelope === 'accounting' ? unwrapAccountingEnvelope(raw) : raw;
 	const result = operation.output.parse(
 		options.shape ? options.shape(payload, parsed) : payload,
 	);

@@ -1,7 +1,10 @@
 import type { FreshBooksEndpoints } from '..';
 import { segment } from '../client';
-import { FreshBooksEndpointInputSchemas as Inputs, FreshBooksEndpointOutputSchemas as Outputs } from './types';
 import { call } from './call';
+import {
+	FreshBooksEndpointInputSchemas as Inputs,
+	FreshBooksEndpointOutputSchemas as Outputs,
+} from './types';
 
 // Billable tasks live under the projects path inside the accounting API, and
 // unlike the other accounting resources they have no delete call at all.

@@ -7,5 +7,14 @@ import * as Tasks from './tasks';
 import * as TimeEntries from './time-entries';
 import * as Users from './users';
 
-export { Clients, Estimates, Expenses, Invoices, Projects, Tasks, TimeEntries, Users };
+export {
+	Clients,
+	Estimates,
+	Expenses,
+	Invoices,
+	Projects,
+	Tasks,
+	TimeEntries,
+	Users,
+};
 export * from './types';

@@ -20,7 +20,9 @@ const BusinessIdSchema = z
 	.number()
 	.int()
 	.positive()
-	.describe('The numeric business id, from the `businessId` field of users.me.');
+	.describe(
+		'The numeric business id, from the `businessId` field of users.me.',
+	);
 
 // The API silently caps list results at 100 per page regardless of per_page
 // (freshbooks.com/api/limits).
@@ -166,15 +168,12 @@ const InvoiceSchema = z
 			.object({ amount: z.string().nullish(), code: z.string().nullish() })
 			.loose()
 			.nullish(),
-		unpaid: z.string().nullish(),
-		total: z.string().nullish(),
-		deposit_amount: z
-			.object({ amount: z.string().nullish(), code: z.string().nullish() })
-			.loose()
-			.nullish(),
+		unpaid: MoneySchema.nullish(),
+		total: MoneySchema.nullish(),
+		deposit_amount: MoneySchema.nullish(),
 		deposit_percentage: z.string().nullish(),
 		deposit_status: z.string().nullish(),
-		discount_total: z.string().nullish(),
+		discount_total: MoneySchema.nullish(),
 		discount_value: z.string().nullish(),
 		discount_description: z.string().nullish(),
 		dispute_status: z.string().nullish(),
@@ -223,7 +222,7 @@ const EstimateSchema = z
 		// The docs examples disagree on whether `sent` is a date or a flag.
 		sent: z.union([z.string(), z.boolean()]).nullish(),
 		amount: MoneySchema.nullish(),
-		discount_total: z.string().nullish(),
+		discount_total: MoneySchema.nullish(),
 		description: z.string().nullish(),
 		terms: z.string().nullish(),
 		notes: z.string().nullish(),
@@ -372,10 +371,7 @@ const ProjectsListResponseSchema = z
 const TimeEntrySchema = z
 	.object({
 		id: z.number(),
-		duration: z
-			.number()
-			.nullish()
-			.describe('Seconds logged.'),
+		duration: z.number().nullish().describe('Seconds logged.'),
 		is_logged: z.boolean().nullish(),
 		active: z.boolean().nullish(),
 		started_at: z.string().nullish(),
@@ -497,7 +493,7 @@ const ClientsGetInputSchema = z.object({
 		.number()
 		.int()
 		.positive()
-		.describe('The client id, from a client\'s `id`.'),
+		.describe("The client id, from a client's `id`."),
 });
 
 export type ClientsGetInput = z.infer<typeof ClientsGetInputSchema>;
@@ -569,7 +565,7 @@ const InvoicesGetInputSchema = z.object({
 		.number()
 		.int()
 		.positive()
-		.describe('The invoice id, from an invoice\'s `id`.'),
+		.describe("The invoice id, from an invoice's `id`."),
 });
 
 export type InvoicesGetInput = z.infer<typeof InvoicesGetInputSchema>;
@@ -577,11 +573,7 @@ export type InvoicesGetInput = z.infer<typeof InvoicesGetInputSchema>;
 const InvoicesCreateInputSchema = z.object({
 	accountId: AccountIdSchema,
 	invoice: InvoiceWriteSchema.extend({
-		customerid: z
-			.number()
-			.int()
-			.positive()
-			.describe('The client id to bill.'),
+		customerid: z.number().int().positive().describe('The client id to bill.'),
 	}).describe('The invoice fields to set. FreshBooks creates it as a draft.'),
 });
 
@@ -634,7 +626,9 @@ const InvoicesSendEmailInputSchema = z
 		'Sends the invoice to the client by email. This goes out immediately and cannot be unsent.',
 	);
 
-export type InvoicesSendEmailInput = z.infer<typeof InvoicesSendEmailInputSchema>;
+export type InvoicesSendEmailInput = z.infer<
+	typeof InvoicesSendEmailInputSchema
+>;
 
 const InvoicesDeleteInputSchema = z.object({
 	accountId: AccountIdSchema,
@@ -682,7 +676,7 @@ const EstimatesGetInputSchema = z.object({
 		.number()
 		.int()
 		.positive()
-		.describe('The estimate id, from an estimate\'s `id`.'),
+		.describe("The estimate id, from an estimate's `id`."),
 });
 
 export type EstimatesGetInput = z.infer<typeof EstimatesGetInputSchema>;
@@ -720,11 +714,19 @@ export type EstimatesDeleteInput = z.infer<typeof EstimatesDeleteInputSchema>;
 const ExpenseWriteSchema = z.object({
 	amount: z
 		.object({
-			amount: z.string().describe('The expense amount as a string, such as "39.99".'),
+			amount: z
+				.string()
+				.describe('The expense amount as a string, such as "39.99".'),
 			code: z.string().optional().describe('Currency code, such as USD.'),
 		})
-		.describe('The amount spent.'),
-	categoryid: z.number().int().positive().optional().describe('The expense category id.'),
+		.optional()
+		.describe('The amount spent. Required to create an expense.'),
+	categoryid: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('The expense category id.'),
 	staffid: z.number().int().positive().optional(),
 	clientid: z.number().int().positive().optional(),
 	projectid: z.number().int().positive().optional(),
@@ -751,7 +753,7 @@ const ExpensesGetInputSchema = z.object({
 		.number()
 		.int()
 		.positive()
-		.describe('The expense id, from an expense\'s `id`.'),
+		.describe("The expense id, from an expense's `id`."),
 });
 
 export type ExpensesGetInput = z.infer<typeof ExpensesGetInputSchema>;
@@ -761,7 +763,9 @@ const ExpensesCreateInputSchema = z.object({
 	expense: ExpenseWriteSchema.extend({
 		amount: z
 			.object({
-				amount: z.string().describe('The expense amount as a string, such as "39.99".'),
+				amount: z
+					.string()
+					.describe('The expense amount as a string, such as "39.99".'),
 				code: z.string().optional().describe('Currency code, such as USD.'),
 			})
 			.describe('The amount spent.'),
@@ -819,7 +823,11 @@ export type TasksListInput = z.infer<typeof TasksListInputSchema>;
 
 const TasksGetInputSchema = z.object({
 	accountId: AccountIdSchema,
-	taskId: z.number().int().positive().describe('The task id, from a task\'s `id`.'),
+	taskId: z
+		.number()
+		.int()
+		.positive()
+		.describe("The task id, from a task's `id`."),
 });
 
 export type TasksGetInput = z.infer<typeof TasksGetInputSchema>;
@@ -886,7 +894,7 @@ const ProjectsGetInputSchema = z.object({
 		.number()
 		.int()
 		.positive()
-		.describe('The project id, from a project\'s `id`.'),
+		.describe("The project id, from a project's `id`."),
 });
 
 export type ProjectsGetInput = z.infer<typeof ProjectsGetInputSchema>;
@@ -923,7 +931,9 @@ const ProjectsDeleteResponseSchema = z.object({
 	projectId: z.number(),
 });
 
-export type ProjectsDeleteResponse = z.infer<typeof ProjectsDeleteResponseSchema>;
+export type ProjectsDeleteResponse = z.infer<
+	typeof ProjectsDeleteResponseSchema
+>;
 
 // ── timeEntries ───────────────────────────────────────────────────────────
 
@@ -967,8 +977,14 @@ const TimeEntriesListInputSchema = z.object({
 		.string()
 		.optional()
 		.describe('Only entries updated at or after this ISO time.'),
-	billed: z.boolean().optional().describe('Only billed (true) or unbilled (false) entries.'),
-	include_deleted: z.boolean().optional().describe('Sent as 1; adds deleted entries.'),
+	billed: z
+		.boolean()
+		.optional()
+		.describe('Only billed (true) or unbilled (false) entries.'),
+	include_deleted: z
+		.boolean()
+		.optional()
+		.describe('Sent as 1; adds deleted entries.'),
 	page: TimeEntriesPageSchema,
 	per_page: PerPageSchema,
 });
@@ -981,7 +997,7 @@ const TimeEntriesGetInputSchema = z.object({
 		.number()
 		.int()
 		.positive()
-		.describe('The time entry id, from a time entry\'s `id`.'),
+		.describe("The time entry id, from a time entry's `id`."),
 });
 
 export type TimeEntriesGetInput = z.infer<typeof TimeEntriesGetInputSchema>;
@@ -1003,22 +1019,36 @@ const TimeEntriesCreateInputSchema = z.object({
 	}).describe('The time entry to create.'),
 });
 
-export type TimeEntriesCreateInput = z.infer<typeof TimeEntriesCreateInputSchema>;
+export type TimeEntriesCreateInput = z.infer<
+	typeof TimeEntriesCreateInputSchema
+>;
 
 const TimeEntriesUpdateInputSchema = z.object({
 	businessId: BusinessIdSchema,
-	timeEntryId: z.number().int().positive().describe('The time entry to change.'),
+	timeEntryId: z
+		.number()
+		.int()
+		.positive()
+		.describe('The time entry to change.'),
 	time_entry: TimeEntryWriteSchema.describe('The time entry fields to change.'),
 });
 
-export type TimeEntriesUpdateInput = z.infer<typeof TimeEntriesUpdateInputSchema>;
+export type TimeEntriesUpdateInput = z.infer<
+	typeof TimeEntriesUpdateInputSchema
+>;
 
 const TimeEntriesDeleteInputSchema = z.object({
 	businessId: BusinessIdSchema,
-	timeEntryId: z.number().int().positive().describe('The time entry to delete.'),
+	timeEntryId: z
+		.number()
+		.int()
+		.positive()
+		.describe('The time entry to delete.'),
 });
 
-export type TimeEntriesDeleteInput = z.infer<typeof TimeEntriesDeleteInputSchema>;
+export type TimeEntriesDeleteInput = z.infer<
+	typeof TimeEntriesDeleteInputSchema
+>;
 
 const TimeEntriesDeleteResponseSchema = z.object({
 	success: z.literal(true),

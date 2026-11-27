@@ -90,7 +90,10 @@ describe('rate-limit retries through createCorsair', () => {
 	it('retries a 409 invoice collision, which the docs say succeeds on retry', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
-			respond({ response: { errors: [{ errno: 409, message: 'collided' }] } }, 409);
+			respond(
+				{ response: { errors: [{ errno: 409, message: 'collided' }] } },
+				409,
+			);
 			respond({
 				response: { result: { invoice: { id: 1 } } },
 			});

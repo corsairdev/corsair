@@ -241,6 +241,7 @@ export const usersMeResponse = { response: identity };
 
 export function accountingList(
 	resource: string,
+	// unknown: each list fixture passes a differently shaped record array.
 	records: unknown[],
 	page = 1,
 	pages = 1,
@@ -313,6 +314,5 @@ export const bareRouteMiss = {
 /** The auth family's OAuth2 error body (probe 27). */
 export const oauthError = {
 	error: 'unauthenticated',
-	error_description:
-		'This action requires authentication to continue.',
+	error_description: 'This action requires authentication to continue.',
 };
