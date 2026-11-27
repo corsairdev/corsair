@@ -481,7 +481,7 @@ export type SteelHeaderPage = {
 	header: string | null;
 };
 
-/** The longest wait a Retry-After header can ask for. */
+/** The longest backoff when a 429 has no Retry-After, as in core. */
 const MAX_RETRY_DELAY_MS = 60_000;
 
 /**
@@ -521,9 +521,8 @@ export function steelRequestUrl(base: string, options: SteelRequest): string {
 function retryAfterMs(value: string | null): number | undefined {
 	if (!value) return undefined;
 	const seconds = Number.parseInt(value, 10);
-	return Number.isNaN(seconds)
-		? undefined
-		: Math.min(Math.max(seconds, 0) * 1000, MAX_RETRY_DELAY_MS);
+	// An explicit wait is kept as sent, as core does; only the fallback is capped.
+	return Number.isNaN(seconds) ? undefined : Math.max(seconds, 0) * 1000;
 }
 
 /**

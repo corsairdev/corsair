@@ -559,6 +559,31 @@ describe('sessions.events paging', () => {
 		}
 	});
 
+	it('waits out a Retry-After longer than a minute', async () => {
+		jest.useFakeTimers({ doNotFake: ['nextTick', 'setImmediate'] });
+		try {
+			replies(
+				{
+					status: 429,
+					body: { message: 'slow down' },
+					headers: { 'retry-after': '240' },
+				},
+				{ body: page(0, 1) },
+			);
+			const pending = endpointFor('sessions.events')(ctx(), { id: ID });
+			await jest.advanceTimersByTimeAsync(239_999);
+			expect(calls).toHaveLength(1);
+			await jest.advanceTimersByTimeAsync(1);
+			await expect(pending).resolves.toEqual({
+				events: page(0, 1),
+				nextCursor: null,
+			});
+			expect(calls).toHaveLength(2);
+		} finally {
+			jest.useRealTimers();
+		}
+	});
+
 	it('raises the scrubbed ApiError on a failure', async () => {
 		replies({
 			status: 404,
