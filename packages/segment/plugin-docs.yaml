@@ -1,0 +1,180 @@
+displayName: Segment
+description: Twilio Segment customer data platform. Manage the workspace configuration a Public API token can reach - sources, destinations, warehouses, tracking plans, functions, the integration catalog and GDPR deletion runs.
+domain: segmentapis.com
+recommendedAuth: api_key
+overviewNote: >
+  This plugin wraps the Segment Public API (api.segmentapis.com) with one
+  credential: a Public API token. Create it in the Segment app under
+  Settings, Access Management, Tokens: choose the Public API token type,
+  not the legacy Config API token. Tokens are workspace-scoped; an EU
+  workspace lives on eu1.api.segmentapis.com, which this plugin does not
+  send to (US host only).
+
+  Things to know before you call:
+
+  - **Regulations permanently delete data.** `regulations.create` starts a
+  deletion or suppression run over the `subjectIds` you pass. It cannot be
+  cancelled and the data cannot be recovered. The run is asynchronous: poll
+  `regulations.get` with the returned `regulateId` until
+  `overallStatus` is a terminal value (`FINISHED` or `PARTIAL_SUCCESS` mean
+  done; `FAILED`, `INVALID` or `NOT_SUPPORTED` mean it did not finish).
+
+  - **The Tracking API is out of scope.** Sending track, identify and other
+  events needs a different credential (a per-source write key on
+  api.segment.io), and that API answers 200 for events it silently drops,
+  so this plugin only manages workspace configuration.
+
+  - **Write keys are secrets.** Source objects embed a `writeKeys` array;
+  treat values from `sources.list`, `sources.get` and
+  `sources.createWriteKey` like passwords. `sources.createWriteKey` mints
+  a credential, and `sources.removeWriteKey` breaks every sender using
+  that key immediately.
+
+  - **Catalog first.** `sources.create`, `destinations.create` and
+  `warehouses.create` all need a `metadataId` from the catalog group, and
+  the catalog item describes the settings the instance requires.
+
+  - **Paging.** Every list call sends `pagination.count` (1-1000, default
+  200) and returns `data.pagination`, whose `next` cursor pages forward.
+
+  - **Errors.** Segment checks auth before routing: a 403 means the token
+  is invalid or lacks the permission, whatever path you called. The plugin
+  retries rate limits (429) with backoff and reads GET 5xxs twice more.
+examples:
+  read:
+    path: sources.list
+    title: List the workspace sources
+    args:
+      count: 25
+  write:
+    path: trackingPlans.create
+    title: Create a tracking plan
+    args:
+      name: Mobile app plan
+      type: TEMPLATE
+apiExamples:
+  workspaces.get: {}
+  sources.list:
+    call: "{ count: 25 }"
+  sources.get:
+    call: "{ sourceId: 'qQEHquLrjRDN9j1ByrChyn' }"
+  sources.create:
+    call: "{ slug: 'web-production', metadataId: 'IqDTy1TpoU', enabled: true }"
+  sources.update:
+    call: "{ sourceId: 'qQEHquLrjRDN9j1ByrChyn', name: 'Web production' }"
+  sources.delete:
+    call: "{ sourceId: 'qQEHquLrjRDN9j1ByrChyn' }"
+  sources.listConnectedDestinations:
+    call: "{ sourceId: 'qQEHquLrjRDN9j1ByrChyn' }"
+  sources.listConnectedWarehouses:
+    call: "{ sourceId: 'qQEHquLrjRDN9j1ByrChyn' }"
+  sources.updateSchemaSettings:
+    call: "{ sourceId: 'qQEHquLrjRDN9j1ByrChyn', settings: { track: { allowUnplannedEvents: false } } }"
+  sources.createWriteKey:
+    call: "{ sourceId: 'qQEHquLrjRDN9j1ByrChyn' }"
+  sources.removeWriteKey:
+    call: "{ sourceId: 'qQEHquLrjRDN9j1ByrChyn', writeKey: 'bEj5MzDqCkHYRqreZgbPuH' }"
+  destinations.list:
+    call: "{ count: 25 }"
+  destinations.get:
+    call: "{ destinationId: 'rh5BDZp6QDHvXFCkibm1pR' }"
+  destinations.create:
+    call: "{ sourceId: 'qQEHquLrjRDN9j1ByrChyn', metadataId: '5gPpjD6ikn', settings: {} }"
+  destinations.update:
+    call: "{ destinationId: 'rh5BDZp6QDHvXFCkibm1pR', enabled: false }"
+  destinations.delete:
+    call: "{ destinationId: 'rh5BDZp6QDHvXFCkibm1pR' }"
+  warehouses.list:
+    call: "{ count: 25 }"
+  warehouses.get:
+    call: "{ warehouseId: 'kpMQMcgaDw' }"
+  warehouses.getConnectionState:
+    call: "{ warehouseId: 'kpMQMcgaDw' }"
+  warehouses.listConnectedSources:
+    call: "{ warehouseId: 'kpMQMcgaDw' }"
+  warehouses.validate:
+    call: "{ metadataId: 'qfA7klpAkB', settings: { host: 'db.example.com', database: 'analytics', username: 'loader' } }"
+  warehouses.create:
+    call: "{ metadataId: 'qfA7klpAkB', settings: { host: 'db.example.com', database: 'analytics', username: 'loader' } }"
+  warehouses.update:
+    call: "{ warehouseId: 'kpMQMcgaDw', enabled: false, settings: { host: 'db.example.com', database: 'analytics', username: 'loader' } }"
+  warehouses.addSourceConnection:
+    call: "{ warehouseId: 'kpMQMcgaDw', sourceId: 'qQEHquLrjRDN9j1ByrChyn' }"
+  warehouses.delete:
+    call: "{ warehouseId: 'kpMQMcgaDw' }"
+  warehouses.removeSourceConnection:
+    call: "{ warehouseId: 'kpMQMcgaDw', sourceId: 'qQEHquLrjRDN9j1ByrChyn' }"
+  trackingPlans.list:
+    call: "{ count: 25 }"
+  trackingPlans.get:
+    call: "{ trackingPlanId: 'tp_2ljkchcmkcY9anKnhvQ1WqAGOGC' }"
+  trackingPlans.listRules:
+    call: "{ trackingPlanId: 'tp_2ljkchcmkcY9anKnhvQ1WqAGOGC' }"
+  trackingPlans.listSources:
+    call: "{ trackingPlanId: 'tp_2ljkchcmkcY9anKnhvQ1WqAGOGC' }"
+  trackingPlans.create:
+    call: "{ name: 'Mobile app plan', type: 'TEMPLATE' }"
+  trackingPlans.update:
+    call: "{ trackingPlanId: 'tp_2ljkchcmkcY9anKnhvQ1WqAGOGC', name: 'Mobile app plan v2' }"
+  trackingPlans.replaceRules:
+    call: "{ trackingPlanId: 'tp_2ljkchcmkcY9anKnhvQ1WqAGOGC', rules: [{ type: 'TRACK', key: 'Order Completed', jsonSchema: {}, version: 1 }] }"
+  trackingPlans.addSource:
+    call: "{ trackingPlanId: 'tp_2ljkchcmkcY9anKnhvQ1WqAGOGC', sourceId: 'qQEHquLrjRDN9j1ByrChyn' }"
+  trackingPlans.delete:
+    call: "{ trackingPlanId: 'tp_2ljkchcmkcY9anKnhvQ1WqAGOGC' }"
+  trackingPlans.removeSource:
+    call: "{ trackingPlanId: 'tp_2ljkchcmkcY9anKnhvQ1WqAGOGC', sourceId: 'qQEHquLrjRDN9j1ByrChyn' }"
+  functions.list:
+    call: "{ resourceType: 'DESTINATION' }"
+  functions.get:
+    call: "{ functionId: 'fn_2ljkchcmkcY9anKnhvQ1WqAGOGC' }"
+  functions.listVersions:
+    call: "{ functionId: 'fn_2ljkchcmkcY9anKnhvQ1WqAGOGC' }"
+  functions.getVersion:
+    call: "{ functionId: 'fn_2ljkchcmkcY9anKnhvQ1WqAGOGC', versionId: 'v_2ljkchcmkcY9anKnhvQ1WqAGOGC' }"
+  functions.create:
+    call: "{ code: 'async function onTrack(event, settings) { return event }', displayName: 'Enrich orders', resourceType: 'DESTINATION' }"
+  functions.update:
+    call: "{ functionId: 'fn_2ljkchcmkcY9anKnhvQ1WqAGOGC', description: 'Enriches order events' }"
+  functions.deploy:
+    call: "{ functionId: 'fn_2ljkchcmkcY9anKnhvQ1WqAGOGC' }"
+  functions.restoreVersion:
+    call: "{ functionId: 'fn_2ljkchcmkcY9anKnhvQ1WqAGOGC', versionId: 'v_2ljkchcmkcY9anKnhvQ1WqAGOGC' }"
+  functions.delete:
+    call: "{ functionId: 'fn_2ljkchcmkcY9anKnhvQ1WqAGOGC' }"
+  catalog.listDestinations:
+    call: "{ count: 50 }"
+  catalog.getDestination:
+    call: "{ destinationMetadataId: '5gPpjD6ikn' }"
+  catalog.listSources:
+    call: "{ count: 50 }"
+  catalog.getSource:
+    call: "{ sourceMetadataId: 'IqDTy1TpoU' }"
+  regulations.list:
+    call: "{ count: 25 }"
+  regulations.create:
+    call: "{ regulationType: 'DELETE_ONLY', subjectType: 'USER_ID', subjectIds: ['user_123'] }"
+  regulations.get:
+    call: "{ regulateId: '1qJkfE1tpwvQcklImGksLN629wn' }"
+apiNotes: >
+  'Auth: a Public API token from app.segment.com, Settings, Access
+  Management, Tokens, Create Token. Pick the Public API token type; the
+  legacy Config API token in the same menu is a different credential that
+  this plugin does not target. Tokens are workspace-scoped with
+  per-token permissions. EU workspaces answer on
+  eu1.api.segmentapis.com; this plugin pins the US host
+  api.segmentapis.com, so EU tokens need a separate setup. The Tracking
+  API on api.segment.io (write keys, event ingestion) is out of scope:
+  different credential, different host, and its 200 answers never prove
+  delivery. Sources.list, sources.get and sources.createWriteKey return
+  writeKeys, which are live credentials. regulations.create permanently
+  deletes the named users'' data and cannot be undone or cancelled;
+  poll regulations.get with the returned regulateId, where FINISHED and
+  PARTIAL_SUCCESS are terminal-done and FAILED, INVALID and
+  NOT_SUPPORTED are terminal-failed. List endpoints always send
+  pagination.count (1-1000, default 200); responses carry
+  data.pagination.next for the following page. Segment checks auth
+  before routing, so a 403 on any path means the token is bad or lacks
+  permission. Shapes follow the official spec v74.1.0; routing was not
+  verifiable live without a token, so response fields are parsed
+  leniently.'
