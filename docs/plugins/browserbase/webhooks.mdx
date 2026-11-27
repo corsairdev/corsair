@@ -1,0 +1,415 @@
+---
+title: "Browserbase webhooks"
+sidebarTitle: "Webhooks"
+description: "Browserbase incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Browserbase plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/browserbase/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `builds`
+  - `completed` (`builds.completed`)
+  - `failed` (`builds.failed`)
+  - `running` (`builds.running`)
+- `invocations`
+  - `completed` (`invocations.completed`)
+  - `failed` (`invocations.failed`)
+  - `pending` (`invocations.pending`)
+  - `running` (`invocations.running`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Builds
+
+### Completed
+
+`builds.completed`
+
+A Function build finished successfully.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id; the same on every retry, so a dedupe key. |
+| `type` | `functions.builds.completed` | Yes | — |
+| `resourceId` | `string` | No | The build the event is about. |
+| `data` | `Record<string, any>` | No | Event-specific fields. |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: functions.builds.completed,
+  resourceId?: string,
+  data?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+browserbase({
+    webhookHooks: {
+        builds: {
+            completed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Failed
+
+`builds.failed`
+
+A Function build failed.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id; the same on every retry, so a dedupe key. |
+| `type` | `functions.builds.failed` | Yes | — |
+| `resourceId` | `string` | No | The build the event is about. |
+| `data` | `Record<string, any>` | No | Event-specific fields. |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: functions.builds.failed,
+  resourceId?: string,
+  data?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+browserbase({
+    webhookHooks: {
+        builds: {
+            failed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Running
+
+`builds.running`
+
+A Function build started.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id; the same on every retry, so a dedupe key. |
+| `type` | `functions.builds.running` | Yes | — |
+| `resourceId` | `string` | No | The build the event is about. |
+| `data` | `Record<string, any>` | No | Event-specific fields. |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: functions.builds.running,
+  resourceId?: string,
+  data?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+browserbase({
+    webhookHooks: {
+        builds: {
+            running: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Invocations
+
+### Completed
+
+`invocations.completed`
+
+A Function invocation finished successfully.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id; the same on every retry, so a dedupe key. |
+| `type` | `functions.invocations.completed` | Yes | — |
+| `resourceId` | `string` | No | The invocation the event is about. |
+| `data` | `Record<string, any>` | No | Event-specific fields. |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: functions.invocations.completed,
+  resourceId?: string,
+  data?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+browserbase({
+    webhookHooks: {
+        invocations: {
+            completed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Failed
+
+`invocations.failed`
+
+A Function invocation failed.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id; the same on every retry, so a dedupe key. |
+| `type` | `functions.invocations.failed` | Yes | — |
+| `resourceId` | `string` | No | The invocation the event is about. |
+| `data` | `Record<string, any>` | No | Event-specific fields. |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: functions.invocations.failed,
+  resourceId?: string,
+  data?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+browserbase({
+    webhookHooks: {
+        invocations: {
+            failed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Pending
+
+`invocations.pending`
+
+Browserbase accepted and queued a Function invocation.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id; the same on every retry, so a dedupe key. |
+| `type` | `functions.invocations.pending` | Yes | — |
+| `resourceId` | `string` | No | The invocation the event is about. |
+| `data` | `Record<string, any>` | No | Event-specific fields. |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: functions.invocations.pending,
+  resourceId?: string,
+  data?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+browserbase({
+    webhookHooks: {
+        invocations: {
+            pending: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Running
+
+`invocations.running`
+
+A Function invocation started.
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id; the same on every retry, so a dedupe key. |
+| `type` | `functions.invocations.running` | Yes | — |
+| `resourceId` | `string` | No | The invocation the event is about. |
+| `data` | `Record<string, any>` | No | Event-specific fields. |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: functions.invocations.running,
+  resourceId?: string,
+  data?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+browserbase({
+    webhookHooks: {
+        invocations: {
+            running: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

@@ -1,0 +1,146 @@
+---
+title: "Browserbase plugin"
+sidebarTitle: "Overview"
+description: "Cloud browsers for AI agents with Browserbase: start, inspect, label and release browser sessions with live debug URLs, logs, replays and recordings, keep logins in contexts and secrets, run Functions and agents, fetch pages and search the web, and receive signed webhooks (76 operations)."
+---
+
+Use **Browserbase** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Create an API key at browserbase.com/settings. It acts on its project. Things to know before you write:
+
+- **Sessions cost money while they run.** `sessions.create` starts a cloud browser billed by the minute; it runs until its `timeout`, or until `sessions.update` sets `status: "REQUEST_RELEASE"`. Both are `destructive`. Connect over CDP with the session's `connectUrl`, or open `sessions.debug` for live view URLs.
+- **Logins and state.** `contexts.*` keep cookies and storage between sessions; `secrets.*` hold credentials the browser fills in (encrypt them with `secrets.keypair` first); `navigationPolicies.*` limit where a session can go.
+- **Recordings.** `sessions.replays.get` lists a session's pages; `sessions.recordingDownloads.create` asks for MP4s, then `sessions.recordingDownloads.list` shows their status and download links.
+- **Functions and agents.** `functions.invoke` runs a deployed Function and `agents.runs.create` starts an agent run; both spend compute and are `destructive`.
+- **Fetch and search.** `fetch.page` returns a page's content without a full session and `search.web` searches the web; both are metered reads.
+- **Webhooks.** `webhooks.create` registers an endpoint and returns its signing secret once. Browserbase signs deliveries with Standard Webhooks (`webhook-id`, `webhook-timestamp`, `webhook-signature`); the plugin verifies them with that secret for the Function invocation and build events.
+
+**What you get:**
+
+- 76 typed API operations
+- 7 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/browserbase better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/browserbase better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/browserbase better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/browserbase better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { browserbase } from '@corsair-dev/browserbase';
+
+export const corsair = createCorsair({
+	plugins: [
+		browserbase(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Browserbase API key before the first call: `pnpm corsair setup --plugin=browserbase --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+browserbase()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'browserbase',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List browser sessions**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.browserbase.api.sessions.list({});
+```
+
+
+**Fetch a page without a browser session**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.browserbase.api.fetch.page({ url: 'https://example.com' });
+```
+
+
+See the full list on the [API](/plugins/browserbase/api) page.
+
+## Webhooks
+
+This plugin registers **7** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/browserbase/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/browserbase/api">
+    Every `browserbase.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/browserbase/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

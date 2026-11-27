@@ -1031,6 +1031,14 @@
                 ]
               },
               {
+                "group": "Browserbase",
+                "pages": [
+                  "plugins/browserbase/overview",
+                  "plugins/browserbase/api",
+                  "plugins/browserbase/database"
+                ]
+              },
+              {
                 "group": "Browserless",
                 "pages": [
                   "plugins/browserless/overview",

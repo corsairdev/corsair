@@ -1,0 +1,3826 @@
+---
+title: "Browserbase API reference"
+sidebarTitle: "API"
+description: "API reference for the Browserbase plugin in Corsair: every `browserbase.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Agents
+
+### create
+
+`agents.create`
+
+Create an Agent. Create a reusable agent. An agent defines a systemPrompt and resultSchema that guide its behavior for every run. Only name is required; an agent created with no systemPrompt behaves like an unconfigured run.
+
+**Risk:** `write`
+
+```ts
+await corsair.browserbase.api.agents.create({ name: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Human-readable name for the agent. Used to identify the agent in the dashboard and API responses. |
+| `systemPrompt` | `string` | No | System prompt that steers the agent's behavior on every run that uses this agent. |
+| `resultSchema` | `object` | No | An optional [JSON Schema](https://json-schema.org/specification) object. If provided, runs that reference this agent will aim to return a `result` that conforms to this schema when they complete. Can be overridden per run by passing `resultSchema` on the run request. |
+
+<AccordionGroup>
+<Accordion title="resultSchema full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agentId` | `string \| null` | No | Unique identifier for the agent. Use this value as `agentId` when creating an agent run. |
+| `name` | `string \| null` | No | Human-readable name for the agent. Used to identify the agent in the dashboard and API responses. |
+| `systemPrompt` | `string \| null` | No | System prompt applied to every run that uses this agent. |
+| `resultSchema` | `object \| null` | No | [JSON Schema](https://json-schema.org/specification) that runs referencing this agent will aim to conform their `result` to. Can be overridden per run by passing `resultSchema` on the run request. |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="resultSchema full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`agents.delete`
+
+Delete an Agent. Delete an agent. Runs that already referenced this agent are unaffected. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.browserbase.api.agents.delete({ agentId: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agentId` | `string` | Yes | The agent ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Browserbase accepted the call; it answered with no body. |
+
+
+
+---
+
+### get
+
+`agents.get`
+
+Get an Agent. Retrieve an agent by ID. (GET /v1/agents/&#123;agentId&#125;)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.agents.get({ agentId: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agentId` | `string` | Yes | The agent ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agentId` | `string \| null` | No | Unique identifier for the agent. Use this value as `agentId` when creating an agent run. |
+| `name` | `string \| null` | No | Human-readable name for the agent. Used to identify the agent in the dashboard and API responses. |
+| `systemPrompt` | `string \| null` | No | System prompt applied to every run that uses this agent. |
+| `resultSchema` | `object \| null` | No | [JSON Schema](https://json-schema.org/specification) that runs referencing this agent will aim to conform their `result` to. Can be overridden per run by passing `resultSchema` on the run request. |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="resultSchema full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`agents.list`
+
+List Agents. List agents across your account. Supports filtering by creation time.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.agents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startAt` | `string` | No | Only return agents created on or after this timestamp (inclusive). RFC 3339, e.g. 2026-01-19T00:00:00Z. |
+| `endAt` | `string` | No | Only return agents created on or before this timestamp (inclusive). RFC 3339, e.g. 2026-01-20T00:00:00Z. |
+| `limit` | `number` | No | Maximum number of results to return. |
+| `cursor` | `string` | No | Pagination cursor. Pass the nextCursor from the previous response to fetch the next page. Omit to start from the first page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | The page of matching agents. |
+| `limit` | `number \| null` | No | The maximum number of results returned in this page. |
+| `nextCursor` | `string \| null \| null` | No | Cursor for the next page. Pass it back as `cursor` on the next request to continue paging. null when there are no more results. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  agentId?: string | null,
+  name?: string | null,
+  systemPrompt?: string | null,
+  resultSchema?: {
+  } | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runs.create
+
+`agents.runs.create`
+
+Run an Agent. Run a browser agent to complete the task by using web search and browser tooling. Optionally pass agentId to run a custom agent you've created. Starts an agent run that uses browser time and model tokens.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.browserbase.api.agents.runs.create({ task: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agentId` | `string` | No | Optionally run a specific [custom agent](/reference/api/create-an-agent) you've created by ID. The run will use the agent's `systemPrompt` and `resultSchema` unless overridden. |
+| `task` | `string` | Yes | A natural language description of the task the agent should accomplish. |
+| `resultSchema` | `object` | No | An optional [JSON Schema](https://json-schema.org/specification) object. If provided, the agent will aim to return a `result` that conforms to this schema when the run completes. Overrides the referenced agent's default `resultSchema` for this run only. |
+| `browserSettings` | `object` | No | Browser configuration for the agent's session. When omitted, runner defaults apply. |
+| `variables` | `object` | No | Optional named variables the agent can reference as placeholders, i.e. `%variable%`. Each entry pairs a `value` the placeholder resolves to with an optional `description` that hints to the agent when it should be used. Values are not persisted. |
+| `pauseWhen` | `string` | No | Optional description of when the agent should pause and wait for input from your application (e.g. a verification code, an approval, or an answer from another system). When set, the agent is given a `pause` tool; calling it transitions the run to `PAUSED` (the agent's request is the trailing `pause` tool call in the run's messages) until it is resumed via the resume endpoint. |
+
+<AccordionGroup>
+<Accordion title="resultSchema full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="browserSettings full type">
+
+```ts
+{
+  context?: {
+    id: string,
+    persist?: boolean
+  },
+  proxies?: (
+    {
+      type: browserbase,
+      proxyId?: string,
+      geolocation?: {
+        city?: string,
+        state?: string,
+        country: string
+      },
+      domainPattern?: string
+    } | {
+      type: external,
+      server: string,
+      domainPattern?: string,
+      username?: string,
+      password?: string
+    } | {
+      type: none,
+      domainPattern?: string
+    }
+  )[] | boolean,
+  proxySettings?: {
+    caCertificates?: string[]
+  },
+  allowedDomains?: string[],
+  ignoreCertificateErrors?: boolean,
+  verified?: boolean,
+  recordSession?: boolean,
+  logSession?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="variables full type">
+
+```ts
+Record<string, {
+  value: string,
+  description?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string \| null` | No | Unique identifier for the run. |
+| `agentId` | `string \| null` | No | The ID of the agent applied to this run, if any. Omitted for ad-hoc runs. |
+| `task` | `string \| null` | No | The original task description. |
+| `status` | `string \| null` | No | Current status of the run. - `PENDING` - agent will run soon - `RUNNING` - agent is currently running - `COMPLETED` - agent has finished running - `FAILED` - agent has failed the run - `STOPPED` - run was stopped by the user - `TIMED_OUT` - run exceeded maximum time - `PAUSED` - run is paused awaiting input from the caller; the agent's request is the trailing `pause` tool call in the run's messages |
+| `sessionId` | `string \| null` | No | The Browserbase session ID powering this run. |
+| `sandboxId` | `string \| null` | No | External sandbox identifier assigned by the runner. Optional. |
+| `resultSchema` | `object \| null` | No | Per-run [JSON Schema](https://json-schema.org/specification) override for the result shape. When unset, the agent's default `resultSchema` applies. |
+| `result` | `object \| null` | No | The agent's structured result for the run. Only present when the run has finished and output is available. The result conforms to the provided [JSON Schema](https://json-schema.org/specification) when one is set. |
+| `cause` | `object \| null` | No | — |
+| `startedAt` | `string \| null` | No | — |
+| `endedAt` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="resultSchema full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="result full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="cause full type">
+
+```ts
+{
+  code?: string | null,
+  message?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runs.get
+
+`agents.runs.get`
+
+Get a Run. Retrieve the current status and details of a run, including its result and associated session information. To fetch the run's messages, use List Run Messages.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.agents.runs.get({ runId: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | The run ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string \| null` | No | Unique identifier for the run. |
+| `agentId` | `string \| null` | No | The ID of the agent applied to this run, if any. Omitted for ad-hoc runs. |
+| `task` | `string \| null` | No | The original task description. |
+| `status` | `string \| null` | No | Current status of the run. - `PENDING` - agent will run soon - `RUNNING` - agent is currently running - `COMPLETED` - agent has finished running - `FAILED` - agent has failed the run - `STOPPED` - run was stopped by the user - `TIMED_OUT` - run exceeded maximum time - `PAUSED` - run is paused awaiting input from the caller; the agent's request is the trailing `pause` tool call in the run's messages |
+| `sessionId` | `string \| null` | No | The Browserbase session ID powering this run. |
+| `sandboxId` | `string \| null` | No | External sandbox identifier assigned by the runner. Optional. |
+| `resultSchema` | `object \| null` | No | Per-run [JSON Schema](https://json-schema.org/specification) override for the result shape. When unset, the agent's default `resultSchema` applies. |
+| `result` | `object \| null` | No | The agent's structured result for the run. Only present when the run has finished and output is available. The result conforms to the provided [JSON Schema](https://json-schema.org/specification) when one is set. |
+| `cause` | `object \| null` | No | — |
+| `startedAt` | `string \| null` | No | — |
+| `endedAt` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="resultSchema full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="result full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="cause full type">
+
+```ts
+{
+  code?: string | null,
+  message?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runs.list
+
+`agents.runs.list`
+
+List Runs. List runs across your account. Supports filtering by status, by the agent they reference, and by creation time.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.agents.runs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `PENDING \| RUNNING \| COMPLETED \| FAILED \| STOPPED \| TIMED_OUT \| PAUSED` | No | Current status of the run. - `PENDING` - agent will run soon - `RUNNING` - agent is currently running - `COMPLETED` - agent has finished running - `FAILED` - agent has failed the run - `STOPPED` - run was stopped by the user - `TIMED_OUT` - run exceeded maximum time - `PAUSED` - run is paused awaiting input from the caller; the agent's request is the trailing `pause` tool call in the run's messages |
+| `agentId` | `string` | No | Only return runs that reference this agent ID. |
+| `startAt` | `string` | No | Only return runs created on or after this timestamp (inclusive). RFC 3339, e.g. 2026-01-19T00:00:00Z. |
+| `endAt` | `string` | No | Only return runs created on or before this timestamp (inclusive). RFC 3339, e.g. 2026-01-20T00:00:00Z. |
+| `limit` | `number` | No | Maximum number of results to return. |
+| `cursor` | `string` | No | Pagination cursor. Pass the nextCursor from the previous response to fetch the next page. Omit to start from the first page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | The page of matching agent runs. |
+| `limit` | `number \| null` | No | The maximum number of results returned in this page. |
+| `nextCursor` | `string \| null \| null` | No | Cursor for the next page. Pass it back as `cursor` on the next request to continue paging. null when there are no more results. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  runId?: string | null,
+  agentId?: string | null,
+  task?: string | null,
+  status?: string | null,
+  sessionId?: string | null,
+  sandboxId?: string | null,
+  resultSchema?: {
+  } | null,
+  result?: {
+  } | null,
+  cause?: {
+    code?: string | null,
+    message?: string | null
+  } | null,
+  startedAt?: string | null,
+  endedAt?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runs.messages
+
+`agents.runs.messages`
+
+List Run Messages. Returns a paginated list of messages produced by a run, in chronological order, with the oldest messages first. Messages conform to the AI SDK UIMessage format.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.agents.runs.messages({ runId: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `since` | `string` | No | The `id` of the last message you've already received. The response will contain messages produced after that one, in chronological order. Omit on the first call. Pass the previous response's `nextSince` value to continue paging or to poll for new messages. |
+| `limit` | `number` | No | Maximum number of messages to return. |
+| `all` | `boolean` | No | Return every message after `since` in one response, ignoring `limit`. |
+| `runId` | `string` | Yes | The run ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | The page of messages, in chronological order, with the oldest messages first. |
+| `nextSince` | `string \| null \| null` | No | The `id` of the last message in `data`. Pass it back as `since` on the next request to continue paging, or to poll for new messages. `null` only when the run has no messages yet; in that case, omit `since` and retry. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  createdAt?: string | null,
+  message?: {
+    role?: string | null,
+    content?: string | {
+      type?: string | null,
+      text?: string | null,
+      toolCallId?: string | null,
+      toolName?: string | null,
+      input?: any | null,
+      output?: any | null,
+      mediaType?: string | null,
+      data?: string | null
+    }[] | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runs.resume
+
+`agents.runs.resume`
+
+Resume a Run. Resume a PAUSED run with additional input. The reply in task is delivered to the agent as the answer to its pause request (the trailing pause tool call in the run's messages), and variables merge over the run's original variables. Resuming a run that is not paused returns a conflict.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.browserbase.api.agents.runs.resume({ runId: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | The run ID. |
+| `task` | `string` | No | Additional input for the agent: the reply to its request for input, which is the trailing `pause` tool call in the run's messages (e.g. an answer or an approval). Delivered to the agent as the result of that pause call. |
+| `variables` | `object` | No | Optional named variables the agent can reference as placeholders, i.e. `%variable%`. Each entry pairs a `value` the placeholder resolves to with an optional `description` that hints to the agent when it should be used. Values are not persisted. |
+
+<AccordionGroup>
+<Accordion title="variables full type">
+
+```ts
+Record<string, {
+  value: string,
+  description?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string \| null` | No | Unique identifier for the run. |
+| `agentId` | `string \| null` | No | The ID of the agent applied to this run, if any. Omitted for ad-hoc runs. |
+| `task` | `string \| null` | No | The original task description. |
+| `status` | `string \| null` | No | Current status of the run. - `PENDING` - agent will run soon - `RUNNING` - agent is currently running - `COMPLETED` - agent has finished running - `FAILED` - agent has failed the run - `STOPPED` - run was stopped by the user - `TIMED_OUT` - run exceeded maximum time - `PAUSED` - run is paused awaiting input from the caller; the agent's request is the trailing `pause` tool call in the run's messages |
+| `sessionId` | `string \| null` | No | The Browserbase session ID powering this run. |
+| `sandboxId` | `string \| null` | No | External sandbox identifier assigned by the runner. Optional. |
+| `resultSchema` | `object \| null` | No | Per-run [JSON Schema](https://json-schema.org/specification) override for the result shape. When unset, the agent's default `resultSchema` applies. |
+| `result` | `object \| null` | No | The agent's structured result for the run. Only present when the run has finished and output is available. The result conforms to the provided [JSON Schema](https://json-schema.org/specification) when one is set. |
+| `cause` | `object \| null` | No | — |
+| `startedAt` | `string \| null` | No | — |
+| `endedAt` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="resultSchema full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="result full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="cause full type">
+
+```ts
+{
+  code?: string | null,
+  message?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runs.stop
+
+`agents.runs.stop`
+
+Stop a Run. Request that an in-progress run stop. The run winds down and transitions to STOPPED. Stopping a run that has already finished returns a conflict.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.browserbase.api.agents.runs.stop({ runId: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | The run ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string \| null` | No | Unique identifier for the run. |
+| `agentId` | `string \| null` | No | The ID of the agent applied to this run, if any. Omitted for ad-hoc runs. |
+| `task` | `string \| null` | No | The original task description. |
+| `status` | `string \| null` | No | Current status of the run. - `PENDING` - agent will run soon - `RUNNING` - agent is currently running - `COMPLETED` - agent has finished running - `FAILED` - agent has failed the run - `STOPPED` - run was stopped by the user - `TIMED_OUT` - run exceeded maximum time - `PAUSED` - run is paused awaiting input from the caller; the agent's request is the trailing `pause` tool call in the run's messages |
+| `sessionId` | `string \| null` | No | The Browserbase session ID powering this run. |
+| `sandboxId` | `string \| null` | No | External sandbox identifier assigned by the runner. Optional. |
+| `resultSchema` | `object \| null` | No | Per-run [JSON Schema](https://json-schema.org/specification) override for the result shape. When unset, the agent's default `resultSchema` applies. |
+| `result` | `object \| null` | No | The agent's structured result for the run. Only present when the run has finished and output is available. The result conforms to the provided [JSON Schema](https://json-schema.org/specification) when one is set. |
+| `cause` | `object \| null` | No | — |
+| `startedAt` | `string \| null` | No | — |
+| `endedAt` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="resultSchema full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="result full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="cause full type">
+
+```ts
+{
+  code?: string | null,
+  message?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`agents.update`
+
+Update an Agent. Update an existing agent. Only the fields provided in the body are modified; omitted fields are left unchanged.
+
+**Risk:** `write`
+
+```ts
+await corsair.browserbase.api.agents.update({ agentId: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agentId` | `string` | Yes | The agent ID. |
+| `name` | `string` | No | Human-readable name for the agent. Used to identify the agent in the dashboard and API responses. |
+| `systemPrompt` | `string` | No | New system prompt that steers the agent's behavior on every run that uses this agent. |
+| `resultSchema` | `object` | No | An optional [JSON Schema](https://json-schema.org/specification) object. If provided, runs that reference this agent will aim to return a `result` that conforms to this schema when they complete. Can be overridden per run by passing `resultSchema` on the run request. |
+
+<AccordionGroup>
+<Accordion title="resultSchema full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agentId` | `string \| null` | No | Unique identifier for the agent. Use this value as `agentId` when creating an agent run. |
+| `name` | `string \| null` | No | Human-readable name for the agent. Used to identify the agent in the dashboard and API responses. |
+| `systemPrompt` | `string \| null` | No | System prompt applied to every run that uses this agent. |
+| `resultSchema` | `object \| null` | No | [JSON Schema](https://json-schema.org/specification) that runs referencing this agent will aim to conform their `result` to. Can be overridden per run by passing `resultSchema` on the run request. |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="resultSchema full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Certificates
+
+### delete
+
+`certificates.delete`
+
+Delete a Certificate. Delete an uploaded certificate from your project by its ID. Session creation requests that still reference this ID in proxySettings.caCertificates fail with HTTP 400. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.browserbase.api.certificates.delete({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Browserbase accepted the call; it answered with no body. |
+
+
+
+---
+
+### get
+
+`certificates.get`
+
+Get a Certificate. Retrieve metadata for an uploaded certificate by its ID, including its project ID and timestamps. The PEM content is not returned.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.certificates.get({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | The Project ID linked to the uploaded Certificate. |
+
+
+
+---
+
+### list
+
+`certificates.list`
+
+List Certificates. List the certificates uploaded to your project.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.certificates.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  projectId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### upload
+
+`certificates.upload`
+
+Upload a Certificate. Upload a PEM file with one or more CA certificates (up to 100 MB). Pass the returned ID in proxySettings.caCertificates when creating a session so the browser trusts these certificates.
+
+**Risk:** `write`
+
+```ts
+await corsair.browserbase.api.certificates.upload({
+	file: { base64: 'SGVsbG8gZnJvbSBDb3JzYWly', filename: 'notes.txt', contentType: 'text/plain' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string \| object \| custom` | Yes | A file: a public URL to it, or &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125; for a small one. |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | The Project ID linked to the uploaded Certificate. |
+
+
+
+---
+
+## Contexts
+
+### create
+
+`contexts.create`
+
+Create a Context. (POST /v1/contexts)
+
+**Risk:** `write`
+
+```ts
+await corsair.browserbase.api.contexts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | No | The Project ID. Can be found in [Settings](https://www.browserbase.com/settings). Optional - if not provided, the project will be inferred from the API key. |
+| `name` | `string` | No | Optional user-defined name for the Context. Leading and trailing whitespace is trimmed before storage. Names are unique within the project among active Contexts, compared case-insensitively. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `publicKey` | `string \| null` | No | The public key to encrypt the user-data-directory. |
+| `cipherAlgorithm` | `string \| null` | No | The cipher algorithm used to encrypt the user-data-directory. AES-256-CBC is currently the only supported algorithm. |
+| `initializationVectorSize` | `number \| null` | No | The initialization vector size used to encrypt the user-data-directory. [Read more about how to use it](/features/contexts). |
+
+
+
+---
+
+### delete
+
+`contexts.delete`
+
+Delete a Context. Cannot be undone. (DELETE /v1/contexts/&#123;id&#125;)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.browserbase.api.contexts.delete({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Browserbase accepted the call; it answered with no body. |
+
+
+
+---
+
+### get
+
+`contexts.get`
+
+Get a Context. (GET /v1/contexts/&#123;id&#125;)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.contexts.get({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | The Project ID linked to the uploaded Context. |
+| `name` | `string \| null` | No | Optional user-defined name for the Context. Leading and trailing whitespace is trimmed before storage. Names are unique within the project among active Contexts, compared case-insensitively. |
+
+
+
+---
+
+## Downloads
+
+### delete
+
+`downloads.delete`
+
+Delete a Download. Delete a download file from storage and mark as deleted. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.browserbase.api.downloads.delete({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The download ID to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Browserbase accepted the call; it answered with no body. |
+
+
+
+---
+
+### get
+
+`downloads.get`
+
+Get a Download. Get download metadata (Accept: application/json) or file content (Accept: application/octet-stream).
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.downloads.get({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The download ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique identifier for the download. |
+| `sessionId` | `string \| null` | No | The Session ID this download belongs to. |
+| `filename` | `string \| null` | No | The filename of the downloaded file. |
+| `mimeType` | `string \| null` | No | The MIME type of the file. |
+| `size` | `number \| null` | No | File size in bytes. |
+| `checksum` | `string \| null` | No | SHA256 checksum of the file. |
+| `createdAt` | `string \| null` | No | Timestamp when the file was downloaded. |
+
+
+
+---
+
+### list
+
+`downloads.list`
+
+List Downloads. List all downloads for a session with optional filtering and pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.downloads.list({ sessionId: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sessionId` | `string` | Yes | Filter downloads by session ID (required). |
+| `filename` | `string` | No | Filter by exact filename match. |
+| `mimeType` | `string` | No | Filter by MIME type. |
+| `minSize` | `number` | No | Minimum file size in bytes. |
+| `maxSize` | `number` | No | Maximum file size in bytes. |
+| `createdAfter` | `string` | No | Filter downloads created on or after this timestamp. |
+| `createdBefore` | `string` | No | Filter downloads created on or before this timestamp. |
+| `limit` | `number` | No | Maximum number of results to return. |
+| `offset` | `number` | No | Number of results to skip for pagination. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `downloads` | `object[] \| null` | No | — |
+| `total` | `number \| null` | No | Total count of matching downloads. |
+| `limit` | `number \| null` | No | — |
+| `offset` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="downloads full type">
+
+```ts
+{
+  id?: string | null,
+  sessionId?: string | null,
+  filename?: string | null,
+  mimeType?: string | null,
+  size?: number | null,
+  checksum?: string | null,
+  createdAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Extensions
+
+### delete
+
+`extensions.delete`
+
+Delete an Extension. Cannot be undone. (DELETE /v1/extensions/&#123;id&#125;)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.browserbase.api.extensions.delete({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Browserbase accepted the call; it answered with no body. |
+
+
+
+---
+
+### get
+
+`extensions.get`
+
+Get an Extension. (GET /v1/extensions/&#123;id&#125;)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.extensions.get({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `fileName` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | The Project ID linked to the uploaded Extension. |
+
+
+
+---
+
+### upload
+
+`extensions.upload`
+
+Upload an Extension. (POST /v1/extensions)
+
+**Risk:** `write`
+
+```ts
+await corsair.browserbase.api.extensions.upload({
+	file: { base64: 'SGVsbG8gZnJvbSBDb3JzYWly', filename: 'notes.txt', contentType: 'text/plain' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string \| object \| custom` | Yes | A file: a public URL to it, or &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125; for a small one. |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `fileName` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | The Project ID linked to the uploaded Extension. |
+
+
+
+---
+
+## Fetch
+
+### page
+
+`fetch.page`
+
+Fetch a Page. Fetch a page and return its content, headers, and metadata. A metered read: each call counts against the plan.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.fetch.page({ url: 'https://example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | The URL to fetch |
+| `allowRedirects` | `boolean` | No | Whether to follow HTTP redirects |
+| `allowInsecureSsl` | `boolean` | No | Whether to bypass TLS certificate verification |
+| `proxies` | `boolean` | No | Whether to enable proxy support for the request |
+| `format` | `raw \| json \| markdown` | No | Output format for the response content. `raw` (default) returns the response body unchanged; `json` returns structured data (requires `schema`); `markdown` returns the page as markdown. |
+| `schema` | `Record<string, any>` | No | JSON Schema describing the desired structure of the response. Only used when `format` is `json`. |
+| `contextId` | `string` | No | ID of a context whose persisted cookies are sent with the request. |
+| `allowedDomains` | `string[]` | No | Domains the fetch may reach, up to 1000. A listed domain also permits its subdomains: `example.com` permits `www.example.com`. A URL on any other host is rejected with a 400 before it is fetched, and so is a redirect to one when `allowRedirects` is set, before it is followed. An empty list (the default) allows any host. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique identifier for the fetch request |
+| `statusCode` | `number \| null` | No | HTTP status code of the fetched response |
+| `headers` | `Record<string, string> \| null` | No | Response headers as key-value pairs |
+| `content` | `string \| Record<string, any> \| null` | No | The response body content. A string for `raw` and `markdown` formats; a structured object for `json` format (the schema-extracted result). |
+| `contentType` | `string \| null` | No | The MIME type of the response |
+| `encoding` | `string \| null` | No | The character encoding of the response |
+
+
+
+---
+
+## Functions
+
+### builds.get
+
+`functions.builds.get`
+
+Get a Function Build. (GET /v1/functions/builds/&#123;id&#125;)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.functions.builds.get({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `request` | `object \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `startedAt` | `string \| null` | No | — |
+| `endedAt` | `string \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+| `builtFunctions` | `object[] \| null` | No | — |
+| `cause` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="request full type">
+
+```ts
+{
+  entrypoint?: string | null,
+  functionNames?: string[] | null
+} | null
+```
+</Accordion>
+
+<Accordion title="builtFunctions full type">
+
+```ts
+{
+  id?: string | null,
+  projectId?: string | null,
+  name?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  createdVersion?: {
+    id?: string | null,
+    projectId?: string | null,
+    functionId?: string | null,
+    functionBuildId?: string | null,
+    sessionCreateParams?: {
+    } | null,
+    userParamsSchema?: {
+    } | null,
+    createdAt?: string | null,
+    updatedAt?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="cause full type">
+
+```ts
+{
+  code?: string | null,
+  message?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### builds.list
+
+`functions.builds.list`
+
+List Function Builds. (GET /v1/functions/builds)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.functions.builds.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `status` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `total` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  projectId?: string | null,
+  request?: {
+    entrypoint?: string | null,
+    functionNames?: string[] | null
+  } | null,
+  status?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  startedAt?: string | null,
+  endedAt?: string | null,
+  expiresAt?: string | null,
+  builtFunctions?: {
+    id?: string | null,
+    projectId?: string | null,
+    name?: string | null,
+    createdAt?: string | null,
+    updatedAt?: string | null,
+    createdVersion?: {
+      id?: string | null,
+      projectId?: string | null,
+      functionId?: string | null,
+      functionBuildId?: string | null,
+      sessionCreateParams?: {
+      } | null,
+      userParamsSchema?: {
+      } | null,
+      createdAt?: string | null,
+      updatedAt?: string | null
+    } | null
+  }[] | null,
+  cause?: {
+    code?: string | null,
+    message?: string | null
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### builds.logs
+
+`functions.builds.logs`
+
+Get Function Build Logs. (GET /v1/functions/builds/&#123;id&#125;/logs)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.functions.builds.logs({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logs` | `object[] \| null` | No | — |
+| `total` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+  message?: string | null,
+  timestamp?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`functions.get`
+
+Get a Function. (GET /v1/functions/&#123;id&#125;)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.functions.get({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### invocations.get
+
+`functions.invocations.get`
+
+Get an Invocation. (GET /v1/functions/invocations/&#123;id&#125;)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.functions.invocations.get({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `functionId` | `string \| null` | No | — |
+| `versionId` | `string \| null` | No | — |
+| `sessionId` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `params` | `object \| null` | No | JSON object that can be stored in a JSONB column |
+| `status` | `string \| null` | No | — |
+| `results` | `string \| number \| boolean \| any[] \| object \| null` | No | Any JSON-serializable value that can be stored in a JSONB column |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `startedAt` | `string \| null` | No | — |
+| `endedAt` | `string \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+| `cause` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+string | number | boolean | any[] | {
+} | null | null
+```
+</Accordion>
+
+<Accordion title="cause full type">
+
+```ts
+{
+  code?: string | null,
+  message?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### invocations.logs
+
+`functions.invocations.logs`
+
+Get Invocation Logs. (GET /v1/functions/invocations/&#123;id&#125;/logs)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.functions.invocations.logs({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `logs` | `object[] \| null` | No | — |
+| `total` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="logs full type">
+
+```ts
+{
+  message?: string | null,
+  timestamp?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### invoke
+
+`functions.invoke`
+
+Invoke a Function. Runs the Function on Browserbase compute.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.browserbase.api.functions.invoke({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `params` | `object` | No | JSON object that can be stored in a JSONB column |
+| `sessionCreateParams` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="sessionCreateParams full type">
+
+```ts
+{
+  labels?: string[],
+  extensionId?: string,
+  browserSettings?: {
+    context?: {
+      id: string,
+      persist?: boolean
+    },
+    extensionId?: string,
+    viewport?: {
+      width?: number,
+      height?: number
+    },
+    blockAds?: boolean,
+    solveCaptchas?: boolean,
+    recordSession?: boolean,
+    logSession?: boolean,
+    advancedStealth?: boolean,
+    verified?: boolean,
+    captchaImageSelector?: string,
+    captchaInputSelector?: string,
+    os?: windows | mac | linux | mobile | tablet,
+    size?: regular | large | xlarge,
+    enableNativeSelectPolyfill?: boolean,
+    enablePdfViewer?: boolean,
+    extensions?: (onepassword | browser-events)[],
+    allowedDomains?: string[],
+    ignoreCertificateErrors?: boolean,
+    riskPolicyId?: string
+  },
+  proxies?: (
+    {
+      type: browserbase,
+      proxyId?: string,
+      geolocation?: {
+        city?: string,
+        state?: string,
+        country: string
+      },
+      domainPattern?: string
+    } | {
+      type: external,
+      server: string,
+      domainPattern?: string,
+      username?: string,
+      password?: string
+    } | {
+      type: none,
+      domainPattern?: string
+    }
+  )[] | boolean,
+  proxySettings?: {
+    caCertificates?: string[]
+  },
+  userMetadata?: {
+  },
+  timeout?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `functionId` | `string \| null` | No | — |
+| `versionId` | `string \| null` | No | — |
+| `sessionId` | `string \| null` | No | — |
+| `region` | `string \| null` | No | — |
+| `params` | `object \| null` | No | JSON object that can be stored in a JSONB column |
+| `status` | `string \| null` | No | — |
+| `results` | `string \| number \| boolean \| any[] \| object \| null` | No | Any JSON-serializable value that can be stored in a JSONB column |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `startedAt` | `string \| null` | No | — |
+| `endedAt` | `string \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="params full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+string | number | boolean | any[] | {
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`functions.list`
+
+List Functions. (GET /v1/functions)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.functions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `total` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  projectId?: string | null,
+  name?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### secrets.attach
+
+`functions.secrets.attach`
+
+Attach a Secret to a Function. Attach a secret to a Function, taking effect on the Function's next invocation. Note: Attaching a secret that is already attached succeeds to support idempotency.
+
+**Risk:** `write`
+
+```ts
+await corsair.browserbase.api.functions.secrets.attach({ id: 'doc_8f2k1x9q', secretId: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `secretId` | `string` | Yes | The id of the project secret to attach (the `id` returned by POST /v1/secrets). Idempotent: re-attaching an already-attached secret succeeds. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Browserbase accepted the call; it answered with no body. |
+
+
+
+---
+
+### secrets.detach
+
+`functions.secrets.detach`
+
+Detach a Secret from a Function. Detach a secret from a Function, taking effect on the Function's next invocation. Note: Detaching a secret that is not attached succeeds to support idempotency. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.browserbase.api.functions.secrets.detach({ id: 'doc_8f2k1x9q', secretId: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `secretId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Browserbase accepted the call; it answered with no body. |
+
+
+
+---
+
+### secrets.list
+
+`functions.secrets.list`
+
+List Function Secrets. List secrets attached to a function. Supports filtering by secret creation time. Returns metadata only.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.functions.secrets.list({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startAt` | `string` | No | Only return secrets created on or after this timestamp (inclusive). RFC 3339, e.g. 2026-01-19T00:00:00Z. |
+| `endAt` | `string` | No | Only return secrets created on or before this timestamp (inclusive). RFC 3339, e.g. 2026-01-20T00:00:00Z. |
+| `limit` | `number` | No | Maximum number of results to return. |
+| `cursor` | `string` | No | Pagination cursor. Pass the nextCursor from the previous response to fetch the next page. Keep the same filters across pages. Omit to start from the first page. |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | The page of matching secrets. |
+| `limit` | `number \| null` | No | The maximum number of results returned in this page. |
+| `nextCursor` | `string \| null \| null` | No | Cursor for the next page. Pass it back as `cursor` on the next request to continue paging. null when there are no more results. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  secretKey?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### versions.get
+
+`functions.versions.get`
+
+Get a Function Version. (GET /v1/functions/versions/&#123;id&#125;)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.functions.versions.get({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | — |
+| `functionId` | `string \| null` | No | — |
+| `functionBuildId` | `string \| null` | No | — |
+| `sessionCreateParams` | `object \| null` | No | JSON object that can be stored in a JSONB column |
+| `userParamsSchema` | `object \| null` | No | JSON object that can be stored in a JSONB column |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sessionCreateParams full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="userParamsSchema full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### versions.invocations
+
+`functions.versions.invocations`
+
+List Invocations for a Function Version.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.functions.versions.invocations({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `status` | `string` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | — |
+| `total` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  projectId?: string | null,
+  functionId?: string | null,
+  versionId?: string | null,
+  sessionId?: string | null,
+  region?: string | null,
+  params?: {
+  } | null,
+  status?: string | null,
+  results?: string | number | boolean | any[] | {
+  } | null | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  startedAt?: string | null,
+  endedAt?: string | null,
+  expiresAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### versions.list
+
+`functions.versions.list`
+
+List Function Versions. (GET /v1/functions/&#123;id&#125;/versions)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.functions.versions.list({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[] \| null` | No | — |
+| `total` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  projectId?: string | null,
+  functionId?: string | null,
+  functionBuildId?: string | null,
+  sessionCreateParams?: {
+  } | null,
+  userParamsSchema?: {
+  } | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Labels
+
+### create
+
+`labels.create`
+
+Create a Label. Create a project-owned label.
+
+**Risk:** `write`
+
+```ts
+await corsair.browserbase.api.labels.create({ name: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Label name. Browserbase trims surrounding Unicode whitespace and preserves display capitalization. The trimmed name must contain 1–128 Unicode characters and no NUL characters. Names are unique ignoring case within the project. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Stable identifier of the label. |
+| `projectId` | `string \| null` | No | The project that owns the label. |
+| `name` | `string \| null` | No | Display name, unique ignoring case within the project. |
+| `createdAt` | `string \| null` | No | UTC timestamp when the label was created. |
+| `updatedAt` | `string \| null` | No | UTC timestamp when the label was last renamed. |
+
+
+
+---
+
+### delete
+
+`labels.delete`
+
+Delete a Label. Delete a label and its session assignments, preserving the sessions. Missing and other-project labels are successful no-ops. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.browserbase.api.labels.delete({ labelId: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `labelId` | `string` | Yes | The label's identifier. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Browserbase accepted the call; it answered with no body. |
+
+
+
+---
+
+### list
+
+`labels.list`
+
+List Labels. List the project's labels, newest first. Page by passing the previous response's nextCursor as cursor; a null nextCursor means there are no further pages.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.labels.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Maximum number of results to return. |
+| `cursor` | `string` | No | Pagination cursor. Pass the nextCursor from the previous response to fetch the next page. Omit to start from the first page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | The page of matching labels. |
+| `limit` | `number \| null` | No | The maximum number of results returned in this page. |
+| `nextCursor` | `string \| null \| null` | No | Cursor for the next page. Pass it back as `cursor` on the next request to continue paging. null when there are no more results. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  projectId?: string | null,
+  name?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`labels.update`
+
+Update a Label. Rename a label, preserving its ID, creation time, and session assignments.
+
+**Risk:** `write`
+
+```ts
+await corsair.browserbase.api.labels.update({ labelId: 'example', name: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `labelId` | `string` | Yes | The label's identifier. |
+| `name` | `string` | Yes | Label name. Browserbase trims surrounding Unicode whitespace and preserves display capitalization. The trimmed name must contain 1–128 Unicode characters and no NUL characters. Names are unique ignoring case within the project. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Stable identifier of the label. |
+| `projectId` | `string \| null` | No | The project that owns the label. |
+| `name` | `string \| null` | No | Display name, unique ignoring case within the project. |
+| `createdAt` | `string \| null` | No | UTC timestamp when the label was created. |
+| `updatedAt` | `string \| null` | No | UTC timestamp when the label was last renamed. |
+
+
+
+---
+
+## Navigation Policies
+
+### create
+
+`navigationPolicies.create`
+
+Create a Navigation Policy. Create a navigation policy for this project. Omitted fields take the defaults: enabled, block by default, block unknown domains, no category rules, and no overrides. Bind the policy to a session with browserSettings.riskPolicyId.
+
+**Risk:** `write`
+
+```ts
+await corsair.browserbase.api.navigationPolicies.create({ name: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Display name. A policy's id identifies it, not its name. |
+| `description` | `string` | No | Free-form notes about the policy. |
+| `enabled` | `boolean` | No | Whether the policy can be bound to new sessions. Running sessions keep the policy they started with. A disabled policy stays editable and can be re-enabled. |
+| `defaultDecision` | `allow \| block` | No | Decision for each of a domain's categories that has no category rule. The strictest of a domain's category decisions applies, and overrides take precedence. |
+| `allowedCategories` | `(adult \| ai-tools \| alcohol-tobacco \| business \| child-abuse \| communication \| dating \| drugs \| education \| entertainment \| finance \| gambling \| games \| government-military \| hacking \| hate \| health \| illegal-activity \| infrastructure \| kids \| lifestyle \| malware \| newly-registered \| news \| parked-inactive \| phishing-scams \| piracy \| proxy-anonymizer \| search-portal \| self-harm \| shopping \| social-media \| society-culture \| sports \| technology \| terrorism-extremism \| travel \| url-shortener \| violence \| weapons)[]` | No | Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one. |
+| `blockedCategories` | `(adult \| ai-tools \| alcohol-tobacco \| business \| child-abuse \| communication \| dating \| drugs \| education \| entertainment \| finance \| gambling \| games \| government-military \| hacking \| hate \| health \| illegal-activity \| infrastructure \| kids \| lifestyle \| malware \| newly-registered \| news \| parked-inactive \| phishing-scams \| piracy \| proxy-anonymizer \| search-portal \| self-harm \| shopping \| social-media \| society-culture \| sports \| technology \| terrorism-extremism \| travel \| url-shortener \| violence \| weapons)[]` | No | Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one. |
+| `unknownDomainBehavior` | `allow \| block` | No | Decision for a domain, or one of its categories, that Browserbase can't classify. It counts as one of the domain's category decisions, so the strictest still applies. |
+| `domainOverrides` | `object[]` | No | Per-host decisions that take precedence over category rules and the default. Each host may appear once. |
+
+<AccordionGroup>
+<Accordion title="domainOverrides full type">
+
+```ts
+{
+  domain: string,
+  decision: allow | block
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique identifier for the navigation policy. |
+| `projectId` | `string \| null` | No | The project the policy belongs to. |
+| `name` | `string \| null` | No | Display name. A policy's id identifies it, not its name. |
+| `description` | `string \| null` | No | Free-form notes about the policy. |
+| `enabled` | `boolean \| null` | No | Whether the policy can be bound to new sessions. Running sessions keep the policy they started with. A disabled policy stays editable and can be re-enabled. |
+| `defaultDecision` | `string \| null` | No | Decision for each of a domain's categories that has no category rule. The strictest of a domain's category decisions applies, and overrides take precedence. |
+| `allowedCategories` | `string[] \| null` | No | Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one. |
+| `blockedCategories` | `string[] \| null` | No | Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one. |
+| `unknownDomainBehavior` | `string \| null` | No | Decision for a domain, or one of its categories, that Browserbase can't classify. It counts as one of the domain's category decisions, so the strictest still applies. |
+| `domainOverrides` | `object[] \| null` | No | Per-host decisions that take precedence over category rules and the default. Each host may appear once. |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="domainOverrides full type">
+
+```ts
+{
+  domain?: string | null,
+  decision?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`navigationPolicies.delete`
+
+Delete a Navigation Policy. Delete a navigation policy. New sessions can no longer bind to it; running sessions keep the policy they started with. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.browserbase.api.navigationPolicies.delete({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The navigation policy ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Browserbase accepted the call; it answered with no body. |
+
+
+
+---
+
+### get
+
+`navigationPolicies.get`
+
+Get a Navigation Policy. Retrieve a single navigation policy by ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.navigationPolicies.get({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The navigation policy ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique identifier for the navigation policy. |
+| `projectId` | `string \| null` | No | The project the policy belongs to. |
+| `name` | `string \| null` | No | Display name. A policy's id identifies it, not its name. |
+| `description` | `string \| null` | No | Free-form notes about the policy. |
+| `enabled` | `boolean \| null` | No | Whether the policy can be bound to new sessions. Running sessions keep the policy they started with. A disabled policy stays editable and can be re-enabled. |
+| `defaultDecision` | `string \| null` | No | Decision for each of a domain's categories that has no category rule. The strictest of a domain's category decisions applies, and overrides take precedence. |
+| `allowedCategories` | `string[] \| null` | No | Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one. |
+| `blockedCategories` | `string[] \| null` | No | Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one. |
+| `unknownDomainBehavior` | `string \| null` | No | Decision for a domain, or one of its categories, that Browserbase can't classify. It counts as one of the domain's category decisions, so the strictest still applies. |
+| `domainOverrides` | `object[] \| null` | No | Per-host decisions that take precedence over category rules and the default. Each host may appear once. |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="domainOverrides full type">
+
+```ts
+{
+  domain?: string | null,
+  decision?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`navigationPolicies.list`
+
+List Navigation Policies. List the project's navigation policies, ordered by name.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.navigationPolicies.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | The project's navigation policies, ordered by name. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  projectId?: string | null,
+  name?: string | null,
+  description?: string | null,
+  enabled?: boolean | null,
+  defaultDecision?: string | null,
+  allowedCategories?: string[] | null,
+  blockedCategories?: string[] | null,
+  unknownDomainBehavior?: string | null,
+  domainOverrides?: {
+    domain?: string | null,
+    decision?: string | null
+  }[] | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`navigationPolicies.update`
+
+Update a Navigation Policy. Update a navigation policy. Omitted fields keep their values; a supplied list replaces the stored list rather than adding to it. The change applies to sessions that start afterwards; running sessions keep the policy they started with.
+
+**Risk:** `write`
+
+```ts
+await corsair.browserbase.api.navigationPolicies.update({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The navigation policy ID. |
+| `name` | `string` | No | Display name. A policy's id identifies it, not its name. |
+| `description` | `string` | No | Free-form notes about the policy. |
+| `enabled` | `boolean` | No | Whether the policy can be bound to new sessions. Running sessions keep the policy they started with. A disabled policy stays editable and can be re-enabled. |
+| `defaultDecision` | `allow \| block` | No | Decision for each of a domain's categories that has no category rule. The strictest of a domain's category decisions applies, and overrides take precedence. |
+| `allowedCategories` | `(adult \| ai-tools \| alcohol-tobacco \| business \| child-abuse \| communication \| dating \| drugs \| education \| entertainment \| finance \| gambling \| games \| government-military \| hacking \| hate \| health \| illegal-activity \| infrastructure \| kids \| lifestyle \| malware \| newly-registered \| news \| parked-inactive \| phishing-scams \| piracy \| proxy-anonymizer \| search-portal \| self-harm \| shopping \| social-media \| society-culture \| sports \| technology \| terrorism-extremism \| travel \| url-shortener \| violence \| weapons)[]` | No | Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one. |
+| `blockedCategories` | `(adult \| ai-tools \| alcohol-tobacco \| business \| child-abuse \| communication \| dating \| drugs \| education \| entertainment \| finance \| gambling \| games \| government-military \| hacking \| hate \| health \| illegal-activity \| infrastructure \| kids \| lifestyle \| malware \| newly-registered \| news \| parked-inactive \| phishing-scams \| piracy \| proxy-anonymizer \| search-portal \| self-harm \| shopping \| social-media \| society-culture \| sports \| technology \| terrorism-extremism \| travel \| url-shortener \| violence \| weapons)[]` | No | Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one. |
+| `unknownDomainBehavior` | `allow \| block` | No | Decision for a domain, or one of its categories, that Browserbase can't classify. It counts as one of the domain's category decisions, so the strictest still applies. |
+| `domainOverrides` | `object[]` | No | Per-host decisions that take precedence over category rules and the default. Each host may appear once. |
+
+<AccordionGroup>
+<Accordion title="domainOverrides full type">
+
+```ts
+{
+  domain: string,
+  decision: allow | block
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique identifier for the navigation policy. |
+| `projectId` | `string \| null` | No | The project the policy belongs to. |
+| `name` | `string \| null` | No | Display name. A policy's id identifies it, not its name. |
+| `description` | `string \| null` | No | Free-form notes about the policy. |
+| `enabled` | `boolean \| null` | No | Whether the policy can be bound to new sessions. Running sessions keep the policy they started with. A disabled policy stays editable and can be re-enabled. |
+| `defaultDecision` | `string \| null` | No | Decision for each of a domain's categories that has no category rule. The strictest of a domain's category decisions applies, and overrides take precedence. |
+| `allowedCategories` | `string[] \| null` | No | Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one. |
+| `blockedCategories` | `string[] \| null` | No | Navigation categories. Browserbase blocks a domain in any blocked category, even if it is also in an allowed one. |
+| `unknownDomainBehavior` | `string \| null` | No | Decision for a domain, or one of its categories, that Browserbase can't classify. It counts as one of the domain's category decisions, so the strictest still applies. |
+| `domainOverrides` | `object[] \| null` | No | Per-host decisions that take precedence over category rules and the default. Each host may appear once. |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="domainOverrides full type">
+
+```ts
+{
+  domain?: string | null,
+  decision?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### get
+
+`projects.get`
+
+Get a Project. (GET /v1/projects/&#123;id&#125;)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.projects.get({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `ownerId` | `string \| null` | No | — |
+| `defaultTimeout` | `number \| null` | No | — |
+| `concurrency` | `number \| null` | No | The maximum number of sessions that this project can run concurrently. |
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List Projects. (GET /v1/projects)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.projects.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  name?: string | null,
+  ownerId?: string | null,
+  defaultTimeout?: number | null,
+  concurrency?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### usage
+
+`projects.usage`
+
+Get Project Usage. (GET /v1/projects/&#123;id&#125;/usage)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.projects.usage({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `browserMinutes` | `number \| null` | No | — |
+| `proxyBytes` | `number \| null` | No | — |
+
+
+
+---
+
+## Search
+
+### web
+
+`search.web`
+
+Web Search. Perform a web search and return structured results. A metered read: each call counts against the plan.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.search.web({ query: 'corsair agent integrations' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | The search query string |
+| `numResults` | `number` | No | Number of results to return |
+| `includeDomains` | `string[]` | No | Only return results from these domains. Entries can be a hostname (example.com), a hostname with a path prefix (example.com/docs), or a wildcard subdomain (*.example.com). The `parallel` provider allows one list, not both, with at most 200 domains and no scheme, port, query string, or fragment. |
+| `excludeDomains` | `string[]` | No | Never return results from these domains. Accepts the same entry formats as includeDomains. Not supported with the people category. |
+| `startPublishedDate` | `string` | No | Only return results published after this date-time (RFC 3339, for example 2026-01-01T00:00:00Z). The `parallel` provider rounds it up to a whole UTC day. Not supported with the company or people categories. |
+| `endPublishedDate` | `string` | No | Only return results published before this date-time (RFC 3339, for example 2026-01-01T00:00:00Z). Only the `exa` provider supports this filter. Not supported with the company or people categories. |
+| `category` | `company \| publication \| news \| personal site \| financial report \| people` | No | Focus the search on a category of content. Only the `exa` provider supports this filter. |
+| `userLocation` | `string` | No | Two-letter ISO 3166-1 country code of the end user. Localizes ranking without restricting results to sources from that country. The `parallel` provider supports only [some countries](https://docs.browserbase.com/platform/search/overview#appendix-supported-countries). |
+| `moderation` | `boolean` | No | Filter unsafe content from the results. Defaults to `false`. Only the `exa` provider supports `true`. |
+| `objective` | `string` | No | The task intent and soft preferences for the search, in natural language. Adds context to query without replacing it. |
+| `maxAgeHours` | `number` | No | Refetch a page when the cached copy is older than this many hours. Omit to use the provider default. A provider can return an older cached copy when a live fetch fails. |
+| `excerpts` | `boolean` | No | Return the passages of each page most relevant to the query. Defaults to false. |
+| `provider` | `parallel \| exa \| parallel \| exa \| any` | No | — |
+| `mode` | `fast \| advanced \| deep-lite \| deep \| fast \| advanced \| fast \| deep-lite \| deep` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| null` | No | Unique identifier for the request |
+| `query` | `string \| null` | No | The search query that was executed |
+| `provider` | `string \| null` | No | The search provider that served the request. Can differ from the documented default when the project or the filters select another provider. |
+| `mode` | `string \| null` | No | The search mode that served the request. |
+| `results` | `object[] \| null` | No | List of search results |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  url?: string | null,
+  title?: string | null,
+  author?: string | null,
+  publishedDate?: string | null,
+  image?: string | null,
+  favicon?: string | null,
+  excerpts?: string[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Secrets
+
+### create
+
+`secrets.create`
+
+Create a Secret. (POST /v1/secrets)
+
+**Risk:** `write`
+
+```ts
+await corsair.browserbase.api.secrets.create({ secretKey: 'example', sealedSecretValue: 'example', keypairId: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secretKey` | `string` | Yes | The name to store the secret value under. |
+| `sealedSecretValue` | `string` | Yes | The secret value encrypted with HPKE. To seal the secret value before sending, get the project's public key from GET /v1/secrets/keypair. Decode the publicKey using base64 into the raw 32-byte public key. Then, use HPKE Base mode (RFC 9180) with the following algorithm suite: DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, and AES-256-GCM. Set both info and additional authenticated data (AAD) to an empty byte string. Then, create a new sender context using the public key and these settings, and encrypt the secret value as one message. Put the 32-byte encapsulated key before the ciphertext and keep the authentication tag at the end of the ciphertext. Encode the combined bytes with standard base64. Send the result as sealedSecretValue: base64(enc \|\| ciphertext) |
+| `keypairId` | `string` | Yes | The `id` returned by GET /v1/secrets/keypair, identifying the keypair whose public key encrypted the value. Recorded with the secret so decryption stays correct across keypair rotation. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique identifier of the secret. |
+| `secretKey` | `string \| null` | No | The name the secret value is stored under. |
+| `createdAt` | `string \| null` | No | Time at which the secret was created, in UTC, using RFC 3339 format, e.g. 2026-01-19T00:00:00.000Z. |
+| `updatedAt` | `string \| null` | No | Time at which the secret's value was last set, in UTC, using RFC 3339 format, e.g. 2026-01-20T00:00:00.000Z. |
+
+
+
+---
+
+### delete
+
+`secrets.delete`
+
+Delete a Secret. Cannot be undone. (DELETE /v1/secrets/&#123;id&#125;)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.browserbase.api.secrets.delete({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id of the project secret to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Browserbase accepted the call; it answered with no body. |
+
+
+
+---
+
+### get
+
+`secrets.get`
+
+Get a Secret. (GET /v1/secrets/&#123;id&#125;)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.secrets.get({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id of the project secret to retrieve. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique identifier of the secret. |
+| `secretKey` | `string \| null` | No | The name the secret value is stored under. |
+| `createdAt` | `string \| null` | No | Time at which the secret was created, in UTC, using RFC 3339 format, e.g. 2026-01-19T00:00:00.000Z. |
+| `updatedAt` | `string \| null` | No | Time at which the secret's value was last set, in UTC, using RFC 3339 format, e.g. 2026-01-20T00:00:00.000Z. |
+
+
+
+---
+
+### keypair
+
+`secrets.keypair`
+
+Get a Keypair. (GET /v1/secrets/keypair)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.secrets.keypair({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Identifier of the keypair the public key was minted from. Pass this back when creating a secret so the ciphertext records which keypair sealed it, which keeps decryption correct across keypair rotation. |
+| `publicKey` | `string \| null` | No | The project's HPKE public encryption key, base64-encoded. Encrypt secret values with this key before creating a secret. |
+
+
+
+---
+
+### list
+
+`secrets.list`
+
+List Secrets. List project secrets. Supports filtering by creation time.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.secrets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startAt` | `string` | No | Only return secrets created on or after this timestamp (inclusive). RFC 3339, e.g. 2026-01-19T00:00:00Z. |
+| `endAt` | `string` | No | Only return secrets created on or before this timestamp (inclusive). RFC 3339, e.g. 2026-01-20T00:00:00Z. |
+| `limit` | `number` | No | Maximum number of results to return. |
+| `cursor` | `string` | No | Pagination cursor. Pass the nextCursor from the previous response to fetch the next page. Omit to start from the first page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | The page of matching secrets. |
+| `limit` | `number \| null` | No | The maximum number of results returned in this page. |
+| `nextCursor` | `string \| null \| null` | No | Cursor for the next page. Pass it back as `cursor` on the next request to continue paging. null when there are no more results. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  secretKey?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`secrets.update`
+
+Update a Secret. Replace a secret's value. The name cannot be changed; to rename, create a new secret and delete the old one.
+
+**Risk:** `write`
+
+```ts
+await corsair.browserbase.api.secrets.update({ id: 'doc_8f2k1x9q', sealedSecretValue: 'example', keypairId: 'example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id of the project secret to update. |
+| `sealedSecretValue` | `string` | Yes | The new secret value encrypted with HPKE. To seal the secret value before sending, get the project's public key from GET /v1/secrets/keypair. Decode the publicKey using base64 into the raw 32-byte public key. Then, use HPKE Base mode (RFC 9180) with the following algorithm suite: DHKEM(X25519, HKDF-SHA256), HKDF-SHA256, and AES-256-GCM. Set both info and additional authenticated data (AAD) to an empty byte string. Then, create a new sender context using the public key and these settings, and encrypt the secret value as one message. Put the 32-byte encapsulated key before the ciphertext and keep the authentication tag at the end of the ciphertext. Encode the combined bytes with standard base64. Send the result as sealedSecretValue: base64(enc \|\| ciphertext) |
+| `keypairId` | `string` | Yes | The `id` returned by GET /v1/secrets/keypair, identifying the keypair whose public key encrypted the value. Recorded with the secret so decryption stays correct across keypair rotation. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique identifier of the secret. |
+| `secretKey` | `string \| null` | No | The name the secret value is stored under. |
+| `createdAt` | `string \| null` | No | Time at which the secret was created, in UTC, using RFC 3339 format, e.g. 2026-01-19T00:00:00.000Z. |
+| `updatedAt` | `string \| null` | No | Time at which the secret's value was last set, in UTC, using RFC 3339 format, e.g. 2026-01-20T00:00:00.000Z. |
+
+
+
+---
+
+## Sessions
+
+### create
+
+`sessions.create`
+
+Create a Session. Starts a cloud browser that is billed by the minute until it is released or times out.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.browserbase.api.sessions.create({ keepAlive: false, timeout: 120 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `labels` | `string[]` | No | Label names to assign after creation. Creates missing labels automatically. Assignment is best-effort and does not delay or fail session creation. |
+| `projectId` | `string` | No | The Project ID. Can be found in [Settings](https://www.browserbase.com/settings). Optional - if not provided, the project will be inferred from the API key. |
+| `extensionId` | `string` | No | The uploaded Extension ID. See [Upload Extension](/reference/api/upload-an-extension). |
+| `browserSettings` | `object` | No | — |
+| `timeout` | `number` | No | Duration in seconds after which the session will automatically end. Defaults to the Project's `defaultTimeout`. Minimum 60 seconds, maximum 21600 seconds (6 hours). |
+| `keepAlive` | `boolean` | No | Set to true to keep the session alive even after disconnections. Available on the Hobby Plan and above. |
+| `proxies` | `object[] \| boolean` | No | Proxy configuration. Can be true for default proxy, or an array of proxy configurations. |
+| `proxySettings` | `object` | No | Supplementary proxy settings. Optional. |
+| `region` | `us-west-2 \| us-east-1 \| eu-central-1 \| ap-southeast-1` | No | The region where the Session should run. |
+| `userMetadata` | `object` | No | Arbitrary user metadata to attach to the session. To learn more about user metadata, see [User Metadata](/features/sessions#user-metadata). |
+
+<AccordionGroup>
+<Accordion title="browserSettings full type">
+
+```ts
+{
+  context?: {
+    id: string,
+    persist?: boolean
+  },
+  extensionId?: string,
+  viewport?: {
+    width?: number,
+    height?: number
+  },
+  blockAds?: boolean,
+  solveCaptchas?: boolean,
+  recordSession?: boolean,
+  logSession?: boolean,
+  advancedStealth?: boolean,
+  verified?: boolean,
+  captchaImageSelector?: string,
+  captchaInputSelector?: string,
+  os?: windows | mac | linux | mobile | tablet,
+  size?: regular | large | xlarge,
+  allowedDomains?: string[],
+  ignoreCertificateErrors?: boolean,
+  riskPolicyId?: string
+}
+```
+</Accordion>
+
+<Accordion title="proxies full type">
+
+```ts
+(
+  {
+    type: browserbase,
+    proxyId?: string,
+    geolocation?: {
+      city?: string,
+      state?: string,
+      country: string
+    },
+    domainPattern?: string
+  } | {
+    type: external,
+    server: string,
+    domainPattern?: string,
+    username?: string,
+    password?: string
+  } | {
+    type: none,
+    domainPattern?: string
+  }
+)[] | boolean
+```
+</Accordion>
+
+<Accordion title="proxySettings full type">
+
+```ts
+{
+  caCertificates?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="userMetadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | The Project ID linked to the Session. |
+| `startedAt` | `string \| null` | No | — |
+| `endedAt` | `string \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `size` | `string \| null` | No | Size of the browser used for the session. |
+| `proxyBytes` | `number \| null` | No | Bytes used via the [Proxy](/features/stealth-mode#proxies-and-residential-ips) |
+| `keepAlive` | `boolean \| null` | No | Indicates if the Session was created to be kept alive upon disconnections |
+| `contextId` | `string \| null` | No | Optional. The Context linked to the Session. |
+| `region` | `string \| null` | No | The region where the Session is running. |
+| `userMetadata` | `object \| null` | No | Arbitrary user metadata to attach to the session. To learn more about user metadata, see [User Metadata](/features/sessions#user-metadata). |
+| `connectUrl` | `string \| null` | No | WebSocket URL to connect to the Session. |
+| `seleniumRemoteUrl` | `string \| null` | No | HTTP URL to connect to the Session. |
+| `signingKey` | `string \| null` | No | Signing key to use when connecting to the Session via HTTP. |
+
+<AccordionGroup>
+<Accordion title="userMetadata full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### debug
+
+`sessions.debug`
+
+Session Live URLs. (GET /v1/sessions/&#123;id&#125;/debug)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.sessions.debug({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `expiresIn` | `number` | No | Time-to-live of the generated live view URLs, in seconds. If omitted, the URLs expire with the session, up to a maximum of 21600 seconds (6 hours). |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `debuggerFullscreenUrl` | `string \| null` | No | — |
+| `debuggerUrl` | `string \| null` | No | — |
+| `pages` | `object[] \| null` | No | — |
+| `wsUrl` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+  id?: string | null,
+  url?: string | null,
+  faviconUrl?: string | null,
+  title?: string | null,
+  debuggerUrl?: string | null,
+  debuggerFullscreenUrl?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`sessions.get`
+
+Get a Session. (GET /v1/sessions/&#123;id&#125;)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.sessions.get({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `includeLabels` | `boolean` | No | Include the session's label IDs and current names. |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | The Project ID linked to the Session. |
+| `startedAt` | `string \| null` | No | — |
+| `endedAt` | `string \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `size` | `string \| null` | No | Size of the browser used for the session. |
+| `proxyBytes` | `number \| null` | No | Bytes used via the [Proxy](/features/stealth-mode#proxies-and-residential-ips) |
+| `keepAlive` | `boolean \| null` | No | Indicates if the Session was created to be kept alive upon disconnections |
+| `contextId` | `string \| null` | No | Optional. The Context linked to the Session. |
+| `region` | `string \| null` | No | The region where the Session is running. |
+| `userMetadata` | `object \| null` | No | Arbitrary user metadata to attach to the session. To learn more about user metadata, see [User Metadata](/features/sessions#user-metadata). |
+| `labels` | `object[] \| null` | No | Browserbase returns label IDs and current names only when includeLabels is true. An empty array means the session has no labels. |
+| `connectUrl` | `string \| null` | No | WebSocket URL to connect to the Session. |
+| `seleniumRemoteUrl` | `string \| null` | No | HTTP URL to connect to the Session. |
+| `signingKey` | `string \| null` | No | Signing key to use when connecting to the Session via HTTP. |
+
+<AccordionGroup>
+<Accordion title="userMetadata full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sessions.list`
+
+List Sessions. (GET /v1/sessions)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.sessions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `PENDING \| RUNNING \| ERROR \| TIMED_OUT \| COMPLETED` | No | — |
+| `q` | `string` | No | Query sessions by user metadata. See [Querying Sessions by User Metadata](/features/sessions#querying-sessions-by-user-metadata) for the schema of this query. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  projectId?: string | null,
+  startedAt?: string | null,
+  endedAt?: string | null,
+  expiresAt?: string | null,
+  status?: string | null,
+  size?: string | null,
+  proxyBytes?: number | null,
+  keepAlive?: boolean | null,
+  contextId?: string | null,
+  region?: string | null,
+  userMetadata?: {
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### logs
+
+`sessions.logs`
+
+Session Logs. (GET /v1/sessions/&#123;id&#125;/logs)
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.sessions.logs({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  method?: string | null,
+  pageId?: number | null,
+  sessionId?: string | null,
+  request?: {
+    timestamp?: number | null,
+    params?: {
+    } | null,
+    rawBody?: string | null
+  } | null,
+  response?: {
+    timestamp?: number | null,
+    result?: {
+    } | null,
+    rawBody?: string | null
+  } | null,
+  timestamp?: number | null,
+  frameId?: string | null,
+  loaderId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### recordingDownloads.create
+
+`sessions.recordingDownloads.create`
+
+Create Session Recording Downloads. Requests one downloadable MP4 per recorded page of a session. Assembly runs asynchronously and every page returns as PENDING. Re-posting re-enqueues all pages and retries any that failed. Poll the GET endpoint for per-page status and, on standard (non-BYOS) projects, download URLs.
+
+**Risk:** `write`
+
+```ts
+await corsair.browserbase.api.sessions.recordingDownloads.create({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Session ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `downloads` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="downloads full type">
+
+```ts
+{
+  pageId?: string | null,
+  status?: string | null,
+  downloadUrl?: string | null,
+  completedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### recordingDownloads.list
+
+`sessions.recordingDownloads.list`
+
+List Session Recording Downloads. Returns the per-page download status for a session, with a short-lived signed URL for each completed page on standard (non-BYOS) projects.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.sessions.recordingDownloads.list({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Session ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `downloads` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="downloads full type">
+
+```ts
+{
+  pageId?: string | null,
+  status?: string | null,
+  downloadUrl?: string | null,
+  completedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replays.get
+
+`sessions.replays.get`
+
+Get Session Replay. Returns page metadata for a session replay, including timing information and the URL of each page's HLS playlist.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.sessions.replays.get({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Session ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pages` | `object[] \| null` | No | — |
+| `pageCount` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="pages full type">
+
+```ts
+{
+  pageId?: string | null,
+  url?: string | null,
+  startTimeMs?: number | null,
+  endTimeMs?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replays.page
+
+`sessions.replays.page`
+
+Get Replay Page. Returns an HLS VOD media playlist (.m3u8) for a specific page of a session replay.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.sessions.replays.page({ id: 'doc_8f2k1x9q', pageId: '0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Session ID |
+| `pageId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+
+
+
+---
+
+### setLabels
+
+`sessions.setLabels`
+
+Set Session Labels. Atomically replace a session's labels. Returns the response after the assignment commits.
+
+**Risk:** `write`
+
+```ts
+await corsair.browserbase.api.sessions.setLabels({
+	id: 'doc_8f2k1x9q',
+	labels: ['example'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `labels` | `string[]` | Yes | Complete replacement set of label names. Empty clears assignments; missing names create labels. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `labels` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="labels full type">
+
+```ts
+{
+  id?: string | null,
+  projectId?: string | null,
+  name?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`sessions.update`
+
+Update a Session. Setting status to REQUEST_RELEASE ends the session.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.browserbase.api.sessions.update({ id: 'doc_8f2k1x9q', status: 'REQUEST_RELEASE' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `REQUEST_RELEASE` | Yes | Set to `REQUEST_RELEASE` to request that the session complete. Use before session's timeout to avoid additional charges. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `projectId` | `string \| null` | No | The Project ID linked to the Session. |
+| `startedAt` | `string \| null` | No | — |
+| `endedAt` | `string \| null` | No | — |
+| `expiresAt` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `size` | `string \| null` | No | Size of the browser used for the session. |
+| `proxyBytes` | `number \| null` | No | Bytes used via the [Proxy](/features/stealth-mode#proxies-and-residential-ips) |
+| `keepAlive` | `boolean \| null` | No | Indicates if the Session was created to be kept alive upon disconnections |
+| `contextId` | `string \| null` | No | Optional. The Context linked to the Session. |
+| `region` | `string \| null` | No | The region where the Session is running. |
+| `userMetadata` | `object \| null` | No | Arbitrary user metadata to attach to the session. To learn more about user metadata, see [User Metadata](/features/sessions#user-metadata). |
+
+<AccordionGroup>
+<Accordion title="userMetadata full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uploadFile
+
+`sessions.uploadFile`
+
+Create Session Uploads. (POST /v1/sessions/&#123;id&#125;/uploads)
+
+**Risk:** `write`
+
+```ts
+await corsair.browserbase.api.sessions.uploadFile({
+	id: 'doc_8f2k1x9q',
+	file: { base64: 'SGVsbG8gZnJvbSBDb3JzYWly', filename: 'notes.txt', contentType: 'text/plain' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `file` | `string \| object \| custom` | Yes | A file: a public URL to it, or &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125; for a small one. |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a Webhook. Register an HTTPS endpoint to receive events for this project. The response includes the signing secret, which is shown only here and when the secret is rotated. Store it before discarding the response. An endpoint may only be registered once per project. The response holds the signing secret; it is shown only here and on rotate.
+
+**Risk:** `write`
+
+```ts
+await corsair.browserbase.api.webhooks.create({
+	endpoint: 'https://example.com/webhooks/browserbase',
+	eventTypes: ['functions.builds.running'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint` | `string` | Yes | HTTPS URL that event deliveries are POSTed to. Must be publicly reachable. |
+| `eventTypes` | `(functions.builds.running \| functions.builds.completed \| functions.builds.failed \| functions.invocations.pending \| functions.invocations.running \| functions.invocations.completed \| functions.invocations.failed)[]` | Yes | Event types this webhook subscribes to. Unknown types are rejected. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique identifier for the webhook. |
+| `projectId` | `string \| null` | No | The project the webhook belongs to. |
+| `endpoint` | `string \| null` | No | HTTPS URL that event deliveries are POSTed to. Must be publicly reachable. |
+| `eventTypes` | `string[] \| null` | No | Event types this webhook subscribes to. Unknown types are rejected. |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `secret` | `string \| null` | No | HMAC-SHA256 signing secret, prefixed `whsec_`. Shown once here; store it now. Use it to verify the signature on every delivery. |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a Webhook. Delete a webhook. Deliveries stop immediately and the signing secret is retired. Events that occurred before the delete are not replayed if the endpoint is registered again. Cannot be undone.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.browserbase.api.webhooks.delete({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The webhook ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Browserbase accepted the call; it answered with no body. |
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Get a Webhook. Retrieve a single webhook by ID. The signing secret is not included; it is only ever returned on create and rotate.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.webhooks.get({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The webhook ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique identifier for the webhook. |
+| `projectId` | `string \| null` | No | The project the webhook belongs to. |
+| `endpoint` | `string \| null` | No | HTTPS URL that event deliveries are POSTed to. Must be publicly reachable. |
+| `eventTypes` | `string[] \| null` | No | Event types this webhook subscribes to. Unknown types are rejected. |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List Webhooks. List the project's webhooks, newest first. Signing secrets are not included. Page by passing the previous response's nextCursor as cursor; a null nextCursor means there are no further pages.
+
+**Risk:** `read`
+
+```ts
+await corsair.browserbase.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Maximum number of results to return. |
+| `cursor` | `string` | No | Cursor from a previous response's `nextCursor`. Omit for the first page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | The page of webhooks, newest first. |
+| `limit` | `number \| null` | No | The maximum number of results returned in this page. |
+| `nextCursor` | `string \| null \| null` | No | Cursor for the next page. Pass it back as `cursor` to continue paging. null when there are no more results. |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  projectId?: string | null,
+  endpoint?: string | null,
+  eventTypes?: string[] | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rotateSecret
+
+`webhooks.rotateSecret`
+
+Rotate a Webhook signing secret. Issue a new signing secret for a webhook. By default the previous secret keeps verifying for 24 hours so a receiver can be updated without dropping deliveries; pass revokeImmediately to end that window at once. The new secret is returned only here.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.browserbase.api.webhooks.rotateSecret({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The webhook ID. |
+| `revokeImmediately` | `boolean` | No | Expire the old secret at once instead of honouring it for 24 hours. Use when responding to a leak; deliveries signed with the old secret stop verifying immediately. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `secret` | `string \| null` | No | The new signing secret, prefixed `whsec_`. |
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a Webhook. Update a webhook's endpoint URL, its subscribed event types, or both. Omitted fields are left unchanged. eventTypes replaces the existing subscription rather than adding to it. The signing secret is unaffected.
+
+**Risk:** `write`
+
+```ts
+await corsair.browserbase.api.webhooks.update({ id: 'doc_8f2k1x9q' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The webhook ID. |
+| `endpoint` | `string` | No | HTTPS URL that event deliveries are POSTed to. Must be publicly reachable. |
+| `eventTypes` | `(functions.builds.running \| functions.builds.completed \| functions.builds.failed \| functions.invocations.pending \| functions.invocations.running \| functions.invocations.completed \| functions.invocations.failed)[]` | No | Event types this webhook subscribes to. Unknown types are rejected. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Unique identifier for the webhook. |
+| `projectId` | `string \| null` | No | The project the webhook belongs to. |
+| `endpoint` | `string \| null` | No | HTTPS URL that event deliveries are POSTed to. Must be publicly reachable. |
+| `eventTypes` | `string[] \| null` | No | Event types this webhook subscribes to. Unknown types are rejected. |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+
+
+
+---
+

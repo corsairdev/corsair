@@ -1,0 +1,178 @@
+# Display copy for the generated docs and the catalog, plus one call
+# example per operation. Generated with the plugin from Browserbase's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Browserbase
+domain: browserbase.com
+description: "Cloud browsers for AI agents with Browserbase: start, inspect, label and release browser sessions with live debug URLs, logs, replays and recordings, keep logins in contexts and secrets, run Functions and agents, fetch pages and search the web, and receive signed webhooks (76 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key at browserbase.com/settings. It acts on its project. Things to know before you write:
+
+  - **Sessions cost money while they run.** `sessions.create` starts a cloud browser billed by the minute; it runs until its `timeout`, or until `sessions.update` sets `status: "REQUEST_RELEASE"`. Both are `destructive`. Connect over CDP with the session's `connectUrl`, or open `sessions.debug` for live view URLs.
+  - **Logins and state.** `contexts.*` keep cookies and storage between sessions; `secrets.*` hold credentials the browser fills in (encrypt them with `secrets.keypair` first); `navigationPolicies.*` limit where a session can go.
+  - **Recordings.** `sessions.replays.get` lists a session's pages; `sessions.recordingDownloads.create` asks for MP4s, then `sessions.recordingDownloads.list` shows their status and download links.
+  - **Functions and agents.** `functions.invoke` runs a deployed Function and `agents.runs.create` starts an agent run; both spend compute and are `destructive`.
+  - **Fetch and search.** `fetch.page` returns a page's content without a full session and `search.web` searches the web; both are metered reads.
+  - **Webhooks.** `webhooks.create` registers an endpoint and returns its signing secret once. Browserbase signs deliveries with Standard Webhooks (`webhook-id`, `webhook-timestamp`, `webhook-signature`); the plugin verifies them with that secret for the Function invocation and build events.
+examples:
+  read:
+    path: sessions.list
+    title: List browser sessions
+    args: {}
+  write:
+    path: fetch.page
+    title: Fetch a page without a browser session
+    args: {"url": "https://example.com"}
+apiExamples:
+  agents.create:
+    args: {"name": "example"}
+  agents.delete:
+    args: {"agentId": "example"}
+  agents.get:
+    args: {"agentId": "example"}
+  agents.list:
+    args: {}
+  agents.runs.create:
+    args: {"task": "example"}
+  agents.runs.get:
+    args: {"runId": "example"}
+  agents.runs.list:
+    args: {}
+  agents.runs.messages:
+    args: {"runId": "example"}
+  agents.runs.resume:
+    args: {"runId": "example"}
+  agents.runs.stop:
+    args: {"runId": "example"}
+  agents.update:
+    args: {"agentId": "example"}
+  certificates.delete:
+    args: {"id": "doc_8f2k1x9q"}
+  certificates.get:
+    args: {"id": "doc_8f2k1x9q"}
+  certificates.list:
+    args: {}
+  certificates.upload:
+    args: {"file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  contexts.create:
+    args: {}
+  contexts.delete:
+    args: {"id": "doc_8f2k1x9q"}
+  contexts.get:
+    args: {"id": "doc_8f2k1x9q"}
+  downloads.delete:
+    args: {"id": "doc_8f2k1x9q"}
+  downloads.get:
+    args: {"id": "doc_8f2k1x9q"}
+  downloads.list:
+    args: {"sessionId": "example"}
+  extensions.delete:
+    args: {"id": "doc_8f2k1x9q"}
+  extensions.get:
+    args: {"id": "doc_8f2k1x9q"}
+  extensions.upload:
+    args: {"file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  fetch.page:
+    args: {"url": "https://example.com"}
+  functions.builds.get:
+    args: {"id": "doc_8f2k1x9q"}
+  functions.builds.list:
+    args: {}
+  functions.builds.logs:
+    args: {"id": "doc_8f2k1x9q"}
+  functions.get:
+    args: {"id": "doc_8f2k1x9q"}
+  functions.invocations.get:
+    args: {"id": "doc_8f2k1x9q"}
+  functions.invocations.logs:
+    args: {"id": "doc_8f2k1x9q"}
+  functions.invoke:
+    args: {"id": "doc_8f2k1x9q"}
+  functions.list:
+    args: {}
+  functions.secrets.attach:
+    args: {"id": "doc_8f2k1x9q", "secretId": "example"}
+  functions.secrets.detach:
+    args: {"id": "doc_8f2k1x9q", "secretId": "example"}
+  functions.secrets.list:
+    args: {"id": "doc_8f2k1x9q"}
+  functions.versions.get:
+    args: {"id": "doc_8f2k1x9q"}
+  functions.versions.invocations:
+    args: {"id": "doc_8f2k1x9q"}
+  functions.versions.list:
+    args: {"id": "doc_8f2k1x9q"}
+  labels.create:
+    args: {"name": "example"}
+  labels.delete:
+    args: {"labelId": "example"}
+  labels.list:
+    args: {}
+  labels.update:
+    args: {"labelId": "example", "name": "example"}
+  navigationPolicies.create:
+    args: {"name": "example"}
+  navigationPolicies.delete:
+    args: {"id": "doc_8f2k1x9q"}
+  navigationPolicies.get:
+    args: {"id": "doc_8f2k1x9q"}
+  navigationPolicies.list:
+    args: {}
+  navigationPolicies.update:
+    args: {"id": "doc_8f2k1x9q"}
+  projects.get:
+    args: {"id": "doc_8f2k1x9q"}
+  projects.list:
+    args: {}
+  projects.usage:
+    args: {"id": "doc_8f2k1x9q"}
+  search.web:
+    args: {"query": "corsair agent integrations"}
+  secrets.create:
+    args: {"secretKey": "example", "sealedSecretValue": "example", "keypairId": "example"}
+  secrets.delete:
+    args: {"id": "doc_8f2k1x9q"}
+  secrets.get:
+    args: {"id": "doc_8f2k1x9q"}
+  secrets.keypair:
+    args: {}
+  secrets.list:
+    args: {}
+  secrets.update:
+    args: {"id": "doc_8f2k1x9q", "sealedSecretValue": "example", "keypairId": "example"}
+  sessions.create:
+    args: {"keepAlive": false, "timeout": 120}
+  sessions.debug:
+    args: {"id": "doc_8f2k1x9q"}
+  sessions.get:
+    args: {"id": "doc_8f2k1x9q"}
+  sessions.list:
+    args: {}
+  sessions.logs:
+    args: {"id": "doc_8f2k1x9q"}
+  sessions.recordingDownloads.create:
+    args: {"id": "doc_8f2k1x9q"}
+  sessions.recordingDownloads.list:
+    args: {"id": "doc_8f2k1x9q"}
+  sessions.replays.get:
+    args: {"id": "doc_8f2k1x9q"}
+  sessions.replays.page:
+    args: {"id": "doc_8f2k1x9q", "pageId": "0"}
+  sessions.setLabels:
+    args: {"id": "doc_8f2k1x9q", "labels": ["example"]}
+  sessions.update:
+    args: {"id": "doc_8f2k1x9q", "status": "REQUEST_RELEASE"}
+  sessions.uploadFile:
+    args: {"id": "doc_8f2k1x9q", "file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  webhooks.create:
+    args: {"endpoint": "https://example.com/webhooks/browserbase", "eventTypes": ["functions.builds.running"]}
+  webhooks.delete:
+    args: {"id": "doc_8f2k1x9q"}
+  webhooks.get:
+    args: {"id": "doc_8f2k1x9q"}
+  webhooks.list:
+    args: {}
+  webhooks.rotateSecret:
+    args: {"id": "doc_8f2k1x9q"}
+  webhooks.update:
+    args: {"id": "doc_8f2k1x9q"}
