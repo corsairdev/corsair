@@ -13324,5 +13324,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-27",
+    "package": "@corsair-dev/instabox",
+    "dir": "packages/instabox",
+    "name": "InstaBox",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-27",
+    "package": "@corsair-dev/supermemory",
+    "dir": "packages/supermemory",
+    "name": "Supermemory",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-27",
+    "package": "@corsair-dev/woocommerce",
+    "dir": "packages/woocommerce",
+    "name": "WooCommerce",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
