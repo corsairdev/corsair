@@ -215,8 +215,13 @@ describe('every operation', () => {
 					: operation.plane === 'analytics'
 						? ANALYTICS
 						: BASE;
-			const path = url.toString().split('?')[0]?.slice(prefix.length) ?? '';
-			if (!url.toString().startsWith(prefix)) {
+			const base = new URL(prefix);
+			const basePath = base.pathname.replace(/\/$/, '');
+			const path = url.pathname.slice(basePath.length);
+			if (
+				url.origin !== base.origin ||
+				!(url.pathname === basePath || url.pathname.startsWith(`${basePath}/`))
+			) {
 				failures.push(`${operation.id}: base ${url.toString()}`);
 			}
 			if (!pattern.test(decodeURIComponent(path))) {
