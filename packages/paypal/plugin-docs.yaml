@@ -1,0 +1,292 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from PayPal's OpenAPI specs;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: PayPal
+domain: paypal.com
+description: "PayPal REST APIs: Checkout orders (create, authorize, capture, track), payments (authorizations, captures, refunds), invoices and templates, subscriptions and billing plans, catalog products, payouts, disputes, vaulted payment tokens, transaction search and balances, shipment tracking, partner referrals, web experience profiles and webhook management, plus verified webhooks for every event type (114 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Each account stores a PayPal app's client id as `client_id` and its secret
+  as the key (developer.paypal.com → Apps & Credentials). On a new tenant, set
+  both: the secret with the usual API-key setup, and the client id in the
+  account's `client_id` field. In code, pass both to the plugin instead:
+  `paypal({ key: secret, clientId, environment: 'sandbox' })`. The plugin
+  trades them for an access token (OAuth client credentials) and reuses it
+  until it nears expiry. Sandbox and live apps are separate: set
+  `environment` to `sandbox` or `live`, or leave it empty and the plugin tries
+  live first and falls back to sandbox when live doesn't know the client id.
+
+  - **Money and email go through `destructive` operations**: capturing,
+  authorizing, reauthorizing and voiding payments, refunds, payouts,
+  subscription captures, cancellations, suspensions and revisions, sending,
+  reminding and updating invoices (an update emails the recipient unless
+  `send_to_recipient` is false), recording payments and refunds, tracking
+  numbers that can email the buyer, and every dispute action (accepting a
+  claim refunds the buyer). `orders.create` is `destructive` too: with a card
+  `payment_source` and intent `CAPTURE`, PayPal captures in the same call.
+  Without a payment source it only makes a draft order for the buyer to
+  approve. Deletes are `destructive`.
+  - **Idempotency.** Many writes take `paypal_request_id` (the
+  PayPal-Request-Id header; check the operation's inputs). Use a new id for
+  each new action. A retry with the same id returns the first result instead
+  of acting twice, but only while PayPal keeps the id (hours to days,
+  depending on the API); after that, look the result up before retrying.
+  `prefer: "return=representation"` returns the full resource.
+  - **Partial updates** (`orders.update`, `plans.update`,
+  `subscriptions.update`, `products.update`, `disputes.update`,
+  `webProfiles.update`) take `patch`, a JSON Patch list such as
+  `[{ "op": "add", "path": "/description", "value": "..." }]` (`replace` only
+  works on a field that is already set), and answer 204 as `{ success: true }`.
+  `invoices.update` and `invoices.templates.update` replace the whole
+  resource: send every field you want to keep.
+  - **Dispute evidence** goes as a multipart form: the `input` field is the
+  JSON part (evidences, notes) and the document fields take a file.
+  - **Webhooks.** Create one with `webhooks.create` (your Corsair webhook URL
+  and the event types) and give the plugin its id as `webhookId` (or store it
+  as the account's webhook signature). Corsair checks each delivery's
+  signature itself, without PayPal's verification API, against PayPal's
+  certificate (PAYPAL-CERT-URL, which must be on paypal.com) and that webhook
+  id. It downloads that certificate over HTTPS the first time it sees it, so
+  the server needs outbound access to PayPal. Deliveries are then routed by
+  `event_type` to `checkoutOrder`, `paymentCapture`, `paymentAuthorization`,
+  `sale`, `subscription`, `plan`, `invoice`, `dispute`, `payout`, `vault`,
+  `catalogProduct` or `other`. `webhooks.verifySignature` does the same check
+  through PayPal's API.
+examples:
+  read:
+    path: orders.get
+    title: Get an order
+    args: {"id": "5O190127TN364715T"}
+  write:
+    path: products.create
+    title: Create a catalog product
+    args: {"name": "Corsair Pro", "type": "SERVICE", "category": "SOFTWARE"}
+apiExamples:
+  balances.get:
+    args: {}
+  disputes.acceptClaim:
+    args: {"id": "5O190127TN364715T"}
+  disputes.acceptOffer:
+    args: {"id": "5O190127TN364715T"}
+  disputes.acknowledgeReturnItem:
+    args: {"id": "5O190127TN364715T"}
+  disputes.adjudicate:
+    args: {"id": "5O190127TN364715T", "adjudication_outcome": "BUYER_FAVOR"}
+  disputes.appeal:
+    args: {"id": "5O190127TN364715T"}
+  disputes.denyOffer:
+    args: {"id": "5O190127TN364715T", "note": "example"}
+  disputes.escalate:
+    args: {"id": "5O190127TN364715T"}
+  disputes.get:
+    args: {"id": "5O190127TN364715T"}
+  disputes.list:
+    args: {}
+  disputes.makeOffer:
+    args: {"id": "5O190127TN364715T", "note": "example", "offer_type": "REFUND"}
+  disputes.provideEvidence:
+    args: {"id": "5O190127TN364715T"}
+  disputes.provideSupportingInfo:
+    args: {"id": "5O190127TN364715T"}
+  disputes.requireEvidence:
+    args: {"id": "5O190127TN364715T", "action": "BUYER_EVIDENCE"}
+  disputes.sendMessage:
+    args: {"id": "5O190127TN364715T"}
+  disputes.update:
+    args: {"id": "5O190127TN364715T", "patch": [{"op": "add"}]}
+  invoices.accountingConnections:
+    args: {}
+  invoices.accountingSync:
+    args: {"id": "1001"}
+  invoices.cancel:
+    args: {"invoice_id": "INV2-Z56S-5LLA-Q52L-CPZ5"}
+  invoices.create:
+    args: {"detail": {"currency_code": "USD", "invoice_number": "CORS-1001"}, "primary_recipients": [{"billing_info": {"email_address": "ada@example.com"}}], "items": [{"name": "Consulting", "quantity": "2", "unit_amount": {"currency_code": "USD", "value": "100.00"}}]}
+  invoices.delete:
+    args: {"invoice_id": "INV2-Z56S-5LLA-Q52L-CPZ5"}
+  invoices.deletePayment:
+    args: {"invoice_id": "INV2-Z56S-5LLA-Q52L-CPZ5", "transaction_id": "EXTR-86F38350LX4353815"}
+  invoices.deleteRefund:
+    args: {"invoice_id": "INV2-Z56S-5LLA-Q52L-CPZ5", "transaction_id": "EXTR-86F38350LX4353815"}
+  invoices.generateQrCode:
+    args: {"invoice_id": "INV2-Z56S-5LLA-Q52L-CPZ5"}
+  invoices.get:
+    args: {"invoice_id": "INV2-Z56S-5LLA-Q52L-CPZ5"}
+  invoices.list:
+    args: {}
+  invoices.nextNumber:
+    args: {}
+  invoices.recordPayment:
+    args: {"invoice_id": "INV2-Z56S-5LLA-Q52L-CPZ5", "method": "BANK_TRANSFER"}
+  invoices.recordRefund:
+    args: {"invoice_id": "INV2-Z56S-5LLA-Q52L-CPZ5", "method": "BANK_TRANSFER"}
+  invoices.remind:
+    args: {"invoice_id": "INV2-Z56S-5LLA-Q52L-CPZ5"}
+  invoices.search:
+    args: {}
+  invoices.send:
+    args: {"invoice_id": "INV2-Z56S-5LLA-Q52L-CPZ5"}
+  invoices.templates.create:
+    args: {}
+  invoices.templates.delete:
+    args: {"template_id": "TEMP-19V05281TU309413B"}
+  invoices.templates.get:
+    args: {"template_id": "TEMP-19V05281TU309413B"}
+  invoices.templates.list:
+    args: {}
+  invoices.templates.update:
+    args: {"template_id": "TEMP-19V05281TU309413B"}
+  invoices.update:
+    args: {"invoice_id": "INV2-Z56S-5LLA-Q52L-CPZ5", "send_to_recipient": false, "detail": {"currency_code": "USD", "invoice_number": "CORS-1001", "note": "Thanks for your business."}, "primary_recipients": [{"billing_info": {"email_address": "ada@example.com"}}], "items": [{"name": "Consulting", "quantity": "3", "unit_amount": {"currency_code": "USD", "value": "100.00"}}]}
+  orders.authorize:
+    args: {"id": "5O190127TN364715T"}
+  orders.capture:
+    args: {"id": "5O190127TN364715T"}
+  orders.confirmPaymentSource:
+    args: {"id": "5O190127TN364715T", "payment_source": {}}
+  orders.create:
+    args: {"intent": "CAPTURE", "purchase_units": [{"reference_id": "order-1001", "amount": {"currency_code": "USD", "value": "49.00"}}], "paypal_request_id": "7b92603e-77ed-4896-8e78-5dea2050476a"}
+  orders.get:
+    args: {"id": "5O190127TN364715T"}
+  orders.trackers.create:
+    args: {"id": "5O190127TN364715T", "tracking_number": "example", "carrier": "DPD_RU", "capture_id": "2GG279541U471931P"}
+  orders.trackers.update:
+    args: {"id": "5O190127TN364715T", "tracker_id": "443844607820", "patch": [{"op": "add"}]}
+  orders.update:
+    args: {"id": "5O190127TN364715T", "patch": [{"op": "replace", "path": "/purchase_units/@reference_id=='order-1001'/description", "value": "Corsair hoodie"}]}
+  partnerReferrals.create:
+    args: {"operations": [{"operation": "API_INTEGRATION"}], "legal_consents": [{"type": "SHARE_DATA_CONSENT", "granted": true}]}
+  partnerReferrals.get:
+    args: {"partner_referral_id": "ZjcyODU4ZWYtYTA1OC00ODIwLTk2M2EtOTZkZWQ4NmQwYzI3"}
+  payments.authorizations.capture:
+    args: {"authorization_id": "0VF52814937998046"}
+  payments.authorizations.get:
+    args: {"authorization_id": "0VF52814937998046"}
+  payments.authorizations.reauthorize:
+    args: {"authorization_id": "0VF52814937998046"}
+  payments.authorizations.void:
+    args: {"authorization_id": "0VF52814937998046"}
+  payments.captures.get:
+    args: {"capture_id": "2GG279541U471931P"}
+  payments.captures.refund:
+    args: {"capture_id": "2GG279541U471931P", "amount": {"currency_code": "USD", "value": "10.00"}, "note_to_payer": "Partial refund for a late delivery"}
+  payments.findEligibleMethods:
+    args: {}
+  payments.refunds.get:
+    args: {"refund_id": "1JU08902781691411"}
+  payouts.create:
+    args: {"sender_batch_header": {"sender_batch_id": "batch-2026-11-27", "email_subject": "You have a payout"}, "items": [{"recipient_type": "EMAIL", "amount": {"value": "5.00", "currency": "USD"}, "receiver": "ada@example.com", "note": "Thanks!"}]}
+  payouts.get:
+    args: {"id": "5O190127TN364715T"}
+  payouts.items.cancel:
+    args: {"payout_item_id": "8AELMXH8UB2P8"}
+  payouts.items.get:
+    args: {"payout_item_id": "8AELMXH8UB2P8"}
+  plans.activate:
+    args: {"id": "5O190127TN364715T"}
+  plans.create:
+    args: {"name": "Example", "billing_cycles": [{"frequency": {"interval_unit": "DAY"}, "tenure_type": "REGULAR", "sequence": 1}], "payment_preferences": {}, "product_id": "PROD-XYAB12ABSB7868434"}
+  plans.deactivate:
+    args: {"id": "5O190127TN364715T"}
+  plans.get:
+    args: {"id": "5O190127TN364715T"}
+  plans.list:
+    args: {}
+  plans.update:
+    args: {"id": "5O190127TN364715T", "patch": [{"op": "add"}]}
+  plans.updatePricing:
+    args: {"id": "5O190127TN364715T", "pricing_schemes": [{"billing_cycle_sequence": 1, "pricing_scheme": {}}]}
+  products.create:
+    args: {"name": "Corsair Pro", "type": "SERVICE", "category": "SOFTWARE"}
+  products.get:
+    args: {"product_id": "PROD-XYAB12ABSB7868434"}
+  products.list:
+    args: {}
+  products.update:
+    args: {"product_id": "PROD-XYAB12ABSB7868434", "patch": [{"op": "add"}]}
+  subscriptions.activate:
+    args: {"id": "5O190127TN364715T"}
+  subscriptions.cancel:
+    args: {"id": "5O190127TN364715T", "reason": "example"}
+  subscriptions.capture:
+    args: {"id": "5O190127TN364715T", "note": "example", "capture_type": "OUTSTANDING_BALANCE", "amount": {"currency_code": "USD", "value": "10.00"}}
+  subscriptions.create:
+    args: {"plan_id": "P-5ML4271244454362WXNWU5NQ"}
+  subscriptions.get:
+    args: {"id": "5O190127TN364715T"}
+  subscriptions.revise:
+    args: {"id": "5O190127TN364715T"}
+  subscriptions.suspend:
+    args: {"id": "5O190127TN364715T", "reason": "example"}
+  subscriptions.transactions:
+    args: {"id": "5O190127TN364715T", "start_time": "2026-11-27T10:00:00Z", "end_time": "2026-11-27T10:00:00Z"}
+  subscriptions.update:
+    args: {"id": "5O190127TN364715T", "patch": [{"op": "add"}]}
+  trackers.create:
+    args: {}
+  trackers.createBatch:
+    args: {}
+  trackers.get:
+    args: {"id": "5O190127TN364715T"}
+  trackers.list:
+    args: {"transaction_id": "EXTR-86F38350LX4353815"}
+  trackers.update:
+    args: {"id": "5O190127TN364715T", "transaction_id": "EXTR86F38350LX4353815", "status": "CANCELLED"}
+  transactions.list:
+    args: {"start_date": "2026-11-01T00:00:00-07:00", "end_date": "2026-11-27T23:59:59-07:00", "fields": "all", "page_size": 100}
+  vault.paymentTokens.create:
+    args: {"payment_source": {}}
+  vault.paymentTokens.delete:
+    args: {"id": "5O190127TN364715T"}
+  vault.paymentTokens.get:
+    args: {"id": "5O190127TN364715T"}
+  vault.paymentTokens.list:
+    args: {"customer_id": "example"}
+  vault.setupTokens.create:
+    args: {"payment_source": {}}
+  vault.setupTokens.get:
+    args: {"id": "5O190127TN364715T"}
+  webProfiles.create:
+    args: {"paypal_request_id": "7b92603e-77ed-4896-8e78-5dea2050476a", "name": "Example"}
+  webProfiles.delete:
+    args: {"id": "5O190127TN364715T"}
+  webProfiles.get:
+    args: {"id": "5O190127TN364715T"}
+  webProfiles.list:
+    args: {}
+  webProfiles.replace:
+    args: {"id": "5O190127TN364715T", "name": "Example"}
+  webProfiles.update:
+    args: {"id": "5O190127TN364715T", "patch": [{"op": "add"}]}
+  webhooks.availableEventTypes:
+    args: {}
+  webhooks.create:
+    args: {"url": "https://example.com/hooks/corsair", "event_types": [{"name": "PAYMENT.CAPTURE.COMPLETED"}, {"name": "CHECKOUT.ORDER.APPROVED"}]}
+  webhooks.delete:
+    args: {"webhook_id": "0EH40505U7160970P"}
+  webhooks.eventTypes:
+    args: {"webhook_id": "0EH40505U7160970P"}
+  webhooks.events.get:
+    args: {"event_id": "WH6TD369808N914414D"}
+  webhooks.events.list:
+    args: {}
+  webhooks.events.resend:
+    args: {"event_id": "WH6TD369808N914414D"}
+  webhooks.get:
+    args: {"webhook_id": "0EH40505U7160970P"}
+  webhooks.list:
+    args: {}
+  webhooks.lookups.create:
+    args: {}
+  webhooks.lookups.delete:
+    args: {"webhook_lookup_id": "0EH40505U7160970P"}
+  webhooks.lookups.get:
+    args: {"webhook_lookup_id": "0EH40505U7160970P"}
+  webhooks.lookups.list:
+    args: {}
+  webhooks.simulateEvent:
+    args: {"event_type": "PAYMENT.CAPTURE.COMPLETED"}
+  webhooks.update:
+    args: {"webhook_id": "0EH40505U7160970P", "patch": [{"op": "add"}]}
+  webhooks.verifySignature:
+    args: {"auth_algo": "example", "cert_url": "https://example.com/hooks/corsair", "transmission_id": "example", "transmission_sig": "example", "transmission_time": "2026-04-09T10:00:00Z", "webhook_id": "0EH40505U7160970P", "webhook_event": {}}

@@ -531,6 +531,7 @@ export const BaseProviders = [
 	'passcreator',
 	'payhere',
 	'payhip',
+	'paypal',
 	'paystack',
 	'pdf4me',
 	'pdfapi',
@@ -1340,6 +1341,7 @@ export const ProviderDisplayNames = {
 	passcreator: 'Passcreator',
 	payhere: 'Payhere',
 	payhip: 'Payhip',
+	paypal: 'PayPal',
 	paystack: 'Paystack',
 	pdf4me: 'PDF4me',
 	pdfapi: 'PDF-API.io',
@@ -2156,6 +2158,7 @@ export type AllProviders =
 	| 'passcreator'
 	| 'payhere'
 	| 'payhip'
+	| 'paypal'
 	| 'paystack'
 	| 'pdf4me'
 	| 'pdfapi'

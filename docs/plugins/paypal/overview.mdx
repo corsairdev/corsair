@@ -1,0 +1,184 @@
+---
+title: "PayPal plugin"
+sidebarTitle: "Overview"
+description: "PayPal REST APIs: Checkout orders (create, authorize, capture, track), payments (authorizations, captures, refunds), invoices and templates, subscriptions and billing plans, catalog products, payouts, disputes, vaulted payment tokens, transaction search and balances, shipment tracking, partner referrals, web experience profiles and webhook management, plus verified webhooks for every event type (114 operations)."
+---
+
+Use **PayPal** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Each account stores a PayPal app's client id as `client_id` and its secret
+as the key (developer.paypal.com → Apps & Credentials). On a new tenant, set
+both: the secret with the usual API-key setup, and the client id in the
+account's `client_id` field. In code, pass both to the plugin instead:
+`paypal({ key: secret, clientId, environment: 'sandbox' })`. The plugin
+trades them for an access token (OAuth client credentials) and reuses it
+until it nears expiry. Sandbox and live apps are separate: set
+`environment` to `sandbox` or `live`, or leave it empty and the plugin tries
+live first and falls back to sandbox when live doesn't know the client id.
+
+- **Money and email go through `destructive` operations**: capturing,
+authorizing, reauthorizing and voiding payments, refunds, payouts,
+subscription captures, cancellations, suspensions and revisions, sending,
+reminding and updating invoices (an update emails the recipient unless
+`send_to_recipient` is false), recording payments and refunds, tracking
+numbers that can email the buyer, and every dispute action (accepting a
+claim refunds the buyer). `orders.create` is `destructive` too: with a card
+`payment_source` and intent `CAPTURE`, PayPal captures in the same call.
+Without a payment source it only makes a draft order for the buyer to
+approve. Deletes are `destructive`.
+- **Idempotency.** Many writes take `paypal_request_id` (the
+PayPal-Request-Id header; check the operation's inputs). Use a new id for
+each new action. A retry with the same id returns the first result instead
+of acting twice, but only while PayPal keeps the id (hours to days,
+depending on the API); after that, look the result up before retrying.
+`prefer: "return=representation"` returns the full resource.
+- **Partial updates** (`orders.update`, `plans.update`,
+`subscriptions.update`, `products.update`, `disputes.update`,
+`webProfiles.update`) take `patch`, a JSON Patch list such as
+`[{ "op": "add", "path": "/description", "value": "..." }]` (`replace` only
+works on a field that is already set), and answer 204 as `{ success: true }`.
+`invoices.update` and `invoices.templates.update` replace the whole
+resource: send every field you want to keep.
+- **Dispute evidence** goes as a multipart form: the `input` field is the
+JSON part (evidences, notes) and the document fields take a file.
+- **Webhooks.** Create one with `webhooks.create` (your Corsair webhook URL
+and the event types) and give the plugin its id as `webhookId` (or store it
+as the account's webhook signature). Corsair checks each delivery's
+signature itself, without PayPal's verification API, against PayPal's
+certificate (PAYPAL-CERT-URL, which must be on paypal.com) and that webhook
+id. It downloads that certificate over HTTPS the first time it sees it, so
+the server needs outbound access to PayPal. Deliveries are then routed by
+`event_type` to `checkoutOrder`, `paymentCapture`, `paymentAuthorization`,
+`sale`, `subscription`, `plan`, `invoice`, `dispute`, `payout`, `vault`,
+`catalogProduct` or `other`. `webhooks.verifySignature` does the same check
+through PayPal's API.
+
+**What you get:**
+
+- 114 typed API operations
+- 12 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/paypal better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/paypal better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/paypal better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/paypal better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { paypal } from '@corsair-dev/paypal';
+
+export const corsair = createCorsair({
+	plugins: [
+		paypal(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the PayPal API key before the first call: `pnpm corsair setup --plugin=paypal --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+paypal()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'paypal',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Get an order**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.paypal.api.orders.get({ id: '5O190127TN364715T' });
+```
+
+
+**Create a catalog product**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.paypal.api.products.create({ name: 'Corsair Pro', type: 'SERVICE', category: 'SOFTWARE' });
+```
+
+
+See the full list on the [API](/plugins/paypal/api) page.
+
+## Webhooks
+
+This plugin registers **12** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/paypal/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/paypal/api">
+    Every `paypal.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/paypal/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
