@@ -1,5 +1,5 @@
 import type { KyselyPlugin, SqliteDialectConfig } from 'kysely';
-import { Kysely, PostgresDialect, SqliteDialect } from 'kysely';
+import { Kysely, PostgresDialect, SqliteAdapter, SqliteDialect } from 'kysely';
 import { PostgresJSDialect } from 'kysely-postgres-js';
 import type { Pool } from 'pg';
 import type { ReservedSql, Sql, UnsafeQueryOptions } from 'postgres';
@@ -25,8 +25,10 @@ import {
 
 export type {
 	CorsairCoreTableName,
+	CorsairDatabaseDialect,
 	CorsairDbTables,
 	CorsairResolvedTableNames,
+	ValidateCorsairDbTablesOptions,
 } from './table-names.js';
 export {
 	CORSAIR_CORE_TABLE_NAMES,
@@ -218,12 +220,44 @@ function buildKyselyPlugins(
 	return plugins;
 }
 
+function isSqliteAdapter(adapter: unknown): boolean {
+	if (adapter instanceof SqliteAdapter) return true;
+	if (typeof adapter !== 'object' || adapter === null) return false;
+	const candidate = adapter as {
+		constructor?: { name?: unknown };
+		supportsTransactionalDdl?: unknown;
+		supportsReturning?: unknown;
+	};
+	if (candidate.constructor?.name === 'SqliteAdapter') return true;
+	// Fallback across separate kysely copies or minified builds: among built-in
+	// Kysely adapters only SQLite sets supportsTransactionalDdl=false and supportsReturning=true.
+	return (
+		candidate.supportsTransactionalDdl === false &&
+		candidate.supportsReturning === true
+	);
+}
+
+function isSqliteDatabaseInput(input: CorsairDatabaseInput): boolean {
+	if (isBetterSqlite3(input)) return true;
+	if (isKysely(input)) {
+		const getExecutor = (
+			input as unknown as { getExecutor?: () => { adapter?: unknown } }
+		).getExecutor;
+		if (typeof getExecutor === 'function') {
+			return isSqliteAdapter(getExecutor.call(input)?.adapter);
+		}
+	}
+	return false;
+}
+
 // The factory always resolves the names; only a hand-built literal may omit them.
 export function createCorsairDatabase(
 	input: CorsairDatabaseInput,
 	options?: CreateCorsairDatabaseOptions,
 ): CorsairDatabase & { tableNames: CorsairResolvedTableNames } {
-	validateCorsairDbTables(options?.dbTables);
+	validateCorsairDbTables(options?.dbTables, {
+		dialect: isSqliteDatabaseInput(input) ? 'sqlite' : 'postgres',
+	});
 	const tableNames = resolveCorsairDbTables(options?.dbTables);
 
 	if (isKysely(input)) {

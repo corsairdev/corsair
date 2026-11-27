@@ -54,12 +54,34 @@ export function resolveCorsairDbTables(
 	};
 }
 
+export type CorsairDatabaseDialect = 'sqlite' | 'postgres';
+
+export type ValidateCorsairDbTablesOptions = {
+	/** Database dialect whose identifier casing rules apply (defaults to 'postgres'). */
+	dialect?: CorsairDatabaseDialect;
+	/** Explicit override for case-insensitive physical table name uniqueness checks. */
+	caseInsensitive?: boolean;
+};
+
+function normalizePhysicalTableName(
+	physical: string,
+	caseInsensitive: boolean,
+): string {
+	// SQLite folds only ASCII A-Z/a-z when comparing table identifiers.
+	return caseInsensitive
+		? physical.replace(/[A-Z]/g, (ch) => ch.toLowerCase())
+		: physical;
+}
+
 /** Postgres truncates an identifier past this, silently. */
 const MAX_IDENTIFIER_BYTES = 63;
 
 const utf8 = new TextEncoder();
 
-export function validateCorsairDbTables(overrides?: CorsairDbTables): void {
+export function validateCorsairDbTables(
+	overrides?: CorsairDbTables,
+	options?: ValidateCorsairDbTablesOptions,
+): void {
 	if (!overrides) return;
 
 	for (const key of Object.keys(overrides)) {
@@ -86,20 +108,31 @@ export function validateCorsairDbTables(overrides?: CorsairDbTables): void {
 		}
 	}
 
+	const caseInsensitive =
+		options?.caseInsensitive ?? options?.dialect === 'sqlite';
+
 	// Over the resolved set, so an override onto a table left at its default
 	// collides too. Scoped to one client: two instances picking the same name
 	// is the caller's to prevent.
 	const resolved = resolveCorsairDbTables(overrides);
-	const owners = new Map<string, CorsairCoreTableName>();
+	const owners = new Map<
+		string,
+		{ key: CorsairCoreTableName; physical: string }
+	>();
 	for (const key of CORSAIR_CORE_TABLE_NAMES) {
 		const physical = resolved[key];
-		const owner = owners.get(physical);
+		const normalized = normalizePhysicalTableName(physical, caseInsensitive);
+		const owner = owners.get(normalized);
 		if (owner) {
+			const detail =
+				owner.physical === physical
+					? `"${physical}"`
+					: `"${owner.physical}" vs "${physical}"`;
 			throw new Error(
-				`dbTables: duplicate physical table name "${physical}" (${owner} and ${key}). Each logical Corsair table must map to a unique name.`,
+				`dbTables: duplicate physical table name ${detail} (${owner.key} and ${key}). Each logical Corsair table must map to a unique name.`,
 			);
 		}
-		owners.set(physical, key);
+		owners.set(normalized, { key, physical });
 	}
 }
 

@@ -1,7 +1,11 @@
 // @ts-expect-error - better-sqlite3 types may not be available
 import Database from 'better-sqlite3';
+import { Kysely, SqliteDialect } from 'kysely';
 import type { CorsairDatabase } from '../db/kysely/database';
-import { createCorsairDatabase } from '../db/kysely/database';
+import {
+	createCorsairDatabase,
+	validateCorsairDbTables,
+} from '../db/kysely/database';
 
 describe('dbTables name mapping', () => {
 	it('rewrites Kysely SQL to physical table names', async () => {
@@ -123,5 +127,111 @@ describe('dbTables name mapping', () => {
 		const database: CorsairDatabase = { db };
 		expect(database.db).toBe(db);
 		sqlite.close();
+	});
+
+	it('rejects case-only duplicate physical table names on SQLite', () => {
+		const sqlite = new Database(':memory:');
+		expect(() =>
+			createCorsairDatabase(sqlite, {
+				dbTables: {
+					corsair_accounts: 'SharedTable',
+					corsair_entities: 'sharedtable',
+				},
+			}),
+		).toThrow(/duplicate physical table name/i);
+
+		expect(() =>
+			createCorsairDatabase(sqlite, {
+				dbTables: {
+					corsair_events: 'CORSAIR_INTEGRATIONS',
+				},
+			}),
+		).toThrow(/duplicate physical table name/i);
+
+		expect(() =>
+			validateCorsairDbTables(
+				{
+					corsair_accounts: 'SharedTable',
+					corsair_entities: 'sharedtable',
+				},
+				{ dialect: 'sqlite' },
+			),
+		).toThrow(/duplicate physical table name/i);
+
+		const kyselySqlite = new Kysely({
+			dialect: new SqliteDialect({ database: sqlite }),
+		});
+		expect(() =>
+			createCorsairDatabase(kyselySqlite as never, {
+				dbTables: {
+					corsair_accounts: 'SharedTable',
+					corsair_entities: 'sharedtable',
+				},
+			}),
+		).toThrow(/duplicate physical table name/i);
+
+		// Simulate a Kysely instance constructed from a separate module copy whose
+		// SqliteAdapter class is not instanceof the imported SqliteAdapter.
+		class ForeignSqliteAdapter {
+			readonly supportsTransactionalDdl = false;
+			readonly supportsReturning = true;
+		}
+		const foreignKyselySqlite = {
+			selectFrom: () => {},
+			withPlugin: () => foreignKyselySqlite,
+			getExecutor: () => ({ adapter: new ForeignSqliteAdapter() }),
+		};
+		expect(() =>
+			createCorsairDatabase(foreignKyselySqlite as never, {
+				dbTables: {
+					corsair_accounts: 'SharedTable',
+					corsair_entities: 'sharedtable',
+				},
+			}),
+		).toThrow(/duplicate physical table name/i);
+
+		sqlite.close();
+	});
+
+	it('preserves distinct non-ASCII table names on SQLite', () => {
+		const sqlite = new Database(':memory:');
+		expect(() =>
+			createCorsairDatabase(sqlite, {
+				dbTables: {
+					corsair_accounts: 'Ä',
+					corsair_entities: 'ä',
+				},
+			}),
+		).not.toThrow();
+
+		expect(() =>
+			validateCorsairDbTables(
+				{
+					corsair_accounts: 'Ä',
+					corsair_entities: 'ä',
+				},
+				{ dialect: 'sqlite' },
+			),
+		).not.toThrow();
+		sqlite.close();
+	});
+
+	it('allows case-only distinct physical table names on Postgres', () => {
+		const pool = { query: () => {}, connect: () => {} };
+		expect(() =>
+			createCorsairDatabase(pool as never, {
+				dbTables: {
+					corsair_accounts: 'SharedTable',
+					corsair_entities: 'sharedtable',
+				},
+			}),
+		).not.toThrow();
+
+		expect(() =>
+			validateCorsairDbTables({
+				corsair_accounts: 'SharedTable',
+				corsair_entities: 'sharedtable',
+			}),
+		).not.toThrow();
 	});
 });
