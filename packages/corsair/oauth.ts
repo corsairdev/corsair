@@ -19,6 +19,15 @@ export {
 	pkceVerifier,
 	processOAuthCallback,
 } from './oauth/index';
+export type {
+	PersonalDataConfig,
+	ReportableAccount,
+} from './oauth/personal-data-reporting';
+export {
+	reportPersonalData,
+	reportPersonalDataForPlugin,
+	startPersonalDataReporting,
+} from './oauth/personal-data-reporting';
 export {
 	renewSubscriptions,
 	startSubscriptionRenewal,
