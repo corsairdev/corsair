@@ -992,7 +992,7 @@ export const lettaEndpointMeta = {
 	'tools.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete Tool. Delete a tool by name. Cannot be undone.',
+		description: 'Delete Tool. Delete a tool by ID. Cannot be undone.',
 	},
 	'tools.get': {
 		riskLevel: 'read',

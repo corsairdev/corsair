@@ -135,7 +135,7 @@ pnpm add @corsair-dev/letta
 | `templates.save` | `letta.api.templates.save` | `write` | Save template version (Cloud-only). Saves the current version of the template as a new version. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired. |
 | `templates.update` | `letta.api.templates.update` | `write` | Update current template from agent file (Cloud-only). Updates the current working version of a template from an agent file. Letta Cloud answered 404 with no such route for this on 11-27 (free account); it may need a paid plan or have been retired. |
 | `tools.create` | `letta.api.tools.create` | `write` | Create Tool. Create a new tool. (POST /v1/tools/) |
-| `tools.delete` | `letta.api.tools.delete` | `destructive` | Delete Tool. Delete a tool by name. Cannot be undone. |
+| `tools.delete` | `letta.api.tools.delete` | `destructive` | Delete Tool. Delete a tool by ID. Cannot be undone. |
 | `tools.get` | `letta.api.tools.get` | `read` | Retrieve Tool. Get a tool by ID. (GET /v1/tools/{tool_id}) |
 | `tools.list` | `letta.api.tools.list` | `read` | List Tools. Get a list of all tools available to agents. |
 | `tools.search` | `letta.api.tools.search` | `read` | Search Tools. Search tools using semantic search. Requires tool embedding to be enabled (embed_tools=True). Uses vector search, full-text search, or hybrid mode to find tools matching the query. Returns tools ranked by relevance with their search scores. |

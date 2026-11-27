@@ -1,5 +1,6 @@
 import { writeFileSync } from 'node:fs';
 import { createCorsair } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { letta } from './index';
 
@@ -86,18 +87,35 @@ describeIfKey('letta live', () => {
 			return undefined;
 		}
 	};
-	/** An operation Letta refuses for a reason outside the plugin (no such route, no object to act on). */
-	const refused = async (op: string, args: Json, status: RegExp) => {
+	/** Runs one operation and says whether it worked (some deletes answer JSON null). */
+	const ran = async (op: string, args: Json = {}): Promise<boolean> => {
+		await step(op, args);
+		return report[report.length - 1]?.ok === true;
+	};
+	/**
+	 * An operation Letta refuses for a reason outside the plugin (no such
+	 * route, no object to act on). Only an ApiError with one of the expected
+	 * statuses counts; a success is reported as its own failure, and its
+	 * answer is returned so whatever it made can be cleaned up.
+	 */
+	const refused = async (
+		op: string,
+		args: Json,
+		status: RegExp,
+	): Promise<Json | undefined> => {
 		try {
-			await call(op, args);
-			report.push({ op, ok: true, note: 'ok (expected a refusal)' });
+			const out = await call(op, args);
+			report.push({ op, ok: false, note: 'answered 2xx; expected a refusal' });
+			return out;
 		} catch (error) {
+			const code = error instanceof ApiError ? error.status : undefined;
 			const message = (error as Error).message;
 			report.push({
 				op,
-				ok: status.test(message),
+				ok: typeof code === 'number' && status.test(String(code)),
 				note: `refused as expected: ${message}`,
 			});
+			return undefined;
 		}
 	};
 
@@ -116,7 +134,24 @@ describeIfKey('letta live', () => {
 					{ conversation_id: made.conversation },
 				]);
 			}
+			if (made.fork) {
+				cleanup.push(['conversations.delete', { conversation_id: made.fork }]);
+			}
+			if (made.agent && made.scheduled) {
+				cleanup.push([
+					'agents.schedule.delete',
+					{ agent_id: made.agent, scheduled_message_id: made.scheduled },
+				]);
+			}
 			if (made.agent) cleanup.push(['agents.delete', { agent_id: made.agent }]);
+			// Made only where a server serves these routes (a self-hosted LETTA_BASE_URL).
+			if (made.archive)
+				cleanup.push(['archives.delete', { archive_id: made.archive }]);
+			if (made.folder)
+				cleanup.push(['folders.delete', { folder_id: made.folder }]);
+			if (made.template) {
+				cleanup.push(['templates.delete', { template_name: made.template }]);
+			}
 			for (const name of ['block', 'block2']) {
 				if (made[name])
 					cleanup.push(['blocks.delete', { block_id: made[name] }]);
@@ -263,9 +298,10 @@ describeIfKey('letta live', () => {
 		});
 		await step('agents.schedule.list', a);
 		if (scheduled?.id) {
+			made.scheduled = String(scheduled.id);
 			const sm = { ...a, scheduled_message_id: scheduled.id };
 			await step('agents.schedule.get', sm);
-			await step('agents.schedule.delete', sm);
+			if (await ran('agents.schedule.delete', sm)) made.scheduled = undefined;
 		}
 
 		const reply = await step(
@@ -392,10 +428,12 @@ describeIfKey('letta live', () => {
 		await refused('conversations.messages.compact', c, /\b400\b/);
 		const fork = await step('conversations.fork', c);
 		if (fork?.id) {
-			await step('conversations.delete', { conversation_id: fork.id });
+			made.fork = String(fork.id);
+			if (await ran('conversations.delete', { conversation_id: fork.id })) {
+				made.fork = undefined;
+			}
 		}
-		await step('conversations.delete', c);
-		made.conversation = undefined;
+		if (await ran('conversations.delete', c)) made.conversation = undefined;
 	});
 
 	it('MCP server (DeepWiki, public) and access tokens', async () => {
@@ -430,8 +468,7 @@ describeIfKey('letta live', () => {
 					server_url: 'https://mcp.deepwiki.com/mcp',
 				},
 			});
-			await step('mcpServers.delete', m);
-			made.mcp = undefined;
+			if (await ran('mcpServers.delete', m)) made.mcp = undefined;
 		}
 		if (made.agent) {
 			const token = await step('accessTokens.create', {
@@ -443,6 +480,7 @@ describeIfKey('letta live', () => {
 				await step('accessTokens.list', { agentId: made.agent });
 				// Letta refuses every delete (400, its own body check); the token expires in 5 minutes.
 				await refused('accessTokens.delete', { token: made.token }, /\b400\b/);
+				// Nothing more to try: the token expires on its own.
 				made.token = undefined;
 			}
 		}
@@ -466,14 +504,17 @@ describeIfKey('letta live', () => {
 		// though the reference lists them.
 		const none = /\b404\b/;
 		await refused('archives.list', {}, none);
-		await refused('archives.create', { name: RUN }, none);
+		const archive = await refused('archives.create', { name: RUN }, none);
+		if (archive?.id) made.archive = String(archive.id);
 		await refused('folders.list', {}, none);
-		await refused('folders.create', { name: RUN }, none);
-		await refused(
+		const folder = await refused('folders.create', { name: RUN }, none);
+		if (folder?.id) made.folder = String(folder.id);
+		const template = await refused(
 			'templates.create',
-			{ body: { type: 'agent', agent_id: made.agent ?? 'agent-x' } },
+			{ body: { type: 'agent', agent_id: made.agent ?? 'agent-x', name: RUN } },
 			none,
 		);
+		if (template) made.template = String(template.name ?? RUN);
 		await refused('passages.search', { query: 'algorithm' }, none);
 		await refused('steps.list', { limit: 5 }, none);
 		await refused('steps.get', { step_id: 'step-x' }, none);
@@ -507,18 +548,19 @@ describeIfKey('letta live', () => {
 	});
 
 	it('deletes what it made', async () => {
-		if (made.agent) {
-			await step('agents.delete', { agent_id: made.agent });
+		// A handle is dropped only once its delete worked, so afterAll retries the rest.
+		if (made.agent && (await ran('agents.delete', { agent_id: made.agent }))) {
 			made.agent = undefined;
 		}
 		for (const name of ['block', 'block2']) {
-			if (made[name]) {
-				await step('blocks.delete', { block_id: made[name] });
+			if (
+				made[name] &&
+				(await ran('blocks.delete', { block_id: made[name] }))
+			) {
 				made[name] = undefined;
 			}
 		}
-		if (made.tool) {
-			await step('tools.delete', { tool_id: made.tool });
+		if (made.tool && (await ran('tools.delete', { tool_id: made.tool }))) {
 			made.tool = undefined;
 		}
 		const failed = report.filter((r) => !r.ok);

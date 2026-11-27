@@ -72,6 +72,12 @@ export type LettaRequest = {
 	body?: unknown;
 	/** The content type of a raw body. */
 	mediaType?: string;
+	/**
+	 * Path values the operation already encoded itself (a file path whose
+	 * slashes stay): sent as they are, while the route keeps its placeholder,
+	 * so error URLs never show them.
+	 */
+	rawPathValues?: Set<string>;
 	/** `binary`: the success comes back as `{ bytes, contentType }`. */
 	responseType?: 'binary';
 	timeoutMs?: number;
@@ -93,19 +99,29 @@ export function baseUrlOf(ctx: LettaCallContext): string {
 	const configured = ctx.options.baseUrl?.trim();
 	if (!configured) return LETTA_API_BASE;
 	const url = new URL(configured);
-	if (url.protocol !== 'https:' && url.protocol !== 'http:') {
-		throw new Error('Letta baseUrl must be an http(s) URL');
+	// The key travels in a header: plain http only to this machine (a local proxy).
+	const loopback = ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname);
+	if (url.protocol !== 'https:' && !(url.protocol === 'http:' && loopback)) {
+		throw new Error(
+			'Letta baseUrl must be an https URL (plain http only for localhost)',
+		);
 	}
 	return configured.replace(/\/+$/, '');
 }
 
-function configFor(base: string, key: string, timeoutMs?: number) {
+function configFor(
+	base: string,
+	key: string,
+	timeoutMs?: number,
+	rawPathValues?: Set<string>,
+) {
 	return {
 		BASE: base,
 		VERSION: '1',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		ENCODE_PATH: encodeLettaPathValue,
+		ENCODE_PATH: (value: string) =>
+			rawPathValues?.has(value) ? value : encodeLettaPathValue(value),
 		TIMEOUT: Math.ceil(timeoutMs ?? LETTA_DEFAULT_TIMEOUT_MS),
 		HEADERS: {
 			Accept: 'application/json',
@@ -159,7 +175,12 @@ export async function makeLettaRequest(
 		throw new AuthMissingError('letta', 'api_key');
 	}
 	const base = baseUrlOf(ctx);
-	const config = configFor(base, ctx.key, options.timeoutMs);
+	const config = configFor(
+		base,
+		ctx.key,
+		options.timeoutMs,
+		options.rawPathValues,
+	);
 	const requestOptions: ApiRequestOptions = {
 		method: options.method,
 		url: options.path,
@@ -325,7 +346,8 @@ function sentStrings(request: ApiError['request']): SentString[] {
 	const found = new Map<string, boolean>();
 	// `unknown` because the sent values are any validated JSON.
 	const visit = (value: unknown, depth: number, secret: boolean) => {
-		if (depth > 8 || value === undefined || value === null) return;
+		// Deep enough for any request body a route takes; still bounded.
+		if (depth > 64 || value === undefined || value === null) return;
 		if (typeof value === 'string') {
 			if (value.length >= (secret ? 1 : 2) && !found.has(value)) {
 				found.set(value, value.length < WHOLE_WORD_BELOW);
@@ -397,7 +419,10 @@ function scrubSent(value: unknown, sent: SentString[], depth = 0): unknown {
 		// `unknown` because each field is scrubbed by its own type.
 		const result: Record<string, unknown> = {};
 		for (const [key, inner] of Object.entries(value)) {
-			result[key] = scrubSent(inner, sent, depth + 1);
+			// A key can be caller data too (a field error keyed by an email).
+			const name = scrubSent(key, sent, depth + 1) as string;
+			result[name === key ? key : `${REDACTED}#${Object.keys(result).length}`] =
+				scrubSent(inner, sent, depth + 1);
 		}
 		return result;
 	}

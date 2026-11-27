@@ -4039,6 +4039,7 @@
       "summary": "Create Message",
       "request": "json",
       "response": "json",
+      "singleAttempt": true,
       "input": {
         "type": "object",
         "properties": {
@@ -4314,6 +4315,7 @@
       "summary": "Create Message Async",
       "request": "json",
       "response": "json",
+      "singleAttempt": true,
       "input": {
         "type": "object",
         "properties": {
@@ -4700,6 +4702,7 @@
       "summary": "Create Message Streaming",
       "request": "json",
       "response": "text",
+      "singleAttempt": true,
       "input": {
         "type": "object",
         "properties": {
@@ -11247,6 +11250,7 @@
       "summary": "Send Conversation Message",
       "request": "json",
       "response": "json",
+      "singleAttempt": true,
       "input": {
         "type": "object",
         "properties": {
@@ -11520,7 +11524,8 @@
             "$ref": "LettaResponse"
           },
           {
-            "type": "string"
+            "type": "string",
+            "pattern": "^(data|event|id|retry|:)"
           }
         ]
       }

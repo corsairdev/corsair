@@ -102,8 +102,32 @@ describe('letta routes', () => {
 			agent_id: AGENT,
 			input: 'hi',
 		});
-		expect(out).toMatchObject({ contentType: 'text/event-stream' });
+		expect(out).toEqual({
+			text: 'data: {"message_type":"assistant_message"}\n\n',
+			contentType: 'text/event-stream',
+		});
 		expect(calls[0]?.url.pathname).toBe(`/v1/agents/${AGENT}/messages/stream`);
+	});
+
+	it('takes a conversation reply as JSON or as the default event stream, nothing else', async () => {
+		reply(
+			'data: {"message_type":"assistant_message"}\n\n',
+			200,
+			'text/event-stream',
+		);
+		await expect(
+			api.conversations.messages.create(ctx(), {
+				conversation_id: 'conv-1',
+				input: 'hi',
+			}),
+		).resolves.toBe('data: {"message_type":"assistant_message"}\n\n');
+		reply('<html>login</html>', 200, 'text/html');
+		await expect(
+			api.conversations.messages.create(ctx(), {
+				conversation_id: 'conv-1',
+				input: 'hi',
+			}),
+		).rejects.toThrow(/HTML page, not JSON/);
 	});
 
 	it('attaches a core memory block with a PATCH', async () => {

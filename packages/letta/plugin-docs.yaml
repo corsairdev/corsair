@@ -6,7 +6,7 @@ domain: letta.com
 description: "Stateful agents with Letta: create agents with memory, send them messages (sync, streaming, async or on a schedule), edit core memory blocks and archival passages, attach tools, MCP servers, folders and files, and inspect conversations, runs, steps and models (129 operations)."
 recommendedAuth: api_key
 overviewNote: |
-  Create an API key in Letta Cloud (app.letta.com). The `baseUrl` option points the plugin at a self-hosted Letta server instead. Things to know before you write:
+  Create an API key in Letta Cloud (app.letta.com). The `baseUrl` option points the plugin at another REST base, such as a proxy (https; plain http only for localhost). Things to know before you write:
 
   - **Agents keep state.** An agent has core memory blocks (always in its context), archival passages (searched when needed), attached tools, folders and files. `agents.blocks.*`, `agents.passages.*`, `blocks.*` and `archives.*` read and edit that memory directly.
   - **Messages run the model.** `agents.messages.create` and `conversations.messages.create` call the agent's model and may run its tools, so they spend tokens and are `destructive`. `agents.messages.createAsync` runs in the background (poll `runs.get`); the streaming routes return the server-sent events as text.

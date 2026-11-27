@@ -29,7 +29,7 @@ export type LettaPluginOptions = {
 	/** A Letta API key (app.letta.com, API keys). On a self-hosted server, its password. */
 	key?: string;
 	/**
-	 * A self-hosted Letta server (`letta server` from Letta Code) or a proxy. Leave it out for https://api.letta.com.
+	 * Another REST API base, such as a proxy in front of Letta Cloud. Leave it out for https://api.letta.com. (Letta Code's `letta server` speaks a WebSocket protocol, not these routes.)
 	 */
 	baseUrl?: string;
 	hooks?: InternalLettaPlugin['hooks'];
