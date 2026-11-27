@@ -1,6 +1,6 @@
 # @corsair-dev/smtp2go
 
-SMTP2GO transactional email plugin for Corsair - send individual, batch and MIME emails, search sent email and activity, manage suppressions, sender domains, templates and webhook registrations, and read sending stats.
+SMTP2GO transactional email plugin for Corsair - send individual, batch and MIME emails, search sent email and activity, manage suppressions, sender domains, templates and webhook registrations, and read sending stats. It does not receive webhook deliveries.
 
 ## Install
 

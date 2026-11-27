@@ -384,6 +384,19 @@ describe('rejections', () => {
 		expect(error.name).toBe('ZodError');
 	});
 
+	it('rejects a batch over the 1000-message cap', async () => {
+		const error = await rejectsWith(
+			endpoints.email.sendBatch(makeCtx(), {
+				emails: Array.from({ length: 1001 }, () => ({
+					sender: 'a@example.com',
+					to: ['r@example.com'],
+					text_body: 'hi',
+				})),
+			}),
+		);
+		expect(error.name).toBe('ZodError');
+	});
+
 	it('rejects a non-uuid schedule_id', async () => {
 		const error = await rejectsWith(
 			endpoints.email.cancelScheduled(makeCtx(), { schedule_id: 'not-a-uuid' }),

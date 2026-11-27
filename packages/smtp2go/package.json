@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/smtp2go",
   "version": "0.1.0",
-  "description": "SMTP2GO transactional email plugin for Corsair - send individual, batch and MIME emails, search sent email and activity, manage suppressions, sender domains, templates and webhook registrations, and read sending stats.",
+  "description": "SMTP2GO transactional email plugin for Corsair - send individual, batch and MIME emails, search sent email and activity, manage suppressions, sender domains, templates and webhook registrations, and read sending stats. It does not receive webhook deliveries.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

@@ -1,3 +1,4 @@
+import type { RawWebhookRequest } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import type { Smtp2goKeyBuilderContext } from './index';
 import { smtp2go, smtp2goEndpointSchemas } from './index';
@@ -127,7 +128,8 @@ describe('smtp2go plugin', () => {
 	it('handles no inbound webhooks', () => {
 		expect(plugin.webhooks).toEqual({});
 		// A delivery for this plugin always routes nowhere.
-		expect(plugin.pluginWebhookMatcher?.({ headers: {} } as never)).toBe(false);
+		const delivery = { headers: {} } as RawWebhookRequest;
+		expect(plugin.pluginWebhookMatcher?.(delivery)).toBe(false);
 	});
 
 	it('offers api_key auth only', () => {
