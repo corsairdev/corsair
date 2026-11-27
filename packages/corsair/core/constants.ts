@@ -302,6 +302,7 @@ export const BaseProviders = [
 	'formdesk',
 	'foursquare',
 	'freeagent',
+	'freshbooks',
 	'freshdesk',
 	'fundable',
 	'gagelist',
@@ -1122,6 +1123,7 @@ export const ProviderDisplayNames = {
 	formdesk: 'Formdesk',
 	foursquare: 'Foursquare',
 	freeagent: 'FreeAgent',
+	freshbooks: 'FreshBooks',
 	freshdesk: 'Freshdesk',
 	fundable: 'Fundable',
 	gagelist: 'Gagelist',
@@ -1949,6 +1951,7 @@ export type AllProviders =
 	| 'formdesk'
 	| 'foursquare'
 	| 'freeagent'
+	| 'freshbooks'
 	| 'freshdesk'
 	| 'fundable'
 	| 'gagelist'
