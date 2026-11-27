@@ -49,6 +49,19 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
+	// A dropped connection (reset, DNS, abort) never reached the server, so
+	// replaying a read is safe. A write with a transport failure stays on
+	// DEFAULT: a retried publish can duplicate a notification.
+	TRANSPORT_ERROR: {
+		match: (error: Error) =>
+			error instanceof NtfyAPIError &&
+			error.method === 'GET' &&
+			error.cause instanceof Error,
+		handler: async () => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
+	},
 	// A 5xx is only replayed for reads. Publish, update, clear and delete are
 	// not idempotent: a retry after a timeout can duplicate a notification.
 	SERVER_ERROR: {
@@ -68,7 +81,10 @@ export const errorHandlers = {
 } satisfies CorsairErrorHandler;
 
 // Handlers match in key order and DEFAULT matches everything, so it stays
-// last even when the caller adds or overrides handlers.
+// last even when the caller adds or overrides handlers. Caller keys keep
+// their positions first: core takes the first matching key, so a caller
+// handler for a status no builtin covers would never run if builtin keys
+// came first.
 export function mergeErrorHandlers(
 	builtin: CorsairErrorHandler,
 	user: CorsairErrorHandler | undefined,
@@ -77,7 +93,9 @@ export function mergeErrorHandlers(
 	const { DEFAULT: builtinDefault, ...builtinRest } = builtin;
 	const { DEFAULT: userDefault, ...userRest } = user;
 	const fallback = userDefault ?? builtinDefault;
-	return fallback
-		? { ...builtinRest, ...userRest, DEFAULT: fallback }
-		: { ...builtinRest, ...userRest };
+	const merged: CorsairErrorHandler = { ...userRest };
+	for (const [name, entry] of Object.entries(builtinRest)) {
+		if (!(name in merged)) merged[name] = entry;
+	}
+	return fallback ? { ...merged, DEFAULT: fallback } : merged;
 }

@@ -16,9 +16,13 @@ const API_KEY = 'tk_0123456789abcdefghij0123456789';
 
 // never parameters: every concrete endpoint is assignable to this because
 // parameters are contravariant.
+// unknown: the return value is operation-specific; each test asserts through
+// its own output schema parse rather than through this alias.
 type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
 
 // The fake context only carries what the endpoints read (ctx.key).
+// unknown: inputs differ per operation, so the helper takes the raw value
+// each test builds for its endpoint's input schema.
 function invoke(endpoint: AnyEndpoint, input: unknown) {
 	return endpoint({ key: API_KEY } as never, input as never);
 }

@@ -1,4 +1,5 @@
 import { AuthMissingError } from 'corsair/core';
+import type { NtfyKeyBuilderContext } from './index';
 import { ntfy, ntfyEndpointSchemas } from './index';
 
 // The key builder only reads authType and keys.
@@ -16,7 +17,10 @@ function buildKey(
 	ctx: ReturnType<typeof keyContext>,
 ) {
 	// The fake context is not a full KeyBuilderContext.
-	return plugin.keyBuilder?.(ctx as never, 'endpoint');
+	return plugin.keyBuilder?.(
+		ctx as unknown as NtfyKeyBuilderContext,
+		'endpoint',
+	);
 }
 
 const operations = [

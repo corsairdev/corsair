@@ -1,5 +1,6 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
+import { NtfyAPIError } from './client';
 import { ntfy } from './index';
 import { publishedMessage } from './test-fixtures';
 
@@ -104,6 +105,30 @@ describe('retries through createCorsair', () => {
 				corsair.ntfy.api.messages.clear({ topic: 't', sequenceId: 's' }),
 			).rejects.toMatchObject({ status: 503 });
 			expect(fetchMock).toHaveBeenCalledTimes(3);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('retries a read whose connection dropped, but not a write', async () => {
+		const { corsair, testDb } = await createClient();
+		const dropped = () => {
+			throw new Error('fetch failed');
+		};
+		try {
+			fetchMock.mockImplementationOnce(dropped).mockImplementationOnce(dropped);
+			respond({ healthy: true, role: 'active' });
+
+			const result = await corsair.ntfy.api.server.health({});
+
+			expect(result).toEqual({ healthy: true, role: 'active' });
+			expect(fetchMock).toHaveBeenCalledTimes(3);
+
+			fetchMock.mockImplementationOnce(dropped);
+			await expect(
+				corsair.ntfy.api.messages.send({ topic: 't', message: 'm' }),
+			).rejects.toBeInstanceOf(NtfyAPIError);
+			expect(fetchMock).toHaveBeenCalledTimes(4);
 		} finally {
 			testDb.cleanup();
 		}

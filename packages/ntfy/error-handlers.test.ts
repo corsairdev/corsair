@@ -118,6 +118,26 @@ describe('ntfy error handlers', () => {
 		},
 	);
 
+	it('retries a read whose connection dropped before reaching ntfy', async () => {
+		const dropped = new NtfyAPIError('fetch failed', {
+			cause: new Error('socket hang up'),
+			method: 'GET',
+		});
+		expect(classify(dropped)).toBe('TRANSPORT_ERROR');
+		expect(await strategy(dropped)).toEqual({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff',
+		});
+	});
+
+	it('does not replay a write whose connection dropped', async () => {
+		const dropped = new NtfyAPIError('fetch failed', {
+			cause: new Error('socket hang up'),
+			method: 'POST',
+		});
+		expect(classify(dropped)).toBe('DEFAULT');
+	});
+
 	it('does not replay a write that timed out', async () => {
 		const timeout = new Error('The operation timed out');
 		const error = new NtfyAPIError(timeout.message, {
