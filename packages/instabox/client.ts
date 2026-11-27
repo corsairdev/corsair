@@ -9,10 +9,10 @@ import { ApiError, request } from 'corsair/http';
 /**
  * InstaBox's REST API (https://instabox.sh/docs/api.md, OpenAPI spec at
  * https://instabox.sh/openapi.json). Every route takes an API key (`ibk_...`)
- * or a signed-in user's access token as `Authorization: Bearer`. A key's
- * scopes (machines:read, machines:write, ...) decide which operations work;
- * the sign-in-only routes (keys, Vault, billing changes, workspaces,
- * sessions) need the user token.
+ * as `Authorization: Bearer`. A key's scopes (machines:read, machines:write,
+ * ...) decide which operations work; member, invite and workspace-secret
+ * changes need a workspace key with workspace:admin. Routes that refuse every
+ * API key (billing, key management, Vault, sessions, support) are left out.
  */
 export const INSTABOX_API_BASE = 'https://api.instabox.sh';
 

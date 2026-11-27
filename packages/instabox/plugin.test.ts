@@ -36,7 +36,7 @@ describe('instabox plugin', () => {
 		const ids = instaboxOperations.map((o) => o.id).sort();
 		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(ids);
 		expect(Object.keys(plugin.endpointSchemas ?? {}).sort()).toEqual(ids);
-		expect(ids).toHaveLength(129);
+		expect(ids).toHaveLength(93);
 		expect(plugin.endpoints?.machines.exec).toEqual(expect.any(Function));
 		expect(Object.keys(plugin.webhookSchemas ?? {})).toHaveLength(12);
 		expect(plugin.webhooks?.sandbox.started.match).toEqual(

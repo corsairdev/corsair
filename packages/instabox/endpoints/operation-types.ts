@@ -20,9 +20,6 @@ export const INSTABOX_OPERATION_IDS = [
 	'feedback.send',
 	'gpuQueue.cancel',
 	'gpuQueue.list',
-	'keys.create',
-	'keys.list',
-	'keys.revoke',
 	'machines.activityLeases.release',
 	'machines.activityLeases.renew',
 	'machines.claimOomKill',
@@ -70,27 +67,11 @@ export const INSTABOX_OPERATION_IDS = [
 	'machines.vault.get',
 	'machines.vault.write',
 	'machines.wake',
-	'me.discord.get',
-	'me.discord.unlink',
 	'me.get',
 	'operations.get',
-	'orgs.billing.cancelSubscription',
-	'orgs.billing.changePlan',
-	'orgs.billing.checkout',
-	'orgs.billing.getTopup',
-	'orgs.billing.movePersonal',
-	'orgs.billing.portal',
-	'orgs.billing.resumeSubscription',
-	'orgs.billing.subscribeWithCredits',
-	'orgs.billing.topup',
-	'orgs.billing.update',
-	'orgs.create',
-	'orgs.delete',
 	'orgs.exports.create',
 	'orgs.exports.list',
 	'orgs.get',
-	'orgs.github.installations.delete',
-	'orgs.github.installations.list',
 	'orgs.github.jobs.get',
 	'orgs.github.jobs.list',
 	'orgs.github.stats',
@@ -100,15 +81,10 @@ export const INSTABOX_OPERATION_IDS = [
 	'orgs.invites.list',
 	'orgs.invites.resend',
 	'orgs.invites.revoke',
-	'orgs.keys.create',
-	'orgs.keys.list',
-	'orgs.keys.revoke',
 	'orgs.list',
 	'orgs.members.changeRole',
 	'orgs.members.list',
 	'orgs.members.remove',
-	'orgs.movePersonal',
-	'orgs.redeemInvite',
 	'orgs.secrets.delete',
 	'orgs.secrets.import',
 	'orgs.secrets.list',
@@ -124,37 +100,17 @@ export const INSTABOX_OPERATION_IDS = [
 	'orgs.webhooks.test',
 	'orgs.webhooks.update',
 	'ports.list',
-	'sessions.list',
-	'sessions.signOut',
 	'snapshots.delete',
 	'snapshots.files.list',
 	'snapshots.get',
 	'snapshots.list',
 	'stats.get',
-	'support.tickets.close',
-	'support.tickets.get',
-	'support.tickets.list',
-	'support.tickets.reply',
 	'templates.list',
 	'usage.get',
 	'usage.machines',
-	'vault.delete',
-	'vault.export',
-	'vault.import',
-	'vault.list',
-	'vault.set',
-	'vault.update',
 ] as const;
 
 export type InstaboxOperationId = (typeof INSTABOX_OPERATION_IDS)[number];
-
-export type InstaboxAPIKeyScopeInput =
-	| 'machines:read'
-	| 'machines:write'
-	| 'machines:delete'
-	| 'images:read'
-	| 'images:write'
-	| 'images:delete';
 
 /** Absent: 1800 (30 minutes). The plan decides, and a value is honoured or refused, never silently replaced: a paid sandbox takes 300-1800 (5 to 30 minutes) in whole minutes, as sent, and 0 (off) where the plan allows always on (else `403 spec_not_allowed`); below 300 (1-299), above 1800, negative… */
 export type InstaboxAutoSuspendAfterSecondsInput = number;
@@ -220,41 +176,10 @@ export type InstaboxWebhookEventTypeInput =
 	| 'snapshot.failed'
 	| 'snapshot.deleted';
 
-export type InstaboxAPIKey = {
-	createdAt?: string | null;
-	/** The key's maker. */
-	createdBy?: number | null;
-	/** The maker's login. */
-	createdByLogin?: string | null;
-	expiresAt?: string | null;
-	/** `key_...` a personal org's, `wkey_...` a workspace's. */
-	id?: string | null;
-	/** Updated at most once a minute. */
-	lastUsedAt?: string | null;
-	name?: string | null;
-	/** The key's org. */
-	orgId?: string | null;
-	/** First 8 characters after `ibk_`, for recognizing the key. */
-	prefix?: string | null;
-	/** `APIKeyScope`s, or a workspace key's `workspace:admin`. */
-	scopes?: Array<string> | null;
-};
-
-export type InstaboxAPIKeyList = {
-	keys?: Array<InstaboxAPIKey> | null;
-};
-
 export type InstaboxActivityLease = {
 	expiresAt?: string | null;
 	id?: string | null;
 	machineId?: string | null;
-};
-
-export type InstaboxCheckoutResponse = {
-	/** The org; absent when the Checkout buys a new workspace. */
-	org?: InstaboxOrg | null;
-	/** The Stripe Checkout URL to send the user to; empty when the org is on the plan already (its credits covered the rest of the month, or the card on file paid). */
-	url?: string | null;
 };
 
 export type InstaboxConnection = {
@@ -285,12 +210,6 @@ export type InstaboxConnectionInfo = {
 	transport?: string | null;
 	/** The sandbox ID. */
 	username?: string | null;
-};
-
-export type InstaboxCreatedAPIKey = {
-	apiKey?: InstaboxAPIKey | null;
-	/** The secret, shown only in this reply and to polls repeated within the 10-minute delivery window. */
-	key?: string | null;
 };
 
 export type InstaboxDesktop = {
@@ -342,21 +261,6 @@ export type InstaboxDirectSecret = {
 	/** Clean path relative to the home directory, without .. components. */
 	file?: string | null;
 	secret?: InstaboxSecretName | null;
-};
-
-export type InstaboxDiscordLink = {
-	/** The Discord user ID. */
-	discordId?: string | null;
-	linkedAt?: string | null;
-	/** The Discord username when it was linked. */
-	username?: string | null;
-};
-
-export type InstaboxDiscordStatus = {
-	/** This server links Discord accounts. */
-	configured?: boolean | null;
-	/** The linked Discord account; null when none is linked. */
-	link?: InstaboxDiscordLink | null;
 };
 
 export type InstaboxDiskWarning = {
@@ -593,21 +497,6 @@ export type InstaboxGPUQueueList = {
 	nextCursor?: string | null;
 };
 
-export type InstaboxGitHubInstallation = {
-	/** The GitHub user or organization login the App is installed on. */
-	account?: string | null;
-	createdAt?: string | null;
-	/** GitHub's installation ID. */
-	id?: number | null;
-	orgId?: string | null;
-	/** Suspended on GitHub; its jobs start no boxes. */
-	suspended?: boolean | null;
-};
-
-export type InstaboxGitHubInstallationList = {
-	installations?: Array<InstaboxGitHubInstallation> | null;
-};
-
 export type InstaboxGitHubJob = {
 	/** The GitHub login that triggered its run; left out for a job recorded before it was. */
 	actor?: string | null;
@@ -790,12 +679,6 @@ export type InstaboxHostTrust = {
 	/** SSH host certificate authority's public key, in authorized_keys format. */
 	publicKey?: string | null;
 	type?: string | null;
-};
-
-/** Explicit original-owner recovery of a retained legacy item. Save privately; contains a real value. */
-export type InstaboxLegacyVaultExport = {
-	item?: InstaboxVaultItem | null;
-	value?: string | null;
 };
 
 /** A sandbox. */
@@ -1167,52 +1050,6 @@ export type InstaboxMinimumLease = {
 	hours?: number | null;
 	/** `hourUSD` for `hours`: what the minimum costs. */
 	minimumUSD?: number | null;
-};
-
-export type InstaboxMovedPersonalPlan = {
-	apiKeys?: Array<string> | null;
-	/** The credits do not cover feeUsd: the workspace is bought in Checkout first, and nothing moves. */
-	checkoutNeeded?: boolean | null;
-	/** Off a dry run with checkoutNeeded: the Checkout buying the workspace. */
-	checkoutUrl?: string | null;
-	/** Into a new workspace (`POST /v1/orgs/move-personal`): it was made; `into` is its ID, the ID the personal org had. */
-	created?: boolean | null;
-	/** The new grant holding the rest, expiring a year after the move (not set on a dry run). */
-	creditId?: string | null;
-	/** Credit grant IDs moved, balance and expiry unchanged. */
-	credits?: Array<string> | null;
-	dryRun?: boolean | null;
-	/** The personal plan that ended; absent: none was active. */
-	endedTier?: string | null;
-	/** Of it, the share of grants that expired since the fee was drawn: not carried, since a move never extends a grant's life (estimated on a dry run too). */
-	expiredUsd?: number | null;
-	/** The new workspace's first fee, drawn from the moved credits. */
-	feeUsd?: number | null;
-	/** The personal org. After a move into a new workspace: the caller's new, empty personal org (the one before is `into`). */
-	from?: string | null;
-	into?: string | null;
-	keptApiKeys?: Array<string> | null;
-	/** Sandbox IDs moved. */
-	machines?: Array<string> | null;
-	/** Moved free sandboxes that became paid. */
-	madePaid?: Array<string> | null;
-	movedAt?: string | null;
-	/** What pays the moved plan. */
-	movedFunding?: string | null;
-	/** The personal plan moved into the workspace with its subscription, card and renewal date (a workspace without a plan of its own); nothing was charged for it, and endedTier is absent. unusedUsd is then the rest of this month's allowance, moved into the workspace's month. */
-	movedTier?: string | null;
-	/** With movedTier: the personal usage so far beyond this month's allowance, billed at the move (credits first, then the card). */
-	overageUsd?: number | null;
-	/** Running sandboxes paused for the move and resumed after it. */
-	paused?: Array<string> | null;
-	/** Of it, what went back into the grants that paid the fee (estimated on a dry run). */
-	returnedUsd?: number | null;
-	secrets?: Array<string> | null;
-	snapshots?: Array<string> | null;
-	/** The new workspace's plan. */
-	tier?: string | null;
-	/** Unused share of this month's personal fee, carried as workspace credit. */
-	unusedUsd?: number | null;
 };
 
 /** A sandbox's outbound network policy: where it may connect to on the internet. It only narrows: a destination the platform blocks stays blocked. Inbound access (SSH, exec, published ports) is not affected. A fork starts with its source's policy. Domains are allowed through DNS: the sandbox's… */
@@ -1597,11 +1434,6 @@ export type InstaboxPlanOffer = {
 	tier?: string | null;
 };
 
-export type InstaboxPortalResponse = {
-	/** The Stripe customer portal URL to send the user to. */
-	url?: string | null;
-};
-
 /** One process, as `ps -e -ww -o pid=,ppid=,user:64=,pcpu=,pmem=,etimes=,args=` reports it. */
 export type InstaboxProcess = {
 	/** The full command line. */
@@ -1786,22 +1618,6 @@ export type InstaboxSecretUsage = {
 	lastUsedAt?: string | null;
 	name?: InstaboxSecretName | null;
 	requests?: number | null;
-};
-
-export type InstaboxSession = {
-	createdAt?: string | null;
-	/** The session making this request. */
-	current?: boolean | null;
-	expiresAt?: string | null;
-	/** Revoke handle (`ss_…`). */
-	id?: string | null;
-	kind?: string | null;
-	/** Last browser use, or the last token refresh of a CLI session. */
-	lastUsedAt?: string | null;
-};
-
-export type InstaboxSessionList = {
-	sessions?: Array<InstaboxSession> | null;
 };
 
 /** A saved copy of a sandbox (software and files). New sandboxes can be created from it. It belongs to its source sandbox's org: every member of the org sees, uses and deletes it. */
@@ -2016,36 +1832,6 @@ export type InstaboxTemplateRef = {
 	version?: string | null;
 };
 
-export type InstaboxTopUp = {
-	amountUSD?: number | null;
-	createdAt?: string | null;
-	/** The credit grant a paid top-up became. */
-	creditId?: string | null;
-	id?: string | null;
-	method?: string | null;
-	paidAt?: string | null;
-	status?: string | null;
-	taxUSD?: number | null;
-	totalUSD?: number | null;
-};
-
-export type InstaboxTopUpOptions = {
-	card?: {
-		brand?: string | null;
-		last4?: string | null;
-	} | null;
-	creditsUSD?: number | null;
-	maxUSD?: number | null;
-	minUSD?: number | null;
-};
-
-export type InstaboxTopUpResponse = {
-	creditsUSD?: number | null;
-	topUp?: InstaboxTopUp | null;
-	/** The Stripe Checkout page (newCard). */
-	url?: string | null;
-};
-
 /** The twin sandbox of a half-size macOS create and its create operation (`Operation.twin`). */
 export type InstaboxTwinCreate = {
 	machineId?: string | null;
@@ -2156,33 +1942,6 @@ export type InstaboxVaultFile = {
 	path?: string | null;
 	/** Hex sha256 of the content written. */
 	sha256?: string | null;
-};
-
-/** Per-user Vault metadata (docs/vault.md). Values are absent from lists. */
-export type InstaboxVaultItem = {
-	createdAt?: string | null;
-	/** `vi_…` */
-	id?: string | null;
-	/** The item's sandbox delivery kind. */
-	kind?: string | null;
-	/** The caller's live machines the item applies to (selector matches, Vault not off). */
-	machines?: number | null;
-	/** Reason an item was retained for recovery. */
-	migrationReason?: string | null;
-	migrationState?: string | null;
-	/** Unique per user. An env item's name is the variable's name. */
-	name?: string | null;
-	/** File items: the target, relative to the home directory. */
-	path?: string | null;
-	/** Historical labels; these do not control org Secret selection. */
-	selector?: Record<string, string> | null;
-	/** The value's size in bytes. */
-	size?: number | null;
-	updatedAt?: string | null;
-};
-
-export type InstaboxVaultItemList = {
-	items?: Array<InstaboxVaultItem> | null;
 };
 
 export type InstaboxVaultKept = {
@@ -2320,16 +2079,6 @@ export type InstaboxOperationInputs = {
 		limit?: number;
 		/** Opaque `nextCursor` from a previous page. */
 		cursor?: string;
-	};
-	'keys.create': {
-		/** Days until the key expires, 1-365. 0 or absent: it does not expire. */
-		expiresInDays?: number;
-		name: string;
-		scopes: Array<InstaboxAPIKeyScopeInput>;
-	};
-	'keys.list': Record<string, never>;
-	'keys.revoke': {
-		id: string;
 	};
 	'machines.activityLeases.release': {
 		/** Sandbox ID (`m_` + 26 lowercase base32 characters). */
@@ -2796,84 +2545,12 @@ export type InstaboxOperationInputs = {
 		/** Sandbox ID (`m_` + 26 lowercase base32 characters). */
 		id: string;
 	};
-	'me.discord.get': Record<string, never>;
-	'me.discord.unlink': Record<string, never>;
 	'me.get': Record<string, never>;
 	'operations.get': {
 		/** Operation ID (`op_…`). */
 		id: string;
 		/** Long-poll for up to this long: a duration such as `25s` or `500ms`, or whole seconds (`25`). Capped at 30s; absent or `0` answers at once. */
 		wait?: string;
-	};
-	'orgs.billing.cancelSubscription': {
-		/** Org ID (org_...). */
-		id: string;
-	};
-	'orgs.billing.changePlan': {
-		/** Org ID (org_...). */
-		id: string;
-		tier: 'pro' | 'builder' | 'team';
-	};
-	'orgs.billing.checkout': {
-		/** Org ID (org_...). */
-		id: string;
-		/** The tier to subscribe to; absent: a disabled workspace's own, or on a free workspace a card to save. */
-		tier?: 'pro' | 'builder' | 'team';
-	};
-	'orgs.billing.getTopup': {
-		/** Org ID (org_...). */
-		id: string;
-	};
-	'orgs.billing.movePersonal': {
-		/** Workspace ID (org_...) to move into. */
-		id: string;
-		/** Report what would happen; change nothing. */
-		dryRun?: boolean;
-	};
-	'orgs.billing.portal': {
-		/** Org ID (org_...). */
-		id: string;
-	};
-	'orgs.billing.resumeSubscription': {
-		/** Org ID (org_...). */
-		id: string;
-	};
-	'orgs.billing.subscribeWithCredits': {
-		/** Org ID (org_...). */
-		id: string;
-		tier: 'pro' | 'builder' | 'team';
-	};
-	'orgs.billing.topup': {
-		/** Org ID (org_...). */
-		id: string;
-		/** Idempotency-Key header: a retry with the same key returns what this key already did instead of doing it again. Leave it out and the plugin sends a new random key. */
-		idempotency_key?: string;
-		/** The credits, whole USD, before tax. */
-		amountUSD: number;
-		/** Pay with another card in Stripe Checkout instead of the card on file. */
-		newCard?: boolean;
-	};
-	'orgs.billing.update': {
-		/** Org ID (org_...). */
-		id: string;
-		/** What a create past the plan's included starts does: `fail` (refused, the default) or `pay` (charged, once an owner or admin turns it on). */
-		extraStarts?: 'pay' | 'fail';
-		/** Whether to email when usage goes beyond what the month includes. */
-		overageAlert?: boolean;
-		/** The cap on this month's usage beyond the allowance; 0: nothing beyond it; -1: no cap. */
-		spendCapUSD?: number;
-		/** The usage alert's share of what the month includes; 0: off. */
-		usageAlertPercent?: number;
-	};
-	'orgs.create': {
-		name: string;
-		tier: 'pro' | 'builder' | 'team';
-	};
-	'orgs.delete': {
-		/** Org ID (org_...). */
-		id: string;
-		/** The workspace's name, exactly: the confirmation. */
-		name: string;
 	};
 	'orgs.exports.create': {
 		/** Organization ID. The caller must be a member. */
@@ -2886,16 +2563,6 @@ export type InstaboxOperationInputs = {
 		id: string;
 	};
 	'orgs.get': {
-		/** Org ID (org_...). */
-		id: string;
-	};
-	'orgs.github.installations.delete': {
-		/** Org ID (org_...). */
-		id: string;
-		/** GitHub's installation ID (the `id` of an install in the list above). */
-		installationId: number;
-	};
-	'orgs.github.installations.list': {
 		/** Org ID (org_...). */
 		id: string;
 	};
@@ -2963,24 +2630,6 @@ export type InstaboxOperationInputs = {
 		/** Invite ID (oi_...). */
 		inviteId: string;
 	};
-	'orgs.keys.create': {
-		/** Org ID (org_...). */
-		id: string;
-		/** Days until the key expires, 1-365. 0 or absent: it does not expire. */
-		expiresInDays?: number;
-		name: string;
-		/** `APIKeyScope`s, or in a workspace `workspace:admin` (also what absent means there). A personal org's key needs some. */
-		scopes?: Array<string>;
-	};
-	'orgs.keys.list': {
-		/** Org ID (org_...). */
-		id: string;
-	};
-	'orgs.keys.revoke': {
-		/** Org ID (org_...). */
-		id: string;
-		keyId: string;
-	};
 	'orgs.list': Record<string, never>;
 	'orgs.members.changeRole': {
 		/** Org ID (org_...). */
@@ -2998,17 +2647,6 @@ export type InstaboxOperationInputs = {
 		id: string;
 		/** The member's user ID. */
 		userId: number;
-	};
-	'orgs.movePersonal': {
-		/** Report what would happen; change nothing. */
-		dryRun?: boolean;
-		/** The new workspace's name. */
-		name: string;
-		/** Optional: the personal plan's tier, which the workspace keeps. Another tier is refused. */
-		tier?: 'pro' | 'builder' | 'team';
-	};
-	'orgs.redeemInvite': {
-		code: string;
 	};
 	'orgs.secrets.delete': {
 		/** Organization ID. */
@@ -3096,10 +2734,6 @@ export type InstaboxOperationInputs = {
 		url?: string;
 	};
 	'ports.list': Record<string, never>;
-	'sessions.list': Record<string, never>;
-	'sessions.signOut': {
-		id: string;
-	};
 	'snapshots.delete': {
 		/** Snapshot ID (`sn_`, or `im_` for older snapshots, + 26 lowercase base32 characters). */
 		id: string;
@@ -3120,19 +2754,6 @@ export type InstaboxOperationInputs = {
 	};
 	'snapshots.list': Record<string, never>;
 	'stats.get': Record<string, never>;
-	'support.tickets.close': {
-		id: string;
-	};
-	'support.tickets.get': {
-		id: string;
-	};
-	'support.tickets.list': {
-		offset?: number;
-	};
-	'support.tickets.reply': {
-		id: string;
-		body: string;
-	};
 	'templates.list': Record<string, never>;
 	'usage.get': {
 		/** An org you belong to (org_...), personal or workspace, to report instead of the default. A workspace API key may name only its own workspace. An org you are not a member of, or that does not exist, answers `404 not_found`, as `GET /v1/orgs/{id}` does. */
@@ -3154,35 +2775,6 @@ export type InstaboxOperationInputs = {
 		limit?: number;
 		offset?: number;
 	};
-	'vault.delete': {
-		/** The item's name. An env item's name is the variable's name. */
-		name: string;
-	};
-	'vault.export': {
-		name: string;
-	};
-	'vault.import': {
-		selector?: InstaboxMetadataInput;
-		values: Record<string, string>;
-	};
-	'vault.list': Record<string, never>;
-	'vault.set': {
-		/** The item's name. An env item's name is the variable's name. */
-		name: string;
-		kind: 'env' | 'file';
-		/** File items only: the target, relative to the home directory. */
-		path?: string;
-		/** Absent or {}: the item applies to every machine. */
-		selector?: Record<string, string>;
-		/** UTF-8 text without NUL bytes, 1 byte to 64 KiB, stored as given. */
-		value: string;
-	};
-	'vault.update': {
-		/** The item's name. An env item's name is the variable's name. */
-		name: string;
-		/** The new selector; {} clears it. */
-		selector: Record<string, string>;
-	};
 };
 
 export type InstaboxOperationOutputs = {
@@ -3191,12 +2783,6 @@ export type InstaboxOperationOutputs = {
 	'feedback.send': InstaboxFeedbackResult;
 	'gpuQueue.cancel': InstaboxGPUQueueEntry;
 	'gpuQueue.list': InstaboxGPUQueueList;
-	'keys.create': InstaboxCreatedAPIKey;
-	'keys.list': InstaboxAPIKeyList;
-	'keys.revoke': {
-		/** Instabox accepted the call; it answered with no body. */
-		success: true;
-	};
 	'machines.activityLeases.release': {
 		/** Instabox accepted the call; it answered with no body. */
 		success: true;
@@ -3265,36 +2851,11 @@ export type InstaboxOperationOutputs = {
 	'machines.vault.get': InstaboxMachineVault;
 	'machines.vault.write': InstaboxVaultApplied;
 	'machines.wake': InstaboxMachine;
-	'me.discord.get': InstaboxDiscordStatus;
-	'me.discord.unlink': {
-		/** Instabox accepted the call; it answered with no body. */
-		success: true;
-	};
 	'me.get': InstaboxMe;
 	'operations.get': InstaboxOperation;
-	'orgs.billing.cancelSubscription': InstaboxOrg;
-	'orgs.billing.changePlan': InstaboxOrg;
-	'orgs.billing.checkout': InstaboxCheckoutResponse;
-	'orgs.billing.getTopup': InstaboxTopUpOptions;
-	'orgs.billing.movePersonal': InstaboxMovedPersonalPlan;
-	'orgs.billing.portal': InstaboxPortalResponse;
-	'orgs.billing.resumeSubscription': InstaboxOrg;
-	'orgs.billing.subscribeWithCredits': InstaboxOrg;
-	'orgs.billing.topup': InstaboxTopUpResponse;
-	'orgs.billing.update': InstaboxOrg;
-	'orgs.create': InstaboxCheckoutResponse;
-	'orgs.delete': {
-		/** Instabox accepted the call; it answered with no body. */
-		success: true;
-	};
 	'orgs.exports.create': InstaboxExport;
 	'orgs.exports.list': InstaboxExportList;
 	'orgs.get': InstaboxOrg;
-	'orgs.github.installations.delete': {
-		/** Instabox accepted the call; it answered with no body. */
-		success: true;
-	};
-	'orgs.github.installations.list': InstaboxGitHubInstallationList;
 	'orgs.github.jobs.get': InstaboxGitHubJobDetail;
 	'orgs.github.jobs.list': InstaboxGitHubJobList;
 	'orgs.github.stats': InstaboxGitHubJobStats;
@@ -3304,12 +2865,6 @@ export type InstaboxOperationOutputs = {
 	'orgs.invites.list': InstaboxOrgInviteList;
 	'orgs.invites.resend': InstaboxOrgInvite;
 	'orgs.invites.revoke': InstaboxOrgInvite;
-	'orgs.keys.create': InstaboxCreatedAPIKey;
-	'orgs.keys.list': InstaboxAPIKeyList;
-	'orgs.keys.revoke': {
-		/** Instabox accepted the call; it answered with no body. */
-		success: true;
-	};
 	'orgs.list': InstaboxOrgList;
 	'orgs.members.changeRole': {
 		/** Instabox accepted the call; it answered with no body. */
@@ -3320,8 +2875,6 @@ export type InstaboxOperationOutputs = {
 		/** Instabox accepted the call; it answered with no body. */
 		success: true;
 	};
-	'orgs.movePersonal': InstaboxMovedPersonalPlan;
-	'orgs.redeemInvite': InstaboxOrg;
 	'orgs.secrets.delete': {
 		/** Instabox accepted the call; it answered with no body. */
 		success: true;
@@ -3343,11 +2896,6 @@ export type InstaboxOperationOutputs = {
 	'orgs.webhooks.test': InstaboxWebhookDelivery;
 	'orgs.webhooks.update': InstaboxWebhook;
 	'ports.list': InstaboxPublicPortList;
-	'sessions.list': InstaboxSessionList;
-	'sessions.signOut': {
-		/** Instabox accepted the call; it answered with no body. */
-		success: true;
-	};
 	'snapshots.delete': {
 		/** Instabox accepted the call; it answered with no body. */
 		success: true;
@@ -3356,26 +2904,7 @@ export type InstaboxOperationOutputs = {
 	'snapshots.get': InstaboxSnapshot;
 	'snapshots.list': InstaboxSnapshotList;
 	'stats.get': InstaboxStats;
-	'support.tickets.close': {
-		/** Instabox accepted the call; it answered with no body. */
-		success: true;
-	};
-	'support.tickets.get': Record<string, InstaboxJsonValue>;
-	'support.tickets.list': Record<string, InstaboxJsonValue>;
-	'support.tickets.reply': Record<string, InstaboxJsonValue>;
 	'templates.list': InstaboxTemplateList;
 	'usage.get': InstaboxUsage;
 	'usage.machines': InstaboxOrgMachineUsageList;
-	'vault.delete': {
-		/** Instabox accepted the call; it answered with no body. */
-		success: true;
-	};
-	'vault.export': InstaboxLegacyVaultExport;
-	'vault.import': {
-		/** Instabox accepted the call; it answered with no body. */
-		success: true;
-	};
-	'vault.list': InstaboxVaultItemList;
-	'vault.set': InstaboxVaultItem;
-	'vault.update': InstaboxVaultItem;
 };

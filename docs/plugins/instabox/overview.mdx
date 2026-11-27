@@ -1,7 +1,7 @@
 ---
 title: "InstaBox plugin"
 sidebarTitle: "Overview"
-description: "InstaBox gives each agent a Linux machine in the cloud: machines (create, start, stop, suspend, resume, fork, resize, exec, files, ports, SSH tokens, desktop links, metrics, logs), snapshots and exports, secrets and Vault, workspaces, members and invites, API keys, billing and usage, GitHub Actions CI jobs, and signed webhooks (129 operations)."
+description: "InstaBox gives each agent a Linux machine in the cloud: machines (create, start, stop, suspend, resume, fork, resize, exec, files, ports, SSH tokens, desktop links, metrics, logs), snapshots and exports, workspace secrets, members and invites, usage, GitHub Actions CI jobs, and signed webhooks (93 operations)."
 ---
 
 Use **InstaBox** through Corsair: one client, typed API calls, and incoming webhooks.
@@ -10,10 +10,9 @@ The account stores one credential: an InstaBox API key (`ibk_...`, from
 the dashboard's API keys page or `instabox keys create`), sent as
 `Authorization: Bearer`. Its scopes decide which operations work. A key
 belongs to one workspace and sees only that workspace's machines and
-snapshots. A signed-in user's access token works in its place and is the
-only credential the sign-in-only routes accept (keys, Vault, billing
-changes, creating and deleting workspaces, sessions, support tickets);
-their descriptions say so.
+snapshots. Member, invite and workspace-secret changes need a workspace
+key with `workspace:admin`; a personal org's key gets `403 missing_scope`
+there.
 
 - **Lifecycle calls** (create, start, stop, suspend, resume, fork,
 snapshot, delete) take an `Idempotency-Key`; the plugin sends a fresh one
@@ -28,22 +27,25 @@ cut at 1 MiB per stream; download files with `machines.files.download`
 rather than `cat`.
 - **Money.** Machines are billed per second while they run (vCPU, memory,
 storage, egress, GPUs). Creating, starting, resuming, waking, forking or
-restoring one, running a command in it, and every plan, checkout and
-top-up call are `destructive`, as are invites, key and token issuing and
-every delete.
+restoring one, running a command in it, invites, SSH certificate and
+token issuing and every delete are `destructive`.
 - **Webhooks.** Register an endpoint with `orgs.webhooks.create` and store
 the `whsec_` secret it returns as the webhook secret. Deliveries follow
 Standard Webhooks (`webhook-id`, `webhook-timestamp`, `webhook-signature`),
 and the plugin checks each one.
 - **Rate limits.** A 429 `rate_limited` carries `Retry-After` and core
 retries it; a 429 `quota_exceeded` is a plan limit and is not retried.
-- Not wrapped: sign-in and OAuth flows, the WebSocket terminal, VNC and
-Orca tunnels, the desktop watch stream, the GitHub and Stripe webhook
-receivers, and deprecated `/v1/images` routes (use `snapshots.*`).
+- Not wrapped: routes that answer `403 permission_denied` to every API
+key and take only a dashboard or CLI sign-in (billing, API key
+management, Vault, sessions, support tickets, Discord, creating,
+deleting and moving workspaces, GitHub App installations), sign-in and
+OAuth flows, the WebSocket terminal, VNC and Orca tunnels, the desktop
+watch stream, the GitHub and Stripe webhook receivers, and deprecated
+`/v1/images` routes (use `snapshots.*`).
 
 **What you get:**
 
-- 129 typed API operations
+- 93 typed API operations
 - 12 incoming webhook event types
 
 ## Setup

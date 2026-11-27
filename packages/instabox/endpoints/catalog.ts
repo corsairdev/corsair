@@ -20,11 +20,6 @@ export const instaboxEndpointsNested = {
 		cancel: op('gpuQueue.cancel'),
 		list: op('gpuQueue.list'),
 	},
-	keys: {
-		create: op('keys.create'),
-		list: op('keys.list'),
-		revoke: op('keys.revoke'),
-	},
 	machines: {
 		activityLeases: {
 			release: op('machines.activityLeases.release'),
@@ -91,40 +86,18 @@ export const instaboxEndpointsNested = {
 		wake: op('machines.wake'),
 	},
 	me: {
-		discord: {
-			get: op('me.discord.get'),
-			unlink: op('me.discord.unlink'),
-		},
 		get: op('me.get'),
 	},
 	operations: {
 		get: op('operations.get'),
 	},
 	orgs: {
-		billing: {
-			cancelSubscription: op('orgs.billing.cancelSubscription'),
-			changePlan: op('orgs.billing.changePlan'),
-			checkout: op('orgs.billing.checkout'),
-			getTopup: op('orgs.billing.getTopup'),
-			movePersonal: op('orgs.billing.movePersonal'),
-			portal: op('orgs.billing.portal'),
-			resumeSubscription: op('orgs.billing.resumeSubscription'),
-			subscribeWithCredits: op('orgs.billing.subscribeWithCredits'),
-			topup: op('orgs.billing.topup'),
-			update: op('orgs.billing.update'),
-		},
-		create: op('orgs.create'),
-		delete: op('orgs.delete'),
 		exports: {
 			create: op('orgs.exports.create'),
 			list: op('orgs.exports.list'),
 		},
 		get: op('orgs.get'),
 		github: {
-			installations: {
-				delete: op('orgs.github.installations.delete'),
-				list: op('orgs.github.installations.list'),
-			},
 			jobs: {
 				get: op('orgs.github.jobs.get'),
 				list: op('orgs.github.jobs.list'),
@@ -141,19 +114,12 @@ export const instaboxEndpointsNested = {
 			resend: op('orgs.invites.resend'),
 			revoke: op('orgs.invites.revoke'),
 		},
-		keys: {
-			create: op('orgs.keys.create'),
-			list: op('orgs.keys.list'),
-			revoke: op('orgs.keys.revoke'),
-		},
 		list: op('orgs.list'),
 		members: {
 			changeRole: op('orgs.members.changeRole'),
 			list: op('orgs.members.list'),
 			remove: op('orgs.members.remove'),
 		},
-		movePersonal: op('orgs.movePersonal'),
-		redeemInvite: op('orgs.redeemInvite'),
 		secrets: {
 			delete: op('orgs.secrets.delete'),
 			import: op('orgs.secrets.import'),
@@ -178,10 +144,6 @@ export const instaboxEndpointsNested = {
 	ports: {
 		list: op('ports.list'),
 	},
-	sessions: {
-		list: op('sessions.list'),
-		signOut: op('sessions.signOut'),
-	},
 	snapshots: {
 		delete: op('snapshots.delete'),
 		files: {
@@ -193,28 +155,12 @@ export const instaboxEndpointsNested = {
 	stats: {
 		get: op('stats.get'),
 	},
-	support: {
-		tickets: {
-			close: op('support.tickets.close'),
-			get: op('support.tickets.get'),
-			list: op('support.tickets.list'),
-			reply: op('support.tickets.reply'),
-		},
-	},
 	templates: {
 		list: op('templates.list'),
 	},
 	usage: {
 		get: op('usage.get'),
 		machines: op('usage.machines'),
-	},
-	vault: {
-		delete: op('vault.delete'),
-		export: op('vault.export'),
-		import: op('vault.import'),
-		list: op('vault.list'),
-		set: op('vault.set'),
-		update: op('vault.update'),
 	},
 } as const;
 
@@ -224,9 +170,6 @@ export const instaboxEndpointSchemas = {
 	'feedback.send': instaboxSchemaEntry('feedback.send'),
 	'gpuQueue.cancel': instaboxSchemaEntry('gpuQueue.cancel'),
 	'gpuQueue.list': instaboxSchemaEntry('gpuQueue.list'),
-	'keys.create': instaboxSchemaEntry('keys.create'),
-	'keys.list': instaboxSchemaEntry('keys.list'),
-	'keys.revoke': instaboxSchemaEntry('keys.revoke'),
 	'machines.activityLeases.release': instaboxSchemaEntry(
 		'machines.activityLeases.release',
 	),
@@ -290,37 +233,11 @@ export const instaboxEndpointSchemas = {
 	'machines.vault.get': instaboxSchemaEntry('machines.vault.get'),
 	'machines.vault.write': instaboxSchemaEntry('machines.vault.write'),
 	'machines.wake': instaboxSchemaEntry('machines.wake'),
-	'me.discord.get': instaboxSchemaEntry('me.discord.get'),
-	'me.discord.unlink': instaboxSchemaEntry('me.discord.unlink'),
 	'me.get': instaboxSchemaEntry('me.get'),
 	'operations.get': instaboxSchemaEntry('operations.get'),
-	'orgs.billing.cancelSubscription': instaboxSchemaEntry(
-		'orgs.billing.cancelSubscription',
-	),
-	'orgs.billing.changePlan': instaboxSchemaEntry('orgs.billing.changePlan'),
-	'orgs.billing.checkout': instaboxSchemaEntry('orgs.billing.checkout'),
-	'orgs.billing.getTopup': instaboxSchemaEntry('orgs.billing.getTopup'),
-	'orgs.billing.movePersonal': instaboxSchemaEntry('orgs.billing.movePersonal'),
-	'orgs.billing.portal': instaboxSchemaEntry('orgs.billing.portal'),
-	'orgs.billing.resumeSubscription': instaboxSchemaEntry(
-		'orgs.billing.resumeSubscription',
-	),
-	'orgs.billing.subscribeWithCredits': instaboxSchemaEntry(
-		'orgs.billing.subscribeWithCredits',
-	),
-	'orgs.billing.topup': instaboxSchemaEntry('orgs.billing.topup'),
-	'orgs.billing.update': instaboxSchemaEntry('orgs.billing.update'),
-	'orgs.create': instaboxSchemaEntry('orgs.create'),
-	'orgs.delete': instaboxSchemaEntry('orgs.delete'),
 	'orgs.exports.create': instaboxSchemaEntry('orgs.exports.create'),
 	'orgs.exports.list': instaboxSchemaEntry('orgs.exports.list'),
 	'orgs.get': instaboxSchemaEntry('orgs.get'),
-	'orgs.github.installations.delete': instaboxSchemaEntry(
-		'orgs.github.installations.delete',
-	),
-	'orgs.github.installations.list': instaboxSchemaEntry(
-		'orgs.github.installations.list',
-	),
 	'orgs.github.jobs.get': instaboxSchemaEntry('orgs.github.jobs.get'),
 	'orgs.github.jobs.list': instaboxSchemaEntry('orgs.github.jobs.list'),
 	'orgs.github.stats': instaboxSchemaEntry('orgs.github.stats'),
@@ -332,15 +249,10 @@ export const instaboxEndpointSchemas = {
 	'orgs.invites.list': instaboxSchemaEntry('orgs.invites.list'),
 	'orgs.invites.resend': instaboxSchemaEntry('orgs.invites.resend'),
 	'orgs.invites.revoke': instaboxSchemaEntry('orgs.invites.revoke'),
-	'orgs.keys.create': instaboxSchemaEntry('orgs.keys.create'),
-	'orgs.keys.list': instaboxSchemaEntry('orgs.keys.list'),
-	'orgs.keys.revoke': instaboxSchemaEntry('orgs.keys.revoke'),
 	'orgs.list': instaboxSchemaEntry('orgs.list'),
 	'orgs.members.changeRole': instaboxSchemaEntry('orgs.members.changeRole'),
 	'orgs.members.list': instaboxSchemaEntry('orgs.members.list'),
 	'orgs.members.remove': instaboxSchemaEntry('orgs.members.remove'),
-	'orgs.movePersonal': instaboxSchemaEntry('orgs.movePersonal'),
-	'orgs.redeemInvite': instaboxSchemaEntry('orgs.redeemInvite'),
 	'orgs.secrets.delete': instaboxSchemaEntry('orgs.secrets.delete'),
 	'orgs.secrets.import': instaboxSchemaEntry('orgs.secrets.import'),
 	'orgs.secrets.list': instaboxSchemaEntry('orgs.secrets.list'),
@@ -360,26 +272,14 @@ export const instaboxEndpointSchemas = {
 	'orgs.webhooks.test': instaboxSchemaEntry('orgs.webhooks.test'),
 	'orgs.webhooks.update': instaboxSchemaEntry('orgs.webhooks.update'),
 	'ports.list': instaboxSchemaEntry('ports.list'),
-	'sessions.list': instaboxSchemaEntry('sessions.list'),
-	'sessions.signOut': instaboxSchemaEntry('sessions.signOut'),
 	'snapshots.delete': instaboxSchemaEntry('snapshots.delete'),
 	'snapshots.files.list': instaboxSchemaEntry('snapshots.files.list'),
 	'snapshots.get': instaboxSchemaEntry('snapshots.get'),
 	'snapshots.list': instaboxSchemaEntry('snapshots.list'),
 	'stats.get': instaboxSchemaEntry('stats.get'),
-	'support.tickets.close': instaboxSchemaEntry('support.tickets.close'),
-	'support.tickets.get': instaboxSchemaEntry('support.tickets.get'),
-	'support.tickets.list': instaboxSchemaEntry('support.tickets.list'),
-	'support.tickets.reply': instaboxSchemaEntry('support.tickets.reply'),
 	'templates.list': instaboxSchemaEntry('templates.list'),
 	'usage.get': instaboxSchemaEntry('usage.get'),
 	'usage.machines': instaboxSchemaEntry('usage.machines'),
-	'vault.delete': instaboxSchemaEntry('vault.delete'),
-	'vault.export': instaboxSchemaEntry('vault.export'),
-	'vault.import': instaboxSchemaEntry('vault.import'),
-	'vault.list': instaboxSchemaEntry('vault.list'),
-	'vault.set': instaboxSchemaEntry('vault.set'),
-	'vault.update': instaboxSchemaEntry('vault.update'),
 } satisfies RequiredPluginEndpointSchemas<typeof instaboxEndpointsNested>;
 
 export const instaboxEndpointMeta = {
@@ -405,23 +305,6 @@ export const instaboxEndpointMeta = {
 	'gpuQueue.list': {
 		riskLevel: 'read',
 		description: "List an org's GPU queue entries",
-	},
-	'keys.create': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description:
-			'Create an API key. Signed-in sessions only; an API key gets 403 permission_denied',
-	},
-	'keys.list': {
-		riskLevel: 'read',
-		description:
-			"List your personal org's API keys (expired ones included, revoked ones not), as `GET /v1/orgs/{id}/keys` for it. Signed-in sessions only",
-	},
-	'keys.revoke': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description:
-			"Revoke one of your personal org's API keys. Signed-in sessions only",
 	},
 	'machines.activityLeases.release': {
 		riskLevel: 'destructive',
@@ -639,15 +522,6 @@ export const instaboxEndpointMeta = {
 		riskLevel: 'destructive',
 		description: 'Resume an idle-suspended machine before using it',
 	},
-	'me.discord.get': {
-		riskLevel: 'read',
-		description: 'The Discord account linked to the signed-in account',
-	},
-	'me.discord.unlink': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description: "Unlink the signed-in account's Discord account",
-	},
 	'me.get': {
 		riskLevel: 'read',
 		description: 'The signed-in user and the sandbox size they get',
@@ -655,68 +529,6 @@ export const instaboxEndpointMeta = {
 	'operations.get': {
 		riskLevel: 'read',
 		description: 'Get an operation (the progress of a sandbox change)',
-	},
-	'orgs.billing.cancelSubscription': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description:
-			"End the org's subscription at the end of the current period. The owner; signed-in sessions only",
-	},
-	'orgs.billing.changePlan': {
-		riskLevel: 'destructive',
-		description:
-			'Move a subscribed org between the paid plans. The owner; signed-in sessions only',
-	},
-	'orgs.billing.checkout': {
-		riskLevel: 'destructive',
-		description:
-			'Put an org on a paid plan, its credits first and a card for the rest. The owner; signed-in sessions only',
-	},
-	'orgs.billing.getTopup': {
-		riskLevel: 'read',
-		description:
-			'What a top-up of the org allows, and the card on file it charges. The owner and admins; signed-in sessions only',
-	},
-	'orgs.billing.movePersonal': {
-		riskLevel: 'destructive',
-		description:
-			'Move your personal plan, sandboxes and credits into a workspace you own (needs a signed-in user token; an API key gets 403)',
-	},
-	'orgs.billing.portal': {
-		riskLevel: 'destructive',
-		description:
-			'Open the Stripe customer portal (invoices, the card). The owner and admins; signed-in sessions only',
-	},
-	'orgs.billing.resumeSubscription': {
-		riskLevel: 'destructive',
-		description:
-			'Take back a cancellation before the period ends. The owner; signed-in sessions only',
-	},
-	'orgs.billing.subscribeWithCredits': {
-		riskLevel: 'destructive',
-		description:
-			'Put an org on a paid plan paid from its credits. The owner; signed-in sessions only',
-	},
-	'orgs.billing.topup': {
-		riskLevel: 'destructive',
-		description:
-			'Buy credits for an org on Pro, Builder or Team. The owner and admins; signed-in sessions only',
-	},
-	'orgs.billing.update': {
-		riskLevel: 'destructive',
-		description:
-			"Set a paid org's spend cap, usage alerts or extra starts. The owner and admins; signed-in sessions only",
-	},
-	'orgs.create': {
-		riskLevel: 'destructive',
-		description:
-			'Buy a workspace through Stripe Checkout. Signed-in sessions only',
-	},
-	'orgs.delete': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description:
-			'Delete a workspace. The owner, naming it; signed-in sessions only',
 	},
 	'orgs.exports.create': {
 		riskLevel: 'write',
@@ -729,17 +541,6 @@ export const instaboxEndpointMeta = {
 	'orgs.get': {
 		riskLevel: 'read',
 		description: "An org you belong to, with its limits and this month's usage",
-	},
-	'orgs.github.installations.delete': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description:
-			'Unlink an install of the GitHub App from an org; its jobs then start no boxes. The App stays installed on GitHub, so Connect GitHub can link it again, here or in another workspace. The owner and admins; signed-in sessions only',
-	},
-	'orgs.github.installations.list': {
-		riskLevel: 'read',
-		description:
-			'The instabox GitHub App installs linked to an org. The owner and admins; signed-in sessions only',
 	},
 	'orgs.github.jobs.get': {
 		riskLevel: 'read',
@@ -785,23 +586,6 @@ export const instaboxEndpointMeta = {
 		irreversible: true,
 		description: 'Revoke an unredeemed invite. The owner and admins',
 	},
-	'orgs.keys.create': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description:
-			"Create an API key of an org. The owner and admins (a personal org's owner); signed-in sessions only",
-	},
-	'orgs.keys.list': {
-		riskLevel: 'read',
-		description:
-			"An org's API keys (expired ones included, revoked ones not). The owner and admins (a personal org's owner); signed-in sessions only",
-	},
-	'orgs.keys.revoke': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description:
-			"Revoke an org's API key. The owner and admins (a personal org's owner); signed-in sessions only",
-	},
 	'orgs.list': {
 		riskLevel: 'read',
 		description: 'The orgs you belong to, your personal org first',
@@ -818,16 +602,6 @@ export const instaboxEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description: 'Remove a member, or leave (your own user ID)',
-	},
-	'orgs.movePersonal': {
-		riskLevel: 'destructive',
-		description:
-			'Move your personal plan, sandboxes and credits into a new workspace (needs a signed-in user token; an API key gets 403)',
-	},
-	'orgs.redeemInvite': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description: 'Join an org with an invite code. Signed-in sessions only',
 	},
 	'orgs.secrets.delete': {
 		riskLevel: 'destructive',
@@ -896,16 +670,6 @@ export const instaboxEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List the public ports of all your sandboxes',
 	},
-	'sessions.list': {
-		riskLevel: 'read',
-		description: 'List your active sign-ins (CLI and browser sessions)',
-	},
-	'sessions.signOut': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description:
-			'Sign out one of your sessions (revokes all its tokens) (needs a signed-in user token; an API key gets 403)',
-	},
 	'snapshots.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
@@ -928,28 +692,6 @@ export const instaboxEndpointMeta = {
 		description:
 			'Public figures, such as how many sandboxes are running right now',
 	},
-	'support.tickets.close': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description:
-			"Close one of the account's tickets (needs a signed-in user token; an API key gets 403)",
-	},
-	'support.tickets.get': {
-		riskLevel: 'read',
-		description:
-			"One of the account's tickets and its messages (needs a signed-in user token; an API key gets 403)",
-	},
-	'support.tickets.list': {
-		riskLevel: 'read',
-		description:
-			"The signed-in account's support tickets, newest activity first",
-	},
-	'support.tickets.reply': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description:
-			"Answer one of the account's open tickets (needs a signed-in user token; an API key gets 403)",
-	},
 	'templates.list': {
 		riskLevel: 'read',
 		description: 'List the templates a sandbox can start from',
@@ -963,33 +705,5 @@ export const instaboxEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Compute, disk and egress use and list price by sandbox over a window, deleted sandboxes included',
-	},
-	'vault.delete': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description: 'Delete a Vault item. Sign-in sessions only',
-	},
-	'vault.export': {
-		riskLevel: 'write',
-		description:
-			'Recover one retained legacy item as a private JSON download (needs a signed-in user token; an API key gets 403)',
-	},
-	'vault.import': {
-		riskLevel: 'write',
-		description:
-			'Atomically import environment variables into the per-user Vault (needs a signed-in user token; an API key gets 403)',
-	},
-	'vault.list': {
-		riskLevel: 'read',
-		description: "The caller's Vault items, by name. Sign-in sessions only",
-	},
-	'vault.set': {
-		riskLevel: 'write',
-		description: 'Create or replace a Vault item. Sign-in sessions only',
-	},
-	'vault.update': {
-		riskLevel: 'write',
-		description:
-			"Change a Vault item's selector without resending its value. Sign-in sessions only",
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof instaboxEndpointsNested>;

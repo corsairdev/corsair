@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/instabox",
   "version": "0.1.0",
-  "description": "InstaBox cloud Linux machines for agents: machines (create, start, stop, suspend, fork, exec, files, ports, SSH, desktop), snapshots, exports, secrets, Vault, workspaces, members, billing, usage and signed webhooks (129 operations).",
+  "description": "InstaBox cloud Linux machines for agents: machines (create, start, stop, suspend, fork, exec, files, ports, SSH, desktop), snapshots, exports, workspace secrets, members, invites, usage and signed webhooks (93 operations).",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

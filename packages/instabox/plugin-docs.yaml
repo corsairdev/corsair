@@ -3,17 +3,16 @@
 # docs-examples.test.ts parses every example with its input schema.
 displayName: InstaBox
 domain: instabox.sh
-description: "InstaBox gives each agent a Linux machine in the cloud: machines (create, start, stop, suspend, resume, fork, resize, exec, files, ports, SSH tokens, desktop links, metrics, logs), snapshots and exports, secrets and Vault, workspaces, members and invites, API keys, billing and usage, GitHub Actions CI jobs, and signed webhooks (129 operations)."
+description: "InstaBox gives each agent a Linux machine in the cloud: machines (create, start, stop, suspend, resume, fork, resize, exec, files, ports, SSH tokens, desktop links, metrics, logs), snapshots and exports, workspace secrets, members and invites, usage, GitHub Actions CI jobs, and signed webhooks (93 operations)."
 recommendedAuth: api_key
 overviewNote: |
   The account stores one credential: an InstaBox API key (`ibk_...`, from
   the dashboard's API keys page or `instabox keys create`), sent as
   `Authorization: Bearer`. Its scopes decide which operations work. A key
   belongs to one workspace and sees only that workspace's machines and
-  snapshots. A signed-in user's access token works in its place and is the
-  only credential the sign-in-only routes accept (keys, Vault, billing
-  changes, creating and deleting workspaces, sessions, support tickets);
-  their descriptions say so.
+  snapshots. Member, invite and workspace-secret changes need a workspace
+  key with `workspace:admin`; a personal org's key gets `403 missing_scope`
+  there.
 
   - **Lifecycle calls** (create, start, stop, suspend, resume, fork,
   snapshot, delete) take an `Idempotency-Key`; the plugin sends a fresh one
@@ -28,18 +27,21 @@ overviewNote: |
   rather than `cat`.
   - **Money.** Machines are billed per second while they run (vCPU, memory,
   storage, egress, GPUs). Creating, starting, resuming, waking, forking or
-  restoring one, running a command in it, and every plan, checkout and
-  top-up call are `destructive`, as are invites, key and token issuing and
-  every delete.
+  restoring one, running a command in it, invites, SSH certificate and
+  token issuing and every delete are `destructive`.
   - **Webhooks.** Register an endpoint with `orgs.webhooks.create` and store
   the `whsec_` secret it returns as the webhook secret. Deliveries follow
   Standard Webhooks (`webhook-id`, `webhook-timestamp`, `webhook-signature`),
   and the plugin checks each one.
   - **Rate limits.** A 429 `rate_limited` carries `Retry-After` and core
   retries it; a 429 `quota_exceeded` is a plan limit and is not retried.
-  - Not wrapped: sign-in and OAuth flows, the WebSocket terminal, VNC and
-  Orca tunnels, the desktop watch stream, the GitHub and Stripe webhook
-  receivers, and deprecated `/v1/images` routes (use `snapshots.*`).
+  - Not wrapped: routes that answer `403 permission_denied` to every API
+  key and take only a dashboard or CLI sign-in (billing, API key
+  management, Vault, sessions, support tickets, Discord, creating,
+  deleting and moving workspaces, GitHub App installations), sign-in and
+  OAuth flows, the WebSocket terminal, VNC and Orca tunnels, the desktop
+  watch stream, the GitHub and Stripe webhook receivers, and deprecated
+  `/v1/images` routes (use `snapshots.*`).
 examples:
   read:
     path: machines.list
@@ -60,12 +62,6 @@ apiExamples:
     args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
   gpuQueue.list:
     args: {}
-  keys.create:
-    args: {"name": "OPENAI_API_KEY", "scopes": ["machines:read"]}
-  keys.list:
-    args: {}
-  keys.revoke:
-    args: {"id": "key_k3m7q2abx5wr4hj6zpcnfa2etd"}
   machines.activityLeases.release:
     args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "leaseID": "build-42"}
   machines.activityLeases.renew:
@@ -160,47 +156,15 @@ apiExamples:
     args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
   machines.wake:
     args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
-  me.discord.get:
-    args: {}
-  me.discord.unlink:
-    args: {}
   me.get:
     args: {}
   operations.get:
     args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
-  orgs.billing.cancelSubscription:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
-  orgs.billing.changePlan:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "tier": "pro"}
-  orgs.billing.checkout:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
-  orgs.billing.getTopup:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
-  orgs.billing.movePersonal:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
-  orgs.billing.portal:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
-  orgs.billing.resumeSubscription:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
-  orgs.billing.subscribeWithCredits:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "tier": "pro"}
-  orgs.billing.topup:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "amountUSD": 25}
-  orgs.billing.update:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
-  orgs.create:
-    args: {"name": "OPENAI_API_KEY", "tier": "pro"}
-  orgs.delete:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "name": "OPENAI_API_KEY"}
   orgs.exports.create:
     args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
   orgs.exports.list:
     args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
   orgs.get:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
-  orgs.github.installations.delete:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "installationId": 1}
-  orgs.github.installations.list:
     args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
   orgs.github.jobs.get:
     args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "job": 1}
@@ -220,12 +184,6 @@ apiExamples:
     args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "inviteId": "oi_4t7m1z"}
   orgs.invites.revoke:
     args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "inviteId": "oi_4t7m1z"}
-  orgs.keys.create:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "name": "OPENAI_API_KEY"}
-  orgs.keys.list:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
-  orgs.keys.revoke:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "keyId": "key_k3m7q2abx5wr4hj6zpcnfa2etd"}
   orgs.list:
     args: {}
   orgs.members.changeRole:
@@ -234,10 +192,6 @@ apiExamples:
     args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
   orgs.members.remove:
     args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "userId": 1}
-  orgs.movePersonal:
-    args: {"name": "OPENAI_API_KEY"}
-  orgs.redeemInvite:
-    args: {"code": "ABC123"}
   orgs.secrets.delete:
     args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "name": "OPENAI_API_KEY"}
   orgs.secrets.import:
@@ -268,10 +222,6 @@ apiExamples:
     args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "webhookId": "wh_2r8m5x"}
   ports.list:
     args: {}
-  sessions.list:
-    args: {}
-  sessions.signOut:
-    args: {"id": "ss_0123456789abcdef01234567"}
   snapshots.delete:
     args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
   snapshots.files.list:
@@ -282,29 +232,9 @@ apiExamples:
     args: {}
   stats.get:
     args: {}
-  support.tickets.close:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
-  support.tickets.get:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd"}
-  support.tickets.list:
-    args: {}
-  support.tickets.reply:
-    args: {"id": "m_k3m7q2abx5wr4hj6zpcnfa2etd", "body": "example"}
   templates.list:
     args: {}
   usage.get:
     args: {}
   usage.machines:
     args: {}
-  vault.delete:
-    args: {"name": "OPENAI_API_KEY"}
-  vault.export:
-    args: {"name": "OPENAI_API_KEY"}
-  vault.import:
-    args: {"values": {}}
-  vault.list:
-    args: {}
-  vault.set:
-    args: {"name": "OPENAI_API_KEY", "kind": "env", "value": "example"}
-  vault.update:
-    args: {"name": "OPENAI_API_KEY", "selector": {}}

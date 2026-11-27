@@ -36,9 +36,8 @@ export type InstaboxPluginOptions = {
 	/**
 	 * An InstaBox API key (`ibk_...`) from the dashboard's API keys page or
 	 * `instabox keys create`, sent as `Authorization: Bearer`. Its scopes decide
-	 * which operations work. A signed-in user's access token works too and is
-	 * the only credential the sign-in-only routes (keys, Vault, billing
-	 * changes, workspaces, sessions) accept.
+	 * which operations work; member, invite and workspace-secret changes need
+	 * a workspace key with workspace:admin.
 	 */
 	key?: string;
 	/**

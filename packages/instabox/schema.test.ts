@@ -29,14 +29,14 @@ describe('instabox-manifest.json', () => {
 		).toEqual([]);
 	});
 
-	it('has 129 operations, one per id and route', () => {
-		expect(ids).toHaveLength(129);
-		expect(new Set(ids).size).toBe(129);
+	it('has 93 operations, one per id and route', () => {
+		expect(ids).toHaveLength(93);
+		expect(new Set(ids).size).toBe(93);
 		expect([...INSTABOX_OPERATION_IDS].sort()).toEqual([...ids].sort());
 		const routes = new Set(
 			instaboxOperations.map((o) => `${o.method} ${o.path}`),
 		);
-		expect(routes.size).toBe(129);
+		expect(routes.size).toBe(93);
 	});
 
 	it('covers the groups of the public API', () => {
@@ -47,17 +47,28 @@ describe('instabox-manifest.json', () => {
 			'exports',
 			'operations',
 			'orgs',
-			'keys',
-			'vault',
 			'usage',
 			'templates',
 			'ports',
 			'gpuQueue',
-			'sessions',
-			'support',
 			'me',
 		]) {
 			expect(groups.has(group)).toBe(true);
+		}
+	});
+
+	it('leaves out the routes that refuse every API key', () => {
+		for (const id of [
+			'keys.list',
+			'vault.list',
+			'sessions.list',
+			'support.tickets.list',
+			'orgs.billing.checkout',
+			'orgs.keys.create',
+			'orgs.create',
+			'orgs.delete',
+		]) {
+			expect(ids).not.toContain(id);
 		}
 	});
 
@@ -126,7 +137,6 @@ describe('risk levels', () => {
 			'machines.start',
 			'machines.fork',
 			'machines.exec',
-			'orgs.billing.topup',
 			'orgs.invites.create',
 			'machines.delete',
 			'snapshots.delete',
