@@ -6483,6 +6483,14 @@
                 ]
               },
               {
+                "group": "VPNDetection",
+                "pages": [
+                  "plugins/vpndetection/overview",
+                  "plugins/vpndetection/api",
+                  "plugins/vpndetection/database"
+                ]
+              },
+              {
                 "group": "waboxapp",
                 "pages": [
                   "plugins/waboxapp/overview",
