@@ -390,6 +390,11 @@ export function createInstaboxOperation<Id extends InstaboxOperationId>(
 			let body = await makeInstaboxRequest(ctx, request);
 			if (operation.emptyOk) {
 				body = decodeMaybeEmpty(id, body);
+			} else if (body === undefined) {
+				// Core answers `undefined` for an empty body and for JSON it
+				// couldn't decode. This route documents a JSON body, so either
+				// is an error, even where the documented schema is open.
+				throw new Error(`InstaBox ${id} answered without a JSON body`);
 			}
 			response = body === EMPTY ? { success: true } : body;
 		}

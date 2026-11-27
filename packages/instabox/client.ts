@@ -154,6 +154,10 @@ export async function makeInstaboxRequest(
 		// again so a keyless request never goes out.
 		throw new AuthMissingError('instabox', 'api_key');
 	}
+	// Core's ApiError keeps a redacted copy of the request, so values sent in
+	// the query and path are gathered here, before the call, to scrub them
+	// from an error body that echoes one back.
+	const secrets = [ctx.key, ...sentValues(options)];
 	const config = configFor(options, ctx.key);
 	const requestOptions: ApiRequestOptions = {
 		method: options.method,
@@ -172,10 +176,21 @@ export async function makeInstaboxRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw withoutRequestData(error, [ctx.key]);
+			throw withoutRequestData(error, secrets);
 		}
 		throw error;
 	}
+}
+
+/** String query and path values of a request, for scrubbing an error that echoes one. */
+function sentValues(options: InstaboxRequest): string[] {
+	const values: string[] = [];
+	for (const record of [options.query, options.pathParameters]) {
+		for (const value of Object.values(record ?? {})) {
+			if (typeof value === 'string' && value.length >= 6) values.push(value);
+		}
+	}
+	return values;
 }
 
 // ── Errors ──────────────────────────────────────────────────────────────────

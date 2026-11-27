@@ -286,6 +286,26 @@ describe('requests', () => {
 	});
 });
 
+describe('responses', () => {
+	it('refuses a 200 whose body is not JSON', async () => {
+		reply(200, 'not json', 'application/json');
+		await expect(
+			endpointFor('machines.get')(ctx(), { id: MID }),
+		).rejects.toThrow(/answered without a JSON body/);
+	});
+
+	it('scrubs a path value the error body echoes', async () => {
+		reply(404, { error: { code: 'not_found', message: `no machine ${MID}` } });
+		const error = (await endpointFor('machines.get')(ctx(), { id: MID }).then(
+			() => undefined,
+			(e: unknown) => e,
+		)) as ApiError;
+		expect(error.message).toBe(
+			'InstaBox 404: not_found: no machine [REDACTED]',
+		);
+	});
+});
+
 describe('errors', () => {
 	it("reads InstaBox's error body", () => {
 		expect(
