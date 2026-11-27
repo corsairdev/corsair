@@ -195,25 +195,40 @@ describe('ip.lookup', () => {
 		await expect(lookup(context(''), { ip: '8.8.8.8' })).rejects.toThrow();
 	});
 
-	it('lets the API error for a bad address through unchanged', async () => {
+	it('lets an API error through unchanged', async () => {
 		const error = new ApiError(
 			{ method: 'GET', url: '/{ip}' },
 			{
-				url: 'https://api.vpndetection.io/not-an-ip',
+				url: 'https://api.vpndetection.io/192.0.2.1',
 				ok: false,
-				status: 400,
-				statusText: 'Bad Request',
-				body: { error: 'not a valid IP address' },
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { error: 'rate limited' },
 			},
-			'Bad Request',
+			'Too Many Requests',
 		);
 		mockRequest.mockRejectedValue(error);
 
-		await expect(lookup(context(''), { ip: 'not-an-ip' })).rejects.toBe(error);
+		await expect(lookup(context(''), { ip: '192.0.2.1' })).rejects.toBe(error);
 	});
 
-	it('rejects an empty ip before any request', async () => {
-		await expect(lookup(context(''), { ip: '' })).rejects.toThrow();
+	it('accepts an IPv6 address', async () => {
+		mockRequest.mockResolvedValue({
+			...VPN_SAMPLE,
+			ip: '2a03:1b20:3:f011::a01f',
+		});
+
+		await lookup(context(''), { ip: '2a03:1b20:3:f011::a01f' });
+
+		expect(mockRequest.mock.calls[0]?.[1].path).toEqual({
+			ip: '2a03:1b20:3:f011::a01f',
+		});
+	});
+
+	it('rejects anything but an address before any request', async () => {
+		for (const ip of ['', 'myip', 'not-an-ip', '256.1.1.1']) {
+			await expect(lookup(context(''), { ip })).rejects.toThrow();
+		}
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 });

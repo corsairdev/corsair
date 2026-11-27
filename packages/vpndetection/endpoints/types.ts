@@ -1,9 +1,10 @@
 import { z } from 'zod';
 
 export const LookupIpInputSchema = z.object({
+	// An address, never any string: `myip` would reach the self-lookup path
+	// and be saved as if the caller had named an address.
 	ip: z
-		.string()
-		.min(1)
+		.union([z.ipv4(), z.ipv6()])
 		.optional()
 		.describe(
 			'IPv4 or IPv6 address. Omit it and the service looks up the caller address.',

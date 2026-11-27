@@ -12,7 +12,7 @@ examples:
       ip: 185.65.135.230
 apiNotes:
   ip.lookup: |
-    Omit `ip` and the service looks up the caller address. Every answer carries `ip`, `is_vpn`, `is_tor`, `is_relay`, `is_bogon`, `is_anycast`, `tor`, `relay`, `location`, `asn` and `hostname`. A lookup with an explicit `ip` is saved to the `lookups` table under that address, replacing the previous row for it; a lookup without `ip` is returned but not saved, and a failed save does not fail the lookup. An address that does not parse comes back as HTTP 400.
+    Omit `ip` and the service looks up the caller address. Every answer carries `ip`, `is_vpn`, `is_tor`, `is_relay`, `is_bogon`, `is_anycast`, `tor`, `relay`, `location`, `asn` and `hostname`. A lookup with an explicit `ip` is saved to the `lookups` table under that address, replacing the previous row for it; a lookup without `ip` is returned but not saved, and a failed save does not fail the lookup. Anything but an IPv4 or IPv6 address in `ip` is refused before the request.
 apiExamples:
   ip.lookup:
     call: "{ ip: '185.65.135.230' }"
