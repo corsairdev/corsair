@@ -1816,6 +1816,14 @@
                 ]
               },
               {
+                "group": "DefiLlama",
+                "pages": [
+                  "plugins/defillama/overview",
+                  "plugins/defillama/api",
+                  "plugins/defillama/database"
+                ]
+              },
+              {
                 "group": "Demio",
                 "pages": [
                   "plugins/demio/overview",

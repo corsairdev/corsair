@@ -215,6 +215,7 @@ export const BaseProviders = [
 	'daytona',
 	'deepline',
 	'deepseek',
+	'defillama',
 	'demio',
 	'deployhq',
 	'desktime',
@@ -1033,6 +1034,7 @@ export const ProviderDisplayNames = {
 	daytona: 'Daytona',
 	deepline: 'Deepline',
 	deepseek: 'DeepSeek',
+	defillama: 'DefiLlama',
 	demio: 'Demio',
 	deployhq: 'DeployHQ',
 	desktime: 'DeskTime',
@@ -1858,6 +1860,7 @@ export type AllProviders =
 	| 'daytona'
 	| 'deepline'
 	| 'deepseek'
+	| 'defillama'
 	| 'demio'
 	| 'deployhq'
 	| 'desktime'

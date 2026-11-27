@@ -1,0 +1,310 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from DefiLlama's API references;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: DefiLlama
+domain: defillama.com
+description: "DefiLlama DeFi data: TVL by protocol and chain, token prices and charts, stablecoins, yields and pools, DEX and options volumes, fees and revenue, oracles, forks, treasuries and hacks; with a Pro key also yields earn and borrow, unlocks, bridges, equities, ETFs, RWA, pre-IPO and digital-asset treasuries (136 operations, 73 free without a key)."
+recommendedAuth: api_key
+overviewNote: |
+  73 routes are free and need no key: TVL (`tvl.*`, except
+  `tvl.chainAssets`, `tvl.inflows` and `tvl.tokenProtocols`), coin prices
+  (`coins.*`), stablecoins, yield pools (`yields.pools`,
+  `yields.poolChart`), DEX, options and fees overviews, oracles, forks,
+  hacks and more. They go to DefiLlama's free hosts (api.llama.fi,
+  coins.llama.fi, stablecoins.llama.fi, yields.llama.fi).
+
+  - **Pro** (defillama.com/subscription): connect with the Pro API key and
+  every call goes to pro-api.llama.fi with higher limits. The other 63
+  routes need it: yields earn, borrow, loops, LST and funding rates,
+  unlocks, bridges, equities, ETFs, RWA, pre-IPO, digital-asset
+  treasuries, raises, categories, entities, derivatives, token liquidity,
+  inflows and `account.usage` (credits left). Without a key they raise a
+  "needs a DefiLlama Pro API key" error before anything is sent; each
+  description says which routes are Pro-only.
+  - **Coins** are `chain:address` or `coingecko:<id>`, comma-separated
+  (`ethereum:0xdac17f958d2ee523a2206206994597c13d831ec7,coingecko:bitcoin`).
+  - **Protocols** are DefiLlama slugs (`aave`, `uniswap`); chains are names
+  (`Ethereum`, `Arbitrum`); timestamps are Unix seconds.
+  - Every operation only reads (`read`).
+examples:
+  basic:
+    path: tvl.protocol
+    title: Read a protocol's TVL history
+    args: {"protocol": "aave"}
+  prices:
+    path: coins.current
+    title: Current prices for a few coins
+    args: {"coins": "coingecko:ethereum,coingecko:bitcoin"}
+apiExamples:
+  account.usage:
+    args: {}
+  bridges.dayStats:
+    args: {"timestamp": 1764547200, "chain": "Ethereum"}
+  bridges.get:
+    args: {"id": 1}
+  bridges.list:
+    args: {}
+  bridges.transactions:
+    args: {"id": 1}
+  bridges.volume:
+    args: {"chain": "Ethereum"}
+  coins.batchHistorical:
+    args: {"coins": "{\"coingecko:ethereum\": [1764547200, 1764633600]}"}
+  coins.block:
+    args: {"chain": "Ethereum", "timestamp": 1764547200}
+  coins.chart:
+    args: {"coins": "coingecko:ethereum,ethereum:0xdac17f958d2ee523a2206206994597c13d831ec7"}
+  coins.current:
+    args: {"coins": "coingecko:ethereum,coingecko:bitcoin"}
+  coins.first:
+    args: {"coins": "coingecko:ethereum,ethereum:0xdac17f958d2ee523a2206206994597c13d831ec7"}
+  coins.historical:
+    args: {"coins": "coingecko:ethereum,ethereum:0xdac17f958d2ee523a2206206994597c13d831ec7", "timestamp": 1764547200}
+  coins.percentageChange:
+    args: {"coins": "coingecko:ethereum,ethereum:0xdac17f958d2ee523a2206206994597c13d831ec7"}
+  dat.institution:
+    args: {"symbol": "USDT"}
+  dat.institutions:
+    args: {}
+  dimensions.categories:
+    args: {"metric": "fees"}
+  dimensions.categoryChainChart:
+    args: {"metric": "fees", "category": "Dexs", "chain": "Ethereum"}
+  dimensions.categoryChainChartByProtocol:
+    args: {"metric": "fees", "category": "Dexs", "chain": "Ethereum"}
+  dimensions.categoryChainMetrics:
+    args: {"metric": "fees", "category": "Dexs", "chain": "Ethereum"}
+  dimensions.categoryChart:
+    args: {"metric": "fees", "category": "Dexs"}
+  dimensions.categoryChartByChain:
+    args: {"metric": "fees", "category": "Dexs"}
+  dimensions.categoryChartByProtocol:
+    args: {"metric": "fees", "category": "Dexs"}
+  dimensions.categoryMetrics:
+    args: {"metric": "fees", "category": "Dexs"}
+  dimensions.chainChart:
+    args: {"metric": "fees", "chain": "Ethereum"}
+  dimensions.chainChartByProtocol:
+    args: {"metric": "fees", "chain": "Ethereum"}
+  dimensions.chainMetrics:
+    args: {"metric": "fees", "chain": "Ethereum"}
+  dimensions.chart:
+    args: {"metric": "fees"}
+  dimensions.chartByChain:
+    args: {"metric": "fees"}
+  dimensions.chartByProtocol:
+    args: {"metric": "fees"}
+  dimensions.metrics:
+    args: {"metric": "fees"}
+  dimensions.protocolChart:
+    args: {"metric": "fees", "protocol": "aave"}
+  dimensions.protocolChartByChain:
+    args: {"metric": "fees", "protocol": "aave"}
+  dimensions.protocolChartByLabel:
+    args: {"metric": "fees", "protocol": "aave"}
+  dimensions.protocolChartByVersion:
+    args: {"metric": "fees", "protocol": "aave"}
+  dimensions.protocolMetrics:
+    args: {"metric": "fees", "protocol": "aave"}
+  equities.companies:
+    args: {}
+  equities.dimensions:
+    args: {"ticker": "COIN", "country": "US"}
+  equities.earningsCalendar:
+    args: {}
+  equities.filings:
+    args: {"ticker": "COIN", "country": "US"}
+  equities.industries:
+    args: {}
+  equities.ohlcv:
+    args: {"ticker": "COIN", "country": "US"}
+  equities.onchain:
+    args: {"ticker": "COIN", "country": "US"}
+  equities.priceHistory:
+    args: {"ticker": "COIN", "country": "US"}
+  equities.sector:
+    args: {"sector": "Technology"}
+  equities.sectors:
+    args: {}
+  equities.sectorsOverview:
+    args: {}
+  equities.statements:
+    args: {"ticker": "COIN", "country": "US"}
+  equities.summary:
+    args: {"ticker": "COIN", "country": "US"}
+  etfs.flows:
+    args: {}
+  etfs.snapshot:
+    args: {}
+  fees.byChain:
+    args: {"chain": "Ethereum", "excludeTotalDataChart": true, "excludeTotalDataChartBreakdown": true}
+  fees.overview:
+    args: {"excludeTotalDataChart": true, "excludeTotalDataChartBreakdown": true}
+  fees.summary:
+    args: {"protocol": "aave"}
+  financialStatements.get:
+    args: {"protocol": "aave"}
+  forks.chartByProtocol:
+    args: {}
+  forks.metrics:
+    args: {}
+  forks.protocolChart:
+    args: {"protocol": "uniswap-v2"}
+  narratives.performance:
+    args: {"period": "30"}
+  oracles.chainChart:
+    args: {"chain": "Ethereum"}
+  oracles.chainChartByProtocol:
+    args: {"chain": "Ethereum"}
+  oracles.chart:
+    args: {}
+  oracles.chartByChain:
+    args: {}
+  oracles.chartByProtocol:
+    args: {}
+  oracles.metrics:
+    args: {}
+  oracles.protocolChart:
+    args: {"protocol": "chainlink"}
+  oracles.protocolChartByChain:
+    args: {"protocol": "chainlink"}
+  overview.categories:
+    args: {}
+  overview.entities:
+    args: {}
+  overview.forks:
+    args: {}
+  overview.hacks:
+    args: {}
+  overview.oracles:
+    args: {}
+  overview.raises:
+    args: {}
+  overview.treasuries:
+    args: {}
+  perps.derivatives:
+    args: {"excludeTotalDataChart": true, "excludeTotalDataChartBreakdown": true}
+  perps.derivativesSummary:
+    args: {"protocol": "aave", "excludeTotalDataChart": true, "excludeTotalDataChartBreakdown": true}
+  perps.openInterest:
+    args: {"excludeTotalDataChart": true, "excludeTotalDataChartBreakdown": true}
+  preIpo.companies:
+    args: {}
+  preIpo.integrations:
+    args: {"company": "openai"}
+  preIpo.raises:
+    args: {"company": "openai"}
+  preIpo.summary:
+    args: {"company": "openai"}
+  preIpo.valuations:
+    args: {"company": "openai"}
+  rwa.chain:
+    args: {"chain": "Ethereum"}
+  rwa.chainChart:
+    args: {"chain": "Ethereum"}
+  rwa.chartByChain:
+    args: {}
+  rwa.current:
+    args: {}
+  rwa.list:
+    args: {}
+  rwa.stats:
+    args: {}
+  stablecoins.chains:
+    args: {}
+  stablecoins.chartAll:
+    args: {}
+  stablecoins.chartByChain:
+    args: {"chain": "Ethereum"}
+  stablecoins.dominance:
+    args: {"chain": "Ethereum"}
+  stablecoins.get:
+    args: {"asset": 1}
+  stablecoins.list:
+    args: {}
+  stablecoins.prices:
+    args: {}
+  tokenLiquidity.history:
+    args: {"token": "ethereum:0xdac17f958d2ee523a2206206994597c13d831ec7"}
+  treasury.chart:
+    args: {"protocol": "aave"}
+  treasury.chartByChain:
+    args: {"protocol": "aave"}
+  treasury.chartByToken:
+    args: {"protocol": "aave"}
+  treasury.metrics:
+    args: {"protocol": "aave"}
+  tvl.chainAssets:
+    args: {}
+  tvl.chains:
+    args: {}
+  tvl.chart:
+    args: {"protocol": "aave"}
+  tvl.chartByChain:
+    args: {"protocol": "aave"}
+  tvl.chartByToken:
+    args: {"protocol": "aave"}
+  tvl.current:
+    args: {"protocol": "aave"}
+  tvl.historicalChainTvl:
+    args: {}
+  tvl.historicalChainTvlByChain:
+    args: {"chain": "Ethereum"}
+  tvl.inflows:
+    args: {"protocol": "aave", "timestamp": 1764547200}
+  tvl.metrics:
+    args: {"protocol": "aave"}
+  tvl.protocol:
+    args: {"protocol": "aave"}
+  tvl.protocols:
+    args: {}
+  tvl.tokenProtocols:
+    args: {"symbol": "USDT"}
+  unlocks.get:
+    args: {"protocol": "aave"}
+  unlocks.list:
+    args: {}
+  volumes.dexSummary:
+    args: {"protocol": "uniswap", "excludeTotalDataChart": true, "excludeTotalDataChartBreakdown": true}
+  volumes.dexs:
+    args: {"excludeTotalDataChart": true, "excludeTotalDataChartBreakdown": true}
+  volumes.dexsByChain:
+    args: {"chain": "Ethereum", "excludeTotalDataChart": true, "excludeTotalDataChartBreakdown": true}
+  volumes.options:
+    args: {"excludeTotalDataChart": true, "excludeTotalDataChartBreakdown": true}
+  volumes.optionsByChain:
+    args: {"chain": "Ethereum", "excludeTotalDataChart": true, "excludeTotalDataChartBreakdown": true}
+  volumes.optionsSummary:
+    args: {"protocol": "hegic"}
+  yields.borrow.marketHistory:
+    args: {"id": "aa70268e-4b52-42bf-a116-608b370f9501"}
+  yields.borrow.markets:
+    args: {}
+  yields.borrow.routes:
+    args: {}
+  yields.borrowPools:
+    args: {}
+  yields.earn.history:
+    args: {"id": "747c1d2a-c668-4682-b9f9-296708a3dd90"}
+  yields.earn.list:
+    args: {}
+  yields.earn.query:
+    args: {}
+  yields.earn.verified:
+    args: {}
+  yields.earn.verifiedGet:
+    args: {"id": "747c1d2a-c668-4682-b9f9-296708a3dd90"}
+  yields.earn.verifiedHistory:
+    args: {"id": "747c1d2a-c668-4682-b9f9-296708a3dd90"}
+  yields.lendBorrowChart:
+    args: {"pool": "747c1d2a-c668-4682-b9f9-296708a3dd90"}
+  yields.loops:
+    args: {}
+  yields.lstRates:
+    args: {}
+  yields.perpFundingRates:
+    args: {}
+  yields.poolChart:
+    args: {"pool": "747c1d2a-c668-4682-b9f9-296708a3dd90"}
+  yields.pools:
+    args: {}
