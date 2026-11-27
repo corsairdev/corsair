@@ -589,6 +589,7 @@ export const BaseProviders = [
 	'quaderno',
 	'quickbooks',
 	'radar',
+	'ragie',
 	'ragic',
 	'raisely',
 	'railway',
@@ -1409,6 +1410,7 @@ export const ProviderDisplayNames = {
 	quaderno: 'Quaderno',
 	quickbooks: 'QuickBooks',
 	radar: 'Radar',
+	ragie: 'Ragie',
 	ragic: 'Ragic',
 	raisely: 'Raisely',
 	railway: 'Railway',
@@ -2236,6 +2238,7 @@ export type AllProviders =
 	| 'quaderno'
 	| 'quickbooks'
 	| 'radar'
+	| 'ragie'
 	| 'ragic'
 	| 'raisely'
 	| 'railway'
