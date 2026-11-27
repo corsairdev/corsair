@@ -329,3 +329,95 @@ describe('review round 1', () => {
 		await expect(call('account.usage', {})).resolves.toBe(0);
 	});
 });
+
+describe('review round 2', () => {
+	it("keeps DefiLlama's message when a sent value matches a field name", async () => {
+		jest.spyOn(globalThis, 'fetch').mockImplementation(
+			async () =>
+				new Response(
+					JSON.stringify({ message: 'Unknown protocol', [KEY]: 'bad key' }),
+					{
+						status: 404,
+						statusText: 'Not Found',
+						headers: { 'content-type': 'application/json' },
+					},
+				),
+		);
+		const error = (await call('treasury.chart', { protocol: 'message' }).catch(
+			(caught: unknown) => caught,
+		)) as ApiError;
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.message).toContain('Unknown protocol');
+		// Other keys that quote a sent value are still redacted.
+		expect(error.body).toEqual({
+			message: 'Unknown protocol',
+			'[REDACTED]': 'bad key',
+		});
+	});
+
+	it('holds fixed-width chart rows to their width', async () => {
+		const args = docs.apiExamples['treasury.chart']?.args;
+		reply(() => ({ status: 200, body: [[1764547200]] }));
+		await expect(call('treasury.chart', args)).rejects.toThrow(/did not match/);
+		reply(() => ({ status: 200, body: [[1764547200, 2]] }));
+		await expect(call('treasury.chart', args)).resolves.toEqual([
+			[1764547200, 2],
+		]);
+		// An empty chart and an extra trailing column still pass.
+		reply(() => ({ status: 200, body: [] }));
+		await expect(call('treasury.chart', args)).resolves.toEqual([]);
+		reply(() => ({ status: 200, body: [[1764547200, 2, 3]] }));
+		await expect(call('treasury.chart', args)).resolves.toHaveLength(1);
+		const candle = docs.apiExamples['equities.ohlcv']?.args;
+		reply(() => ({ status: 200, body: [[1764547200, 1, 2, 0.5, 1.5]] }));
+		await expect(call('equities.ohlcv', candle)).rejects.toThrow(
+			/did not match/,
+		);
+		reply(() => ({ status: 200, body: [[1764547200, 1, 2, 0.5, 1.5, 900]] }));
+		await expect(call('equities.ohlcv', candle)).resolves.toHaveLength(1);
+		reply(() => ({ status: 200, body: [['2025-12-01T00:00:00Z']] }));
+		await expect(
+			call(
+				'equities.priceHistory',
+				docs.apiExamples['equities.priceHistory']?.args,
+			),
+		).rejects.toThrow(/did not match/);
+	});
+
+	it('checks the per-chain values next to timestamp', async () => {
+		reply(() => ({ status: 200, body: [{ timestamp: 1, Ethereum: '100' }] }));
+		await expect(call('rwa.chartByChain', {})).rejects.toThrow(/did not match/);
+		reply(() => ({ status: 200, body: [{ timestamp: 1, Ethereum: 100 }] }));
+		await expect(call('rwa.chartByChain', {})).resolves.toEqual([
+			{ timestamp: 1, Ethereum: 100 },
+		]);
+	});
+
+	it('takes lowercase and empty equity lookbacks', async () => {
+		reply(() => ({ status: 200, body: [] }));
+		await call('equities.ohlcv', {
+			ticker: 'COIN',
+			country: 'US',
+			timeframe: '7d',
+		});
+		expect(calls[0]?.url).toContain('timeframe=7d');
+		await call('equities.priceHistory', {
+			ticker: 'COIN',
+			country: 'US',
+			timeframe: '',
+		});
+		await call('equities.priceHistory', {
+			ticker: 'COIN',
+			country: 'US',
+			timeframe: 'YTD',
+		});
+		expect(calls[2]?.url).toContain('timeframe=YTD');
+		await expect(
+			call('equities.ohlcv', {
+				ticker: 'COIN',
+				country: 'US',
+				timeframe: '2d',
+			}),
+		).rejects.toThrow();
+	});
+});

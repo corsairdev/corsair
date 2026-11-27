@@ -653,7 +653,18 @@ export type DefillamaOperationInputs = {
 			| 'YTD'
 			| '1Y'
 			| '5Y'
-			| 'MAX';
+			| 'MAX'
+			| '1d'
+			| '7d'
+			| '1w'
+			| '1m'
+			| '3m'
+			| '6m'
+			| 'ytd'
+			| '1y'
+			| '5y'
+			| 'max'
+			| '';
 	};
 	'equities.onchain': {
 		/** Stock ticker symbol (case-insensitive) */
@@ -677,7 +688,18 @@ export type DefillamaOperationInputs = {
 			| 'YTD'
 			| '1Y'
 			| '5Y'
-			| 'MAX';
+			| 'MAX'
+			| '1d'
+			| '7d'
+			| '1w'
+			| '1m'
+			| '3m'
+			| '6m'
+			| 'ytd'
+			| '1y'
+			| '5y'
+			| 'max'
+			| '';
 	};
 	'equities.sector': {
 		/** Sector to return, as a slug (`technology`, `financial-services`) or as its label in any case (`Financial Services`). Valid values are the `sectorSlug`s returned by `GET /equities/v1/sectors`. */

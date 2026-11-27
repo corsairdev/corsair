@@ -330,6 +330,21 @@ function escapeRegExp(text: string): string {
 	return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/** Error body field names `defillamaErrorMessage` reads; never secrets. */
+const ERROR_FIELDS = new Set([
+	'type',
+	'error',
+	'message',
+	'msg',
+	'detail',
+	'details',
+	'loc',
+	'problem',
+	'reason',
+	'request_id',
+	'correlation_id',
+]);
+
 /** Replaces every sent string inside an error body with [REDACTED]. */
 // `unknown` because an error body is whatever JSON (or text) the site sent.
 function scrubSent(value: unknown, sent: SentString[], depth = 0): unknown {
@@ -358,12 +373,13 @@ function scrubSent(value: unknown, sent: SentString[], depth = 0): unknown {
 		// `unknown` because error detail items have no fixed shape.
 		const result: Record<string, unknown> = {};
 		for (const [key, inner] of Object.entries(value)) {
-			// A key can quote a sent value too (`{ "<key>": "invalid" }`).
-			result[scrubSent(key, sent, depth + 1) as string] = scrubSent(
-				inner,
-				sent,
-				depth + 1,
-			);
+			// A key can quote a sent value too (`{ "<key>": "invalid" }`). The
+			// fixed field names the message is built from stay, so a sent value
+			// that happens to be `message` doesn't hide DefiLlama's reason.
+			const name = ERROR_FIELDS.has(key)
+				? key
+				: (scrubSent(key, sent, depth + 1) as string);
+			result[name] = scrubSent(inner, sent, depth + 1);
 		}
 		return result;
 	}

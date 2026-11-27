@@ -351,7 +351,13 @@ function schemaFromOpenApi(
 		schema = strict ? tuple : tuple.rest(z.unknown());
 	} else if (type === 'array') {
 		let arraySchema = z.array(schemaFromOpenApi(value.items, mode, cache));
-		if (strict && typeof value.minItems === 'number') {
+		// A fixed-width row (`[timestamp, value]`, a six-column candle) is held to
+		// its width on a response too, so a row missing columns fails the read;
+		// extra trailing columns pass, as on tuple rows. Other arrays (the chart
+		// itself) keep minItems for requests only and may come back empty.
+		const fixedWidth =
+			typeof value.minItems === 'number' && value.minItems === value.maxItems;
+		if ((strict || fixedWidth) && typeof value.minItems === 'number') {
 			arraySchema = arraySchema.min(value.minItems);
 		}
 		if (strict && typeof value.maxItems === 'number') {
@@ -396,10 +402,18 @@ function schemaFromOpenApi(
 			// Unknown keys are kept (see SchemaMode), except in a request object the
 			// spec closes with `additionalProperties: false` (`{ mode: "none" }` for
 			// an empty quote request takes nothing at all).
+			// Named fields next to a value schema for every other key
+			// (`{ timestamp, <chain>: number }`): the other keys' values are checked.
 			let objectSchema =
 				strict && value.additionalProperties === false
 					? z.object(shape).strict()
-					: z.object(shape).passthrough();
+					: isRecord(value.additionalProperties)
+						? z
+								.object(shape)
+								.catchall(
+									schemaFromOpenApi(value.additionalProperties, mode, cache),
+								)
+						: z.object(shape).passthrough();
 			// `anyOf: [{required: [a]}, {required: [b]}]` on a request: at least one
 			// of those fields must be set.
 			const alternatives = strict ? requiredAlternatives(value.anyOf) : [];

@@ -1888,7 +1888,7 @@ await corsair.defillama.api.equities.ohlcv({ ticker: 'COIN', country: 'US' });
 |------|------|----------|-------------|
 | `ticker` | `string` | Yes | Stock ticker symbol (case-insensitive) |
 | `country` | `string` | Yes | Two-letter country code (ISO 3166-1 alpha-2) for the company, as returned by `GET /equities/v1/companies-list` (case-insensitive). |
-| `timeframe` | `1D \| 7D \| 1W \| 1M \| 3M \| 6M \| YTD \| 1Y \| 5Y \| MAX` | No | Optional lookback window (case-insensitive), same values as price history. `1D` returns the most recent trading session and `7D`/`1W` (aliases) the last 7 days, both as 5-minute bars; `1M` and longer are daily bars. `YTD` runs from January 1 of the current year. Omit or empty for full history (`MAX`). Intraday coverage is best-effort — a ticker without intraday data falls back to daily bars. |
+| `timeframe` | `1D \| 7D \| 1W \| 1M \| 3M \| 6M \| YTD \| 1Y \| 5Y \| MAX \| 1d \| 7d \| 1w \| 1m \| 3m \| 6m \| ytd \| 1y \| 5y \| max \| ""` | No | Optional lookback window (case-insensitive), same values as price history. `1D` returns the most recent trading session and `7D`/`1W` (aliases) the last 7 days, both as 5-minute bars; `1M` and longer are daily bars. `YTD` runs from January 1 of the current year. Omit or empty for full history (`MAX`). Intraday coverage is best-effort — a ticker without intraday data falls back to daily bars. |
 
 
 
@@ -1981,7 +1981,7 @@ await corsair.defillama.api.equities.priceHistory({ ticker: 'COIN', country: 'US
 |------|------|----------|-------------|
 | `ticker` | `string` | Yes | Stock ticker symbol (case-insensitive) |
 | `country` | `string` | Yes | Two-letter country code (ISO 3166-1 alpha-2) for the company, as returned by `GET /equities/v1/companies-list` (case-insensitive). |
-| `timeframe` | `1D \| 7D \| 1W \| 1M \| 3M \| 6M \| YTD \| 1Y \| 5Y \| MAX` | No | Optional lookback window (case-insensitive). `1D` returns the most recent trading session and `7D`/`1W` (aliases) the last 7 days, both at 5-minute resolution; `1M` and longer are daily. `YTD` runs from January 1 of the current year. Omit or empty for full history (`MAX`). Intraday coverage is best-effort — a ticker without intraday data falls back to daily bars, and `1D` then returns the single most recent daily bar. |
+| `timeframe` | `1D \| 7D \| 1W \| 1M \| 3M \| 6M \| YTD \| 1Y \| 5Y \| MAX \| 1d \| 7d \| 1w \| 1m \| 3m \| 6m \| ytd \| 1y \| 5y \| max \| ""` | No | Optional lookback window (case-insensitive). `1D` returns the most recent trading session and `7D`/`1W` (aliases) the last 7 days, both at 5-minute resolution; `1M` and longer are daily. `YTD` runs from January 1 of the current year. Omit or empty for full history (`MAX`). Intraday coverage is best-effort — a ticker without intraday data falls back to daily bars, and `1D` then returns the single most recent daily bar. |
 
 
 
