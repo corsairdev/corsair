@@ -29,7 +29,7 @@ function reply(answer: (url: string) => Answer) {
 		if (url.endsWith('/v1/oauth2/token')) {
 			tokenCalls++;
 			if (
-				url.includes('api-m.paypal.com') &&
+				new URL(url).hostname === 'api-m.paypal.com' &&
 				headers.authorization?.includes(
 					Buffer.from('sandbox-app:').toString('base64').slice(0, 8),
 				)
