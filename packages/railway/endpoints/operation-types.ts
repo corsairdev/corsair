@@ -5125,7 +5125,12 @@ export type RailwayOperationInputs = {
 		baseConfigEtag?: string;
 		commitMessage?: string;
 		environmentId: string;
-		input: RailwayJsonValue;
+		input:
+			| Record<string, RailwayJsonValue>
+			| Array<RailwayJsonValue>
+			| string
+			| number
+			| boolean;
 		/** Defaults to true for compatibility. Async-capable clients set false and poll environmentChangeSetApply. */
 		waitForCompletion?: boolean;
 	};
@@ -5201,7 +5206,12 @@ export type RailwayOperationInputs = {
 	};
 	'environments.previewChangeSet': {
 		environmentId: string;
-		input: RailwayJsonValue;
+		input:
+			| Record<string, RailwayJsonValue>
+			| Array<RailwayJsonValue>
+			| string
+			| number
+			| boolean;
 	};
 	'environments.rename': {
 		id: string;
@@ -5209,7 +5219,12 @@ export type RailwayOperationInputs = {
 	};
 	'environments.stageChanges': {
 		environmentId: string;
-		input: RailwayJsonValue;
+		input:
+			| Record<string, RailwayJsonValue>
+			| Array<RailwayJsonValue>
+			| string
+			| number
+			| boolean;
 		/** Merge the input patch into the existing staged patch. */
 		merge?: boolean;
 	};
@@ -5921,7 +5936,12 @@ export type RailwayOperationInputs = {
 		input: RailwaySignalDeleteInputInput;
 	};
 	'signals.evaluate': {
-		context: RailwayJsonValue;
+		context:
+			| Record<string, RailwayJsonValue>
+			| Array<RailwayJsonValue>
+			| string
+			| number
+			| boolean;
 		name: string;
 		owner?: string;
 	};

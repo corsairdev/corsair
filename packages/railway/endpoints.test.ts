@@ -170,7 +170,10 @@ describe('responses', () => {
 			flattenConnection({ edges: [{ node: { id: 1 } }], pageInfo: { a: 1 } }),
 		).toEqual({ items: [{ id: 1 }], pageInfo: { a: 1 } });
 		expect(flattenConnection(null)).toBeNull();
-		expect(flattenConnection({ id: 1 })).toEqual({ id: 1 });
+		expect(() => flattenConnection({ id: 1 })).toThrow(/without its edges/);
+		expect(() => flattenConnection({ edges: 'invalid', pageInfo: {} })).toThrow(
+			/without its edges/,
+		);
 	});
 
 	it('keeps an answer whose only errors are inside it', async () => {
@@ -225,6 +228,24 @@ describe('errors', () => {
 		).toBe(429);
 		expect(graphqlStatus(['Environment not found'])).toBe(404);
 		expect(graphqlStatus(['Invalid name'])).toBe(400);
+	});
+
+	it('scrubs JSON-escaped copies of a sent value and keys of an errors map', async () => {
+		reply(400, {
+			message: 'bad value',
+			errors: [{ message: 'value "line1\\nSECRET" is invalid' }],
+			details: { 'ada@example.com': 'unknown key' },
+		});
+		const error = (await endpointFor('variables.upsert')(ctx(), {
+			input: {
+				projectId: 'p',
+				environmentId: 'e',
+				name: 'PEM',
+				value: 'line1\nSECRET',
+			},
+		}).catch((e: unknown) => e)) as ApiError;
+		expect(JSON.stringify(error)).not.toContain('SECRET');
+		expect(JSON.stringify(error)).not.toContain('ada@example.com');
 	});
 
 	it('rebuilds an HTTP error without the variables or the token', async () => {

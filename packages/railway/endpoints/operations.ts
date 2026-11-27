@@ -76,13 +76,17 @@ function asRecord(value: unknown): Record<string, unknown> | undefined {
 
 /**
  * A Relay connection (`{ edges: [{ node }], pageInfo }`) as
- * `{ items, pageInfo }`. Anything else (a null connection, a malformed one)
- * is passed on for the output schema to refuse.
+ * `{ items, pageInfo }`. A null connection (where the schema allows one)
+ * is passed on; anything without an `edges` list is an error.
  */
 // `unknown` because the connection is untrusted until the output schema parses it.
 export function flattenConnection(value: unknown): unknown {
+	if (value === null || value === undefined) return value;
 	const connection = asRecord(value);
-	if (!connection || !Array.isArray(connection.edges)) return value;
+	if (!connection || !Array.isArray(connection.edges)) {
+		// Not a connection at all: refused, never passed on as an empty page.
+		throw new Error('Railway answered a list without its edges');
+	}
 	return {
 		items: connection.edges.map((edge) => asRecord(edge)?.node),
 		pageInfo: connection.pageInfo,

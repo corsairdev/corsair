@@ -27,9 +27,16 @@ describeIfLive('railway live', () => {
 	});
 	const api = corsair.railway.api;
 	let projectId = '';
+	// The create call, so cleanup can wait for one still in flight.
+	let creating: Promise<unknown> = Promise.resolve();
 
 	afterAll(async () => {
-		if (projectId) await api.projects.delete({ id: projectId });
+		await creating.catch(() => undefined);
+		if (!projectId) return;
+		const deleted = await api.projects.delete({ id: projectId });
+		if (deleted !== true) {
+			throw new Error(`Railway did not delete test project ${projectId}`);
+		}
 	});
 
 	it('reads the user, regions and a template', async () => {
@@ -45,10 +52,13 @@ describeIfLive('railway live', () => {
 	it('creates a project, a variable and an environment, then cleans up', async () => {
 		const me = await api.me.get({});
 		const workspaceId = String(me.workspaces?.[0]?.id);
-		const project = await api.projects.create({
+		const pending = api.projects.create({
 			input: { name: `corsair-live-${STAMP}`, workspaceId },
 		});
-		projectId = String(project.id);
+		creating = pending.then((project) => {
+			projectId = String(project.id);
+		});
+		await creating;
 		const environments = await api.environments.list({ projectId });
 		const environmentId = String(environments.items?.[0]?.id);
 		expect(environments.items?.[0]?.name).toBe('production');

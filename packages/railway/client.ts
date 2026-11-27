@@ -260,7 +260,9 @@ export function withoutRequestData(error: ApiError, key?: string): ApiError {
 		...(key ? [{ text: key, wholeWord: false }] : []),
 		...sentStrings(error.request),
 	].sort((a, b) => b.text.length - a.text.length);
-	const body = scrubSent(withoutEchoedValues(error.body), sent);
+	// Only the messages are kept: an `errors` map could use a sent value
+	// (a variable name, an email) as a key, which scrubbing values misses.
+	const body = scrubSent(onlyMessages(error.body), sent);
 	const message = railwayErrorMessage(error.status, error.statusText, body);
 	return new ApiError(
 		{
@@ -315,13 +317,7 @@ export function railwayErrorMessage(
 					? (entry as { message?: unknown }).message
 					: entry,
 			)
-		: typeof fields.errors === 'object' && fields.errors !== null
-			? Object.entries(fields.errors).flatMap(([field, messages]) =>
-					(Array.isArray(messages) ? messages : [messages]).map((message) =>
-						typeof message === 'string' ? `${field} ${message}` : undefined,
-					),
-				)
-			: [];
+		: [];
 	if (errors.length > 0) {
 		for (const item of errors.slice(0, 5)) {
 			if (
@@ -400,6 +396,12 @@ function sentStrings(request: ApiError['request']): SentString[] {
 	// The path values were sent encoded (`a%40b.md`); Railway quotes them back
 	// decoded, so the decoded form is scrubbed too.
 	visit(decodedValues(request.path), 0, true);
+	// A value with quotes, backslashes or newlines can come back JSON-escaped
+	// inside a message ("line1\\nline2"): that form is scrubbed too.
+	for (const [text, wholeWord] of [...found]) {
+		const escaped = JSON.stringify(text).slice(1, -1);
+		if (escaped !== text && !found.has(escaped)) found.set(escaped, wholeWord);
+	}
 	return [...found]
 		.map(([text, wholeWord]) => ({ text, wholeWord }))
 		.sort((a, b) => b.text.length - a.text.length);
@@ -466,6 +468,38 @@ function redactedValues(
 ): Record<string, string> | undefined {
 	if (values === undefined) return undefined;
 	return Object.fromEntries(Object.keys(values).map((key) => [key, REDACTED]));
+}
+
+/**
+ * An HTTP error body cut down to its messages: GraphQL's
+ * `{ errors: [{ message }] }`, a top-level `message`, or plain text.
+ */
+// `unknown` because an error body is whatever JSON (or text) Railway sent.
+export function onlyMessages(body: unknown): unknown {
+	if (typeof body === 'string') return body;
+	if (typeof body !== 'object' || body === null || Array.isArray(body)) {
+		return undefined;
+	}
+	const record = body as { message?: unknown; errors?: unknown };
+	const messages = Array.isArray(record.errors)
+		? record.errors
+				.map((entry) =>
+					typeof entry === 'string'
+						? entry
+						: typeof entry === 'object' &&
+								entry !== null &&
+								typeof (entry as { message?: unknown }).message === 'string'
+							? (entry as { message: string }).message
+							: undefined,
+				)
+				.filter((message): message is string => message !== undefined)
+		: [];
+	return {
+		...(typeof record.message === 'string' ? { message: record.message } : {}),
+		...(messages.length > 0
+			? { errors: messages.map((message) => ({ message })) }
+			: {}),
+	};
 }
 
 /** `https://…/contacts.json?query=…` → `https://…/contacts.json?[REDACTED]`. */

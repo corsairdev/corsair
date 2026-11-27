@@ -177,6 +177,16 @@ describe('catalog', () => {
 		expect(list.safeParse({ orderBy: 'BOGUS' }).success).toBe(false);
 	});
 
+	it('refuses null for a required JSON argument', () => {
+		const stage = getRailwayInputSchema('environments.stageChanges');
+		expect(stage.safeParse({ environmentId: 'e', input: null }).success).toBe(
+			false,
+		);
+		expect(stage.safeParse({ environmentId: 'e', input: {} }).success).toBe(
+			true,
+		);
+	});
+
 	it('parses responses leniently: unknown fields kept, missing ones fine', () => {
 		const out = getRailwayOutputSchema('projects.get').parse({
 			id: 'p1',

@@ -6179,7 +6179,10 @@ Experimental: applies an intent-level RailwayChangeSet and returns operation res
 **Risk:** `destructive`
 
 ```ts
-await corsair.railway.api.environments.applyChangeSet({ environmentId: '00000003-5c1e-4d8a-9f43-2b6e1c0a9d17', input: 'example' });
+await corsair.railway.api.environments.applyChangeSet({
+	environmentId: '00000003-5c1e-4d8a-9f43-2b6e1c0a9d17',
+	input: {},
+});
 ```
 
 **Input**
@@ -6189,8 +6192,18 @@ await corsair.railway.api.environments.applyChangeSet({ environmentId: '00000003
 | `baseConfigEtag` | `string` | No | Snapshot token from Environment.configEtag the plan was computed against. When set, the apply is rejected if the environment has changed since. |
 | `commitMessage` | `string` | No | — |
 | `environmentId` | `string` | Yes | — |
-| `input` | `any` | Yes | — |
+| `input` | `object \| any[] \| string \| number \| boolean` | Yes | — |
 | `waitForCompletion` | `boolean` | No | Defaults to true for compatibility. Async-capable clients set false and poll environmentChangeSetApply. |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+} | any[] | string | number | boolean
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -6997,7 +7010,10 @@ Experimental: previews an intent-level RailwayChangeSet without side effects
 **Risk:** `read`
 
 ```ts
-await corsair.railway.api.environments.previewChangeSet({ environmentId: '00000003-5c1e-4d8a-9f43-2b6e1c0a9d17', input: 'example' });
+await corsair.railway.api.environments.previewChangeSet({
+	environmentId: '00000003-5c1e-4d8a-9f43-2b6e1c0a9d17',
+	input: {},
+});
 ```
 
 **Input**
@@ -7005,7 +7021,17 @@ await corsair.railway.api.environments.previewChangeSet({ environmentId: '000000
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `environmentId` | `string` | Yes | — |
-| `input` | `any` | Yes | — |
+| `input` | `object \| any[] \| string \| number \| boolean` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+} | any[] | string | number | boolean
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -7152,7 +7178,10 @@ Sets the staged patch for a single environment
 **Risk:** `write`
 
 ```ts
-await corsair.railway.api.environments.stageChanges({ environmentId: '00000003-5c1e-4d8a-9f43-2b6e1c0a9d17', input: 'example' });
+await corsair.railway.api.environments.stageChanges({
+	environmentId: '00000003-5c1e-4d8a-9f43-2b6e1c0a9d17',
+	input: {},
+});
 ```
 
 **Input**
@@ -7160,8 +7189,18 @@ await corsair.railway.api.environments.stageChanges({ environmentId: '00000003-5
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `environmentId` | `string` | Yes | — |
-| `input` | `any` | Yes | — |
+| `input` | `object \| any[] \| string \| number \| boolean` | Yes | — |
 | `merge` | `boolean` | No | Merge the input patch into the existing staged patch. |
+
+<AccordionGroup>
+<Accordion title="input full type">
+
+```ts
+{
+} | any[] | string | number | boolean
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -16962,16 +17001,29 @@ Evaluate a signal against an evaluation context (pure resolution; does not mutat
 **Risk:** `read`
 
 ```ts
-await corsair.railway.api.signals.evaluate({ context: 'example', name: 'api' });
+await corsair.railway.api.signals.evaluate({
+	context: {},
+	name: 'api',
+});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `context` | `any` | Yes | — |
+| `context` | `object \| any[] \| string \| number \| boolean` | Yes | — |
 | `name` | `string` | Yes | — |
 | `owner` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="context full type">
+
+```ts
+{
+} | any[] | string | number | boolean
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -18130,7 +18182,7 @@ Get a template by code or ID or GitHub owner and repo
 **Risk:** `read`
 
 ```ts
-await corsair.railway.api.templates.get({});
+await corsair.railway.api.templates.get({ code: 'postgres' });
 ```
 
 **Input**
@@ -18981,7 +19033,7 @@ The spans of one trace, oldest first. Only spans belonging to the environment ar
 **Risk:** `read`
 
 ```ts
-await corsair.railway.api.traces.get({ environmentId: '00000003-5c1e-4d8a-9f43-2b6e1c0a9d17', traceId: 'example' });
+await corsair.railway.api.traces.get({ traceId: '4bf92f3577b34da6a3ce929d0e0e4736', environmentId: '00000003-5c1e-4d8a-9f43-2b6e1c0a9d17' });
 ```
 
 **Input**

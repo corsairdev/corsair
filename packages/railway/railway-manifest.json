@@ -2884,7 +2884,9 @@
           "environmentId": {
             "type": "string"
           },
-          "input": {},
+          "input": {
+            "type": ["object", "array", "string", "number", "boolean"]
+          },
           "waitForCompletion": {
             "type": "boolean",
             "description": "Defaults to true for compatibility. Async-capable clients set false and poll environmentChangeSetApply."
@@ -3294,7 +3296,9 @@
           "environmentId": {
             "type": "string"
           },
-          "input": {}
+          "input": {
+            "type": ["object", "array", "string", "number", "boolean"]
+          }
         },
         "additionalProperties": false,
         "required": ["environmentId", "input"]
@@ -3338,7 +3342,9 @@
           "environmentId": {
             "type": "string"
           },
-          "input": {},
+          "input": {
+            "type": ["object", "array", "string", "number", "boolean"]
+          },
           "merge": {
             "type": "boolean",
             "description": "Merge the input patch into the existing staged patch."
@@ -7701,7 +7707,9 @@
       "input": {
         "type": "object",
         "properties": {
-          "context": {},
+          "context": {
+            "type": ["object", "array", "string", "number", "boolean"]
+          },
           "name": {
             "type": "string"
           },

@@ -15,15 +15,22 @@ overviewNote: |
   - **One operation per GraphQL field.** Every query and mutation of
   Railway's public API (`backboard.railway.com/graphql/v2`) is an operation;
   its input is the field's arguments, mostly an `input` object for mutations.
-  The plugin sends a fixed document per operation that selects every scalar
-  field of the result and the scalars of each nested object; lists inside a
-  result (a project's services) come from their own list operations.
-  - **Lists** that Railway pages (projects, deployments, environments, ...)
+  The plugin sends a fixed document per operation that selects the result's
+  scalar and enum fields and the scalars of each nested object. Fields that
+  need arguments, connections inside a result (a project's services come
+  from their own list operation) and fields API tokens can't read
+  (`User.platformFeatureFlags`) are left out.
+  - **Lists.** Relay connections (projects, deployments, environments, ...)
   take `first`/`after` (or `last`/`before`) and return `{ items, pageInfo }`;
-  pass `pageInfo.endCursor` as `after` for the next page.
+  pass `pageInfo.endCursor` as `after` for the next page. A few lists page
+  their own way (`cloudAgentTasks.list` returns `nextCursor` and takes
+  `cursor`): their output says which fields to use.
   - **Errors.** Railway answers most failures with HTTP 200 and a GraphQL
   `errors` list; the plugin raises them as `RailwayGraphQLError` with a
-  status (403 for "Not Authorized", 404 for a missing record, 400 otherwise).
+  status (403 for "Not Authorized", 404 for a missing record, 429 for
+  "too many requests" or "too quickly", 400 otherwise). When the only
+  errors are inside the result (an audit log entry whose project was
+  deleted), the call succeeds and those nested fields come back null.
   - **Risk.** Queries are `read`. Deletes, deploys, redeploys, restarts,
   rollbacks, template and repo deploys, new services, environments,
   volumes, buckets, sandboxes and cloud agents (all use credits), tokens and
@@ -261,7 +268,7 @@ apiExamples:
   environmentPatches.restage:
     args: {"patchId": "example"}
   environments.applyChangeSet:
-    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": "example"}
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {}}
   environments.changeSetApplyStatus:
     args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17"}
   environments.create:
@@ -287,11 +294,11 @@ apiExamples:
   environments.pendingWork:
     args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
   environments.previewChangeSet:
-    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": "example"}
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {}}
   environments.rename:
     args: {"id": "00000001-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {"name": "api"}}
   environments.stageChanges:
-    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": "example"}
+    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "input": {}}
   environments.stagedChanges:
     args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
   environments.triggerDeploys:
@@ -639,7 +646,7 @@ apiExamples:
   signals.delete:
     args: {"input": {"name": "api", "owner": "example"}}
   signals.evaluate:
-    args: {"context": "example", "name": "api"}
+    args: {"context": {}, "name": "api"}
   signals.get:
     args: {"name": "api"}
   signals.list:
@@ -681,7 +688,7 @@ apiExamples:
   templates.generate:
     args: {"input": {"projectId": "00000002-5c1e-4d8a-9f43-2b6e1c0a9d17"}}
   templates.get:
-    args: {}
+    args: {"code": "postgres"}
   templates.list:
     args: {}
   templates.metrics:
@@ -699,7 +706,7 @@ apiExamples:
   templates.updateVolume:
     args: {"serviceId": "00000004-5c1e-4d8a-9f43-2b6e1c0a9d17", "templateId": "0000000b-5c1e-4d8a-9f43-2b6e1c0a9d17", "volumeId": "00000007-5c1e-4d8a-9f43-2b6e1c0a9d17"}
   traces.get:
-    args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17", "traceId": "example"}
+    args: {"traceId": "4bf92f3577b34da6a3ce929d0e0e4736", "environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
   traces.list:
     args: {"environmentId": "00000003-5c1e-4d8a-9f43-2b6e1c0a9d17"}
   traces.status:
