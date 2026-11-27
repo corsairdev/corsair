@@ -3727,6 +3727,15 @@
                 ]
               },
               {
+                "group": "Maritime",
+                "pages": [
+                  "plugins/maritime/overview",
+                  "plugins/maritime/api",
+                  "plugins/maritime/database",
+                  "plugins/maritime/webhooks"
+                ]
+              },
+              {
                 "group": "Marketstack",
                 "pages": [
                   "plugins/marketstack/overview",

@@ -1,0 +1,178 @@
+---
+title: "Maritime plugin"
+sidebarTitle: "Overview"
+description: "Maritime, the cloud for AI agents: agent boxes (chat, exec, files, triggers, channels, skills, env), virtual machines (create, run commands, files, snapshots, templates, keys), swarms and swarm servers, computers on demand (desktops and phones), end users, projects, private networks, domains, usage and billing, and signed webhooks (332 operations)."
+---
+
+Use **Maritime** through Corsair: one client, typed API calls, and incoming webhooks.
+
+The account stores one Maritime API key (`mk_...`, from `maritime keys
+create` or the dashboard's Settings → API keys), sent as
+`Authorization: Bearer`. The key's scopes (provision, deploy, secrets,
+manage, sandboxes) decide which operations work.
+
+- **Two kinds of machine.** Agent boxes (`agents.*`) keep their disk, sleep
+when idle and wake on a chat message, webhook, trigger or exec. Virtual
+machines (`sandboxes.*`, ids `sbx-...`) run one task and end with their
+disk; `sandboxes.ephemeral.create` makes one that ends after a few idle
+minutes. Computers (`computers.*`) are desktops and phones your agent sees
+and clicks.
+- **Commands and files in a virtual machine** (`sandboxes.commands.*`,
+`sandboxes.files.*`, `sandboxes.code.run`) go to the machine's own data
+plane. The plugin reads the machine's `dataPlaneUrl` and `secret` first
+and sends the secret in `X-Maritime-Token`; the account key never goes
+there.
+- **Money.** Every machine is billed per second while awake (an agent box
+per GB of memory per month). Creating, waking or resizing one, running
+commands in it, starting a swarm or renting a swarm server ($1 a minute),
+and plan, trial, top-up and credit purchases are `destructive`, as are
+sends (chat, invoke, project messages, invites), key and secret changes,
+and every delete.
+- **Lists** page with `limit` and `cursor` (pass the previous page's
+`nextCursor`).
+- **Webhooks.** Subscribe with `webhooks.create` (agent, message, exec and
+end-user events, signed `X-Maritime-Signature: sha256=<hex>`) or
+`sandboxWebhooks.create` (virtual machine events, signed
+`Maritime-Signature: t=...,v1=...`). Store the secret returned at create
+time as the webhook secret: the plugin checks every delivery with it.
+- **Rate limits.** A 429 carries `Retry-After`; core retries it three
+times, and a 5xx is retried for reads only.
+- Not wrapped: sign-in and OAuth flows the CLI and dashboard run, the
+dashboard's own proxies and share pages, Maritime's internal routes, the
+E2B-compatible `/e2b` copy of the sandbox API (the e2b plugin reaches it
+with `E2B_DOMAIN=sb.mtm.sh`), and the `/v1/fleets` partner API, which takes
+a platform credential rather than an `mk_` key. The data plane's terminal
+(WebSocket) and file watch (event stream) are left out too.
+
+**What you get:**
+
+- 332 typed API operations
+- 21 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/maritime better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/maritime better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/maritime better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/maritime better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { maritime } from '@corsair-dev/maritime';
+
+export const corsair = createCorsair({
+	plugins: [
+		maritime(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Maritime API key before the first call: `pnpm corsair setup --plugin=maritime --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+maritime()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'maritime',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List virtual machines**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.maritime.api.sandboxes.list({
+	state: ['running'],
+	limit: 20,
+});
+```
+
+
+**Run a command in a virtual machine**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.maritime.api.sandboxes.commands.run({ sandbox_id: 'sbx-k3m7q2ab', cmd: 'uname -a', timeoutSeconds: 30 });
+```
+
+
+See the full list on the [API](/plugins/maritime/api) page.
+
+## Webhooks
+
+This plugin registers **21** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/maritime/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/maritime/api">
+    Every `maritime.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/maritime/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

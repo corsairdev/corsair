@@ -448,6 +448,7 @@ export const BaseProviders = [
 	'mailtrap',
 	'make',
 	'mapbox',
+	'maritime',
 	'marketstack',
 	'melo',
 	'mem0',
@@ -1246,6 +1247,7 @@ export const ProviderDisplayNames = {
 	mailtrap: 'Mailtrap',
 	make: 'Make',
 	mapbox: 'Mapbox',
+	maritime: 'Maritime',
 	marketstack: 'Marketstack',
 	melo: 'Melo',
 	mem0: 'Mem0',
@@ -2051,6 +2053,7 @@ export type AllProviders =
 	| 'mailtrap'
 	| 'make'
 	| 'mapbox'
+	| 'maritime'
 	| 'marketstack'
 	| 'melo'
 	| 'mem0'

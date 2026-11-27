@@ -1,0 +1,1390 @@
+---
+title: "Maritime webhooks"
+sidebarTitle: "Webhooks"
+description: "Maritime incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The Maritime plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/maritime/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `agent`
+  - `deployed` (`agent.deployed`)
+  - `error` (`agent.error`)
+  - `llmLimitReached` (`agent.llmLimitReached`)
+  - `restarted` (`agent.restarted`)
+  - `sleeping` (`agent.sleeping`)
+  - `stopped` (`agent.stopped`)
+  - `woken` (`agent.woken`)
+- `endUser`
+  - `created` (`endUser.created`)
+  - `deleted` (`endUser.deleted`)
+  - `resumed` (`endUser.resumed`)
+  - `suspended` (`endUser.suspended`)
+- `exec`
+  - `finished` (`exec.finished`)
+- `message`
+  - `failed` (`message.failed`)
+  - `reply` (`message.reply`)
+- `sandbox`
+  - `created` (`sandbox.created`)
+  - `ended` (`sandbox.ended`)
+  - `error` (`sandbox.error`)
+  - `paused` (`sandbox.paused`)
+  - `pauseFailed` (`sandbox.pauseFailed`)
+  - `resumed` (`sandbox.resumed`)
+  - `running` (`sandbox.running`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Agent
+
+### Deployed
+
+`agent.deployed`
+
+The agent finished deploying and is ready (X-Maritime-Event agent.deployed)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | The event name, such as agent.error. |
+| `agent_id` | `string \| null` | No | The agent the event is about. |
+| `external_id` | `string \| null` | No | The agent's external_id: your own customer's id. |
+| `end_user` | `object \| null` | No | The end user the agent belongs to, or null. |
+| `timestamp` | `string \| null` | No | When it happened (ISO 8601). |
+| `data` | `Record<string, any> \| null` | No | Event fields: failure_kind on agent.error; execution_id, status, exit_code on exec.finished. |
+
+<AccordionGroup>
+<Accordion title="end_user full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  agent_id?: string | null,
+  external_id?: string | null,
+  end_user?: {
+  } | null,
+  timestamp?: string | null,
+  data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        agent: {
+            deployed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Error
+
+`agent.error`
+
+The agent entered an error state (data.failure_kind tells a failed build apart) (X-Maritime-Event agent.error)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | The event name, such as agent.error. |
+| `agent_id` | `string \| null` | No | The agent the event is about. |
+| `external_id` | `string \| null` | No | The agent's external_id: your own customer's id. |
+| `end_user` | `object \| null` | No | The end user the agent belongs to, or null. |
+| `timestamp` | `string \| null` | No | When it happened (ISO 8601). |
+| `data` | `Record<string, any> \| null` | No | Event fields: failure_kind on agent.error; execution_id, status, exit_code on exec.finished. |
+
+<AccordionGroup>
+<Accordion title="end_user full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  agent_id?: string | null,
+  external_id?: string | null,
+  end_user?: {
+  } | null,
+  timestamp?: string | null,
+  data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        agent: {
+            error: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Llm Limit Reached
+
+`agent.llmLimitReached`
+
+The agent reached its monthly AI spend limit (once per agent per month) (X-Maritime-Event agent.llm_limit_reached)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | The event name, such as agent.error. |
+| `agent_id` | `string \| null` | No | The agent the event is about. |
+| `external_id` | `string \| null` | No | The agent's external_id: your own customer's id. |
+| `end_user` | `object \| null` | No | The end user the agent belongs to, or null. |
+| `timestamp` | `string \| null` | No | When it happened (ISO 8601). |
+| `data` | `Record<string, any> \| null` | No | Event fields: failure_kind on agent.error; execution_id, status, exit_code on exec.finished. |
+
+<AccordionGroup>
+<Accordion title="end_user full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  agent_id?: string | null,
+  external_id?: string | null,
+  end_user?: {
+  } | null,
+  timestamp?: string | null,
+  data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        agent: {
+            llmLimitReached: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Restarted
+
+`agent.restarted`
+
+The agent was restarted (X-Maritime-Event agent.restarted)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | The event name, such as agent.error. |
+| `agent_id` | `string \| null` | No | The agent the event is about. |
+| `external_id` | `string \| null` | No | The agent's external_id: your own customer's id. |
+| `end_user` | `object \| null` | No | The end user the agent belongs to, or null. |
+| `timestamp` | `string \| null` | No | When it happened (ISO 8601). |
+| `data` | `Record<string, any> \| null` | No | Event fields: failure_kind on agent.error; execution_id, status, exit_code on exec.finished. |
+
+<AccordionGroup>
+<Accordion title="end_user full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  agent_id?: string | null,
+  external_id?: string | null,
+  end_user?: {
+  } | null,
+  timestamp?: string | null,
+  data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        agent: {
+            restarted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Sleeping
+
+`agent.sleeping`
+
+The agent auto-slept after going idle (X-Maritime-Event agent.sleeping)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | The event name, such as agent.error. |
+| `agent_id` | `string \| null` | No | The agent the event is about. |
+| `external_id` | `string \| null` | No | The agent's external_id: your own customer's id. |
+| `end_user` | `object \| null` | No | The end user the agent belongs to, or null. |
+| `timestamp` | `string \| null` | No | When it happened (ISO 8601). |
+| `data` | `Record<string, any> \| null` | No | Event fields: failure_kind on agent.error; execution_id, status, exit_code on exec.finished. |
+
+<AccordionGroup>
+<Accordion title="end_user full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  agent_id?: string | null,
+  external_id?: string | null,
+  end_user?: {
+  } | null,
+  timestamp?: string | null,
+  data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        agent: {
+            sleeping: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Stopped
+
+`agent.stopped`
+
+The agent was stopped (X-Maritime-Event agent.stopped)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | The event name, such as agent.error. |
+| `agent_id` | `string \| null` | No | The agent the event is about. |
+| `external_id` | `string \| null` | No | The agent's external_id: your own customer's id. |
+| `end_user` | `object \| null` | No | The end user the agent belongs to, or null. |
+| `timestamp` | `string \| null` | No | When it happened (ISO 8601). |
+| `data` | `Record<string, any> \| null` | No | Event fields: failure_kind on agent.error; execution_id, status, exit_code on exec.finished. |
+
+<AccordionGroup>
+<Accordion title="end_user full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  agent_id?: string | null,
+  external_id?: string | null,
+  end_user?: {
+  } | null,
+  timestamp?: string | null,
+  data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        agent: {
+            stopped: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Woken
+
+`agent.woken`
+
+A sleeping agent was woken (X-Maritime-Event agent.woken)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | The event name, such as agent.error. |
+| `agent_id` | `string \| null` | No | The agent the event is about. |
+| `external_id` | `string \| null` | No | The agent's external_id: your own customer's id. |
+| `end_user` | `object \| null` | No | The end user the agent belongs to, or null. |
+| `timestamp` | `string \| null` | No | When it happened (ISO 8601). |
+| `data` | `Record<string, any> \| null` | No | Event fields: failure_kind on agent.error; execution_id, status, exit_code on exec.finished. |
+
+<AccordionGroup>
+<Accordion title="end_user full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  agent_id?: string | null,
+  external_id?: string | null,
+  end_user?: {
+  } | null,
+  timestamp?: string | null,
+  data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        agent: {
+            woken: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## End User
+
+### Created
+
+`endUser.created`
+
+An end user was created (X-Maritime-Event end_user.created)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | The event name, such as agent.error. |
+| `agent_id` | `string \| null` | No | The agent the event is about. |
+| `external_id` | `string \| null` | No | The agent's external_id: your own customer's id. |
+| `end_user` | `object \| null` | No | The end user the agent belongs to, or null. |
+| `timestamp` | `string \| null` | No | When it happened (ISO 8601). |
+| `data` | `Record<string, any> \| null` | No | Event fields: failure_kind on agent.error; execution_id, status, exit_code on exec.finished. |
+
+<AccordionGroup>
+<Accordion title="end_user full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  agent_id?: string | null,
+  external_id?: string | null,
+  end_user?: {
+  } | null,
+  timestamp?: string | null,
+  data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        endUser: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Deleted
+
+`endUser.deleted`
+
+An end user was deleted with their agents (X-Maritime-Event end_user.deleted)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | The event name, such as agent.error. |
+| `agent_id` | `string \| null` | No | The agent the event is about. |
+| `external_id` | `string \| null` | No | The agent's external_id: your own customer's id. |
+| `end_user` | `object \| null` | No | The end user the agent belongs to, or null. |
+| `timestamp` | `string \| null` | No | When it happened (ISO 8601). |
+| `data` | `Record<string, any> \| null` | No | Event fields: failure_kind on agent.error; execution_id, status, exit_code on exec.finished. |
+
+<AccordionGroup>
+<Accordion title="end_user full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  agent_id?: string | null,
+  external_id?: string | null,
+  end_user?: {
+  } | null,
+  timestamp?: string | null,
+  data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        endUser: {
+            deleted: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Resumed
+
+`endUser.resumed`
+
+A suspended end user was resumed (X-Maritime-Event end_user.resumed)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | The event name, such as agent.error. |
+| `agent_id` | `string \| null` | No | The agent the event is about. |
+| `external_id` | `string \| null` | No | The agent's external_id: your own customer's id. |
+| `end_user` | `object \| null` | No | The end user the agent belongs to, or null. |
+| `timestamp` | `string \| null` | No | When it happened (ISO 8601). |
+| `data` | `Record<string, any> \| null` | No | Event fields: failure_kind on agent.error; execution_id, status, exit_code on exec.finished. |
+
+<AccordionGroup>
+<Accordion title="end_user full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  agent_id?: string | null,
+  external_id?: string | null,
+  end_user?: {
+  } | null,
+  timestamp?: string | null,
+  data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        endUser: {
+            resumed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Suspended
+
+`endUser.suspended`
+
+An end user was suspended (X-Maritime-Event end_user.suspended)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | The event name, such as agent.error. |
+| `agent_id` | `string \| null` | No | The agent the event is about. |
+| `external_id` | `string \| null` | No | The agent's external_id: your own customer's id. |
+| `end_user` | `object \| null` | No | The end user the agent belongs to, or null. |
+| `timestamp` | `string \| null` | No | When it happened (ISO 8601). |
+| `data` | `Record<string, any> \| null` | No | Event fields: failure_kind on agent.error; execution_id, status, exit_code on exec.finished. |
+
+<AccordionGroup>
+<Accordion title="end_user full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  agent_id?: string | null,
+  external_id?: string | null,
+  end_user?: {
+  } | null,
+  timestamp?: string | null,
+  data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        endUser: {
+            suspended: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Exec
+
+### Finished
+
+`exec.finished`
+
+A detached exec reached a final status (data.execution_id, status, exit_code) (X-Maritime-Event exec.finished)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | The event name, such as agent.error. |
+| `agent_id` | `string \| null` | No | The agent the event is about. |
+| `external_id` | `string \| null` | No | The agent's external_id: your own customer's id. |
+| `end_user` | `object \| null` | No | The end user the agent belongs to, or null. |
+| `timestamp` | `string \| null` | No | When it happened (ISO 8601). |
+| `data` | `Record<string, any> \| null` | No | Event fields: failure_kind on agent.error; execution_id, status, exit_code on exec.finished. |
+
+<AccordionGroup>
+<Accordion title="end_user full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  agent_id?: string | null,
+  external_id?: string | null,
+  end_user?: {
+  } | null,
+  timestamp?: string | null,
+  data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        exec: {
+            finished: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Message
+
+### Failed
+
+`message.failed`
+
+An async API message failed (X-Maritime-Event message.failed)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | The event name, such as agent.error. |
+| `agent_id` | `string \| null` | No | The agent the event is about. |
+| `external_id` | `string \| null` | No | The agent's external_id: your own customer's id. |
+| `end_user` | `object \| null` | No | The end user the agent belongs to, or null. |
+| `timestamp` | `string \| null` | No | When it happened (ISO 8601). |
+| `data` | `Record<string, any> \| null` | No | Event fields: failure_kind on agent.error; execution_id, status, exit_code on exec.finished. |
+
+<AccordionGroup>
+<Accordion title="end_user full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  agent_id?: string | null,
+  external_id?: string | null,
+  end_user?: {
+  } | null,
+  timestamp?: string | null,
+  data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        message: {
+            failed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Reply
+
+`message.reply`
+
+An async API message got its reply (X-Maritime-Event message.reply)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | The event name, such as agent.error. |
+| `agent_id` | `string \| null` | No | The agent the event is about. |
+| `external_id` | `string \| null` | No | The agent's external_id: your own customer's id. |
+| `end_user` | `object \| null` | No | The end user the agent belongs to, or null. |
+| `timestamp` | `string \| null` | No | When it happened (ISO 8601). |
+| `data` | `Record<string, any> \| null` | No | Event fields: failure_kind on agent.error; execution_id, status, exit_code on exec.finished. |
+
+<AccordionGroup>
+<Accordion title="end_user full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event: string,
+  agent_id?: string | null,
+  external_id?: string | null,
+  end_user?: {
+  } | null,
+  timestamp?: string | null,
+  data?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        message: {
+            reply: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Sandbox
+
+### Created
+
+`sandbox.created`
+
+A virtual machine was created (type sandbox.created)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id. |
+| `type` | `string` | Yes | The event type, such as sandbox.ended. |
+| `createdAt` | `string \| null` | No | — |
+| `sandboxId` | `string \| null` | No | — |
+| `endUser` | `string \| null` | No | — |
+| `data` | `Record<string, string \| null> \| null` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string | null,
+  sandboxId?: string | null,
+  endUser?: string | null,
+  data?: Record<string, string | null> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        sandbox: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Ended
+
+`sandbox.ended`
+
+A virtual machine ended (type sandbox.ended)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id. |
+| `type` | `string` | Yes | The event type, such as sandbox.ended. |
+| `createdAt` | `string \| null` | No | — |
+| `sandboxId` | `string \| null` | No | — |
+| `endUser` | `string \| null` | No | — |
+| `data` | `Record<string, string \| null> \| null` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string | null,
+  sandboxId?: string | null,
+  endUser?: string | null,
+  data?: Record<string, string | null> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        sandbox: {
+            ended: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Error
+
+`sandbox.error`
+
+A virtual machine hit an error (type sandbox.error)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id. |
+| `type` | `string` | Yes | The event type, such as sandbox.ended. |
+| `createdAt` | `string \| null` | No | — |
+| `sandboxId` | `string \| null` | No | — |
+| `endUser` | `string \| null` | No | — |
+| `data` | `Record<string, string \| null> \| null` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string | null,
+  sandboxId?: string | null,
+  endUser?: string | null,
+  data?: Record<string, string | null> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        sandbox: {
+            error: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Paused
+
+`sandbox.paused`
+
+A virtual machine paused (type sandbox.paused)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id. |
+| `type` | `string` | Yes | The event type, such as sandbox.ended. |
+| `createdAt` | `string \| null` | No | — |
+| `sandboxId` | `string \| null` | No | — |
+| `endUser` | `string \| null` | No | — |
+| `data` | `Record<string, string \| null> \| null` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string | null,
+  sandboxId?: string | null,
+  endUser?: string | null,
+  data?: Record<string, string | null> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        sandbox: {
+            paused: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Pause Failed
+
+`sandbox.pauseFailed`
+
+A virtual machine failed to pause (type sandbox.pause_failed)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id. |
+| `type` | `string` | Yes | The event type, such as sandbox.ended. |
+| `createdAt` | `string \| null` | No | — |
+| `sandboxId` | `string \| null` | No | — |
+| `endUser` | `string \| null` | No | — |
+| `data` | `Record<string, string \| null> \| null` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string | null,
+  sandboxId?: string | null,
+  endUser?: string | null,
+  data?: Record<string, string | null> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        sandbox: {
+            pauseFailed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Resumed
+
+`sandbox.resumed`
+
+A virtual machine resumed (type sandbox.resumed)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id. |
+| `type` | `string` | Yes | The event type, such as sandbox.ended. |
+| `createdAt` | `string \| null` | No | — |
+| `sandboxId` | `string \| null` | No | — |
+| `endUser` | `string \| null` | No | — |
+| `data` | `Record<string, string \| null> \| null` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string | null,
+  sandboxId?: string | null,
+  endUser?: string | null,
+  data?: Record<string, string | null> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        sandbox: {
+            resumed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Running
+
+`sandbox.running`
+
+A virtual machine is running (type sandbox.running)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The event id. |
+| `type` | `string` | Yes | The event type, such as sandbox.ended. |
+| `createdAt` | `string \| null` | No | — |
+| `sandboxId` | `string \| null` | No | — |
+| `endUser` | `string \| null` | No | — |
+| `data` | `Record<string, string \| null> \| null` | No | — |
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string | null,
+  sandboxId?: string | null,
+  endUser?: string | null,
+  data?: Record<string, string | null> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+maritime({
+    webhookHooks: {
+        sandbox: {
+            running: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
