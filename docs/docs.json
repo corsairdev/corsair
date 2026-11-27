@@ -5558,6 +5558,14 @@
                 ]
               },
               {
+                "group": "Steel",
+                "pages": [
+                  "plugins/steel/overview",
+                  "plugins/steel/api",
+                  "plugins/steel/database"
+                ]
+              },
+              {
                 "group": "Storeganise",
                 "pages": [
                   "plugins/storeganise/overview",

@@ -1,0 +1,168 @@
+# Display copy for the generated docs and the catalog, plus one call
+# example per operation. Generated with the plugin from Steel's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Steel
+domain: steel.dev
+description: "Cloud browsers for AI agents with Steel: start and release browser sessions, watch them live, read their events, logs and cost, run commands and computer actions, scrape, screenshot or PDF a page, and manage profiles, credentials, vaults, extensions, files and projects (71 operations)."
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key at app.steel.dev under API Keys. A project key reaches one project; an organization key reaches all of them. Things to know before you write:
+
+  - **Sessions cost money while they run.** `sessions.create` starts a cloud browser that bills by the minute until `sessions.release` (or `sessions.releaseAll`) ends it or its `timeout` passes, so all three are `destructive`. Connect to a session over CDP with the `websocketUrl` it returns, or drive it with `sessions.computer` and `sessions.commands.run`.
+  - **One-shot tools.** `tools.scrape`, `tools.screenshot` and `tools.pdf` load a page in a short session and return the result; they spend wallet credit like a short session and are metered reads (`read`).
+  - **Logins.** `credentials.*`, `vaults.*` and `secretConnections.*` store site logins that sessions can use (`sessions.credentials.attach`); `profiles.*` keep cookies and browser state between sessions.
+  - **Files.** `files.*` are project files and `sessions.files.*` live in one session's browser. File paths may contain slashes (`downloads/report.pdf`); downloads come back as files.
+  - **CAPTCHA solving and Steel's proxies** need a verified account (Steel asks for $10 of credit). `sessions.captchas.*` spend that credit.
+  - **Self-hosted.** The `baseUrl` option points the plugin at a self-hosted Steel browser server; routes the open-source server doesn't have answer 404.
+examples:
+  read:
+    path: sessions.list
+    title: List browser sessions
+    args: {}
+  write:
+    path: tools.scrape
+    title: Scrape a page as Markdown
+    args: {"url": "https://example.com", "format": ["markdown"]}
+apiExamples:
+  apiKeys.create:
+    args: {}
+  auth.jwks:
+    args: {}
+  credentials.create:
+    args: {"value": {}}
+  credentials.delete:
+    args: {"origin": "example"}
+  credentials.list:
+    args: {}
+  credentials.update:
+    args: {}
+  extensions.delete:
+    args: {"extensionId": "example"}
+  extensions.deleteAll:
+    args: {}
+  extensions.download:
+    args: {"extensionId": "example"}
+  extensions.list:
+    args: {}
+  extensions.update:
+    args: {"extensionId": "example"}
+  extensions.upload:
+    args: {}
+  files.delete:
+    args: {"path": "example"}
+  files.download:
+    args: {"path": "example"}
+  files.list:
+    args: {}
+  files.upload:
+    args: {"file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  profiles.create:
+    args: {"userDataDir": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  profiles.delete:
+    args: {"id": "doc_8f2k1x9q"}
+  profiles.get:
+    args: {"id": "doc_8f2k1x9q"}
+  profiles.list:
+    args: {}
+  profiles.update:
+    args: {"id": "doc_8f2k1x9q", "userDataDir": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  projects.get:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  projects.list:
+    args: {}
+  secretConnections.create:
+    args: {"name": "example", "provider": "1password", "auth": {}}
+  secretConnections.delete:
+    args: {"id": "doc_8f2k1x9q"}
+  secretConnections.get:
+    args: {"id": "doc_8f2k1x9q"}
+  secretConnections.list:
+    args: {}
+  secretConnections.test:
+    args: {"id": "doc_8f2k1x9q"}
+  secretConnections.update:
+    args: {"id": "doc_8f2k1x9q"}
+  sessions.agentLogs:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  sessions.agentTraces:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  sessions.captchas.solve:
+    args: {"sessionId": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  sessions.captchas.solveImage:
+    args: {"sessionId": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "imageXPath": "example", "inputXPath": "example"}
+  sessions.captchas.status:
+    args: {"sessionId": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  sessions.commands.cancelExecution:
+    args: {"sessionId": "example", "executionId": "example"}
+  sessions.commands.getExecution:
+    args: {"sessionId": "example", "executionId": "example"}
+  sessions.commands.run:
+    args: {"sessionId": "example", "commands": {"command": "navigate", "url": "https://example.com"}}
+  sessions.computer:
+    args: {"sessionId": "example", "action": "move_mouse"}
+  sessions.context:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  sessions.cost:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  sessions.create:
+    args: {"timeout": 60000}
+  sessions.credentials.attach:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  sessions.credentials.detach:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "credentialId": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  sessions.credentials.detachVault:
+    args: {"reference": "example", "id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  sessions.credentials.list:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  sessions.credentials.replace:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  sessions.events:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  sessions.files.delete:
+    args: {"sessionId": "example", "path": "example"}
+  sessions.files.deleteAll:
+    args: {"sessionId": "example"}
+  sessions.files.download:
+    args: {"sessionId": "example", "path": "example"}
+  sessions.files.downloadArchive:
+    args: {"sessionId": "example"}
+  sessions.files.list:
+    args: {"sessionId": "example"}
+  sessions.files.upload:
+    args: {"sessionId": "example", "file": {"base64": "SGVsbG8gZnJvbSBDb3JzYWly", "filename": "notes.txt", "contentType": "text/plain"}}
+  sessions.get:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  sessions.hlsPlaylist:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  sessions.list:
+    args: {}
+  sessions.liveDetails:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  sessions.logs:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  sessions.metadata.replace:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "metadata": {}}
+  sessions.metadata.update:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c", "metadata": {}}
+  sessions.release:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  sessions.releaseAll:
+    args: {}
+  sessions.signalCatalog:
+    args: {}
+  tools.pdf:
+    args: {"url": "https://example.com"}
+  tools.scrape:
+    args: {"url": "https://example.com", "format": ["markdown"]}
+  tools.screenshot:
+    args: {"url": "https://example.com"}
+  vaults.create:
+    args: {"name": "example"}
+  vaults.delete:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  vaults.get:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}
+  vaults.list:
+    args: {}
+  vaults.update:
+    args: {"id": "3f0e6a2c-8b1d-4c7e-9a52-1d2e3f4a5b6c"}

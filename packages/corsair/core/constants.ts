@@ -670,6 +670,7 @@ export const BaseProviders = [
 	'stannp',
 	'starton',
 	'statuscake',
+	'steel',
 	'storeganise',
 	'storerocket',
 	'stormboard',
@@ -1468,6 +1469,7 @@ export const ProviderDisplayNames = {
 	stannp: 'Stannp',
 	starton: 'Starton',
 	statuscake: 'StatusCake',
+	steel: 'Steel',
 	storeganise: 'Storeganise',
 	storerocket: 'Storerocket',
 	stormboard: 'Stormboard',
@@ -2273,6 +2275,7 @@ export type AllProviders =
 	| 'stannp'
 	| 'starton'
 	| 'statuscake'
+	| 'steel'
 	| 'storeganise'
 	| 'storerocket'
 	| 'stormboard'
