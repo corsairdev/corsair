@@ -1,0 +1,508 @@
+---
+title: "ntfy API reference"
+sidebarTitle: "API"
+description: "API reference for the ntfy plugin in Corsair: every `ntfy.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### usage
+
+`account.usage`
+
+Read the account view: tier limits, messages/emails/calls used and remaining, and the daily reset time
+
+**Risk:** `read`
+
+```ts
+await corsair.ntfy.api.account.usage({});
+```
+
+**Input:** _empty object_
+
+Anonymous callers get an IP-based view; with a token it is the account tier. No per-topic stats exist on ntfy.sh.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+| `role` | `string` | Yes | — |
+| `limits` | `object` | Yes | — |
+| `stats` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="limits full type">
+
+```ts
+{
+  basis?: string | null,
+  messages?: number | null,
+  messages_expiry_duration?: number | null,
+  emails?: number | null,
+  calls?: number | null,
+  reservations?: number | null,
+  attachment_total_size?: number | null,
+  attachment_file_size?: number | null,
+  attachment_expiry_duration?: number | null,
+  attachment_bandwidth?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="stats full type">
+
+```ts
+{
+  messages?: number | null,
+  messages_remaining?: number | null,
+  emails?: number | null,
+  emails_remaining?: number | null,
+  calls?: number | null,
+  calls_remaining?: number | null,
+  reservations?: number | null,
+  reservations_remaining?: number | null,
+  attachment_total_size?: number | null,
+  attachment_total_size_remaining?: number | null,
+  reset_at?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### clear
+
+`messages.clear`
+
+Mark a message as read and dismissed on subscribers (sends a message_clear event)
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.messages.clear({ topic: 'mytopic', sequenceId: 'disk-alert' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `string` | Yes | Topic name |
+| `sequenceId` | `string` | Yes | Sequence id of the message to mark as read |
+
+Sends a `message_clear` event: subscribers mark the message read and dismissed. The cache entry stays until it expires.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `time` | `number` | Yes | Unix seconds |
+| `expires` | `number \| null` | No | Unix seconds the cache entry expires |
+| `event` | `message_clear` | Yes | — |
+| `topic` | `string` | Yes | — |
+| `sequence_id` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`messages.delete`
+
+Delete a message by sequence id, sending a delete event to subscribers; the cache entry is removed
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.ntfy.api.messages.delete({ topic: 'mytopic', sequenceId: 'disk-alert' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `string` | Yes | Topic name |
+| `sequenceId` | `string` | Yes | Sequence id of the message to delete |
+
+Sends a `message_delete` event and removes the cache entry; it also cancels a scheduled message before delivery. Republishing the same `sequenceId` revives the sequence.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `time` | `number` | Yes | Unix seconds |
+| `expires` | `number \| null` | No | Unix seconds the cache entry expires |
+| `event` | `message_delete` | Yes | — |
+| `topic` | `string` | Yes | — |
+| `sequence_id` | `string \| null` | No | — |
+
+
+
+---
+
+### poll
+
+`messages.poll`
+
+Read cached messages from one or more topics, optionally including scheduled ones, with since/filters
+
+**Risk:** `read`
+
+```ts
+await corsair.ntfy.api.messages.poll({ topic: 'mytopic', since: '10min' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `string` | Yes | Topic name, or a comma-separated list of up to 150 topics, [-_A-Za-z0-9]&#123;1,64&#125; each |
+| `since` | `string \| number` | No | Read messages since: a duration ("10min"), unix seconds, a message id, "all" (default), or "latest" |
+| `scheduled` | `boolean` | No | Include scheduled (undelivered) messages |
+| `id` | `string` | No | Only the message with this id |
+| `message` | `string` | No | Filter by message text |
+| `title` | `string` | No | Filter by title |
+| `priority` | `(number \| min \| low \| default \| high \| urgent)[]` | No | Only these priorities (OR filter) |
+| `tags` | `string[]` | No | Only messages with all of these tags (AND filter) |
+
+Reads the server-side cache (12h on ntfy.sh, 10 MB replay cap per topic). Poll filters: `message`, `title`, `id` match text; `priority` is an OR list, `tags` an AND list. A multi-topic comma list (up to 150 topics) interleaves by time.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  id: string,
+  time: number,
+  expires?: number | null,
+  event: message,
+  topic: string,
+  message: string,
+  sequence_id?: string | null,
+  title?: string | null,
+  priority?: number | null,
+  tags?: string[] | null,
+  click?: string | null,
+  actions?: {
+    action: view | broadcast | http | copy,
+    label: string,
+    url?: string,
+    clear?: boolean,
+    method?: string,
+    headers?: Record<string, string>,
+    body?: string,
+    intent?: string,
+    extras?: Record<string, string>,
+    value?: string
+  }[] | null,
+  attachment?: {
+    name: string,
+    url: string,
+    type?: string | null,
+    size?: number | null,
+    expires?: number | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`messages.send`
+
+Publish a notification to a topic; every subscriber gets a push, so the send cannot be undone
+
+**Risk:** `write` · **Irreversible**
+
+```ts
+await corsair.ntfy.api.messages.send({ topic: 'mytopic', message: 'Disk space is low at 5.1 GB', title: 'Low disk space alert', priority: 4, tags: ['warning', 'cd'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `string` | Yes | Topic name, [-_A-Za-z0-9]&#123;1,64&#125; |
+| `message` | `string` | No | Notification body; the server default is "triggered" |
+| `title` | `string` | No | Notification title |
+| `priority` | `number \| min \| low \| default \| high \| urgent` | No | Priority as 1-5 or min\|low\|default\|high\|urgent |
+| `tags` | `string[]` | No | Emoji tags, e.g. ["warning","skull"] |
+| `click` | `string` | No | URL opened when the notification is clicked |
+| `markdown` | `boolean` | No | Render the message as markdown |
+| `actions` | `object[]` | No | Up to 3 action buttons |
+| `delay` | `string` | No | Delayed delivery, e.g. "30min" or "9am"; ntfy.sh accepts 10s to 3d. Cancel before delivery with messages.delete |
+| `sequenceId` | `string` | No | Optional sequence id; publishing again with the same id updates (replaces) the message on subscribers |
+
+Publishes as JSON to the server root. `message` defaults to 'triggered' server-side. `delay` accepts 10s to 3d on ntfy.sh; self-hosted servers may differ.
+
+<AccordionGroup>
+<Accordion title="actions full type">
+
+```ts
+{
+  action: view | broadcast | http | copy,
+  label: string,
+  url?: string,
+  clear?: boolean,
+  method?: string,
+  headers?: Record<string, string>,
+  body?: string,
+  intent?: string,
+  extras?: Record<string, string>,
+  value?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `time` | `number` | Yes | Unix seconds |
+| `expires` | `number \| null` | No | Unix seconds the cache entry expires |
+| `event` | `message` | Yes | — |
+| `topic` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+| `sequence_id` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `priority` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `click` | `string \| null` | No | — |
+| `actions` | `object[] \| null` | No | — |
+| `attachment` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="actions full type">
+
+```ts
+{
+  action: view | broadcast | http | copy,
+  label: string,
+  url?: string,
+  clear?: boolean,
+  method?: string,
+  headers?: Record<string, string>,
+  body?: string,
+  intent?: string,
+  extras?: Record<string, string>,
+  value?: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="attachment full type">
+
+```ts
+{
+  name: string,
+  url: string,
+  type?: string | null,
+  size?: number | null,
+  expires?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`messages.update`
+
+Publish a new version of a message under an existing sequence id; the server keeps both versions and notifies again
+
+**Risk:** `write`
+
+```ts
+await corsair.ntfy.api.messages.update({ topic: 'mytopic', message: 'Disk space is low at 4.9 GB', sequenceId: 'disk-alert' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `string` | Yes | Topic name, [-_A-Za-z0-9]&#123;1,64&#125; |
+| `message` | `string` | No | Notification body; the server default is "triggered" |
+| `title` | `string` | No | Notification title |
+| `priority` | `number \| min \| low \| default \| high \| urgent` | No | Priority as 1-5 or min\|low\|default\|high\|urgent |
+| `tags` | `string[]` | No | Emoji tags, e.g. ["warning","skull"] |
+| `click` | `string` | No | URL opened when the notification is clicked |
+| `markdown` | `boolean` | No | Render the message as markdown |
+| `actions` | `object[]` | No | Up to 3 action buttons |
+| `delay` | `string` | No | Delayed delivery, e.g. "30min" or "9am"; ntfy.sh accepts 10s to 3d. Cancel before delivery with messages.delete |
+| `sequenceId` | `string` | Yes | Sequence id of the message to update; the server keeps both versions and notifies again |
+
+Publishes with `sequence_id` set. The server keeps both versions and every subscriber is notified again.
+
+<AccordionGroup>
+<Accordion title="actions full type">
+
+```ts
+{
+  action: view | broadcast | http | copy,
+  label: string,
+  url?: string,
+  clear?: boolean,
+  method?: string,
+  headers?: Record<string, string>,
+  body?: string,
+  intent?: string,
+  extras?: Record<string, string>,
+  value?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `time` | `number` | Yes | Unix seconds |
+| `expires` | `number \| null` | No | Unix seconds the cache entry expires |
+| `event` | `message` | Yes | — |
+| `topic` | `string` | Yes | — |
+| `message` | `string` | Yes | — |
+| `sequence_id` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `priority` | `number \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `click` | `string \| null` | No | — |
+| `actions` | `object[] \| null` | No | — |
+| `attachment` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="actions full type">
+
+```ts
+{
+  action: view | broadcast | http | copy,
+  label: string,
+  url?: string,
+  clear?: boolean,
+  method?: string,
+  headers?: Record<string, string>,
+  body?: string,
+  intent?: string,
+  extras?: Record<string, string>,
+  value?: string
+}[] | null
+```
+</Accordion>
+
+<Accordion title="attachment full type">
+
+```ts
+{
+  name: string,
+  url: string,
+  type?: string | null,
+  size?: number | null,
+  expires?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Server
+
+### health
+
+`server.health`
+
+Read server health (healthy flag and role)
+
+**Risk:** `read`
+
+```ts
+await corsair.ntfy.api.server.health({});
+```
+
+**Input:** _empty object_
+
+No special rights needed, but corsair still sends the token.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `healthy` | `boolean` | Yes | — |
+| `role` | `string` | Yes | — |
+
+
+
+---
+
+### stats
+
+`server.stats`
+
+Read server-wide totals: message count and rate per second
+
+**Risk:** `read`
+
+```ts
+await corsair.ntfy.api.server.stats({});
+```
+
+**Input:** _empty object_
+
+Server-wide totals, not per-account.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `number` | Yes | — |
+| `messages_rate` | `number` | Yes | — |
+
+
+
+---
+

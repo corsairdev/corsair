@@ -1,0 +1,55 @@
+displayName: ntfy
+description: Push notifications with ntfy - publish messages to topics, poll cached messages, update and clear message sequences, delete scheduled or delivered messages, and read account usage and server stats.
+domain: ntfy.sh
+recommendedAuth: api_key
+overviewNote: |
+  Create an access token at https://ntfy.sh/account under Manage access tokens, then Create access token. The token starts with `tk_` and is shown once. Corsair authenticates every call, and ntfy.sh rejects any bad Authorization header with 401 even on public topics, so a token is required even to read public ones. Things to know before you send:
+
+  - **Real pushes.** `messages.send` delivers a real push notification to every subscriber of the topic. On ntfy.sh a visitor can send 250 messages per rolling 24 hours and has a 60-request burst limit; the plugin retries 429s with backoff, honoring Retry-After.
+  - **Sends cannot be undone.** `messages.send` and `messages.update` both notify subscribers; neither can be recalled. Failed sends are never replayed automatically, because a retry after a timeout can duplicate a notification.
+  - **Sequences.** Publishing with `sequenceId` gives the message a stable id: publishing again with the same id updates it (the server keeps both versions), `messages.clear` marks it read and dismissed, and `messages.delete` deletes it and cancels a scheduled delivery before it goes out.
+  - **Polling, not webhooks.** ntfy has no inbound webhooks here: `messages.poll` reads the topic cache as NDJSON and returns the messages with `event: "message"`. An unknown topic polls to an empty list, not an error. Use `since` (a duration like `10min`, unix seconds, a message id, `all` or `latest`) as the cursor, and `scheduled: true` to list undelivered scheduled messages.
+  - **Priorities and actions.** `priority` takes 1-5 or min|low|default|high|urgent; responses always use ints and omit the field at default. `actions` takes up to 3 buttons of type view, http, broadcast or copy; the server assigns each an id. http actions default to POST.
+  - **Delays.** `delay` takes a duration or time like `30min` or `9am`; ntfy.sh accepts 10 seconds to 3 days. The message sits undelivered until its time; its `time` field is the future delivery time.
+  - **Account view.** `account.usage` reads your tier limits and used/remaining counters with the daily reset time. `server.health` and `server.stats` read server-wide values and need no special rights.
+examples:
+  read:
+    path: messages.poll
+    title: Poll a topic
+    args:
+      topic: mytopic
+      since: 10min
+  write:
+    path: messages.send
+    title: Send a notification
+    args:
+      topic: mytopic
+      message: Disk space is low at 5.1 GB
+      title: Low disk space alert
+      priority: 4
+      tags:
+        - warning
+        - cd
+apiExamples:
+  messages.send:
+    call: "{ topic: 'mytopic', message: 'Disk space is low at 5.1 GB', title: 'Low disk space alert', priority: 4, tags: ['warning', 'cd'] }"
+  messages.poll:
+    call: "{ topic: 'mytopic', since: '10min' }"
+  messages.update:
+    call: "{ topic: 'mytopic', message: 'Disk space is low at 4.9 GB', sequenceId: 'disk-alert' }"
+  messages.clear:
+    call: "{ topic: 'mytopic', sequenceId: 'disk-alert' }"
+  messages.delete:
+    call: "{ topic: 'mytopic', sequenceId: 'disk-alert' }"
+  account.usage: {}
+  server.health: {}
+  server.stats: {}
+apiNotes:
+  messages.send: 'Publishes as JSON to the server root. `message` defaults to ''triggered'' server-side. `delay` accepts 10s to 3d on ntfy.sh; self-hosted servers may differ.'
+  messages.poll: 'Reads the server-side cache (12h on ntfy.sh, 10 MB replay cap per topic). Poll filters: `message`, `title`, `id` match text; `priority` is an OR list, `tags` an AND list. A multi-topic comma list (up to 150 topics) interleaves by time.'
+  messages.update: 'Publishes with `sequence_id` set. The server keeps both versions and every subscriber is notified again.'
+  messages.clear: 'Sends a `message_clear` event: subscribers mark the message read and dismissed. The cache entry stays until it expires.'
+  messages.delete: 'Sends a `message_delete` event and removes the cache entry; it also cancels a scheduled message before delivery. Republishing the same `sequenceId` revives the sequence.'
+  account.usage: 'Anonymous callers get an IP-based view; with a token it is the account tier. No per-topic stats exist on ntfy.sh.'
+  server.health: 'No special rights needed, but corsair still sends the token.'
+  server.stats: 'Server-wide totals, not per-account.'

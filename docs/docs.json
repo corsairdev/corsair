@@ -4236,6 +4236,14 @@
                 ]
               },
               {
+                "group": "ntfy",
+                "pages": [
+                  "plugins/ntfy/overview",
+                  "plugins/ntfy/api",
+                  "plugins/ntfy/database"
+                ]
+              },
+              {
                 "group": "Nutshell",
                 "pages": [
                   "plugins/nutshell/overview",
