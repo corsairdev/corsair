@@ -169,6 +169,9 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	// The domain lookup gave publora.com's 32px favicon; its 180px apple-touch
 	// icon is the same origami bird on a transparent background.
 	publora: 'https://publora.com/apple-touch-icon.png',
+	// The domain lookup gave a different company's grey S on yellow; steel.dev's
+	// own 180px apple-touch icon is the blue browser-tab mark.
+	steel: 'https://steel.dev/favicons/website-180.png',
 	// interzoid.com serves no favicon (twenty-icons and Google both miss);
 	// its GitHub organisation logo is square.
 	interzoid: 'https://github.com/interzoid.png?size=256',
