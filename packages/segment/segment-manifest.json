@@ -17,8 +17,8 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "audienceIds": {
@@ -63,20 +63,20 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "audienceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "connectionId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "enabled": {
@@ -148,20 +148,20 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "audienceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -189,20 +189,20 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "audienceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -233,14 +233,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "audienceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -275,20 +275,20 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "audienceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "enabled": {
@@ -351,8 +351,8 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "name": {
@@ -410,13 +410,14 @@
       "response": "json",
       "bodyMediaType": "application/vnd.segment.v1+json",
       "accept": "application/vnd.segment.v1+json",
+      "singleAttempt": true,
       "input": {
         "type": "object",
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "definition": {
@@ -466,14 +467,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -502,14 +503,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "audienceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "destination": {
@@ -559,14 +560,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "audienceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -600,14 +601,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "audienceType": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "slug": {
@@ -645,20 +646,20 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "audienceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "destinationId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -687,20 +688,20 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "audienceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "destinationId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "idSyncConfiguration": {
@@ -739,14 +740,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "include": {
@@ -780,14 +781,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -818,8 +819,8 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "search": {
@@ -868,14 +869,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -921,14 +922,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "audienceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -957,14 +958,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "strategy": {
@@ -1011,20 +1012,20 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "scheduleId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -1052,20 +1053,20 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "scheduleId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -1093,14 +1094,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -1129,20 +1130,20 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "scheduleId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "strategy": {
@@ -1190,14 +1191,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "enabled": {
@@ -1305,8 +1306,8 @@
         "properties": {
           "destinationMetadataId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -1334,8 +1335,8 @@
         "properties": {
           "sourceMetadataId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -1363,8 +1364,8 @@
         "properties": {
           "warehouseMetadataId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -1486,8 +1487,8 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "name": {
@@ -1544,14 +1545,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -1579,14 +1580,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -1617,8 +1618,8 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -1653,14 +1654,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "enabled": {
@@ -1746,8 +1747,8 @@
         "properties": {
           "credentialId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -1775,8 +1776,8 @@
         "properties": {
           "credentialId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -1835,8 +1836,8 @@
         "properties": {
           "credentialId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "warehousesPagination": {
@@ -1877,8 +1878,8 @@
         "properties": {
           "credentialId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "name": {
@@ -2008,7 +2009,8 @@
             "items": {
               "type": "string"
             },
-            "x-corsair-in": "query"
+            "x-corsair-in": "query",
+            "x-corsair-join": ","
           },
           "granularity": {
             "description": "The size of each bucket in the requested window. Based on the granularity chosen, there are restrictions on the time range you can query: **Minute**: - Max time range: 4 hours - Oldest possible start time: 48 hours in the past **Hour**: - Max Time range: 14 days - Oldest possible start time: 30 days in the past **Day**: - Max time range: 30 days - Oldest possible start time: 30 days in the past This parameter exists in beta.",
@@ -2081,7 +2083,8 @@
             "items": {
               "type": "string"
             },
-            "x-corsair-in": "query"
+            "x-corsair-in": "query",
+            "x-corsair-join": ","
           },
           "granularity": {
             "description": "The size of each bucket in the requested window. Based on the granularity chosen, there are restrictions on the time range you can query: **Minute**: - Max time range: 4 hours - Oldest possible start time: 48 hours in the past **Hour**: - Max Time range: 14 days - Oldest possible start time: 30 days in the past **Day**: - Max time range: 30 days - Oldest possible start time: 30 days in the past This parameter exists in beta.",
@@ -2153,7 +2156,8 @@
             "items": {
               "type": "string"
             },
-            "x-corsair-in": "query"
+            "x-corsair-in": "query",
+            "x-corsair-join": ","
           },
           "granularity": {
             "description": "The size of each bucket in the requested window. Based on the granularity chosen, there are restrictions on the time range you can query: **Minute**: - Max time range: 4 hours - Oldest possible start time: 48 hours in the past **Hour**: - Max Time range: 14 days - Oldest possible start time: 30 days in the past **Day**: - Max time range: 30 days - Oldest possible start time: 30 days in the past This parameter exists in beta.",
@@ -2226,7 +2230,8 @@
             "items": {
               "type": "string"
             },
-            "x-corsair-in": "query"
+            "x-corsair-in": "query",
+            "x-corsair-join": ","
           },
           "granularity": {
             "description": "The size of each bucket in the requested window. Based on the granularity chosen, there are restrictions on the time range you can query: **Minute**: - Max time range: 4 hours - Oldest possible start time: 48 hours in the past **Hour**: - Max Time range: 14 days - Oldest possible start time: 30 days in the past **Day**: - Max time range: 30 days - Oldest possible start time: 30 days in the past This parameter exists in beta.",
@@ -2298,7 +2303,8 @@
             "items": {
               "type": "string"
             },
-            "x-corsair-in": "query"
+            "x-corsair-in": "query",
+            "x-corsair-join": ","
           },
           "granularity": {
             "description": "The size of each bucket in the requested window. Based on the granularity chosen, there are restrictions on the time range you can query: **Minute**: - Max time range: 4 hours - Oldest possible start time: 48 hours in the past **Hour**: - Max Time range: 14 days - Oldest possible start time: 30 days in the past **Day**: - Max time range: 30 days - Oldest possible start time: 30 days in the past This parameter exists in beta.",
@@ -2371,7 +2377,8 @@
             "items": {
               "type": "string"
             },
-            "x-corsair-in": "query"
+            "x-corsair-in": "query",
+            "x-corsair-join": ","
           },
           "granularity": {
             "description": "The size of each bucket in the requested window. Based on the granularity chosen, there are restrictions on the time range you can query: **Minute**: - Max time range: 4 hours - Oldest possible start time: 48 hours in the past **Hour**: - Max Time range: 14 days - Oldest possible start time: 30 days in the past **Day**: - Max time range: 30 days - Oldest possible start time: 30 days in the past This parameter exists in beta.",
@@ -2462,8 +2469,8 @@
         "properties": {
           "destinationId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -2492,8 +2499,8 @@
         "properties": {
           "destinationId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "sourceId": {
@@ -2556,14 +2563,14 @@
         "properties": {
           "destinationId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "filterId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -2591,14 +2598,14 @@
         "properties": {
           "destinationId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "filterId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -2629,8 +2636,8 @@
         "properties": {
           "destinationId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -2703,14 +2710,14 @@
         "properties": {
           "destinationId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "filterId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "if": {
@@ -2763,8 +2770,8 @@
         "properties": {
           "destinationId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -2792,8 +2799,8 @@
         "properties": {
           "destinationId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "sourceId": {
@@ -2874,8 +2881,8 @@
         "properties": {
           "destinationId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "name": {
@@ -2932,14 +2939,14 @@
         "properties": {
           "destinationId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -2967,14 +2974,14 @@
         "properties": {
           "destinationId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -3005,8 +3012,8 @@
         "properties": {
           "destinationId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -3041,14 +3048,14 @@
         "properties": {
           "destinationId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "input": {
@@ -3086,8 +3093,8 @@
         "properties": {
           "destinationId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "name": {
@@ -3153,7 +3160,8 @@
             "items": {
               "type": "string"
             },
-            "x-corsair-in": "query"
+            "x-corsair-in": "query",
+            "x-corsair-join": ","
           },
           "sourceId": {
             "description": "A list of strings which filters the results to the given SourceIds. This parameter exists in v1.",
@@ -3267,8 +3275,8 @@
         "properties": {
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -3296,8 +3304,8 @@
         "properties": {
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -3363,8 +3371,8 @@
         "properties": {
           "id": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "integrationId": {
@@ -3476,8 +3484,8 @@
         "properties": {
           "functionId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -3505,8 +3513,8 @@
         "properties": {
           "functionId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -3534,8 +3542,8 @@
         "properties": {
           "functionId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -3563,14 +3571,14 @@
         "properties": {
           "functionId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "versionId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -3644,8 +3652,8 @@
         "properties": {
           "instanceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -3673,8 +3681,8 @@
         "properties": {
           "instanceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -3740,8 +3748,8 @@
         "properties": {
           "instanceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "enabled": {
@@ -3830,8 +3838,8 @@
         "properties": {
           "functionId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -3866,8 +3874,8 @@
         "properties": {
           "functionId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "versionId": {
@@ -3901,8 +3909,8 @@
         "properties": {
           "functionId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "code": {
@@ -4081,14 +4089,14 @@
         "properties": {
           "key": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "value": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -4138,8 +4146,8 @@
         "properties": {
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "code": {
@@ -4172,8 +4180,8 @@
         "properties": {
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -4201,8 +4209,8 @@
         "properties": {
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -4231,8 +4239,8 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "metadataId": {
@@ -4285,14 +4293,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "warehouseId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -4323,8 +4331,8 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -4361,14 +4369,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "warehouseId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -4403,14 +4411,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "warehouseId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "name": {
@@ -4460,14 +4468,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "warehouseId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "syncOverrides": {
@@ -4557,8 +4565,8 @@
         "properties": {
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "regulationType": {
@@ -4622,8 +4630,8 @@
         "properties": {
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "regulationType": {
@@ -4677,8 +4685,8 @@
         "properties": {
           "regulateId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -4770,8 +4778,8 @@
         "properties": {
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "status": {
@@ -4923,8 +4931,8 @@
         "properties": {
           "modelId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -4952,8 +4960,8 @@
         "properties": {
           "modelId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -5013,8 +5021,8 @@
         "properties": {
           "modelId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "name": {
@@ -5064,14 +5072,14 @@
         "properties": {
           "modelId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "syncId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "reasonForCanceling": {
@@ -5141,14 +5149,14 @@
         "properties": {
           "modelId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "syncId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -5176,14 +5184,14 @@
         "properties": {
           "modelId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "subscriptionId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "count": {
@@ -5253,8 +5261,8 @@
         "properties": {
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "labels": {
@@ -5339,8 +5347,8 @@
         "properties": {
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -5368,8 +5376,8 @@
         "properties": {
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -5397,8 +5405,8 @@
         "properties": {
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -5426,8 +5434,8 @@
         "properties": {
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -5489,8 +5497,8 @@
         "properties": {
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -5527,8 +5535,8 @@
         "properties": {
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -5562,14 +5570,14 @@
         "properties": {
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "writeKey": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -5598,8 +5606,8 @@
         "properties": {
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "labels": {
@@ -5636,8 +5644,8 @@
         "properties": {
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "name": {
@@ -5687,8 +5695,8 @@
         "properties": {
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "track": {
@@ -5749,8 +5757,8 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -5812,8 +5820,8 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -5855,14 +5863,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "entitySlug": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -5906,20 +5914,20 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "entitySlug": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "propertyName": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -5950,14 +5958,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "eventName": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -6018,20 +6026,20 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "eventName": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "propertyName": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "propertyType": {
@@ -6067,8 +6075,8 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -6119,14 +6127,14 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "traitKey": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "collection": {
@@ -6163,8 +6171,8 @@
         "properties": {
           "spaceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -6340,78 +6348,319 @@
           "batch": {
             "type": "array",
             "items": {
-              "type": "object",
-              "additionalProperties": true,
-              "properties": {
-                "type": {
-                  "type": "string",
-                  "enum": [
-                    "identify",
-                    "track",
-                    "page",
-                    "screen",
-                    "group",
-                    "alias"
-                  ],
-                  "description": "The call this message is."
-                },
-                "userId": {
-                  "type": "string",
-                  "description": "Your id for the user. Send userId, anonymousId or both."
-                },
-                "anonymousId": {
-                  "type": "string",
-                  "description": "A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both."
-                },
-                "context": {
+              "oneOf": [
+                {
                   "type": "object",
-                  "additionalProperties": true,
-                  "description": "Extra information about the call: ip, userAgent, locale, library, page, campaign, device and so on. Context fields Segment reads are listed in the Common fields spec."
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": ["identify"],
+                      "description": "The call this message is."
+                    },
+                    "userId": {
+                      "type": "string",
+                      "description": "Your id for the user. Send userId, anonymousId or both."
+                    },
+                    "anonymousId": {
+                      "type": "string",
+                      "description": "A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both."
+                    },
+                    "context": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "Extra information about the call: ip, userAgent, locale, library, page, campaign, device and so on. Context fields Segment reads are listed in the Common fields spec."
+                    },
+                    "integrations": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "Turns destinations on or off for this call: `{ \"All\": false, \"Mixpanel\": true }`."
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "When the event happened, ISO 8601. Left out, Segment uses the time it received the call. Use it when you send historical data."
+                    },
+                    "messageId": {
+                      "type": "string",
+                      "description": "A unique id for the message; Segment drops repeats of the same messageId. Left out, Segment makes one."
+                    },
+                    "traits": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "What you know about the user: email, name, plan, createdAt and any custom traits."
+                    }
+                  },
+                  "required": ["type"],
+                  "anyOf": [
+                    {
+                      "required": ["userId"]
+                    },
+                    {
+                      "required": ["anonymousId"]
+                    }
+                  ]
                 },
-                "integrations": {
+                {
                   "type": "object",
-                  "additionalProperties": true,
-                  "description": "Turns destinations on or off for this call: `{ \"All\": false, \"Mixpanel\": true }`."
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": ["track"],
+                      "description": "The call this message is."
+                    },
+                    "userId": {
+                      "type": "string",
+                      "description": "Your id for the user. Send userId, anonymousId or both."
+                    },
+                    "anonymousId": {
+                      "type": "string",
+                      "description": "A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both."
+                    },
+                    "context": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "Extra information about the call: ip, userAgent, locale, library, page, campaign, device and so on. Context fields Segment reads are listed in the Common fields spec."
+                    },
+                    "integrations": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "Turns destinations on or off for this call: `{ \"All\": false, \"Mixpanel\": true }`."
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "When the event happened, ISO 8601. Left out, Segment uses the time it received the call. Use it when you send historical data."
+                    },
+                    "messageId": {
+                      "type": "string",
+                      "description": "A unique id for the message; Segment drops repeats of the same messageId. Left out, Segment makes one."
+                    },
+                    "event": {
+                      "type": "string",
+                      "description": "The name of the action, such as \"Order Completed\"."
+                    },
+                    "properties": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "Properties of the event: revenue, currency, product ids and so on."
+                    }
+                  },
+                  "required": ["type", "event"],
+                  "anyOf": [
+                    {
+                      "required": ["userId"]
+                    },
+                    {
+                      "required": ["anonymousId"]
+                    }
+                  ]
                 },
-                "timestamp": {
-                  "type": "string",
-                  "description": "When the event happened, ISO 8601. Left out, Segment uses the time it received the call. Use it when you send historical data."
-                },
-                "messageId": {
-                  "type": "string",
-                  "description": "A unique id for the message; Segment drops repeats of the same messageId. Left out, Segment makes one."
-                },
-                "event": {
-                  "type": "string",
-                  "description": "The name of the action, such as \"Order Completed\"."
-                },
-                "name": {
-                  "type": "string",
-                  "description": "The name of the page, such as \"Home\"."
-                },
-                "properties": {
+                {
                   "type": "object",
-                  "additionalProperties": true,
-                  "description": "Properties of the event: revenue, currency, product ids and so on."
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": ["page"],
+                      "description": "The call this message is."
+                    },
+                    "userId": {
+                      "type": "string",
+                      "description": "Your id for the user. Send userId, anonymousId or both."
+                    },
+                    "anonymousId": {
+                      "type": "string",
+                      "description": "A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both."
+                    },
+                    "context": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "Extra information about the call: ip, userAgent, locale, library, page, campaign, device and so on. Context fields Segment reads are listed in the Common fields spec."
+                    },
+                    "integrations": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "Turns destinations on or off for this call: `{ \"All\": false, \"Mixpanel\": true }`."
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "When the event happened, ISO 8601. Left out, Segment uses the time it received the call. Use it when you send historical data."
+                    },
+                    "messageId": {
+                      "type": "string",
+                      "description": "A unique id for the message; Segment drops repeats of the same messageId. Left out, Segment makes one."
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "The name of the page, such as \"Home\"."
+                    },
+                    "properties": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "Properties of the page: url, path, referrer, title and custom properties."
+                    }
+                  },
+                  "required": ["type"],
+                  "anyOf": [
+                    {
+                      "required": ["userId"]
+                    },
+                    {
+                      "required": ["anonymousId"]
+                    }
+                  ]
                 },
-                "traits": {
+                {
                   "type": "object",
-                  "additionalProperties": true,
-                  "description": "What you know about the user: email, name, plan, createdAt and any custom traits."
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": ["screen"],
+                      "description": "The call this message is."
+                    },
+                    "userId": {
+                      "type": "string",
+                      "description": "Your id for the user. Send userId, anonymousId or both."
+                    },
+                    "anonymousId": {
+                      "type": "string",
+                      "description": "A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both."
+                    },
+                    "context": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "Extra information about the call: ip, userAgent, locale, library, page, campaign, device and so on. Context fields Segment reads are listed in the Common fields spec."
+                    },
+                    "integrations": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "Turns destinations on or off for this call: `{ \"All\": false, \"Mixpanel\": true }`."
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "When the event happened, ISO 8601. Left out, Segment uses the time it received the call. Use it when you send historical data."
+                    },
+                    "messageId": {
+                      "type": "string",
+                      "description": "A unique id for the message; Segment drops repeats of the same messageId. Left out, Segment makes one."
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "The name of the screen, such as \"Checkout\"."
+                    },
+                    "properties": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "Properties of the screen."
+                    }
+                  },
+                  "required": ["type"],
+                  "anyOf": [
+                    {
+                      "required": ["userId"]
+                    },
+                    {
+                      "required": ["anonymousId"]
+                    }
+                  ]
                 },
-                "groupId": {
-                  "type": "string",
-                  "description": "Your id for the group."
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": ["group"],
+                      "description": "The call this message is."
+                    },
+                    "userId": {
+                      "type": "string",
+                      "description": "Your id for the user. Send userId, anonymousId or both."
+                    },
+                    "anonymousId": {
+                      "type": "string",
+                      "description": "A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both."
+                    },
+                    "context": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "Extra information about the call: ip, userAgent, locale, library, page, campaign, device and so on. Context fields Segment reads are listed in the Common fields spec."
+                    },
+                    "integrations": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "Turns destinations on or off for this call: `{ \"All\": false, \"Mixpanel\": true }`."
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "When the event happened, ISO 8601. Left out, Segment uses the time it received the call. Use it when you send historical data."
+                    },
+                    "messageId": {
+                      "type": "string",
+                      "description": "A unique id for the message; Segment drops repeats of the same messageId. Left out, Segment makes one."
+                    },
+                    "groupId": {
+                      "type": "string",
+                      "description": "Your id for the group."
+                    },
+                    "traits": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "Traits of the group: name, industry, employees, plan."
+                    }
+                  },
+                  "required": ["type", "groupId"],
+                  "anyOf": [
+                    {
+                      "required": ["userId"]
+                    },
+                    {
+                      "required": ["anonymousId"]
+                    }
+                  ]
                 },
-                "previousId": {
-                  "type": "string",
-                  "description": "The id the user had before."
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": ["alias"],
+                      "description": "The call this message is."
+                    },
+                    "userId": {
+                      "type": "string",
+                      "description": "Your id for the user. Send userId, anonymousId or both."
+                    },
+                    "anonymousId": {
+                      "type": "string",
+                      "description": "A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both."
+                    },
+                    "context": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "Extra information about the call: ip, userAgent, locale, library, page, campaign, device and so on. Context fields Segment reads are listed in the Common fields spec."
+                    },
+                    "integrations": {
+                      "type": "object",
+                      "additionalProperties": true,
+                      "description": "Turns destinations on or off for this call: `{ \"All\": false, \"Mixpanel\": true }`."
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "description": "When the event happened, ISO 8601. Left out, Segment uses the time it received the call. Use it when you send historical data."
+                    },
+                    "messageId": {
+                      "type": "string",
+                      "description": "A unique id for the message; Segment drops repeats of the same messageId. Left out, Segment makes one."
+                    },
+                    "previousId": {
+                      "type": "string",
+                      "description": "The id the user had before."
+                    }
+                  },
+                  "required": ["type", "previousId", "userId"]
                 }
-              },
-              "required": ["type"]
+              ]
             },
             "minItems": 1,
-            "description": "The calls, each with its `type`."
+            "maxItems": 2500,
+            "description": "The calls (at most 2,500), each with its `type` and the fields that call needs."
           },
           "context": {
             "type": "object",
@@ -6484,7 +6733,15 @@
             "description": "Traits of the group: name, industry, employees, plan."
           }
         },
-        "required": ["groupId"]
+        "required": ["groupId"],
+        "anyOf": [
+          {
+            "required": ["userId"]
+          },
+          {
+            "required": ["anonymousId"]
+          }
+        ]
       },
       "output": {
         "type": "object",
@@ -6539,7 +6796,15 @@
             "additionalProperties": true,
             "description": "What you know about the user: email, name, plan, createdAt and any custom traits."
           }
-        }
+        },
+        "anyOf": [
+          {
+            "required": ["userId"]
+          },
+          {
+            "required": ["anonymousId"]
+          }
+        ]
       },
       "output": {
         "type": "object",
@@ -6598,7 +6863,15 @@
             "additionalProperties": true,
             "description": "Properties of the page: url, path, referrer, title and custom properties."
           }
-        }
+        },
+        "anyOf": [
+          {
+            "required": ["userId"]
+          },
+          {
+            "required": ["anonymousId"]
+          }
+        ]
       },
       "output": {
         "type": "object",
@@ -6657,7 +6930,15 @@
             "additionalProperties": true,
             "description": "Properties of the screen."
           }
-        }
+        },
+        "anyOf": [
+          {
+            "required": ["userId"]
+          },
+          {
+            "required": ["anonymousId"]
+          }
+        ]
       },
       "output": {
         "type": "object",
@@ -6717,7 +6998,15 @@
             "description": "Properties of the event: revenue, currency, product ids and so on."
           }
         },
-        "required": ["event"]
+        "required": ["event"],
+        "anyOf": [
+          {
+            "required": ["userId"]
+          },
+          {
+            "required": ["anonymousId"]
+          }
+        ]
       },
       "output": {
         "type": "object",
@@ -6744,8 +7033,8 @@
         "properties": {
           "trackingPlanId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "sourceId": {
@@ -6822,8 +7111,8 @@
         "properties": {
           "trackingPlanId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -6851,8 +7140,8 @@
         "properties": {
           "trackingPlanId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -6926,8 +7215,8 @@
         "properties": {
           "trackingPlanId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -6964,8 +7253,8 @@
         "properties": {
           "trackingPlanId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -6999,8 +7288,8 @@
         "properties": {
           "trackingPlanId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "rules": {
@@ -7036,8 +7325,8 @@
         "properties": {
           "trackingPlanId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "sourceId": {
@@ -7071,8 +7360,8 @@
         "properties": {
           "trackingPlanId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "rules": {
@@ -7109,8 +7398,8 @@
         "properties": {
           "trackingPlanId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "name": {
@@ -7148,8 +7437,8 @@
         "properties": {
           "trackingPlanId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "rules": {
@@ -7274,8 +7563,8 @@
         "properties": {
           "transformationId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -7303,8 +7592,8 @@
         "properties": {
           "transformationId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -7364,8 +7653,8 @@
         "properties": {
           "transformationId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "name": {
@@ -7607,8 +7896,8 @@
         "properties": {
           "userGroupId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "permissions": {
@@ -7645,8 +7934,8 @@
         "properties": {
           "userGroupId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "emails": {
@@ -7711,8 +8000,8 @@
         "properties": {
           "userGroupId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -7740,8 +8029,8 @@
         "properties": {
           "userGroupId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -7803,8 +8092,8 @@
         "properties": {
           "userGroupId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -7841,8 +8130,8 @@
         "properties": {
           "userGroupId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -7876,8 +8165,8 @@
         "properties": {
           "userGroupId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "emails": {
@@ -7914,8 +8203,8 @@
         "properties": {
           "userGroupId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "permissions": {
@@ -7952,8 +8241,8 @@
         "properties": {
           "userGroupId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "emails": {
@@ -7990,8 +8279,8 @@
         "properties": {
           "userGroupId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "name": {
@@ -8025,8 +8314,8 @@
         "properties": {
           "userId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "permissions": {
@@ -8093,8 +8382,8 @@
         "properties": {
           "userId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -8156,8 +8445,8 @@
         "properties": {
           "userId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -8192,8 +8481,8 @@
         "properties": {
           "userId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "permissions": {
@@ -8229,14 +8518,14 @@
         "properties": {
           "warehouseId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -8301,8 +8590,8 @@
         "properties": {
           "warehouseId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -8330,8 +8619,8 @@
         "properties": {
           "warehouseId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -8359,8 +8648,8 @@
         "properties": {
           "warehouseId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -8388,8 +8677,8 @@
         "properties": {
           "warehouseId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -8451,8 +8740,8 @@
         "properties": {
           "warehouseId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -8489,14 +8778,14 @@
         "properties": {
           "warehouseId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -8533,14 +8822,14 @@
         "properties": {
           "warehouseId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -8577,8 +8866,8 @@
         "properties": {
           "warehouseId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "pagination": {
@@ -8612,14 +8901,14 @@
         "properties": {
           "warehouseId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "sourceId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           }
         },
@@ -8648,8 +8937,8 @@
         "properties": {
           "warehouseId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "enabled": {
@@ -8691,8 +8980,8 @@
         "properties": {
           "warehouseId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "name": {
@@ -8734,8 +9023,8 @@
         "properties": {
           "warehouseId": {
             "type": "string",
-            "minimum": 1,
-            "maximum": 255,
+            "minLength": 1,
+            "maxLength": 255,
             "x-corsair-in": "path"
           },
           "syncOverrides": {

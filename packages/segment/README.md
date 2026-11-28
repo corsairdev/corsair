@@ -13,13 +13,13 @@ pnpm add @corsair-dev/segment
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
 | `activations.batchQuery` | `segment.api.activations.batchQuery` | `read` | Batch Query Activations for Space. Lists Activations in bulk across many Audiences in one call. Intended for bulk reads, for example pulling activation metadata for hundreds of audiences on a schedule, so callers don't need one listActivationsFromAudience call per audience. Alpha in Segment's API: it may change. |
-| `activations.create` | `segment.api.activations.create` | `write` | Add Activation to Audience. Defines how audience data is sent to a Destination. This step enables the data sync. You must establish a connection (Add Destination to Audience) for this audience before an Activation can be created. Alpha in Segment's API: it may change. |
+| `activations.create` | `segment.api.activations.create` | `destructive` | Add Activation to Audience. Defines how audience data is sent to a Destination. This step enables the data sync. You must establish a connection (Add Destination to Audience) for this audience before an Activation can be created. Alpha in Segment's API: it may change. Starts sending the audience to the destination once the activation is enabled. |
 | `activations.delete` | `segment.api.activations.delete` | `destructive` | Remove Activation from Audience. Deletes an Activation. Alpha in Segment's API: it may change. Cannot be undone. |
 | `activations.get` | `segment.api.activations.get` | `read` | Get Activation from Audience. Gets a single Activation by id. Alpha in Segment's API: it may change. |
 | `activations.list` | `segment.api.activations.list` | `read` | List Activations from Audience. Lists all Activations. Alpha in Segment's API: it may change. |
-| `activations.update` | `segment.api.activations.update` | `write` | Update Activation for Audience. Updates an Activation. Alpha in Segment's API: it may change. |
+| `activations.update` | `segment.api.activations.update` | `destructive` | Update Activation for Audience. Updates an Activation. Alpha in Segment's API: it may change. With performResync true, Segment sends the whole audience to the destination again. |
 | `audiences.create` | `segment.api.audiences.create` | `write` | Create Audience. Creates Audience. In order to successfully call this endpoint, the specified Workspace needs to have the Audience feature enabled. |
-| `audiences.createPreview` | `segment.api.audiences.createPreview` | `read` | Create Audience Preview. Previews Audience. In order to successfully call this endpoint, the specified Workspace needs to have the Audience feature enabled. This endpoint also has a rate limit of 700 requests per month per spaceId, which is lower than the default due to access pattern restrictions. |
+| `audiences.createPreview` | `segment.api.audiences.createPreview` | `read` | Create Audience Preview. Previews Audience. In order to successfully call this endpoint, the specified Workspace needs to have the Audience feature enabled. This endpoint also has a rate limit of 700 requests per month per spaceId, which is lower than the default due to access pattern restrictions. Segment allows a limited number of previews a month: a 429 means the quota is spent, so the call is not retried. |
 | `audiences.delete` | `segment.api.audiences.delete` | `destructive` | Remove Audience from Space. Deletes an Audience by id and spaceId. In order to successfully call this endpoint, the specified Workspace needs to have the Audience feature enabled. Cannot be undone. |
 | `audiences.destinations.add` | `segment.api.audiences.destinations.add` | `write` | Add Destination to Audience. Establishes a connection between an audience and a Destination. To start syncing data, you must create an Activation for the connection created here. Note that the Destination must be added to Engage through the Engage Settings page within the App before creating the connection through the API. Alpha in Segment's API: it may change. |
 | `audiences.destinations.list` | `segment.api.audiences.destinations.list` | `read` | List Destinations from Audience. Lists all Destinations from an Audience. In order to successfully call this endpoint, the specified Workspace needs to have the Audience feature enabled. Alpha in Segment's API: it may change. |
@@ -157,7 +157,7 @@ pnpm add @corsair-dev/segment
 | `spaces.schema.listTraitSampleValues` | `segment.api.spaces.schema.listTraitSampleValues` | `read` | List Sample Values from Trait. Returns sample values for a Trait in a Space. Alpha in Segment's API: it may change. |
 | `testing.echo` | `segment.api.testing.echo` | `read` | Echo. Public Echo endpoint. (GET /echo) |
 | `tracking.alias` | `segment.api.tracking.alias` | `write` | Merge two user identities. Merges two identities of one user (a previous anonymous or old id and the new userId) in destinations that need it, such as Mixpanel. Most destinations merge on identify and do not need alias. Tracking API: sent with the source write key. |
-| `tracking.batch` | `segment.api.tracking.batch` | `write` | Send a batch of calls. Sends up to 500 KB of identify, track, page, screen, group and alias calls in one request (each message at most 32 KB). Use it to import historical data or to save requests. Tracking API: sent with the source write key. |
+| `tracking.batch` | `segment.api.tracking.batch` | `write` | Send a batch of calls. Sends up to 2,500 calls and 500 KB of identify, track, page, screen, group and alias calls in one request (each message at most 32 KB). Use it to import historical data or to save requests. Tracking API: sent with the source write key. |
 | `tracking.group` | `segment.api.tracking.group` | `write` | Associate a user with a group. Ties a user to a group (a company, account or team) and records traits about the group. Tracking API: sent with the source write key. |
 | `tracking.identify` | `segment.api.tracking.identify` | `write` | Identify a user. Ties a user to their actions and records traits about them (email, name, plan). Traits stay on the user profile in destinations that keep one. Tracking API: sent with the source write key to api.segment.io (events.eu1.segmentapis.com in the EU). Segment answers 200 for every call it can parse; check the source debugger for what arrived. |
 | `tracking.page` | `segment.api.tracking.page` | `write` | Record a page view. Records that a user viewed a page of a website. Tracking API: sent with the source write key. |
@@ -226,7 +226,7 @@ Auth: API key. Corsair prompts your tenant for credentials on first use.
 
 ## Webhooks
 
-Handles 7 webhook events. See the reference for payloads and `webhookHooks`.
+Handles 8 webhook events. See the reference for payloads and `webhookHooks`.
 
 ## Reference
 

@@ -153,6 +153,25 @@ function mediaTypeFor(options: SegmentRequest): string | undefined {
 }
 
 /**
+ * Core parses only `application/json` bodies and hands any other text back
+ * as a string. Segment answers in its versioned media types
+ * (`application/vnd.segment.v1+json`), so a string that is a JSON object or
+ * list is decoded here. Anything else (an HTML page, plain text) stays a
+ * string, and the operation refuses it.
+ */
+// `unknown` because the body is whatever the transport returned.
+export function decodeJsonText(value: unknown): unknown {
+	if (typeof value !== 'string') return value;
+	const text = value.trim();
+	if (!(text.startsWith('{') || text.startsWith('['))) return value;
+	try {
+		return JSON.parse(text);
+	} catch {
+		return value;
+	}
+}
+
+/**
  * Sends one Segment call through core's transport, which retries a 429 three
  * times (honouring Retry-After) and raises `ApiError` with the status.
  */
@@ -182,11 +201,13 @@ export async function makeSegmentRequest(
 		...(options.responseType ? { responseType: options.responseType } : {}),
 	};
 	try {
-		return await request<unknown>(config, requestOptions, {
-			rateLimitConfig: options.singleAttempt
-				? { ...SEGMENT_RATE_LIMIT_CONFIG, maxRetries: 0 }
-				: SEGMENT_RATE_LIMIT_CONFIG,
-		});
+		return decodeJsonText(
+			await request<unknown>(config, requestOptions, {
+				rateLimitConfig: options.singleAttempt
+					? { ...SEGMENT_RATE_LIMIT_CONFIG, maxRetries: 0 }
+					: SEGMENT_RATE_LIMIT_CONFIG,
+			}),
+		);
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw withoutRequestData(error, ctx.key, base, [
@@ -490,7 +511,8 @@ export function withoutQuery(url: string): string {
  * are dropped, or the reason would go with it.
  */
 // `unknown` because the error body is untrusted provider JSON.
-function unwrapped(body: unknown): unknown {
+function unwrapped(raw: unknown): unknown {
+	const body = decodeJsonText(raw);
 	if (typeof body !== 'object' || body === null || Array.isArray(body)) {
 		return body;
 	}

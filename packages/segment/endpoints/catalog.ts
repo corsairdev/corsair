@@ -631,9 +631,9 @@ export const segmentEndpointMeta = {
 			"Batch Query Activations for Space. Lists Activations in bulk across many Audiences in one call. Intended for bulk reads, for example pulling activation metadata for hundreds of audiences on a schedule, so callers don't need one listActivationsFromAudience call per audience. Alpha in Segment's API: it may change.",
 	},
 	'activations.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			"Add Activation to Audience. Defines how audience data is sent to a Destination. This step enables the data sync. You must establish a connection (Add Destination to Audience) for this audience before an Activation can be created. Alpha in Segment's API: it may change.",
+			"Add Activation to Audience. Defines how audience data is sent to a Destination. This step enables the data sync. You must establish a connection (Add Destination to Audience) for this audience before an Activation can be created. Alpha in Segment's API: it may change. Starts sending the audience to the destination once the activation is enabled.",
 	},
 	'activations.delete': {
 		riskLevel: 'destructive',
@@ -652,9 +652,9 @@ export const segmentEndpointMeta = {
 			"List Activations from Audience. Lists all Activations. Alpha in Segment's API: it may change.",
 	},
 	'activations.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			"Update Activation for Audience. Updates an Activation. Alpha in Segment's API: it may change.",
+			"Update Activation for Audience. Updates an Activation. Alpha in Segment's API: it may change. With performResync true, Segment sends the whole audience to the destination again.",
 	},
 	'audiences.create': {
 		riskLevel: 'write',
@@ -664,7 +664,7 @@ export const segmentEndpointMeta = {
 	'audiences.createPreview': {
 		riskLevel: 'read',
 		description:
-			'Create Audience Preview. Previews Audience. In order to successfully call this endpoint, the specified Workspace needs to have the Audience feature enabled. This endpoint also has a rate limit of 700 requests per month per spaceId, which is lower than the default due to access pattern restrictions.',
+			'Create Audience Preview. Previews Audience. In order to successfully call this endpoint, the specified Workspace needs to have the Audience feature enabled. This endpoint also has a rate limit of 700 requests per month per spaceId, which is lower than the default due to access pattern restrictions. Segment allows a limited number of previews a month: a 429 means the quota is spent, so the call is not retried.',
 	},
 	'audiences.delete': {
 		riskLevel: 'destructive',
@@ -1363,7 +1363,7 @@ export const segmentEndpointMeta = {
 	'tracking.batch': {
 		riskLevel: 'write',
 		description:
-			'Send a batch of calls. Sends up to 500 KB of identify, track, page, screen, group and alias calls in one request (each message at most 32 KB). Use it to import historical data or to save requests. Tracking API: sent with the source write key.',
+			'Send a batch of calls. Sends up to 2,500 calls and 500 KB of identify, track, page, screen, group and alias calls in one request (each message at most 32 KB). Use it to import historical data or to save requests. Tracking API: sent with the source write key.',
 	},
 	'tracking.group': {
 		riskLevel: 'write',

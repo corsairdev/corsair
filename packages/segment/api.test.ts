@@ -1,12 +1,15 @@
 import { writeFileSync } from 'node:fs';
 import { segmentEndpointsNested } from './endpoints/catalog';
+import { segmentOperations } from './endpoints/manifest';
 import type { SegmentContext } from './index';
 
 /**
  * Live run against a real Segment workspace. Skipped unless a credential is
  * set (CI never runs files named api.test.ts):
  *
- *   SEGMENT_PUBLIC_API_TOKEN=sgp_... SEGMENT_WRITE_KEY=... [SEGMENT_REGION=eu] npx jest api.test.ts
+ *   SEGMENT_PUBLIC_API_TOKEN=sgp_... SEGMENT_WRITE_KEY=... npx jest api.test.ts
+ *
+ * For an EU workspace, add SEGMENT_REGION=eu before the command.
  *
  * SEGMENT_PUBLIC_API_TOKEN (Team or Business plan) runs the workspace reads
  * and a label + source round trip (both deleted again). SEGMENT_WRITE_KEY
@@ -14,8 +17,8 @@ import type { SegmentContext } from './index';
  * source with no destinations connected. Optional: SEGMENT_LIVE_REPORT=<file>
  * writes each step's outcome as JSON.
  */
-const token = process.env.SEGMENT_PUBLIC_API_TOKEN;
-const writeKey = process.env.SEGMENT_WRITE_KEY;
+const token = process.env.SEGMENT_PUBLIC_API_TOKEN?.trim() || undefined;
+const writeKey = process.env.SEGMENT_WRITE_KEY?.trim() || undefined;
 const region = process.env.SEGMENT_REGION === 'eu' ? 'eu' : 'us';
 const describeIfToken = token ? describe : describe.skip;
 const describeIfWriteKey = writeKey ? describe : describe.skip;
@@ -121,9 +124,15 @@ describeIfToken('Segment Public API (live)', () => {
 			'usage.getDailyApiCalls',
 			'usage.getDailyMtu',
 		]) {
-			const input = id.startsWith('usage.')
-				? { period: `${new Date().toISOString().slice(0, 7)}-01` }
-				: { pagination: { count: 10 } };
+			const props = (segmentOperations.find((o) => o.id === id)?.input
+				.properties ?? {}) as Record<string, unknown>;
+			const input: Record<string, unknown> = {
+				...('pagination' in props ? { pagination: { count: 10 } } : {}),
+				...('period' in props
+					? { period: `${new Date().toISOString().slice(0, 7)}-01` }
+					: {}),
+				...(id === 'functions.list' ? { resourceType: 'DESTINATION' } : {}),
+			};
 			await run(id, input, true);
 		}
 		await run('spaces.list', {}, true);

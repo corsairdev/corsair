@@ -5009,35 +5009,125 @@ export type SegmentOperationInputs = {
 		previousId: string;
 	};
 	'tracking.batch': {
-		/** The calls, each with its `type`. */
-		batch: Array<{
-			/** The call this message is. */
-			type: 'identify' | 'track' | 'page' | 'screen' | 'group' | 'alias';
-			/** Your id for the user. Send userId, anonymousId or both. */
-			userId?: string;
-			/** A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both. */
-			anonymousId?: string;
-			/** Extra information about the call: ip, userAgent, locale, library, page, campaign, device and so on. Context fields Segment reads are listed in the Common fields spec. */
-			context?: Record<string, SegmentJsonValue>;
-			/** Turns destinations on or off for this call: `{ "All": false, "Mixpanel": true }`. */
-			integrations?: Record<string, SegmentJsonValue>;
-			/** When the event happened, ISO 8601. Left out, Segment uses the time it received the call. Use it when you send historical data. */
-			timestamp?: string;
-			/** A unique id for the message; Segment drops repeats of the same messageId. Left out, Segment makes one. */
-			messageId?: string;
-			/** The name of the action, such as "Order Completed". */
-			event?: string;
-			/** The name of the page, such as "Home". */
-			name?: string;
-			/** Properties of the event: revenue, currency, product ids and so on. */
-			properties?: Record<string, SegmentJsonValue>;
-			/** What you know about the user: email, name, plan, createdAt and any custom traits. */
-			traits?: Record<string, SegmentJsonValue>;
-			/** Your id for the group. */
-			groupId?: string;
-			/** The id the user had before. */
-			previousId?: string;
-		}>;
+		/** The calls (at most 2,500), each with its `type` and the fields that call needs. */
+		batch: Array<
+			| {
+					/** The call this message is. */
+					type: 'identify';
+					/** Your id for the user. Send userId, anonymousId or both. */
+					userId?: string;
+					/** A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both. */
+					anonymousId?: string;
+					/** Extra information about the call: ip, userAgent, locale, library, page, campaign, device and so on. Context fields Segment reads are listed in the Common fields spec. */
+					context?: Record<string, SegmentJsonValue>;
+					/** Turns destinations on or off for this call: `{ "All": false, "Mixpanel": true }`. */
+					integrations?: Record<string, SegmentJsonValue>;
+					/** When the event happened, ISO 8601. Left out, Segment uses the time it received the call. Use it when you send historical data. */
+					timestamp?: string;
+					/** A unique id for the message; Segment drops repeats of the same messageId. Left out, Segment makes one. */
+					messageId?: string;
+					/** What you know about the user: email, name, plan, createdAt and any custom traits. */
+					traits?: Record<string, SegmentJsonValue>;
+			  }
+			| {
+					/** The call this message is. */
+					type: 'track';
+					/** Your id for the user. Send userId, anonymousId or both. */
+					userId?: string;
+					/** A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both. */
+					anonymousId?: string;
+					/** Extra information about the call: ip, userAgent, locale, library, page, campaign, device and so on. Context fields Segment reads are listed in the Common fields spec. */
+					context?: Record<string, SegmentJsonValue>;
+					/** Turns destinations on or off for this call: `{ "All": false, "Mixpanel": true }`. */
+					integrations?: Record<string, SegmentJsonValue>;
+					/** When the event happened, ISO 8601. Left out, Segment uses the time it received the call. Use it when you send historical data. */
+					timestamp?: string;
+					/** A unique id for the message; Segment drops repeats of the same messageId. Left out, Segment makes one. */
+					messageId?: string;
+					/** The name of the action, such as "Order Completed". */
+					event: string;
+					/** Properties of the event: revenue, currency, product ids and so on. */
+					properties?: Record<string, SegmentJsonValue>;
+			  }
+			| {
+					/** The call this message is. */
+					type: 'page';
+					/** Your id for the user. Send userId, anonymousId or both. */
+					userId?: string;
+					/** A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both. */
+					anonymousId?: string;
+					/** Extra information about the call: ip, userAgent, locale, library, page, campaign, device and so on. Context fields Segment reads are listed in the Common fields spec. */
+					context?: Record<string, SegmentJsonValue>;
+					/** Turns destinations on or off for this call: `{ "All": false, "Mixpanel": true }`. */
+					integrations?: Record<string, SegmentJsonValue>;
+					/** When the event happened, ISO 8601. Left out, Segment uses the time it received the call. Use it when you send historical data. */
+					timestamp?: string;
+					/** A unique id for the message; Segment drops repeats of the same messageId. Left out, Segment makes one. */
+					messageId?: string;
+					/** The name of the page, such as "Home". */
+					name?: string;
+					/** Properties of the page: url, path, referrer, title and custom properties. */
+					properties?: Record<string, SegmentJsonValue>;
+			  }
+			| {
+					/** The call this message is. */
+					type: 'screen';
+					/** Your id for the user. Send userId, anonymousId or both. */
+					userId?: string;
+					/** A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both. */
+					anonymousId?: string;
+					/** Extra information about the call: ip, userAgent, locale, library, page, campaign, device and so on. Context fields Segment reads are listed in the Common fields spec. */
+					context?: Record<string, SegmentJsonValue>;
+					/** Turns destinations on or off for this call: `{ "All": false, "Mixpanel": true }`. */
+					integrations?: Record<string, SegmentJsonValue>;
+					/** When the event happened, ISO 8601. Left out, Segment uses the time it received the call. Use it when you send historical data. */
+					timestamp?: string;
+					/** A unique id for the message; Segment drops repeats of the same messageId. Left out, Segment makes one. */
+					messageId?: string;
+					/** The name of the screen, such as "Checkout". */
+					name?: string;
+					/** Properties of the screen. */
+					properties?: Record<string, SegmentJsonValue>;
+			  }
+			| {
+					/** The call this message is. */
+					type: 'group';
+					/** Your id for the user. Send userId, anonymousId or both. */
+					userId?: string;
+					/** A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both. */
+					anonymousId?: string;
+					/** Extra information about the call: ip, userAgent, locale, library, page, campaign, device and so on. Context fields Segment reads are listed in the Common fields spec. */
+					context?: Record<string, SegmentJsonValue>;
+					/** Turns destinations on or off for this call: `{ "All": false, "Mixpanel": true }`. */
+					integrations?: Record<string, SegmentJsonValue>;
+					/** When the event happened, ISO 8601. Left out, Segment uses the time it received the call. Use it when you send historical data. */
+					timestamp?: string;
+					/** A unique id for the message; Segment drops repeats of the same messageId. Left out, Segment makes one. */
+					messageId?: string;
+					/** Your id for the group. */
+					groupId: string;
+					/** Traits of the group: name, industry, employees, plan. */
+					traits?: Record<string, SegmentJsonValue>;
+			  }
+			| {
+					/** The call this message is. */
+					type: 'alias';
+					/** Your id for the user. Send userId, anonymousId or both. */
+					userId: string;
+					/** A pseudo-unique id for a user you have not identified yet (a session or device id). Send userId, anonymousId or both. */
+					anonymousId?: string;
+					/** Extra information about the call: ip, userAgent, locale, library, page, campaign, device and so on. Context fields Segment reads are listed in the Common fields spec. */
+					context?: Record<string, SegmentJsonValue>;
+					/** Turns destinations on or off for this call: `{ "All": false, "Mixpanel": true }`. */
+					integrations?: Record<string, SegmentJsonValue>;
+					/** When the event happened, ISO 8601. Left out, Segment uses the time it received the call. Use it when you send historical data. */
+					timestamp?: string;
+					/** A unique id for the message; Segment drops repeats of the same messageId. Left out, Segment makes one. */
+					messageId?: string;
+					/** The id the user had before. */
+					previousId: string;
+			  }
+		>;
 		/** Context merged into every message of the batch. */
 		context?: Record<string, SegmentJsonValue>;
 		/** Destination switches applied to every message of the batch. */

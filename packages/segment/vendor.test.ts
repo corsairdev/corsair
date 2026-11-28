@@ -30,7 +30,11 @@ type Captured = {
 };
 let calls: Captured[] = [];
 
-function reply(status: number, body: unknown) {
+function reply(
+	status: number,
+	body: unknown,
+	contentType = 'application/json',
+) {
 	jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
 		calls.push({
 			url: String(input),
@@ -40,7 +44,7 @@ function reply(status: number, body: unknown) {
 		});
 		return new Response(JSON.stringify(body), {
 			status,
-			headers: { 'content-type': 'application/json' },
+			headers: { 'content-type': contentType },
 		});
 	});
 }
@@ -106,6 +110,38 @@ describe('API versions', () => {
 		expect(calls[0]?.headers.get('authorization')).toBe(`Bearer ${TOKEN}`);
 	});
 
+	it("decodes answers in Segment's versioned media types", async () => {
+		reply(
+			200,
+			{ data: { workspace: { id: 'w1', slug: 'acme', name: 'Acme' } } },
+			'application/vnd.segment.v1+json',
+		);
+		await expect(
+			segmentEndpointsNested.workspaces.get(ctx(), {}),
+		).resolves.toEqual({
+			data: { workspace: { id: 'w1', slug: 'acme', name: 'Acme' } },
+		});
+		reply(
+			404,
+			{ errors: [{ type: 'not-found', message: 'Source not found' }] },
+			'application/vnd.segment.v1+json',
+		);
+		await expect(
+			segmentEndpointsNested.sources.get(ctx(), { sourceId: 'gone' }),
+		).rejects.toThrow('Segment 404: Source not found');
+	});
+
+	it('takes ids made of digits in the path (the spec writes length limits as number bounds)', async () => {
+		reply(200, { data: {} });
+		await segmentEndpointsNested.spaces.schema.listEventProperties(ctx(), {
+			spaceId: 'spa1',
+			eventName: '2026',
+		});
+		expect(new URL(String(calls[0]?.url)).pathname).toBe(
+			'/spaces/spa1/events/2026/properties',
+		);
+	});
+
 	it('sends a body in the same version it asks for', async () => {
 		reply(200, { data: { source: { id: 'src1' } } });
 		await segmentEndpointsNested.sources.create(ctx(), {
@@ -149,6 +185,33 @@ describe('paging', () => {
 		const urls = calls.map((c) => new URL(c.url));
 		expect(urls[0]?.searchParams.get('pagination.count')).toBe('200');
 		expect(urls[1]?.searchParams.get('pagination.count')).toBe('10');
+	});
+
+	it('joins comma-delimited lists (groupBy) into one value', async () => {
+		reply(200, { data: {} });
+		await segmentEndpointsNested.events.getVolume(ctx(), {
+			startTime: '2026-11-01T00:00:00Z',
+			endTime: '2026-11-02T00:00:00Z',
+			granularity: 'DAY',
+			groupBy: ['eventName', 'eventType'],
+		});
+		const url = new URL(String(calls[0]?.url));
+		expect(url.searchParams.getAll('groupBy')).toEqual(['eventName,eventType']);
+	});
+
+	it('sends a monthly-quota route once on a 429', async () => {
+		reply(429, { errors: [{ type: 'too-many-requests', message: 'quota' }] });
+		await expect(
+			segmentEndpointsNested.audiences.createPreview(ctx(), {
+				spaceId: 'spa1',
+				definition: {
+					query: "event('Shoes Bought').count() >= 1",
+					type: 'USERS',
+				},
+				audienceType: 'USERS',
+			} as never),
+		).rejects.toThrow(/Segment 429/);
+		expect(calls).toHaveLength(1);
 	});
 
 	it('sends other object query values (filters) the same way', async () => {
@@ -222,6 +285,39 @@ describe('Tracking API', () => {
 		const call = calls[0] as Captured;
 		expect(call.url).toBe('https://api.segment.io/v1/batch');
 		expect(JSON.parse(String(call.body)).batch).toHaveLength(2);
+	});
+
+	it('requires userId or anonymousId on each call and each batch item', async () => {
+		reply(200, { success: true });
+		const send = ctx({ writeKey: WRITE_KEY });
+		await expect(
+			segmentEndpointsNested.tracking.track(send, { event: 'Opened' } as never),
+		).rejects.toThrow(/userId|anonymousId/);
+		await expect(
+			segmentEndpointsNested.tracking.batch(send, {
+				batch: [{ type: 'track', event: 'Opened' }],
+			} as never),
+		).rejects.toThrow();
+		await expect(
+			segmentEndpointsNested.tracking.batch(send, {
+				batch: [{ type: 'track', userId: 'u1' }],
+			} as never),
+		).rejects.toThrow();
+		await expect(
+			segmentEndpointsNested.tracking.batch(send, {
+				batch: Array.from({ length: 2501 }, () => ({
+					type: 'track',
+					userId: 'u1',
+					event: 'X',
+				})),
+			} as never),
+		).rejects.toThrow();
+		expect(calls).toHaveLength(0);
+		await segmentEndpointsNested.tracking.track(send, {
+			anonymousId: 'anon-1',
+			event: 'Opened',
+		});
+		expect(calls).toHaveLength(1);
 	});
 
 	it('requires the fields each call needs before sending', async () => {
@@ -338,6 +434,8 @@ describe('risk levels', () => {
 			'functions.deploy',
 			'reverseEtl.syncs.create',
 			'users.delete',
+			'activations.create',
+			'activations.update',
 		]) {
 			expect([
 				id,
@@ -419,5 +517,30 @@ describe('webhooks', () => {
 			request(rawBody, sign(rawBody, 'other')),
 		);
 		expect(bad).toMatchObject({ success: false, statusCode: 401 });
+		const { 'x-signature': _dropped, ...unsigned } = request().headers;
+		const missing = await segmentWebhooksNested.events.track.handler(
+			webhookCtx,
+			{ ...request(), headers: unsigned },
+		);
+		expect(missing).toMatchObject({ success: false, statusCode: 401 });
+	});
+
+	it('takes a batched delivery signed over its first event', async () => {
+		const second = { ...event, messageId: 'ajs-124', type: 'identify' };
+		const batchBody = JSON.stringify([event, second]);
+		const batch = request(batchBody, sign(JSON.stringify(event)));
+		expect(matchSegmentWebhook(batch)).toBe(true);
+		expect(segmentWebhooksNested.events.track.match(batch)).toBe(false);
+		expect(segmentWebhooksNested.events.batch.match(batch)).toBe(true);
+		const ok = await segmentWebhooksNested.events.batch.handler(
+			webhookCtx,
+			batch,
+		);
+		expect(ok).toMatchObject({ success: true, data: [event, second] });
+		const forged = await segmentWebhooksNested.events.batch.handler(
+			webhookCtx,
+			request(batchBody, sign(JSON.stringify(second))),
+		);
+		expect(forged).toMatchObject({ success: false, statusCode: 401 });
 	});
 });

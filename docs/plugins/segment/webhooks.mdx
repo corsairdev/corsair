@@ -14,6 +14,7 @@ The Segment plugin handles incoming webhooks. Point your provider’s subscripti
 
 - `events`
   - `alias` (`events.alias`)
+  - `batch` (`events.batch`)
   - `delete` (`events.delete`)
   - `group` (`events.group`)
   - `identify` (`events.identify`)
@@ -119,6 +120,91 @@ segment({
     webhookHooks: {
         events: {
             alias: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Batch
+
+`events.batch`
+
+A batched delivery from the Webhooks destination: several events in one request, signed over the first.
+
+**Payload:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Payload full type">
+
+```ts
+{
+  type: identify | track | page | screen | group | alias | delete,
+  messageId?: string | null,
+  userId?: string | null,
+  anonymousId?: string | null,
+  timestamp?: string | null,
+  sentAt?: string | null,
+  receivedAt?: string | null,
+  originalTimestamp?: string | null,
+  channel?: string | null,
+  version?: number | string | null,
+  context?: Record<string, any> | null,
+  integrations?: Record<string, any> | null,
+  event?: string | null,
+  name?: string | null,
+  properties?: Record<string, any> | null,
+  traits?: Record<string, any> | null,
+  groupId?: string | null,
+  previousId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: identify | track | page | screen | group | alias | delete,
+  messageId?: string | null,
+  userId?: string | null,
+  anonymousId?: string | null,
+  timestamp?: string | null,
+  sentAt?: string | null,
+  receivedAt?: string | null,
+  originalTimestamp?: string | null,
+  channel?: string | null,
+  version?: number | string | null,
+  context?: Record<string, any> | null,
+  integrations?: Record<string, any> | null,
+  event?: string | null,
+  name?: string | null,
+  properties?: Record<string, any> | null,
+  traits?: Record<string, any> | null,
+  groupId?: string | null,
+  previousId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+segment({
+    webhookHooks: {
+        events: {
+            batch: {
                 before(ctx, args) {
                     return { ctx, args };
                 },

@@ -15,6 +15,9 @@ import type { SegmentContext } from '../index';
 // hex HMAC-SHA1 of the raw body with that secret
 // (https://www.twilio.com/docs/segment/connections/destinations/catalog/webhooks).
 // The plugin refuses requests without a valid signature, so set the secret.
+// With batching on, the body is a JSON array of events and Segment signs only
+// the first event (its JSON text): those arrive as `events.batch`. That rule
+// comes from the docs; no batched delivery has been checked live yet.
 // There is no timestamp to bound replays: drop repeats by messageId.
 
 export const SegmentWebhookEventSchema = z.enum([
@@ -55,6 +58,9 @@ const EventSchema = z
 
 export type SegmentWebhookEvent = z.infer<typeof EventSchema>;
 
+const BatchSchema = z.array(EventSchema).min(1);
+export type SegmentWebhookBatch = z.infer<typeof BatchSchema>;
+
 function header(
 	headers: WebhookRequest<unknown>['headers'],
 	name: string,
@@ -66,15 +72,17 @@ function header(
 }
 
 // `unknown` because the body is an untrusted string or object until parsed.
-function bodyType(body: unknown): string | undefined {
-	let value = body;
-	if (typeof value === 'string') {
-		try {
-			value = JSON.parse(value);
-		} catch {
-			return undefined;
-		}
+function parsedBody(body: unknown): unknown {
+	if (typeof body !== 'string') return body;
+	try {
+		return JSON.parse(body);
+	} catch {
+		return undefined;
 	}
+}
+
+// `unknown` because the value is untrusted JSON.
+function typeOf(value: unknown): string | undefined {
 	if (typeof value !== 'object' || value === null || Array.isArray(value)) {
 		return undefined;
 	}
@@ -82,20 +90,36 @@ function bodyType(body: unknown): string | undefined {
 	return typeof type === 'string' ? type : undefined;
 }
 
+function fromSegment(request: RawWebhookRequest): boolean {
+	return (
+		header(request.headers, 'x-signature') !== undefined ||
+		/^segment\.io\//i.test(header(request.headers, 'user-agent') ?? '')
+	);
+}
+
 /** The event a request from Segment's Webhooks destination carries. */
 export function segmentEventName(
 	request: RawWebhookRequest,
 ): SegmentWebhookEventName | undefined {
-	const fromSegment =
-		header(request.headers, 'x-signature') !== undefined ||
-		/^segment\.io\//i.test(header(request.headers, 'user-agent') ?? '');
-	if (!fromSegment) return undefined;
-	const parsed = SegmentWebhookEventSchema.safeParse(bodyType(request.body));
+	if (!fromSegment(request)) return undefined;
+	const parsed = SegmentWebhookEventSchema.safeParse(
+		typeOf(parsedBody(request.body)),
+	);
 	return parsed.success ? parsed.data : undefined;
 }
 
+/** A batched delivery: a JSON array whose first item is a Segment event. */
+export function isSegmentBatch(request: RawWebhookRequest): boolean {
+	if (!fromSegment(request)) return false;
+	const body = parsedBody(request.body);
+	return (
+		Array.isArray(body) &&
+		SegmentWebhookEventSchema.safeParse(typeOf(body[0])).success
+	);
+}
+
 export function matchSegmentWebhook(request: RawWebhookRequest): boolean {
-	return segmentEventName(request) !== undefined;
+	return segmentEventName(request) !== undefined || isSegmentBatch(request);
 }
 
 /**
@@ -109,8 +133,50 @@ export function verifySegmentSignature(
 	const signature = header(request.headers, 'x-signature')?.trim();
 	if (!signature || !request.rawBody || !secret.trim()) return false;
 	if (!/^[a-f0-9]{40}$/i.test(signature)) return false;
-	const expected = createHmac('sha1', secret).update(request.rawBody).digest();
-	return timingSafeEqual(Buffer.from(signature, 'hex'), expected);
+	const supplied = Buffer.from(signature, 'hex');
+	const signs = (text: string) =>
+		timingSafeEqual(supplied, createHmac('sha1', secret).update(text).digest());
+	if (signs(request.rawBody)) return true;
+	// A batch is signed over its first event's JSON text.
+	const body = parsedBody(request.rawBody);
+	return (
+		Array.isArray(body) && body.length > 0 && signs(JSON.stringify(body[0]))
+	);
+}
+
+function batchWebhook(): CorsairWebhook<
+	SegmentContext,
+	SegmentWebhookBatch,
+	SegmentWebhookBatch
+> {
+	return {
+		match: (request) => isSegmentBatch(request),
+		handler: async (ctx, request) => {
+			if (
+				request.hubVerified !== true &&
+				!verifySegmentSignature(request, ctx.key)
+			) {
+				return {
+					success: false,
+					statusCode: 401,
+					error: 'Invalid webhook signature',
+				};
+			}
+			try {
+				if (!request.rawBody) throw new Error('Missing raw body');
+				return {
+					success: true,
+					data: BatchSchema.parse(JSON.parse(request.rawBody)),
+				};
+			} catch {
+				return {
+					success: false,
+					statusCode: 400,
+					error: 'Invalid webhook payload',
+				};
+			}
+		},
+	};
 }
 
 function webhookFor(
@@ -155,6 +221,7 @@ export const segmentWebhooksNested = {
 		group: webhookFor('group'),
 		alias: webhookFor('alias'),
 		delete: webhookFor('delete'),
+		batch: batchWebhook(),
 	},
 } as const;
 
@@ -193,6 +260,12 @@ export const segmentWebhookSchemas = {
 			'A source received an alias call: two ids of one user were merged.',
 		payload: EventSchema,
 		response: EventSchema,
+	},
+	'events.batch': {
+		description:
+			'A batched delivery from the Webhooks destination: several events in one request, signed over the first.',
+		payload: BatchSchema,
+		response: BatchSchema,
 	},
 	'events.delete': {
 		description:

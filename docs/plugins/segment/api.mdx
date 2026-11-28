@@ -108,9 +108,9 @@ await corsair.segment.api.activations.batchQuery({ spaceId: 'spa_9aQ1Lj62S4bomZK
 
 `activations.create`
 
-Add Activation to Audience. Defines how audience data is sent to a Destination. This step enables the data sync. You must establish a connection (Add Destination to Audience) for this audience before an Activation can be created. Alpha in Segment's API: it may change.
+Add Activation to Audience. Defines how audience data is sent to a Destination. This step enables the data sync. You must establish a connection (Add Destination to Audience) for this audience before an Activation can be created. Alpha in Segment's API: it may change. Starts sending the audience to the destination once the activation is enabled.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.segment.api.activations.create({
@@ -429,9 +429,9 @@ await corsair.segment.api.activations.list({ spaceId: 'spa_9aQ1Lj62S4bomZKLF4DPq
 
 `activations.update`
 
-Update Activation for Audience. Updates an Activation. Alpha in Segment's API: it may change.
+Update Activation for Audience. Updates an Activation. Alpha in Segment's API: it may change. With performResync true, Segment sends the whole audience to the destination again.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.segment.api.activations.update({ spaceId: 'spa_9aQ1Lj62S4bomZKLF4DPqW', audienceId: 'example', id: 'doc_8f2k1x9q' });
@@ -636,7 +636,7 @@ await corsair.segment.api.audiences.create({
 
 `audiences.createPreview`
 
-Create Audience Preview. Previews Audience. In order to successfully call this endpoint, the specified Workspace needs to have the Audience feature enabled. This endpoint also has a rate limit of 700 requests per month per spaceId, which is lower than the default due to access pattern restrictions.
+Create Audience Preview. Previews Audience. In order to successfully call this endpoint, the specified Workspace needs to have the Audience feature enabled. This endpoint also has a rate limit of 700 requests per month per spaceId, which is lower than the default due to access pattern restrictions. Segment allows a limited number of previews a month: a 429 means the quota is spent, so the call is not retried.
 
 **Risk:** `read`
 
@@ -10375,13 +10375,22 @@ await corsair.segment.api.tracking.alias({ userId: 'user-1234', previousId: 'ano
 
 `tracking.batch`
 
-Send a batch of calls. Sends up to 500 KB of identify, track, page, screen, group and alias calls in one request (each message at most 32 KB). Use it to import historical data or to save requests. Tracking API: sent with the source write key.
+Send a batch of calls. Sends up to 2,500 calls and 500 KB of identify, track, page, screen, group and alias calls in one request (each message at most 32 KB). Use it to import historical data or to save requests. Tracking API: sent with the source write key.
 
 **Risk:** `write`
 
 ```ts
 await corsair.segment.api.tracking.batch({
-	batch: [{ type: 'identify' }],
+	batch: [{
+		type: 'identify',
+		userId: 'user-1234',
+		traits: { plan: 'pro' },
+	}, {
+		type: 'track',
+		userId: 'user-1234',
+		event: 'Order Completed',
+		properties: { revenue: 42 },
+	}],
 });
 ```
 
@@ -10389,7 +10398,7 @@ await corsair.segment.api.tracking.batch({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `batch` | `object[]` | Yes | The calls, each with its `type`. |
+| `batch` | `object[]` | Yes | The calls (at most 2,500), each with its `type` and the fields that call needs. |
 | `context` | `object` | No | Context merged into every message of the batch. |
 | `integrations` | `object` | No | Destination switches applied to every message of the batch. |
 
@@ -10397,25 +10406,84 @@ await corsair.segment.api.tracking.batch({
 <Accordion title="batch full type">
 
 ```ts
-{
-  type: identify | track | page | screen | group | alias,
-  userId?: string,
-  anonymousId?: string,
-  context?: {
-  },
-  integrations?: {
-  },
-  timestamp?: string,
-  messageId?: string,
-  event?: string,
-  name?: string,
-  properties?: {
-  },
-  traits?: {
-  },
-  groupId?: string,
-  previousId?: string
-}[]
+(
+  {
+    type: identify,
+    userId?: string,
+    anonymousId?: string,
+    context?: {
+    },
+    integrations?: {
+    },
+    timestamp?: string,
+    messageId?: string,
+    traits?: {
+    }
+  } | {
+    type: track,
+    userId?: string,
+    anonymousId?: string,
+    context?: {
+    },
+    integrations?: {
+    },
+    timestamp?: string,
+    messageId?: string,
+    event: string,
+    properties?: {
+    }
+  } | {
+    type: page,
+    userId?: string,
+    anonymousId?: string,
+    context?: {
+    },
+    integrations?: {
+    },
+    timestamp?: string,
+    messageId?: string,
+    name?: string,
+    properties?: {
+    }
+  } | {
+    type: screen,
+    userId?: string,
+    anonymousId?: string,
+    context?: {
+    },
+    integrations?: {
+    },
+    timestamp?: string,
+    messageId?: string,
+    name?: string,
+    properties?: {
+    }
+  } | {
+    type: group,
+    userId?: string,
+    anonymousId?: string,
+    context?: {
+    },
+    integrations?: {
+    },
+    timestamp?: string,
+    messageId?: string,
+    groupId: string,
+    traits?: {
+    }
+  } | {
+    type: alias,
+    userId: string,
+    anonymousId?: string,
+    context?: {
+    },
+    integrations?: {
+    },
+    timestamp?: string,
+    messageId?: string,
+    previousId: string
+  }
+)[]
 ```
 </Accordion>
 
@@ -10457,7 +10525,11 @@ Associate a user with a group. Ties a user to a group (a company, account or tea
 **Risk:** `write`
 
 ```ts
-await corsair.segment.api.tracking.group({ groupId: 'acme-inc' });
+await corsair.segment.api.tracking.group({
+	userId: 'user-1234',
+	groupId: 'acme-inc',
+	traits: { name: 'Acme Inc', plan: 'enterprise' },
+});
 ```
 
 **Input**
@@ -10585,7 +10657,11 @@ Record a page view. Records that a user viewed a page of a website. Tracking API
 **Risk:** `write`
 
 ```ts
-await corsair.segment.api.tracking.page({});
+await corsair.segment.api.tracking.page({
+	userId: 'user-1234',
+	name: 'Pricing',
+	properties: { path: '/pricing' },
+});
 ```
 
 **Input**
@@ -10648,7 +10724,7 @@ Record a screen view. Records that a user viewed a screen of a mobile app. Track
 **Risk:** `write`
 
 ```ts
-await corsair.segment.api.tracking.screen({});
+await corsair.segment.api.tracking.screen({ anonymousId: 'anon-5678', name: 'Checkout' });
 ```
 
 **Input**
