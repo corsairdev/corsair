@@ -1,0 +1,139 @@
+---
+title: "Zoho CRM plugin"
+sidebarTitle: "Overview"
+description: "Zoho CRM with the full v8 REST API: records in every module, search and COQL, notes, attachments, tags, emails, bulk read and write, users, roles, territories, layouts, fields, pipelines, blueprints, workflow rules, webforms and org settings, in every Zoho data center (573 operations)."
+---
+
+Use **Zoho CRM** through Corsair: one client, typed API calls.
+
+Connect a Zoho account with OAuth. Things to know before you write:
+
+- **Data center.** A Zoho org lives in one data center. Set `region` to it: `us` (default, zoho.com), `eu`, `in`, `au` (com.au), `jp`, `ca`, `cn` (com.cn) or `sa`. API calls go to `https://www.zohoapis.<tld>` and sign-in to the matching accounts host (`accounts.zohocloud.ca` for Canada). A token from one data center gets 401 in another.
+- **Records** live in modules addressed by API name (`Leads`, `Contacts`, `Accounts`, `Deals`, custom modules like `Projects__c`). `records.list` needs `fields` (up to 50 API names). Lists answer 204 when empty, which reads as `{ success: true }`. Writes take `data: [...]` (up to 100 records) and answer per record, often with status 207 when some fail.
+- **Search** with `records.search` (criteria, email, phone or word) or with COQL (`coql.query`), Zoho's SQL-like query language.
+- **Credits.** Every call spends API credits from the org's daily pool (the Free edition gets 5,000 a day). When they run out Zoho answers 429.
+- **Editions.** Many settings routes (blueprints, workflow rules, webhooks, territories, portals, kiosks, Zia, sandboxes of automation) need a paid edition; the Free edition answers 403 or 400 `FEATURE_NOT_SUPPORTED`.
+- **Risky operations.** Deletes, merges, lead conversion, mass actions, transfers and the recycle bin's `empty` are `destructive`, and so are calls that send email (send mail, mail merge, portal invites, cadence enrolment).
+
+**What you get:**
+
+- 573 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/zohocrm better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/zohocrm better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/zohocrm better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/zohocrm better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { zohocrm } from '@corsair-dev/zohocrm';
+
+export const corsair = createCorsair({
+	plugins: [
+		zohocrm(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Zoho CRM OAuth app.
+
+```ts
+zohocrm()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'zohocrm',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List leads**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohocrm.api.records.list({ module: 'Leads', fields: 'Last_Name,Email,Company', per_page: 10 });
+```
+
+
+**Create a lead**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohocrm.api.records.create({
+	module: 'Leads',
+	data: [{ Last_Name: 'Rivera', Company: 'Northpeak' }],
+});
+```
+
+
+See the full list on the [API](/plugins/zohocrm/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/zohocrm/api">
+    Every `zohocrm.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
