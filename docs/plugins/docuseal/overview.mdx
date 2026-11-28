@@ -4,7 +4,7 @@ sidebarTitle: "Overview"
 description: "E-signature platform for fillable PDF forms - manage templates, create submissions from templates, PDFs, HTML or DOCX, track submitters, and read back signed documents."
 ---
 
-Use **DocuSeal** through Corsair: one client, typed API calls.
+Use **DocuSeal** through Corsair: one client, typed API calls, and incoming webhooks.
 
 Create an API key at console.docuseal.com under API. Every DocuSeal account also gets a free sandbox with separate keys, so you can test without touching production documents. Things to know before you send:
 
@@ -12,13 +12,14 @@ Create an API key at console.docuseal.com under API. Every DocuSeal account also
 - **Archive, not delete.** The hosted API has no hard delete. `templates.archive` and `submissions.archive` archive; restore either with `templates.update` or `submissions.update` and `archived: false`.
 - **Signed document URLs.** `submissions.getDocuments` returns URLs of the signed documents. They act as bearer credentials, so treat the result as sensitive.
 - **Paging.** The three list endpoints page by id cursor: pass `pagination.next` from one page as `after` on the next. Page size is capped at 100 (DocuSeal defaults to 10).
-- **Pro plan features.** Creating templates or submissions from uploaded PDF or DOCX files, merging templates and replacing template documents may require a paid (Pro) plan; the docs no longer mark which.
-- **Webhooks.** DocuSeal sends webhook deliveries for 11 event types (form, submission and template events), but they are configured per account in the DocuSeal console, not through the API, and there is no documented payload signature. Corsair does not receive them; handle deliveries with your own endpoint.
-- **Hosts.** This plugin targets `api.docuseal.com`. DocuSeal also runs `api.docuseal.eu` and self-hosted installations with their own hosts, which this plugin does not switch between.
+- **Plans and editions.** On DocuSeal Cloud every operation works in the free test mode (checked 11-28). The open-source self-hosted build has no routes for templates from HTML, PDF or DOCX, `templates.merge`, `templates.updateDocuments` or one-off submissions from PDF, HTML or DOCX: those answer 404 there. Without Pro, Cloud's `submissions.createFromEmails` creates a submission for the first address only.
+- **Webhooks.** DocuSeal sends 11 event types (form viewed, started, completed, declined; submission created, completed, expired, archived; template created, updated, archived). Add the webhook URL in DocuSeal's webhook settings and store its signing secret (`whsec_...`) as the webhook signature: every delivery is checked against `X-Docuseal-Signature` (an HMAC-SHA256 of the timestamp and body) and refused when it is more than five minutes old. `events.listFormCompleted` and `events.listSubmissionCompleted` give the same completed events by polling.
+- **Hosts.** Calls go to `api.docuseal.com`. Pass `baseUrl` to the plugin for the EU cloud (`https://api.docuseal.eu`) or a self-hosted site (`https://sign.example.com`; `/api` is added).
 
 **What you get:**
 
-- 23 typed API operations
+- 28 typed API operations
+- 11 incoming webhook event types
 
 ## Setup
 
@@ -125,11 +126,20 @@ await tenant.docuseal.api.submissions.create({
 
 See the full list on the [API](/plugins/docuseal/api) page.
 
+## Webhooks
+
+This plugin registers **11** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/docuseal/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/docuseal/api">
     Every `docuseal.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/docuseal/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.

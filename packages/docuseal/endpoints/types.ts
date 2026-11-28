@@ -344,25 +344,28 @@ const SubmitterBaseSchema = z
 
 export type DocuSealSubmitter = z.infer<typeof SubmitterBaseSchema>;
 
+// The spec marks these arrays required, but DocuSeal leaves `documents` out of
+// the submitters POST /submissions returns (live, 3.4.0, 11-28), so none of
+// them may fail a call that already happened.
 const SubmitterSchema = SubmitterBaseSchema.extend({
 	// unknown: the spec types the embedded template loosely.
 	template: z.unknown().nullish(),
-	submission_events: z.array(SubmissionEventSchema),
-	values: z.array(FieldValueSchema),
-	documents: z.array(DocumentSchema),
+	submission_events: z.array(SubmissionEventSchema).nullish(),
+	values: z.array(FieldValueSchema).nullish(),
+	documents: z.array(DocumentSchema).nullish(),
 });
 
 const SubmitterSummarySchema = SubmitterBaseSchema;
 
 const SubmissionSubmitterSchema = SubmitterBaseSchema.extend({
-	values: z.array(FieldValueSchema),
-	documents: z.array(DocumentSchema),
+	values: z.array(FieldValueSchema).nullish(),
+	documents: z.array(DocumentSchema).nullish(),
 });
 
 const SubmitterCreateResultSchema = SubmitterBaseSchema.extend({
-	values: z.array(FieldValueSchema),
-	documents: z.array(DocumentSchema),
-	embed_src: z.string(),
+	values: z.array(FieldValueSchema).nullish(),
+	documents: z.array(DocumentSchema).nullish(),
+	embed_src: z.string().nullish(),
 });
 
 const SubmissionSchema = z
@@ -371,7 +374,8 @@ const SubmissionSchema = z
 		name: z.string().nullish(),
 		slug: z.string(),
 		source: z.string(),
-		submitters_order: z.enum(SUBMITTERS_ORDERS),
+		// An open string: a value outside the spec enum must not fail a read.
+		submitters_order: z.string().nullish(),
 		expire_at: z.string().nullish(),
 		// unknown: submission variable values, keyed by variable name.
 		variables: z.record(z.string(), z.unknown()),
@@ -385,9 +389,11 @@ const SubmissionSchema = z
 		// unknown: the spec types the creating user loosely.
 		created_by_user: z.unknown().nullish(),
 		template: TemplateSummarySchema.nullish(),
-		submitters: z.array(SubmissionSubmitterSchema),
-		submission_events: z.array(SubmissionEventSchema),
-		documents: z.array(DocumentSchema),
+		// Required in the spec; PUT /submissions/{id} leaves submission_events
+		// out (live, 3.4.0, 11-28).
+		submitters: z.array(SubmissionSubmitterSchema).nullish(),
+		submission_events: z.array(SubmissionEventSchema).nullish(),
+		documents: z.array(DocumentSchema).nullish(),
 	})
 	.loose();
 
@@ -406,7 +412,8 @@ const SubmissionCreateOneoffResultSchema = z
 		name: z.string(),
 		submitters: z.array(SubmitterCreateResultSchema),
 		source: z.string(),
-		submitters_order: z.enum(SUBMITTERS_ORDERS),
+		// An open string: a value outside the spec enum must not fail a read.
+		submitters_order: z.string().nullish(),
 		status: z.string(),
 		expire_at: z.string().nullish(),
 		created_at: z.string(),
@@ -1002,6 +1009,148 @@ export type SubmittersUpdateResponse = z.infer<
 
 // ── registries ────────────────────────────────────────────────────────────
 
+// ── routes beyond the published spec ─────────────────────────────────────
+// DocuSeal serves these from app/controllers/api (users, form_events,
+// submission_events, tools) in the same release as the spec routes; the
+// OpenAPI file leaves them out. Checked live on 3.4.0 (11-28).
+
+const UsersMeInputSchema = z.object({});
+
+const UsersMeResponseSchema = z
+	.object({
+		id: z.number(),
+		first_name: z.string().nullish(),
+		last_name: z.string().nullish(),
+		email: z.string().nullish(),
+	})
+	.loose();
+
+export type UsersMeInput = z.input<typeof UsersMeInputSchema>;
+export type UsersMeResponse = z.infer<typeof UsersMeResponseSchema>;
+
+// Event lists page by completion time in Unix seconds, not by id.
+const EventsListInputSchema = z.object({
+	limit: LimitSchema,
+	after: z
+		.number()
+		.int()
+		.nonnegative()
+		.optional()
+		.describe(
+			'Unix seconds: only events completed after this time. Pass `pagination.next` from the previous page.',
+		),
+	before: z
+		.number()
+		.int()
+		.nonnegative()
+		.optional()
+		.describe('Unix seconds: only events completed before this time.'),
+});
+
+const EventPaginationSchema = z
+	.object({
+		count: z.number(),
+		next: z.number().nullish(),
+		prev: z.number().nullish(),
+	})
+	.loose();
+
+const EventsListFormCompletedResponseSchema = z
+	.object({
+		data: z.array(
+			z
+				.object({
+					event_type: z.string(),
+					timestamp: z.string().nullish(),
+					// The same submitter object a form.completed webhook carries.
+					data: z.object({ id: z.number() }).loose(),
+				})
+				.loose(),
+		),
+		pagination: EventPaginationSchema,
+	})
+	.loose();
+
+const EventsListSubmissionCompletedResponseSchema = z
+	.object({
+		data: z.array(
+			z
+				.object({
+					event_type: z.string(),
+					timestamp: z.string().nullish(),
+					// The same submission object submissions.get returns.
+					data: z.object({ id: z.number() }).loose(),
+				})
+				.loose(),
+		),
+		pagination: EventPaginationSchema,
+	})
+	.loose();
+
+export type EventsListInput = z.input<typeof EventsListInputSchema>;
+export type EventsListFormCompletedResponse = z.infer<
+	typeof EventsListFormCompletedResponseSchema
+>;
+export type EventsListSubmissionCompletedResponse = z.infer<
+	typeof EventsListSubmissionCompletedResponseSchema
+>;
+
+const ToolsMergePdfsInputSchema = z.object({
+	files: z
+		.array(z.string())
+		.min(2)
+		.describe('Base64-encoded PDF files, merged in this order (at least 2).'),
+});
+
+const ToolsMergePdfsResponseSchema = z
+	.object({
+		data: z.string().describe('The merged PDF, base64-encoded.'),
+	})
+	.loose();
+
+const ToolsVerifyPdfInputSchema = z.object({
+	file: z.string().describe('A base64-encoded signed PDF.'),
+});
+
+const ToolsVerifyPdfResponseSchema = z
+	.object({
+		checksum_status: z
+			.string()
+			.describe(
+				'`verified` when the file matches a document this account completed, else `not_found`.',
+			),
+		signatures: z.array(
+			z
+				.object({
+					verification_result: z
+						.array(
+							z
+								.object({
+									type: z.string().nullish(),
+									content: z.string().nullish(),
+								})
+								.loose(),
+						)
+						.nullish(),
+					signer_name: z.string().nullish(),
+					signing_reason: z.string().nullish(),
+					signing_time: z.string().nullish(),
+					signature_type: z.string().nullish(),
+				})
+				.loose(),
+		),
+	})
+	.loose();
+
+export type ToolsMergePdfsInput = z.input<typeof ToolsMergePdfsInputSchema>;
+export type ToolsMergePdfsResponse = z.infer<
+	typeof ToolsMergePdfsResponseSchema
+>;
+export type ToolsVerifyPdfInput = z.input<typeof ToolsVerifyPdfInputSchema>;
+export type ToolsVerifyPdfResponse = z.infer<
+	typeof ToolsVerifyPdfResponseSchema
+>;
+
 export type DocuSealEndpointInputs = {
 	templatesList: TemplatesListInput;
 	templatesGet: TemplatesGetInput;
@@ -1026,6 +1175,11 @@ export type DocuSealEndpointInputs = {
 	submittersList: SubmittersListInput;
 	submittersGet: SubmittersGetInput;
 	submittersUpdate: SubmittersUpdateInput;
+	usersMe: UsersMeInput;
+	eventsListFormCompleted: EventsListInput;
+	eventsListSubmissionCompleted: EventsListInput;
+	toolsMergePdfs: ToolsMergePdfsInput;
+	toolsVerifyPdf: ToolsVerifyPdfInput;
 };
 
 export type DocuSealEndpointOutputs = {
@@ -1052,6 +1206,11 @@ export type DocuSealEndpointOutputs = {
 	submittersList: SubmittersListResponse;
 	submittersGet: SubmittersGetResponse;
 	submittersUpdate: SubmittersUpdateResponse;
+	usersMe: UsersMeResponse;
+	eventsListFormCompleted: EventsListFormCompletedResponse;
+	eventsListSubmissionCompleted: EventsListSubmissionCompletedResponse;
+	toolsMergePdfs: ToolsMergePdfsResponse;
+	toolsVerifyPdf: ToolsVerifyPdfResponse;
 };
 
 export const DocuSealEndpointInputSchemas = {
@@ -1078,6 +1237,11 @@ export const DocuSealEndpointInputSchemas = {
 	submittersList: SubmittersListInputSchema,
 	submittersGet: SubmittersGetInputSchema,
 	submittersUpdate: SubmittersUpdateInputSchema,
+	usersMe: UsersMeInputSchema,
+	eventsListFormCompleted: EventsListInputSchema,
+	eventsListSubmissionCompleted: EventsListInputSchema,
+	toolsMergePdfs: ToolsMergePdfsInputSchema,
+	toolsVerifyPdf: ToolsVerifyPdfInputSchema,
 } as const;
 
 export const DocuSealEndpointOutputSchemas = {
@@ -1104,4 +1268,9 @@ export const DocuSealEndpointOutputSchemas = {
 	submittersList: SubmittersListResponseSchema,
 	submittersGet: SubmitterSchema,
 	submittersUpdate: SubmitterCreateResultSchema,
+	usersMe: UsersMeResponseSchema,
+	eventsListFormCompleted: EventsListFormCompletedResponseSchema,
+	eventsListSubmissionCompleted: EventsListSubmissionCompletedResponseSchema,
+	toolsMergePdfs: ToolsMergePdfsResponseSchema,
+	toolsVerifyPdf: ToolsVerifyPdfResponseSchema,
 } as const;

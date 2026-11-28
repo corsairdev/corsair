@@ -1,71 +1,67 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { DocuSealAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { DocuSealTransportError } from './client';
 
-// Statuses observed through probes and the spec; DocuSeal documents no error
-// taxonomy beyond the {"error": "<message>"} envelope.
+function status(error: Error): number | undefined {
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+function isRead(error: Error): boolean {
+	return error instanceof ApiError && error.request?.method === 'GET';
+}
+
+// Statuses observed live (self-hosted DocuSeal 3.4.0, 11-28) and in the spec;
+// DocuSeal documents no error taxonomy beyond the {"error": "<message>"}
+// envelope.
 export const errorHandlers = {
-	// A 429 means DocuSeal refused the request before running it, so a replay
-	// cannot repeat a write. No Retry-After contract is documented; a header,
-	// when present, pins the delay.
+	// Core's request() has already retried this 429 three times, honouring
+	// Retry-After, before a handler sees it; retrying again would multiply
+	// the attempts.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) =>
-			error instanceof DocuSealAPIError && error.status === 429,
-		handler: async (error: Error) => ({
-			maxRetries: 2,
-			headersRetryAfterMs:
-				error instanceof DocuSealAPIError ? error.retryAfter : undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
-	},
-	// 401: a wrong or revoked API key.
-	AUTH_ERROR: {
-		match: (error: Error) =>
-			error instanceof DocuSealAPIError && error.status === 401,
+		match: (error: Error) => status(error) === 429,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 400 invalid input, 404 for an id DocuSeal does not know, 422 rejected
-	// field. A retry sends the
-	// same request.
+	// 401: a wrong or revoked API key. 403: the key's user may not do this.
+	AUTH_ERROR: {
+		match: (error: Error) => {
+			const code = status(error);
+			return code === 401 || code === 403;
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	// 400 invalid input, 404 an id DocuSeal does not know, 422 a rejected
+	// field. A retry sends the same request.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
-			const status =
-				error instanceof DocuSealAPIError ? error.status : undefined;
+			const code = status(error);
 			return (
 				error.name === 'ZodError' ||
-				status === 400 ||
-				status === 404 ||
-				status === 422
+				code === 400 ||
+				code === 404 ||
+				code === 422
 			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// A dropped connection (reset, DNS, abort) never reached DocuSeal, so
-	// replaying a read is safe. A write with a transport failure stays on
-	// DEFAULT: a retried submission.create with send_email would re-send the
-	// signature email.
+	// A read that never reached DocuSeal is safe to replay. A write stays on
+	// DEFAULT: submissions.create with send_email would re-send the
+	// signature email if the first attempt had landed.
 	TRANSPORT_ERROR: {
 		match: (error: Error) =>
-			error instanceof DocuSealAPIError &&
-			error.method === 'GET' &&
-			error.status === undefined &&
-			error.cause !== undefined,
+			error instanceof DocuSealTransportError && error.method === 'GET',
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
-	// DocuSeal says nothing about 5xx retryability, so only reads are replayed:
-	// a failed write may have gone through, and submissions.create with
-	// send_email would re-send the signature email.
+	// Only reads are replayed after a 5xx: a failed write may have gone
+	// through, and DocuSeal has no idempotency keys.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			error instanceof DocuSealAPIError &&
-			error.method === 'GET' &&
-			(error.status ?? 0) >= 500,
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		match: (error: Error) => (status(error) ?? 0) >= 500,
+		handler: async (error: Error) =>
+			isRead(error)
+				? { maxRetries: 2, retryStrategy: 'exponential_backoff' as const }
+				: { maxRetries: 0 },
 	},
 	DEFAULT: {
 		match: () => true,

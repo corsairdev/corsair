@@ -1,4 +1,4 @@
-import { Submissions, Submitters, Templates } from './endpoints';
+import { Account, Submissions, Submitters, Templates } from './endpoints';
 import {
 	archiveResult,
 	base64Pdf,
@@ -755,5 +755,79 @@ describe('submitters requests', () => {
 				fields: [{ name: 'Start date', default_value: '2026-02-15' }],
 			},
 		});
+	});
+});
+
+describe('routes beyond the published spec', () => {
+	let fetchSpy: jest.SpyInstance;
+	const ctx = { key: 'k', options: {} } as never;
+
+	function reply(body: object) {
+		fetchSpy.mockResolvedValueOnce(
+			new Response(JSON.stringify(body), {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+	}
+
+	beforeEach(() => {
+		fetchSpy = jest.spyOn(globalThis, 'fetch');
+		jest.spyOn(console, 'log').mockImplementation(() => undefined);
+	});
+	afterEach(() => jest.restoreAllMocks());
+
+	function sent(index = 0) {
+		const [url, init] = fetchSpy.mock.calls[index] as [string, RequestInit];
+		return {
+			url,
+			method: init.method,
+			body: init.body ? JSON.parse(String(init.body)) : undefined,
+		};
+	}
+
+	it('users.me reads GET /user', async () => {
+		reply({ id: 1, first_name: 'A', last_name: 'B', email: 'a@example.com' });
+		const result = await Account.me(ctx, {});
+		expect(sent()).toEqual({
+			url: 'https://api.docuseal.com/user',
+			method: 'GET',
+			body: undefined,
+		});
+		expect(result.id).toBe(1);
+	});
+
+	it.each([
+		['listFormCompleted', '/events/form/completed'],
+		['listSubmissionCompleted', '/events/submission/completed'],
+	] as const)('events.%s pages by Unix seconds', async (op, path) => {
+		reply({
+			data: [{ event_type: 'x', timestamp: 't', data: { id: 1 } }],
+			pagination: { count: 1, next: 1700000000, prev: 1700000000 },
+		});
+		const result = await Account[op](ctx, { limit: 5, after: 1699999999 });
+		expect(sent().url).toBe(
+			`https://api.docuseal.com${path}?limit=5&after=1699999999`,
+		);
+		expect(result.pagination.next).toBe(1700000000);
+	});
+
+	it('tools.mergePdfs posts the files and needs two', async () => {
+		reply({ data: 'JVBERi0=' });
+		const result = await Account.mergePdfs(ctx, { files: ['YQ==', 'Yg=='] });
+		expect(sent()).toEqual({
+			url: 'https://api.docuseal.com/tools/merge',
+			method: 'POST',
+			body: { files: ['YQ==', 'Yg=='] },
+		});
+		expect(result.data).toBe('JVBERi0=');
+		await expect(Account.mergePdfs(ctx, { files: ['YQ=='] })).rejects.toThrow();
+	});
+
+	it('tools.verifyPdf posts the file', async () => {
+		reply({ checksum_status: 'not_found', signatures: [] });
+		const result = await Account.verifyPdf(ctx, { file: 'YQ==' });
+		expect(sent().body).toEqual({ file: 'YQ==' });
+		expect(result.checksum_status).toBe('not_found');
 	});
 });

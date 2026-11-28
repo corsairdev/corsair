@@ -4,9 +4,9 @@ import { docuseal } from './index';
 import { templateList } from './test-fixtures';
 
 /**
- * DocuSeal documents no rate-limit contract, so the client makes one attempt
- * and error-handlers.ts decides: a 429 (which never ran) retries for every
- * method, a 5xx only replays a GET, and writes never replay.
+ * DocuSeal documents no rate-limit contract. Core's request() retries a 429
+ * three times (it never ran, so every method), error-handlers.ts adds no
+ * further 429 retries, a 5xx only replays a GET, and writes never replay.
  */
 async function createClient() {
 	const testDb = createTestDatabase();
@@ -49,7 +49,7 @@ afterEach(() => {
 });
 
 describe('retries through createCorsair', () => {
-	it('retries a 429 once more and then succeeds', async () => {
+	it('retries a 429 and then succeeds', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			respond({ error: 'Too many requests' }, 429, { 'Retry-After': '0' });
@@ -67,14 +67,15 @@ describe('retries through createCorsair', () => {
 	it('gives up after the last 429', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
-			for (let attempt = 0; attempt < 3; attempt += 1) {
+			// One attempt plus core's three retries.
+			for (let attempt = 0; attempt < 4; attempt += 1) {
 				respond({ error: 'Too many requests' }, 429, { 'Retry-After': '0' });
 			}
 
 			await expect(corsair.docuseal.api.templates.list({})).rejects.toThrow(
 				'DocuSeal 429',
 			);
-			expect(fetchMock).toHaveBeenCalledTimes(3);
+			expect(fetchMock).toHaveBeenCalledTimes(4);
 		} finally {
 			testDb.cleanup();
 		}

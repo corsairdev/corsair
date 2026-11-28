@@ -1966,7 +1966,8 @@
                 "pages": [
                   "plugins/docuseal/overview",
                   "plugins/docuseal/api",
-                  "plugins/docuseal/database"
+                  "plugins/docuseal/database",
+                  "plugins/docuseal/webhooks"
                 ]
               },
               {

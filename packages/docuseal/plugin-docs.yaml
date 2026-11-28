@@ -9,9 +9,9 @@ overviewNote: |
   - **Archive, not delete.** The hosted API has no hard delete. `templates.archive` and `submissions.archive` archive; restore either with `templates.update` or `submissions.update` and `archived: false`.
   - **Signed document URLs.** `submissions.getDocuments` returns URLs of the signed documents. They act as bearer credentials, so treat the result as sensitive.
   - **Paging.** The three list endpoints page by id cursor: pass `pagination.next` from one page as `after` on the next. Page size is capped at 100 (DocuSeal defaults to 10).
-  - **Pro plan features.** Creating templates or submissions from uploaded PDF or DOCX files, merging templates and replacing template documents may require a paid (Pro) plan; the docs no longer mark which.
-  - **Webhooks.** DocuSeal sends webhook deliveries for 11 event types (form, submission and template events), but they are configured per account in the DocuSeal console, not through the API, and there is no documented payload signature. Corsair does not receive them; handle deliveries with your own endpoint.
-  - **Hosts.** This plugin targets `api.docuseal.com`. DocuSeal also runs `api.docuseal.eu` and self-hosted installations with their own hosts, which this plugin does not switch between.
+  - **Plans and editions.** On DocuSeal Cloud every operation works in the free test mode (checked 11-28). The open-source self-hosted build has no routes for templates from HTML, PDF or DOCX, `templates.merge`, `templates.updateDocuments` or one-off submissions from PDF, HTML or DOCX: those answer 404 there. Without Pro, Cloud's `submissions.createFromEmails` creates a submission for the first address only.
+  - **Webhooks.** DocuSeal sends 11 event types (form viewed, started, completed, declined; submission created, completed, expired, archived; template created, updated, archived). Add the webhook URL in DocuSeal's webhook settings and store its signing secret (`whsec_...`) as the webhook signature: every delivery is checked against `X-Docuseal-Signature` (an HMAC-SHA256 of the timestamp and body) and refused when it is more than five minutes old. `events.listFormCompleted` and `events.listSubmissionCompleted` give the same completed events by polling.
+  - **Hosts.** Calls go to `api.docuseal.com`. Pass `baseUrl` to the plugin for the EU cloud (`https://api.docuseal.eu`) or a self-hosted site (`https://sign.example.com`; `/api` is added).
 examples:
   read:
     path: templates.list
@@ -72,6 +72,16 @@ apiExamples:
     call: "{ id: 987654 }"
   submitters.update:
     call: "{ id: 987654, values: { 'Start date': '2026-02-01' }, send_email: true }"
+  users.me:
+    call: "{}"
+  events.listFormCompleted:
+    call: "{ limit: 50, after: 1764320000 }"
+  events.listSubmissionCompleted:
+    call: "{ limit: 50 }"
+  tools.mergePdfs:
+    call: "{ files: ['<base64 PDF>', '<base64 PDF>'] }"
+  tools.verifyPdf:
+    call: "{ file: '<base64 signed PDF>' }"
 apiNotes:
   templates.list: 'Pages by id cursor: pass `pagination.next` from one page as `after` on the next. Page size is capped at 100; DocuSeal defaults to 10.'
   templates.archive: 'DocuSeal archives instead of deleting. Restore an archived template with `templates.update` and `archived: false`.'
@@ -88,3 +98,8 @@ apiNotes:
   submissions.getDocuments: 'Returns URLs of the submission''s documents, signed and final once completed. The URLs act as bearer credentials, so treat the result as sensitive.'
   submitters.list: 'Pages by id cursor: pass `pagination.next` from one page as `after` on the next. Page size is capped at 100; DocuSeal defaults to 10.'
   submitters.update: 'Passing `completed: true` counter-signs the document as this submitter and cannot be undone. `send_email: true` re-sends the invitation.'
+  users.me: 'Not in DocuSeal''s published OpenAPI file, but served by the same API (GET /user).'
+  events.listFormCompleted: 'Pages by completion time in Unix seconds: pass `pagination.next` as `after`. Not in the published OpenAPI file.'
+  events.listSubmissionCompleted: 'Pages by completion time in Unix seconds: pass `pagination.next` as `after`. Not in the published OpenAPI file.'
+  tools.mergePdfs: 'Stateless: the merged PDF comes back base64-encoded and nothing is stored. Not in the published OpenAPI file.'
+  tools.verifyPdf: '`checksum_status` is `verified` when the file is a document this account completed. Not in the published OpenAPI file.'

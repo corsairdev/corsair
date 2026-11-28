@@ -1,0 +1,1299 @@
+---
+title: "DocuSeal webhooks"
+sidebarTitle: "Webhooks"
+description: "DocuSeal incoming webhooks in Corsair: the event paths to subscribe to, the payload each event carries, and the response data."
+---
+
+The DocuSeal plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/docuseal/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `form`
+  - `completed` (`form.completed`)
+  - `declined` (`form.declined`)
+  - `started` (`form.started`)
+  - `viewed` (`form.viewed`)
+- `submission`
+  - `archived` (`submission.archived`)
+  - `completed` (`submission.completed`)
+  - `created` (`submission.created`)
+  - `expired` (`submission.expired`)
+- `template`
+  - `archived` (`template.archived`)
+  - `created` (`template.created`)
+  - `updated` (`template.updated`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    // With multiTenancy, give each tenant its own URL (/api/webhook?tenantId=acme):
+    // the query says whose account, secret and hooks handle the delivery.
+    const query = Object.fromEntries(new URL(request.url).searchParams);
+    // The raw text, not request.json(): signatures are checked over the exact bytes sent.
+    const body = await request.text();
+    const result = await processWebhook(corsair, headers, body, query);
+    if (!result.plugin) {
+        return Response.json({ success: false }, { status: 404 });
+    }
+    // A refusal (bad signature) carries no status and answers 400; a handler
+    // that threw comes back with 500, so the sender retries it.
+    const status =
+        result.response?.success === false ? (result.response.statusCode ?? 400) : 200;
+    return Response.json(result.response ?? { success: true }, {
+        status,
+        headers: result.responseHeaders,
+    });
+}
+```
+
+## Events
+
+## Form
+
+### Completed
+
+`form.completed`
+
+A submitter completed and signed the form (event_type form.completed)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `form.completed` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  submission_id?: number | null,
+  email?: string | null,
+  phone?: string | null,
+  name?: string | null,
+  role?: string | null,
+  external_id?: string | null,
+  status?: string | null,
+  sent_at?: string | null,
+  opened_at?: string | null,
+  completed_at?: string | null,
+  declined_at?: string | null,
+  decline_reason?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  values?: {
+  }[] | null,
+  documents?: {
+    name: string,
+    url: string
+  }[] | null,
+  audit_log_url?: string | null,
+  submission_url?: string | null,
+  submission?: {
+    id?: number | null,
+    status?: string | null,
+    url?: string | null,
+    audit_log_url?: string | null,
+    combined_document_url?: string | null,
+    created_at?: string | null
+  } | null,
+  template?: {
+    id?: number | null,
+    name?: string | null,
+    external_id?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: form.completed,
+  timestamp: string,
+  data: {
+    id: number,
+    submission_id?: number | null,
+    email?: string | null,
+    phone?: string | null,
+    name?: string | null,
+    role?: string | null,
+    external_id?: string | null,
+    status?: string | null,
+    sent_at?: string | null,
+    opened_at?: string | null,
+    completed_at?: string | null,
+    declined_at?: string | null,
+    decline_reason?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    values?: {
+    }[] | null,
+    documents?: {
+      name: string,
+      url: string
+    }[] | null,
+    audit_log_url?: string | null,
+    submission_url?: string | null,
+    submission?: {
+      id?: number | null,
+      status?: string | null,
+      url?: string | null,
+      audit_log_url?: string | null,
+      combined_document_url?: string | null,
+      created_at?: string | null
+    } | null,
+    template?: {
+      id?: number | null,
+      name?: string | null,
+      external_id?: string | null
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+docuseal({
+    webhookHooks: {
+        form: {
+            completed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Declined
+
+`form.declined`
+
+A submitter declined to sign (event_type form.declined)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `form.declined` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  submission_id?: number | null,
+  email?: string | null,
+  phone?: string | null,
+  name?: string | null,
+  role?: string | null,
+  external_id?: string | null,
+  status?: string | null,
+  sent_at?: string | null,
+  opened_at?: string | null,
+  completed_at?: string | null,
+  declined_at?: string | null,
+  decline_reason?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  values?: {
+  }[] | null,
+  documents?: {
+    name: string,
+    url: string
+  }[] | null,
+  audit_log_url?: string | null,
+  submission_url?: string | null,
+  submission?: {
+    id?: number | null,
+    status?: string | null,
+    url?: string | null,
+    audit_log_url?: string | null,
+    combined_document_url?: string | null,
+    created_at?: string | null
+  } | null,
+  template?: {
+    id?: number | null,
+    name?: string | null,
+    external_id?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: form.declined,
+  timestamp: string,
+  data: {
+    id: number,
+    submission_id?: number | null,
+    email?: string | null,
+    phone?: string | null,
+    name?: string | null,
+    role?: string | null,
+    external_id?: string | null,
+    status?: string | null,
+    sent_at?: string | null,
+    opened_at?: string | null,
+    completed_at?: string | null,
+    declined_at?: string | null,
+    decline_reason?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    values?: {
+    }[] | null,
+    documents?: {
+      name: string,
+      url: string
+    }[] | null,
+    audit_log_url?: string | null,
+    submission_url?: string | null,
+    submission?: {
+      id?: number | null,
+      status?: string | null,
+      url?: string | null,
+      audit_log_url?: string | null,
+      combined_document_url?: string | null,
+      created_at?: string | null
+    } | null,
+    template?: {
+      id?: number | null,
+      name?: string | null,
+      external_id?: string | null
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+docuseal({
+    webhookHooks: {
+        form: {
+            declined: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Started
+
+`form.started`
+
+A submitter started filling in the form (event_type form.started)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `form.started` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  submission_id?: number | null,
+  email?: string | null,
+  phone?: string | null,
+  name?: string | null,
+  role?: string | null,
+  external_id?: string | null,
+  status?: string | null,
+  sent_at?: string | null,
+  opened_at?: string | null,
+  completed_at?: string | null,
+  declined_at?: string | null,
+  decline_reason?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  values?: {
+  }[] | null,
+  documents?: {
+    name: string,
+    url: string
+  }[] | null,
+  audit_log_url?: string | null,
+  submission_url?: string | null,
+  submission?: {
+    id?: number | null,
+    status?: string | null,
+    url?: string | null,
+    audit_log_url?: string | null,
+    combined_document_url?: string | null,
+    created_at?: string | null
+  } | null,
+  template?: {
+    id?: number | null,
+    name?: string | null,
+    external_id?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: form.started,
+  timestamp: string,
+  data: {
+    id: number,
+    submission_id?: number | null,
+    email?: string | null,
+    phone?: string | null,
+    name?: string | null,
+    role?: string | null,
+    external_id?: string | null,
+    status?: string | null,
+    sent_at?: string | null,
+    opened_at?: string | null,
+    completed_at?: string | null,
+    declined_at?: string | null,
+    decline_reason?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    values?: {
+    }[] | null,
+    documents?: {
+      name: string,
+      url: string
+    }[] | null,
+    audit_log_url?: string | null,
+    submission_url?: string | null,
+    submission?: {
+      id?: number | null,
+      status?: string | null,
+      url?: string | null,
+      audit_log_url?: string | null,
+      combined_document_url?: string | null,
+      created_at?: string | null
+    } | null,
+    template?: {
+      id?: number | null,
+      name?: string | null,
+      external_id?: string | null
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+docuseal({
+    webhookHooks: {
+        form: {
+            started: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Viewed
+
+`form.viewed`
+
+A submitter opened the signing form (event_type form.viewed)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `form.viewed` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  submission_id?: number | null,
+  email?: string | null,
+  phone?: string | null,
+  name?: string | null,
+  role?: string | null,
+  external_id?: string | null,
+  status?: string | null,
+  sent_at?: string | null,
+  opened_at?: string | null,
+  completed_at?: string | null,
+  declined_at?: string | null,
+  decline_reason?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  values?: {
+  }[] | null,
+  documents?: {
+    name: string,
+    url: string
+  }[] | null,
+  audit_log_url?: string | null,
+  submission_url?: string | null,
+  submission?: {
+    id?: number | null,
+    status?: string | null,
+    url?: string | null,
+    audit_log_url?: string | null,
+    combined_document_url?: string | null,
+    created_at?: string | null
+  } | null,
+  template?: {
+    id?: number | null,
+    name?: string | null,
+    external_id?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: form.viewed,
+  timestamp: string,
+  data: {
+    id: number,
+    submission_id?: number | null,
+    email?: string | null,
+    phone?: string | null,
+    name?: string | null,
+    role?: string | null,
+    external_id?: string | null,
+    status?: string | null,
+    sent_at?: string | null,
+    opened_at?: string | null,
+    completed_at?: string | null,
+    declined_at?: string | null,
+    decline_reason?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    values?: {
+    }[] | null,
+    documents?: {
+      name: string,
+      url: string
+    }[] | null,
+    audit_log_url?: string | null,
+    submission_url?: string | null,
+    submission?: {
+      id?: number | null,
+      status?: string | null,
+      url?: string | null,
+      audit_log_url?: string | null,
+      combined_document_url?: string | null,
+      created_at?: string | null
+    } | null,
+    template?: {
+      id?: number | null,
+      name?: string | null,
+      external_id?: string | null
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+docuseal({
+    webhookHooks: {
+        form: {
+            viewed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Submission
+
+### Archived
+
+`submission.archived`
+
+A submission was archived (event_type submission.archived)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `submission.archived` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  status?: string | null,
+  source?: string | null,
+  slug?: string | null,
+  audit_log_url?: string | null,
+  combined_document_url?: string | null,
+  expire_at?: string | null,
+  completed_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  archived_at?: string | null,
+  submitters?: {
+  }[] | null,
+  documents?: {
+  }[] | null,
+  template?: {
+    id?: number | null,
+    name?: string | null,
+    external_id?: string | null
+  } | null,
+  created_by_user?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: submission.archived,
+  timestamp: string,
+  data: {
+    id: number,
+    name?: string | null,
+    status?: string | null,
+    source?: string | null,
+    slug?: string | null,
+    audit_log_url?: string | null,
+    combined_document_url?: string | null,
+    expire_at?: string | null,
+    completed_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    archived_at?: string | null,
+    submitters?: {
+    }[] | null,
+    documents?: {
+    }[] | null,
+    template?: {
+      id?: number | null,
+      name?: string | null,
+      external_id?: string | null
+    } | null,
+    created_by_user?: {
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+docuseal({
+    webhookHooks: {
+        submission: {
+            archived: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Completed
+
+`submission.completed`
+
+Every submitter of a submission completed it (event_type submission.completed)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `submission.completed` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  status?: string | null,
+  source?: string | null,
+  slug?: string | null,
+  audit_log_url?: string | null,
+  combined_document_url?: string | null,
+  expire_at?: string | null,
+  completed_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  archived_at?: string | null,
+  submitters?: {
+  }[] | null,
+  documents?: {
+  }[] | null,
+  template?: {
+    id?: number | null,
+    name?: string | null,
+    external_id?: string | null
+  } | null,
+  created_by_user?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: submission.completed,
+  timestamp: string,
+  data: {
+    id: number,
+    name?: string | null,
+    status?: string | null,
+    source?: string | null,
+    slug?: string | null,
+    audit_log_url?: string | null,
+    combined_document_url?: string | null,
+    expire_at?: string | null,
+    completed_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    archived_at?: string | null,
+    submitters?: {
+    }[] | null,
+    documents?: {
+    }[] | null,
+    template?: {
+      id?: number | null,
+      name?: string | null,
+      external_id?: string | null
+    } | null,
+    created_by_user?: {
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+docuseal({
+    webhookHooks: {
+        submission: {
+            completed: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Created
+
+`submission.created`
+
+A submission was created (event_type submission.created)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `submission.created` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  status?: string | null,
+  source?: string | null,
+  slug?: string | null,
+  audit_log_url?: string | null,
+  combined_document_url?: string | null,
+  expire_at?: string | null,
+  completed_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  archived_at?: string | null,
+  submitters?: {
+  }[] | null,
+  documents?: {
+  }[] | null,
+  template?: {
+    id?: number | null,
+    name?: string | null,
+    external_id?: string | null
+  } | null,
+  created_by_user?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: submission.created,
+  timestamp: string,
+  data: {
+    id: number,
+    name?: string | null,
+    status?: string | null,
+    source?: string | null,
+    slug?: string | null,
+    audit_log_url?: string | null,
+    combined_document_url?: string | null,
+    expire_at?: string | null,
+    completed_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    archived_at?: string | null,
+    submitters?: {
+    }[] | null,
+    documents?: {
+    }[] | null,
+    template?: {
+      id?: number | null,
+      name?: string | null,
+      external_id?: string | null
+    } | null,
+    created_by_user?: {
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+docuseal({
+    webhookHooks: {
+        submission: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Expired
+
+`submission.expired`
+
+A submission passed its expiry date (event_type submission.expired)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `submission.expired` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  status?: string | null,
+  source?: string | null,
+  slug?: string | null,
+  audit_log_url?: string | null,
+  combined_document_url?: string | null,
+  expire_at?: string | null,
+  completed_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  archived_at?: string | null,
+  submitters?: {
+  }[] | null,
+  documents?: {
+  }[] | null,
+  template?: {
+    id?: number | null,
+    name?: string | null,
+    external_id?: string | null
+  } | null,
+  created_by_user?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: submission.expired,
+  timestamp: string,
+  data: {
+    id: number,
+    name?: string | null,
+    status?: string | null,
+    source?: string | null,
+    slug?: string | null,
+    audit_log_url?: string | null,
+    combined_document_url?: string | null,
+    expire_at?: string | null,
+    completed_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    archived_at?: string | null,
+    submitters?: {
+    }[] | null,
+    documents?: {
+    }[] | null,
+    template?: {
+      id?: number | null,
+      name?: string | null,
+      external_id?: string | null
+    } | null,
+    created_by_user?: {
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+docuseal({
+    webhookHooks: {
+        submission: {
+            expired: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+## Template
+
+### Archived
+
+`template.archived`
+
+A template was archived (event_type template.archived)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `template.archived` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  slug?: string | null,
+  external_id?: string | null,
+  folder_id?: number | null,
+  folder_name?: string | null,
+  archived_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  submitters?: {
+  }[] | null,
+  fields?: {
+  }[] | null,
+  documents?: {
+  }[] | null,
+  author?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: template.archived,
+  timestamp: string,
+  data: {
+    id: number,
+    name?: string | null,
+    slug?: string | null,
+    external_id?: string | null,
+    folder_id?: number | null,
+    folder_name?: string | null,
+    archived_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    submitters?: {
+    }[] | null,
+    fields?: {
+    }[] | null,
+    documents?: {
+    }[] | null,
+    author?: {
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+docuseal({
+    webhookHooks: {
+        template: {
+            archived: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Created
+
+`template.created`
+
+A template was created (event_type template.created)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `template.created` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  slug?: string | null,
+  external_id?: string | null,
+  folder_id?: number | null,
+  folder_name?: string | null,
+  archived_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  submitters?: {
+  }[] | null,
+  fields?: {
+  }[] | null,
+  documents?: {
+  }[] | null,
+  author?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: template.created,
+  timestamp: string,
+  data: {
+    id: number,
+    name?: string | null,
+    slug?: string | null,
+    external_id?: string | null,
+    folder_id?: number | null,
+    folder_name?: string | null,
+    archived_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    submitters?: {
+    }[] | null,
+    fields?: {
+    }[] | null,
+    documents?: {
+    }[] | null,
+    author?: {
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+docuseal({
+    webhookHooks: {
+        template: {
+            created: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
+### Updated
+
+`template.updated`
+
+A template was changed (event_type template.updated)
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event_type` | `template.updated` | Yes | — |
+| `timestamp` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string | null,
+  slug?: string | null,
+  external_id?: string | null,
+  folder_id?: number | null,
+  folder_name?: string | null,
+  archived_at?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  submitters?: {
+  }[] | null,
+  fields?: {
+  }[] | null,
+  documents?: {
+  }[] | null,
+  author?: {
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  event_type: template.updated,
+  timestamp: string,
+  data: {
+    id: number,
+    name?: string | null,
+    slug?: string | null,
+    external_id?: string | null,
+    folder_id?: number | null,
+    folder_name?: string | null,
+    archived_at?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    submitters?: {
+    }[] | null,
+    fields?: {
+    }[] | null,
+    documents?: {
+    }[] | null,
+    author?: {
+    } | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+docuseal({
+    webhookHooks: {
+        template: {
+            updated: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+

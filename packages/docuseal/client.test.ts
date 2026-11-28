@@ -1,13 +1,16 @@
 import util from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
-	DocuSealAPIError,
+	DocuSealTransportError,
 	describeDocuSealError,
 	makeDocuSealRequest,
+	normalizeDocuSealBaseUrl,
 	segment,
 } from './client';
 import { notAuthenticated, template } from './test-fixtures';
 
 const API_KEY = 'docuseal-secret-test-key';
+const CTX = { key: API_KEY };
 
 let fetchMock: jest.SpyInstance;
 
@@ -30,10 +33,10 @@ function respond(
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<DocuSealAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(DocuSealAPIError);
-	if (!(error instanceof DocuSealAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -49,7 +52,7 @@ describe('makeDocuSealRequest', () => {
 	it('authenticates with X-Auth-Token and no Authorization header', async () => {
 		respond(template, 200);
 
-		const result = await makeDocuSealRequest(API_KEY, {
+		const result = await makeDocuSealRequest(CTX, {
 			method: 'GET',
 			path: '/templates/12',
 		});
@@ -67,7 +70,7 @@ describe('makeDocuSealRequest', () => {
 	it('POSTs a JSON body with a JSON content type', async () => {
 		respond([], 200);
 
-		await makeDocuSealRequest(API_KEY, {
+		await makeDocuSealRequest(CTX, {
 			method: 'POST',
 			path: '/submissions',
 			body: { template_id: 12, submitters: [] },
@@ -86,7 +89,7 @@ describe('makeDocuSealRequest', () => {
 	it('sends no body or content type on a bodyless DELETE', async () => {
 		respond({ id: 12, archived_at: null }, 200);
 
-		await makeDocuSealRequest(API_KEY, {
+		await makeDocuSealRequest(CTX, {
 			method: 'DELETE',
 			path: '/templates/12',
 		});
@@ -102,7 +105,7 @@ describe('makeDocuSealRequest', () => {
 			200,
 		);
 
-		await makeDocuSealRequest(API_KEY, {
+		await makeDocuSealRequest(CTX, {
 			method: 'GET',
 			path: '/templates',
 			query: { limit: 5, q: undefined, archived: undefined },
@@ -116,54 +119,99 @@ describe('makeDocuSealRequest', () => {
 		respond(notAuthenticated, 401);
 
 		const error = await failure(
-			makeDocuSealRequest(API_KEY, { method: 'GET', path: '/templates' }),
+			makeDocuSealRequest(CTX, { method: 'GET', path: '/templates' }),
 		);
 		expect(error.status).toBe(401);
-		expect(error.method).toBe('GET');
+		expect(error.request.method).toBe('GET');
 		expect(error.message).toBe('DocuSeal 401: Not authenticated');
 	});
 
 	it('treats a 429 as a rate limit and reads Retry-After', async () => {
-		respond(notAuthenticated, 429, { 'Retry-After': '2' });
+		// Core retries a 429 three times before it gives up.
+		for (let i = 0; i < 4; i++) {
+			respond(notAuthenticated, 429, { 'Retry-After': '0' });
+		}
 
 		const error = await failure(
-			makeDocuSealRequest(API_KEY, { method: 'GET', path: '/templates' }),
+			makeDocuSealRequest(CTX, { method: 'GET', path: '/templates' }),
 		);
 		expect(error.status).toBe(429);
-		expect(error.retryAfter).toBe(2000);
-		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(error.retryAfter).toBe(0);
+		expect(fetchMock).toHaveBeenCalledTimes(4);
 	});
 
 	it('falls back to the status when the error body is not JSON', async () => {
 		respond('<html>gateway down</html>', 502);
 
 		const error = await failure(
-			makeDocuSealRequest(API_KEY, { method: 'GET', path: '/templates' }),
+			makeDocuSealRequest(CTX, { method: 'GET', path: '/templates' }),
 		);
 		expect(error.message).toContain('DocuSeal 502');
 	});
 
-	it('keeps the transport cause on a network failure', async () => {
-		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+	it('keeps the transport cause and method on a network failure', async () => {
+		fetchMock.mockRejectedValue(new TypeError('fetch failed'));
 
-		const error = await failure(
-			makeDocuSealRequest(API_KEY, { method: 'GET', path: '/templates' }),
-		);
+		const error = await makeDocuSealRequest(CTX, {
+			method: 'GET',
+			path: '/templates',
+		}).catch((caught: unknown) => caught);
+		expect(error).toBeInstanceOf(DocuSealTransportError);
+		if (!(error instanceof DocuSealTransportError)) throw error;
 		expect(error.message).toContain('fetch failed');
-		expect(error.status).toBeUndefined();
 		expect(error.method).toBe('GET');
 		expect(error.cause).toBeInstanceOf(TypeError);
+	});
+
+	it('keeps signer data and the key out of the ApiError request', async () => {
+		respond({ error: 'Template not found' }, 404);
+
+		const error = await failure(
+			makeDocuSealRequest(CTX, {
+				method: 'POST',
+				path: '/submissions',
+				body: { template_id: 1, submitters: [{ email: 'a@example.com' }] },
+			}),
+		);
+		expect(error.status).toBe(404);
+		expect(error.request.method).toBe('POST');
+		expect(error.request.body).toBe('[REDACTED]');
+		expect(error.request.headers).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('a@example.com');
+		expect(util.inspect(error, { depth: 10 })).not.toContain('a@example.com');
+		expect(error.message).toBe('DocuSeal 404: Template not found');
+	});
+
+	it('sends calls to the EU cloud or a self-hosted site when baseUrl is set', async () => {
+		respond(template, 200);
+		respond(template, 200);
+
+		await makeDocuSealRequest(
+			{ key: API_KEY, options: { baseUrl: 'https://api.docuseal.eu' } },
+			{ method: 'GET', path: '/templates/1' },
+		);
+		await makeDocuSealRequest(
+			{ key: API_KEY, options: { baseUrl: 'https://sign.example.com/' } },
+			{ method: 'GET', path: '/templates/1' },
+		);
+
+		expect(fetchMock.mock.calls[0]?.[0]).toBe(
+			'https://api.docuseal.eu/templates/1',
+		);
+		expect(fetchMock.mock.calls[1]?.[0]).toBe(
+			'https://sign.example.com/api/templates/1',
+		);
 	});
 
 	it('keeps the API key out of an API error', async () => {
 		respond(notAuthenticated, 401);
 
 		const error = await failure(
-			makeDocuSealRequest(API_KEY, { method: 'GET', path: '/templates' }),
+			makeDocuSealRequest(CTX, { method: 'GET', path: '/templates' }),
 		);
 		expect(error.message).not.toContain(API_KEY);
 		expect(JSON.stringify(error)).not.toContain(API_KEY);
-		expect(util.inspect(error)).not.toContain(API_KEY);
+		expect(util.inspect(error, { depth: 10 })).not.toContain(API_KEY);
 	});
 });
 
@@ -188,5 +236,38 @@ describe('segment', () => {
 	it('encodes a value for one path segment', () => {
 		expect(segment('a/b?c')).toBe('a%2Fb%3Fc');
 		expect(segment(12)).toBe('12');
+	});
+});
+
+describe('normalizeDocuSealBaseUrl', () => {
+	it('defaults to the global cloud', () => {
+		expect(normalizeDocuSealBaseUrl(undefined)).toBe(
+			'https://api.docuseal.com',
+		);
+		expect(normalizeDocuSealBaseUrl('  ')).toBe('https://api.docuseal.com');
+	});
+
+	it('keeps the cloud API hosts as they are', () => {
+		expect(normalizeDocuSealBaseUrl('https://api.docuseal.eu/')).toBe(
+			'https://api.docuseal.eu',
+		);
+	});
+
+	it('adds /api to a self-hosted site once', () => {
+		expect(normalizeDocuSealBaseUrl('http://localhost:3000')).toBe(
+			'http://localhost:3000/api',
+		);
+		expect(normalizeDocuSealBaseUrl('https://example.com/sign/api/')).toBe(
+			'https://example.com/sign/api',
+		);
+	});
+
+	it('refuses URLs that are not plain http(s) roots', () => {
+		expect(() => normalizeDocuSealBaseUrl('ftp://example.com')).toThrow();
+		expect(() => normalizeDocuSealBaseUrl('not a url')).toThrow();
+		expect(() =>
+			normalizeDocuSealBaseUrl('https://user:pw@example.com'),
+		).toThrow();
+		expect(() => normalizeDocuSealBaseUrl('https://example.com?x=1')).toThrow();
 	});
 });

@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/docuseal",
   "version": "0.1.0",
-  "description": "DocuSeal e-signature plugin: manage templates and submissions, create signatures from templates, PDFs, HTML or DOCX, and track submitters. Webhook deliveries are configured in the DocuSeal console; Corsair does not handle them.",
+  "description": "DocuSeal e-signature plugin: manage templates and submissions, create signatures from templates, PDFs, HTML or DOCX, and track submitters. Verifies DocuSeal's signed webhook deliveries for form, submission and template events.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

@@ -1,5 +1,6 @@
+import { ApiError } from 'corsair/http';
 import { ZodError } from 'zod';
-import { DocuSealAPIError } from './client';
+import { DocuSealTransportError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
 type HandlerName = keyof typeof errorHandlers;
@@ -21,30 +22,25 @@ function apiError(
 	status: number,
 	options: { retryAfter?: number; method?: string } = {},
 ) {
-	return new DocuSealAPIError(`DocuSeal ${status}: failed`, {
-		status,
-		...options,
-	});
+	return new ApiError(
+		{ method: (options.method ?? 'GET') as 'GET', url: '/templates' },
+		{
+			url: 'https://api.docuseal.com/templates',
+			ok: false,
+			status,
+			statusText: 'failed',
+			body: { error: 'failed' },
+		},
+		`DocuSeal ${status}: failed`,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 describe('DocuSeal error handlers', () => {
-	it('retries a 429 with backoff, which never ran', async () => {
-		const error = apiError(429);
-		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
-		expect(await strategy(error)).toEqual({
-			maxRetries: 2,
-			headersRetryAfterMs: undefined,
-			retryStrategy: 'exponential_backoff',
-		});
-	});
-
-	it('honours Retry-After when a gateway sends one', async () => {
+	it('does not retry a 429 again after core already retried it', async () => {
 		const error = apiError(429, { retryAfter: 2000 });
-		expect(await strategy(error)).toEqual({
-			maxRetries: 2,
-			headersRetryAfterMs: 2000,
-			retryStrategy: 'exponential_backoff',
-		});
+		expect(classify(error)).toBe('RATE_LIMIT_ERROR');
+		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});
 
 	it.each(['GET', 'POST', 'DELETE'] as const)(
@@ -55,11 +51,14 @@ describe('DocuSeal error handlers', () => {
 		},
 	);
 
-	it('does not retry a 401 with a bad or revoked key', async () => {
-		const error = apiError(401);
-		expect(classify(error)).toBe('AUTH_ERROR');
-		expect(await strategy(error)).toEqual({ maxRetries: 0 });
-	});
+	it.each([401, 403])(
+		'does not retry a %i (bad key or no permission)',
+		async (status) => {
+			const error = apiError(status);
+			expect(classify(error)).toBe('AUTH_ERROR');
+			expect(await strategy(error)).toEqual({ maxRetries: 0 });
+		},
+	);
 
 	it.each([400, 404, 422])('does not retry a %i', async (status) => {
 		const error = apiError(status);
@@ -86,16 +85,16 @@ describe('DocuSeal error handlers', () => {
 		'does not replay a failed %s on a 5xx, which may have run',
 		async (method) => {
 			const error = apiError(500, { method });
-			expect(classify(error)).toBe('DEFAULT');
+			expect(classify(error)).toBe('SERVER_ERROR');
 			expect(await strategy(error)).toEqual({ maxRetries: 0 });
 		},
 	);
 
 	it('retries a read whose connection dropped before reaching DocuSeal', async () => {
-		const dropped = new DocuSealAPIError('fetch failed', {
-			cause: new Error('socket hang up'),
-			method: 'GET',
-		});
+		const dropped = new DocuSealTransportError(
+			'GET',
+			new Error('socket hang up'),
+		);
 		expect(classify(dropped)).toBe('TRANSPORT_ERROR');
 		expect(await strategy(dropped)).toEqual({
 			maxRetries: 2,
@@ -105,10 +104,7 @@ describe('DocuSeal error handlers', () => {
 
 	it('does not replay a write that timed out', async () => {
 		const timeout = new Error('The operation timed out');
-		const error = new DocuSealAPIError(timeout.message, {
-			cause: timeout,
-			method: 'POST',
-		});
+		const error = new DocuSealTransportError('POST', timeout);
 		expect(classify(error)).toBe('DEFAULT');
 		expect(await strategy(error)).toEqual({ maxRetries: 0 });
 	});

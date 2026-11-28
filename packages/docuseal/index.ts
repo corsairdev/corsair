@@ -1,5 +1,6 @@
 import type {
 	BindEndpoints,
+	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
@@ -9,9 +10,10 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Submissions, Submitters, Templates } from './endpoints';
+import { Account, Submissions, Submitters, Templates } from './endpoints';
 import type {
 	DocuSealEndpointInputs,
 	DocuSealEndpointOutputs,
@@ -22,11 +24,28 @@ import {
 } from './endpoints/types';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { DocuSealSchema } from './schema';
+import {
+	docuSealWebhookSchemas,
+	docuSealWebhooksNested,
+	isDocuSealDelivery,
+} from './webhooks';
 
 export type DocuSealPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	/**
+	 * The DocuSeal server: `https://api.docuseal.com` (default, global cloud),
+	 * `https://api.docuseal.eu` (EU cloud), or a self-hosted site
+	 * (`https://sign.example.com`, `/api` is added).
+	 */
+	baseUrl?: string;
+	/**
+	 * The webhook's signing secret (`whsec_...`) from DocuSeal's webhook
+	 * settings. Overrides the account's stored webhook_signature.
+	 */
+	webhookSecret?: string;
 	hooks?: InternalDocuSealPlugin['hooks'];
+	webhookHooks?: InternalDocuSealPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof docuSealEndpointsNested>;
 };
@@ -42,6 +61,8 @@ export type DocuSealKeyBuilderContext =
 export type DocuSealBoundEndpoints = BindEndpoints<
 	typeof docuSealEndpointsNested
 >;
+
+export type DocuSealBoundWebhooks = BindWebhooks<typeof docuSealWebhooksNested>;
 
 type DocuSealEndpoint<K extends keyof DocuSealEndpointOutputs> =
 	CorsairEndpoint<
@@ -74,6 +95,11 @@ export type DocuSealEndpoints = {
 	submittersList: DocuSealEndpoint<'submittersList'>;
 	submittersGet: DocuSealEndpoint<'submittersGet'>;
 	submittersUpdate: DocuSealEndpoint<'submittersUpdate'>;
+	usersMe: DocuSealEndpoint<'usersMe'>;
+	eventsListFormCompleted: DocuSealEndpoint<'eventsListFormCompleted'>;
+	eventsListSubmissionCompleted: DocuSealEndpoint<'eventsListSubmissionCompleted'>;
+	toolsMergePdfs: DocuSealEndpoint<'toolsMergePdfs'>;
+	toolsVerifyPdf: DocuSealEndpoint<'toolsVerifyPdf'>;
 };
 
 const docuSealEndpointsNested = {
@@ -106,6 +132,17 @@ const docuSealEndpointsNested = {
 		get: Submitters.get,
 		update: Submitters.update,
 	},
+	users: {
+		me: Account.me,
+	},
+	events: {
+		listFormCompleted: Account.listFormCompleted,
+		listSubmissionCompleted: Account.listSubmissionCompleted,
+	},
+	tools: {
+		mergePdfs: Account.mergePdfs,
+		verifyPdf: Account.verifyPdf,
+	},
 } as const;
 
 const operationNames = [
@@ -132,6 +169,11 @@ const operationNames = [
 	'submitters.list',
 	'submitters.get',
 	'submitters.update',
+	'users.me',
+	'events.listFormCompleted',
+	'events.listSubmissionCompleted',
+	'tools.mergePdfs',
+	'tools.verifyPdf',
 ] as const;
 
 export const docuSealEndpointSchemas = {
@@ -227,6 +269,26 @@ export const docuSealEndpointSchemas = {
 		input: DocuSealEndpointInputSchemas.submittersUpdate,
 		output: DocuSealEndpointOutputSchemas.submittersUpdate,
 	},
+	'users.me': {
+		input: DocuSealEndpointInputSchemas.usersMe,
+		output: DocuSealEndpointOutputSchemas.usersMe,
+	},
+	'events.listFormCompleted': {
+		input: DocuSealEndpointInputSchemas.eventsListFormCompleted,
+		output: DocuSealEndpointOutputSchemas.eventsListFormCompleted,
+	},
+	'events.listSubmissionCompleted': {
+		input: DocuSealEndpointInputSchemas.eventsListSubmissionCompleted,
+		output: DocuSealEndpointOutputSchemas.eventsListSubmissionCompleted,
+	},
+	'tools.mergePdfs': {
+		input: DocuSealEndpointInputSchemas.toolsMergePdfs,
+		output: DocuSealEndpointOutputSchemas.toolsMergePdfs,
+	},
+	'tools.verifyPdf': {
+		input: DocuSealEndpointInputSchemas.toolsVerifyPdf,
+		output: DocuSealEndpointOutputSchemas.toolsVerifyPdf,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof docuSealEndpointsNested
 >;
@@ -294,29 +356,29 @@ const docuSealEndpointMeta = {
 			'Read one submission with its submitters, documents and event history',
 	},
 	'submissions.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create a submission from a template, one submitter per signing role; sends the signature-request emails unless send_email is false',
 	},
 	'submissions.createFromPdf': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create a one-off submission from base64-encoded PDF files without saving a template; sends signature-request emails unless send_email is false',
 	},
 	'submissions.createFromHtml': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Create a one-off submission from HTML documents without saving a template; sends signature-request emails unless send_email is false',
 	},
 	'submissions.createFromDocx': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Create a one-off submission from base64-encoded DOCX files with {{...}} tags; may require a paid (Pro) plan',
+			'Create a one-off submission from base64-encoded DOCX files with {{...}} tags; sends signature-request emails unless send_email is false; may require a paid (Pro) plan',
 	},
 	'submissions.createFromEmails': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Create one submission per address in a comma-separated list, all from one template',
+			'Create one submission per address in a comma-separated list, all from one template; sends a signature-request email to each address unless send_email is false. On DocuSeal Cloud without Pro only the first address gets a submission',
 	},
 	'submissions.update': {
 		riskLevel: 'write',
@@ -329,7 +391,7 @@ const docuSealEndpointMeta = {
 			'Archive a submission; DocuSeal has no hard delete, so it can be restored with submissions.update and archived: false',
 	},
 	'submissions.getDocuments': {
-		riskLevel: 'write',
+		riskLevel: 'read',
 		description:
 			"Read the URLs of a submission's documents, which are signed and final once the submission is completed; the URLs act as bearer credentials, so treat the result as sensitive",
 	},
@@ -344,18 +406,48 @@ const docuSealEndpointMeta = {
 			'Read one submitter with the values they filled in and their documents',
 	},
 	'submitters.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		irreversible: true,
 		description:
 			'Edit a submitter, resend their invitation, or fill their fields; passing completed: true counter-signs the document as this submitter and cannot be undone',
 	},
+	'users.me': {
+		riskLevel: 'read',
+		description:
+			'Read the user the API key belongs to: id, first and last name, and email',
+	},
+	'events.listFormCompleted': {
+		riskLevel: 'read',
+		description:
+			'List form.completed events (one per signer who finished), oldest first by completion time in Unix seconds; a polling alternative to webhooks',
+	},
+	'events.listSubmissionCompleted': {
+		riskLevel: 'read',
+		description:
+			'List submission.completed events (one per fully signed submission), paged by completion time in Unix seconds; a polling alternative to webhooks',
+	},
+	'tools.mergePdfs': {
+		riskLevel: 'read',
+		description:
+			'Merge two or more base64-encoded PDFs into one and return it base64-encoded; stores nothing',
+	},
+	'tools.verifyPdf': {
+		riskLevel: 'read',
+		description:
+			"Check a base64-encoded signed PDF's digital signatures and whether it matches a document this account completed",
+	},
 } as const satisfies RequiredPluginEndpointMeta<typeof docuSealEndpointsNested>;
+
+const docuSealWebhookSchemaMap =
+	docuSealWebhookSchemas satisfies RequiredPluginWebhookSchemas<
+		typeof docuSealWebhooksNested
+	>;
 
 export type BaseDocuSealPlugin<T extends DocuSealPluginOptions> = CorsairPlugin<
 	'docuseal',
 	typeof DocuSealSchema,
 	typeof docuSealEndpointsNested,
-	{},
+	typeof docuSealWebhooksNested,
 	T,
 	typeof defaultAuthType
 >;
@@ -377,13 +469,20 @@ export function docuseal<const T extends DocuSealPluginOptions>(
 		schema: DocuSealSchema,
 		options: options,
 		hooks: options.hooks,
+		webhookHooks: options.webhookHooks,
 		endpoints: docuSealEndpointsNested,
-		webhooks: {},
+		webhooks: docuSealWebhooksNested,
 		endpointMeta: docuSealEndpointMeta,
 		endpointSchemas: docuSealEndpointSchemas,
-		pluginWebhookMatcher: () => false,
+		webhookSchemas: docuSealWebhookSchemaMap,
+		pluginWebhookMatcher: isDocuSealDelivery,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: DocuSealKeyBuilderContext, source) => {
+			if (source === 'webhook') {
+				if (options.webhookSecret) return options.webhookSecret;
+				return (await ctx.keys.get_webhook_signature()) ?? '';
+			}
+
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -398,8 +497,14 @@ export function docuseal<const T extends DocuSealPluginOptions>(
 	} satisfies InternalDocuSealPlugin;
 }
 
-export { DocuSealAPIError, describeDocuSealError } from './client';
-
+export {
+	DOCUSEAL_API_BASE,
+	DOCUSEAL_EU_API_BASE,
+	DocuSealTransportError,
+	describeDocuSealError,
+	normalizeDocuSealBaseUrl,
+	withoutRequestData,
+} from './client';
 export type {
 	DocuSealEndpointInputs,
 	DocuSealEndpointOutputs,
@@ -413,3 +518,8 @@ export type {
 	TemplatesListInput,
 	TemplatesListResponse,
 } from './endpoints/types';
+export type {
+	DocuSealWebhookId,
+	DocuSealWebhookPayloads,
+} from './webhooks';
+export { verifyDocuSealWebhook } from './webhooks';

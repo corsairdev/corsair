@@ -26,6 +26,11 @@ const OPERATIONS = [
 	'submitters.list',
 	'submitters.get',
 	'submitters.update',
+	'users.me',
+	'events.listFormCompleted',
+	'events.listSubmissionCompleted',
+	'tools.mergePdfs',
+	'tools.verifyPdf',
 ];
 
 // unknown: the endpoints literal's group shapes are read structurally here.
@@ -42,16 +47,39 @@ function flatten(endpoints: Record<string, unknown>): string[] {
 describe('docuseal plugin definition', () => {
 	const plugin = docuseal();
 
-	it('registers as docuseal with api_key auth and no webhooks', () => {
+	it('registers as docuseal with api_key auth and the 11 webhook events', () => {
 		expect(plugin.id).toBe('docuseal');
 		expect(plugin.options?.authType).toBe('api_key');
-		expect(plugin.webhooks).toEqual({});
+		expect(flatten(plugin.webhooks as Record<string, unknown>)).toEqual(
+			[
+				'form.completed',
+				'form.declined',
+				'form.started',
+				'form.viewed',
+				'submission.archived',
+				'submission.completed',
+				'submission.created',
+				'submission.expired',
+				'template.archived',
+				'template.created',
+				'template.updated',
+			].sort(),
+		);
+		expect(Object.keys(plugin.webhookSchemas ?? {}).sort()).toEqual(
+			flatten(plugin.webhooks as Record<string, unknown>),
+		);
 		expect(
 			plugin.pluginWebhookMatcher?.({ headers: {}, body: {} } as never),
 		).toBe(false);
+		expect(
+			plugin.pluginWebhookMatcher?.({
+				headers: { 'x-docuseal-signature': '1.abc' },
+				body: { event_type: 'form.completed' },
+			} as never),
+		).toBe(true);
 	});
 
-	it('exposes exactly the 23 spec operations', () => {
+	it('exposes the 23 spec operations and the 5 routes the spec leaves out', () => {
 		// unknown: the endpoints literal's group shapes are read structurally here.
 		expect(flatten(plugin.endpoints as Record<string, unknown>)).toEqual(
 			[...OPERATIONS].sort(),
@@ -82,18 +110,22 @@ describe('docuseal plugin definition', () => {
 			'templates.updateDocuments': 'write',
 			'submissions.list': 'read',
 			'submissions.get': 'read',
-			'submissions.create': 'write',
-			'submissions.createFromPdf': 'write',
-			'submissions.createFromHtml': 'write',
-			'submissions.createFromDocx': 'write',
-			'submissions.createFromEmails': 'write',
+			'submissions.create': 'destructive',
+			'submissions.createFromPdf': 'destructive',
+			'submissions.createFromHtml': 'destructive',
+			'submissions.createFromDocx': 'destructive',
+			'submissions.createFromEmails': 'destructive',
 			'submissions.update': 'write',
 			'submissions.archive': 'write',
-			// Signed document URLs act as bearer credentials.
-			'submissions.getDocuments': 'write',
+			'submissions.getDocuments': 'read',
 			'submitters.list': 'read',
 			'submitters.get': 'read',
-			'submitters.update': 'write',
+			'submitters.update': 'destructive',
+			'users.me': 'read',
+			'events.listFormCompleted': 'read',
+			'events.listSubmissionCompleted': 'read',
+			'tools.mergePdfs': 'read',
+			'tools.verifyPdf': 'read',
 		});
 	});
 
@@ -142,10 +174,15 @@ describe('docuseal key builder', () => {
 
 	// The fake context only carries what keyBuilder reads; a full
 	// AccountKeyManager is not implementable in a test.
-	function keyContext(apiKey?: string) {
+	function keyContext(apiKey?: string, webhookSecret?: string) {
 		return {
 			authType: 'api_key',
-			keys: { get_api_key: jest.fn().mockResolvedValue(apiKey ?? null) },
+			keys: {
+				get_api_key: jest.fn().mockResolvedValue(apiKey ?? null),
+				get_webhook_signature: jest
+					.fn()
+					.mockResolvedValue(webhookSecret ?? null),
+			},
 			// unknown: a full AccountKeyManager is not implementable in a test.
 		} as unknown as DocuSealKeyBuilderContext;
 	}
@@ -171,9 +208,21 @@ describe('docuseal key builder', () => {
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
-	it('refuses webhook keys, because DocuSeal deliveries are not handled', async () => {
+	it('gives webhooks the signing secret, from the option first', async () => {
+		await expect(
+			keyBuilderOf(docuseal({ webhookSecret: 'whsec_option' }))(
+				keyContext('stored-key', 'whsec_stored'),
+				'webhook',
+			),
+		).resolves.toBe('whsec_option');
+		await expect(
+			keyBuilderOf(docuseal())(
+				keyContext('stored-key', 'whsec_stored'),
+				'webhook',
+			),
+		).resolves.toBe('whsec_stored');
 		await expect(
 			keyBuilderOf(docuseal())(keyContext('stored-key'), 'webhook'),
-		).rejects.toBeInstanceOf(AuthMissingError);
+		).resolves.toBe('');
 	});
 });
