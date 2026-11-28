@@ -11,8 +11,10 @@ import type { GhostContext } from '../index';
 // integration's webhooks in Ghost Admin). Each delivery carries
 // X-Ghost-Signature: `sha256=<hex>, t=<ms>`, an HMAC-SHA256 with the webhook's
 // secret over the raw body followed by the timestamp (checked on real
-// deliveries from Ghost 6, 11-28). The event name is not a header: Ghost 6
-// puts it in the body's `event` field, next to `{ <resource>: { current, previous } }`.
+// deliveries from Ghost 6.79, 11-28). The event name is not a header: Ghost
+// 6.45 and later put it in the body's `event` field, next to
+// `{ <resource>: { current, previous } }`. Older releases send no name, so for
+// them the webhook's target URL carries it: `https://.../hook?event=post.published`.
 
 const RESOURCE_EVENTS = [
 	'added',
@@ -80,7 +82,14 @@ function eventSchema(event: GhostWebhookEventType) {
 		| 'member'
 		| 'site';
 	const base = z
-		.object({ event: z.literal(event).describe('The event name Ghost sent.') })
+		.object({
+			event: z
+				.literal(event)
+				.optional()
+				.describe(
+					'The event name (Ghost 6.45 and later; older releases leave it out).',
+				),
+		})
 		.passthrough();
 	return key === 'site'
 		? base
@@ -119,12 +128,20 @@ function bodyEvent(body: unknown): string | undefined {
 	return typeof event === 'string' ? event : undefined;
 }
 
-/** The event a Ghost-signed request carries, from its body's `event` field. */
+/**
+ * The event a Ghost-signed request carries: the body's `event` field (Ghost
+ * 6.45+), else the `event` query value of the target URL the webhook was
+ * created with (older releases).
+ */
 export function ghostEventName(
 	request: RawWebhookRequest,
 ): GhostWebhookEventType | undefined {
 	if (!header(request.headers, 'x-ghost-signature')) return undefined;
-	const parsed = GhostWebhookEventTypeSchema.safeParse(bodyEvent(request.body));
+	const fromQuery = request.query?.event;
+	const parsed = GhostWebhookEventTypeSchema.safeParse(
+		bodyEvent(request.body) ??
+			(Array.isArray(fromQuery) ? fromQuery[0] : fromQuery),
+	);
 	return parsed.success ? parsed.data : undefined;
 }
 
@@ -197,7 +214,7 @@ function webhookFor(
 }
 
 export type GhostWebhookEvent = {
-	event: GhostWebhookEventType;
+	event?: GhostWebhookEventType;
 	post?: z.infer<typeof ChangeSchema>;
 	page?: z.infer<typeof ChangeSchema>;
 	tag?: z.infer<typeof ChangeSchema>;

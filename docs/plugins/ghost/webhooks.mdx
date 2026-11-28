@@ -89,7 +89,7 @@ A member was created (member.added).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `member.added` | Yes | The event name Ghost sent. |
+| `event` | `member.added` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `member` | `object` | Yes | The member before and after. |
 
 <AccordionGroup>
@@ -125,7 +125,7 @@ A member was created (member.added).
 
 ```ts
 {
-  event: member.added,
+  event?: member.added,
   member: {
     current: {
       id?: string | null,
@@ -179,7 +179,7 @@ A member was deleted (member.deleted).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `member.deleted` | Yes | The event name Ghost sent. |
+| `event` | `member.deleted` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `member` | `object` | Yes | The member before and after. |
 
 <AccordionGroup>
@@ -215,7 +215,7 @@ A member was deleted (member.deleted).
 
 ```ts
 {
-  event: member.deleted,
+  event?: member.deleted,
   member: {
     current: {
       id?: string | null,
@@ -269,7 +269,7 @@ A member was edited (member.edited).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `member.edited` | Yes | The event name Ghost sent. |
+| `event` | `member.edited` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `member` | `object` | Yes | The member before and after. |
 
 <AccordionGroup>
@@ -305,7 +305,7 @@ A member was edited (member.edited).
 
 ```ts
 {
-  event: member.edited,
+  event?: member.edited,
   member: {
     current: {
       id?: string | null,
@@ -361,7 +361,7 @@ A page was created (page.added).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `page.added` | Yes | The event name Ghost sent. |
+| `event` | `page.added` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `page` | `object` | Yes | The page before and after. |
 
 <AccordionGroup>
@@ -397,7 +397,7 @@ A page was created (page.added).
 
 ```ts
 {
-  event: page.added,
+  event?: page.added,
   page: {
     current: {
       id?: string | null,
@@ -451,7 +451,7 @@ A page was deleted (page.deleted).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `page.deleted` | Yes | The event name Ghost sent. |
+| `event` | `page.deleted` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `page` | `object` | Yes | The page before and after. |
 
 <AccordionGroup>
@@ -487,7 +487,7 @@ A page was deleted (page.deleted).
 
 ```ts
 {
-  event: page.deleted,
+  event?: page.deleted,
   page: {
     current: {
       id?: string | null,
@@ -541,7 +541,7 @@ A page was edited (page.edited).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `page.edited` | Yes | The event name Ghost sent. |
+| `event` | `page.edited` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `page` | `object` | Yes | The page before and after. |
 
 <AccordionGroup>
@@ -577,7 +577,7 @@ A page was edited (page.edited).
 
 ```ts
 {
-  event: page.edited,
+  event?: page.edited,
   page: {
     current: {
       id?: string | null,
@@ -631,7 +631,7 @@ A page was published (page.published).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `page.published` | Yes | The event name Ghost sent. |
+| `event` | `page.published` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `page` | `object` | Yes | The page before and after. |
 
 <AccordionGroup>
@@ -667,7 +667,7 @@ A page was published (page.published).
 
 ```ts
 {
-  event: page.published,
+  event?: page.published,
   page: {
     current: {
       id?: string | null,
@@ -721,7 +721,7 @@ A page was edited after it was published (page.published.edited).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `page.published.edited` | Yes | The event name Ghost sent. |
+| `event` | `page.published.edited` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `page` | `object` | Yes | The page before and after. |
 
 <AccordionGroup>
@@ -757,7 +757,7 @@ A page was edited after it was published (page.published.edited).
 
 ```ts
 {
-  event: page.published.edited,
+  event?: page.published.edited,
   page: {
     current: {
       id?: string | null,
@@ -811,7 +811,7 @@ A page was rescheduled (page.rescheduled).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `page.rescheduled` | Yes | The event name Ghost sent. |
+| `event` | `page.rescheduled` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `page` | `object` | Yes | The page before and after. |
 
 <AccordionGroup>
@@ -847,7 +847,7 @@ A page was rescheduled (page.rescheduled).
 
 ```ts
 {
-  event: page.rescheduled,
+  event?: page.rescheduled,
   page: {
     current: {
       id?: string | null,
@@ -901,7 +901,7 @@ A page was scheduled (page.scheduled).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `page.scheduled` | Yes | The event name Ghost sent. |
+| `event` | `page.scheduled` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `page` | `object` | Yes | The page before and after. |
 
 <AccordionGroup>
@@ -937,7 +937,7 @@ A page was scheduled (page.scheduled).
 
 ```ts
 {
-  event: page.scheduled,
+  event?: page.scheduled,
   page: {
     current: {
       id?: string | null,
@@ -991,7 +991,7 @@ A page got a tag (page.tag.attached).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `page.tag.attached` | Yes | The event name Ghost sent. |
+| `event` | `page.tag.attached` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `page` | `object` | Yes | The page before and after. |
 
 <AccordionGroup>
@@ -1027,7 +1027,7 @@ A page got a tag (page.tag.attached).
 
 ```ts
 {
-  event: page.tag.attached,
+  event?: page.tag.attached,
   page: {
     current: {
       id?: string | null,
@@ -1081,7 +1081,7 @@ A page lost a tag (page.tag.detached).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `page.tag.detached` | Yes | The event name Ghost sent. |
+| `event` | `page.tag.detached` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `page` | `object` | Yes | The page before and after. |
 
 <AccordionGroup>
@@ -1117,7 +1117,7 @@ A page lost a tag (page.tag.detached).
 
 ```ts
 {
-  event: page.tag.detached,
+  event?: page.tag.detached,
   page: {
     current: {
       id?: string | null,
@@ -1171,7 +1171,7 @@ A page went back to draft (page.unpublished).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `page.unpublished` | Yes | The event name Ghost sent. |
+| `event` | `page.unpublished` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `page` | `object` | Yes | The page before and after. |
 
 <AccordionGroup>
@@ -1207,7 +1207,7 @@ A page went back to draft (page.unpublished).
 
 ```ts
 {
-  event: page.unpublished,
+  event?: page.unpublished,
   page: {
     current: {
       id?: string | null,
@@ -1261,7 +1261,7 @@ A page was unscheduled (page.unscheduled).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `page.unscheduled` | Yes | The event name Ghost sent. |
+| `event` | `page.unscheduled` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `page` | `object` | Yes | The page before and after. |
 
 <AccordionGroup>
@@ -1297,7 +1297,7 @@ A page was unscheduled (page.unscheduled).
 
 ```ts
 {
-  event: page.unscheduled,
+  event?: page.unscheduled,
   page: {
     current: {
       id?: string | null,
@@ -1353,7 +1353,7 @@ A post was created (post.added).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `post.added` | Yes | The event name Ghost sent. |
+| `event` | `post.added` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `post` | `object` | Yes | The post before and after. |
 
 <AccordionGroup>
@@ -1389,7 +1389,7 @@ A post was created (post.added).
 
 ```ts
 {
-  event: post.added,
+  event?: post.added,
   post: {
     current: {
       id?: string | null,
@@ -1443,7 +1443,7 @@ A post was deleted (post.deleted).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `post.deleted` | Yes | The event name Ghost sent. |
+| `event` | `post.deleted` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `post` | `object` | Yes | The post before and after. |
 
 <AccordionGroup>
@@ -1479,7 +1479,7 @@ A post was deleted (post.deleted).
 
 ```ts
 {
-  event: post.deleted,
+  event?: post.deleted,
   post: {
     current: {
       id?: string | null,
@@ -1533,7 +1533,7 @@ A post was edited (post.edited).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `post.edited` | Yes | The event name Ghost sent. |
+| `event` | `post.edited` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `post` | `object` | Yes | The post before and after. |
 
 <AccordionGroup>
@@ -1569,7 +1569,7 @@ A post was edited (post.edited).
 
 ```ts
 {
-  event: post.edited,
+  event?: post.edited,
   post: {
     current: {
       id?: string | null,
@@ -1623,7 +1623,7 @@ A post was published (post.published).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `post.published` | Yes | The event name Ghost sent. |
+| `event` | `post.published` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `post` | `object` | Yes | The post before and after. |
 
 <AccordionGroup>
@@ -1659,7 +1659,7 @@ A post was published (post.published).
 
 ```ts
 {
-  event: post.published,
+  event?: post.published,
   post: {
     current: {
       id?: string | null,
@@ -1713,7 +1713,7 @@ A post was edited after it was published (post.published.edited).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `post.published.edited` | Yes | The event name Ghost sent. |
+| `event` | `post.published.edited` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `post` | `object` | Yes | The post before and after. |
 
 <AccordionGroup>
@@ -1749,7 +1749,7 @@ A post was edited after it was published (post.published.edited).
 
 ```ts
 {
-  event: post.published.edited,
+  event?: post.published.edited,
   post: {
     current: {
       id?: string | null,
@@ -1803,7 +1803,7 @@ A post was rescheduled (post.rescheduled).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `post.rescheduled` | Yes | The event name Ghost sent. |
+| `event` | `post.rescheduled` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `post` | `object` | Yes | The post before and after. |
 
 <AccordionGroup>
@@ -1839,7 +1839,7 @@ A post was rescheduled (post.rescheduled).
 
 ```ts
 {
-  event: post.rescheduled,
+  event?: post.rescheduled,
   post: {
     current: {
       id?: string | null,
@@ -1893,7 +1893,7 @@ A post was scheduled (post.scheduled).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `post.scheduled` | Yes | The event name Ghost sent. |
+| `event` | `post.scheduled` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `post` | `object` | Yes | The post before and after. |
 
 <AccordionGroup>
@@ -1929,7 +1929,7 @@ A post was scheduled (post.scheduled).
 
 ```ts
 {
-  event: post.scheduled,
+  event?: post.scheduled,
   post: {
     current: {
       id?: string | null,
@@ -1983,7 +1983,7 @@ A post got a tag (post.tag.attached).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `post.tag.attached` | Yes | The event name Ghost sent. |
+| `event` | `post.tag.attached` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `post` | `object` | Yes | The post before and after. |
 
 <AccordionGroup>
@@ -2019,7 +2019,7 @@ A post got a tag (post.tag.attached).
 
 ```ts
 {
-  event: post.tag.attached,
+  event?: post.tag.attached,
   post: {
     current: {
       id?: string | null,
@@ -2073,7 +2073,7 @@ A post lost a tag (post.tag.detached).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `post.tag.detached` | Yes | The event name Ghost sent. |
+| `event` | `post.tag.detached` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `post` | `object` | Yes | The post before and after. |
 
 <AccordionGroup>
@@ -2109,7 +2109,7 @@ A post lost a tag (post.tag.detached).
 
 ```ts
 {
-  event: post.tag.detached,
+  event?: post.tag.detached,
   post: {
     current: {
       id?: string | null,
@@ -2163,7 +2163,7 @@ A post went back to draft (post.unpublished).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `post.unpublished` | Yes | The event name Ghost sent. |
+| `event` | `post.unpublished` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `post` | `object` | Yes | The post before and after. |
 
 <AccordionGroup>
@@ -2199,7 +2199,7 @@ A post went back to draft (post.unpublished).
 
 ```ts
 {
-  event: post.unpublished,
+  event?: post.unpublished,
   post: {
     current: {
       id?: string | null,
@@ -2253,7 +2253,7 @@ A post was unscheduled (post.unscheduled).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `post.unscheduled` | Yes | The event name Ghost sent. |
+| `event` | `post.unscheduled` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `post` | `object` | Yes | The post before and after. |
 
 <AccordionGroup>
@@ -2289,7 +2289,7 @@ A post was unscheduled (post.unscheduled).
 
 ```ts
 {
-  event: post.unscheduled,
+  event?: post.unscheduled,
   post: {
     current: {
       id?: string | null,
@@ -2345,7 +2345,7 @@ Any content on the site changed (site.changed).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `site.changed` | Yes | The event name Ghost sent. |
+| `event` | `site.changed` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 
 
 
@@ -2354,7 +2354,7 @@ Any content on the site changed (site.changed).
 
 ```ts
 {
-  event: site.changed
+  event?: site.changed
 }
 ```
 </Accordion>
@@ -2392,7 +2392,7 @@ A tag was created (tag.added).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `tag.added` | Yes | The event name Ghost sent. |
+| `event` | `tag.added` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `tag` | `object` | Yes | The tag before and after. |
 
 <AccordionGroup>
@@ -2428,7 +2428,7 @@ A tag was created (tag.added).
 
 ```ts
 {
-  event: tag.added,
+  event?: tag.added,
   tag: {
     current: {
       id?: string | null,
@@ -2482,7 +2482,7 @@ A tag was deleted (tag.deleted).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `tag.deleted` | Yes | The event name Ghost sent. |
+| `event` | `tag.deleted` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `tag` | `object` | Yes | The tag before and after. |
 
 <AccordionGroup>
@@ -2518,7 +2518,7 @@ A tag was deleted (tag.deleted).
 
 ```ts
 {
-  event: tag.deleted,
+  event?: tag.deleted,
   tag: {
     current: {
       id?: string | null,
@@ -2572,7 +2572,7 @@ A tag was edited (tag.edited).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `event` | `tag.edited` | Yes | The event name Ghost sent. |
+| `event` | `tag.edited` | No | The event name (Ghost 6.45 and later; older releases leave it out). |
 | `tag` | `object` | Yes | The tag before and after. |
 
 <AccordionGroup>
@@ -2608,7 +2608,7 @@ A tag was edited (tag.edited).
 
 ```ts
 {
-  event: tag.edited,
+  event?: tag.edited,
   tag: {
     current: {
       id?: string | null,

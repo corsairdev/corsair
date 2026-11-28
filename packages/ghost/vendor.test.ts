@@ -308,6 +308,34 @@ describe('webhooks (real Ghost 6 deliveries)', () => {
 		).toBe(false);
 	});
 
+	it("routes a delivery without event (Ghost before 6.45) by the target URL's ?event=", async () => {
+		const body = JSON.stringify({
+			post: { current: { id: 'p1', title: 'Old Ghost' }, previous: {} },
+		});
+		const t = String(Date.now());
+		const sig = createHmac('sha256', fixtures.secret)
+			.update(`${body}${t}`)
+			.digest('hex');
+		const old = {
+			headers: { 'x-ghost-signature': `sha256=${sig}, t=${t}` },
+			body,
+			rawBody: body,
+			payload: JSON.parse(body),
+			query: { event: 'post.published' },
+		};
+		expect(ghostWebhooksNested.posts.published.match(old)).toBe(true);
+		expect(matchGhostWebhook({ headers: old.headers, body })).toBe(false);
+		await expect(
+			ghostWebhooksNested.posts.published.handler(
+				{ key: fixtures.secret } as never,
+				old as never,
+			),
+		).resolves.toMatchObject({
+			success: true,
+			data: { post: { current: { title: 'Old Ghost' } } },
+		});
+	});
+
 	it("routes by the body's event and parses the change", async () => {
 		expect(matchGhostWebhook(request(postAdded))).toBe(true);
 		expect(ghostWebhooksNested.posts.added.match(request(postAdded))).toBe(

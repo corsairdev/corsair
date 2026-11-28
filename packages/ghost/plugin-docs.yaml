@@ -13,7 +13,7 @@ overviewNote: |
   - **Edits** need the `updated_at` you last read: a stale value answers 409, so two edits never overwrite each other.
   - **Publishing and email.** `status: "published"` puts a post on the live site. Updating a post to published with the `newsletter` query value emails it to members, which can't be taken back. Both are marked `destructive`.
   - **Staff.** An integration key can list users and roles and send invites; editing or deleting a staff user needs a staff access token of an Administrator.
-  - **Webhooks.** Ghost signs each delivery with HMAC-SHA256 of the raw body plus a timestamp, in `X-Ghost-Signature: sha256=<hex>, t=<ms>`, using the webhook's secret. The plugin checks it before handling post, page, tag, member and site events.
+  - **Webhooks.** Ghost signs each delivery with HMAC-SHA256 of the raw body plus a timestamp, in `X-Ghost-Signature: sha256=<hex>, t=<ms>`, using the webhook's secret. The plugin checks it before handling post, page, tag, member and site events. Ghost 6.45 and later name the event in the body; on older releases add `?event=<name>` (for example `?event=post.published`) to the webhook's target URL so the plugin can route it.
 examples:
   read:
     path: posts.list
