@@ -1,5 +1,14 @@
 import { inspect } from 'node:util';
-import { readEnvelopeError, SMTP2GO_API_BASE, Smtp2goAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import {
+	isReplayablePath,
+	isSmtp2goAuthError,
+	readEnvelopeError,
+	SMTP2GO_API_BASE,
+	SMTP2GO_REGION_HOSTS,
+	Smtp2goTransportError,
+	smtp2goErrorCode,
+} from './client';
 import {
 	missingKeyError,
 	statsCycleOk,
@@ -52,84 +61,123 @@ describe('client request shape', () => {
 	});
 });
 
+function apiError(status: number, message: string, code?: string): ApiError {
+	return new ApiError(
+		{ method: 'POST', url: '/stats/email_cycle' },
+		{
+			url: `${SMTP2GO_API_BASE}/stats/email_cycle`,
+			ok: false,
+			status,
+			statusText: 'x',
+			body: { data: { error: message, error_code: code } },
+		},
+		`SMTP2GO ${status}: ${message}`,
+	);
+}
+
 describe('error parsing', () => {
-	it('maps a 400 envelope onto Smtp2goAPIError with status and code', async () => {
+	it('maps a 400 envelope onto core ApiError with status and code', async () => {
 		mockFetch(errorResponse(400, unknownKeyError));
 
 		const error = await captureError(endpoints.stats.cycle(makeCtx(), {}));
 
-		expect(error).toBeInstanceOf(Smtp2goAPIError);
-		const apiError = error as Smtp2goAPIError;
-		expect(apiError.status).toBe(400);
-		expect(apiError.code).toBe('E_ApiResponseCodes.API_EXCEPTION');
-		expect(apiError.message).toContain('API User');
-		expect(apiError.replayable).toBe(true);
+		expect(error).toBeInstanceOf(ApiError);
+		const apiErr = error as ApiError;
+		expect(apiErr.status).toBe(400);
+		expect(smtp2goErrorCode(apiErr)).toBe('E_ApiResponseCodes.API_EXCEPTION');
+		expect(apiErr.message).toContain('API User');
+		expect(apiErr.request.url).toBe('/stats/email_cycle');
 	});
 
-	it('never carries the key in message, inspect or JSON output', async () => {
-		// The request would echo the key in its body if the plugin ever sent
-		// body auth; the transport error path keeps no body at all.
+	it('never carries the key or the request body in message, inspect or JSON output', async () => {
 		mockFetch(errorResponse(403, missingKeyError));
 
-		const error = await captureError(endpoints.stats.cycle(makeCtx(), {}));
+		const error = await captureError(
+			endpoints.email.send(makeCtx(), {
+				sender: 'a@example.com',
+				to: ['secret-recipient@example.com'],
+				text_body: 'hi',
+			}),
+		);
 
-		expect(error).toBeInstanceOf(Smtp2goAPIError);
-		const apiError = error as Smtp2goAPIError;
-		const rendered = `${apiError.message}\n${inspect(apiError)}\n${JSON.stringify(apiError)}`;
+		expect(error).toBeInstanceOf(ApiError);
+		const apiErr = error as ApiError;
+		const rendered = `${apiErr.message}\n${inspect(apiErr, { depth: 10 })}\n${JSON.stringify(apiErr)}`;
 		expect(rendered).not.toContain(API_KEY);
-		expect(apiError).not.toHaveProperty('body');
-		expect(apiError).not.toHaveProperty('cause');
+		expect(rendered).not.toContain('secret-recipient@example.com');
+		expect(apiErr.request.body).toBe('[REDACTED]');
+		expect(apiErr.request.headers).toBeUndefined();
 	});
 
-	it('marks auth failures by text for 403 and by status for 401', async () => {
-		const text403 = new Smtp2goAPIError(
-			"SMTP2GO 403: The 'api_key' parameter was not found",
-			{ status: 403 },
-		);
-		const text400 = new Smtp2goAPIError(
-			"SMTP2GO 400: An API User matching the passed 'api_key' was not found",
-			{ status: 400 },
-		);
-		const validation400 = new Smtp2goAPIError(
-			'SMTP2GO 400 E_ApiResponseCodes.NON_VALIDATING_IN_PAYLOAD: field to is missing',
-			{ status: 400, code: 'E_ApiResponseCodes.NON_VALIDATING_IN_PAYLOAD' },
-		);
-		const status401 = new Smtp2goAPIError('SMTP2GO 401: denied', {
-			status: 401,
-		});
-
-		expect(text403.isAuthError).toBe(true);
-		expect(text400.isAuthError).toBe(true);
-		expect(status401.isAuthError).toBe(true);
-		expect(validation400.isAuthError).toBe(false);
+	it('marks auth failures by text for 403/400 and by status for 401', () => {
+		expect(
+			isSmtp2goAuthError(
+				apiError(403, "The 'api_key' parameter was not found"),
+			),
+		).toBe(true);
+		expect(
+			isSmtp2goAuthError(
+				apiError(
+					400,
+					"An API User matching the passed 'api_key' was not found",
+				),
+			),
+		).toBe(true);
+		expect(isSmtp2goAuthError(apiError(401, 'denied'))).toBe(true);
+		expect(
+			isSmtp2goAuthError(
+				apiError(
+					400,
+					'field to is missing',
+					'E_ApiResponseCodes.NON_VALIDATING_IN_PAYLOAD',
+				),
+			),
+		).toBe(false);
 	});
 
-	it('marks rate limits and keeps a Retry-After value', () => {
-		const limited = new Smtp2goAPIError('SMTP2GO 429: slow down', {
-			status: 429,
-			retryAfter: 90_000,
-		});
-		expect(limited.isRateLimit).toBe(true);
-		expect(limited.retryAfter).toBe(90_000);
-
-		const notLimited = new Smtp2goAPIError('SMTP2GO 400: bad', {
-			status: 400,
-		});
-		expect(notLimited.isRateLimit).toBe(false);
+	it('replays reads only, by route', () => {
+		expect(isReplayablePath('/stats/email_cycle')).toBe(true);
+		expect(isReplayablePath('/api_keys/view')).toBe(true);
+		expect(isReplayablePath('/email/search')).toBe(true);
+		expect(isReplayablePath('/sms/view-sent')).toBe(true);
+		expect(isReplayablePath('/email/send')).toBe(false);
+		expect(isReplayablePath('/suppression/remove')).toBe(false);
+		expect(isReplayablePath('/sms/send')).toBe(false);
 	});
 
-	it('flags transport failures and carries their replayability', () => {
-		const readFailure = new Smtp2goAPIError('fetch failed', {
-			transport: true,
-			replayable: true,
-		});
-		const writeFailure = new Smtp2goAPIError('fetch failed', {
-			transport: true,
-			replayable: false,
-		});
-		expect(readFailure.transport).toBe(true);
-		expect(readFailure.replayable).toBe(true);
-		expect(writeFailure.replayable).toBe(false);
+	it('wraps transport failures with the method and route', async () => {
+		(globalThis.fetch as unknown as jest.Mock).mockRejectedValueOnce(
+			new TypeError('fetch failed'),
+		);
+		const error = await captureError(endpoints.stats.cycle(makeCtx(), {}));
+		expect(error).toBeInstanceOf(Smtp2goTransportError);
+		expect((error as Smtp2goTransportError).path).toBe('/stats/email_cycle');
+	});
+
+	it('redacts email addresses SMTP2GO echoes in an error', async () => {
+		mockFetch(
+			errorResponse(400, {
+				request_id: 'r',
+				data: { error: 'Recipient bob@example.com is suppressed' },
+			}),
+		);
+		const error = await captureError(endpoints.stats.cycle(makeCtx(), {}));
+		expect((error as Error).message).toContain('[email]');
+		expect((error as Error).message).not.toContain('bob@example.com');
+	});
+
+	it('sends to a regional host when region is set', async () => {
+		mockFetch(
+			new Response(JSON.stringify(statsCycleOk), {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		await endpoints.stats.cycle(
+			{ ...makeCtx(), options: { region: 'eu' } } as never,
+			{},
+		);
+		expect(lastCall().url).toBe(`${SMTP2GO_REGION_HOSTS.eu}/stats/email_cycle`);
 	});
 });
 

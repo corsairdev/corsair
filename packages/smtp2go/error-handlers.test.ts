@@ -1,4 +1,5 @@
-import { Smtp2goAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { Smtp2goTransportError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
 type HandlerResult = {
@@ -26,11 +27,39 @@ function handlerOf(
 	return entry;
 }
 
-function smtpError(
-	message: string,
-	options: ConstructorParameters<typeof Smtp2goAPIError>[1] = {},
-): Smtp2goAPIError {
-	return new Smtp2goAPIError(message, options);
+type ErrorOptions = {
+	status?: number;
+	code?: string;
+	retryAfter?: number;
+	transport?: boolean;
+	replayable?: boolean;
+};
+
+/**
+ * Builds the error core and the client raise: an ApiError for an HTTP
+ * answer, a transport error for a request that never got one. Replayable
+ * failures use a read route, the rest a send.
+ */
+function smtpError(message: string, options: ErrorOptions = {}): Error {
+	const path = options.replayable ? '/stats/email_cycle' : '/email/send';
+	if (options.transport) {
+		return new Smtp2goTransportError('POST', path, new Error(message));
+	}
+	const status = options.status ?? 400;
+	return new ApiError(
+		{ method: 'POST', url: path },
+		{
+			url: `https://api.smtp2go.com/v3${path}`,
+			ok: false,
+			status,
+			statusText: 'x',
+			body: options.code
+				? { data: { error: message, error_code: options.code } }
+				: undefined,
+		},
+		message,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 function firstMatch(error: Error): string | undefined {
@@ -95,19 +124,11 @@ describe('error handler order and behavior', () => {
 		expect(firstMatch(new Error('bad input'))).toBe('DEFAULT');
 	});
 
-	it('retries a 429 once, delayed past the documented IP timeout', async () => {
-		const noHeader = await handlerOf(handlers, 'RATE_LIMIT_ERROR').handler(
+	it('does not retry a 429 again: core already waited the IP timeout and retried', async () => {
+		const result = await handlerOf(handlers, 'RATE_LIMIT_ERROR').handler(
 			smtpError('SMTP2GO 429', { status: 429 }),
 		);
-		expect(noHeader.maxRetries).toBe(1);
-		// No Retry-After header exists on this API, so the fallback delay is
-		// the documented minimum throttle window.
-		expect(noHeader.headersRetryAfterMs).toBe(60_000);
-
-		const withHeader = await handlerOf(handlers, 'RATE_LIMIT_ERROR').handler(
-			smtpError('SMTP2GO 429', { status: 429, retryAfter: 90_000 }),
-		);
-		expect(withHeader.headersRetryAfterMs).toBe(90_000);
+		expect(result.maxRetries).toBe(0);
 	});
 
 	it('never retries auth, permission or validation failures', async () => {
@@ -162,7 +183,7 @@ describe('error handler order and behavior', () => {
 		// so core finds it before the trailing DEFAULT.
 		const caller418 = {
 			match: (error: Error) =>
-				error instanceof Smtp2goAPIError && error.status === 418,
+				error instanceof ApiError && error.status === 418,
 			handler: async () => ({ maxRetries: 5 }),
 		};
 

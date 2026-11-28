@@ -1,5 +1,6 @@
 import type {
 	BindEndpoints,
+	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
@@ -9,8 +10,10 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
+	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import type { Smtp2goRegion } from './client';
 import {
 	Activity,
 	Domains,
@@ -21,8 +24,17 @@ import {
 	Webhooks,
 } from './endpoints';
 import type {
-	Smtp2goEndpointInputs,
-	Smtp2goEndpointOutputs,
+	GeneratedEndpointInputs,
+	GeneratedEndpointOutputs,
+} from './endpoints/generated';
+import {
+	generatedEndpointGroups,
+	generatedEndpointMeta,
+	generatedSchemaEntries,
+} from './endpoints/generated';
+import type {
+	Smtp2goEndpointInputs as HandWrittenInputs,
+	Smtp2goEndpointOutputs as HandWrittenOutputs,
 } from './endpoints/types';
 import {
 	Smtp2goEndpointInputSchemas,
@@ -30,19 +42,38 @@ import {
 } from './endpoints/types';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { Smtp2goSchema } from './schema';
+import {
+	isSmtp2goDelivery,
+	smtp2goWebhookSchemas,
+	smtp2goWebhooksNested,
+} from './webhooks';
 
-// Deferred endpoint families, all POST routes under /v3 with the same auth:
-// apiKeys (add returns a credential), subaccounts (add returns credentials),
-// smtpUsers, singleSenders, sms (paid feature), ipAuth, dedicatedIps (paid),
-// archive (paid), allowedSenders/allowedRecipients, and the rarely used
-// domain/tracking, domain/returnpath and domain/subaccount_access editors.
-// Add them as separate groups when needed; each is documented on
-// developers.smtp2go.com.
+export type Smtp2goEndpointInputs = HandWrittenInputs & GeneratedEndpointInputs;
+export type Smtp2goEndpointOutputs = HandWrittenOutputs &
+	GeneratedEndpointOutputs;
+
+// Scope: all 69 operations of SMTP2GO's API reference. Email, activity,
+// suppressions, domains, stats, templates and webhooks are hand-written; the
+// rest (API keys, subaccounts, SMTP users, single senders, SMS, IP auth,
+// dedicated IPs, archive, allowed senders and recipients, and the domain
+// tracking/return-path/subaccount-access editors) are generated into
+// endpoints/generated.ts by kits/plugin-gen/smtp2go/gen.py.
 
 export type Smtp2goPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	/**
+	 * Pin a regional host (us, eu, au). Left out, calls go to the regionless
+	 * api.smtp2go.com, which routes to the account's region.
+	 */
+	region?: Smtp2goRegion;
+	/**
+	 * The webhook's auth_header_value; deliveries must carry it in their
+	 * Authorization header. Overrides the stored webhook_signature.
+	 */
+	webhookSecret?: string;
 	hooks?: InternalSmtp2goPlugin['hooks'];
+	webhookHooks?: InternalSmtp2goPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof smtp2goEndpointsNested>;
 };
@@ -57,6 +88,8 @@ export type Smtp2goKeyBuilderContext = KeyBuilderContext<Smtp2goPluginOptions>;
 export type Smtp2goBoundEndpoints = BindEndpoints<
 	typeof smtp2goEndpointsNested
 >;
+
+export type Smtp2goBoundWebhooks = BindWebhooks<typeof smtp2goWebhooksNested>;
 
 type Smtp2goEndpoint<K extends keyof Smtp2goEndpointOutputs> = CorsairEndpoint<
 	Smtp2goContext,
@@ -94,6 +127,8 @@ export type Smtp2goEndpoints = {
 	webhooksAdd: Smtp2goEndpoint<'webhooksAdd'>;
 	webhooksEdit: Smtp2goEndpoint<'webhooksEdit'>;
 	webhooksRemove: Smtp2goEndpoint<'webhooksRemove'>;
+} & {
+	[K in keyof GeneratedEndpointOutputs]: Smtp2goEndpoint<K>;
 };
 
 const smtp2goEndpointsNested = {
@@ -118,6 +153,7 @@ const smtp2goEndpointsNested = {
 		add: Domains.add,
 		verify: Domains.verify,
 		remove: Domains.remove,
+		...generatedEndpointGroups.domains,
 	},
 	stats: {
 		bounces: Stats.bounces,
@@ -140,14 +176,25 @@ const smtp2goEndpointsNested = {
 		edit: Webhooks.edit,
 		remove: Webhooks.remove,
 	},
+	allowedRecipients: generatedEndpointGroups.allowedRecipients,
+	allowedSenders: generatedEndpointGroups.allowedSenders,
+	apiKeys: generatedEndpointGroups.apiKeys,
+	archive: generatedEndpointGroups.archive,
+	dedicatedIps: generatedEndpointGroups.dedicatedIps,
+	ipAuth: generatedEndpointGroups.ipAuth,
+	singleSenders: generatedEndpointGroups.singleSenders,
+	sms: generatedEndpointGroups.sms,
+	smtpUsers: generatedEndpointGroups.smtpUsers,
+	subaccounts: generatedEndpointGroups.subaccounts,
 } as const;
 
-const registryEntry = (key: keyof Smtp2goEndpointInputs) => ({
+const registryEntry = <K extends keyof HandWrittenInputs>(key: K) => ({
 	input: Smtp2goEndpointInputSchemas[key],
 	output: Smtp2goEndpointOutputSchemas[key],
 });
 
 export const smtp2goEndpointSchemas = {
+	...generatedSchemaEntries,
 	'email.send': registryEntry('emailSend'),
 	'email.sendMime': registryEntry('emailSendMime'),
 	'email.sendBatch': registryEntry('emailSendBatch'),
@@ -184,20 +231,21 @@ export const smtp2goEndpointSchemas = {
 const defaultAuthType = 'api_key' as const;
 
 const smtp2goEndpointMeta = {
+	...generatedEndpointMeta,
 	'email.send': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		irreversible: true,
 		description:
 			'Send one email to up to 100 recipients, with HTML or plain text, a template, attachments, custom headers, or a schedule up to 3 days out; the result counts succeeded and failed recipients at HTTP 200, so check failed, not the status',
 	},
 	'email.sendMime': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		irreversible: true,
 		description:
 			'Send one pre-encoded MIME message, with the same per-recipient succeeded/failed accounting as email.send',
 	},
 	'email.sendBatch': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		irreversible: true,
 		description:
 			'Send up to 1000 independent messages in one call; the answer carries one email_id or schedule_id entry per message',
@@ -328,7 +376,7 @@ const smtp2goEndpointMeta = {
 	'webhooks.edit': {
 		riskLevel: 'write',
 		description:
-			'Change a webhook registration by id, including its event list, URL or disabled state',
+			'Change a webhook registration by id; the edit replaces its settings, so pass url every time and auth_header_type/auth_header_value again or the Authorization header is dropped',
 	},
 	'webhooks.remove': {
 		riskLevel: 'destructive',
@@ -338,11 +386,16 @@ const smtp2goEndpointMeta = {
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof smtp2goEndpointsNested>;
 
+const smtp2goWebhookSchemaMap =
+	smtp2goWebhookSchemas satisfies RequiredPluginWebhookSchemas<
+		typeof smtp2goWebhooksNested
+	>;
+
 export type BaseSmtp2goPlugin<T extends Smtp2goPluginOptions> = CorsairPlugin<
 	'smtp2go',
 	typeof Smtp2goSchema,
 	typeof smtp2goEndpointsNested,
-	{},
+	typeof smtp2goWebhooksNested,
 	T,
 	typeof defaultAuthType
 >;
@@ -364,16 +417,20 @@ export function smtp2go<const T extends Smtp2goPluginOptions>(
 		schema: Smtp2goSchema,
 		options: options,
 		hooks: options.hooks,
+		webhookHooks: options.webhookHooks,
 		endpoints: smtp2goEndpointsNested,
-		// SMTP2GO sends webhook deliveries to URLs registered over its API, but
-		// their payload shapes and signature scheme are unverified, so this
-		// plugin does not handle inbound deliveries.
-		webhooks: {},
+		webhooks: smtp2goWebhooksNested,
 		endpointMeta: smtp2goEndpointMeta,
 		endpointSchemas: smtp2goEndpointSchemas,
-		pluginWebhookMatcher: () => false,
+		webhookSchemas: smtp2goWebhookSchemaMap,
+		pluginWebhookMatcher: isSmtp2goDelivery,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: Smtp2goKeyBuilderContext, source) => {
+			if (source === 'webhook') {
+				if (options.webhookSecret) return options.webhookSecret;
+				return (await ctx.keys.get_webhook_signature()) ?? '';
+			}
+
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -388,8 +445,14 @@ export function smtp2go<const T extends Smtp2goPluginOptions>(
 	} satisfies InternalSmtp2goPlugin;
 }
 
-export { Smtp2goAPIError } from './client';
-
+export type { Smtp2goRegion } from './client';
+export {
+	SMTP2GO_REGION_HOSTS,
+	Smtp2goEnvelopeError,
+	Smtp2goTransportError,
+	smtp2goErrorCode,
+	withoutRequestData,
+} from './client';
 export type {
 	ActivitySearchInput,
 	ActivitySearchResponse,
@@ -413,8 +476,6 @@ export type {
 	EmailSendMimeInput,
 	EmailSendMimeResponse,
 	EmailSendResponse,
-	Smtp2goEndpointInputs,
-	Smtp2goEndpointOutputs,
 	StatsBouncesInput,
 	StatsBouncesResponse,
 	StatsCycleInput,
@@ -452,3 +513,5 @@ export type {
 	WebhooksRemoveInput,
 	WebhooksRemoveResponse,
 } from './endpoints/types';
+export type { Smtp2goEmailEvent, Smtp2goSmsEvent } from './webhooks';
+export { verifySmtp2goWebhook } from './webhooks';

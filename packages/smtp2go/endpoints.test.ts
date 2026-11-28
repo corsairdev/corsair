@@ -1,4 +1,8 @@
-import { Smtp2goAPIError } from './client';
+import {
+	isSmtp2goAuthError,
+	Smtp2goEnvelopeError,
+	smtp2goErrorCode,
+} from './client';
 import {
 	activitySearchOk,
 	bareError,
@@ -190,7 +194,7 @@ describe('output parsing per operation', () => {
 		const removed = await endpoints.domains.remove(makeCtx(), {
 			domain: 'example.com',
 		});
-		expect(removed.data.domains).toEqual([]);
+		expect(removed.data?.domains).toEqual([]);
 	});
 
 	it('stats.cycle keeps the plan counts', async () => {
@@ -269,10 +273,11 @@ describe('output parsing per operation', () => {
 	});
 
 	it('webhooks operations parse the registration object', async () => {
-		mockFetch(ok(webhookViewOk));
+		// /webhook/view answers an array of registrations (live, 11-28).
+		mockFetch(ok({ ...webhookViewOk, data: [webhookViewOk.data] }));
 		const listed = await endpoints.webhooks.list(makeCtx(), {});
-		expect(listed.data.id).toBe(4317);
-		expect(listed.data.events).toEqual(['spam']);
+		expect(listed.data?.[0]?.id).toBe(4317);
+		expect(listed.data?.[0]?.events).toEqual(['spam']);
 
 		mockFetch(ok(webhookAddOk));
 		const added = await endpoints.webhooks.add(makeCtx(), {
@@ -281,7 +286,10 @@ describe('output parsing per operation', () => {
 		expect(added.data.headers).toBe('X-Test-Header');
 
 		mockFetch(ok(webhookEditOk));
-		const edited = await endpoints.webhooks.edit(makeCtx(), { id: 4320 });
+		const edited = await endpoints.webhooks.edit(makeCtx(), {
+			id: 4320,
+			url: 'https://example.com/test-webhook',
+		});
 		expect(edited.data.output_format).toBe('form');
 
 		mockFetch(ok(webhookRemoveOk));
@@ -325,16 +333,14 @@ describe('rejections', () => {
 				text_body: 'hi',
 			}),
 		);
-		expect(error).toBeInstanceOf(Smtp2goAPIError);
-		expect((error as Smtp2goAPIError).message).toContain('2xx');
+		expect(error).toBeInstanceOf(Smtp2goEnvelopeError);
+		expect((error as Smtp2goEnvelopeError).message).toContain('2xx');
 	});
 
 	it('fails loudly on a bare error body', async () => {
 		mockFetch(errorResponse(400, bareError));
 		const error = await rejectsWith(endpoints.stats.cycle(makeCtx(), {}));
-		expect((error as Smtp2goAPIError).code).toBe(
-			'E_ApiResponseCodes.API_EXCEPTION',
-		);
+		expect(smtp2goErrorCode(error)).toBe('E_ApiResponseCodes.API_EXCEPTION');
 	});
 
 	it('rejects a send with no body at all before spending the call', async () => {
@@ -436,16 +442,16 @@ describe('rejections', () => {
 	it('surfaces field validation errors from the 400 envelope', async () => {
 		mockFetch(errorResponse(400, fieldValidationError));
 		const error = await rejectsWith(endpoints.stats.cycle(makeCtx(), {}));
-		expect((error as Smtp2goAPIError).code).toBe(
+		expect(smtp2goErrorCode(error)).toBe(
 			'E_ApiResponseCodes.NON_VALIDATING_IN_PAYLOAD',
 		);
-		expect((error as Smtp2goAPIError).isAuthError).toBe(false);
+		expect(isSmtp2goAuthError(error)).toBe(false);
 	});
 
 	it('maps the missing-key 403 envelope onto an auth error', async () => {
 		mockFetch(errorResponse(403, missingKeyError));
 		const error = await rejectsWith(endpoints.stats.cycle(makeCtx(), {}));
-		expect((error as Smtp2goAPIError).isAuthError).toBe(true);
-		expect((error as Smtp2goAPIError).status).toBe(403);
+		expect(isSmtp2goAuthError(error)).toBe(true);
+		expect((error as { status?: number }).status).toBe(403);
 	});
 });

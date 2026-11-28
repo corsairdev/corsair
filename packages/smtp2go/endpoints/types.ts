@@ -669,7 +669,8 @@ const DomainsRemoveInputSchema = z.object({
 
 export type DomainsRemoveInput = z.input<typeof DomainsRemoveInputSchema>;
 
-const DomainsRemoveResponseSchema = envelope(DomainsDataSchema);
+// Live (11-28): a successful /domain/remove answers `data: null`.
+const DomainsRemoveResponseSchema = envelope(DomainsDataSchema.nullable());
 
 export type DomainsRemoveResponse = z.infer<typeof DomainsRemoveResponseSchema>;
 
@@ -1005,7 +1006,9 @@ const WebhooksListInputSchema = z.object({
 export type WebhooksListInput = z.input<typeof WebhooksListInputSchema>;
 
 // The documented answer is a single webhook object rather than a list.
-const WebhooksListResponseSchema = envelope(WebhookSchema);
+// Live (11-28): /webhook/view answers an array of webhooks ([] when none),
+// not one webhook object.
+const WebhooksListResponseSchema = envelope(z.array(WebhookSchema));
 
 export type WebhooksListResponse = z.infer<typeof WebhooksListResponseSchema>;
 
@@ -1051,7 +1054,12 @@ const WebhooksEditInputSchema = z.object({
 		.int()
 		.positive()
 		.describe('The webhook registration to change.'),
-	url: z.string().min(1).optional(),
+	// The reference marks url optional, but /webhook/edit answers 400 "The
+	// field 'url' was expecting a value" without it (live, 11-28).
+	url: z
+		.string()
+		.min(1)
+		.describe('The webhook URL; required on every edit, even when unchanged.'),
 	events: z.array(z.string()).optional(),
 	sms_events: z.array(z.string()).optional(),
 	headers: z.array(z.string()).optional(),

@@ -1,5 +1,6 @@
 import type { RawWebhookRequest } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { generatedEndpointMeta } from './endpoints/generated';
 import type { Smtp2goKeyBuilderContext } from './index';
 import { smtp2go, smtp2goEndpointSchemas } from './index';
 
@@ -34,6 +35,13 @@ const OPERATIONS = [
 	'webhooks.edit',
 	'webhooks.remove',
 ] as const;
+
+// The 29 hand-written operations above and the 40 generated ones: all 69
+// operations of SMTP2GO's API reference.
+const ALL_OPERATIONS = [
+	...OPERATIONS,
+	...Object.keys(generatedEndpointMeta),
+].sort();
 
 type EndpointMeta = {
 	riskLevel: string;
@@ -71,18 +79,17 @@ describe('smtp2go plugin', () => {
 	// unknown: the meta map is typed generically; tests read single fields.
 	const meta = plugin.endpointMeta as unknown as Record<string, EndpointMeta>;
 
-	it('registers every advertised operation', () => {
+	it('registers all 69 operations of the API reference', () => {
+		expect(ALL_OPERATIONS).toHaveLength(69);
 		expect(flatten(plugin.endpoints as Record<string, unknown>)).toEqual(
-			[...OPERATIONS].sort(),
+			ALL_OPERATIONS,
 		);
 	});
 
 	it('declares input and output schemas for each operation', () => {
-		expect(Object.keys(smtp2goEndpointSchemas).sort()).toEqual(
-			[...OPERATIONS].sort(),
-		);
+		expect(Object.keys(smtp2goEndpointSchemas).sort()).toEqual(ALL_OPERATIONS);
 
-		for (const operation of OPERATIONS) {
+		for (const operation of ALL_OPERATIONS) {
 			const entry = required(smtp2goEndpointSchemas, operation);
 			expect(entry.input).toBeDefined();
 			expect(entry.output).toBeDefined();
@@ -90,46 +97,60 @@ describe('smtp2go plugin', () => {
 	});
 
 	it('describes each operation without generator placeholder text', () => {
-		for (const operation of OPERATIONS) {
+		for (const operation of ALL_OPERATIONS) {
 			const entry = required(meta, operation);
 			expect(entry.description.length).toBeGreaterThan(20);
 			expect(entry.description).not.toMatch(/example resource/i);
 		}
 	});
 
-	it('classifies sends, removals and reads correctly', () => {
+	it('marks sends, deletions and credential changes destructive', () => {
+		for (const operation of [
+			'email.send',
+			'email.sendMime',
+			'email.sendBatch',
+			'sms.send',
+			'singleSenders.add',
+			'apiKeys.add',
+			'apiKeys.remove',
+			'smtpUsers.remove',
+			'subaccounts.close',
+		]) {
+			expect([operation, required(meta, operation).riskLevel]).toEqual([
+				operation,
+				'destructive',
+			]);
+		}
 		for (const operation of [
 			'email.send',
 			'email.sendMime',
 			'email.sendBatch',
 		]) {
-			const entry = required(meta, operation);
-			expect([operation, entry.riskLevel]).toEqual([operation, 'write']);
-			expect(entry.irreversible).toBe(true);
+			expect(required(meta, operation).irreversible).toBe(true);
 		}
-
-		const destructive = OPERATIONS.filter(
-			(operation) => required(meta, operation).riskLevel === 'destructive',
-		);
-		expect(destructive).toEqual([
-			'email.cancelScheduled',
-			'suppressions.remove',
-			'domains.remove',
-			'templates.delete',
-			'webhooks.remove',
-		]);
-
-		const reads = OPERATIONS.filter(
+		const reads = ALL_OPERATIONS.filter(
 			(operation) => required(meta, operation).riskLevel === 'read',
 		);
-		expect(reads).toHaveLength(14);
+		expect(reads).toHaveLength(28);
+		for (const operation of reads) {
+			expect(operation).toMatch(
+				/\.(list|search\w*|view|get\w*|permissions|summary|cycle|bounces|spam|unsubscribes|history|listReceived|listSent)$/,
+			);
+		}
 	});
 
-	it('handles no inbound webhooks', () => {
-		expect(plugin.webhooks).toEqual({});
-		// A delivery for this plugin always routes nowhere.
-		const delivery = { headers: {} } as RawWebhookRequest;
-		expect(plugin.pluginWebhookMatcher?.(delivery)).toBe(false);
+	it('handles email and SMS webhook events', () => {
+		expect(Object.keys(plugin.webhookSchemas ?? {}).sort()).toEqual([
+			'email.event',
+			'sms.event',
+		]);
+		const other = { headers: {}, body: { event: 'push' } } as RawWebhookRequest;
+		expect(plugin.pluginWebhookMatcher?.(other)).toBe(false);
+		const delivered = {
+			headers: {},
+			body: { event: 'delivered' },
+		} as RawWebhookRequest;
+		expect(plugin.pluginWebhookMatcher?.(delivered)).toBe(true);
 	});
 
 	it('offers api_key auth only', () => {
@@ -145,7 +166,10 @@ describe('smtp2go plugin', () => {
 			// keyBuilder reads; a full AccountKeyManager is not needed.
 			({
 				authType: 'api_key',
-				keys: { get_api_key: async () => key },
+				keys: {
+					get_api_key: async () => key,
+					get_webhook_signature: async () => 'stored-webhook-token',
+				},
 			}) as unknown as Smtp2goKeyBuilderContext;
 
 		it('returns the explicitly configured key', async () => {
@@ -167,10 +191,16 @@ describe('smtp2go plugin', () => {
 			).rejects.toBeInstanceOf(AuthMissingError);
 		});
 
-		it('throws AuthMissingError for non-endpoint sources', async () => {
+		it('gives webhooks the auth header value, from the option first', async () => {
+			await expect(
+				keyBuilderOf(smtp2go({ webhookSecret: 'option-token' }))(
+					keyContext('stored-key'),
+					'webhook',
+				),
+			).resolves.toBe('option-token');
 			await expect(
 				keyBuilderOf(plugin)(keyContext('stored-key'), 'webhook'),
-			).rejects.toBeInstanceOf(AuthMissingError);
+			).resolves.toBe('stored-webhook-token');
 		});
 	});
 });

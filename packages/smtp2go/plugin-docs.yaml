@@ -1,5 +1,5 @@
 displayName: SMTP2GO
-description: Transactional email delivery with SMTP2GO - send single, batch and MIME messages, search sent email and activity, manage suppressions, sender domains, templates and webhook registrations, and read sending stats and plan usage.
+description: Transactional email and SMS with SMTP2GO - send single, batch and MIME messages, search sent email, activity and archives, manage suppressions, sender domains, single senders, templates, webhooks, API keys, SMTP users, IP auth, allowed lists and subaccounts, read stats, and receive email and SMS webhook events.
 domain: smtp2go.com
 recommendedAuth: api_key
 overviewNote: |
@@ -9,11 +9,14 @@ overviewNote: |
   - **A 200 is not always full success.** `email.send`, `email.sendMime` and `email.sendBatch` answer HTTP 200 with `succeeded` and `failed` counts. Check `failed` (and the per-recipient `failures` array), not just the call result.
   - **A message needs a body.** SMTP2GO requires at least one of `text_body`, `html_body` or `template_id`; the plugin checks this before spending a call. `subject` is optional despite the docs saying required (verified live).
   - **Quota accounting.** Every To/CC/BCC recipient counts as one email against the plan. `stats.cycle` answers how many are left in the current cycle.
-  - **Throttling is by IP.** Too many requests OR too many error responses trip a throttle that lasts at least a minute, answered by a 429 with an empty body and no `Retry-After` header. The plugin waits that minute before one retry; nothing retries a 4xx, because errors feed the same throttle.
+  - **Throttling is by IP.** Too many requests OR too many error responses trip a throttle that lasts at least a minute, answered by a 429 with an empty body and no `Retry-After` header. Core waits that minute before one retry; nothing retries a 4xx, because errors feed the same throttle.
+  - **Regions.** Calls go to the regionless `api.smtp2go.com`, which routes to the account's region. Pass `region: 'us' | 'eu' | 'au'` to the plugin to pin a regional host.
   - **Sends are never replayed.** A 5xx on a read is retried; a 5xx on a send or a removal is not, because the first attempt may have gone through.
   - **Paging.** List operations take `continue_token` (and `page_size` or `limit`) and return the next `continue_token` in `data`; it is null on the last page.
   - **There is no per-email status endpoint.** `/email/status/{email_id}` does not exist. Look up a sent email with `email.searchSent` filtered by `email_id`, or use `activity.search` for delivery events.
-  - **Webhooks.** `webhooks.*` manages webhook registrations over the API. The plugin does not receive SMTP2GO webhook deliveries; their payload shapes and signature scheme are not covered here.
+  - **Webhooks.** SMTP2GO doesn't sign deliveries. Register the webhook with `auth_header_type: 'bearer'` and an `auth_header_value`, and store that value as the webhook signature: each delivery's `Authorization` header is compared with it. `webhooks.edit` replaces the whole registration, so send `url` and the auth fields again on every edit or the header is dropped (checked live 11-28). The free plan allows one webhook.
+  - **Plans.** On the free plan, `archive.*` answers 400 `UNKNOWN_ERROR`, the SMS reads answer 500, and subaccounts need a paid plan. `sms.send` texts real numbers and spends SMS credit.
+  - **Reference drift.** Checked live 11-28: `dedicated_ips/view`, `api_keys/add` and `api_keys/edit` answer an object where the reference shows an array, `ip_auth/view` and `webhook/view` answer arrays, `domain/remove` answers `data: null`, and `webhook/edit` requires `url`. The schemas follow the live answers. `api_keys/view` masks the keys, so keep the full key `apiKeys.add` returns if you need to edit or remove it.
 examples:
   read:
     path: stats.cycle
@@ -84,7 +87,7 @@ apiExamples:
   webhooks.add:
     call: "{ url: 'https://example.com/smtp2go-events', events: ['delivered', 'open', 'click', 'spam', 'bounce'], output_format: 'json' }"
   webhooks.edit:
-    call: "{ id: 4320, disabled: true }"
+    call: "{ id: 4320, url: 'https://example.com/hooks/smtp2go', disabled: true, auth_header_type: 'bearer', auth_header_value: '<token>' }"
   webhooks.remove:
     call: "{ id: 4320 }"
 apiNotes:

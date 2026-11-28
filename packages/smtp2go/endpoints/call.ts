@@ -5,7 +5,7 @@ import type { Smtp2goRequest } from '../client';
 import {
 	makeSmtp2goRequest,
 	readEnvelopeError,
-	Smtp2goAPIError,
+	Smtp2goEnvelopeError,
 } from '../client';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
@@ -26,17 +26,18 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	const raw = await makeSmtp2goRequest(ctx.key, toRequest(parsed));
+	const request = toRequest(parsed);
+	const raw = await makeSmtp2goRequest(
+		{ key: ctx.key, options: ctx.options },
+		request,
+	);
 
 	// A 2xx body can still be an error: the envelope carries `data.error`
 	// alongside the request_id (and a bare `{ error, error_code }` shape is
 	// documented for some failures). Fail here rather than parsing it.
 	const envelopeError = readEnvelopeError(raw);
 	if (envelopeError) {
-		throw new Smtp2goAPIError(
-			`SMTP2GO error in a 2xx response: ${envelopeError.message}`,
-			{ code: envelopeError.code },
-		);
+		throw new Smtp2goEnvelopeError(request.path, envelopeError);
 	}
 
 	const result = operation.output.parse(raw);

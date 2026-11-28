@@ -73,11 +73,848 @@ count. The endpoint is documented at 60 requests per minute.
     smtp_response?: string | null,
     host?: string | null,
     headers?: string | null,
-    custom_headers?: Record<string, unknown> | null
+    custom_headers?: Record<string, any> | null
   }[],
   total_events?: number | null,
   continue_token?: string | null
 }
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Allowed Recipients
+
+### add
+
+`allowedRecipients.add`
+
+Add allowed recipients: add one or more email addresses and domain names to your Allowed Recipients List. Further details of the associated setting are found in the SMTP2GO Guides.
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.allowedRecipients.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `allowed_recipients` | `string[]` | Yes | Array of email addresses and domain names. |
+| `enabled` | `boolean` | No | A flag indicating if this list is taken into account when sending |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  allowed_recipients?: string[] | null,
+  enabled?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`allowedRecipients.list`
+
+View allowed recipients: returns the email addresses and domain names on your Allowed Recipients list.
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.allowedRecipients.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  allowed_recipients?: string[] | null,
+  enabled?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`allowedRecipients.remove`
+
+Remove allowed recipients: remove one or more emails addresses or domain names stored in your Allowed Recipients List. Note: In the event that any of the email addresses or domains do not feature…
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.allowedRecipients.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `allowed_recipients` | `string[]` | Yes | Array of email addresses and domain names to remove. |
+| `enabled` | `boolean` | No | A flag indicating if this list is taken into account when sending |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  allowed_recipients?: string[] | null,
+  enabled?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`allowedRecipients.update`
+
+Update allowed recipients: replace the email addresses and domain names on your Allowed Recipients List using this endpoint. Further details of these modes are found in the SMPT2GO Guides. Note… (replaces the whole list)
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.allowedRecipients.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `allowed_recipients` | `string[]` | Yes | Array of email addresses and domain names. |
+| `enabled` | `boolean` | Yes | A flag indicating if this list should be taken into account when sending |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  allowed_recipients?: string[] | null,
+  enabled?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Allowed Senders
+
+### add
+
+`allowedSenders.add`
+
+Add allowed senders: add one or more email addresses and domain names to your Allowed or Restricted Senders List. How this list of email addresses and domain names are used is shown by the…
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.allowedSenders.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `allowed_senders` | `string[]` | Yes | Array of email addresses and domain names. |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  allowed_senders?: string[] | null,
+  mode?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`allowedSenders.list`
+
+View allowed senders: returns the email addresses and domain names on your Allowed or Restricted Senders list, as well as the Restrict Senders setting, which dictates how they are interpreted.
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.allowedSenders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  allowed_senders?: string[] | null,
+  mode?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`allowedSenders.remove`
+
+Remove allowed senders: remove one or more emails addresses or domain names stored in your Allowed or Restricted Senders List. Note: In the event that any of the email addresses or domains do…
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.allowedSenders.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `allowed_senders` | `string[]` | Yes | Array of email addresses and domain names to remove. |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  allowed_senders?: string[] | null,
+  mode?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`allowedSenders.update`
+
+Update allowed senders: replace the email addresses and domain names on your Allowed or Restricted Senders List using this endpoint. How the email addresses and domain names are used is… (replaces the whole list)
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.allowedSenders.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `allowed_senders` | `string[]` | Yes | Array of email addresses and domain names. |
+| `mode` | `whitelist \| blacklist \| disabled` | Yes | A string indicating how the list of email address and domain names is interpreted. and should be one of 'whitelist', 'blacklist' or 'disabled'.Warning: Changing the mode to 'whitelist' or… |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  allowed_senders?: string[] | null,
+  mode?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Api Keys
+
+### add
+
+`apiKeys.add`
+
+Add a new API key: add a new API key to your accountThis endpoint is rate-limited to 5 requests per minute. (mints a new credential)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.smtp2go.api.apiKeys.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `description` | `string` | No | A comment or description of your new API key |
+| `custom_ratelimit` | `boolean` | No | If true, a custom rate limit will be enabled for this user, and defined by the custom_ratelimit_value and custom_ratelimit_period. |
+| `custom_ratelimit_value` | `number` | No | If passed, defines the limit of emails this user can send in the period specified in custom_ratelimit_period.Note: Only stores this value if custom_ratelimit is true. |
+| `custom_ratelimit_period` | `string` | No | If passed, defines the period for which this user will be limited to the number of emails specified in custom_ratelimit_value.Syntax: "\\ [hour[s]\|day[s]\|week[s]\|month[s]] [hh:mm:ss]".Examples:… |
+| `ip_pool` | `number` | No | If passed, any emails sent with this API key will use dedicated IP's in this IP Pool, This value can be found on the /v3/dedicated_ips/view endpoint. |
+| `feedback_enabled` | `boolean` | No | If true, custom feedback via the unsubscribe footer will be enabled and defined by the below settings. |
+| `feedback_html` | `string` | No | The HTML content to insert into the custom feedback email body via the unsubscribe footer.System Variables (Only available here):Unsubscribe URL = %%UNSUBSCRIBE%% Email address = %%EMAIL%% |
+| `feedback_text` | `string` | No | The text content to insert into the custom feedback email body via the unsubscribe footer.System Variables (Only available here):Unsubscribe URL = %%UNSUBSCRIBE%% Email address = %%EMAIL%% |
+| `open_tracking_enabled` | `boolean` | No | If true, open tracking will be enabled for this API key. |
+| `click_tracking_enabled` | `boolean` | No | If true, click tracking will be enabled for this API key. |
+| `archive_enabled` | `boolean` | No | If true, archiving (available on paid plans) will be enabled for this API key. |
+| `audit_email` | `string` | No | If passed, this email will be BCC'd on all emails sent by this API key. |
+| `bounce_notifications` | `string` | No | If passed, will control how bounce notifications are handled. Must be one of [from, drop, or a valid email address]. [from] will return the email to sender, [drop] will discard the event, and the… |
+| `status` | `string` | No | The initial status of the API key, one of ['allowed', 'blocked', 'sandbox']. |
+| `endpoints` | `string[]` | No | An array of endpoints that this API key will be allowed to use.The endpoints passed must be a subset of the endpoints allowed by the API key making this call.A full list of endpoints can be found in… |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  api_key?: string | null,
+  username?: string | null,
+  description?: string | null,
+  status?: string | null,
+  sending_status?: string | null,
+  endpoints?: string[] | null,
+  bounce_notifications?: string | null,
+  default_ratelimit_period?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### edit
+
+`apiKeys.edit`
+
+Edit an API key: edit an existing API key
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.apiKeys.edit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of the existing API key you wish to edit. |
+| `description` | `string` | No | A comment or description of your new API key |
+| `custom_ratelimit` | `boolean` | No | If true, a custom rate limit will be enabled for this user, and defined by the custom_ratelimit_value and custom_ratelimit_period. |
+| `custom_ratelimit_value` | `number` | No | If passed, defines the limit of emails this user can send in the period specified in custom_ratelimit_period.Note: Only stores this value if custom_ratelimit is true. |
+| `custom_ratelimit_period` | `string` | No | If passed, defines the period for which this user will be limited to the number of emails specified in custom_ratelimit_value.Syntax: "\\ [hour[s]\|day[s]\|week[s]\|month[s]] [hh:mm:ss]".Examples:… |
+| `ip_pool` | `number` | No | If passed, any emails sent with this API key will use dedicated IP's in this IP Pool, This value can be found on the /v3/dedicated_ips/view endpoint. |
+| `feedback_enabled` | `boolean` | No | If true, custom feedback via the unsubscribe footer will be enabled and defined by the below settings. |
+| `feedback_html` | `string` | No | The HTML content to insert into the custom feedback email body via the unsubscribe footer.System Variables (Only available here):Unsubscribe URL = %%UNSUBSCRIBE%% Email address = %%EMAIL%% |
+| `feedback_text` | `string` | No | The text content to insert into the custom feedback email body via the unsubscribe footer.System Variables (Only available here):Unsubscribe URL = %%UNSUBSCRIBE%% Email address = %%EMAIL%% |
+| `open_tracking_enabled` | `boolean` | No | If true, open tracking will be enabled for this API key. |
+| `click_tracking_enabled` | `boolean` | No | If true, click tracking will be enabled for this API key. |
+| `archive_enabled` | `boolean` | No | If true, archiving (available on paid plans) will be enabled for this API key. |
+| `audit_email` | `string` | No | If passed, this email will be BCC'd on all emails sent by this API key. |
+| `bounce_notifications` | `string` | No | If passed, will control how bounce notifications are handled. Must be one of [from, drop, or a valid email address]. [from] will return the email to sender, [drop] will discard the event, and the… |
+| `status` | `string` | No | The initial status of the API key, one of ['allowed', 'blocked', 'sandbox']. |
+| `endpoints` | `string[]` | No | An array of endpoints that this API key will be allowed to use.Any additional endpoints passed must be a subset of the endpoints allowed by the API key making this call.A full list of endpoints can… |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  api_key?: string | null,
+  username?: string | null,
+  description?: string | null,
+  status?: string | null,
+  sending_status?: string | null,
+  endpoints?: string[] | null,
+  bounce_notifications?: string | null,
+  default_ratelimit_period?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`apiKeys.list`
+
+View API Keys: retrieve a list of API keys on this account
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.apiKeys.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | A full API key to retrieve the information for. |
+| `search` | `string` | No | A search keyword used to refine the results. |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `request_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  api_key?: string | null,
+  username?: string | null,
+  description?: string | null,
+  custom_rate_limit?: boolean | null,
+  custom_ratelimit_value?: number | null,
+  custom_ratelimit_period?: string | null,
+  default_ratelimit_value?: string | null,
+  default_ratelimit_period?: string | null,
+  ippool?: number | null,
+  feedback_enabled?: boolean | null,
+  feedback_html?: string | null,
+  feedback_text?: string | null,
+  open_tracking_enabled?: boolean | null,
+  click_tracking_enabled?: boolean | null,
+  archive_enabled?: boolean | null,
+  audit_email?: string | null,
+  bounce_notifications?: string | null,
+  status?: string | null,
+  sending_status?: string | null,
+  endpoints?: any[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### patch
+
+`apiKeys.patch`
+
+Patch an API key: patch an existing API key ignoring missing properties
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.apiKeys.patch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of the existing API key you wish to edit. |
+| `description` | `string` | No | A comment or description of your new API key |
+| `custom_ratelimit` | `boolean` | No | If true, a custom rate limit will be enabled for this user, and defined by the custom_ratelimit_value and custom_ratelimit_period. |
+| `custom_ratelimit_value` | `number` | No | If passed, defines the limit of emails this user can send in the period specified in custom_ratelimit_period.Note: Only stores this value if custom_ratelimit is true. |
+| `custom_ratelimit_period` | `string` | No | If passed, defines the period for which this user will be limited to the number of emails specified in custom_ratelimit_value.Syntax: "\\ [hour[s]\|day[s]\|week[s]\|month[s]] [hh:mm:ss]".Examples:… |
+| `ip_pool` | `number` | No | If passed, any emails sent with this API key will use dedicated IP's in this IP Pool, This value can be found on the /v3/dedicated_ips/view endpoint. |
+| `feedback_enabled` | `boolean` | No | If true, custom feedback via the unsubscribe footer will be enabled and defined by the below settings. |
+| `feedback_html` | `string` | No | The HTML content to insert into the custom feedback email body via the unsubscribe footer.System Variables (Only available here):Unsubscribe URL = %%UNSUBSCRIBE%% Email address = %%EMAIL%% |
+| `feedback_text` | `string` | No | The text content to insert into the custom feedback email body via the unsubscribe footer.System Variables (Only available here):Unsubscribe URL = %%UNSUBSCRIBE%% Email address = %%EMAIL%% |
+| `open_tracking_enabled` | `boolean` | No | If true, open tracking will be enabled for this API key. |
+| `click_tracking_enabled` | `boolean` | No | If true, click tracking will be enabled for this API key. |
+| `archive_enabled` | `boolean` | No | If true, archiving (available on paid plans) will be enabled for this API key. |
+| `audit_email` | `string` | No | If passed, this email will be BCC'd on all emails sent by this API key. |
+| `bounce_notifications` | `string` | No | If passed, will control how bounce notifications are handled. Must be one of [from, drop, or a valid email address]. [from] will return the email to sender, [drop] will discard the event, and the… |
+| `status` | `string` | No | The initial status of the API key, one of ['allowed', 'blocked', 'sandbox']. |
+| `endpoints` | `string[]` | No | An array of endpoints that this API key will be allowed to use.Any additional endpoints passed must be a subset of the endpoints allowed by the API key making this call.A full list of endpoints can… |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  api_key?: string | null,
+  username?: string | null,
+  description?: string | null,
+  status?: string | null,
+  sending_status?: string | null,
+  endpoints?: string[] | null,
+  bounce_notifications?: string | null,
+  default_ratelimit_period?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### permissions
+
+`apiKeys.permissions`
+
+View Permissions: retrieve a list of endpoints this API Key can use. This endpoint is available to all API Keys.
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.apiKeys.permissions({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `string[] \| null` | No | — |
+| `request_id` | `string \| null` | No | — |
+
+
+
+---
+
+### remove
+
+`apiKeys.remove`
+
+Remove an API key: remove an existing API key (revokes the key)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.smtp2go.api.apiKeys.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The ID of the existing API key you wish to remove. |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any \| null` | No | — |
+
+
+
+---
+
+## Archive
+
+### getEmail
+
+`archive.getEmail`
+
+View an archived email: fetch an archived email using the email_id
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.archive.getEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_id` | `string` | Yes | The unique email_id of the archived email you wish to retrieve |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  attachment_count?: number | null,
+  attachments?: any[] | null,
+  byte_count?: number | null,
+  email_id?: string | null,
+  envelope_from?: string | null,
+  headers?: string | null,
+  recipient?: string | null,
+  sender?: string | null,
+  sent?: string | null,
+  subject?: string | null,
+  to?: string | null,
+  url?: string | null,
+  username?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`archive.search`
+
+Search archived content: retrieve a list of up to 5,000 archived emails matching the supplied parameters.
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.archive.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | No | ISO-8601 formatted datetime which defaults to current date at midnight. The range will be inclusive of start_date and exclusive of end_date. Timezone is UTC. |
+| `end_date` | `string` | No | ISO-8601 formatted datetime which defaults to now. Timezone is UTC. |
+| `limit` | `number` | No | The maximum number of emails to return (Default: 5,000) |
+| `username` | `string` | No | If passed, only return email details sent by this user |
+| `recipient` | `string` | No | If passed, only return emails with this recipient |
+| `sender` | `string` | No | If passed, only return emails with this sender |
+| `envelope_from` | `string` | No | If passed, only return emails with this envelope_from |
+| `subject` | `string` | No | If passed, only return emails with this subject |
+| `headers` | `string` | No | If passed, only return emails with this substring in the headers |
+| `continue_token` | `string` | No | If passed, will continue the previous search if too many results were found. |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `request_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  email_count?: number | null,
+  emails?: {
+    attachment_count?: number | null,
+    attachments?: any[] | null,
+    byte_count?: number | null,
+    email_id?: string | null,
+    envelope_from?: string | null,
+    headers?: string | null,
+    recipient?: string | null,
+    sender?: string | null,
+    sent?: string | null,
+    subject?: string | null,
+    to?: string | null,
+    url?: string | null,
+    username?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Dedicated Ips
+
+### list
+
+`dedicatedIps.list`
+
+View Dedicated IP Addresses: retrieve a list of Dedicated IP addresses on this account
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.dedicatedIps.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ip_pools?: Record<string, any>[] | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -158,6 +995,189 @@ CNAME). Verification starts right away unless `auto_verify` is false.
     } | null
   }[]
 }
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### editReturnPath
+
+`domains.editReturnPath`
+
+Edit the return-path subdomain: a Return Path Subdomain is used to instruct the server where to return emails that are not deliverable (ie. Bounces). This endpoint allows you to edit a Return Path…
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.domains.editReturnPath({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The sender domain to edit the return-path subdomain for |
+| `old_subdomain` | `string` | Yes | The domains old return-path subdomain |
+| `new_subdomain` | `string` | Yes | The domains new return-path subdomain |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domains?: {
+    domain?: {
+      dkim_value?: string | null,
+      domain?: string | null,
+      suffix?: string | null,
+      rpath_selector?: string | null,
+      rpath_status?: string | null,
+      rpath_verified?: boolean | null,
+      rpath_value?: string | null,
+      dkim_status?: string | null,
+      dkim_verified?: boolean | null,
+      subdomain?: any | null,
+      fulldomain?: string | null,
+      dkim_selector?: string | null
+    } | null,
+    trackers?: {
+      cname_value?: string | null,
+      cname_status?: string | null,
+      cname_verified?: boolean | null,
+      domain?: string | null,
+      suffix?: string | null,
+      subdomain?: string | null,
+      enabled?: boolean | null,
+      fulldomain?: string | null
+    }[] | null,
+    subaccount_access?: {
+      subaccounts?: any[] | null,
+      future_subaccounts?: boolean | null
+    } | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### editSubaccountAccess
+
+`domains.editSubaccountAccess`
+
+Edit subaccount access: allow subaccounts to send from verified sender domains on the master account.
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.domains.editSubaccountAccess({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The sender domain to edit subaccount access for |
+| `subaccounts` | `any[]` | Yes | A list of subaccount_ids to be given access. ID's can be found by querying /subaccounts/search |
+| `future_subaccounts` | `boolean` | No | If set to true, will automatically add any new subaccounts to the access list |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string \| null` | No | — |
+| `subaccounts` | `any[] \| null` | No | — |
+| `future_subaccounts` | `boolean \| null` | No | — |
+| `data` | `any \| null` | No | — |
+
+
+
+---
+
+### editTracking
+
+`domains.editTracking`
+
+Edit the tracking subdomain: a Tracking Subdomain is used to monitor your email opens and clicks. This endpoint allows you to edit a tracking subdomain for a particular sender domain. Full details…
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.domains.editTracking({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | The sender domain to edit the tracking subdomain for |
+| `old_subdomain` | `string` | Yes | The domains old tracking subdomain |
+| `new_subdomain` | `string` | Yes | The domains new tracking subdomain |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domains?: {
+    domain?: {
+      dkim_value?: string | null,
+      domain?: string | null,
+      suffix?: string | null,
+      rpath_selector?: string | null,
+      rpath_status?: string | null,
+      rpath_verified?: boolean | null,
+      rpath_value?: string | null,
+      dkim_status?: string | null,
+      dkim_verified?: boolean | null,
+      subdomain?: any | null,
+      fulldomain?: string | null,
+      dkim_selector?: string | null
+    } | null,
+    trackers?: {
+      cname_value?: string | null,
+      cname_status?: string | null,
+      cname_verified?: boolean | null,
+      domain?: string | null,
+      suffix?: string | null,
+      subdomain?: string | null,
+      enabled?: boolean | null,
+      fulldomain?: string | null
+    }[] | null,
+    subaccount_access?: {
+      subaccounts?: any[] | null,
+      future_subaccounts?: boolean | null
+    } | null
+  }[] | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -268,7 +1288,7 @@ await corsair.smtp2go.api.domains.remove({ domain: 'example.com' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `request_id` | `string` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `object \| null` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -306,7 +1326,7 @@ await corsair.smtp2go.api.domains.remove({ domain: 'example.com' });
       future_subaccounts?: boolean | null
     } | null
   }[]
-}
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -419,7 +1439,7 @@ the cancellation with `email.searchScheduled`.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `request_id` | `string` | Yes | — |
-| `data` | `Record<string, unknown> \| string \| null` | No | — |
+| `data` | `Record<string, any> \| string \| null` | No | — |
 
 
 
@@ -565,7 +1585,7 @@ answers 404). `continue_token` is null on the last page.
 
 Send one email to up to 100 recipients, with HTML or plain text, a template, attachments, custom headers, or a schedule up to 3 days out; the result counts succeeded and failed recipients at HTTP 200, so check failed, not the status
 
-**Risk:** `write` · **Irreversible**
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.smtp2go.api.email.send({ sender: 'John Smith <john@example.com>', to: ['Jane Jones <jane@example.com>'], subject: 'Your receipt', text_body: 'Thanks for your order.', custom_headers: [{ header: 'Reply-To', value: 'support@example.com' }] });
@@ -650,7 +1670,7 @@ rather than the status code.
 {
   succeeded?: number | null,
   failed?: number | null,
-  failures?: Record<string, unknown>[] | null,
+  failures?: Record<string, any>[] | null,
   email_id?: string | null,
   schedule_id?: string | null
 }
@@ -668,7 +1688,7 @@ rather than the status code.
 
 Send up to 1000 independent messages in one call; the answer carries one email_id or schedule_id entry per message
 
-**Risk:** `write` · **Irreversible**
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.smtp2go.api.email.sendBatch({ emails: [{ sender: 'john@example.com', to: ['jane@example.com'], subject: 'Receipt 1', text_body: 'Thanks.' }, { sender: 'john@example.com', to: ['sam@example.com'], subject: 'Receipt 2', text_body: 'Thanks.' }] });
@@ -752,7 +1772,7 @@ a bare array with one entry per message, carrying an `email_id`, or a
 
 Send one pre-encoded MIME message, with the same per-recipient succeeded/failed accounting as email.send
 
-**Risk:** `write` · **Irreversible**
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.smtp2go.api.email.sendMime({ mime_email: 'MIME-Version: 1.0\r\nSubject: hi\r\n...', fastaccept: true });
@@ -785,10 +1805,855 @@ accounting as `email.send`.
 {
   succeeded?: number | null,
   failed?: number | null,
-  failures?: Record<string, unknown>[] | null,
+  failures?: Record<string, any>[] | null,
   email_id?: string | null,
   schedule_id?: string | null
 }
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ip Auth
+
+### list
+
+`ipAuth.list`
+
+View IP Auth: returns a list of all IP Auth entries that are managed by this account, or details of a specific IP Auth, when you include the [ip_address] in your request. If no…
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.ipAuth.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip_address` | `string` | No | If passed, a valid ip address of an existing IP Auth entry that you wish to view |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ip_address?: string | null,
+  description?: string | null,
+  status?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### patch
+
+`ipAuth.patch`
+
+Patch an IP Auth: patch an existing IP Auth ignoring missing properties
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.ipAuth.patch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip_address` | `string` | Yes | A valid IP address of your existing IP Auth that you wish to edit |
+| `description` | `string` | No | A comment or description of the IP Auth |
+| `custom_ratelimit` | `boolean` | No | If true, a custom rate limit will be enabled for this user, and defined by the custom_ratelimit_value and custom_ratelimit_period. |
+| `custom_ratelimit_value` | `number` | No | If passed, defines the limit of emails this user can send in the period specified in custom_ratelimit_period.Note: Only stores this value if custom_ratelimit is true. |
+| `custom_ratelimit_period` | `string` | No | If passed, defines the period for which this user will be limited to the number of emails specified in custom_ratelimit_value.Syntax: "\\ [hour[s]\|day[s]\|week[s]\|month[s]] [hh:mm:ss]".Examples:… |
+| `ip_pool` | `number` | No | If passed, any emails sent with this IP Auth will use dedicated IP's in this IP Pool, This value can be found on the /v3/dedicated_ips/view endpoint. |
+| `feedback_enabled` | `boolean` | No | If true, custom feedback via the unsubscribe footer will be enabled and defined by the below settings. |
+| `feedback_html` | `string` | No | The HTML content to insert into the custom feedback email body via the unsubscribe footer.System Variables (Only available here):Unsubscribe URL = %%UNSUBSCRIBE%% Email address = %%EMAIL%% |
+| `feedback_text` | `string` | No | The text content to insert into the custom feedback email body via the unsubscribe footer.System Variables (Only available here):Unsubscribe URL = %%UNSUBSCRIBE%% Email address = %%EMAIL%% |
+| `open_tracking_enabled` | `boolean` | No | If true, open tracking will be enabled for this IP Auth user. |
+| `click_tracking_enabled` | `boolean` | No | If true, click tracking will be enabled for this IP Auth. |
+| `archive_enabled` | `boolean` | No | If true, archiving (available on paid plans) will be enabled for this IP Auth. |
+| `audit_email` | `string` | No | If passed, this email will be BCC'd on all emails sent by this IP Auth. |
+| `bounce_notifications` | `string` | No | If passed, will control how bounce notifications are handled. Must be one of [from, drop, or a valid email address]. [from] will return the email to sender, [drop] will discard the event, and the… |
+| `status` | `string` | No | The initial status of the IP Auth user, one of ['allowed', 'blocked', 'sandbox']. |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `request_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ip_address?: string | null,
+  description?: string | null,
+  custom_rate_limit?: boolean | null,
+  custom_ratelimit_value?: number | null,
+  custom_ratelimit_period?: string | null,
+  default_ratelimit_value?: string | null,
+  default_ratelimit_period?: string | null,
+  ippool?: number | null,
+  feedback_enabled?: boolean | null,
+  feedback_html?: string | null,
+  feedback_text?: string | null,
+  open_tracking_enabled?: boolean | null,
+  click_tracking_enabled?: boolean | null,
+  archive_enabled?: boolean | null,
+  audit_email?: string | null,
+  bounce_notifications?: string | null,
+  status?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`ipAuth.remove`
+
+Remove an IP Auth entry: remove an IP Auth entry from your account (the IP can no longer send)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.smtp2go.api.ipAuth.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ip_address` | `string` | Yes | A valid ip address of an existing IP Auth entry that you wish to remove |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any \| null` | No | — |
+
+
+
+---
+
+## Single Senders
+
+### add
+
+`singleSenders.add`
+
+Add a single sender email: use the API to add a single sender email address to your account, to use from which to send mail. If the email address has previously been added and not yet verified,… (emails a verification link to the address)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.smtp2go.api.singleSenders.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address` | `string` | Yes | The email address that you wish to send emails from |
+| `message` | `string` | No | (Optional) If provided, will add a text only message to the email. |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `any \| null` | No | — |
+
+
+
+---
+
+### list
+
+`singleSenders.list`
+
+View single sender emails: returns a list of single sender email addresses on your account, along with their verification status. If you include a email_address, the response will only include…
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.singleSenders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address` | `string` | No | (Optional) If provided, only return email addresses that match value |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  request_id?: string | null,
+  senders?: {
+    email_address?: string | null,
+    verified?: boolean | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`singleSenders.remove`
+
+Remove a single sender email: remove a single sender email address from your account. Include the address to remove as the email_address parameter. (the address must be verified again)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.smtp2go.api.singleSenders.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address` | `string` | Yes | The email address to remove from your Single Sender Emails |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+
+
+
+---
+
+## Sms
+
+### listReceived
+
+`sms.listReceived`
+
+View received SMS: view received SMS messages.
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.sms.listReceived({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | No | ISO-8601 formatted datetime which defaults to 7 days ago at midnight. The range will be inclusive of start_date and exclusive of end_date. Timezone is UTC. |
+| `end_date` | `string` | No | ISO-8601 formatted datetime which defaults to now. Timezone is UTC. |
+| `unix_start` | `number` | No | Deprecated: this is a legacy method of selecting the start of the search period as a unix timestamp. This can be left empty to use the start_date. |
+| `unix_end` | `number` | No | Deprecated: this is a legacy method of selecting the end of the search period as a unix timestamp. This can be left empty to use the end_date. |
+| `username` | `string` | No | If passed will filter the results based on the username information on the message |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  request_id?: string | null,
+  messages?: {
+    source_address?: string | null,
+    destination_address?: string | null,
+    timestamp?: string | null,
+    content?: string | null,
+    message_id?: string | null,
+    username?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSent
+
+`sms.listSent`
+
+View sent SMS: view sent SMS messages.
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.sms.listSent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | No | ISO-8601 formatted datetime which defaults to 7 days ago at midnight. The range will be inclusive of start_date and exclusive of end_date. Timezone is UTC. |
+| `end_date` | `string` | No | ISO-8601 formatted datetime which defaults to now. Timezone is UTC. |
+| `username` | `string` | No | If passed will filter the results based on the username information on the message |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  request_id?: string | null,
+  messages?: {
+    id?: string | null,
+    timestamp?: string | null,
+    username?: string | null,
+    sender?: string | null,
+    sender_email?: string | null,
+    destination_address?: string | null,
+    destination_address_county?: string | null,
+    format?: string | null,
+    status?: string | null,
+    content?: string | null,
+    units?: number | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`sms.send`
+
+Send SMS: send an SMS message to one or more numbers, up to a maximum of 100 numbers. (sends text messages and spends SMS credit)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.smtp2go.api.sms.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `destination` | `string[]` | Yes | An array of SMS numbers to send the message to (Maximum: 100 numbers). Numbers should include the country code of the recipient, and can optionally start with a plus symbol (+). |
+| `sender` | `string` | No | The message will be sent from this number or sender-id (numbers must be in e.164 format). If left empty or the source and destination are located in different countries, we will attempt to use one… |
+| `content` | `string` | Yes | The content of the SMS. If more than 160 characters, will be sent as multiple units. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `request_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  statuses?: {
+    queued?: number | null
+  } | null,
+  total_sent?: number | null,
+  messages?: {
+    destination?: string | null,
+    message_id?: string | null,
+    status?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### summary
+
+`sms.summary`
+
+SMS Summary: retrieve a summary of SMS messages within a certain time range.
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.sms.summary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | No | ISO-8601 formatted datetime which defaults to current date at midnight. The range will be inclusive of start_date and exclusive of end_date. Timezone is UTC. |
+| `end_date` | `string` | No | ISO-8601 formatted datetime which defaults to now. Timezone is UTC. |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `request_id` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  total_messages?: number | null,
+  total_units?: number | null,
+  total_cost?: number | null,
+  subaccounts?: {
+    subaccount_id?: string | null,
+    total_messages?: number | null,
+    total_units?: number | null,
+    total_cost?: number | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Smtp Users
+
+### add
+
+`smtpUsers.add`
+
+Add an SMTP user: add a new SMTP user to your account. Full details of the available options for new user accounts can be found in the SMTP User Guide.
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.smtpUsers.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | A username to access the SMTP2GO service via SMTP. Length = 5 to 100 |
+| `email_password` | `string` | No | A valid password for your new SMTP User. Must have an entropy of at least 64 bits. Consider using a password generator or leave blank for an auto generated value. Ideally contain at least: 12… |
+| `description` | `string` | No | A comment or description of your new SMTP User |
+| `custom_ratelimit` | `boolean` | No | If true, a custom rate limit will be enabled for this user, and defined by the custom_ratelimit_value and custom_ratelimit_period. Default: false |
+| `custom_ratelimit_value` | `number` | No | If passed, defines the limit of emails this user can send in the period specified in custom_ratelimit_period.Note: Only stores this value if custom_ratelimit is true. |
+| `custom_ratelimit_period` | `string` | No | If passed, defines the period for which this user will be limited to the number of emails specified in custom_ratelimit_value.Syntax: "\\ [hour[s]\|day[s]\|week[s]\|month[s]] [hh:mm:ss]".Examples:… |
+| `ip_pool` | `number` | No | If passed, any emails sent with this SMTP user will use dedicated IP's in this IP Pool, This value can be found on the /v3/dedicated_ips/view endpoint. |
+| `feedback_enabled` | `boolean` | No | If true, custom feedback via the unsubscribe footer will be enabled and defined by the below settings. Default: false |
+| `feedback_domain` | `string` | No | The domain to insert into the custom feedback links via the unsubscribe footer. Default: blankWarning: In order to use the SMTP2go feedback handling feature, this parameter needs to be set to… |
+| `feedback_html` | `string` | No | The HTML content to insert into the custom feedback email body via the unsubscribe footer. Default: blank System Variables (Only available here):Unsubscribe URL = %%UNSUBSCRIBE%% Email address =… |
+| `feedback_text` | `string` | No | The text content to insert into the custom feedback email body via the unsubscribe footer. Default: blankSystem Variables (Only available here):Unsubscribe URL = %%UNSUBSCRIBE%% Email address =… |
+| `open_tracking_enabled` | `boolean` | No | If true, open tracking will be enabled for this user. Default: false |
+| `click_tracking_enabled` | `boolean` | No | If true, click tracking will be enabled for this user. Default: false |
+| `archive_enabled` | `boolean` | No | If true, archiving (available on paid plans) will be enabled for this user. Default: false. |
+| `audit_email` | `string` | No | If passed, this email will be BCC'd on all emails sent by this SMTP User |
+| `bounce_notifications` | `string` | No | If passed, will control how bounce notifications are handled. Must be one of [from, drop, or a valid email address]. [from] will return the email to sender, [drop] will discard the event, and the… |
+| `status` | `string` | No | The initial status of the SMTP user, one of ['allowed', 'blocked', 'sandbox'], defaults to 'allowed' |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  results?: {
+    comments?: string | null,
+    username?: string | null,
+    email_password?: string | null,
+    sending_allowed?: boolean | null,
+    custom_ratelimit?: boolean | null,
+    custom_ratelimit_value?: number | null,
+    custom_ratelimit_period?: string | null,
+    default_ratelimit_value?: string | null,
+    default_ratelimit_period?: string | null,
+    ippool?: number | null,
+    description?: string | null,
+    feedback_enabled?: boolean | null,
+    feedback_domain?: string | null,
+    feedback_html?: string | null,
+    feedback_text?: string | null,
+    archive_enabled?: boolean | null,
+    open_tracking_enabled?: boolean | null,
+    audit_email?: string | null,
+    bounce_notifications?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### edit
+
+`smtpUsers.edit`
+
+Edit SMTP user details: update an SMTP user's details with the parameters passed. Full details of the available options for SMTP user accounts is found in the SMTP User Guide.
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.smtpUsers.edit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | A valid username of your existing SMTP User that you wish to edit |
+| `email_password` | `string` | No | A valid password for your new SMTP User. Must have an entropy of at least 64 bits. Consider using a password generator or leave blank for an auto generated value. Ideally contain at least: 12… |
+| `description` | `string` | No | A comment or description of your new SMTP User |
+| `custom_ratelimit` | `boolean` | No | If true, a custom rate limit will be enabled for this user, and defined by the custom_ratelimit_value and custom_ratelimit_period. |
+| `custom_ratelimit_value` | `number` | No | If passed, defines the maximum number of emails this user can send in the custom_ratelimit_period. Values: 1 to 2147483647 |
+| `custom_ratelimit_period` | `string` | No | If passed, defines the period for which this user will be limited to the number of emails specified in custom_ratelimit_value. Syntax: " &#123;hour[s]\|day[s]\|week[s]\|month[s]&#125;[,hh:mm:ss]". Examples: "1… |
+| `ip_pool` | `number` | No | If passed, any emails sent with this SMTP user will use dedicated IP's in this IP Pool, This value can be found on the /v3/dedicated_ips/view endpoint. |
+| `feedback_enabled` | `boolean` | No | If true, custom feedback via the unsubscribe footer will be enabled and defined by the below settings. Default: false |
+| `feedback_domain` | `string` | No | The domain to insert into the custom feedback links via the unsubscribe footer |
+| `feedback_html` | `string` | No | The HTML content to insert into the custom feedback email body via the unsubscribe footer |
+| `feedback_text` | `string` | No | The text content to insert into the custom feedback email body via the unsubscribe footer |
+| `open_tracking_enabled` | `boolean` | No | If true, open tracking will be enabled for this user. Default: false |
+| `click_tracking_enabled` | `boolean` | No | If true, click tracking will be enabled for this user. Default: false |
+| `archive_enabled` | `boolean` | No | If true, archiving will be enabled for this user. Default: false |
+| `audit_email` | `string` | No | If passed, this email will be BCC'd on all emails sent by this SMTP User |
+| `bounce_notifications` | `string` | No | If passed, will control how bounce notifications are handled. Must be one of [from, drop, or a valid email address]. [from] will return the email to sender, [drop] will discard the event, and the… |
+| `status` | `string` | No | If passed will set the status of the SMTP user, one of ['allowed', 'blocked', 'sandbox'] |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  results?: {
+    comments?: string | null,
+    username?: string | null,
+    email_password?: string | null,
+    sending_allowed?: boolean | null,
+    custom_ratelimit?: boolean | null,
+    custom_ratelimit_value?: number | null,
+    custom_ratelimit_period?: string | null,
+    default_ratelimit_value?: string | null,
+    default_ratelimit_period?: string | null,
+    ippool?: number | null,
+    description?: string | null,
+    feedback_enabled?: boolean | null,
+    feedback_domain?: string | null,
+    feedback_html?: string | null,
+    feedback_text?: string | null,
+    archive_enabled?: boolean | null,
+    open_tracking_enabled?: boolean | null,
+    audit_email?: string | null,
+    bounce_notifications?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`smtpUsers.list`
+
+View SMTP users: returns a list of all SMTP users that are managed by this account, or details of a specific user, when you include the [username] in your request. If no users are…
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.smtpUsers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | No | If passed, a valid SMTP2GO username of your existing SMTP User that you wish to view |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  results?: {
+    comments?: string | null,
+    username?: string | null,
+    email_password?: string | null,
+    sending_allowed?: boolean | null,
+    custom_ratelimit?: boolean | null,
+    custom_ratelimit_value?: number | null,
+    custom_ratelimit_period?: string | null,
+    default_ratelimit_value?: string | null,
+    default_ratelimit_period?: string | null,
+    ippool?: number | null,
+    description?: string | null,
+    feedback_enabled?: boolean | null,
+    feedback_domain?: string | null,
+    feedback_html?: string | null,
+    feedback_text?: string | null,
+    archive_enabled?: boolean | null,
+    open_tracking_enabled?: boolean | null,
+    audit_email?: string | null,
+    bounce_notifications?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### patch
+
+`smtpUsers.patch`
+
+Patch an SMTP user: patch an existing SMTP user ignoring missing properties
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.smtpUsers.patch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | A valid username of your existing SMTP User that you wish to edit |
+| `email_password` | `string` | No | A valid SMTP2GO password for your existing SMTP User. Must have an entropy of at least 64 bits. Consider using a password generator or leave blank for an auto generated value. |
+| `description` | `string` | No | A comment or description of the SMTP user |
+| `custom_ratelimit` | `boolean` | No | If true, a custom rate limit will be enabled for this user, and defined by the custom_ratelimit_value and custom_ratelimit_period. |
+| `custom_ratelimit_value` | `number` | No | If passed, defines the limit of emails this user can send in the period specified in custom_ratelimit_period.Note: Only stores this value if custom_ratelimit is true. |
+| `custom_ratelimit_period` | `string` | No | If passed, defines the period for which this user will be limited to the number of emails specified in custom_ratelimit_value.Syntax: "\\ [hour[s]\|day[s]\|week[s]\|month[s]] [hh:mm:ss]".Examples:… |
+| `ip_pool` | `number` | No | If passed, any emails sent with this API key will use dedicated IP's in this IP Pool, This value can be found on the /v3/dedicated_ips/view endpoint. |
+| `feedback_enabled` | `boolean` | No | If true, custom feedback via the unsubscribe footer will be enabled and defined by the below settings. |
+| `feedback_html` | `string` | No | The HTML content to insert into the custom feedback email body via the unsubscribe footer.System Variables (Only available here):Unsubscribe URL = %%UNSUBSCRIBE%% Email address = %%EMAIL%% |
+| `feedback_text` | `string` | No | The text content to insert into the custom feedback email body via the unsubscribe footer.System Variables (Only available here):Unsubscribe URL = %%UNSUBSCRIBE%% Email address = %%EMAIL%% |
+| `open_tracking_enabled` | `boolean` | No | If true, open tracking will be enabled for this SMTP user. |
+| `click_tracking_enabled` | `boolean` | No | If true, click tracking will be enabled for this SMTP user. |
+| `archive_enabled` | `boolean` | No | If true, archiving (available on paid plans) will be enabled for this SMTP user. |
+| `audit_email` | `string` | No | If passed, this email will be BCC'd on all emails sent by this SMTP user. |
+| `bounce_notifications` | `string` | No | If passed, will control how bounce notifications are handled. Must be one of [from, drop, or a valid email address]. [from] will return the email to sender, [drop] will discard the event, and the… |
+| `status` | `string` | No | The initial status of the SMTP user, one of ['allowed', 'blocked', 'sandbox']. |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  results?: {
+    comments?: string | null,
+    username?: string | null,
+    email_password?: string | null,
+    sending_allowed?: boolean | null,
+    custom_ratelimit?: boolean | null,
+    custom_ratelimit_value?: number | null,
+    custom_ratelimit_period?: string | null,
+    default_ratelimit_value?: string | null,
+    default_ratelimit_period?: string | null,
+    ippool?: number | null,
+    description?: string | null,
+    feedback_enabled?: boolean | null,
+    feedback_domain?: string | null,
+    feedback_html?: string | null,
+    feedback_text?: string | null,
+    archive_enabled?: boolean | null,
+    open_tracking_enabled?: boolean | null,
+    audit_email?: string | null,
+    bounce_notifications?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`smtpUsers.remove`
+
+Remove an SMTP user: remove an SMTP user from your account (deletes the SMTP login)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.smtp2go.api.smtpUsers.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | A valid SMTP2GO username of your existing SMTP User that you wish to remove |
+| `subaccount_id` | `string` | No | If you wish to make this API call on behalf of a subaccount then include its unique ID here |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  results?: {
+    comments?: string | null,
+    username?: string | null,
+    email_password?: string | null,
+    sending_allowed?: boolean | null,
+    custom_ratelimit?: boolean | null,
+    custom_ratelimit_value?: number | null,
+    custom_ratelimit_period?: string | null,
+    default_ratelimit_value?: string | null,
+    default_ratelimit_period?: string | null,
+    ippool?: number | null,
+    description?: string | null,
+    feedback_enabled?: boolean | null,
+    feedback_domain?: string | null,
+    feedback_html?: string | null,
+    feedback_text?: string | null,
+    archive_enabled?: boolean | null,
+    open_tracking_enabled?: boolean | null,
+    audit_email?: string | null,
+    bounce_notifications?: string | null
+  }[] | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1101,6 +2966,261 @@ await corsair.smtp2go.api.stats.unsubscribes({});
 
 ---
 
+## Subaccounts
+
+### add
+
+`subaccounts.add`
+
+Add a subaccount: adds a new subaccount on your master account. Note: This end-point is rate limited to 50 calls per hour.
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.subaccounts.add({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fullname` | `string` | Yes | A full name used for the subaccount |
+| `subaccount_email` | `string` | No | An optional email address for the first team member in the subaccount. An email invitation will be sent to this address. |
+| `limit` | `number` | No | The number of emails the subaccount is allowed to send per billing cycle. Valid values:2000, 5000, 10000, 20000, 30000, 40000, 50000, 60000, 80000, 100000, 250000, 500000, 1000000, 2000000, 3000000,… |
+| `dedicated_ip` | `boolean` | No | Auto assign a dedicated IP to the subaccount (Only available if limit is greater than 100,000) |
+| `archiving` | `boolean` | No | Choose whether the subaccount is allowed to enable archiving. You still need to turn on archiving for individual senders within the subaccount. |
+| `enforce_2fa` | `boolean` | No | Enforce team members of this subaccount to use 2FA. |
+| `enable_sms` | `boolean` | No | Enable SMS messaging for the subaccount. Additional charges apply. |
+| `sms_limit` | `number` | No | Your subaccount will be able to send up to this monthly limit of SMS messages. Their sending will also be limited by the master account's overall monthly limit. |
+| `ip_pool` | `number` | No | If passed, will set the default ip_pool of this subaccount and any emails sent will use dedicated IP's in this IP Pool, This value can be found on the /v3/dedicated_ips/view endpoint. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string | null,
+  id?: string | null,
+  plan_size?: number | null,
+  plan_used?: number | null,
+  plan_remaining?: number | null,
+  state?: string | null,
+  dedicated_ip?: boolean | null,
+  archiving?: boolean | null,
+  enforce_2fa?: boolean | null,
+  sms_enabled?: boolean | null,
+  sms_limit?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### close
+
+`subaccounts.close`
+
+Close a subaccount: changes the status of an Active subaccount to Closed (stops the subaccount sending)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.smtp2go.api.subaccounts.close({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id of the subaccount you want to close |
+| `email` | `string` | No | The email address of the subaccount you want to close |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `string \| null` | No | — |
+
+
+
+---
+
+### edit
+
+`subaccounts.edit`
+
+Update a subaccount: changes the details on an existing subaccount
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.subaccounts.edit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The id of an existing subaccount |
+| `fullname` | `string` | No | If provided, will set to the new full name for the subaccount |
+| `limit` | `number` | No | If provided, will set to the new limit for the subaccount |
+| `dedicated_ip` | `boolean` | No | If provided, will set to the new dedicated IP address for the subaccount (If limit is greater than 100,000) |
+| `archiving` | `boolean` | No | Choose whether the subaccount is allowed to enable archiving. You still need to turn on archiving for individual senders within the subaccount. |
+| `enforce_2fa` | `boolean` | No | Enforce team members of this subaccount to use 2FA. |
+| `enable_sms` | `boolean` | No | Enable SMS messaging for the subaccount. Additional charges apply. |
+| `sms_limit` | `number` | No | Your subaccount will be able to send up to this monthly limit of SMS messages. Their sending will also be limited by the master account's overall monthly limit. |
+| `ip_pool` | `number` | No | If passed, will set the default ip_pool of this subaccount and any emails sent will use dedicated IP's in this IP Pool, This value can be found on the /v3/dedicated_ips/view endpoint. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  name?: string | null,
+  id?: string | null,
+  plan_size?: number | null,
+  plan_used?: number | null,
+  plan_remaining?: number | null,
+  state?: string | null,
+  dedicated_ip?: boolean | null,
+  archiving?: boolean | null,
+  enforce_2fa?: boolean | null,
+  sms_enabled?: boolean | null,
+  sms_limit?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reopen
+
+`subaccounts.reopen`
+
+Reopen a closed subaccount: changes the status of a Closed subaccount back to Active
+
+**Risk:** `write`
+
+```ts
+await corsair.smtp2go.api.subaccounts.reopen({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | No | The email address of the subaccount you want to reopen |
+| `id` | `string` | Yes | The id of the subaccount you want to reopen |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  email?: string | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`subaccounts.search`
+
+View subaccounts: returns any subaccounts that match search criteria
+
+**Risk:** `read`
+
+```ts
+await corsair.smtp2go.api.subaccounts.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fuzzy_search` | `boolean` | No | Determines if search terms match complete field values and are case sensitive (false) or partial fields and are case insensitive (true). Default: true |
+| `search_terms` | `string[]` | No | Return subaccounts with one or more of the strings in the following array.Note: See 'fuzzy_search' for impact on case sensitivity |
+| `states` | `string` | No | Controls which states you will be searched Valid values: all, active, closed, suspended |
+| `sort_direction` | `string` | No | Sort direction, sorts either asc or desc by subaccount name |
+| `page_size` | `number` | No | Number of subaccounts to retrieve per call |
+| `continue_token` | `string` | No | A token provided by a prior call to this endpoint, passing this will cause it to fetch the next page of results |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `request_id` | `string \| null` | No | — |
+| `data` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  continue_token?: any | null,
+  total_count?: number | null,
+  subaccounts?: {
+    email?: string | null,
+    state?: string | null,
+    plan_size?: number | null,
+    plan_remaining?: number | null,
+    plan_used?: number | null,
+    name?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Suppressions
 
 ### add
@@ -1281,7 +3401,7 @@ await corsair.smtp2go.api.templates.add({ id: 'order-receipt', template_name: 'O
 | `subject` | `string` | Yes | — |
 | `html_body` | `string` | Yes | — |
 | `text_body` | `string` | Yes | — |
-| `template_variables` | `Record<string, unknown>` | No | — |
+| `template_variables` | `Record<string, any>` | No | — |
 | `tags` | `string[]` | No | — |
 
 Unusually, the API requires the caller to choose the template `id`.
@@ -1307,7 +3427,7 @@ Unusually, the API requires the caller to choose the template `id`.
   subject?: string | null,
   html_body?: string | null,
   text_body?: string | null,
-  template_variables?: Record<string, unknown> | null,
+  template_variables?: Record<string, any> | null,
   tags?: string[] | null,
   last_updated?: string | null
 }
@@ -1375,7 +3495,7 @@ await corsair.smtp2go.api.templates.edit({ id: 'order-receipt', subject: 'New su
 | `subject` | `string` | No | — |
 | `html_body` | `string` | No | — |
 | `text_body` | `string` | No | — |
-| `template_variables` | `Record<string, unknown>` | No | — |
+| `template_variables` | `Record<string, any>` | No | — |
 | `tags` | `string[]` | No | — |
 
 
@@ -1398,7 +3518,7 @@ await corsair.smtp2go.api.templates.edit({ id: 'order-receipt', subject: 'New su
   subject?: string | null,
   html_body?: string | null,
   text_body?: string | null,
-  template_variables?: Record<string, unknown> | null,
+  template_variables?: Record<string, any> | null,
   tags?: string[] | null,
   last_updated?: string | null
 }
@@ -1506,7 +3626,7 @@ await corsair.smtp2go.api.templates.view({ id: '5355878' });
   html_body?: string | null,
   text_body?: string | null,
   tags?: string[] | null,
-  template_variables?: Record<string, unknown> | null,
+  template_variables?: Record<string, any> | null,
   last_updated?: string | null
 }
 ```
@@ -1588,12 +3708,12 @@ receive these deliveries; it manages the registration only.
 
 `webhooks.edit`
 
-Change a webhook registration by id, including its event list, URL or disabled state
+Change a webhook registration by id; the edit replaces its settings, so pass url every time and auth_header_type/auth_header_value again or the Authorization header is dropped
 
 **Risk:** `write`
 
 ```ts
-await corsair.smtp2go.api.webhooks.edit({ id: 4320, disabled: true });
+await corsair.smtp2go.api.webhooks.edit({ id: 4320, url: 'https://example.com/hooks/smtp2go', disabled: true, auth_header_type: 'bearer', auth_header_value: '<token>' });
 ```
 
 **Input**
@@ -1601,7 +3721,7 @@ await corsair.smtp2go.api.webhooks.edit({ id: 4320, disabled: true });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | The webhook registration to change. |
-| `url` | `string` | No | — |
+| `url` | `string` | Yes | The webhook URL; required on every edit, even when unchanged. |
 | `events` | `string[]` | No | — |
 | `sms_events` | `string[]` | No | — |
 | `headers` | `string[]` | No | — |
@@ -1675,7 +3795,7 @@ The documented answer is a single registration object with its `events`,
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `request_id` | `string` | Yes | — |
-| `data` | `object` | Yes | — |
+| `data` | `object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -1693,7 +3813,7 @@ The documented answer is a single registration object with its `events`,
   auth_header_value?: string | null,
   disabled?: boolean | null,
   custom_headers?: string[] | null
-}
+}[]
 ```
 </Accordion>
 </AccordionGroup>

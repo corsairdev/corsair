@@ -427,7 +427,7 @@ describe('SMTP2GO request shapes', () => {
 	});
 
 	it('webhooks.list posts to /webhook/view', async () => {
-		mockFetch(ok(webhookViewOk));
+		mockFetch(ok({ ...webhookViewOk, data: [webhookViewOk.data] }));
 
 		await endpoints.webhooks.list(makeCtx(), {});
 
@@ -455,10 +455,18 @@ describe('SMTP2GO request shapes', () => {
 	it('webhooks.edit posts the id and fields to /webhook/edit', async () => {
 		mockFetch(ok(webhookEditOk));
 
-		await endpoints.webhooks.edit(makeCtx(), { id: 4320, disabled: true });
+		await endpoints.webhooks.edit(makeCtx(), {
+			id: 4320,
+			url: 'https://example.com/test-webhook',
+			disabled: true,
+		});
 
 		expect(lastCall().url).toBe(`${BASE}/webhook/edit`);
-		expect(sentBody()).toEqual({ id: 4320, disabled: true });
+		expect(sentBody()).toEqual({
+			id: 4320,
+			url: 'https://example.com/test-webhook',
+			disabled: true,
+		});
 	});
 
 	it('webhooks.remove posts the id to /webhook/remove', async () => {
