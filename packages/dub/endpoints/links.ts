@@ -162,6 +162,19 @@ export const count: DubEndpoints['linksCount'] = (ctx, input) =>
 				groupBy,
 			},
 		}),
+		{
+			// Dub answers a number without groupBy and an array with it; any
+			// other body (an error envelope on a 200) must fail, not pass as a count.
+			shape: (raw, { groupBy }) => {
+				const fits = groupBy ? Array.isArray(raw) : typeof raw === 'number';
+				if (!fits) {
+					throw new Error(
+						`[dub] links.count expected ${groupBy ? 'an array of grouped counts' : 'a number'}`,
+					);
+				}
+				return raw;
+			},
+		},
 	);
 
 export const remove: DubEndpoints['linksDelete'] = (ctx, input) =>

@@ -71,15 +71,21 @@ export class DubTransportError extends Error {
 	readonly method: string;
 	readonly path: string;
 
-	constructor(method: string, path: string, cause: unknown) {
-		const message =
+	constructor(method: string, path: string, cause: unknown, key?: string) {
+		const raw =
 			cause instanceof Error || cause instanceof DOMException
 				? cause.message
 				: 'Dub request failed before a response';
-		super(message, { cause });
+		// A key Headers refuses (a newline in it) makes fetch throw a message
+		// that quotes it: scrub it, and keep a cause only when it is clean.
+		const leaks = Boolean(key) && raw.includes(String(key));
+		super(
+			leaks ? raw.split(String(key)).join('[REDACTED]') : raw,
+			leaks ? undefined : { cause },
+		);
 		this.name = 'DubTransportError';
 		this.method = method;
-		this.path = path;
+		this.path = redactPath(path);
 	}
 }
 
@@ -100,11 +106,11 @@ export function withoutRequestData(error: ApiError): ApiError {
 	return new ApiError(
 		{
 			method: error.request.method,
-			url: error.request.url,
+			url: redactPath(error.request.url),
 			body: error.request.body === undefined ? undefined : REDACTED,
 		},
 		{
-			url: error.url.split('?')[0] ?? error.url,
+			url: redactPath(error.url.split('?')[0] ?? error.url),
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
@@ -134,15 +140,40 @@ export function withoutRequestData(error: ApiError): ApiError {
 	);
 }
 
-const EMAIL_PATTERN = /[^\s@"'<>(),;:]+@[^\s@"'<>(),;:]+\.[^\s@"'<>(),;:]+/g;
+function looksLikeEmail(token: string): boolean {
+	const at = token.indexOf('@');
+	if (at < 1) return false;
+	const dot = token.indexOf('.', at + 2);
+	return dot > at + 1 && dot < token.length - 1;
+}
 
 /**
  * Dub echoes some input in its messages (an invalid tag name, a taken key),
- * which can carry a customer's email address. Addresses are replaced before
- * the message lands in an error.
+ * which can carry a customer's email address. Words that look like an
+ * address are replaced. A split instead of a regex keeps this linear.
  */
 export function redactEmails(text: string): string {
-	return text.replace(EMAIL_PATTERN, '[email]');
+	return text
+		.split(' ')
+		.map((word) => (looksLikeEmail(word) ? '[email]' : word))
+		.join(' ');
+}
+
+/**
+ * A request path with addresses taken out: `/customers/ext_<email>` carries
+ * a customer's address in the URL. Decoded first so `%40` is seen.
+ */
+export function redactPath(path: string): string {
+	let decoded = path;
+	try {
+		decoded = decodeURIComponent(path);
+	} catch {
+		// keep the raw path
+	}
+	return decoded
+		.split('/')
+		.map((part) => (looksLikeEmail(part) ? '[redacted]' : part))
+		.join('/');
 }
 
 export function describeDubError(
@@ -207,6 +238,6 @@ export async function makeDubRequest(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) throw withoutRequestData(error);
-		throw new DubTransportError(method, path, error);
+		throw new DubTransportError(method, path, error, ctx.key);
 	}
 }

@@ -34,7 +34,7 @@ if (!apiKey) {
 
 const live = apiKey ? describe : describe.skip;
 
-type Outcome = 'ok' | 'plan' | 'not_found' | 'error';
+type Outcome = 'ok' | 'plan' | 'not_found' | 'not_called' | 'error';
 
 // unknown: whatever the step returned or threw, summarised for the log.
 function record(step: string, outcome: Outcome, detail: unknown) {
@@ -58,15 +58,18 @@ function summarise(result: unknown): unknown {
 
 live('Dub live', () => {
 	jest.setTimeout(300_000);
-	const testDb = createTestDatabase();
-	const corsair = createCorsair({
-		plugins: [dub({ key: apiKey })],
-		database: testDb.db,
-		kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
-	});
-	const api = corsair.dub.api;
+	// Built in beforeAll, so a skipped suite opens no database.
+	let testDb: ReturnType<typeof createTestDatabase> | undefined;
+	let api: ReturnType<typeof makeClient>;
+	function makeClient(db: ReturnType<typeof createTestDatabase>['db']) {
+		return createCorsair({
+			plugins: [dub({ key: apiKey })],
+			database: db,
+			kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
+		}).dub.api;
+	}
 	const stamp = Date.now().toString(36);
-	const cleanup: Array<() => Promise<unknown>> = [];
+	const cleanup: Array<[string, () => Promise<unknown>]> = [];
 	const outcomes: Record<string, Outcome> = {};
 
 	/**
@@ -99,7 +102,8 @@ live('Dub live', () => {
 				outcomes[name] = 'plan';
 				return undefined;
 			}
-			if (options.allowNotFound && (status === 404 || status === 400)) {
+			// Only a 404 for a made-up id proves the lookup ran; a 400 is a bad request.
+			if (options.allowNotFound && status === 404) {
 				record(name, 'not_found', message);
 				outcomes[name] = 'not_found';
 				return undefined;
@@ -111,24 +115,43 @@ live('Dub live', () => {
 	}
 
 	beforeAll(async () => {
+		testDb = createTestDatabase();
 		await createIntegrationAndAccount(testDb.db, 'dub', 'default');
+		api = makeClient(testDb.db);
 	});
 
 	afterAll(async () => {
-		for (const undo of cleanup.reverse()) {
-			await undo().catch(() => undefined);
+		const leftovers: string[] = [];
+		try {
+			for (const [name, undo] of cleanup.reverse()) {
+				try {
+					await undo();
+				} catch (error) {
+					// Already gone is fine; anything else is a leftover to report.
+					if (!(error instanceof ApiError && error.status === 404)) {
+						leftovers.push(name);
+					}
+				}
+			}
+			record('cleanup', leftovers.length ? 'error' : 'ok', { leftovers });
+			record('summary', 'ok', outcomes);
+		} finally {
+			testDb?.cleanup();
 		}
-		record('summary', 'ok', outcomes);
-		testDb.cleanup();
+		if (leftovers.length)
+			throw new Error(`left behind: ${leftovers.join(', ')}`);
 	});
 
 	let linkId = '';
 	let linkKey = '';
 
 	it('links: create, read, update, upsert, bulk, count, delete', async () => {
+		// A per-run destination: upsert matches by url, so a fixed url could
+		// pick up another link.
+		const destination = `https://corsair.dev/?live=dub-${stamp}`;
 		const created = await step('links.create', () =>
 			api.links.create({
-				url: 'https://corsair.dev/?live=dub',
+				url: destination,
 				key: `corsair-${stamp}`,
 				externalId: `corsair-live-${stamp}`,
 				comments: 'Corsair plugin live test',
@@ -137,7 +160,7 @@ live('Dub live', () => {
 		if (!created) throw new Error('links.create failed');
 		linkId = created.id;
 		linkKey = created.key ?? '';
-		cleanup.push(() => api.links.delete({ linkId }));
+		cleanup.push([`link ${linkId}`, () => api.links.delete({ linkId })]);
 
 		const got = await step('links.get', () => api.links.get({ linkId }));
 		expect(got?.id).toBe(linkId);
@@ -150,7 +173,7 @@ live('Dub live', () => {
 			api.links.update({ linkId, comments: 'updated by the live suite' }),
 		);
 		const upserted = await step('links.upsert', () =>
-			api.links.upsert({ url: 'https://corsair.dev/?live=dub', key: linkKey }),
+			api.links.upsert({ url: destination, key: linkKey }),
 		);
 		expect(upserted?.id).toBe(linkId);
 
@@ -165,6 +188,10 @@ live('Dub live', () => {
 		const bulkIds = (bulk ?? [])
 			.map((entry) => ('id' in entry ? (entry.id as string) : undefined))
 			.filter((id): id is string => Boolean(id));
+		// Cleanup first, so a failed assertion below leaves nothing behind.
+		for (const id of bulkIds) {
+			cleanup.push([`link ${id}`, () => api.links.delete({ linkId: id })]);
+		}
 		expect(bulkIds).toHaveLength(2);
 		await step('links.bulkUpdate', () =>
 			api.links.bulkUpdate({
@@ -193,7 +220,7 @@ live('Dub live', () => {
 			api.tags.create({ name: `corsair-${stamp}` }),
 		);
 		if (tag) {
-			cleanup.push(() => api.tags.delete({ id: tag.id }));
+			cleanup.push([`tag ${tag.id}`, () => api.tags.delete({ id: tag.id })]);
 			await step('tags.update', () =>
 				api.tags.update({ id: tag.id, name: `corsair-${stamp}-2` }),
 			);
@@ -208,7 +235,10 @@ live('Dub live', () => {
 		);
 		await step('folders.list', () => api.folders.list({}));
 		if (folder) {
-			cleanup.push(() => api.folders.delete({ id: folder.id }));
+			cleanup.push([
+				`folder ${folder.id}`,
+				() => api.folders.delete({ id: folder.id }),
+			]);
 			await step('folders.update', () =>
 				api.folders.update({ id: folder.id, name: `corsair-${stamp}-2` }),
 			);
@@ -230,12 +260,25 @@ live('Dub live', () => {
 		await step('domains.checkStatus', () =>
 			api.domains.checkStatus({ domains: `corsair-${stamp}.link` }),
 		);
+		if (!testDomain) {
+			for (const name of [
+				'domains.create',
+				'domains.update',
+				'domains.delete',
+			]) {
+				record(name, 'not_called', 'DUB_TEST_DOMAIN not set');
+				outcomes[name] = 'not_called';
+			}
+		}
 		if (testDomain) {
 			const domain = await step('domains.create', () =>
 				api.domains.create({ slug: testDomain }),
 			);
 			if (domain) {
-				cleanup.push(() => api.domains.delete({ slug: testDomain }));
+				cleanup.push([
+					`domain ${testDomain}`,
+					() => api.domains.delete({ slug: testDomain }),
+				]);
 				await step('domains.update', () =>
 					api.domains.update({ slug: testDomain, archived: true }),
 				);
@@ -295,8 +338,8 @@ live('Dub live', () => {
 			}
 			if (testCase.name === 'domains.register') {
 				// Claims a real .link domain on paid plans: never in a live suite.
-				record(testCase.name, 'plan', 'skipped: claims a domain');
-				outcomes[testCase.name] = 'plan';
+				record(testCase.name, 'not_called', 'claims a real domain');
+				outcomes[testCase.name] = 'not_called';
 				continue;
 			}
 			const [group, action] = testCase.name.split('.') as [string, string];
@@ -324,8 +367,13 @@ live('Dub live', () => {
 		record('error.links.get.404', 'ok', (error as Error).message);
 	});
 
-	it('every operation answered', () => {
+	it('links.delete, then every operation has an outcome', async () => {
+		if (!linkId) throw new Error('links.create did not run');
+		await step('links.delete', () => api.links.delete({ linkId }));
 		const errors = Object.entries(outcomes).filter(([, o]) => o === 'error');
 		expect(errors).toEqual([]);
+		const expected = Object.keys(dub().endpointMeta ?? {}).sort();
+		expect(expected).toHaveLength(63);
+		expect(expected.filter((name) => !outcomes[name])).toEqual([]);
 	});
 });

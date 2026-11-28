@@ -107,14 +107,19 @@ export const generatedCases: {
 		name: 'partners.attributeReferringPartner',
 		method: 'POST',
 		path: '/partners/attribute-referring-partner',
-		input: {},
+		input: {
+			partnerId: 'pn_example',
+			referredByPartnerId: 'pn_referrer',
+		},
 	},
 	{
 		id: 'partnersUpdateTags',
 		name: 'partners.updateTags',
 		method: 'POST',
 		path: '/partners/update-tags',
-		input: {},
+		input: {
+			partnerIds: ['pn_example'],
+		},
 	},
 	{
 		id: 'partnersUpdateGroup',
@@ -123,6 +128,7 @@ export const generatedCases: {
 		path: '/partners/update-group',
 		input: {
 			groupId: 'example',
+			partnerIds: ['pn_example'],
 		},
 	},
 	{
@@ -270,6 +276,7 @@ export const generatedCases: {
 		path: '/messages',
 		input: {
 			text: 'example',
+			partnerId: 'pn_example',
 		},
 	},
 ];

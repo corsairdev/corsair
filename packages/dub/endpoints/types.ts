@@ -439,6 +439,7 @@ export type LinksCountInput = z.input<typeof LinksCountInputSchema>;
 // A bare number without groupBy. With groupBy Dub returns the grouped query
 // result directly: an array of rows such as { domain, _count } (see
 // apps/web/lib/api/links/get-links-count.ts), whose keys follow the groupBy.
+// links.count checks the answer matches the mode it asked for.
 const LinksCountResponseSchema = z.union([
 	z.number(),
 	z.array(
@@ -446,8 +447,6 @@ const LinksCountResponseSchema = z.union([
 			.object({ _count: z.union([z.number(), z.object({}).loose()]).nullish() })
 			.loose(),
 	),
-	// unknown: kept for an object-shaped grouped answer.
-	z.record(z.string(), z.unknown()),
 ]);
 
 export type LinksCountResponse = z.infer<typeof LinksCountResponseSchema>;
@@ -1143,18 +1142,25 @@ const CustomersListResponseSchema = z.object({
 
 export type CustomersListResponse = z.infer<typeof CustomersListResponseSchema>;
 
+const IncludeExpandedFieldsSchema = z
+	.boolean()
+	.optional()
+	.describe("Also return the customer's link, partner and discount.");
+
 const CustomerSelectorInputSchema = z.object({
 	id: z
 		.string()
 		.describe(
 			"The customer's ID on Dub, or their externalId prefixed with ext_.",
 		),
+	includeExpandedFields: IncludeExpandedFieldsSchema,
 });
 
 export type CustomerSelectorInput = z.input<typeof CustomerSelectorInputSchema>;
 
 const CustomersUpdateInputSchema = z.object({
 	id: z.string(),
+	includeExpandedFields: IncludeExpandedFieldsSchema,
 	email: EmailSchema.nullish(),
 	name: z.string().max(100).nullish(),
 	avatar: z.string().nullish(),

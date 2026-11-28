@@ -130,7 +130,7 @@ describe('links', () => {
 	});
 
 	it('list fails loudly when a 2xx body is not the bare array', async () => {
-		respond(errorEnvelope, 200);
+		respond(errorEnvelope('bad_request', 'Malformed.'), 200);
 
 		await expect(invoke(Links.list, {})).rejects.toThrow();
 	});
@@ -225,7 +225,7 @@ describe('links', () => {
 	});
 
 	it('count queries /links/count with groupBy', async () => {
-		respond(7);
+		respond([{ domain: 'dub.sh', _count: 7 }]);
 
 		const result = await invoke(Links.count, {
 			groupBy: 'domain',
@@ -237,16 +237,20 @@ describe('links', () => {
 			path: '/links/count',
 			query: { groupBy: 'domain', search: 'a' },
 		});
-		expect(result).toBe(7);
+		expect(result).toEqual([{ domain: 'dub.sh', _count: 7 }]);
 	});
 
-	it('count accepts a grouped object answer', async () => {
-		respond({ 'dub.sh': 5, 'acme.link': 2 });
+	it('count refuses an answer that does not match the requested mode', async () => {
+		respond(errorEnvelope('bad_request', 'Malformed.'), 200);
+		await expect(invoke(Links.count, {})).rejects.toThrow(/expected a number/);
 
-		await expect(invoke(Links.count, {})).resolves.toEqual({
-			'dub.sh': 5,
-			'acme.link': 2,
-		});
+		respond(7);
+		await expect(invoke(Links.count, { groupBy: 'domain' })).rejects.toThrow(
+			/expected an array/,
+		);
+
+		respond(0);
+		await expect(invoke(Links.count, {})).resolves.toBe(0);
 	});
 
 	it('count accepts the grouped array Dub returns with groupBy', async () => {
@@ -888,5 +892,35 @@ describe('error surfacing', () => {
 			status: 429,
 			body: { error: { code: 'rate_limit_exceeded' } },
 		});
+		expect(fetchMock).toHaveBeenCalledTimes(4);
+	});
+
+	it('keeps a customer address out of the error URL', async () => {
+		respond(errorEnvelope('not_found', 'Customer not found.'), 404);
+		const error = await invoke(Customers.get, {
+			id: 'ext_buyer@example.com',
+		}).catch((e: unknown) => e);
+		const text = JSON.stringify(error) + String((error as Error).message);
+		expect(text).not.toContain('buyer@example.com');
+		expect(text).not.toContain('buyer%40example.com');
+	});
+
+	it('sends includeExpandedFields as a query flag on get and update', async () => {
+		respond({ id: 'cus_1' });
+		await invoke(Customers.get, { id: 'cus_1', includeExpandedFields: true });
+		expect(lastRequest().query).toMatchObject({
+			includeExpandedFields: 'true',
+		});
+
+		respond({ id: 'cus_1' });
+		await invoke(Customers.update, {
+			id: 'cus_1',
+			name: 'Ada',
+			includeExpandedFields: true,
+		});
+		expect(lastRequest().query).toMatchObject({
+			includeExpandedFields: 'true',
+		});
+		expect(lastRequest().body).toEqual({ name: 'Ada' });
 	});
 });

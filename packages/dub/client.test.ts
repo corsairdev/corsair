@@ -6,6 +6,8 @@ import {
 	dubErrorCode,
 	isReplaySafe,
 	makeDubRequest,
+	redactEmails,
+	redactPath,
 	segment,
 } from './client';
 import {
@@ -264,5 +266,33 @@ describe('redacting echoed input', () => {
 			'Dub 422 unprocessable_entity: Invalid tag: [email]',
 		);
 		expect(JSON.stringify(error.body)).not.toContain('alice@example.com');
+	});
+});
+
+describe('linear redaction', () => {
+	it('redacts addresses in text and paths without a regex', () => {
+		expect(
+			describeDubError(422, errorEnvelope('x', 'tag a@b.co is bad'), 'f'),
+		).toBe('Dub 422 x: tag [email] is bad');
+		expect(redactPath('/customers/ext_buyer%40example.com')).toBe(
+			'/customers/[redacted]',
+		);
+		expect(redactPath('/links/link_123')).toBe('/links/link_123');
+		// A long run of one character stays fast (no backtracking).
+		const started = Date.now();
+		redactEmails(`${'!'.repeat(100_000)}@`);
+		expect(Date.now() - started).toBeLessThan(200);
+	});
+
+	it('keeps a key that Headers refuses out of the transport error', () => {
+		const key = 'dub_key\nINJECTED';
+		const error = new DubTransportError(
+			'GET',
+			'/links',
+			new TypeError(`Headers.append: "${key}" is an invalid header value.`),
+			key,
+		);
+		expect(error.message).not.toContain(key);
+		expect(error.cause).toBeUndefined();
 	});
 });

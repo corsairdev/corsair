@@ -443,7 +443,7 @@ await corsair.dub.api.commissions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `type` | `click \| lead \| sale \| referral \| custom` | No | Filter the list of commissions by type. Supports advanced filtering: single value, multiple values (comma-separated), or exclusion (prefix with `-`). Examples: - "sale" - "sale,lead" - "-click" |
+| `type` | `string` | No | One type (click, lead, sale, referral, custom), several comma-separated ("sale,lead"), or an exclusion ("-click"). |
 | `customerId` | `string` | No | Filter the list of commissions by the associated customer. |
 | `payoutId` | `string` | No | Filter the list of commissions by the associated payout. |
 | `bountySubmissionId` | `string` | No | Filter the list of commissions by the associated bounty submission. |
@@ -659,6 +659,7 @@ await corsair.dub.api.customers.get({ id: 'cus_1KAP4CXQ2W' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | The customer's ID on Dub, or their externalId prefixed with ext_. |
+| `includeExpandedFields` | `boolean` | No | Also return the customer's link, partner and discount. |
 
 
 
@@ -838,6 +839,7 @@ await corsair.dub.api.customers.update({ id: 'cus_1KAP4CXQ2W', name: 'Jordan Lee
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
+| `includeExpandedFields` | `boolean` | No | Also return the customer's link, partner and discount. |
 | `email` | `string \| null` | No | — |
 | `name` | `string \| null` | No | — |
 | `avatar` | `string \| null` | No | — |
@@ -2319,7 +2321,7 @@ await corsair.dub.api.links.count({ groupBy: 'domain' });
 
 
 
-**Output:** `number \| object[] \| Record<string, any>`
+**Output:** `number \| object[]`
 
 <AccordionGroup>
 <Accordion title="Output full type">
@@ -2328,7 +2330,7 @@ await corsair.dub.api.links.count({ groupBy: 'domain' });
 number | {
   _count?: number | {
   } | null
-}[] | Record<string, any>
+}[]
 ```
 </Accordion>
 </AccordionGroup>

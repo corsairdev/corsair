@@ -1246,17 +1246,26 @@ export const partnersAttributeReferringPartner: DubEndpoints['partnersAttributeR
 				output: partnersAttributeReferringPartnerOutput(),
 			},
 			rawInput,
-			(input) => ({
-				method: 'POST',
-				path: `/partners/attribute-referring-partner`,
-				body: {
-					partnerId: input.partnerId,
-					tenantId: input.tenantId,
-					referredByPartnerId: input.referredByPartnerId,
-					referredByTenantId: input.referredByTenantId,
-					createCommissionsForPastEvents: input.createCommissionsForPastEvents,
-				},
-			}),
+			(input) => {
+				if (!(input.partnerId || input.tenantId))
+					throw new Error('[dub] Name the partner with partnerId or tenantId');
+				if (!(input.referredByPartnerId || input.referredByTenantId))
+					throw new Error(
+						'[dub] Name the referring partner with referredByPartnerId or referredByTenantId',
+					);
+				return {
+					method: 'POST',
+					path: `/partners/attribute-referring-partner`,
+					body: {
+						partnerId: input.partnerId,
+						tenantId: input.tenantId,
+						referredByPartnerId: input.referredByPartnerId,
+						referredByTenantId: input.referredByTenantId,
+						createCommissionsForPastEvents:
+							input.createCommissionsForPastEvents,
+					},
+				};
+			},
 		);
 
 const partnersUpdateTagsInput = lazy(() =>
@@ -1305,16 +1314,26 @@ export const partnersUpdateTags: DubEndpoints['partnersUpdateTags'] = (
 			output: partnersUpdateTagsOutput(),
 		},
 		rawInput,
-		(input) => ({
-			method: 'POST',
-			path: `/partners/update-tags`,
-			body: {
-				partnerIds: input.partnerIds,
-				tenantIds: input.tenantIds,
-				addTagIds: input.addTagIds,
-				removeTagIds: input.removeTagIds,
-			},
-		}),
+		(input) => {
+			if (
+				!(
+					Boolean(input.partnerIds?.length) !== Boolean(input.tenantIds?.length)
+				)
+			)
+				throw new Error('[dub] Pass exactly one of partnerIds or tenantIds');
+			if (!((input.partnerIds ?? input.tenantIds ?? []).length <= 100))
+				throw new Error('[dub] At most 100 partners per call');
+			return {
+				method: 'POST',
+				path: `/partners/update-tags`,
+				body: {
+					partnerIds: input.partnerIds,
+					tenantIds: input.tenantIds,
+					addTagIds: input.addTagIds,
+					removeTagIds: input.removeTagIds,
+				},
+			};
+		},
 	);
 
 const partnersUpdateGroupInput = lazy(() =>
@@ -1358,16 +1377,26 @@ export const partnersUpdateGroup: DubEndpoints['partnersUpdateGroup'] = (
 			output: partnersUpdateGroupOutput(),
 		},
 		rawInput,
-		(input) => ({
-			method: 'POST',
-			path: `/partners/update-group`,
-			body: {
-				partnerIds: input.partnerIds,
-				tenantIds: input.tenantIds,
-				groupId: input.groupId,
-				disableGroupMove: input.disableGroupMove,
-			},
-		}),
+		(input) => {
+			if (
+				!(
+					Boolean(input.partnerIds?.length) !== Boolean(input.tenantIds?.length)
+				)
+			)
+				throw new Error('[dub] Pass exactly one of partnerIds or tenantIds');
+			if (!((input.partnerIds ?? input.tenantIds ?? []).length <= 100))
+				throw new Error('[dub] At most 100 partners per call');
+			return {
+				method: 'POST',
+				path: `/partners/update-group`,
+				body: {
+					partnerIds: input.partnerIds,
+					tenantIds: input.tenantIds,
+					groupId: input.groupId,
+					disableGroupMove: input.disableGroupMove,
+				},
+			};
+		},
 	);
 
 const programApplicationsListInput = lazy(() =>
@@ -1892,10 +1921,10 @@ export const commissionsCreate: DubEndpoints['commissionsCreate'] = (
 const commissionsListInput = lazy(() =>
 	z.object({
 		type: z
-			.enum(['click', 'lead', 'sale', 'referral', 'custom'])
+			.string()
 			.optional()
 			.describe(
-				'Filter the list of commissions by type. Supports advanced filtering: single value, multiple values (comma-separated), or exclusion (prefix with `-`). Examples: - "sale" - "sale,lead" - "-click"',
+				'One type (click, lead, sale, referral, custom), several comma-separated ("sale,lead"), or an exclusion ("-click").',
 			),
 		customerId: z
 			.string()
@@ -2905,15 +2934,19 @@ export const messagesCreate: DubEndpoints['messagesCreate'] = (ctx, rawInput) =>
 			output: messagesCreateOutput(),
 		},
 		rawInput,
-		(input) => ({
-			method: 'POST',
-			path: `/messages`,
-			body: {
-				partnerId: input.partnerId,
-				tenantId: input.tenantId,
-				text: input.text,
-			},
-		}),
+		(input) => {
+			if (!(input.partnerId || input.tenantId))
+				throw new Error('[dub] Name the recipient with partnerId or tenantId');
+			return {
+				method: 'POST',
+				path: `/messages`,
+				body: {
+					partnerId: input.partnerId,
+					tenantId: input.tenantId,
+					text: input.text,
+				},
+			};
+		},
 	);
 
 // Dub reads array query values as repeated or comma-separated strings.

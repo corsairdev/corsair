@@ -76,7 +76,11 @@ export const get: DubEndpoints['customersGet'] = (ctx, input) =>
 			output: Outputs.customersGet,
 		},
 		input,
-		({ id }) => ({ method: 'GET', path: `/customers/${segment(id)}` }),
+		({ id, includeExpandedFields }) => ({
+			method: 'GET',
+			path: `/customers/${segment(id)}`,
+			query: { includeExpandedFields },
+		}),
 	);
 
 export const update: DubEndpoints['customersUpdate'] = (ctx, input) =>
@@ -88,9 +92,11 @@ export const update: DubEndpoints['customersUpdate'] = (ctx, input) =>
 			output: Outputs.customersUpdate,
 		},
 		input,
-		({ id, ...body }) => ({
+		({ id, includeExpandedFields, ...body }) => ({
 			method: 'PATCH',
 			path: `/customers/${segment(id)}`,
+			// A query flag, not a customer field.
+			query: { includeExpandedFields },
 			body,
 		}),
 	);
