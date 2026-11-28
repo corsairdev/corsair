@@ -195,7 +195,7 @@ describe('error handler order and behavior', () => {
 
 		const names = Object.keys(merged);
 		expect(names.at(-1)).toBe('DEFAULT');
-		expect(
+		await expect(
 			handlerOf(merged, 'DEFAULT').handler(new Error('x')),
 		).resolves.toMatchObject({
 			maxRetries: 7,
@@ -203,7 +203,7 @@ describe('error handler order and behavior', () => {
 		// The builtin handlers the caller did not name are still present.
 		expect(handlerOf(merged, 'RATE_LIMIT_ERROR')).toBeDefined();
 		// The caller's handler is reachable ahead of DEFAULT.
-		expect(
+		await expect(
 			handlerOf(merged, 'TEAPOT_ERROR').handler(
 				smtpError('SMTP2GO 418', { status: 418 }),
 			),

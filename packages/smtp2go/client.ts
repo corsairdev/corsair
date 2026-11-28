@@ -133,8 +133,43 @@ const REDACTED = '[REDACTED]';
  * rebuilt without them, keeping the status, method, route and rate-limit
  * fields; the body keeps only SMTP2GO's error text and code.
  */
+/**
+ * Every string value the caller sent (template text, webhook tokens,
+ * passwords), longest first, so an error that echoes one can drop it.
+ */
+// unknown: a request body is any JSON value.
+export function sentStrings(body: unknown): string[] {
+	const found = new Set<string>();
+	const walk = (value: unknown, depth: number) => {
+		if (depth > 6 || value === null || value === undefined) return;
+		if (typeof value === 'string') {
+			if (value.length >= 6) found.add(value);
+			return;
+		}
+		if (Array.isArray(value)) {
+			for (const item of value) walk(item, depth + 1);
+			return;
+		}
+		if (typeof value === 'object') {
+			for (const item of Object.values(value)) walk(item, depth + 1);
+		}
+	};
+	walk(body, 0);
+	return [...found].sort((a, b) => b.length - a.length);
+}
+
+export function scrubSent(text: string, sent: string[]): string {
+	let out = text;
+	for (const value of sent) out = out.split(value).join('[REDACTED]');
+	return out;
+}
+
 export function withoutRequestData(error: ApiError): ApiError {
-	const envelope = readEnvelopeError(error.body);
+	const sent = sentStrings(error.request.body);
+	const raw = readEnvelopeError(error.body);
+	const envelope = raw
+		? { ...raw, message: scrubSent(raw.message, sent) }
+		: undefined;
 	const label = [error.status, envelope?.code]
 		.filter((part) => part !== undefined)
 		.join(' ');
@@ -189,11 +224,13 @@ export class Smtp2goTransportError extends Error {
 				: 'SMTP2GO request failed before a response';
 		// A key Headers refuses (a newline in it) makes fetch throw a message
 		// that quotes it: scrub it, and keep a cause only when it is clean.
-		const leaks = Boolean(key) && raw.includes(String(key));
-		super(
-			leaks ? raw.split(String(key)).join('[REDACTED]') : raw,
-			leaks ? undefined : { cause },
-		);
+		// Headers trims surrounding whitespace before quoting a value, so the
+		// trimmed form is scrubbed too.
+		const forms = key ? [key, key.trim()].filter(Boolean) : [];
+		const leaks = forms.some((form) => raw.includes(form));
+		let message = raw;
+		for (const form of forms) message = message.split(form).join('[REDACTED]');
+		super(message, leaks ? undefined : { cause });
 		this.name = 'Smtp2goTransportError';
 		this.method = method;
 		this.path = path;
@@ -209,8 +246,15 @@ export class Smtp2goEnvelopeError extends Error {
 	readonly code?: string;
 	readonly path: string;
 
-	constructor(path: string, envelope: { message: string; code?: string }) {
-		super(`SMTP2GO error in a 2xx response: ${redactEmails(envelope.message)}`);
+	constructor(
+		path: string,
+		envelope: { message: string; code?: string },
+		// unknown: the request body, whose echoed values are removed.
+		sentBody?: unknown,
+	) {
+		super(
+			`SMTP2GO error in a 2xx response: ${redactEmails(scrubSent(envelope.message, sentStrings(sentBody)))}`,
+		);
 		this.name = 'Smtp2goEnvelopeError';
 		this.code = envelope.code;
 		this.path = path;

@@ -46,6 +46,18 @@ const ALL_EVENTS: readonly string[] = [
 	...SMTP2GO_SMS_EVENTS,
 ];
 
+/** A header by name, whatever case the caller's object uses. */
+function headerValue(
+	headers: Record<string, string | string[] | undefined>,
+	name: string,
+): string | undefined {
+	const direct = getHeader(headers, name);
+	if (direct) return direct;
+	const key = Object.keys(headers).find((k) => k.toLowerCase() === name);
+	const value = key === undefined ? undefined : headers[key];
+	return Array.isArray(value) ? value[0] : value;
+}
+
 function safeEqual(left: string, right: string): boolean {
 	const a = Buffer.from(left);
 	const b = Buffer.from(right);
@@ -69,7 +81,7 @@ export function verifySmtp2goWebhook(
 				'No SMTP2GO webhook secret is set (plugin option webhookSecret or keys.set_webhook_signature): use the auth_header_value of the webhook',
 		};
 	}
-	const header = getHeader(request.headers, 'authorization')?.trim();
+	const header = headerValue(request.headers, 'authorization')?.trim();
 	if (!header) {
 		return { valid: false, error: 'Missing Authorization header' };
 	}

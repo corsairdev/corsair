@@ -37,7 +37,7 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	// documented for some failures). Fail here rather than parsing it.
 	const envelopeError = readEnvelopeError(raw);
 	if (envelopeError) {
-		throw new Smtp2goEnvelopeError(request.path, envelopeError);
+		throw new Smtp2goEnvelopeError(request.path, envelopeError, request.body);
 	}
 
 	const result = operation.output.parse(raw);

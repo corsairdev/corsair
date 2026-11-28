@@ -44,21 +44,19 @@ describe('generated operations', () => {
 	});
 
 	it.each(cases.map((c) => [c.name, c] as const))(
-		'%s sends its method and path with the key in the header',
+		'%s validates its smallest input and sends its method and path',
 		async (_name, testCase) => {
-			mockFetch(ok());
+			// An empty `data` of the documented kind (object, array or string),
+			// which the lenient output schema must accept.
+			mockFetch(
+				new Response(
+					JSON.stringify({ request_id: 'req-1', data: testCase.data }),
+					{ status: 200, headers: { 'Content-Type': 'application/json' } },
+				),
+			);
 			const endpoint = byName.get(testCase.name);
 			if (!endpoint) throw new Error(`no endpoint ${testCase.name}`);
-			// Inputs with required fields fail validation before any request;
-			// those are covered by the next test.
-			const sent = await endpoint(makeCtx() as never, {}).then(
-				() => true,
-				(error: unknown) => {
-					if (error instanceof Error && error.name === 'ZodError') return false;
-					throw error;
-				},
-			);
-			if (!sent) return;
+			await endpoint(makeCtx() as never, testCase.input);
 			expect(lastCall().url).toBe(`${BASE}${testCase.path}`);
 			expect(lastCall().init.method).toBe(testCase.method);
 			expect(sentHeader('X-Smtp2go-Api-Key')).toBe(API_KEY);

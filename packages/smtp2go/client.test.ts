@@ -8,6 +8,7 @@ import {
 	SMTP2GO_REGION_HOSTS,
 	Smtp2goTransportError,
 	smtp2goErrorCode,
+	withoutRequestData,
 } from './client';
 import {
 	missingKeyError,
@@ -28,6 +29,7 @@ import {
 	sentBody,
 	sentHeader,
 } from './test-helpers';
+import { verifySmtp2goWebhook } from './webhooks';
 
 beforeEach(installFetchMock);
 afterEach(restoreFetchMock);
@@ -211,5 +213,40 @@ describe('readEnvelopeError', () => {
 
 	it('returns undefined for a success body', () => {
 		expect(readEnvelopeError(statsCycleOk)).toBeUndefined();
+	});
+});
+
+describe('echoed request values', () => {
+	it('removes values the caller sent from SMTP2GO error text', () => {
+		const error = withoutRequestData(
+			new ApiError(
+				{
+					method: 'POST',
+					url: '/webhook/edit',
+					body: { auth_header_value: 'tok-super-secret' },
+				},
+				{
+					url: `${SMTP2GO_API_BASE}/webhook/edit`,
+					ok: false,
+					status: 400,
+					statusText: 'x',
+					body: {
+						data: { error: "bad auth_header_value 'tok-super-secret'" },
+					},
+				},
+				'x',
+			),
+		);
+		expect(error.message).not.toContain('tok-super-secret');
+		expect(JSON.stringify(error.body)).not.toContain('tok-super-secret');
+	});
+
+	it('reads the Authorization header in any case', () => {
+		expect(
+			verifySmtp2goWebhook(
+				{ payload: {}, headers: { Authorization: 'Bearer test-token' } },
+				'test-token',
+			),
+		).toEqual({ valid: true });
 	});
 });

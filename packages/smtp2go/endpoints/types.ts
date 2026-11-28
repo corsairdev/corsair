@@ -398,8 +398,34 @@ const ActivitySearchInputSchema = z.object({
 	search: z.string().optional(),
 	search_email_id: z.string().optional(),
 	search_subject: z.string().optional(),
+	search_subject_op: z
+		.enum(['equals', 'contains', 'not_equals', 'not_contains'])
+		.optional()
+		.describe('How search_subject compares; SMTP2GO defaults to contains.'),
 	search_sender: z.string().optional(),
+	search_sender_op: z
+		.enum(['equals', 'contains', 'not_equals', 'not_contains'])
+		.optional()
+		.describe('How search_sender compares; SMTP2GO defaults to contains.'),
 	search_recipient: z.string().optional(),
+	search_recipient_op: z
+		.enum(['equals', 'contains', 'not_equals', 'not_contains'])
+		.optional()
+		.describe('How search_recipient compares; SMTP2GO defaults to contains.'),
+	search_usernames: z
+		.array(z.string())
+		.optional()
+		.describe('Only events for emails sent by these SMTP usernames.'),
+	only_latest_by_sent: z
+		.boolean()
+		.optional()
+		.describe(
+			'Only the latest event per email, ordered by sent date (overrides only_latest).',
+		),
+	custom_headers: z
+		.array(z.string())
+		.optional()
+		.describe("Header names to parse out of each email's raw headers."),
 	event_types: z
 		.array(z.string())
 		.optional()
@@ -413,7 +439,7 @@ const ActivitySearchInputSchema = z.object({
 		.max(SMTP2GO_MAX_ACTIVITY_LIMIT)
 		.optional()
 		.describe(
-			`Defaults to 100; the API returns at most ${SMTP2GO_MAX_ACTIVITY_LIMIT} items.`,
+			`SMTP2GO defaults to 100 and allows up to ${SMTP2GO_MAX_ACTIVITY_LIMIT} per call.`,
 		),
 	continue_token: z.string().optional(),
 	only_latest: z.boolean().optional(),
@@ -492,6 +518,14 @@ const SuppressionsListInputSchema = z.object({
 		.describe(
 			"Restrict the results to these types: 'manual', 'spam', 'unsubscribe', 'bounce', 'compliance'.",
 		),
+	start_date: z
+		.string()
+		.optional()
+		.describe('Only suppressions added on or after this date (YYYY-MM-DD).'),
+	end_date: z
+		.string()
+		.optional()
+		.describe('Only suppressions added on or before this date (YYYY-MM-DD).'),
 	limit: z.number().int().min(1).optional(),
 	continue_token: z.string().optional(),
 });

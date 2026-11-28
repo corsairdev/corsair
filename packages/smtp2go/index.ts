@@ -269,7 +269,7 @@ const smtp2goEndpointMeta = {
 	'activity.search': {
 		riskLevel: 'read',
 		description:
-			'Search delivery activity events (processed, delivered, bounced, opened, clicked and more) by date, address and event type; limited to 100 returned items per call',
+			'Search delivery activity events (processed, delivered, bounced, opened, clicked and more) by date, address, subject or username, with equals/contains/not_* operators; 100 items by default, up to 1,000 per call, continue_token for more',
 	},
 	'suppressions.list': {
 		riskLevel: 'read',

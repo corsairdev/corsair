@@ -298,37 +298,52 @@ live('SMTP2GO live', () => {
 		// The allowed lists only restrict sending when the account turns that
 		// mode on; the suite adds one example.com entry and removes it again.
 		const entry = `allowed-${stamp}.example.com`;
+		// Both updates replace the whole list: they resend the account's own
+		// entries plus the test one, and cleanup restores the originals.
+		const senders = await api.allowedSenders.list({});
+		const sendersData = (senders.data ?? {}) as {
+			mode?: string;
+			allowed_senders?: string[];
+		};
+		const originalSenders = sendersData.allowed_senders ?? [];
+		const mode = (sendersData.mode ?? 'disabled') as 'disabled';
+		cleanup.push(() =>
+			api.allowedSenders.update({ allowed_senders: originalSenders, mode }),
+		);
 		await step('allowedSenders.add', () =>
 			api.allowedSenders.add({ allowed_senders: [entry] }),
 		);
-		cleanup.push(() => api.allowedSenders.remove({ allowed_senders: [entry] }));
-		// update replaces the list and needs the mode; keep the account's own.
-		const senders = await api.allowedSenders.list({});
-		const mode =
-			(senders.data as { mode?: string } | undefined)?.mode ?? 'disabled';
 		await step('allowedSenders.update', () =>
 			api.allowedSenders.update({
-				allowed_senders: [entry],
-				mode: mode as 'disabled',
+				allowed_senders: [...originalSenders, entry],
+				mode,
 			}),
 		);
 		await step('allowedSenders.remove', () =>
 			api.allowedSenders.remove({ allowed_senders: [entry] }),
 		);
 
+		const recipients = await api.allowedRecipients.list({});
+		const recipientsData = (recipients.data ?? {}) as {
+			enabled?: boolean;
+			allowed_recipients?: string[];
+		};
+		const originalRecipients = recipientsData.allowed_recipients ?? [];
+		const enabled = recipientsData.enabled ?? false;
+		cleanup.push(() =>
+			api.allowedRecipients.update({
+				allowed_recipients: originalRecipients,
+				enabled,
+			}),
+		);
 		await step('allowedRecipients.add', () =>
 			api.allowedRecipients.add({ allowed_recipients: [entry] }),
 		);
-		cleanup.push(() =>
-			api.allowedRecipients.remove({ allowed_recipients: [entry] }),
-		);
-		// update needs `enabled`; keep the account's own setting so the list
-		// never starts restricting sends.
-		const recipients = await api.allowedRecipients.list({});
-		const enabled =
-			(recipients.data as { enabled?: boolean } | undefined)?.enabled ?? false;
 		await step('allowedRecipients.update', () =>
-			api.allowedRecipients.update({ allowed_recipients: [entry], enabled }),
+			api.allowedRecipients.update({
+				allowed_recipients: [...originalRecipients, entry],
+				enabled,
+			}),
 		);
 		await step('allowedRecipients.remove', () =>
 			api.allowedRecipients.remove({ allowed_recipients: [entry] }),

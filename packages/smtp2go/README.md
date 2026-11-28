@@ -12,7 +12,7 @@ pnpm add @corsair-dev/smtp2go
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `activity.search` | `smtp2go.api.activity.search` | `read` | Search delivery activity events (processed, delivered, bounced, opened, clicked and more) by date, address and event type; limited to 100 returned items per call |
+| `activity.search` | `smtp2go.api.activity.search` | `read` | Search delivery activity events (processed, delivered, bounced, opened, clicked and more) by date, address, subject or username, with equals/contains/not_* operators; 100 items by default, up to 1,000 per call, continue_token for more |
 | `allowedRecipients.add` | `smtp2go.api.allowedRecipients.add` | `write` | Add allowed recipients: add one or more email addresses and domain names to your Allowed Recipients List. Further details of the associated setting are found in the SMTP2GO Guides. |
 | `allowedRecipients.list` | `smtp2go.api.allowedRecipients.list` | `read` | View allowed recipients: returns the email addresses and domain names on your Allowed Recipients list. |
 | `allowedRecipients.remove` | `smtp2go.api.allowedRecipients.remove` | `write` | Remove allowed recipients: remove one or more emails addresses or domain names stored in your Allowed Recipients List. Note: In the event that any of the email addresses or domains do not feature… |
@@ -64,7 +64,7 @@ pnpm add @corsair-dev/smtp2go
 | `stats.spam` | `smtp2go.api.stats.spam` | `read` | Read spam-complaint counts over the last 30 days or a given window |
 | `stats.summary` | `smtp2go.api.stats.summary` | `read` | Read one combined report: billing cycle usage, bounces, spam, unsubscribes, opens and clicks |
 | `stats.unsubscribes` | `smtp2go.api.stats.unsubscribes` | `read` | Read unsubscribe counts over the last 30 days or a given window |
-| `subaccounts.add` | `smtp2go.api.subaccounts.add` | `write` | Add a subaccount: adds a new subaccount on your master account. Note: This end-point is rate limited to 50 calls per hour. |
+| `subaccounts.add` | `smtp2go.api.subaccounts.add` | `destructive` | Add a subaccount: adds a new subaccount on your master account. Note: This end-point is rate limited to 50 calls per hour. (emails an invitation when subaccount_email is set) |
 | `subaccounts.close` | `smtp2go.api.subaccounts.close` | `destructive` | Close a subaccount: changes the status of an Active subaccount to Closed (stops the subaccount sending) |
 | `subaccounts.edit` | `smtp2go.api.subaccounts.edit` | `write` | Update a subaccount: changes the details on an existing subaccount |
 | `subaccounts.reopen` | `smtp2go.api.subaccounts.reopen` | `write` | Reopen a closed subaccount: changes the status of a Closed subaccount back to Active |

@@ -148,11 +148,14 @@ apiNotes:
     The answer's `data` is a confirmation string, such as
     "Successfully deleted template 'example'".
   webhooks.list: |
-    The documented answer is a single registration object with its `events`,
-    `output_format` and auth header settings, not an array.
+    Returns an array of registrations in `data`, each with its `events`,
+    `output_format` and auth header settings (an empty array when there are
+    none). The reference shows a single object; the live API answers an array.
   webhooks.add: |
     `output_format` accepts `form` or `json` and defaults to `form`. With no
-    `events` list the webhook receives all email events. The plugin does not
-    receive these deliveries; it manages the registration only.
+    `events` list the webhook receives all email events. Set `auth_header_type`
+    and `auth_header_value`, and store the value as the plugin's webhook
+    secret: the plugin's `email.event` and `sms.event` webhooks receive the
+    deliveries and check that header.
   webhooks.remove: |
     Removals are permanent; deliveries to that URL stop.

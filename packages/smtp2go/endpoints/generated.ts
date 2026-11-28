@@ -3002,7 +3002,7 @@ const subaccountsSearchOutput = lazy(() =>
 			request_id: z.string().nullish(),
 			data: z
 				.object({
-					continue_token: z.unknown().nullish(),
+					continue_token: z.string().nullish(),
 					total_count: z.number().nullish(),
 					subaccounts: z
 						.array(
@@ -3480,9 +3480,9 @@ export const generatedEndpointMeta = {
 			'Remove an SMTP user: remove an SMTP user from your account (deletes the SMTP login)',
 	},
 	'subaccounts.add': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Add a subaccount: adds a new subaccount on your master account. Note: This end-point is rate limited to 50 calls per hour.',
+			'Add a subaccount: adds a new subaccount on your master account. Note: This end-point is rate limited to 50 calls per hour. (emails an invitation when subaccount_email is set)',
 	},
 	'subaccounts.close': {
 		riskLevel: 'destructive',

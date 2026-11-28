@@ -14,7 +14,7 @@ description: "API reference for the SMTP2GO plugin in Corsair: every `smtp2go.ap
 
 `activity.search`
 
-Search delivery activity events (processed, delivered, bounced, opened, clicked and more) by date, address and event type; limited to 100 returned items per call
+Search delivery activity events (processed, delivered, bounced, opened, clicked and more) by date, address, subject or username, with equals/contains/not_* operators; 100 items by default, up to 1,000 per call, continue_token for more
 
 **Risk:** `read`
 
@@ -31,10 +31,16 @@ await corsair.smtp2go.api.activity.search({ event_types: ['delivered', 'opened']
 | `search` | `string` | No | — |
 | `search_email_id` | `string` | No | — |
 | `search_subject` | `string` | No | — |
+| `search_subject_op` | `equals \| contains \| not_equals \| not_contains` | No | How search_subject compares; SMTP2GO defaults to contains. |
 | `search_sender` | `string` | No | — |
+| `search_sender_op` | `equals \| contains \| not_equals \| not_contains` | No | How search_sender compares; SMTP2GO defaults to contains. |
 | `search_recipient` | `string` | No | — |
+| `search_recipient_op` | `equals \| contains \| not_equals \| not_contains` | No | How search_recipient compares; SMTP2GO defaults to contains. |
+| `search_usernames` | `string[]` | No | Only events for emails sent by these SMTP usernames. |
+| `only_latest_by_sent` | `boolean` | No | Only the latest event per email, ordered by sent date (overrides only_latest). |
+| `custom_headers` | `string[]` | No | Header names to parse out of each email's raw headers. |
 | `event_types` | `string[]` | No | Event types to keep: 'processed', 'soft-bounced', 'hard-bounced', 'rejected', 'spam', 'delivered', 'unsubscribed', 'resubscribed', 'opened', 'clicked'. |
-| `limit` | `number` | No | Defaults to 100; the API returns at most 1000 items. |
+| `limit` | `number` | No | SMTP2GO defaults to 100 and allows up to 1000 per call. |
 | `continue_token` | `string` | No | — |
 | `only_latest` | `boolean` | No | — |
 | `include_headers` | `boolean` | No | — |
@@ -2972,9 +2978,9 @@ await corsair.smtp2go.api.stats.unsubscribes({});
 
 `subaccounts.add`
 
-Add a subaccount: adds a new subaccount on your master account. Note: This end-point is rate limited to 50 calls per hour.
+Add a subaccount: adds a new subaccount on your master account. Note: This end-point is rate limited to 50 calls per hour. (emails an invitation when subaccount_email is set)
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.smtp2go.api.subaccounts.add({});
@@ -3202,7 +3208,7 @@ await corsair.smtp2go.api.subaccounts.search({});
 
 ```ts
 {
-  continue_token?: any | null,
+  continue_token?: string | null,
   total_count?: number | null,
   subaccounts?: {
     email?: string | null,
@@ -3287,6 +3293,8 @@ await corsair.smtp2go.api.suppressions.list({ suppression_types: ['spam'], limit
 |------|------|----------|-------------|
 | `email_address` | `string` | No | — |
 | `suppression_types` | `string[]` | No | Restrict the results to these types: 'manual', 'spam', 'unsubscribe', 'bounce', 'compliance'. |
+| `start_date` | `string` | No | Only suppressions added on or after this date (YYYY-MM-DD). |
+| `end_date` | `string` | No | Only suppressions added on or before this date (YYYY-MM-DD). |
 | `limit` | `number` | No | — |
 | `continue_token` | `string` | No | — |
 
@@ -3667,8 +3675,10 @@ await corsair.smtp2go.api.webhooks.add({ url: 'https://example.com/smtp2go-event
 | `subaccount_id` | `string` | No | — |
 
 `output_format` accepts `form` or `json` and defaults to `form`. With no
-`events` list the webhook receives all email events. The plugin does not
-receive these deliveries; it manages the registration only.
+`events` list the webhook receives all email events. Set `auth_header_type`
+and `auth_header_value`, and store the value as the plugin's webhook
+secret: the plugin's `email.event` and `sms.event` webhooks receive the
+deliveries and check that header.
 
 
 
@@ -3785,8 +3795,9 @@ await corsair.smtp2go.api.webhooks.list({});
 |------|------|----------|-------------|
 | `subaccount_id` | `string` | No | — |
 
-The documented answer is a single registration object with its `events`,
-`output_format` and auth header settings, not an array.
+Returns an array of registrations in `data`, each with its `events`,
+`output_format` and auth header settings (an empty array when there are
+none). The reference shows a single object; the live API answers an array.
 
 
 
