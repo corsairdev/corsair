@@ -557,7 +557,7 @@ export type OmnisendCreateEmailInput = {
 	/** Email subject line */
 	subject?: string;
 	/** Email template unique identifier. Required for regular email campaigns: creation is rejected without it, even when the campaign would be saved as a draft. Booster campaigns are exempt — they may still send content.email (e.g. to override the subject) but do not require a template, inheriting the… */
-	templateID: string;
+	templateID?: string;
 };
 
 /** SMS content for campaign creation */

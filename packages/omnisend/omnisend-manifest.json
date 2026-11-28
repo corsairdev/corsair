@@ -6363,7 +6363,6 @@
           "type": "string"
         }
       },
-      "required": ["templateID"],
       "type": "object"
     },
     "CreateProductResponse": {

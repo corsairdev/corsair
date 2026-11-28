@@ -105,6 +105,23 @@ describe('omnisend requests', () => {
 		});
 	});
 
+	it('creates a booster campaign without its own template id', async () => {
+		reply({ id: '6650a1b2c3d4e5f6a7b8c9d9', type: 'booster' }, 201);
+		await api.campaigns.create(ctx, {
+			type: 'booster',
+			channel: 'email',
+			boosterSettings: {
+				campaignID: '6650a1b2c3d4e5f6a7b8c9d0',
+				sendTo: 'nonOpeners',
+			},
+			content: { email: { subject: 'Last chance' } },
+		});
+		expect(JSON.parse(String(calls[0]?.body))).toMatchObject({
+			type: 'booster',
+			content: { email: { subject: 'Last chance' } },
+		});
+	});
+
 	it('sends a campaign by id', async () => {
 		reply({ campaignID: '6650a1b2c3d4e5f6a7b8c9d0', status: 'inProgress' });
 		await api.campaigns.send(ctx, { id: '6650a1b2c3d4e5f6a7b8c9d0' });
@@ -173,6 +190,7 @@ describe('omnisend risk levels', () => {
 			'automations.enable',
 			'automations.sendBlockTestEmail',
 			'events.send',
+			'batches.create',
 		] as const) {
 			expect(omnisendEndpointMeta[id].riskLevel).toBe('destructive');
 		}

@@ -370,7 +370,7 @@ export const omnisendEndpointMeta = {
 			'Patch automation workflow. Partially update an automation workflow. Only the fields provided in the request body are updated. Enabled automations cannot be patched. Disable the automation via POST /automations/{id}/disable, make changes, then re-enable via POST /automations/{id}/enable when ready.',
 	},
 	'batches.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		job: {
 			idPath: 'batchID',
 			status: {
@@ -382,7 +382,7 @@ export const omnisendEndpointMeta = {
 			},
 		},
 		description:
-			'Queue up to 100 contact, product, category or event writes that Omnisend applies one by one, and read the batch back with batches.get until it is finished or stopped.',
+			'Queue up to 100 contact, product, category or event writes that Omnisend applies one by one, and read the batch back with batches.get until it is finished or stopped. An events batch can start automations that message customers, like events.send.',
 	},
 	'batches.get': {
 		riskLevel: 'read',
@@ -460,16 +460,17 @@ export const omnisendEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Send a draft campaign to its audience. This cannot be undone, and it answers 402 when the audience exceeds the billing tier.',
+			'Send a draft campaign to its audience. This cannot be undone, and it answers 402 when the audience exceeds the billing tier. Sends the campaign to its whole audience; it cannot be undone.',
 	},
 	'campaigns.sendTestEmail': {
 		riskLevel: 'destructive',
 		description:
-			'Render a campaign and email it to 1-5 addresses, so no customer receives it.',
+			'Render a campaign and email it to 1-5 addresses. Omnisend sends to exactly the addresses given, so use internal test inboxes, not customers.',
 	},
 	'campaigns.setUtm': {
 		riskLevel: 'write',
-		description: 'Set the UTM tags stamped on a campaign links.',
+		description:
+			'Set the UTM tags stamped on a campaign links. Send tags for a regular campaign or variants for an A/B test campaign, not both.',
 	},
 	'campaigns.stopAbTest': {
 		riskLevel: 'write',
@@ -569,7 +570,7 @@ export const omnisendEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Record an event for a contact, which creates or updates that contact and can trigger automations that email real customers. The event is queued (202) and append-only: it cannot be edited, read back or deleted.',
+			'Record an event for a contact, which creates or updates that contact and can trigger automations that email real customers. The event is queued (202) and append-only: it cannot be edited, read back or deleted. Omnisend\'s events guide asks for an origin on every event: use "api" unless your integration has its own origin.',
 	},
 	'events.updateSchema': {
 		riskLevel: 'write',

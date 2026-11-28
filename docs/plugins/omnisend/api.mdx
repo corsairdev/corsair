@@ -67577,9 +67577,9 @@ await corsair.omnisend.api.automations.update({ id: '6650a1b2c3d4e5f6a7b8c9d0' }
 
 `batches.create`
 
-Queue up to 100 contact, product, category or event writes that Omnisend applies one by one, and read the batch back with batches.get until it is finished or stopped.
+Queue up to 100 contact, product, category or event writes that Omnisend applies one by one, and read the batch back with batches.get until it is finished or stopped. An events batch can start automations that message customers, like events.send.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.omnisend.api.batches.create({
@@ -68207,7 +68207,7 @@ await corsair.omnisend.api.campaigns.create({
     senderEmail?: string,
     senderName?: string,
     subject?: string,
-    templateID: string
+    templateID?: string
   },
   sms?: {
     compliance: {
@@ -68898,7 +68898,7 @@ await corsair.omnisend.api.campaigns.selectAbTestWinner({ id: '6650a1b2c3d4e5f6a
 
 `campaigns.send`
 
-Send a draft campaign to its audience. This cannot be undone, and it answers 402 when the audience exceeds the billing tier.
+Send a draft campaign to its audience. This cannot be undone, and it answers 402 when the audience exceeds the billing tier. Sends the campaign to its whole audience; it cannot be undone.
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -68928,7 +68928,7 @@ await corsair.omnisend.api.campaigns.send({ id: '6650a1b2c3d4e5f6a7b8c9d0' });
 
 `campaigns.sendTestEmail`
 
-Render a campaign and email it to 1-5 addresses, so no customer receives it.
+Render a campaign and email it to 1-5 addresses. Omnisend sends to exactly the addresses given, so use internal test inboxes, not customers.
 
 **Risk:** `destructive`
 
@@ -68962,7 +68962,7 @@ await corsair.omnisend.api.campaigns.sendTestEmail({
 
 `campaigns.setUtm`
 
-Set the UTM tags stamped on a campaign links.
+Set the UTM tags stamped on a campaign links. Send tags for a regular campaign or variants for an A/B test campaign, not both.
 
 **Risk:** `write`
 
@@ -72937,7 +72937,7 @@ await corsair.omnisend.api.events.queryMetadata({ category: 'automations' });
 
 `events.send`
 
-Record an event for a contact, which creates or updates that contact and can trigger automations that email real customers. The event is queued (202) and append-only: it cannot be edited, read back or deleted.
+Record an event for a contact, which creates or updates that contact and can trigger automations that email real customers. The event is queued (202) and append-only: it cannot be edited, read back or deleted. Omnisend's events guide asks for an origin on every event: use "api" unless your integration has its own origin.
 
 **Risk:** `destructive` · **Irreversible**
 
